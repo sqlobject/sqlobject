@@ -1045,7 +1045,7 @@ class SQLObject(object):
         self._connection.cache.expire(self.id, self.__class__)
 
     def delete(cls, id):
-        obj = cls(id)
+        obj = cls.get(id)
         obj.destroySelf()
 
     delete = classmethod(delete)
