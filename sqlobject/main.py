@@ -875,7 +875,7 @@ class SQLObject(object):
             try:
                 getattr(self.__class__, name)
             except AttributeError:
-                raise TypeError, "%s.new() got an unexpected keyword argument %s" % (self.__class__.__name__, name)
+                raise TypeError, "%s() got an unexpected keyword argument %s" % (self.__class__.__name__, name)
             try:
                 setattr(self, name, value)
             except AttributeError, e:
