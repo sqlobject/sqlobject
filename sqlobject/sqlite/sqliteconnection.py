@@ -24,8 +24,6 @@ class SQLiteConnection(DBAPI):
         user, password, host, path, args = cls._parseURI(uri)
         assert host is None, "SQLite can only be used locally (with a URI like sqlite:///file or sql:/file, not %r)" % uri
         assert user is None and password is None, "You may not provide usernames or passwords for SQLite databases"
-        if path != ':memory:':
-            path = '/' + path
         return cls(filename=path, **args)
     connectionFromURI = classmethod(connectionFromURI)
 
