@@ -936,17 +936,24 @@ class PickleValidator(BinaryValidator):
             return None
         if isinstance(value, str):
             return pickle.loads(value)
-        return value
+        raise validators.InvalidField("expected a pickle string in the PickleCol '%s', got %s instead" % \
+            (self.name, type(value)), value, state)
 
     def fromPython(self, value, state):
         if value is None:
             return None
-        pickled = pickle.dumps(value)
-        return BinaryValidator.fromPython(self, pickled, state)
-
+        return pickle.dumps(value)
 
 class SOPickleCol(SOBLOBCol):
     validatorClass = PickleValidator # can be overriden in descendants
+
+    def __init__(self, **kw):
+        self.pickleProtocol = popKey(kw, 'pickleProtocol', 1)
+        SOBLOBCol.__init__(self, **kw)
+
+    def createValidator(self):
+        """Create a validator for the column. Can be overriden in descendants."""
+        return self.validatorClass(name=self.name, pickleProtocol=self.pickleProtocol)
 
 class PickleCol(BLOBCol):
     baseClass = SOPickleCol
