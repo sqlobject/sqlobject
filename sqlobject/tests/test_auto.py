@@ -73,6 +73,7 @@ class TestAuto:
       age INT DEFAULT NULL,
       created DATETIME NOT NULL,
       happy char(1) DEFAULT 'Y' NOT NULL,
+      long_field TEXT,
       wannahavefun TINYINT DEFAULT 0 NOT NULL
     )
     """
@@ -85,6 +86,7 @@ class TestAuto:
       age INT DEFAULT 0,
       created VARCHAR(40) NOT NULL,
       happy char(1) DEFAULT 'Y' NOT NULL,
+      long_field TEXT,
       wannahavefun BOOL DEFAULT FALSE NOT NULL
     )
     """
@@ -96,7 +98,8 @@ class TestAuto:
       last_name VARCHAR(200) NOT NULL,
       age INT DEFAULT 0,
       created VARCHAR(40) NOT NULL,
-      happy char(1) DEFAULT 'Y' NOT NULL
+      happy char(1) DEFAULT 'Y' NOT NULL,
+      long_field TEXT
     )
     """
 
@@ -125,12 +128,16 @@ class TestAuto:
                         lastName='doe',
                         age=10,
                         created=now(),
-                        wannahavefun=False)
+                        wannahavefun=False,
+                        long_field='x'*1000)
         jane = AutoTest(firstName='jane',
                         lastName='doe',
                         happy='N',
                         created=now(),
-                        wannahavefun=True)
+                        wannahavefun=True,
+                        long_field='x'*1000)
         assert not john.wannahavefun
         assert jane.wannahavefun
+        assert john.long_field == 'x'*1000
+        assert jane.long_field == 'x'*1000
         del classregistry.registry(AutoTest._registry).classes['AutoTest']
