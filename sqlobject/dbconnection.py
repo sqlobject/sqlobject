@@ -3,6 +3,7 @@ from __future__ import generators
 True, False = 1==1, 0==1
 
 import threading
+from threadinglocal import local as threading_local
 import re
 import warnings
 import atexit
@@ -255,7 +256,8 @@ class DBAPI(DBConnection):
             elif self.autoCommit:
                 if self.debug:
                     self.printDebug(conn, 'auto', 'COMMIT')
-                conn.commit()
+                if not getattr(conn, 'autocommit', False):
+                    conn.commit()
             else:
                 if self.debug:
                     self.printDebug(conn, 'auto', 'ROLLBACK')
@@ -726,6 +728,60 @@ class Transaction(object):
         if self._obsolete:
             return
         self.rollback()
+
+class ConnectionHub(object):
+
+    """
+    This object serves as a hub for connections, so that you can pass
+    in a ConnectionHub to a SQLObject subclass as though it was a
+    connection, but actually bind a real database connection later.
+    You can also bind connections on a per-thread basis.
+
+    You must hang onto the original ConnectionHub instance, as you
+    cannot retrieve it again from the class or instance.
+
+    To use the hub, do something like::
+
+        hub = ConnectionHub()
+        class MyClass(SQLObject):
+            _connection = hub
+
+        hub.threadConnection = connectionFromURI('...')
+        
+    """
+
+    def __init__(self):
+        self.threadingLocal = threading_local()
+
+    def __get__(self, obj, type=None):
+        return self.getConnection()
+
+    def __set__(self, obj, value):
+        obj.__dict__['_connection'] = value
+
+    def getConnection(self):
+        try:
+            return self.threadingLocal.connection
+        except AttributeError:
+            try:
+                return self.processConnection
+            except AttributeError:
+                raise AttributeError(
+                    "No connection has been defined for this thread "
+                    "or process")
+
+    def _set_threadConnection(self, value):
+        self.threadingLocal.connection = value
+
+    def _get_threadConnection(self):
+        return self.threadingLocal.connection
+
+    def _del_threadConnection(self):
+        del self.threadingLocal.connection
+
+    threadConnection = property(_get_threadConnection,
+                                _set_threadConnection,
+                                _del_threadConnection)
 
 class ConnectionURIOpener(object):
 

@@ -63,10 +63,19 @@ def setupClass(soClasses):
     B, then do setupClass([B, A]) and B won't be destroyed or cleared
     until after A is destroyed or cleared.
     """
+    global hub
     if not isinstance(soClasses, (list, tuple)):
         soClasses = [soClasses]
     connection = getConnection()
     for soClass in soClasses:
+        ## This would be an alternate way to register connections...
+        #try:
+        #    hub
+        #except NameError:
+        #    hub = sqlobject.dbconnection.ConnectionHub()
+        #soClass._connection = hub
+        #hub.threadConnection = connection
+        #hub.processConnection = connection
         soClass._connection = connection
     installOrClear(soClasses)
     return soClasses
