@@ -1,4 +1,4 @@
-from SQLObject import *
+from sqlobject import *
 from config import conn
 
 __connection__ = conn
@@ -32,21 +32,21 @@ def reset():
 reset()
 
 ## Snippet "address-use1"
-p = Person.new(firstName='John', lastName='Doe')
+p = Person(firstName='John', lastName='Doe')
 print p.addresses
 #>> []
-a1 = Address.new(street='123', city='Smallsville',
+a1 = Address(street='123', city='Smallsville',
                  state='IL', zip='50484', person=p)
 print [a.street for a in p.addresses]
 #>> ['123']
 ## end snippet
 
 # We'll add some more data to make the results more interesting:
-add1 = Person.new(firstName='Jane', lastName='Doe')
-add2 = Person.new(firstName='Tom', lastName='Brown')
-Address.new(street='5839', city='Eckersville',
+add1 = Person(firstName='Jane', lastName='Doe')
+add2 = Person(firstName='Tom', lastName='Brown')
+Address(street='5839', city='Eckersville',
             state='IL', zip='50482', person=add1)
-Address.new(street='4', city='Whinging',
+Address(street='4', city='Whinging',
             state='AZ', zip='49378', person=add2)
 
 ## Snippet "person-select1"

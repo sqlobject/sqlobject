@@ -1,4 +1,4 @@
-from SQLObject import *
+from sqlobject import *
 import setup
 
 __connection__ = setup.conn
@@ -34,12 +34,12 @@ class Role(SQLObject):
 setup.reset()
 
 ## Snippet "userrole-use"
-bob = User.new(username='bob')
-tim = User.new(username='tim')
-jay = User.new(username='jay')
+bob = User(username='bob')
+tim = User(username='tim')
+jay = User(username='jay')
 
-admin = Role.new(name='admin')
-editor = Role.new(name='editor')
+admin = Role(name='admin')
+editor = Role(name='editor')
 
 bob.addRole(admin)
 bob.addRole(editor)

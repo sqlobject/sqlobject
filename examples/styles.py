@@ -1,4 +1,4 @@
-from SQLObject import *
+from sqlobject import *
 from config import conn
 
 __connection__ = conn

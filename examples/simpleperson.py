@@ -1,16 +1,7 @@
-from SQLObject import *
+from sqlobject import *
 
-## Use one of these to define your connection:
-"""
-## Snippet "connections"
-conn = MySQLConnection(user='test', db='testdb')
-conn = PostgresConnection('user=test dbname=testdb')
-conn = SQLiteConnect('database.db')
-conn = DBMConnection('database/')
-## End snippet
-"""
-conn = DBMConnection('database/')
-conn = MySQLConnection(user='test', db='test')
+from setup import *
+__connection__ = conn
 
 ## Snippet "simpleaddress-person1"
 class Person(SQLObject):
@@ -47,7 +38,7 @@ Person.createTable()
 ## End snippet
 
 ## Snippet "simpleaddress-person1-use"
-p = Person.new(firstName="John", lastName="Doe")
+p = Person(firstName="John", lastName="Doe")
 print p
 #>> <Person 1 firstName='John' middleInitial=None lastName='Doe'>
 print p.firstName
@@ -55,7 +46,7 @@ print p.firstName
 p.middleInitial = 'Q'
 print p.middleInitial
 #>> 'Q'
-p2 = Person(1)
+p2 = Person.get(1)
 print p2
 #>> <Person 1 firstName='John' middleInitial='Q' lastName='Doe'>
 print p is p2
@@ -67,7 +58,7 @@ print '-'*60
 
 conn.debug = 1
 ## Snippet "simpleaddress-person1-use-debug"
-p = Person.new(firstName="John", lastName="Doe")
+p = Person(firstName="John", lastName="Doe")
 #>> QueryIns:
 #   INSERT INTO person (last_name, middle_initial, first_name)
 #   VALUES ('Doe', NULL, 'John')
@@ -91,7 +82,7 @@ p.middleInitial = 'Q'
 #   WHERE id = 1
 print p.middleInitial
 #>> 'Q'
-p2 = Person(1)
+p2 = Person.get(1)
 #-- Again, no database access, since we're just grabbing the same
 #-- instance we already had.
 print p2

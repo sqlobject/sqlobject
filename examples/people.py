@@ -1,31 +1,9 @@
 #!/usr/bin/env python
-from SQLObject import *
+from sqlobject import *
 import os
 
-############################################################
-## Configuration parameters:
-############################################################
-
-user = os.environ.get('SQLOBJECT_USER', 'sqlobject_test')
-passwd = os.environ.get('SQLOBJECT_PASSWORD', '')
-database = os.environ.get('SQLOBJECT_DATABASE', 'sqlobject_test')
-debug = 1
-
-############################################################
-## Setup connections:
-############################################################
-
-print 'Accessing with user %s and password %s' % (user, passwd)
-
-if 1:
-    # do MySQL test
-    __connection__ = MySQLConnection('localhost', database,
-                                     user, passwd, debug=debug)
-else:
-    # do Postgres test
-    __connection__ = PostgresConnection('dbname=%s user=%s' %
-                                        (database, user), debug=debug)
-
+from setup import *
+__connection__ = conn
 
 ############################################################
 ## Define classes:
@@ -93,7 +71,7 @@ if 'drop' in args:
 
 if 'create' in args:
     for table in tableClasses:
-        table.createTable(ifExists=True)
+        table.createTable(ifNotExists=True)
 
 if 'clear' in args:
     for table in tableClasses:
@@ -105,7 +83,7 @@ if 'clear' in args:
 ############################################################
 
 test1 = """
->>> p = Person.new(firstName="John", lastName="Doe", username="johnd")
+>>> p = Person(firstName="John", lastName="Doe", username="johnd")
 >>> print p
 <Person 1 firstName='John' middleInitial=None lastName='Doe'>
 >>> print p.firstName
@@ -113,7 +91,7 @@ John
 >>> p.middleInitial = 'Q'
 >>> print p.middleInitial
 Q
->>> p2 = Person(p.id)
+>>> p2 = Person.get(p.id)
 >>> print p2
 <Person 1 firstName='John' middleInitial='Q' lastName='Doe'>
 >>> print p is p2
@@ -124,7 +102,7 @@ Q
 """
 
 test2 = """
->>> r = Role.new(name="editor")
+>>> r = Role(name="editor")
 >>> p = list(Person.select('all'))[-1]
 >>> p.addRole(r)
 >>> print p.roles
@@ -134,7 +112,7 @@ test2 = """
 >>> r.removePerson(p)
 >>> print p.roles
 []
->>> phone = PhoneNumber.new(person=p, phoneNumber='773-555-1023', phoneType='home')
+>>> phone = PhoneNumber(person=p, phoneNumber='773-555-1023', phoneType='home')
 >>> print p.phoneNumbers
 """
 

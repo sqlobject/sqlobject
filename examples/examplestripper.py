@@ -10,6 +10,10 @@ code...
 ## End Snippet
 
 Then a file snippets/snippetname.html is created.
+
+This isn't an example, but it's a tool for merging the examples and
+the documentation.  This requires the presence of the source-highlight
+program: http://www.gnu.org/software/src-highlite/source-highlight.html
 """
 
 import re, os, sys

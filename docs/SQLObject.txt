@@ -65,7 +65,7 @@ have a new-style feel as a result -- setting attributes has side
 effects (it changes the database), and defining classes has side
 effects (through the use of metaclasses).  Attributes are generally
 exposed, not marked private, knowing that they can be made dynamic
-later.
+or write-only later.
 
 SQLObject creates objects that feel similar to normal Python objects
 (with the semantics of new-style classes).  An attribute attached to a
@@ -96,10 +96,10 @@ compilation step.
 .. _Webware: http://webware.sourceforge.net
 
 SQLObject provides a strong database abstraction, allowing
-cross-database compatibility (so long as you don't specifically go
-around SQLObject).  This compatibility extends not just to several
-databases, but also to currently one non-SQL, non-relational backend
-(based on the `dbm` module).
+cross-database compatibility (so long as you don't sidestep
+SQLObject).  This compatibility extends not just to several databases,
+but also to currently one non-SQL, non-relational backend (based on
+the `dbm` module).
 
 SQLObject has joins, one-to-many, and many-to-many, something which
 many ORMs do not have.  The join system is also intended to be
@@ -109,7 +109,7 @@ You can map between database names and Python attribute and class
 names; often these two won't match, or the database style would be
 inappropriate for a Python attribute.  This way your database schema
 does not have to be designed with SQLObject in mind, and the resulting
-classes 
+classes do not have to inherit the database's naming schemes.
 
 Future
 ======
@@ -129,6 +129,10 @@ Here are some things I plan:
 * Automatic joins in select queries.
 * More kinds of joins, and more powerful join results (closer to how
   `select` works).
+
+See also the `Plan for 0.6`__.
+
+.. __: Plan06.html
 
 Using SQLObject: An Introduction
 ================================
@@ -164,6 +168,11 @@ The special attribute `_connection` defines the connection we should
 use (you can also set a module-level variable `__connection__` which
 would automatically be picked up if you don't specify `_connection`).
 
+.. warning::
+   The `__connection__` magic variable can be a little fragile -- it
+   has to be defined before the class is defined.  This means it
+   *must* be assigned above the ``class ...:`` line.
+
 `firstName`, `middleInitial`, and `lastName` are all columns in the
 database.  The general schema implied by this class definition is:
 
@@ -191,7 +200,7 @@ If you don't want to do table creation (you already have tables, or
 you want to create the tables yourself), you can just use the vague
 `Col` class.  SQLObject doesn't do much type checking, allowing the
 database and the adapter to handle most of the type conversion.
-Databases usually do their own type coercion anyway.
+Databases generally do their own type coercion on inputs.
 
 You'll note that the ``id`` column is not given in the class
 definition, it is implied.  For MySQL databases it should be defined
@@ -209,16 +218,23 @@ Using the Class
 Now that you have a class, how will you use it?  We'll be considering
 the class defined above.
 
-You can use the standard constructor to fetch instances that *already
-exist*.  So if you wanted to fetch the Person by id 10, you'd call
-``Person(10)``.
+You can use the class method `.get()` to fetch instances that
+already exist.  So if you wanted to fetch the Person by id 10, you'd
+call ``Person.get(10)``.
 
-To create a new object (and row), use the `.new()` class method.  In
-this case you might call ``Person.new(firstName="John",
-lastName="Doe")``.  If you had left out ``firstName`` or ``lastName``
-you would have gotten an error, as no default was given for these
-columns (``middleInitial`` has a default, so it will be set to
-``NULL``, the SQL equivalent of ``None``).
+.. warning::
+   This is a change from SQLObject 0.5 -- before the standard
+   constructor fetched rows from the database, and the `.new()`
+   method created new rows.  Now SQLObject is more like Python, where
+   the class constructor creates a new object/row, and the `.get()`
+   method fetches a row.
+
+To create a new object (and row), use class instantiation.  In this
+case you might call ``Person.new(firstName="John", lastName="Doe")``.
+If you had left out ``firstName`` or ``lastName`` you would have
+gotten an error, as no default was given for these columns
+(``middleInitial`` has a default, so it will be set to ``NULL``, the
+SQL equivalent of ``None``).
 
 When you create an object, it is immediately inserted into the
 database.  SQLObject generally uses the database as immediate storage.
@@ -236,7 +252,7 @@ particular id in memory at any one time.  If you ask for more than one
 person by a particular ID, you'll get back the same instance.  This
 way you can be sure of a certain amount of consistency if you have
 multiple threads accessing the same data (though of course across
-processes there can be no sharing of an instance).  This changes if
+processes there can be no sharing of an instance).  This isn't true if
 you're using transactions_.
 
 To get an idea of what's happening behind the surface, I'll give the
@@ -259,15 +275,15 @@ method, like:
    :file: ../examples/snippets/simpleaddress-person1-use-set.html
 
 This will send only one ``UPDATE`` statement.  You can also use `set`
-with non-database properties (there's no benefit, but the distinction
-between database columns and other attributes thus remains somewhat
-hidden).
+with non-database properties (there's no benefit, but it helps hide
+the difference between database and non-database attributes).
+
 
 One-to-Many Relationships
 -------------------------
 
-Well, a real address book should have people, but also addresses.
-These examples are in ``personaddress.py``
+A real address book should have people, but also addresses.  These
+examples are in ``personaddress.py``
 
 First, let's define the new address table.  People can have multiple
 addresses, of course:
@@ -275,7 +291,7 @@ addresses, of course:
 .. raw:: html
    :file: ../examples/snippets/address-address.html
 
-Note the column ``person = ForeignKey('Person')``.  This is a
+Note the column ``person = ForeignKey("Person")``.  This is a
 reference to a `Person` object.  We refer to other classes by name
 (with a string) to avoid circular dependencies.  In the database
 there will be a ``person_id`` column, type ``INT``, which points to
@@ -286,10 +302,10 @@ Here's the `Person` class:
 .. raw:: html
    :file: ../examples/snippets/address-person.html
 
-We get the backreference with ``addresses =
-MultipleJoin('Address')``.  When we access a person's `addresses`
-attribute, we will get back a (dynamic) list of all the `Address`
-objects associated with that person.  An example:
+We get the backreference with ``addresses = MultipleJoin('Address')``.
+When we access a person's `addresses` attribute, we will get back a
+list of all the `Address` objects associated with that person.  An
+example:
 
 .. raw:: html
    :file: ../examples/snippets/address-use1.html
@@ -319,6 +335,17 @@ You may notice that the columns have the extra keyword argument
 identifies rows -- like a username uniquely identifies a user.  This
 identifier is in addition to the primary key (``id``), which is always
 present.
+
+.. note::
+   SQLObject has a strong requirement that the primary key be unique
+   and *immutable*.  You cannot change the primary key through
+   SQLObject, and if you change it through another mechanism you can
+   cause inconsistency in any running SQLObject program (and in your
+   data).  For this reason meaningless integer IDs are encouraged --
+   something like a username that could change in the future may
+   uniquely identify a row, but it may be changed in the future.  So
+   long as it is not used to reference the row internally, it is also
+   *safe* to change it in the future.
 
 A alternateID column creates a class method, like ``byUsername`` for a
 column named ``username`` (or you can use the `alternateMethodName`
@@ -356,8 +383,8 @@ can also work like this:
 .. raw:: html
    :file: ../examples/snippets/person-select3.html
 
-You may wish to use `MyClass.sqlrepr` to quote any values you use
-if you use this technique (quoting is automatic if you use ``q``).
+You may wish to use `MyClass.sqlrepr` to quote any values you use if
+you create SQL manually (quoting is automatic if you use ``q``).
 Tables given in `clauseTables` will be added to the ``FROM`` portion
 (again, they are automatically picked up when using ``q``).  The table
 you're selecting is always assumed to be included, of course.
@@ -367,9 +394,8 @@ you're selecting is always assumed to be included, of course.
 You can use the keyword arguments `orderBy` to create ``ORDER BY`` in
 the select statements: `orderBy` takes a string, which should be the
 *database* name of the column, or a column in the form
-``Person.q.firstName``; `groupBy` is similar.  Both accept lists or
-tuples of arguments.  You can use ``"-colname"`` to specify descending
-order, or call ``MyClass.select().reversed()``.
+``Person.q.firstName``.  You can use ``"-colname"`` to specify
+descending order, or call ``MyClass.select().reversed()``.
 
 You can use the special class variable `_defaultOrder` to give a
 default ordering for all selects.  To get an unordered result when
@@ -380,7 +406,9 @@ is only executed when you iterate over the select results, or if you
 use ``list()`` to force the result to be executed.  When you iterate
 over the select results, rows are fetched one at a time.  This way you
 can iterate over large results without keeping the entire result set
-in memory.
+in memory.  You can also do things like ``.reversed()`` without
+fetching and reversing the entire result -- instead, SQLObject can
+change the SQL that is sent so you get equivalent results.
 
 You can also slice select results.  The results are used in the SQL
 query, so ``peeps[:10]`` will result in ``LIMIT 10`` being added to
@@ -398,6 +426,29 @@ slicing, this makes batched queries easy to write:
 .. raw:: html
    :file: ../examples/snippets/slicing-batch.html
 
+.. note:: 
+
+   There are several factors when considering the efficiency of this
+   kind of batching, and it depends very much how the batching is
+   being used.  Consider a web application where you are showing an
+   average of 100 results, 10 at a time, and the results are ordered
+   by the date they were added to the database.  While slicing will
+   keep the database from returning all the results (and so save some
+   communication time), the database will still have to scan through
+   the entire result set to sort the items (so it knows which the
+   first ten are), and depending on your query may need to scan
+   through the entire table (depending on your use of indexes).
+   Indexes are probably the most important way to improve importance
+   in a case like this, and you may find caching to be more effective
+   than slicing.
+
+   In this case, caching would mean retrieving the *complete* results.
+   You can use ``list(MyClass.select(...))`` to do this.  You can save
+   these results for some limited period of time, as the user looks
+   through the results page by page.  This means the first page in a
+   search result will be slightly more expensive, but all later pages
+   will be very cheap.
+
 For more information on the where clause in the queries, see the
 `SQLBuilder documentation`_.
 
@@ -414,29 +465,36 @@ some other details to be aware of.
 Initializing the Objects
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-With new-style classes, `__init__` is called everytime the class is
-called.  That means it's called when an object is just fetched from
-the cache.  That's useless in most cases, so instead we use a `_init`
-method, which is only called once in an object's life (with one
-argument -- the object's ID).
+There are two ways SQLObject instances can come into existance: they
+can be fetched from the database, or they can be inserted into the
+database.  In both cases a new Python object is created.  This makes
+the place of `__init__` a little confusing.
+
+In general, you should not touch `__init__`.  Instead use the `_init`
+method, which is called after an object is fetched or inserted.  This
+method has the signature ``_init(self, id, connection=None,
+selectResults=None)``, though you may just want to use ``_init(self,
+*args, **kw)``.
 
 Adding Magic Attributes (properties)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-You can use all the normal techniques for defining this new-style
-class, including `classmethod`, `staticmethod`, and `property`, but
-you can use a shortcut.  If you have a method that's name starts with
-``_set_``, ``_get_``, ``_del_``, or ``_doc_``, it will be used to
-create a property.  So, for instance, say you have images stored under
-the ID of the person in the ``/var/people/images`` directory:
+You can use all the normal techniques for defining methods in this
+new-style class, including `classmethod`, `staticmethod`, and
+`property`, but you can also use a shortcut.  If you have a method
+that's name starts with ``_set_``, ``_get_``, ``_del_``, or ``_doc_``,
+it will be used to create a property.  So, for instance, say you have
+images stored under the ID of the person in the ``/var/people/images``
+directory:
 
 .. raw:: html
    :file: ../examples/snippets/person_magicmethod.html
 
 Later, you can use the ``.image`` property just like an attribute, and
 the changes will be reflected in the filesystem by calling these
-methods.  I use this particular technique frequently for information
-that is better to keep in files as opposed to the database.
+methods.  This is a good technique for information that is better to
+keep in files as opposed to the database (such as large, opaque data
+like images).
 
 You can also pass an ``image`` keyword argument to the `new` class
 method or the `set` method, like ``Person.new(..., image=imageText)``.
@@ -455,12 +513,13 @@ an database column attribute.  For instance, imagine there's special
 code you want to run whenever someone's name changes -- you could make
 a subclass, and then use ``Person.__setattr__(self, 'lastName',
 value)`` to actually do the deed, but that's obviously very awkward --
-you have to create subclasses without an real inheritance
-relationship, and the whole thing feels architecturally fragile.
-SQLObject creates methods like ``_set_lastName`` for each of your
-columns, but again you can't use this, since there's no superclass to
-reference (and you can't write ``SQLObject._set_lastName(...)``).  You
-want to override that ``_set_lastName`` method yourself.
+you have to create subclasses without a real inheritance relationship,
+and the whole thing feels architecturally fragile.  SQLObject creates
+methods like ``_set_lastName`` for each of your columns, but again you
+can't use this, since there's no superclass to reference (and you
+can't write ``SQLObject._set_lastName(...)``, because the SQLObject
+class doesn't know about your class's columns).  You want to override
+that ``_set_lastName`` method yourself.
 
 To deal with this, SQLObject creates two methods for each getter and
 setter, for example: ``_set_lastName`` and ``_SO_set_lastName``.  So
@@ -475,12 +534,15 @@ digits, and of proper length, and make the formatting nice:
 .. raw:: html
    :file: ../examples/snippets/phonenumber_magicoverride.html
 
-Of course, the user may be surprised if the value they set the
-attribute to is not the same value they get back -- in this case we
-removed some of the characters before putting it in the database, and
-then formatted the number into a nice string on the way out.  This is
-one disadvantage of making actual work look like simple attribute
-access.  
+.. note::
+
+   You should be a little cautious when modifying data that gets set
+   in an attribute.  Generally someone using your class will expect
+   that the value they set the attribute to will be the same value
+   they get back.  In this example we removed some of the characters
+   before putting it in the database, and reformatted it on the way
+   out.  One advantage of methods (as opposed to attribute access) is
+   that the programmer is more likely to expect this disconnect.
 
 Reference
 =========

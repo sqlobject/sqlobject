@@ -67,7 +67,7 @@ class PhoneNumber(SQLObject):
 ## Snippet "transactions1"
 conn = DBConnection.PostgresConnection('yada')
 trans = conn.transaction()
-p = Person(1, trans)
+p = Person.get(1, trans)
 p.firstName = 'Bob'
 trans.commit()
 p.firstName = 'Billy'

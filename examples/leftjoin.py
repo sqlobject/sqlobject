@@ -1,4 +1,4 @@
-from SQLObject import *
+from sqlobject import *
 
 ## Use one of these to define your connection:
 """
@@ -34,9 +34,9 @@ data = [
 
 for insert in data:
     firstName, lastName = insert[0].split(' ', 1)
-    customer = Customer.new(firstName=firstName, lastName=lastName)
+    customer = Customer(firstName=firstName, lastName=lastName)
     for number in insert[1:]:
-        contact = Contact.new(customer=customer, phoneNumber=number)
+        contact = Contact(customer=customer, phoneNumber=number)
 
 ## Snippet "leftjoin-simple"
 for customer in Customer.select():
