@@ -38,18 +38,6 @@ class ClassRegistryTest(SQLObjectTest):
         else:
             self.fail("should have raised an error on duplicate class definition")
 
-## class Billboard(SQLObject):
-##     message = StringCol()
-
-## class UnicodeTest(SQLObjectTest):
-##     classes = [Billboard]
-
-##     def testUnicodeStrings(self):
-##         try:
-##             b = Billboard(message = u"foobar")
-##         except Exception, err:
-##             self.fail("shouldn't have raised an exception.")
-
 ########################################
 ## Basic operation
 ########################################
@@ -741,6 +729,12 @@ class AddressJoiner(SQLObject):
     _columns = [StringCol('zip', length=5, alternateID=True)]
     _joins = [RelatedJoin('PersonJoiner')]
 
+class ImplicitJoiningSO(SQLObject):
+    foo = RelatedJoin('Bar')
+
+class ExplicitJoiningSO(SQLObject):
+    _joins = [MultipleJoin('Bar', joinMethodName='foo')]
+
 class JoinTest(SQLObjectTest):
 
     classes = [PersonJoiner, AddressJoiner]
@@ -771,6 +765,15 @@ class JoinTest(SQLObjectTest):
 
     def assertNamesEqual(self, people, dest):
         self.assertEqual([p.name for p in people], dest)
+
+    def testJoinAttributeWithUnderscores(self):
+        # Make sure that the implicit setting of joinMethodName works
+        self.failUnless(hasattr(ImplicitJoiningSO, 'foo'))
+        self.failIf(hasattr(ImplicitJoiningSO, 'bars'))
+
+        # And make sure explicit setting also works
+        self.failUnless(hasattr(ExplicitJoiningSO, 'foo'))
+        self.failIf(hasattr(ExplicitJoiningSO, 'bars'))
 
 class PersonJoiner2(SQLObject):
 

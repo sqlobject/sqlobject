@@ -29,6 +29,8 @@ class Join(object):
     def _get_joinMethodName(self):
         return self._joinMethodName
 
+    joinMethodName = property(_get_joinMethodName, _set_joinMethodName)
+
     def withClass(self, soClass):
         if self.kw.has_key('joinMethodName'):
             self._joinMethodName = self.kw['joinMethodName']
