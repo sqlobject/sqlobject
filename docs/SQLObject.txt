@@ -43,8 +43,7 @@ Requirements
 ============
 
 Currently SQLObject supports MySQL_, PostgreSQL_ (via ``psycopg``),
-SQLite_, Firebird_, and a DBM-based store.  The DBM backend is
-experimental.
+SQLite_, Firebird_, Sybase_, and `MAX DB`_ (also known as SAP DB).
 
 .. _PostgreSQL: http://postgresql.org
 .. _SQLite: http://sqlite.org
@@ -97,9 +96,7 @@ compilation step.
 
 SQLObject provides a strong database abstraction, allowing
 cross-database compatibility (so long as you don't sidestep
-SQLObject).  This compatibility extends not just to several databases,
-but also to currently one non-SQL, non-relational backend (based on
-the `dbm` module).
+SQLObject).
 
 SQLObject has joins, one-to-many, and many-to-many, something which
 many ORMs do not have.  The join system is also intended to be
@@ -792,8 +789,7 @@ Automatic Schema Generation
 
 All the connections support creating and droping tables based on the
 class definition.  First you have to prepare your class definition,
-which means including type information in your columns (though
-DBMConnection_ do not require or use type information).
+which means including type information in your columns.
 
 Columns Types
 ~~~~~~~~~~~~~
@@ -942,7 +938,7 @@ SQLObject requirements
 
 While SQLObject tries not to make too many requirements on your
 schema, some assumptions are made.  Some of these may be relaxed in
-the future.  (Of course, none of this applies to DBMConnection)
+the future.
 
 All tables that you want to turn into a class need to have an integer
 primary key.  That key should be defined like:
@@ -1032,7 +1028,7 @@ DBConnection: Database Connections
 
 The `DBConnection` module currently has four external classes,
 `MySQLConnection`, `PostgresConnection`, `SQLiteConnection`, 
-and `DBMConnection`.
+`SybaseConnection`, and `MaxdbConnection`.
 
 You can pass the keyword argument `debug` to any connector.  If set to
 true, then any SQL sent to the database will also be printed to the
@@ -1097,46 +1093,46 @@ the restrictions on your indexing.
 
 .. _this page: http://www.volny.cz/iprenosil/interbase/ip_ib_indexcalculator.htm
 
-DBMConnection
--------------
+SybaseConnection
+----------------
 
-`DBMConnection` takes a single string, which is the path to a
-directory in which to store the database.
+`SybaseConnection` takes the arguments `host`, `db`, `user`, and
+`passwd`.  It also takes the extra boolean argument `locking` (default
+True), which is passed through when performing a connection.  You may
+use a False value for `locking` if you are not using multiple threads,
+for a slight performance boost.
 
-DBMConnection uses flat hash databases to store all the data.  These
-databases are created by the standard `anydbm` module.  This is
-something of an experiment, and things like safety under concurrent
-access (multithreaded or multiprocess) should not be expected.  The
-select interface using the magic ``q`` attribute is supported, though
-other SQL is not supported.
+It uses the Sybase_ module.
 
-DBMConnection allows any kind of objects to be put in columns -- all
-values are pickled, and so only normal pickling restrictions apply.
+.. _Sybase: http://www.object-craft.com.au/projects/sybase/
 
-DBMConnection does not support `automatic class generation` or
-transactions_.
+MAX DB
+------
+
+MAX DB, also known as SAP DB, is available from a partnership of SAP
+and MySQL.  It takes the typical arguments: `host`, `database`,
+`user`, `password`.  It also takes the arguments `sqlmode` (default
+``"internal"``), `isolation`, and `timeout`, which are passed through
+when creating the connection to the database.
+
+It uses the sapdb_ module.
+
+.. _sapdb: http://www.sapdb.org/sapdbPython.html
 
 Exported Symbols
 ================
 
-You can use ``from SQLObject import *``, though you don't have to.  It
+You can use ``from sqlobject import *``, though you don't have to.  It
 exports a minimal number of symbols.  The symbols exported:
 
-From `SQLObject.SQLObject`:
+From `sqlobject.main`:
 
 * `NoDefault`
 * `SQLObject`
 * `getID`
 * `getObject`
 
-From `SQLObject.DBConnection`:
-
-* `MySQLConnection`
-* `PostgresConnection`
-* `SQLiteConnection`
-* `DBMConnection`
-
-From `SQLObject.Col`:
+From `sqlobject.col`:
 * `Col`
 * `StringCol`
 * `IntCol`
@@ -1148,17 +1144,17 @@ From `SQLObject.Col`:
 * `DecimalCol`
 * `CurrencyCol`
 
-From `SQLObject.Join`:
+From `sqlobject.joins`:
 * `MultipleJoin`
 * `RelatedJoin`
 
-From `SQLObject.Style`:
+From `sqlobject.styles`:
 * `Style`
 * `MixedCaseUnderscoreStyle`
 * `DefaultStyle`
 * `MixedCaseStyle`
 
-From `SQLObject.SQLBuilder`:
+From `sqlobject.sqlbuilder`:
 
 * `AND`
 * `OR`
