@@ -7,29 +7,29 @@ from sqlobject.inheritance import InheritableSQLObject
 ########################################
 
 
-class Person(InheritableSQLObject):
+class InherPerson(InheritableSQLObject):
     _inheritable = 1        # I want this class to be inherited
     firstName = StringCol()
     lastName = StringCol()
 
-class Employee(Person):
+class Employee(InherPerson):
     _inheritable = 0        # If I don't want this class to be inherited
     position = StringCol()
 
 def setup():
-    setupClass(Person)
+    setupClass(InherPerson)
     setupClass(Employee)
 
     Employee(firstName='Ian', lastName='Bicking', position='Project leader')
-    Person(firstName='Daniel', lastName='Savard')
+    InherPerson(firstName='Daniel', lastName='Savard')
 
 
 def test_inheritance():
     setup()
 
-    persons = Person.select() # all
+    persons = InherPerson.select() # all
     for person in persons:
-        assert isinstance(person, Person)
+        assert isinstance(person, InherPerson)
         if isinstance(person, Employee):
             assert not hasattr(person, "childName")
         else:
@@ -40,7 +40,7 @@ def test_inheritance():
 def test_inheritance_select():
     setup()
 
-    persons = Person.select(Person.q.firstName <> None)
+    persons = InherPerson.select(InherPerson.q.firstName <> None)
     assert persons.count() == 2
 
     employees = Employee.select(Employee.q.firstName <> None)
