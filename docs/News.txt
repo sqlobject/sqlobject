@@ -13,6 +13,15 @@ SQLObject 0.6
 Interface Changes
 -----------------
 
+* Lazy updates.  Add ``_lazyUpdate=True`` to your class, and updates
+  will only be written when you call ``obj.syncUpdate()`` or
+  ``obj.sync()`` (``sync`` also refetches the data from the database,
+  which ``syncUpdate`` does not do).  When enabled, instances have a
+  property ``dirty``, which indicates if they have pending updates.
+* Separated database drivers (PostgresConnection, MySQLConnection,
+  etc.) into separate packages.  You can access the driver through
+  URIs, like ``mysql://user:pass@host/dbname`` -- to set drivers after
+  class creation you should use `sqlobject.dbconnection.openURI()`.
 * The ``SQLObject`` package has been renamed to ``sqlobject``.  This
   makes it similar to several other packages, and emphasizes the
   distinction between the ``sqlobject`` package and the ``SQLObject``
