@@ -383,6 +383,9 @@ class SOBoolCol(SOCol):
     def _maxdbType(self):
         return "BOOLEAN"
 
+    def _sqliteType(self):
+        return "TINYINT"
+
 class BoolCol(Col):
     baseClass = SOBoolCol
 
