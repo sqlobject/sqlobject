@@ -16,7 +16,7 @@ class FirebirdConnection(DBAPI):
         if kinterbasdb is None:
             import kinterbasdb
         self.module = kinterbasdb
-        
+
         self.limit_re = re.compile('^\s*(select )(.*)', re.IGNORECASE)
 
         if not autoCommit and not kw.has_key('pool'):
@@ -37,7 +37,7 @@ class FirebirdConnection(DBAPI):
         DBAPI.__init__(self, **kw)
 
     def connectionFromURI(cls, uri):
-        auth, password, host, path, args = cls._parseURI(uri)
+        auth, password, host, port, path, args = cls._parseURI(uri)
         if not password:
             password = 'masterkey'
         if not auth:
@@ -45,7 +45,7 @@ class FirebirdConnection(DBAPI):
         path = path.replace('/', os.sep)
         return cls(host, db=path, user=auth, passwd=password, **args)
     connectionFromURI = classmethod(connectionFromURI)
-    
+
     def _runWithConnection(self, meth, *args):
         conn = self.getConnection()
         # @@: Horrible auto-commit implementation.  Just horrible!

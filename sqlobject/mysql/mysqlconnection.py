@@ -20,9 +20,9 @@ class MySQLConnection(DBAPI):
         DBAPI.__init__(self, **kw)
 
     def connectionFromURI(cls, uri):
-        user, password, host, path, args = cls._parseURI(uri)
+        user, password, host, port, path, args = cls._parseURI(uri)
         return cls(db=path.strip('/'), user=user or '', passwd=password or '',
-                   host=host or 'localhost', **args)
+                   host=host or 'localhost', port=port or '', **args)
     connectionFromURI = classmethod(connectionFromURI)
 
     def makeConnection(self):

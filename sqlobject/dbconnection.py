@@ -93,6 +93,17 @@ class DBConnection:
                 password = None
         else:
             user = password = None
+        if host and host.find(':') != -1:
+            _host, port = host.split(':')
+            try:
+                port = int(port)
+            except ValueError:
+                raise ValueError, "port must be integer, got '%s' instead" % port
+            if not (1 <= port <= 65535):
+                raise ValueError, "port must be integer in the range 1-65535, got '%d' instead" % port
+            host = _host
+        else:
+            port = None
         path = '/' + rest
         args = {}
         if path.find('?') != -1:
@@ -102,7 +113,7 @@ class DBConnection:
                 argname, argvalue = single.split('=', 1)
                 argvalue = urllib.unquote(argvalue)
                 args[argname] = argvalue
-        return user, password, host, path, args
+        return user, password, host, port, path, args
     _parseURI = staticmethod(_parseURI)
 
 class DBAPI(DBConnection):

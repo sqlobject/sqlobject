@@ -22,7 +22,7 @@ class SQLiteConnection(DBAPI):
         DBAPI.__init__(self, **kw)
 
     def connectionFromURI(cls, uri):
-        user, password, host, path, args = cls._parseURI(uri)
+        user, password, host, port, path, args = cls._parseURI(uri)
         assert host is None, (
             "SQLite can only be used locally (with a URI like "
             "sqlite:///file or sqlite:/file, not %r)" % uri)

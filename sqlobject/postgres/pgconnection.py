@@ -12,7 +12,7 @@ class PostgresConnection(DBAPI):
     dbName = 'postgres'
     schemes = [dbName, 'postgresql', 'psycopg']
 
-    def __init__(self, dsn=None, host=None, db=None,
+    def __init__(self, dsn=None, host=None, port=None, db=None,
                  user=None, passwd=None, usePygresql=False,
                  **kw):
         global psycopg, pgdb
@@ -31,6 +31,7 @@ class PostgresConnection(DBAPI):
 
         self.user = user
         self.host = host
+        self.port = port
         self.db = db
         self.password = passwd
         if dsn is None:
@@ -44,6 +45,8 @@ class PostgresConnection(DBAPI):
             if host:
                 # @@: right format?
                 dsn.append('host=%s' % host)
+            if port:
+                dsn.append('port=%s' % port)
             dsn = ' '.join(dsn)
         self.dsn = dsn
         DBAPI.__init__(self, **kw)
@@ -52,9 +55,9 @@ class PostgresConnection(DBAPI):
         self._server_version = None # Not yet initialized
 
     def connectionFromURI(cls, uri):
-        user, password, host, path, args = cls._parseURI(uri)
+        user, password, host, port, path, args = cls._parseURI(uri)
         path = path.strip('/')
-        return cls(host=host, db=path, user=user, passwd=password, **args)
+        return cls(host=host, port=port, db=path, user=user, passwd=password, **args)
     connectionFromURI = classmethod(connectionFromURI)
 
     def _setAutoCommit(self, conn, auto):
