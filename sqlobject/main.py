@@ -769,9 +769,14 @@ class SQLObject(object):
         # _SO_creating is special, see _SO_setValue
         if self._SO_creating or self._lazyUpdate:
             for name, value in kw.items():
-                fromPy = getattr(self, '_SO_fromPython_%s' % name, None)
-                if fromPy:
-                    kw[name] = fromPy(value, self._SO_validatorState)
+                fromPython = getattr(self, '_SO_fromPython_%s' % name, None)
+                if fromPython:
+                    kw[name] = dbValue = fromPython(value, self._SO_validatorState)
+                else:
+                    dbValue = value
+                toPython = getattr(self, '_SO_toPython_%s' % name, None)
+                if toPython:
+                    value = toPython(dbValue, self._SO_validatorState)
                 setattr(self, instanceName(name), value)
             for name, value in extra.items():
                 try:
@@ -805,9 +810,12 @@ class SQLObject(object):
                     dbValue = fromPython(value, self._SO_validatorState)
                 else:
                     dbValue = value
-                toUpdate[name] = dbValue
+                toPython = getattr(self, '_SO_toPython_%s' % name, None)
+                if toPython:
+                    value = toPython(dbValue, self._SO_validatorState)
                 if self._cacheValues:
                     setattr(self, instanceName(name), value)
+                toUpdate[name] = dbValue
             for name, value in extra.items():
                 try:
                     getattr(self.__class__, name)
