@@ -1342,23 +1342,59 @@ if mxdatetime_available:
 ## BLOB columns
 ########################################
 
-class Profile(SQLObject):
+class ImageData(SQLObject):
     image = BLOBCol(default='emptydata', length=65535)
 
 class BLOBColTest(SQLObjectTest):
-    classes = [Profile]
+    classes = [ImageData]
 
     def testBLOBCol(self):
         data = ''.join([chr(x) for x in range(256)])
 
-        prof = Profile()
+        prof = ImageData()
         prof.image = data
         iid = prof.id
 
         connection().cache.clear()
 
-        prof2 = Profile.get(iid)
-        assert prof2.image == data
+        prof2 = ImageData.get(iid)
+        self.assertEqual(prof2.image, data)
+
+########################################
+## Pickle columns
+########################################
+
+class PickleData:
+    pi = 3.14156
+    def __init__(self):
+        self.question = 'The Ulimate Question of Life, the Universe and Everything'
+        self.answer = 42
+
+class PickleContainer(SQLObject):
+    pickledata = PickleCol(default=None, length=65535)
+
+class PickleColTest(SQLObjectTest):
+    classes = [PickleContainer]
+
+    def testPickleCol(self):
+        mypickledata = PickleData()
+
+        ctnr = PickleContainer(pickledata=mypickledata)
+        iid = ctnr.id
+
+        connection().cache.clear()
+
+        ctnr2 = PickleContainer.get(iid)
+        s2 = ctnr2.pickledata
+
+        self.failUnless(isinstance(s2, PickleData))
+        self.failUnless(isinstance(s2.pi, float))
+        self.failUnless(isinstance(s2.question, str))
+        self.failUnless(isinstance(s2.answer, int))
+        self.assertEqual(s2.pi, mypickledata.pi)
+        self.assertEqual(s2.question, mypickledata.question)
+        self.assertEqual(s2.answer, mypickledata.answer)
+
 
 ########################################
 ## Run from command-line:

@@ -19,6 +19,10 @@ are what gets used.
 """
 
 import re, time
+try:
+    import cPickle as pickle
+except ImportError:
+    import pickle
 import sqlbuilder
 # Sadly the name "constraints" conflicts with many of the function
 # arguments in this module, so we rename it:
@@ -883,6 +887,37 @@ class SOBLOBCol(SOStringCol):
 
 class BLOBCol(StringCol):
     baseClass = SOBLOBCol
+
+
+class PickleValidator(BinaryValidator):
+    """
+    Validator for pickle types.  A pickle type is simply a binary type with
+    hidden pickling, so that we can simply store any kind of stuff in a
+    particular column.
+
+    The support for this relies directly on the support for binary for your
+    database.
+    """
+
+    def toPython(self, value, state):
+        if value is None:
+            return None
+        if isinstance(value, str):
+            return pickle.loads(value)
+        return value
+
+    def fromPython(self, value, state):
+        if value is None:
+            return None
+        pickled = pickle.dumps(value)
+        return BinaryValidator.fromPython(self, pickled, state)
+
+
+class SOPickleCol(SOBLOBCol):
+    validatorClass = PickleValidator # can be overriden in descendants
+
+class PickleCol(BLOBCol):
+    baseClass = SOPickleCol
 
 
 def popKey(kw, name, default=None):
