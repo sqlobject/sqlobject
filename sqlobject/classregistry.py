@@ -98,7 +98,15 @@ class ClassRegistry(object):
             callback(cls, *args, **kw)
 
     def getClass(self, className):
-        return self.classes[className]
+        try:
+            return self.classes[className]
+        except KeyError:
+            all = self.classes.keys()
+            all.sort()
+            raise KeyError(
+                "No class %s found in the registry %s (these classes "
+                "exist: %s)"
+                % (className, self.name or '[default]', ', '.join(all)))
 
     def allClasses(self):
         return self.classes.values()
