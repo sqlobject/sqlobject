@@ -80,6 +80,7 @@ class MetaSQLObject(type):
         if not d.has_key('_table'):
             d['_table'] = None
 
+
         if d.has_key('_connection'):
             connection = d['_connection']
             del d['_connection']

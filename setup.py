@@ -3,7 +3,7 @@ import warnings
 warnings.filterwarnings("ignore", "Unknown distribution option")
 
 subpackages = ['dbm', 'firebird', 'include', 'mysql', 'postgres',
-               'sqlite', 'sybase']
+               'sqlite', 'sybase', 'maxdb']
 
 import sys
 # patch distutils if it can't cope with the "classifiers" keyword
