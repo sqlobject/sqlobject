@@ -91,7 +91,6 @@ class DeclarativeMeta(type):
         cls = type.__new__(meta, class_name, bases, new_attrs)
         if new_attrs.has_key('__classinit__'):
             cls.__classinit__ = staticmethod(cls.__classinit__.im_func)
-        cls.declarative_count = counter.next()
         cls.__classinit__(cls, new_attrs)
         return cls
 
@@ -104,6 +103,7 @@ class Declarative(object):
     __metaclass__ = DeclarativeMeta
 
     def __classinit__(cls, new_attrs):
+        cls.declarative_count = counter.next()
         for name in cls.__mutableattributes__:
             if not new_attrs.has_key(name):
                 setattr(cls, copy.copy(getattr(cls, name)))
