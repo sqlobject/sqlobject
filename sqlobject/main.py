@@ -473,7 +473,7 @@ class SQLObject(object):
         for columnDef in cls._connection.columnsFromSchema(cls._table, cls):
             alreadyExists = False
             for c in cls._columns:
-                if c.kw['name'] == columnDef.kw['name']:
+                if c.name == columnDef.name:
                     alreadyExists = True
                     break
             if not alreadyExists:
