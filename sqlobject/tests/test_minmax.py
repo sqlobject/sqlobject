@@ -1,5 +1,4 @@
 from sqlobject import *
-from sqlobject.sresults import *
 from sqlobject.tests.dbtest import *
 
 # Test MIN, AVG, MAX, SUM
@@ -55,5 +54,6 @@ def test_many():
 
     select = IntAccumulator.select()
     attribute = IntAccumulator.q.value
-    expression = accumulateMany(("MIN", attribute), ("AVG", attribute), ("MAX", attribute))
-    assert select.accumulate(*expression) == (1, 2, 3)
+    assert select.accumulateMany(
+      ("MIN", attribute), ("AVG", attribute), ("MAX", attribute)
+    ) == (1, 2, 3)
