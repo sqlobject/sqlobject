@@ -176,6 +176,8 @@ class DBAPI(DBConnection):
                 # the __del__ in Iteration (unfortunately, not sure why
                 # it happens)
                 self._pool.append(conn)
+        else:
+            conn.close()
 
     def printDebug(self, conn, s, name, type='query'):
         if type == 'query':
@@ -478,12 +480,21 @@ class DBAPI(DBConnection):
         self.close()
 
     def close(self):
-        if self._pool:
-            for conn in self._pool:
+        if not self._pool:
+            return
+        self._poolLock.acquire()
+        try:
+            conns = self._pool[:]
+            self._pool[:] = []
+            for conn in conns:
                 try:
                     conn.close()
                 except self.module.Error:
                     pass
+            del conn
+            del conns
+        finally:
+            self._poolLock.release()
 
 class Iteration(object):
 
