@@ -130,8 +130,16 @@ h2 {
   border: medium solid black;
 }
 
+h1 a:link, h2 a:link { 
+  color: #ffffff;
+}
+
 h3, h4, h5, h6 {
   background-color: #cccccc;
+  color: #000000;
+}
+
+h3 a:link, h4 a:link, h5 a:link, h6 a:link { 
   color: #000000;
 }
 
