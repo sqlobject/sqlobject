@@ -1,3 +1,11 @@
+"""
+This implements the instance caching in SQLObject.  Caching is
+relatively aggressive.  All objects are retained so long as they are
+in memory, by keeping weak references to objects.  We also keep other
+objects in a cache that doesn't allow them to be garbage collected
+(unless caching is turned off).
+"""
+
 import threading
 from weakref import ref
 from time import time as now
@@ -46,6 +54,9 @@ class CacheFactory(object):
         self.lock = threading.Lock()
 
     def tryGet(self, id):
+        """
+        This returns None, or the object in cache.
+        """
         value = self.expiredCache.get(id)
         if value:
             # it's actually a weakref:
@@ -55,6 +66,28 @@ class CacheFactory(object):
         return self.cache.get(id)
 
     def get(self, id):
+        """
+        This method can cause deadlocks!  tryGet is safer
+
+        This returns the object found in cache, or None.  If None,
+        then the cache will remain locked!  This is so that the
+        calling function can create the object in a threadsafe manner
+        before releasing the lock.  You should use this like (note
+        that ``cache`` is actually a CacheSet object in this
+        example)::
+
+          obj = cache.get(some_id, my_class)
+          if obj is None:
+              try:
+                  obj = create_object(some_id)
+                  cache.put(some_id, my_class, obj)
+              finally:
+                  cache.finishPut(cls)
+
+        This method checks both the main cache (which retains
+        references) and the 'expired' cache, which retains only weak
+        references.
+        """
 
         if self.doCache:
             if self.cullCount > self.cullFrequency:
@@ -109,21 +142,40 @@ class CacheFactory(object):
             return val
 
     def put(self, id, obj):
+        """
+        Puts an object into the cache.  Should only be called after
+        .get(), so that duplicate objects don't end up in the cache.
+        """
         if self.doCache:
             self.cache[id] = obj
         else:
             self.expiredCache[id] = ref(obj)
 
     def finishPut(self):
+        """
+        Releases the lock that is retained when .get() is called and
+        returns None.
+        """
         self.lock.release()
 
     def created(self, id, obj):
+        """
+        Inserts and object into the cache.  Should be used when no one
+        else knows about the object yet, so there cannot be any object
+        already in the cache.  After a database INSERT is an example
+        of this situation.
+        """
         if self.doCache:
             self.cache[id] = obj
         else:
             self.expiredCache[id] = ref(obj)
 
     def cull(self):
+        """
+        Runs through the cache and expires objects.  E.g., if
+        ``cullFraction`` is 3, then every third object is moved to
+        the 'expired' (aka weakref) cache.
+        """
         self.lock.acquire()
         try:
             keys = self.cache.keys()
@@ -139,11 +191,19 @@ class CacheFactory(object):
             self.lock.release()
 
     def clear(self):
+        """
+        Removes everything from the cache.  Warning!  This can cause
+        duplicate objects in memory.
+        """
         if self.doCache:
             self.cache.clear()
         self.expiredCache.clear()
 
     def expire(self, id):
+        """
+        Expires a single object.  Typically called after a delete.
+        Doesn't even keep a weakref.  (@@: bad name?)
+        """
         if not self.doCache:
             return
         self.lock.acquire()
@@ -156,6 +216,10 @@ class CacheFactory(object):
             self.lock.release()
 
     def expireAll(self):
+        """
+        Expires all objects, moving them all into the expired/weakref
+        cache.
+        """
         if not self.doCache:
             return
         self.lock.acquire()
@@ -167,6 +231,9 @@ class CacheFactory(object):
             self.lock.release()
 
     def allIDs(self):
+        """
+        Returns the IDs of all objects in the cache.
+        """
         if self.doCache:
             all = self.cache.keys()
         else:
@@ -177,6 +244,14 @@ class CacheFactory(object):
         return all
 
 class CacheSet(object):
+
+    """
+    A CacheSet is used to collect and maintain a series of caches.  In
+    SQLObject, there is one CacheSet per connection, and one Cache
+    in the CacheSet for each class, since IDs are not unique across
+    classes.  It contains methods similar to Cache, but that take
+    a ``cls`` argument.
+    """
 
     def __init__(self, *args, **kw):
         self.caches = {}
