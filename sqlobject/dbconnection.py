@@ -14,10 +14,16 @@ import col
 from joins import sorter
 from converters import sqlrepr
 import urllib
+import weakref
 
 warnings.filterwarnings("ignore", "DB-API extension cursor.lastrowid used")
 
 _connections = {}
+
+def _closeConnection(ref):
+    conn = ref()
+    if conn is not None:
+        conn.close()
 
 class DBConnection:
 
@@ -35,6 +41,7 @@ class DBConnection:
         self._connectionCount = 1
         self.autoCommit = autoCommit
         registerConnectionInstance(self)
+        atexit.register(_closeConnection, weakref.ref(self))
 
     def uri(self):
         auth = self.user or ''
@@ -438,6 +445,17 @@ class DBAPI(DBConnection):
 
     def sqlrepr(self, v):
         return sqlrepr(v, self.dbName)
+
+    def __del__(self):
+        self.close()
+
+    def close(self):
+        if self._pool:
+            for conn in self._pool:
+                try:
+                    conn.close()
+                except self.module.Error:
+                    pass
 
 class Iteration(object):
 
