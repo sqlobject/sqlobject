@@ -7,7 +7,8 @@ from sqlobject.tests.dbtest import *
 
 class Lazy(SQLObject):
 
-    _lazyUpdate = True
+    class sqlmeta:
+        lazyUpdate = True
     name = StringCol()
     other = StringCol(default='nothing')
     third = StringCol(default='third')

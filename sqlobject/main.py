@@ -151,6 +151,7 @@ class sqlmeta(object):
     table = None
     idName = None
     style = None
+    lazyUpdate = False
 
     __metaclass__ = declarative.DeclarativeMeta
 
@@ -258,8 +259,6 @@ class SQLObject(object):
     # when necessary: (bad clever? maybe)
     _expired = False
 
-    _lazyUpdate = False
-
     # This function is used to coerce IDs into the proper format,
     # so you should replace it with str, or another function, if you
     # aren't using integer IDs
@@ -283,6 +282,7 @@ class SQLObject(object):
         # This is true if we're initializing the SQLObject class,
         # instead of a subclass:
         is_base = cls.__bases__ == (object,)
+        #assert cls.__name__ != 'Reparented1'
 
         if (not new_attrs.has_key('sqlmeta')
             and not is_base):
@@ -291,6 +291,31 @@ class SQLObject(object):
             # subclass:
             #cls.sqlmeta = cls.sqlmeta.clone()
             cls.sqlmeta = type('sqlmeta', (cls.sqlmeta,), {})
+        if not issubclass(cls.sqlmeta, sqlmeta):
+            # We allow no superclass and an object superclass, instead
+            # of inheriting from sqlmeta; but in that case we replace
+            # the class and just move over its attributes:
+            assert cls.sqlmeta.__bases__ in ((), (object,)), (
+                "If you do not inherit your sqlmeta class from "
+                "sqlobject.sqlmeta, it must not inherit from any other "
+                "class (your sqlmeta inherits from: %s)"
+                % cls.sqlmeta.__bases__)
+            for base in cls.__bases__:
+                superclass = getattr(base, 'sqlmeta', None)
+                if superclass:
+                    break
+            else:
+                assert 0, (
+                    "No sqlmeta class could be found in any superclass "
+                    "(while fixing up sqlmeta %r inheritance)"
+                    % cls.sqlmeta)
+            values = dict(cls.sqlmeta.__dict__)
+            for key in values.keys():
+                if key.startswith('__') and key.endswith('__'):
+                    # Magic values shouldn't be passed through:
+                    del values[key]
+            cls.sqlmeta = type('sqlmeta', (superclass,), values)
+                               
         cls.sqlmeta.setClass(cls)
         
         implicitColumns = []
@@ -313,11 +338,8 @@ class SQLObject(object):
                 delattr(cls, attr)
                 continue                
 
-        if (new_attrs.has_key('_table') and not is_base):
-            deprecated("'_table' is deprecated; please set the 'table' "
-                       "attribute in sqlmeta instead", level=2)
-            cls.sqlmeta.table = cls._table
-            del cls._table
+        if not is_base:
+            cls._cleanDeprecatedAttrs(new_attrs)
 
         if new_attrs.has_key('_connection'):
             connection = new_attrs['_connection']
@@ -402,12 +424,6 @@ class SQLObject(object):
         if connection or not hasattr(cls, '_connection'):
             cls.setConnection(connection)
 
-        if (new_attrs.has_key('_style') and not is_base):
-            deprecated("'_style' is deprecated; please set the 'style' "
-                       "attribute in sqlmeta instead", level=2)
-            cls.sqlmeta.style = cls._style
-            del cls._style
-
         # plainSetters are columns that haven't been overridden by the
         # user, so we can contact the database directly to set them.
         # Note that these can't set these in the SQLObject class
@@ -424,12 +440,6 @@ class SQLObject(object):
         # This is a dictionary of columnName: columnObject
         cls._SO_columnDict = {}
         cls._SO_columns = []
-
-        if (new_attrs.has_key('_idName') and not is_base):
-            deprecated("'_idName' is deprecated; please set the 'idName' "
-                       "attribute in sqlmeta instead", level=2)
-            cls.sqlmeta.idName = cls._idName
-            del cls._idName
 
         # We have to check if there are columns in the inherited
         # _columns where the attribute has been set to None in this
@@ -485,6 +495,35 @@ class SQLObject(object):
     _style = _sqlmeta_attr('style', 2)
     _table = _sqlmeta_attr('table', 2)
     _idName = _sqlmeta_attr('idName', 2)
+    _lazyUpdate = _sqlmeta_attr('lazyUpdate', 2)
+
+    def _cleanDeprecatedAttrs(cls, new_attrs):
+        if new_attrs.has_key('_table'):
+            deprecated("'_table' is deprecated; please set the 'table' "
+                       "attribute in sqlmeta instead", level=2)
+            cls.sqlmeta.table = cls._table
+            del cls._table
+
+        if new_attrs.has_key('_lazyUpdate'):
+            deprecated("'_lazyUpdate' is deprecated; please set the "
+                       "'lazyUpdate' attribute in sqlmeta instead",
+                       level=2)
+            cls.sqlmeta.lazyUpdate = cls._lazyUpdate
+            del cls._lazyUpdate
+
+        if new_attrs.has_key('_style'):
+            deprecated("'_style' is deprecated; please set the 'style' "
+                       "attribute in sqlmeta instead", level=2)
+            cls.sqlmeta.style = cls._style
+            del cls._style
+
+        if new_attrs.has_key('_idName'):
+            deprecated("'_idName' is deprecated; please set the 'idName' "
+                       "attribute in sqlmeta instead", level=2)
+            cls.sqlmeta.idName = cls._idName
+            del cls._idName
+
+    _cleanDeprecatedAttrs = classmethod(_cleanDeprecatedAttrs)
 
     def get(cls, id, connection=None, selectResults=None):
 
@@ -823,7 +862,7 @@ class SQLObject(object):
                 self._SO_writeLock.release()
 
     def sync(self):
-        if self._lazyUpdate and self._SO_createValues:
+        if self.sqlmeta.lazyUpdate and self._SO_createValues:
             self.syncUpdate()
         self._SO_writeLock.acquire()
         try:
@@ -877,7 +916,7 @@ class SQLObject(object):
             dbValue = value
         if toPython:
             value = toPython(dbValue, self._SO_validatorState)
-        if self._SO_creating or self._lazyUpdate:
+        if self._SO_creating or self.sqlmeta.lazyUpdate:
             self.dirty = True
             self._SO_createValues[name] = dbValue
             setattr(self, instanceName(name), value)
@@ -905,7 +944,7 @@ class SQLObject(object):
         kw = dict(filter(f_is_column, items))
 
         # _SO_creating is special, see _SO_setValue
-        if self._SO_creating or self._lazyUpdate:
+        if self._SO_creating or self.sqlmeta.lazyUpdate:
             for name, value in kw.items():
                 fromPython = getattr(self, '_SO_fromPython_%s' % name, None)
                 if fromPython:
@@ -1072,7 +1111,7 @@ class SQLObject(object):
         # Doesn't have to be threadsafe because we're still in
         # new(), which doesn't need to be threadsafe.
         self.dirty = False
-        if not self._lazyUpdate:
+        if not self.sqlmeta.lazyUpdate:
             del self._SO_createValues
         else:
             self._SO_createValues = {}
