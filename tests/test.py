@@ -98,6 +98,8 @@ class BoolColTest(SQLObjectTest):
     def testBoolCol(self):
         student = Student(is_smart=False)
         self.assertEqual(student.is_smart, False)
+        student2 = Student(is_smart='false')
+        self.assertEqual(student2.is_smart, True)
 
 class TestCase34(SQLObjectTest):
 
