@@ -229,8 +229,8 @@ class DBAPI(DBConnection):
     def transaction(self):
         return Transaction(self)
 
-    def queryInsertID(self, table, idName, id, names, values):
-        return self._runWithConnection(self._queryInsertID, table, idName, id, names, values)
+    def queryInsertID(self, soInstance, id, names, values):
+        return self._runWithConnection(self._queryInsertID, soInstance, id, names, values)
 
     def iterSelect(self, select):
         return Iteration(self, self.getConnection(),
@@ -485,10 +485,10 @@ class Transaction(object):
         self.assertActive()
         return self._dbConnection._queryOne(self._connection, s)
 
-    def queryInsertID(self, table, idName, id, names, values):
+    def queryInsertID(self, soInstance, id, names, values):
         self.assertActive()
         return self._dbConnection._queryInsertID(
-            self._connection, table, idName, id, names, values)
+            self._connection, soInstance, id, names, values)
 
     def iterSelect(self, select):
         self.assertActive()

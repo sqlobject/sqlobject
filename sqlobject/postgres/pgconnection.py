@@ -56,10 +56,14 @@ class PostgresConnection(DBAPI):
             conn.autocommit(1)
         return conn
 
-    def _queryInsertID(self, conn, table, idName, id, names, values):
+    def _queryInsertID(self, conn, soInstance, id, names, values):
+        table = soInstance._table
+        idName = soInstance._idName
+        sequenceName = getattr(soInstance, '_idSequence',
+                               '%s_%s_seq' % (table, idName))
         c = conn.cursor()
         if id is None:
-            c.execute("SELECT NEXTVAL('%s_%s_seq')" % (table, idName))
+            c.execute("SELECT NEXTVAL('%s')" % sequenceName)
             id = c.fetchone()[0]
         names = [idName] + names
         values = [id] + values

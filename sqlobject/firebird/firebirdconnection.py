@@ -70,10 +70,13 @@ class FirebirdConnection(DBAPI):
         """Firebird uses 'generators' to create new ids for a table.
         The users needs to create a generator named GEN_<tablename>
         for each table this method to work."""
-
+        table = soInstance._table
+        idName = soInstance._idName
+        sequenceName = getattr(soInstance, '_idSequence',
+                               'GEN_%s' % table)
         if id is None:
-            row = self.queryOne('SELECT gen_id(GEN_%s,1) FROM rdb$database'
-                                % table)
+            row = self.queryOne('SELECT gen_id(%s,1) FROM rdb$database'
+                                % sequenceName)
             id = row[0]
         names = [idName] + names
         values = [id] + values

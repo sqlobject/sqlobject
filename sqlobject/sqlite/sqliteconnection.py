@@ -33,7 +33,9 @@ class SQLiteConnection(DBAPI):
     def makeConnection(self):
         return self._conn
 
-    def _queryInsertID(self, conn, table, idName, id, names, values):
+    def _queryInsertID(self, conn, soInstance, id, names, values):
+        table = soInstance._table
+        idName = soInstance._idName
         c = conn.cursor()
         if id is not None:
             names = [idName] + names

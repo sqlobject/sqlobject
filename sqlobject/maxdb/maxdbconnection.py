@@ -106,7 +106,9 @@ class MaxdbConnection(DBAPI):
 		conn =  dbapi.Connection(self.user, self.password, self.database, self.host,**self._getConfigParams(self.sqlmode,self.autoCommit) )
 		return conn
 	
-	def _queryInsertID(self, conn, table, idName, id, names, values):
+	def _queryInsertID(self, conn, soInstance, id, names, values):
+	    table = soInstance._table
+            idName = soInstance._idName
 	    c = conn.cursor()
 	    if id is None:
 			c.execute('SELECT %s.NEXTVAL FROM DUAL' % (self.createSequenceName(table)))
