@@ -304,6 +304,8 @@ class SOStringCol(SOCol):
         return constraints
 
     def _sqlType(self):
+        if self.customSQLType is not None:
+            return self.customSQLType
         if not self.length:
             return 'TEXT'
         elif self.varchar:
