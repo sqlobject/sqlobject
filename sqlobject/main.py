@@ -147,7 +147,7 @@ class MetaSQLObject(type):
             newClass._table = newClass._style.pythonClassToDBTable(className)
 
         # If _idName isn't given, use style default
-        if not hasattr(newClass, '_idName'):
+        if not d.has_key('_idName'):
             newClass._idName = newClass._style.idForTable(newClass._table)
 
         # We use the magic "q" attribute for accessing lazy
