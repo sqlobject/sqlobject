@@ -202,10 +202,10 @@ class SOCol(object):
 
     def _firebirdType(self):
         return self._sqlType()
-               
+        
     def _maxdbType(self):
-		return self._sqlType()        
-	        
+	  return self._sqlType()
+
     def mysqlCreateSQL(self):
         return ' '.join([self.dbName, self._mysqlType()] + self._extraSQL())
 
@@ -226,9 +226,9 @@ class SOCol(object):
             return ' '.join([self.dbName, self._firebirdType()] + self._extraSQL())
         else:
             return ' '.join([self.dbName] + [self._firebirdType()[0]] + self._extraSQL() + [self._firebirdType()[1]])
-            
+	
     def maxdbCreateSQL(self):
-        return ' '.join([self.dbName, self._maxdbType()] + self._extraSQL())
+       return ' '.join([self.dbName, self._maxdbType()] + self._extraSQL())
 
     def __get__(self, obj, type=None):
         if obj is None:
@@ -311,10 +311,10 @@ class SOStringCol(SOCol):
             return self._sqlType()
             
     def _maxdbType(self):
-        if not self.length:
-            return 'LONG ASCII'
-        else:
-            return self._sqlType()
+	        if not self.length:
+	            return 'LONG ASCII'
+	        else:
+	            return self._sqlType()
 
 class StringCol(Col):
     baseClass = SOStringCol
@@ -327,9 +327,6 @@ class SOIntCol(SOCol):
         return [consts.isInt]
 
     def _sqlType(self):
-        return 'INT'
-        
-    def _maxdbType(self):
         return 'INT'
 
 class IntCol(Col):
@@ -369,9 +366,9 @@ class SOBoolCol(SOCol):
 
     def _firebirdType(self):
         return 'INT'
-    
-    def _maxdbType(self):
-        return "BOOLEAN"
+        
+	def _maxdbType(self):
+		return "BOOLEAN"
 
 class BoolCol(Col):
     baseClass = SOBoolCol
@@ -460,16 +457,16 @@ class SOForeignKey(SOKeyCol):
         return sql
         
 	def maxdbCreateSQL(self):
-		from main import findClass
-		other = findClass(self.foreignKey)
-		fidName = self.dbName
-		#I assume that foreign key name is identical to the id of the reference table		
-		sql = ' '.join([fidName, self._maxdbType()])
-		tName = other._table
-		idName  = other._idName
-		sql=sql + ',' + '\n' 
-		sql=sql + 'FOREIGN KEY (%s) REFERENCES %s(%s)'%(fidName,tName,idName)
-		return sql
+			from main import findClass
+			other = findClass(self.foreignKey)
+			fidName = self.dbName
+			#I assume that foreign key name is identical to the id of the reference table		
+			sql = ' '.join([fidName, self._maxdbType()])
+			tName = other._table
+			idName  = other._idName
+			sql=sql + ',' + '\n' 
+			sql=sql + 'FOREIGN KEY (%s) REFERENCES %s(%s)'%(fidName,tName,idName)
+			return sql
 
 class ForeignKey(KeyCol):
 
@@ -510,10 +507,9 @@ class SOEnumCol(SOCol):
         checkConstraint = "CHECK (%s in (%s))" % (self.dbName, enumValues)
         #NB. Return a tuple, not a string here
         return "VARCHAR(%i)" % (length), checkConstraint
-        
+ 
 	def _maxdbType(self):
 		raise "Enum type is not supported"
-    
 
 class EnumCol(Col):
     baseClass = SOEnumCol
@@ -537,9 +533,9 @@ class SODateTimeCol(SOCol):
 
     def _firebirdType(self):
         return 'TIMESTAMP'
-    
-    def _maxdbType(self):
-    	return 'TIMESTAMP'
+        
+	def _maxdbType(self):
+		return 'TIMESTAMP'
 
 class DateTimeCol(Col):
     baseClass = SODateTimeCol
