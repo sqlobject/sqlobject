@@ -80,6 +80,16 @@ class MetaSQLObject(type):
         if not d.has_key('_table'):
             d['_table'] = None
 
+        if d.has_key('_connection'):
+            connection = d['_connection']
+            del d['_connection']
+            assert not d.has_key('connection')
+        elif d.has_key('connection'):
+            connection = d['connection']
+            del d['connection']
+        else:
+            connection = None
+
         # We actually create the class.
         newClass = type.__new__(cls, className, bases, d)
         newClass._SO_finishedClassCreation = False
@@ -96,19 +106,14 @@ class MetaSQLObject(type):
         ######################################################
         # Set some attributes to their defaults, if necessary.
         # First we get the connection:
-        if not newClass._connection:
-
+        if not connection and not getattr(newClass, '_connection', None):
             mod = sys.modules[newClass.__module__]
             # See if there's a __connection__ global in
             # the module, use it if there is.
             if hasattr(mod, '__connection__'):
-                newClass._connection = mod.__connection__
+                connection = mod.__connection__
 
-        # If the connection is named, we turn the name into
-        # a real connection.
-        if isinstance(newClass._connection, str):
-            newClass._connection = dbconnection.openURI(
-                newClass._connection)
+        newClass.setConnection(connection)
 
         # The style object tells how to map between Python
         # identifiers and Database identifiers:
@@ -308,6 +313,8 @@ class SQLObject(object):
     # Default is false, but we set it to true for the *instance*
     # when necessary: (bad clever? maybe)
     _expired = False
+
+    _lazyUpdate = False
 
     def get(cls, id, connection=None, selectResults=None):
 
@@ -597,6 +604,7 @@ class SQLObject(object):
             if not selectResults:
                 raise SQLObjectNotFound, "The object %s by the ID %s does not exist" % (self.__class__.__name__, self.id)
         self._SO_selectInit(selectResults)
+        self.dirty = 0
 
     def _SO_loadValue(self, attrName):
         try:
@@ -628,6 +636,8 @@ class SQLObject(object):
                 self._SO_writeLock.release()
 
     def sync(self):
+        if self._lazyUpdate and self._SO_createValues:
+            self.syncUpdate()
         self._SO_writeLock.acquire()
         try:
             dbNames = [col.dbName for col in self._SO_columns]
@@ -636,6 +646,20 @@ class SQLObject(object):
                 raise SQLObjectNotFound, "The object %s by the ID %s has been deleted" % (self.__class__.__name__, self.id)
             self._SO_selectInit(selectResults)
             self._expired = False
+        finally:
+            self._SO_writeLock.release()
+
+    def syncUpdate(self):
+        if not self._SO_createValues:
+            return
+        print 'UP:', self._SO_createValues
+        self._SO_writeLock.acquire()
+        try:
+            if self._SO_columnDict:
+                values = [(self._SO_columnDict[v[0]].dbName, v[1]) for v in self._SO_createValues.items()]
+                self._connection._SO_update(self, values)
+            self.dirty = False
+            self._SO_createValues = {}
         finally:
             self._SO_writeLock.release()
 
@@ -663,8 +687,10 @@ class SQLObject(object):
         # dictionary until later:
         if fromPython:
             value = fromPython(value, self._SO_validatorState)
-        if self._SO_creating:
+        if self._SO_creating or self._lazyUpdate:
+            self.dirty = True
             self._SO_createValues[name] = value
+            setattr(self, instanceName(name), value)
             return
 
         self._connection._SO_update(self,
@@ -679,12 +705,14 @@ class SQLObject(object):
         # potentially with one SQL statement if possible.
 
         # _SO_creating is special, see _SO_setValue
-        if self._SO_creating:
+        if self._SO_creating or self._lazyUpdate:
             for name, value in kw.items():
                 fromPython = getattr(self, '_SO_fromPython_%s' % name)
                 if fromPython:
                     kw[name] = fromPython(value, self._SO_validatorState)
             self._SO_createValues.update(kw)
+            self.dirty = True
+            setattr(self, instanceName(name), value)
             return
 
         self._SO_writeLock.acquire()
@@ -753,7 +781,7 @@ class SQLObject(object):
             return
         
         # Pass the connection object along if we were given one.
-        # Passing None for the ID tells __new__ we want to create
+        # Passing None for the ID tells __init__ we want to create
         # a new object.
         if kw.has_key('connection'):
             self._connection = kw['connection']
@@ -788,7 +816,7 @@ class SQLObject(object):
 
                 # If we don't get it, it's an error:
                 if default is NoDefault:
-                    raise TypeError, "%s did not get expected keyword argument %s" % (cls.__name__, repr(column.name))
+                    raise TypeError, "%s() did not get expected keyword argument %s" % (self.__class__.__name__, column.name)
                 # Otherwise we put it in as though they did pass
                 # that keyword:
                 kw[column.name] = default
@@ -829,7 +857,11 @@ class SQLObject(object):
         # Get rid of _SO_create*, we aren't creating anymore.
         # Doesn't have to be threadsafe because we're still in
         # new(), which doesn't need to be threadsafe.
-        del self._SO_createValues
+        self.dirty = False
+        if not self._lazyUpdate:
+            del self._SO_createValues
+        else:
+            self._SO_createValues = {}
         del self._SO_creating
 
         # Do the insert -- most of the SQL in this case is left
@@ -1001,6 +1033,11 @@ class SQLObject(object):
             items.append((col.name, getattr(self, col.name)))
         return items
 
+    def setConnection(cls, value):
+        if isinstance(value, (str, unicode)):
+            value = dbconnection.openURI(value)
+        cls._connection = value
+    setConnection = classmethod(setConnection)
 
 def capitalize(name):
     return name[0].capitalize() + name[1:]
@@ -1151,6 +1188,7 @@ class SQLObjectState(object):
         self.soObject = soObject
         self.protocol = 'sql'
 
+    
 
 ########################################
 ## Utility functions (for external consumption)

@@ -900,6 +900,97 @@ class StyleTest(SQLObjectTest):
         self.assertEqual(st1.st2, st2)
 
 ########################################
+## Lazy updates
+########################################
+
+class Lazy(SQLObject):
+
+    _lazyUpdate = True
+    name = StringCol()
+    other = StringCol(default='nothing')
+
+class LazyTest(SQLObjectTest):
+    
+    classes = [Lazy]
+
+    def setUp(self):
+        SQLObjectTest.setUp(self)
+        self.conn = Lazy._connection
+        self.conn.didUpdate = False
+        oldUpdate = self.conn._SO_update
+        newUpdate = lambda so, values, s=self, c=self.conn, o=oldUpdate: self._alternateUpdate(so, values, c, o)
+        self.conn._SO_update = newUpdate
+
+    def _alternateUpdate(self, so, values, conn, oldUpdate):
+        conn.didUpdate = True
+        return oldUpdate(so, values)
+
+    def test(self):
+        assert not self.conn.didUpdate
+        obj = Lazy(name='tim')
+        # We just did an insert, but not an update:
+        assert not self.conn.didUpdate
+        obj.set(name='joe')
+        assert obj.dirty
+        self.assertEqual(obj.name, 'joe')
+        assert not self.conn.didUpdate
+        obj.syncUpdate()
+        self.assertEqual(obj.name, 'joe')
+        assert self.conn.didUpdate
+        assert not obj.dirty
+        self.assertEqual(obj.name, 'joe')
+        self.conn.didUpdate = False
+
+        obj = Lazy(name='frank')
+        obj.name = 'joe'
+        assert not self.conn.didUpdate
+        assert obj.dirty
+        self.assertEqual(obj.name, 'joe')
+        obj.name = 'joe2'
+        assert not self.conn.didUpdate
+        assert obj.dirty
+        self.assertEqual(obj.name, 'joe2')
+        obj.syncUpdate()
+        self.assertEqual(obj.name, 'joe2')
+        assert not obj.dirty
+        assert self.conn.didUpdate
+        self.conn.didUpdate = False
+
+        obj = Lazy(name='loaded')
+        assert not obj.dirty
+        assert not self.conn.didUpdate
+        self.assertEqual(obj.name, 'loaded')
+        obj.name = 'unloaded'
+        assert obj.dirty
+        self.assertEqual(obj.name, 'unloaded')
+        assert not self.conn.didUpdate
+        obj.sync()
+        assert not obj.dirty
+        self.assertEqual(obj.name, 'unloaded')
+        assert self.conn.didUpdate
+        self.conn.didUpdate = False
+        obj.name = 'whatever'
+        assert obj.dirty
+        self.assertEqual(obj.name, 'whatever')
+        assert not self.conn.didUpdate
+        obj._SO_loadValue('name')
+        assert obj.dirty
+        self.assertEqual(obj.name, 'whatever')
+        assert not self.conn.didUpdate
+        obj._SO_loadValue('other')
+        self.assertEqual(obj.name, 'whatever')
+        assert not self.conn.didUpdate
+        obj.syncUpdate()
+        assert self.conn.didUpdate
+        self.conn.didUpdate = False
+
+        obj = Lazy(name='last')
+        assert not obj.dirty
+        obj.syncUpdate()
+        assert not self.conn.didUpdate
+        assert not obj.dirty
+
+########################################
 ## Run from command-line:
 ########################################
 

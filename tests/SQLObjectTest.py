@@ -1,5 +1,7 @@
 import unittest
 from sqlobject import *
+from sqlobject.dbconnection import openURI
+import os
 
 True, False = 1==1, 0==1
 
@@ -11,60 +13,49 @@ def mysqlConnection():
     SQLObjectTest.supportRestrictedEnum = False
     # Technically it does, but now how we're using it:
     SQLObjectTest.supportTransactions = False
-    return MySQLConnection(host='localhost',
-                           db='test',
-                           user='test',
-                           passwd='',
-                           debug=0)
+    return 'mysql://test@localhost/test'
 
 def dbmConnection():
     SQLObjectTest.supportDynamic = True
     SQLObjectTest.supportAuto = False
     SQLObjectTest.supportRestrictedEnum = False
     SQLObjectTest.supportTransactions = False
-    return DBMConnection('data')
+    return 'dbm:///data'
 
 def postgresConnection():
     SQLObjectTest.supportDynamic = True
     SQLObjectTest.supportAuto = True
     SQLObjectTest.supportRestrictedEnum = True
     SQLObjectTest.supportTransactions = True
-    return PostgresConnection(db='test')
+    return 'postgres://localhost/test'
 
 def pygresConnection():
     SQLObjectTest.supportDynamic = True
     SQLObjectTest.supportAuto = True
     SQLObjectTest.supportRestrictedEnum = True
     SQLObjectTest.supportTransactions = True
-    return PostgresConnection(db='test', usePygresql=True)
+    return 'pygresql://localhost/test'
 
 def sqliteConnection():
     SQLObjectTest.supportDynamic = False
     SQLObjectTest.supportAuto = False
     SQLObjectTest.supportRestrictedEnum = False
     SQLObjectTest.supportTransactions = True
-    return SQLiteConnection('data/sqlite.data')
-
+    return 'sqlite:///%s/data/sqlite.data' % os.getcwd()
 
 def sybaseConnection():
     SQLObjectTest.supportDynamic = False
     SQLObjectTest.supportAuto = False
     SQLObjectTest.supportRestrictedEnum = False
     SQLObjectTest.supportTransactions = True
-    return SybaseConnection(host='localhost',
-                            db='test',
-                            user='sa',
-                            passwd='sybasesa',
-                            autoCommit=1)
+    return 'sybase://sa:sybasesa@localhost/test'
 
 def firebirdConnection():
     SQLObjectTest.supportDynamic = True
     SQLObjectTest.supportAuto = False
     SQLObjectTest.supportRestrictedEnum = True
     SQLObjectTest.supportTransactions = True
-    return FirebirdConnection('localhost', '/var/lib/firebird/data/test.gdb',
-                              user='sysdba', passwd='masterkey')
-
+    return 'firebird://sysdba:masterkey@localhost/var/lib/firebird/data/test.gdb'
 
 _supportedDatabases = {
     'mysql': 'MySQLdb',
@@ -96,6 +87,9 @@ class SQLObjectTest(unittest.TestCase):
     databaseName = None
 
     def setUp(self):
+        global __connection__
+        if isinstance(__connection__, str):
+            __connection__ = openURI(__connection__)
         if self.debugSQL:
             print
             print '#' * 70
