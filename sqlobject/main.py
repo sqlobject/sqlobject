@@ -1095,6 +1095,7 @@ class SelectResults(object):
             orderBy = map(self._mungeOrderBy, orderBy)
         else:
             orderBy = self._mungeOrderBy(orderBy)
+        print "OUT: %r; in: %r" % (sourceClass.sqlrepr(orderBy), sourceClass.sqlrepr(self.ops['orderBy']))
         self.ops['dbOrderBy'] = orderBy
         if ops.has_key('connection') and ops['connection'] is None:
             del ops['connection']
@@ -1105,17 +1106,20 @@ class SelectResults(object):
             desc = True
         else:
             desc = False
-        if self.sourceClass._SO_columnDict.has_key(orderBy):
-            val = self.sourceClass._SO_columnDict[orderBy].dbName
-            if desc:
-                return '-' + val
+        if isinstance(orderBy, (str, unicode)):
+            if self.sourceClass._SO_columnDict.has_key(orderBy):
+                val = self.sourceClass._SO_columnDict[orderBy].dbName
+                if desc:
+                    return '-' + val
+                else:
+                    return val
             else:
-                return val
+                if desc:
+                    return '-' + orderBy
+                else:
+                    return orderBy
         else:
-            if desc:
-                return sqlbuilder.DESC(orderBy)
-            else:
-                return orderBy
+            return orderBy
 
     def clone(self, **newOps):
         ops = self.ops.copy()

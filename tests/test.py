@@ -259,32 +259,55 @@ class Names(SQLObject):
 
     _table = 'names_table'
 
-    fname = StringCol(length=30)
-    lname = StringCol(length=30)
+    firstName = StringCol(length=30)
+    lastName = StringCol(length=30)
 
-    _defaultOrder = ['lname', 'fname']
+    _defaultOrder = ['lastName', 'firstName']
 
 class NamesTest(SQLObjectTest):
 
     classes = [Names]
 
     def inserts(self):
-        for fname, lname in [('aj', 'baker'), ('joe', 'robbins'),
-                             ('tim', 'jackson'), ('joe', 'baker'),
-                             ('zoe', 'robbins')]:
-            Names(fname=fname, lname=lname)
+        for firstName, lastName in [('aj', 'baker'), ('joe', 'robbins'),
+                                    ('tim', 'jackson'), ('joe', 'baker'),
+                                    ('zoe', 'robbins')]:
+            Names(firstName=firstName, lastName=lastName)
 
     def testDefaultOrder(self):
-        self.assertEqual([(n.fname, n.lname) for n in Names.select()],
+        self.assertEqual([(n.firstName, n.lastName) for n in Names.select()],
                          [('aj', 'baker'), ('joe', 'baker'),
                           ('tim', 'jackson'), ('joe', 'robbins'),
                           ('zoe', 'robbins')])
 
     def testOtherOrder(self):
-        self.assertEqual([(n.fname, n.lname) for n in Names.select().orderBy(['fname', 'lname'])],
+        self.assertEqual([(n.firstName, n.lastName) for n in Names.select().orderBy(['firstName', 'lastName'])],
                          [('aj', 'baker'), ('joe', 'baker'),
                           ('joe', 'robbins'), ('tim', 'jackson'),
                           ('zoe', 'robbins')])
+
+    def testUntranslatedColumnOrder(self):
+        self.assertEqual([(n.firstName, n.lastName) for n in Names.select().orderBy(['first_name', 'last_name'])],
+                         [('aj', 'baker'), ('joe', 'baker'),
+                          ('joe', 'robbins'), ('tim', 'jackson'),
+                          ('zoe', 'robbins')])
+
+    def testSingleUntranslatedColumnOrder(self):
+        self.assertEqual([n.firstName for n in
+                          Names.select().orderBy('firstName')],
+                         ['aj', 'joe', 'joe', 'tim', 'zoe'])
+        self.assertEqual([n.firstName for n in
+                          Names.select().orderBy('first_name')],
+                         ['aj', 'joe', 'joe', 'tim', 'zoe'])
+        self.assertEqual([n.firstName for n in
+                          Names.select().orderBy('-firstName')],
+                         ['zoe', 'tim', 'joe', 'joe', 'aj'])
+        self.assertEqual([n.firstName for n in
+                          Names.select().orderBy('-first_name')],
+                         ['zoe', 'tim', 'joe', 'joe', 'aj'])
+        self.assertEqual([n.firstName for n in
+                          Names.select().orderBy(Names.q.firstName)],
+                         ['aj', 'joe', 'joe', 'tim', 'zoe'])
 
 ########################################
 ## Select results
