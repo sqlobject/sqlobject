@@ -676,7 +676,7 @@ class DateTimeValidator(validators.DateValidator):
             return value
         if mxdatetime_available: # convert mxDateTime instance to datetime
             if isinstance(value, DateTimeType):
-                if hasattr(value, "hour"):
+                if ("%H" in self.format) or ("%T" in self.format):
                     return datetime.datetime(value.year, value.month, value.day,
                         value.hour, value.minute, value.second)
                 else:
