@@ -442,6 +442,7 @@ class TransactionTest(SQLObjectTest):
             TestSOTrans._connection.autoCommit = 'exception'
             TestSOTrans(name='joe', connection=trans)
             trans.rollback()
+            trans.begin()
             self.assertEqual([n.name for n in TestSOTrans.select(connection=trans)],
                              ['bob', 'tim'])
             b = TestSOTrans.byName('bob', connection=trans)
@@ -450,6 +451,7 @@ class TransactionTest(SQLObjectTest):
             self.assertEqual(b.name, 'robert')
             b.name = 'bob'
             trans.rollback()
+            trans.begin()
             self.assertEqual(b.name, 'robert')
         finally:
             TestSOTrans._connection.autoCommit = True
@@ -886,6 +888,7 @@ class ValidationTest(SQLObjectTest):
 class SOStringID(SQLObject):
 
     _table = 'so_string_id'
+    _idType = str
     val = StringCol(alternateID=True)
 
     mysqlCreate = """

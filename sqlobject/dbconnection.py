@@ -148,7 +148,7 @@ class DBAPI(DBConnection):
             else:
                 s += ' pool=[%s]' % ', '.join([str(self._connectionNumbers[id(v)]) for v in self._pool])
             self.printDebug(conn, s, 'Pool')
-        if self.supportTransactions:
+        if self.supportTransactions and not explicit:
             if self.autoCommit == 'exception':
                 if self.debug:
                     self.printDebug(conn, 'auto/exception', 'ROLLBACK')
@@ -435,6 +435,9 @@ class Iteration(object):
             dbconn.printDebug(rawconn, self.query, 'Select')
         self.dbconn._executeRetry(self.rawconn, self.cursor, self.query)
 
+    def __iter__(self):
+        return self
+
     def next(self):
         result = self.cursor.fetchone()
         if result is None:
@@ -497,8 +500,8 @@ class Transaction(object):
         # still iterating through the results.
         # @@: But would it be okay for psycopg, with threadsafety
         # level 2?
-        return list(Iteration(self, self._connection,
-                              select, keepConnection=True))
+        return iter(list(Iteration(self, self._connection,
+                                   select, keepConnection=True)))
 
     def commit(self):
         if self._obsolete:
