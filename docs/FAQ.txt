@@ -107,9 +107,9 @@ since the composition of multiple classes is usually a better solution
 anyway).
 
 
-There is also another kind of inheritance. See Inheritance.txt_
+There is also another kind of inheritance. See Inheritance.html_
 
-.. _Inheritance.txt: Inheritance.txt
+.. _Inheritance.html: Inheritance.html
 
 
 Composite/Compound Attributes
@@ -188,7 +188,14 @@ Binary values can be difficult to store in databases, as SQL doesn't
 have a widely-implemented way to express binaries as literals, and
 there's differing support in database.
 
-A possible way to keep this data in a database is by using encoding.
+The module sqlobject.col defines validators and column classes that
+to some extent support binary values. There is BLOBCol that extends
+StringCol and allow to store binary values; currently it works only
+with PostgreSQL and MySQL. PickleCol extends BLOBCol and allows to store
+any object in the column; the column, naturally, pickles the object upon
+assignment and unpickles it upon retrieving the data from the DB.
+
+Another possible way to keep binary data in a database is by using encoding.
 Base 64 is a good encoding, reasonably compact but also safe.  As
 an example, imagine you want to store images in the database:
 
