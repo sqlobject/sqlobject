@@ -337,9 +337,9 @@ class SQLObject(object):
                     # Magic values shouldn't be passed through:
                     del values[key]
             cls.sqlmeta = type('sqlmeta', (superclass,), values)
-                               
+
         cls.sqlmeta.setClass(cls)
-        
+
         implicitColumns = []
         implicitJoins = []
         implicitIndexes = []
@@ -358,7 +358,7 @@ class SQLObject(object):
                 value.setName(attr)
                 implicitIndexes.append(value)
                 delattr(cls, attr)
-                continue                
+                continue
 
         if not is_base:
             cls._cleanDeprecatedAttrs(new_attrs)
@@ -516,7 +516,7 @@ class SQLObject(object):
     def get(cls, id, connection=None, selectResults=None):
 
         assert id is not None, 'None is not a possible id for %s' % cls.__name
-        
+
         id = cls._idType(id)
 
         if connection is None:
@@ -1291,8 +1291,8 @@ class SQLObject(object):
         self._connection._SO_delete(self)
         self._connection.cache.expire(self.id, self.__class__)
 
-    def delete(cls, id):
-        obj = cls.get(id)
+    def delete(cls, id, connection=None):
+        obj = cls.get(id, connection=connection)
         obj.destroySelf()
 
     delete = classmethod(delete)
