@@ -58,6 +58,9 @@ class Style(object):
         # keys, you can't really change this style.
         return attr + "ID"
 
+    def tableReference(self, table):
+        return table + "_id"
+
 class MixedCaseUnderscoreStyle(Style):
 
     """
