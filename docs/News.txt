@@ -48,6 +48,9 @@ Interface Changes
   DBMS, not in SQLObject (i.e., they will not work in databases like
   MySQL and SQLite).
 
+* New ``_create(id, **kw)`` method that can be overridden to intercept
+  and modify attempts to insert rows in the database.
+
 Bugs
 ----
 
@@ -61,6 +64,7 @@ Bugs
 
 * Python 2.2 booleans fixed (SF: 903488)
 
+* Longs (e.g., ``1L``) get converted properly (SF: 939965)
 
 SQLObject 0.5.2
 ===============

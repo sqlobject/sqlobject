@@ -105,7 +105,11 @@ def IntConverter(value, db):
     return repr(int(value))
 
 registerConverter(type(1), IntConverter)
-registerConverter(type(0L), IntConverter)
+
+def LongConverter(value, db):
+    return str(value)
+
+registerConverter(type(0L), LongConverter)
 
 if NumericType:
     registerConverter(NumericType, IntConverter)
