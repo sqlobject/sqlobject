@@ -134,6 +134,18 @@ class CreateNewSQLObject:
     """
     pass
 
+class sqlmeta(object):
+
+    """
+    This object is the object we use to keep track of all sorts of
+    information.  Subclasses are made for each SQLObject subclass
+    (dynamically if necessary), and instances are created to go
+    alongside every SQLObject instance.
+    """
+
+    def __init__(self, instance):
+        self.instance = instance
+
 # SQLObject is the superclass for all SQLObject classes, of
 # course.  All the deeper magic is done in MetaSQLObject, and
 # only lesser magic is done here.  All the actual work is done
@@ -192,7 +204,18 @@ class SQLObject(object):
     # aren't using integer IDs
     _idType = int
 
+    sqlmeta = sqlmeta
+
     def __classinit__(cls, new_attrs):
+
+        if (not new_attrs.has_key('sqlmeta')
+            and not cls.__bases__ == (object,)):
+            # We have to create our own subclass, usually.
+            # type(className, bases_tuple, attr_dict) creates a new
+            # subclass:
+            cls.sqlmeta = type('sqlmeta', (cls.sqlmeta,), {})
+        cls.sqlmeta.soClass = cls
+        
         implicitColumns = []
         implicitJoins = []
         implicitIndexes = []
@@ -623,6 +646,10 @@ class SQLObject(object):
         # created, unlike __init__ which would be called
         # anytime the object was returned from cache.
         self.id = id
+        # We shadow the sqlmeta class with an instance of sqlmeta
+        # that points to us (our sqlmeta buddy object; where the
+        # sqlmeta class is our class's buddy class)
+        self.sqlmeta = self.__class__.sqlmeta(self)
         self._SO_writeLock = threading.Lock()
 
         # If no connection was given, we'll inherit the class
