@@ -83,7 +83,7 @@ class ConverterRegistry:
             # lookup on klasses dict
             return self.klass.get(value.__class__, default)
         return self.basic.get(type(value), default)
-
+     
 converters = ConverterRegistry()
 registerConverter = converters.registerConverter
 lookupConverter = converters.lookupConverter
