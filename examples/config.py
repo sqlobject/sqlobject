@@ -11,7 +11,7 @@ conn = MySQLConnection(user='test', db='testdb')
 conn = 'mysql://test@localhost/testdb'
 conn = PostgresConnection('user=test dbname=testdb')
 conn = 'postgres://test@localhost/testdb'
-conn = SQLiteConnect('database.db')
+conn = SQLiteConnection('database.db')
 conn = 'sqlite://path/to/database.db'
 conn = DBMConnection('database/')
 conn = 'dbm://path/to/database/'
