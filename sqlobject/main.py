@@ -1142,7 +1142,7 @@ class SQLObject(object):
         if isinstance(value, cls):
             return value.id
         else:
-            return self._idType(value)
+            return cls._idType(value)
 
     coerceID = classmethod(coerceID)
 
