@@ -195,7 +195,7 @@ class FancyValidator(Validator):
                                    self._toPython,
                                    self.validatePython)
 
-    def fromPython(self, value, state):
+    def fromPython(self, value, state=None):
         return self.attemptConvert(value, state,
                                    self.validatePython,
                                    self._fromPython,
@@ -227,7 +227,7 @@ class CompoundValidator(FancyValidator):
     def toPython(self, value, state=None):
         return self.attemptConvert(value, state, toPython)
 
-    def fromPython(self, value, state):
+    def fromPython(self, value, state=None):
         return self.attemptConvert(value, state, fromPython)
 
     def matchesProtocol(self, validator, state):
