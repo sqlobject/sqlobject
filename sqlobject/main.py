@@ -760,8 +760,10 @@ class SQLObject(object):
             for name, value in kw.items():
                 fromPython = getattr(self, '_SO_fromPython_%s' % name, None)
                 if fromPython:
-                    value = fromPython(value, self._SO_validatorState)
-                toUpdate[name] = value
+                    dbValue = fromPython(value, self._SO_validatorState)
+                else:
+                    dbValue = value
+                toUpdate[name] = dbValue
                 if self._cacheValues:
                     setattr(self, instanceName(name), value)
             for name, value in extra.items():
