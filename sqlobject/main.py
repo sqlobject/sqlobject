@@ -154,6 +154,7 @@ class sqlmeta(object):
     lazyUpdate = False
     defaultOrder = None
     cacheValues = True
+    registry = None
 
     __metaclass__ = declarative.DeclarativeMeta
 
@@ -246,8 +247,6 @@ class SQLObject(object):
     _indexes = []
 
     _fromDatabase = False
-
-    _registry = None
 
     # Default is false, but we set it to true for the *instance*
     # when necessary: (bad clever? maybe)
@@ -484,7 +483,7 @@ class SQLObject(object):
                     setattr(cls.q, column.name,
                         getattr(currentClass.q, column.name))
 
-        classregistry.registry(cls._registry).addClass(cls)
+        classregistry.registry(cls.sqlmeta.registry).addClass(cls)
 
     _style = _sqlmeta_attr('style', 2)
     _table = _sqlmeta_attr('table', 2)
@@ -492,10 +491,11 @@ class SQLObject(object):
     _lazyUpdate = _sqlmeta_attr('lazyUpdate', 2)
     _defaultOrder = _sqlmeta_attr('defaultOrder', 2)
     _cacheValues = _sqlmeta_attr('cacheValues', 2)
+    _registry = _sqlmeta_attr('registry', 2)
 
     def _cleanDeprecatedAttrs(cls, new_attrs):
         for attr in ['_table', '_lazyUpdate', '_style', '_idName',
-                     '_defaultOrder', '_cacheValues']:
+                     '_defaultOrder', '_cacheValues', '_registry']:
             if new_attrs.has_key(attr):
                 new_name = attr[1:]
                 deprecated("'%s' is deprecated; please set the '%s' "
@@ -637,7 +637,7 @@ class SQLObject(object):
             # We'll need to put in a real reference at
             # some point.  See needSet at the top of the
             # file for more on this.
-            classregistry.registry(cls._registry).addClassCallback(
+            classregistry.registry(cls.sqlmeta.registry).addClassCallback(
                 column.foreignKey,
                 lambda foreign, me, attr: setattr(me, attr, foreign),
                 cls, '_SO_class_%s' % column.foreignKey)
@@ -1134,7 +1134,7 @@ class SQLObject(object):
     _SO_fetchAlternateID = classmethod(_SO_fetchAlternateID)
 
     def _SO_depends(cls):
-        return findDependencies(cls.__name__, cls._registry)
+        return findDependencies(cls.__name__, cls.sqlmeta.registry)
     _SO_depends = classmethod(_SO_depends)
 
     def select(cls, clause=None, clauseTables=None,

@@ -54,7 +54,7 @@ class SOJoin(object):
                  joinDef=None):
         self.soClass = soClass
         self.otherClassName = otherClass
-        classregistry.registry(soClass._registry).addClassCallback(
+        classregistry.registry(soClass.sqlmeta.registry).addClassCallback(
             otherClass, self._setOtherClass)
         self.joinColumn = joinColumn
         self.joinMethodName = joinMethodName
@@ -145,7 +145,8 @@ class SORelatedJoin(SOMultipleJoin):
         self.intermediateTable = intermediateTable
         self.otherColumn = otherColumn
         SOMultipleJoin.__init__(self, **kw)
-        classregistry.registry(self.soClass._registry).addClassCallback(
+        classregistry.registry(
+            self.soClass.sqlmeta.registry).addClassCallback(
             self.otherClassName, self._setOtherRelatedClass)
 
     def _setOtherRelatedClass(self, otherClass):

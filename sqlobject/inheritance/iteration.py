@@ -64,7 +64,7 @@ class InheritableIteration(Iteration):
         dbconn = self.dbconn
         rawconn = self.rawconn
         cursor = rawconn.cursor()
-        registry = self.select.sourceClass._registry
+        registry = self.select.sourceClass.sqlmeta.registry
         for childName, ids in childIdsNames.items():
             klass = findClass(childName, registry)
             select = klass.select(sqlbuilder.IN(sqlbuilder.SQLConstant("id"), ids))

@@ -160,4 +160,5 @@ class TestAuto:
         assert jane.wannahavefun
         assert john.longField == 'x'*1000
         assert jane.longField == 'x'*1000
-        del classregistry.registry(AutoTest._registry).classes['AutoTest']
+        del classregistry.registry(
+            AutoTest.sqlmeta.registry).classes['AutoTest']

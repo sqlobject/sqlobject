@@ -31,7 +31,8 @@ class InheritableSelectResults(SelectResults):
         #DSM: and will do himself the relationship between classes.
         if type(clause) is not str:
             tableRegistry = {}
-            allClasses = classregistry.registry(sourceClass._registry).allClasses()
+            allClasses = classregistry.registry(
+                sourceClass.sqlmeta.registry).allClasses()
             for registryClass in allClasses:
                 if registryClass.sqlmeta.table in tablesDict:
                     #DSM: By default, no parents are needed for the clauses
