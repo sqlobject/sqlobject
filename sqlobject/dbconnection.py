@@ -413,7 +413,7 @@ class DBAPI(DBConnection):
                     self.sqlrepr(secondValue)))
 
     def _SO_columnClause(self, soClass, kw):
-        return ' '.join(['%s = %s' %
+        return ' AND '.join(['%s = %s' %
                          (soClass._SO_columnDict[key].dbName,
                           self.sqlrepr(value))
                          for key, value
