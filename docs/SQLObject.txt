@@ -478,7 +478,8 @@ In general, you should not touch `__init__`.  Instead use the `_init`
 method, which is called after an object is fetched or inserted.  This
 method has the signature ``_init(self, id, connection=None,
 selectResults=None)``, though you may just want to use ``_init(self,
-*args, **kw)``.
+*args, **kw)``.  **Note:** don't forget to call
+``SQLObject._init(self, *args, **kw)`` if you override the method!
 
 Adding Magic Attributes (properties)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
