@@ -186,7 +186,7 @@ class CacheFactory(object):
             # This offset tries to balance out which objects we
             # expire, so no object will just hang out in the cache
             # forever.
-            self.cullOffset = (self.culldOffset + 1) % self.cullFraction
+            self.cullOffset = (self.cullOffset + 1) % self.cullFraction
         finally:
             self.lock.release()
 
