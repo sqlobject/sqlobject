@@ -1,5 +1,5 @@
 """
-sql.py
+sqlobject.sqlbuilder
   17 Oct 2002, Ian Bicking <ianb@colorstudy.com>
 Builds SQL expressions from normal Python expressions.  Python
 2.1 or higher IS REQUIRED.
@@ -69,7 +69,7 @@ True, False = (1==1), (0==1)
 
 import re, fnmatch
 import operator
-from Converters import sqlrepr, registerConverter, TRUE, FALSE
+from converters import sqlrepr, registerConverter, TRUE, FALSE
 
 safeSQLRE = re.compile(r'^[a-zA-Z][a-zA-Z0-9_\.]*$')
 def sqlIdentifier(obj):

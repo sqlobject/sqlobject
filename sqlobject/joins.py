@@ -1,9 +1,15 @@
-import SQLBuilder
-NoDefault = SQLBuilder.NoDefault
-import Style
-import SQLObject
+import sqlbuilder
+NoDefault = sqlbuilder.NoDefault
+import styles
+import classregistry
 
 __all__ = ['MultipleJoin', 'RelatedJoin']
+
+def getID(obj):
+    try:
+        return obj.id
+    except AttributeError:
+        return int(id)
 
 class Join(object):
 
@@ -33,8 +39,8 @@ class SOJoin(object):
                  joinDef=None):
         self.soClass = soClass
         self.otherClassName = otherClass
-        SQLObject.addNeedSet(self, otherClass, soClass._registry,
-                             'otherClass')
+        classregistry.registry(soClass._registry).addClassCallback(
+            otherClass, self._setOtherClass)
         self.joinColumn = joinColumn
         self.joinMethodName = joinMethodName
         self.orderBy = orderBy
@@ -42,7 +48,10 @@ class SOJoin(object):
             # Here we set up the basic join, which is
             # one-to-many, where the other class points to
             # us.
-            self.joinColumn = Style.getStyle(self.soClass).tableReference(self.soClass._table)
+            self.joinColumn = styles.getStyle(self.soClass).tableReference(self.soClass._table)
+
+    def _setOtherClass(self, cls):
+        self.otherClass = cls
 
     def hasIntermediateTable(self):
         return False
@@ -62,10 +71,10 @@ def sorter(orderBy):
             fhead = sorter(orderBy[0])
             frest = sorter(orderBy[1:])
             return lambda a, b, fhead=fhead, frest=frest: fhead(a, b) or frest(a, b)
-    if isinstance(orderBy, SQLBuilder.DESC) \
-       and isinstance(orderBy.expr, SQLBuilder.SQLObjectField):
+    if isinstance(orderBy, sqlbuilder.DESC) \
+       and isinstance(orderBy.expr, sqlbuilder.SQLObjectField):
         orderBy = '-' + orderBy.expr.original
-    elif isinstance(orderBy, SQLBuilder.SQLObjectField):
+    elif isinstance(orderBy, sqlbuilder.SQLObjectField):
         orderBy = orderBy.original
     # @@: but we don't handle more complex expressions for orderings
     if orderBy.startswith('-'):
@@ -117,13 +126,13 @@ class SORelatedJoin(SOMultipleJoin):
     def __init__(self,
                  otherColumn=None,
                  intermediateTable=None, **kw):
-        SOMultipleJoin.__init__(self, **kw)
         self.intermediateTable = intermediateTable
         self.otherColumn = otherColumn
-        SQLObject.addNeedSet(self, self.otherClassName,
-                             self.soClass._registry, '_setOtherClass')
+        SOMultipleJoin.__init__(self, **kw)
+        classregistry.registry(self.soClass._registry).addClassCallback(
+            self.otherClassName, self._setOtherRelatedClass)
 
-    def _setOtherClass(self, otherClass):
+    def _setOtherRelatedClass(self, otherClass):
         if not self.intermediateTable:
             names = [self.soClass._table,
                      otherClass._table]
@@ -152,20 +161,21 @@ class SORelatedJoin(SOMultipleJoin):
         inst._connection._SO_intermediateDelete(
             self.intermediateTable,
             self.joinColumn,
-            SQLObject.getID(inst),
+            getID(inst),
             self.otherColumn,
-            SQLObject.getID(other))
+            getID(other))
 
     def add(self, inst, other):
         inst._connection._SO_intermediateInsert(
             self.intermediateTable,
             self.joinColumn,
-            SQLObject.getID(inst),
+            getID(inst),
             self.otherColumn,
-            SQLObject.getID(other))
+            getID(other))
 
 class RelatedJoin(MultipleJoin):
     baseClass = SORelatedJoin
 
 def capitalize(name):
     return name[0].capitalize() + name[1:]
+

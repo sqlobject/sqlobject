@@ -2,12 +2,14 @@
 Col
 """
 
-import SQLBuilder
+import sqlbuilder
 import re
-import Constraints
-from include import Validator
+# Sadly the name "constraints" conflicts with many of the function
+# arguments in this module, so we rename it:
+import constraints as consts
+from include import validators
 
-NoDefault = SQLBuilder.NoDefault
+NoDefault = sqlbuilder.NoDefault
 True, False = 1==1, 0==1
     
 
@@ -44,7 +46,7 @@ class SOCol(object):
         # why would anyone *want* to use a name like that?
         # @@: I suppose we could actually add backquotes to the
         # dbName if we needed to...
-        assert SQLBuilder.sqlIdentifier(name), 'Name must be SQL-safe (letters, numbers, underscores): %s' \
+        assert sqlbuilder.sqlIdentifier(name), 'Name must be SQL-safe (letters, numbers, underscores): %s' \
                % repr(name)
         assert name != 'id', 'The column name "id" is reserved for SQLObject use (and is implicitly created).'
         assert name, "You must provide a name for all columns"
@@ -72,7 +74,7 @@ class SOCol(object):
         elif notNone is not NoDefault:
             self.notNone = notNone
         if self.notNone:
-            self.constraints = [Constraints.notNull] + self.constraints
+            self.constraints = [consts.notNull] + self.constraints
 
         self.name = name
         self.soClass = None
@@ -94,7 +96,7 @@ class SOCol(object):
         # the column, we separate the mixedCase into mixed_case
         # and assume that.
         if dbName is None:
-            self.dbName = soClass.sqlmeta.style.pythonAttrToDBColumn(self.name)
+            self.dbName = soClass._style.pythonAttrToDBColumn(self.name)
         else:
             self.dbName = dbName
 
@@ -283,9 +285,9 @@ class SOStringCol(SOCol):
         SOCol.__init__(self, **kw)
 
     def autoConstraints(self):
-        constraints = [Constraints.isString]
+        constraints = [consts.isString]
         if self.length is not None:
-            constraints += [Constraints.MaxLength(self.length)]
+            constraints += [consts.MaxLength(self.length)]
         return constraints
 
     def _sqlType(self):
@@ -310,7 +312,7 @@ class SOIntCol(SOCol):
     # 3-03 @@: support precision, maybe max and min directly
 
     def autoConstraints(self):
-        return [Constraints.isInt]
+        return [consts.isInt]
 
     def _sqlType(self):
         return 'INT'
@@ -318,22 +320,22 @@ class SOIntCol(SOCol):
 class IntCol(Col):
     baseClass = SOIntCol
 
-class BoolValidator(Validator.Validator):
+class BoolValidator(validators.Validator):
 
     def fromPython(self, value, state):
         if value:
-            return SQLBuilder.TRUE
+            return sqlbuilder.TRUE
         else:
-            return SQLBuilder.FALSE
+            return sqlbuilder.FALSE
 
 class SOBoolCol(SOCol):
 
     def __init__(self, **kw):
         SOCol.__init__(self, **kw)
-        self.validator = Validator.All.join(BoolValidator(), self.validator)
+        self.validator = validators.All.join(BoolValidator(), self.validator)
 
     def autoConstraints(self):
-        return [Constraints.isBool]
+        return [consts.isBool]
 
     def _postgresType(self):
         return 'BOOL'
@@ -352,7 +354,7 @@ class SOFloatCol(SOCol):
     # 3-03 @@: support precision (e.g., DECIMAL)
 
     def autoConstraints(self):
-        return [Constraints.isFloat]
+        return [consts.isFloat]
 
     def _sqlType(self):
         return 'FLOAT'
@@ -443,14 +445,14 @@ class SOEnumCol(SOCol):
         SOCol.__init__(self, **kw)
 
     def autoConstraints(self):
-        return [Constraints.isString, Constraints.InList(self.enumValues)]
+        return [consts.isString, consts.InList(self.enumValues)]
 
     def _mysqlType(self):
-        return "ENUM(%s)" % ', '.join([SQLBuilder.sqlrepr(v, 'mysql') for v in self.enumValues])
+        return "ENUM(%s)" % ', '.join([sqlbuilder.sqlrepr(v, 'mysql') for v in self.enumValues])
 
     def _postgresType(self):
         length = max(map(len, self.enumValues))
-        enumValues = ', '.join([SQLBuilder.sqlrepr(v, 'postgres') for v in self.enumValues])
+        enumValues = ', '.join([sqlbuilder.sqlrepr(v, 'postgres') for v in self.enumValues])
         checkConstraint = "CHECK (%s in (%s))" % (self.dbName, enumValues)
         return "VARCHAR(%i) %s" % (length, checkConstraint)
 

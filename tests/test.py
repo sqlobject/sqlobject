@@ -16,8 +16,9 @@ if '--coverage' in sys.argv:
     coverage.start()
 
 from SQLObjectTest import *
-from SQLObject import *
-from SQLObject.include import Validator
+from sqlobject import *
+from sqlobject.include import validators
+from sqlobject import classregistry
 from mx import DateTime
 
 ########################################
@@ -628,8 +629,7 @@ class AutoTest(SQLObjectTest):
                             wannahavefun=True)
         self.failIf(john.wannahavefun)
         self.failUnless(jane.wannahavefun)
-        reg = sys.modules[SQLObject.__module__].classRegistry[AutoTest._registry]
-        del reg['AutoTest']
+        del classregistry.registry(AutoTest._registry).classes['AutoTest']
 
 ########################################
 ## Joins
@@ -783,9 +783,9 @@ class ExpireTest(SQLObjectTest):
 
 class SOValidation(SQLObject):
 
-    name = StringCol(validator=Validator.PlainText(), default='x', dbName='name_col')
-    name2 = StringCol(validator=Validator.ConfirmType(str), default='y')
-    name3 = IntCol(validator=Validator.Wrapper(fromPython=int), default=100)
+    name = StringCol(validator=validators.PlainText(), default='x', dbName='name_col')
+    name2 = StringCol(validator=validators.ConfirmType(str), default='y')
+    name3 = IntCol(validator=validators.Wrapper(fromPython=int), default=100)
 
 class ValidationTest(SQLObjectTest):
 
@@ -793,19 +793,19 @@ class ValidationTest(SQLObjectTest):
 
     def testValidate(self):
         t = SOValidation.new(name='hey')
-        self.assertRaises(Validator.InvalidField, setattr, t,
+        self.assertRaises(validators.InvalidField, setattr, t,
                           'name', '!!!')
         t.name = 'you'
 
     def testConfirmType(self):
         t = SOValidation.new(name2='hey')
-        self.assertRaises(Validator.InvalidField, setattr, t,
+        self.assertRaises(validators.InvalidField, setattr, t,
                           'name2', 1)
         t.name2 = 'you'
 
     def testWrapType(self):
         t = SOValidation.new(name3=1)
-        self.assertRaises(Validator.InvalidField, setattr, t,
+        self.assertRaises(validators.InvalidField, setattr, t,
                           'name3', 'x')
         t.name3 = 1L
         self.assertEqual(t.name3, 1)

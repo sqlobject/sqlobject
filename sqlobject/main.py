@@ -21,84 +21,25 @@ USA.
 """
 
 import threading
-import SQLBuilder
-import DBConnection
-import Col
-import Style
+import sqlbuilder
+import dbconnection
+import col
+import styles
 import types
 import warnings
-import Join
+import joins
+import classregistry
 
 import sys
 if sys.version_info[:3] < (2, 2, 0):
     raise ImportError, "SQLObject requires Python 2.2.0 or later"
 
-NoDefault = SQLBuilder.NoDefault
+NoDefault = sqlbuilder.NoDefault
 
 class SQLObjectNotFound(LookupError): pass
 class SQLObjectIntegrityError(Exception): pass
 
 True, False = 1==1, 0==1
-
-# We'll be dealing with classes that reference each other, so
-# class C1 may reference C2 (in a join), while C2 references
-# C1 right back.  Since classes are created in an order, there
-# will be a point when C1 exists but C2 doesn't.  So we deal
-# with classes by name, and after each class is created we
-# try to fix up any references by replacing the names with
-# actual classes.
-
-# Here we keep a dictionaries of class names to classes -- note
-# that the classes might be spread among different modules, so
-# since we pile them together names need to be globally unique,
-# not just module unique.
-# Like needSet below, the container dictionary is keyed by the
-# "class registry".
-classRegistry = {}
-
-# This contains the list of (cls, needClass) pairs, where cls has
-# a reference to the class named needClass.  It is keyed by "class
-# registries", which are disjunct sets of classes.
-needSet = {}
-
-# Here's what we call after each class is created, to fix up
-# what we can.  We never really know what the last class to be
-# created is, so we have to call this over and over.
-def setNeedSet():
-    global needSet
-    for registryName, needClassDict in needSet.items():
-        newNeedClassDict = {}
-        for needClass, q in needClassDict.items():
-            try:
-                cls = findClass(needClass, registry=registryName)
-                for obj, attr in q:
-                    curr = getattr(obj, attr, None)
-                    if curr is cls:
-                        pass
-                    elif callable(curr):
-                        curr(cls)
-                    else:
-                        setattr(obj, attr, cls)
-            except KeyError:
-                newNeedClassDict[needClass] = q
-        needSet[registryName] = newNeedClassDict
-
-def addNeedSet(obj, setCls, registry, attr):
-    try:
-        cls = findClass(setCls, registry=registry)
-        if callable(getattr(obj, attr, None)):
-            if not isinstance(getattr(obj, attr), type):
-                # Otherwise we got a class, which means we probably
-                # already set this column.
-                getattr(obj, attr)(cls)
-        else:
-            setattr(obj, attr, cls)
-        return
-    except KeyError:
-        pass
-    q = needSet.setdefault(registry, {}).setdefault(setCls, [])
-    q.append((obj, attr))
-
 
 # This is the metaclass.  It essentially takes a dictionary
 # of all the attributes (and thus methods) defined in the
@@ -108,8 +49,6 @@ class MetaSQLObject(type):
 
     def __new__(cls, className, bases, d):
 
-        global classRegistry, needSet
-
         # We fix up the columns here -- replacing any strings with
         # simply-contructed Col objects, and searching the class
         # variables for instances of Col objects (which get put into
@@ -117,7 +56,7 @@ class MetaSQLObject(type):
         columns = []
         for column in d.get('_columns', []):
             if isinstance(column, str):
-                column = Col.Col(column)
+                column = col.Col(column)
             columns.append(column)
         if columns:
             d['_columns'] = columns
@@ -125,12 +64,12 @@ class MetaSQLObject(type):
         implicitColumns = []
         implicitJoins = []
         for attr, value in d.items():
-            if isinstance(value, Col.Col):
+            if isinstance(value, col.Col):
                 value.setName(attr)
                 implicitColumns.append(value)
                 del d[attr]
                 continue
-            if isinstance(value, Join.Join):
+            if isinstance(value, joins.Join):
                 value.setName(attr)
                 implicitJoins.append(value)
                 del d[attr]
@@ -144,17 +83,6 @@ class MetaSQLObject(type):
         # We actually create the class.
         newClass = type.__new__(cls, className, bases, d)
         newClass._SO_finishedClassCreation = False
-
-        # needSet stuff (see top of module) would get messed
-        # up if more than one SQLObject class has the same
-        # name.
-        registry = newClass._registry
-        assert not classRegistry.get(registry, {}).has_key(className), "A database object by the name %s has already been created" % repr(className)
-
-        # Register it, for use with needSet
-        if not classRegistry.has_key(registry):
-            classRegistry[registry] = {}
-        classRegistry[registry][className] = newClass
 
         # We append to _columns, but we don't want to change the
         # superclass's _columns list, so we make a copy if necessary
@@ -179,7 +107,7 @@ class MetaSQLObject(type):
         # If the connection is named, we turn the name into
         # a real connection.
         if isinstance(newClass._connection, str):
-            newClass._connection = DBConnection.connectionForName(
+            newClass._connection = dbconnection.connectionForName(
                 newClass._connection)
 
         # The style object tells how to map between Python
@@ -188,7 +116,7 @@ class MetaSQLObject(type):
             if newClass._connection and newClass._connection.style:
                 newClass._style = newClass._connection.style
             else:
-                newClass._style = Style.defaultStyle
+                newClass._style = styles.defaultStyle
 
         # plainSetters are columns that haven't been overridden by the
         # user, so we can contact the database directly to set them.
@@ -218,7 +146,7 @@ class MetaSQLObject(type):
         # We use the magic "q" attribute for accessing lazy
         # SQL where-clause generation.  See the sql module for
         # more.
-        newClass.q = SQLBuilder.SQLObjectTable(newClass)
+        newClass.q = sqlbuilder.SQLObjectTable(newClass)
 
         for column in newClass._columns[:]:
             newClass.addColumn(column)
@@ -241,8 +169,7 @@ class MetaSQLObject(type):
         newClass._SO_finishedClassCreation = True
         makeProperties(newClass)
 
-        # Call needSet
-        setNeedSet()
+        classregistry.registry(newClass._registry).addClass(newClass)
 
         # And return the class
         return newClass
@@ -314,7 +241,7 @@ def findClass(name, registry=None):
 
 def findDependencies(name, registry=None):
     depends = []
-    for n, klass in classRegistry[registry].items():
+    for klass in classregistry.registry(registry).allClasses():
         if findDependantColumns(name, klass):
             depends.append(klass)
     return depends
@@ -518,8 +445,10 @@ class SQLObject(object):
             # We'll need to put in a real reference at
             # some point.  See needSet at the top of the
             # file for more on this.
-            addNeedSet(cls, column.foreignKey, cls._registry,
-                       '_SO_class_%s' % column.foreignKey)
+            classregistry.registry(cls._registry).addClassCallback(
+                column.foreignKey,
+                lambda foreign, me, attr: setattr(me, attr, foreign),
+                cls, '_SO_class_%s' % column.foreignKey)
 
         if column.alternateMethodName:
             func = eval('lambda cls, val, connection=None: cls._SO_fetchAlternateID(%s, val, connection=connection)' % repr(column.dbName))
@@ -548,7 +477,7 @@ class SQLObject(object):
     def delColumn(cls, column, changeSchema=False):
         if isinstance(column, str):
             column = cls._SO_columnDict[column]
-        if isinstance(column, Col.Col):
+        if isinstance(column, col.Col):
             for c in cls._SO_columns:
                 if column is c.columnDef:
                     column = c
@@ -1103,9 +1032,9 @@ class SelectResults(object):
                  **ops):
         self.sourceClass = sourceClass
         if clause is None or isinstance(clause, str) and clause == 'all':
-            clause = SQLBuilder.SQLTrueClause
+            clause = sqlbuilder.SQLTrueClause
         self.clause = clause
-        tablesDict = SQLBuilder.tablesUsedDict(self.clause)
+        tablesDict = sqlbuilder.tablesUsedDict(self.clause)
         tablesDict[sourceClass._table] = 1
         if clauseTables:
             for table in clauseTables:
@@ -1138,7 +1067,7 @@ class SelectResults(object):
                 return val
         else:
             if desc:
-                return SQLBuilder.DESC(orderBy)
+                return sqlbuilder.DESC(orderBy)
             else:
                 return orderBy
 

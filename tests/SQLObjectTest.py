@@ -1,5 +1,5 @@
 import unittest
-from SQLObject import *
+from sqlobject import *
 
 True, False = 1==1, 0==1
 

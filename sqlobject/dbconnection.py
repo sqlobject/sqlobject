@@ -8,11 +8,11 @@ import warnings
 import atexit
 import os
 import new
-import SQLBuilder
-from Cache import CacheSet
-import Col
-from Join import sorter
-from Converters import sqlrepr
+import sqlbuilder
+from cache import CacheSet
+import col
+from joins import sorter
+from converters import sqlrepr
 
 # We set these up as globals, which will be set if we end up
 # needing the drivers:
@@ -221,7 +221,7 @@ class DBAPI(DBConnection):
                 lst = [lst]
             lst = [clauseQuote(i) for i in lst]
             if desc:
-                lst = [SQLBuilder.DESC(i) for i in lst]
+                lst = [sqlbuilder.DESC(i) for i in lst]
             return ', '.join([self.sqlrepr(i) for i in lst])
 
         def clauseQuote(s):
@@ -231,13 +231,13 @@ class DBAPI(DBConnection):
                     s = s[1:]
                 else:
                     desc = False
-                assert SQLBuilder.sqlIdentifier(s), "Strings in clauses are expected to be column identifiers.  I got: %r" % s
+                assert sqlbuilder.sqlIdentifier(s), "Strings in clauses are expected to be column identifiers.  I got: %r" % s
                 if select.sourceClass._SO_columnDict.has_key(s):
                     s = select.sourceClass._SO_columnDict[s].dbName
                 if desc:
-                    return SQLBuilder.DESC(SQLBuilder.SQLConstant(s))
+                    return sqlbuilder.DESC(sqlbuilder.SQLConstant(s))
                 else:
-                    return SQLBuilder.SQLConstant(s)
+                    return sqlbuilder.SQLConstant(s)
             else:
                 return s
 
@@ -521,18 +521,18 @@ class MySQLConnection(DBAPI):
 
     def guessClass(self, t):
         if t.startswith('int'):
-            return Col.IntCol, {}
+            return col.IntCol, {}
         elif t.startswith('varchar'):
-            return Col.StringCol, {'length': int(t[8:-1])}
+            return col.StringCol, {'length': int(t[8:-1])}
         elif t.startswith('char'):
-            return Col.StringCol, {'length': int(t[5:-1]),
+            return col.StringCol, {'length': int(t[5:-1]),
                                    'varchar': False}
         elif t.startswith('datetime'):
-            return Col.DateTimeCol, {}
+            return col.DateTimeCol, {}
         elif t.startswith('bool'):
-            return Col.BoolCol, {}
+            return col.BoolCol, {}
         else:
-            return Col.Col, {}
+            return col.Col, {}
 
 ########################################
 ## Postgres connection
@@ -672,7 +672,7 @@ class PostgresConnection(DBAPI):
             kw['name'] = soClass._style.dbColumnToPythonAttr(field)
             kw['notNone'] = notnull
             if defaultstr is not None:
-                kw['default'] = getattr(SQLBuilder.const, defaultstr)
+                kw['default'] = getattr(sqlbuilder.const, defaultstr)
             if keymap.has_key(field):
                 kw['foreignKey'] = keymap[field]
             results.append(colClass(**kw))
@@ -680,20 +680,20 @@ class PostgresConnection(DBAPI):
 
     def guessClass(self, t):
         if t.count('int'):
-            return Col.IntCol, {}
+            return col.IntCol, {}
         elif t.count('varying'):
-            return Col.StringCol, {'length': int(t[t.index('(')+1:-1])}
+            return col.StringCol, {'length': int(t[t.index('(')+1:-1])}
         elif t.startswith('character('):
-            return Col.StringCol, {'length': int(t[t.index('(')+1:-1]),
+            return col.StringCol, {'length': int(t[t.index('(')+1:-1]),
                                    'varchar': False}
         elif t == 'text':
-            return Col.StringCol, {}
+            return col.StringCol, {}
         elif t.startswith('datetime'):
-            return Col.DateTimeCol, {}
+            return col.DateTimeCol, {}
         elif t.startswith('bool'):
-            return Col.BoolCol, {}
+            return col.BoolCol, {}
         else:
-            return Col.Col, {}
+            return col.Col, {}
 
 
 ########################################
@@ -869,16 +869,16 @@ class SybaseConnection(DBAPI):
 
     def guessClass(self, t):
         if t.startswith('int'):
-            return Col.IntCol, {}
+            return col.IntCol, {}
         elif t.startswith('varchar'):
-            return Col.StringCol, {'length': int(t[8:-1])}
+            return col.StringCol, {'length': int(t[8:-1])}
         elif t.startswith('char'):
-            return Col.StringCol, {'length': int(t[5:-1]),
+            return col.StringCol, {'length': int(t[5:-1]),
                                    'varchar': False}
         elif t.startswith('datetime'):
-            return Col.DateTimeCol, {}
+            return col.DateTimeCol, {}
         else:
-            return Col.Col, {}
+            return col.Col, {}
 
 ########################################
 ## Firebird connection
@@ -1053,16 +1053,16 @@ class FirebirdConnection(DBAPI):
         """
 
         if t in self._intTypes:
-            return Col.IntCol, {}
+            return col.IntCol, {}
         elif t == 'VARYING':
-            return Col.StringCol, {'length': flength}
+            return col.StringCol, {'length': flength}
         elif t == 'TEXT':
-            return Col.StringCol, {'length': flength,
+            return col.StringCol, {'length': flength,
                                    'varchar': False}
         elif t in self._dateTypes:
-            return Col.DateTimeCol, {}
+            return col.DateTimeCol, {}
         else:
-            return Col.Col, {}
+            return col.Col, {}
 
 ########################################
 ## File-based connections
@@ -1146,7 +1146,7 @@ class FileConnection(DBConnection):
         clauses = []
         for name, value in kw.items():
             clauses.append(getattr(soClass.q, name) == value)
-        return SQLBuilder.AND(*clauses)
+        return sqlbuilder.AND(*clauses)
 
     def _SO_selectJoin(self, soClass, column, value):
         results = []
@@ -1354,7 +1354,7 @@ class DBMSelectResults(object):
 
         for idList in self.comboIter:
             self.idList = idList
-            if SQLBuilder.execute(self.select.clause, self):
+            if sqlbuilder.execute(self.select.clause, self):
                 if not self._maxNext:
                     raise StopIteration
                 self._maxNext -= 1
