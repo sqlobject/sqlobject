@@ -47,7 +47,7 @@ from types import InstanceType, ClassType, TypeType
 
 sqlStringReplace = [
     ('\\', '\\\\'),
-    ("'", "''"),
+    ("'", "\\'"),
     ('\000', '\\0'),
     ('\b', '\\b'),
     ('\n', '\\n'),
