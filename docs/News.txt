@@ -7,8 +7,8 @@ News
 
 .. _start:
 
-SVN trunk
-=========
+SQLObject 0.6.1
+===============
 
 Interface Changes
 -----------------
@@ -75,7 +75,7 @@ Interface Changes
   rows (like class instantiation used to do).
 
 * We're now using a Subversion repository instead of CVS.  It is
-  located at svn://colorstudy.com/trunk/SQLObject 
+  located at http://svn.colorstudy.com/trunk/SQLObject 
 
 * If you pass ``forceDBName=True`` to the ``*Col`` constructors, then
   your column name doesn't have to be restricted to a-z, 0-9, and _.
