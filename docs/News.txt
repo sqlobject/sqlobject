@@ -7,6 +7,22 @@ News
 
 .. _start:
 
+SQLObject 0.6
+=============
+
+Interface Changes
+-----------------
+
+* The ``SQLObject`` package has been renamed to ``sqlobject``.  This
+  makes it similar to several other packages, and emphasizes the
+  distinction between the ``sqlobject`` package and the ``SQLObject``
+  class.
+* Class instantiation now creates new rows (like `.new()` used to
+  do), and the `.get()` method now retrieves objects that already have
+  rows (like class instantiation used to do).
+* We're now using a Subversion repository instead of CVS.  It is
+  located at svn://colorstudy.com/trunk/SQLObject
+
 SQLObject 0.5.2
 ===============
 
