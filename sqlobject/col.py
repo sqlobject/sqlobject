@@ -446,20 +446,25 @@ class SOForeignKey(SOKeyCol):
     def postgresCreateSQL(self):
         from main import findClass
         sql = SOKeyCol.postgresCreateSQL(self)
+        other = findClass(self.foreignKey)
+        tName = other._table
+        idName = other._idName
         if self.cascade is not None:
-            other = findClass(self.foreignKey)
-            tName = other._table
-            idName = other._idName
-            action = self.cascade and 'CASCADE' or 'RESTRICT'
-            constraint = ('CONSTRAINT %(tName)s_exists '
-                          'FOREIGN KEY(%(colName)s) '
-                          'REFERENCES %(tName)s(%(idName)s) '
-                          'ON DELETE %(action)s' %
-                          {'tName':tName,
-                           'colName':self.dbName,
-                           'idName':idName,
-                           'action':action})
-            sql = ', '.join([sql, constraint])
+            if self.cascade:
+                action = 'ON DELETE CASCADE'
+            else:
+                action = 'ON DELETE RESTRICT'
+        else:
+            action = ''
+        constraint = ('CONSTRAINT %(tName)s_exists '
+                      'FOREIGN KEY (%(colName)s) '
+                      'REFERENCES %(tName)s (%(idName)s) '
+                      '%(action)s' %
+                      {'tName': tName,
+                       'colName': self.dbName,
+                       'idName': idName,
+                       'action': action})
+        sql = ', '.join([sql, constraint])
         return sql
 
     def sybaseCreateSQL(self):
