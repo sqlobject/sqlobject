@@ -328,6 +328,12 @@ class BoolValidator(validators.Validator):
         else:
             return sqlbuilder.FALSE
 
+    def toPython(self, value, state):
+        if int(value):
+            return sqlbuilder.TRUE
+        else:
+            return sqlbuilder.FALSE
+
 class SOBoolCol(SOCol):
 
     def __init__(self, **kw):
