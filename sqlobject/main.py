@@ -1119,15 +1119,21 @@ class SQLObject(object):
     def _SO_getID(self, obj):
         return getID(obj)
 
-    def _SO_fetchAlternateID(cls, dbIDName, value, connection=None):
-        result = (connection or cls._connection)._SO_selectOneAlt(
+    def _findAlternateID(cls, dbIDName, value, connection=None):
+        return (connection or cls._connection)._SO_selectOneAlt(
             cls,
             [cls.sqlmeta.idName] +
             [col.dbName for col in cls.sqlmeta._columns],
             dbIDName,
-            value)
+            value), None
+    _findAlternateID = classmethod(_findAlternateID)
+
+    def _SO_fetchAlternateID(cls, dbIDName, value, connection=None):
+        result, obj = cls._findAlternateID(dbIDName, value, connection)
         if not result:
             raise SQLObjectNotFound, "The %s by alternateID %s=%s does not exist" % (cls.__name__, dbIDName, repr(value))
+        if obj:
+           return obj
         if connection:
             obj = cls.get(result[0], connection=connection)
         else:

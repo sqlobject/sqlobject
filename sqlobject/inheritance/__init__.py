@@ -193,6 +193,37 @@ class InheritableSQLObject(SQLObject):
 
         super(InheritableSQLObject, self)._create(id, **kw)
 
+    def _findAlternateID(cls, dbIDName, value, connection=None):
+        found = False
+        currentClass = cls
+        try:
+            while currentClass:
+                for col in currentClass.sqlmeta._columns:
+                    if col.dbName == dbIDName:
+                        found = True
+                        raise StopIteration
+                currentClass = currentClass._parentClass
+        except StopIteration:
+            pass
+        if not found:
+            return [], None
+        result = list(cls.selectBy(connection, **{col.name: value}))
+        if not result:
+            return result, None
+        obj = result[0]
+        return [obj.id], obj
+    _findAlternateID = classmethod(_findAlternateID)
+
+    def selectBy(cls, connection=None, **kw):
+        clause = []
+        for name, value in kw.items():
+            clause.append(getattr(cls.q, name) == value)
+        clause = reduce(sqlbuilder.AND, clause)
+        conn = connection or cls._connection
+        return cls.SelectResultsClass(cls, clause, connection=conn)
+
+    selectBy = classmethod(selectBy)
+
     def destroySelf(self):
         #DSM: If this object has parents, recursivly kill them
         if hasattr(self, '_parent') and self._parent:
