@@ -1095,7 +1095,7 @@ class SelectResults(object):
             orderBy = map(self._mungeOrderBy, orderBy)
         else:
             orderBy = self._mungeOrderBy(orderBy)
-        print "OUT: %r; in: %r" % (sourceClass.sqlrepr(orderBy), sourceClass.sqlrepr(self.ops['orderBy']))
+        #print "OUT: %r; in: %r" % (sourceClass.sqlrepr(orderBy), sourceClass.sqlrepr(self.ops['orderBy']))
         self.ops['dbOrderBy'] = orderBy
         if ops.has_key('connection') and ops['connection'] is None:
             del ops['connection']
