@@ -56,3 +56,9 @@ def SybaseConnection(*args, **kw):
     _sybase.builder()(*args, **kw)
 
 
+import maxdb
+_maxdb = maxdb
+del maxdb
+def MaxdbConnection(*args, **kw):
+    _warn('MaxdbConnection is deprecated; use connectionForURI("maxdb://...") or "from sqlobject.maxdb import builder; MaxdbConnection = builder()"')
+    _maxdb.builder()(*args, **kw)
