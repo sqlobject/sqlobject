@@ -3,6 +3,13 @@
 Inheritance
 -----------
 
+Daniel Savard has implemented inheritance for SQLObject. According to
+ObjectMatter_ this is a kind of vertical inheritance. The only difference
+is that objects reference their leafs, not parents. Links to parents are
+reconstructed at run-time using the hierarchy of Python classes.
+
+.. _ObjectMatter: http://www.objectmatter.com/vbsf/docs/maptool/ormapping.html
+
 * As suggested by Ian Bicking, each child class now has the same
   ID than the parent class.  No more need for childID column and
   parent foreignKey (with a small speed boost).
