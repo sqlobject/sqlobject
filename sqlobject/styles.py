@@ -87,10 +87,6 @@ class MixedCaseUnderscoreStyle(Style):
 
 DefaultStyle = MixedCaseUnderscoreStyle
 
-class UnderscoreStyle(MixedCaseUnderscoreStyle):
-    def instanceAttrToIDAttr(self, attr):
-        return attr + '_id'
-
 class MixedCaseStyle(Style):
 
     """
