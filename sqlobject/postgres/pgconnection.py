@@ -49,7 +49,10 @@ class PostgresConnection(DBAPI):
         conn.autocommit(auto)
 
     def makeConnection(self):
-        conn = self.pgmodule.connect(self.dsn)
+        try:
+            conn = self.pgmodule.connect(self.dsn)
+        except self.pgmodule.OperationalError, e:
+            raise self.pgmodule.OperationalError("%s; used connection string %r" % (e, self.dsn))
         if self.autoCommit:
             conn.autocommit(1)
         return conn
