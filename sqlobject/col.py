@@ -140,7 +140,7 @@ class SOCol(object):
             self.constraints = [consts.notNull] + self.constraints
 
         self.name = name
-        self.soClass = None
+        self.soClass = soClass
         self._default = default
         self.customSQLType = sqlType
 
@@ -622,7 +622,8 @@ class SOForeignKey(SOKeyCol):
 
     def postgresCreateSQL(self):
         sql = SOKeyCol.postgresCreateSQL(self)
-        other = findClass(self.foreignKey)
+        print [self, self.soClass]
+        other = findClass(self.foreignKey, self.soClass.sqlmeta.registry)
         tName = other.sqlmeta.table
         idName = other.sqlmeta.idName
         if self.cascade is not None:
