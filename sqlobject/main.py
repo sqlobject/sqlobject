@@ -389,8 +389,9 @@ class SQLObject(object):
 
         if not column.immutable:
             # We start by just using the _SO_setValue method
-            setter = eval('lambda self, val: self._SO_setValue(%s, val, self.%s)' % (repr(name), '_SO_fromPython_%s' % name))
+            setter = eval('lambda self, val: self._SO_setValue(%s, val, self.%s, self.%s)' % (repr(name), '_SO_fromPython_%s' % name, '_SO_toPython_%s' % name))
             setattr(cls, '_SO_fromPython_%s' % name, column.fromPython)
+            setattr(cls, '_SO_toPython_%s' % name, column.toPython)
             setattr(cls, rawSetterName(name), setter)
             # Then do the aliasing
             if not hasattr(cls, setterName(name)):
@@ -676,7 +677,7 @@ class SQLObject(object):
         finally:
             self._SO_writeLock.release()
 
-    def _SO_setValue(self, name, value, fromPython):
+    def _SO_setValue(self, name, value, fromPython, toPython):
         # This is the place where we actually update the
         # database.
 
@@ -685,16 +686,20 @@ class SQLObject(object):
         # the parts are set.  So we just keep them in a
         # dictionary until later:
         if fromPython:
-            value = fromPython(value, self._SO_validatorState)
+            dbValue = fromPython(value, self._SO_validatorState)
+        else:
+            dbValue = value
+        if toPython:
+            value = toPython(dbValue, self._SO_validatorState)
         if self._SO_creating or self._lazyUpdate:
             self.dirty = True
-            self._SO_createValues[name] = value
+            self._SO_createValues[name] = dbValue
             setattr(self, instanceName(name), value)
             return
 
         self._connection._SO_update(self,
                                     [(self._SO_columnDict[name].dbName,
-                                      value)])
+                                      dbValue)])
 
         if self._cacheValues:
             setattr(self, instanceName(name), value)
