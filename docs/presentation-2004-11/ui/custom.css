@@ -1,3 +1,7 @@
+td {
+  vertical-align: top;
+}
+
 .string { 
   color: #006600;
 }
@@ -16,7 +20,7 @@
 }
 
 .sql { 
-  color: #006600;
+  color: #004466;
   font-weight: bold;
 }
 

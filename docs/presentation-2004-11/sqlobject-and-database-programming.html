@@ -11,7 +11,7 @@
 <link rel="stylesheet" href="ui/print.css" type="text/css"
 media="print" id="slidePrint" />
 <link rel="stylesheet" href="ui/custom.css" type="text/css"/>
-<sc ript src="ui/slides.js" type="text/javascript"></script>
+<script src="ui/slides.js" type="text/javascript"></script>
 </head>
 <body>
 
@@ -62,7 +62,7 @@ media="print" id="slidePrint" />
 <!-- ======================================== -->
 
 <div class="slide">
-<h1>Database Programming in Python</h1>
+<h1>The DB API</h1>
 
 <p>Database programming in Python is based on the <b><a
 href="http://www.python.org/peps/pep-0249.html">DB-API</a></b>.
@@ -72,11 +72,9 @@ Some supported databases:
 <li>MySQL</li>
 <li>PostgreSQL (multiple drivers)</li>
 <li>SQLite</li>
-<li>Oracle</li>
-<li>Sybase</li>
 <li>Firebird (Interbase)</li>
 <li>MAXDB (SAP DB)</li>
-<li>MS SQL Server</li>
+<li>Oracle, Sybase, MS SQL Server</li>
 </p>
 </div>
 
@@ -109,7 +107,7 @@ for id, first_name, last_name in result:
 <h1>DB API</h1>
 
 <ul>
-<li> Import the databse module (<code>MySQLdb</code>,
+<li> Import the database module (<code>MySQLdb</code>,
 <code>psycopg</code>, <code>sqlite</code>, etc) </li>
 <li> Use <code>module.connect(...)</code> to create a
 connection. </li>
@@ -194,12 +192,14 @@ The table:
 
 <div class="slide">
 
-<h1>Object-Relational Mappers: Classes</h1>
+<h1>ORMs: Classes</h1>
 
 <p>
 
 The class:
 
+<table width="100%">
+<tr><td>
 <table border=1>
 
 <tr class="code-accent"><th colspan=3>person</th></tr>
@@ -225,14 +225,16 @@ The class:
 </tr>
 
 </table>
-<p>
+</td>
 
+<td>
 <pre>
 class Person(SQLObject):
     <span class="comment"># id is implicit</span>
     first_name = StringCol()
     last_name = StringCol()
 </pre>
+</td></tr></table>
 
 </div>
 
@@ -241,11 +243,14 @@ class Person(SQLObject):
 
 <div class="slide">
 
-<h1>Object-Relational Mappers: Instances</h1>
+<h1>ORMs: Instances</h1>
 
 <p>
 
 An instance:
+
+<table width="100%">
+<tr><td>
 
 <table border=1>
 
@@ -272,13 +277,17 @@ An instance:
 </tr>
 
 </table>
-<p>
+
+</td><td>
 
 <pre>
-john = Person.get(1)
-assert john.first_name == <span class="string">'John'</span>
+<span class="prompt">&gt;&gt;&gt;</span> john = Person.get(1)
+<span class="prompt">&gt;&gt;&gt;</span> john.first_name
+<span class="output">'John'</span>
 </pre>
 
+</td></tr></table>
+</p>
 
 </div>
 
@@ -286,7 +295,7 @@ assert john.first_name == <span class="string">'John'</span>
 
 
 <div class="slide">
-<h1>Object-Relational Mapping: summary</h1>
+<h1>ORM: summary</h1>
 
 <ul>
  <li>Every table is a class</li>
@@ -308,10 +317,32 @@ class Person(SQLObject):
     first_name = StringCol()
     last_name = StringCol()
     emails = MultipleJoin('Email')
+</pre>
+
+</div>
+
+<!-- ======================================== -->
+
+
+<div class="slide">
+<h1>Usage (classes)</h1>
+
+<pre>
 class Email(SQLObject):
     person = ForeignKey(<span class="string">'Person'</span>)
     type = EnumCol(['home', 'work'])
     address = StringCol()
+</pre>
+
+</div>
+
+<!-- ======================================== -->
+
+
+<div class="slide">
+<h1>Usage (creating tables)</h1>
+
+<pre>
 def createTables():
     for table in (Person, Email):
         table.createTable(ifNotExists=True)
@@ -322,7 +353,7 @@ def createTables():
 <!-- ======================================== -->
 
 <div class="slide">
-<h1>More use...</h1>
+<h1>Usage (instances)</h1>
 
 Using your classes:
 
@@ -332,6 +363,17 @@ Using your classes:
 <span class="prompt">...</span>     address=<span class="string">'john@work.com'</span>)
 <span class="prompt">&gt;&gt;&gt;</span> john.emails
 <span class="output">[]</span>
+</pre>
+
+</div>
+
+<!-- ======================================== -->
+
+
+<div class="slide">
+<h1>Usage (instances)</h1>
+
+<pre>
 <span class="prompt">&gt;&gt;&gt;</span> tom = Person(first_name=<span class="string">'Tom'</span>, last_name=<span class="string">'Jones'</span>)
 <span class="prompt">&gt;&gt;&gt;</span> tom is Person.get(tom.id)
 <span class="output">True</span>
@@ -340,8 +382,6 @@ Using your classes:
 </pre>
 
 </div>
-
-
 
 
 <!-- ======================================== -->
@@ -373,13 +413,17 @@ class Person(SQLObject):
         return self.first_name + ' ' + self.last_name
 </pre>
 
+<pre>
+<span class="prompt">&gt;&gt;&gt;</span> tom.name
+<span class="output">'Tom Jones'</span>
+</pre>
 
 </div>
 
 <!-- ======================================== -->
 
 <div class="slide">
-<h1></h1>
+<h1>Automatic properties</h1>
 
 <ul>
 <li> <code>_get_attr()</code> methods are called whenever the
@@ -487,25 +531,6 @@ class Person(SQLObject):
 <!-- ======================================== -->
 
 <div class="slide">
-<h1>Lazy classes</h1>
-
-<p>
-SQLObject can use reflection to figure out what columns your table
-has:
-
-<pre>
-class Person(SQLObject):
-    _fromDatabase = True
-</pre>
-
-</p>
-
-</div>
-
-<!-- ======================================== -->
-
-
-<div class="slide">
 <h1>Many-to-many...</h1>
 
 <p>
@@ -522,6 +547,28 @@ CREATE TABLE address_person (
 </div>
 
 <!-- ======================================== -->
+
+<div class="slide">
+<h1>Lazy classes</h1>
+
+<p>
+SQLObject can use reflection to figure out what columns your table
+has:
+
+<pre>
+class Person(SQLObject):
+    _fromDatabase = True
+</pre>
+
+You can start with <code>_fromDatabase = True</code> and add 
+in explicit columns, overriding defaults.
+
+</p>
+
+</div>
+
+<!-- ======================================== -->
+
 
 
 <div class="slide">
@@ -542,12 +589,13 @@ new object is returned)</li>
 <h1>Updating</h1>
 
 <ul>
-<li>Use <code>aPerson.first_name = <span
-class="string">"new_name"</span></code></li>
-<li>Use <code>aPerson.set(first_name=<span
+<li><code>aPerson.first_name = <span
+class="string">"new_name"</span></code><br>
+ <code class="sql">UPDATE</code> is executed immediately </li>
+<li> Update multiple columns at once: <br>
+<code>aPerson.set(first_name=<span
 class="string">"new_fname"</span>, last_name=<span
-class="string">"new_lname"</span>)</code> for multiple simultaneous
-updates. </li>
+class="string">"new_lname"</span>)</code>  </li>
 </ul>
 
 </div>
@@ -580,7 +628,7 @@ Person.select(query)
 <p>
 
 <ul>
-<li><code>Class.<b>q</b>.<i>column_name</i></code> creates a magical
+<li><code>Class.<b style="color: #990000">q</b>.column_name</code> creates a magical
 object that creates queries.</li>
 <li><code>sqlrepr()</code> turns these query objects into SQL (mostly
 hidden)</li>
@@ -625,13 +673,13 @@ WHERE person.id = email.person_id
 <div class="slide">
 <h1>SelectResult</h1>
 
-Select results are fancy.
+Select results are more than just lists:
 
 <ul>
 <li> You can slice them, and <code class="sql">LIMIT</code> and <code
 class="sql">OFFSET</code> statements are added to your query</li>
 <li> You can iterate through them, and avoid loading all objects into
-memory</li>
+memory </li>
 <li> You can do things like <code>select_result.count()</code> to run
 aggregate functions </li>
 <li> To get a real list, you must do <code>list(select_result)</code></li>
@@ -673,6 +721,75 @@ anyway </li>
 
 <!-- ======================================== -->
 
+<div class="slide">
+<h1>The problem with ORMs</h1>
+
+<p>
+ORMs live in the world between Object Oriented programmers (and
+programs) and Relational programmers (and programs).  Neither will be
+happy.
+</p>
+
+</div>
+
+<!-- ======================================== -->
+
+
+<div class="slide">
+<h1>ORM Mismatch</h1>
+
+<ul>
+ <li> Python classes aren't tables</li>
+ <li> Python instances aren't rows</li>
+<ul>
+
+</div>
+
+<!-- ======================================== -->
+
+
+<div class="slide">
+<h1>ORM Mismatch: Classes</h1>
+
+<ul>
+ <li> Databases don't have inheritance </li>
+ <li> Even when they do, no one uses it </li>
+ <li> Some tables are too boring (e.g., intermediate tables for
+ many-to-many relationships), or don't warrant the overhead </li>
+</ul>
+
+</div>
+
+<!-- ======================================== -->
+
+<div class="slide">
+<h1>ORM Mismatch: Instances</h1>
+
+<ul>
+ <li> Instances get garbage collected, rows are forever </li>
+ <li> Rows exist even when instances don't </li>
+ <li> Instances may still exist when the row is gone </li>
+ <li> In the relational calculus, rows don't have real identity </li>
+
+</div>
+
+<!-- ======================================== -->
+
+
+<div class="slide">
+<h1>ORM Mismatch: Relations</h1>
+
+<ul>
+ <li> Things like joins don't make sense for objects, but are central
+ to relations </li>
+ <li> Views and stored procedures also don't make sense </li>
+ <li> Aggregate functions and set operations aren't natural in Python 
+ (the <code>for</code> loop is natural) </li>
+</ul>
+
+</div>
+
+<!-- ======================================== -->
 
 <div class="slide">
 <h1>Solving the question by avoidance</h1>
@@ -690,62 +807,6 @@ anyway </li>
 
 
 <div class="slide">
-<h1>ORM Mismatch</h1>
-
-<ul>
- <li> Python classes aren't tables</li>
- <li> Python instances aren't rows</li>
- <li> Primitive values (like <code class="string">"John"</code>)
-  aren't part of the ORM at all </li>
-<ul>
-
-</div>
-
-<!-- ======================================== -->
-
-
-<div class="slide">
-<h1>ORM Mismatch: Classes</h1>
-
-<ul>
- <li> Databases don't have inheritance </li>
- <li> Even when they do, no one uses it </li>
- <li> Some tables are too boring (e.g., intermediate tables for
- many-to-many relationships) </li>
-</ul>
-
-</div>
-
-<!-- ======================================== -->
-
-<div class="slide">
-<h1>ORM Mismatch: Instances</h1>
-
-<ul>
- <li> Instances get garbage collected, rows are forever </li>
- <li> Instances can't be pre-allocated </li>
- <li> In the relational calculus, rows don't have real identity </li>
-
-</div>
-
-<!-- ======================================== -->
-
-
-<div class="slide">
-<h1>ORM Mismatch: Relations</h1>
-
-<ul>
- <li> Things like joins don't make sense for objects, but are central
- to relations </li>
- <li> Views and stored procedures also don't make sense </li>
-</ul>
-
-</div>
-
-<!-- ======================================== -->
-
-
-<div class="slide">
 <h1>Solving the Mismatch</h1>
 
 SQLObject's answer: don't try too hard.
@@ -753,9 +814,42 @@ SQLObject's answer: don't try too hard.
 <ul>
  <li> There exist database restrictions; not every database schema maps
  well.  (But most are fine) </li>
+ <li> Sometimes you have to do things more slowly or more imperatively,
+ compared to a purely relational technique </li>
  <li> There exist object restrictions; not every object-oriented
- concept maps well; e.g., no inheritance. </li>
+ concept maps well; e.g., no inheritance </li>
+ <li> Inheritance isn't planned; this isn't transparent persistence </li>
 </ul>
+
+</div>
+
+<!-- ======================================== -->
+
+<div class="slide">
+<h1>Some other alternatives</h1>
+
+Several Python ORMs exist; contrasts: 
+<ul>
+ <li> SQLObject doesn't try to be too OO, so it works well with normal 
+ database schemas </li>
+ <li> SQLObject doesn't have a compile step </li>
+ <li> SQLObject isn't <i>just</i> a SQL wrapper </li>
+ <li> SQLObject is reasonably complete </li>
+</ul>
+
+</div>
+
+<!-- ======================================== -->
+
+
+<div class="slide">
+<h1>Other alternatives...</h1>
+
+<p>
+
+See the Python Wiki at: <a href="http://python.org/moin">python.org/moin</a><br>
+The page is <a href="http://python.org/moin/HigherLevelDatabaseProgramming">HigherLevelDatabaseProgramming</a>.
+</p>
 
 </div>
 
