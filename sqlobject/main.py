@@ -162,9 +162,6 @@ class sqlmeta(object):
 
     def setClass(cls, soClass):
         cls.soClass = soClass
-    setClass = classmethod(setClass)
-
-    def finishClass(cls):
         if not cls.style:
             if cls.soClass._connection and cls.soClass._connection.style:
                 cls.style = cls.soClass._connection.style
@@ -174,7 +171,7 @@ class sqlmeta(object):
             cls.table = cls.style.pythonClassToDBTable(cls.soClass.__name__)
         if cls.idName is None:
             cls.idName = cls.style.idForTable(cls.table)
-    finishClass = classmethod(finishClass)
+    setClass = classmethod(setClass)
 
 class _sqlmeta_attr(object):
 
@@ -276,8 +273,6 @@ class SQLObject(object):
             #cls.sqlmeta = cls.sqlmeta.clone()
             cls.sqlmeta = type('sqlmeta', (cls.sqlmeta,), {})
         cls.sqlmeta.setClass(cls)
-        cls.sqlmeta.finishClass()
-
         
         implicitColumns = []
         implicitJoins = []
