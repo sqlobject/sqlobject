@@ -522,7 +522,7 @@ class SQLObject(object):
 
     def get(cls, id, connection=None, selectResults=None):
 
-        assert id is not None, 'None is not a possible id for %s' % cls.__name
+        assert id is not None, 'None is not a possible id for %s' % cls.__name__
 
         id = cls._idType(id)
 
