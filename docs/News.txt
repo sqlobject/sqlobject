@@ -7,6 +7,20 @@ News
 
 .. _start:
 
+SQLObject 0.6.2
+===============
+
+Interface Changes
+-----------------
+
+* The long broken and unused ``DBMConnection`` has been removed.
+
+Features
+--------
+
+* New ``UnicodeCol()`` that converts to and from Unicode
+  in the database.
+
 SQLObject 0.6.1
 ===============
 

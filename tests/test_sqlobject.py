@@ -1254,6 +1254,39 @@ class DistinctTest(SQLObjectTest):
                          {0: 1, 1:1})
 
 ########################################
+## Unicode columns
+########################################
+
+class Unicode1(SQLObject):
+    count = IntCol(alternateID=True)
+    col1 = UnicodeCol()
+    col2 = UnicodeCol(dbEncoding='latin-1')
+
+class UnicodeTest(SQLObjectTest):
+
+    classes = [Unicode1]
+
+    data = [u'\u00f0', u'test', 'ascii test']
+
+    def testCreate(self):
+        items = []
+        for i, n in enumerate(self.data):
+            items.append(Unicode1(count=i, col1=n, col2=n))
+        for n, item in zip(self.data, items):
+            item.col1 = item.col2 = n
+        for n, item in zip(self.data, items):
+            self.assertEqual(item.col1, item.col2, n)
+        conn = Unicode1._connection
+        rows = conn.queryAll("""
+        SELECT count, col1, col2
+        FROM unicode1
+        ORDER BY count
+        """)
+        for count, col1, col2 in rows:
+            self.assertEqual(self.data[count].encode('utf-8'), col1)
+            self.assertEqual(self.data[count].encode('latin1'), col2)
+
+########################################
 ## Run from command-line:
 ########################################
 

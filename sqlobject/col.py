@@ -338,6 +338,28 @@ class SOStringCol(SOCol):
 class StringCol(Col):
     baseClass = SOStringCol
 
+class UnicodeStringValidator(validators.Validator):
+
+    def __init__(self, db_encoding='UTF-8'):
+        self.db_encoding = db_encoding
+
+    def fromPython(self, value, state):
+        return value.encode(self.db_encoding)
+
+    def toPython(self, value, state):
+        return unicode(value, self.db_encoding)
+
+class SOUnicodeCol(SOStringCol):
+
+    def __init__(self, **kw):
+        self.dbEncoding = popKey(kw, 'dbEncoding', 'UTF-8')
+        SOStringCol.__init__(self, **kw)
+        self.validator = validators.All.join(
+            UnicodeStringValidator(self.dbEncoding), self.validator)
+
+class UnicodeCol(Col):
+    baseClass = SOUnicodeCol
+
 class SOIntCol(SOCol):
 
     # 3-03 @@: support precision, maybe max and min directly

@@ -612,26 +612,34 @@ different types of columns, when SQLObject creates your tables.
     Will create a ``BOOLEAN`` column in Postgres, or ``INT`` in other
     databses.  It will also convert values to ``"t"/"f"`` or ``0/1``
     according to the database backend.
+
 `CurrencyCol`:
     Equivalent to ``DecimalCol(size=10, precision=2)``.
+
 `DateTimeCol`:
     A date and time (usually returned as an mxDateTime object).
+
 `DecimalCol`:
     Base-10, precise number.  Uses the keyword arguments `size` for
     number of digits stored, and `precision` for the number of digits
     after the decimal point.
+
 `EnumCol`:
     One of several string values -- give the possible strings as a
     list, with the `enumValues` keyword argument.  MySQL has a native
     ``ENUM`` type, but will work with other databases too (storage
     just won't be as efficient).
+
 `FloatCol`:
     Floats.
+
 `ForeignKey`:
     A key to another table/class.  Use like ``user =
     ForeignKey('User')``.
+
 `IntCol`:
     Integers.
+
 `StringCol`:
     A string (character) column.  Extra keywords:
 
@@ -642,6 +650,15 @@ different types of columns, when SQLObject creates your tables.
         A boolean; if you have a length, differentiates between
         ``CHAR`` and ``VARCHAR``, default True, i.e., use
         ``VARCHAR``.
+
+`UnicodeCol`: 
+    A subclass of `StringCol`.  Also accepts a dbEncoding keyword
+    argument, which defaults to ``"UTF-8"``.  Values coming in and
+    out from the database will be encoded and decoded.  **Note**:
+    parameters in queries will not be automatically encoded, so if
+    you do a query matching a UnicodeCol column you must apply the
+    encoding yourself.
+
 
 SQLObject Class: Specifying Your Class
 --------------------------------------
