@@ -197,3 +197,32 @@ and this will mess up your base64-encoded values.  As a workaround:
 .. raw:: html
    :file: ../examples/snippets/image-binary-sqlite.html
 
+
+Reloading Modules
+-----------------
+
+If you've tried to reload a module that defines SQLObject subclasses,
+you've probably encountered various odd errors.  The short answer: you
+can't reload these modules.
+
+The long answer: reloading modules in Python doesn't work very well.
+Reloading actually means *re-running* the module.  Every ``class``
+statement creates a class -- but your old classes don't disappear.
+When you reload a module, new classes are created, and they take over
+the names in the module.
+
+SQLObject, however, doesn't search the names in a module to find a
+class.  When you say ``ForeignKey('SomeClass')``, SQLObject looks for
+any SQLObject subclass anywhere with the name ``SomeClass``.  This is
+to avoid problems with circular imports and circular dependencies, as
+tables have forward- and back-references, and other circular
+dependencies.  SQLObject resolves these dependencies lazily.
+
+But when you reload a module, suddenly there will be two SQLObject
+classes in the process with the same name.  SQLObject doesn't know
+that one of them is obsolete.  And even if it did, it doesn't know
+every other place in the system that has a reference to that obsolete
+class.
+
+For this reason and several others, reloading modules is highly
+error-prone and difficult to support.
