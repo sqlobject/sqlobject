@@ -10,7 +10,8 @@ class FirebirdConnection(DBAPI):
     schemes = [dbName]
 
     def __init__(self, host, db, user='sysdba',
-                 passwd='masterkey', autoCommit=1, **kw):
+                 passwd='masterkey', autoCommit=1,
+                 dialect=None, role=None, charset=None, **kw):
         global kinterbasdb
         if kinterbasdb is None:
             import kinterbasdb
@@ -25,6 +26,9 @@ class FirebirdConnection(DBAPI):
         self.db = db
         self.user = user
         self.passwd = passwd
+        self.dialect = dialect
+        self.role = role
+        self.charset = charset
 
         DBAPI.__init__(self, **kw)
 
@@ -62,8 +66,13 @@ class FirebirdConnection(DBAPI):
 
     def makeConnection(self):
         return kinterbasdb.connect(
-            host = self.host, database = self.db,
-            user = self.user, password = self.passwd
+            host=self.host,
+            database=self.db,
+            user=self.user,
+            password=self.passwd,
+            dialect=self.dialect,
+            role=self.role,
+            charset=self.charset,
             )
 
     def _queryInsertID(self, conn, table, idName, id, names, values):
