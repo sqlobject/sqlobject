@@ -25,7 +25,8 @@ class CommandRunner(object):
                 break
         else:
             # no command found
-            self.invalid('No COMMAND given')
+            self.invalid('No COMMAND given (try "%s help")'
+                         % os.path.basename(invoked_as))
         real_command = self.command_aliases.get(command, command)
         if real_command not in self.commands.keys():
             self.invalid('COMMAND %s unknown' % command)
@@ -100,6 +101,7 @@ class Command(object):
     max_args_error = 'You must provide no more than %(max_args)s arguments'
     aliases = ()
     required_args = []
+    description = None
 
     def __classinit__(cls, new_args):
         if cls.__bases__ == (object,):
@@ -114,6 +116,11 @@ class Command(object):
         self.runner = runner
 
     def run(self):
+        self.parser.usage = "%%prog [options]\n%s" % (
+            self.description or self.summary)
+        self.parser.prog = '%s %s' % (
+            os.path.basename(self.invoked_as),
+            self.command_name)
         self.options, self.args = self.parser.parse_args(self.raw_args)
         if (getattr(self.options, 'simulate', False)
             and not self.options.verbose):
@@ -331,8 +338,9 @@ class CommandHelp(Command):
             the_runner.run([self.invoked_as, self.args[0], '-h'])
         else:
             print 'Available commands:'
-            print '  (use "%s help COMMAND" or "%s COMMAND -h" for more)' % (
+            print '  (use "%s help COMMAND" or "%s COMMAND -h" ' % (
                 self.prog_name, self.prog_name)
+            print '  for more information)'
             items = the_runner.commands.items()
             items.sort()
             max_len = max([len(cn) for cn, c in items])
