@@ -43,17 +43,26 @@ supportsMatrix = {
     }
 
 
-def setupClass(soClass):
+def setupClass(soClasses):
     """
-    Makes sure the class has a corresponding and correct table.
-    This won't recreate the table if it already exists.  It will
-    check that the table is properly defined (in case you change
-    your table definition).
+    Makes sure the classes have a corresponding and correct table.
+    This won't recreate the table if it already exists.  It will check
+    that the table is properly defined (in case you change your table
+    definition).
+
+    You can provide a single class or a list of classes; if a list
+    then classes will be created in the order you provide, and
+    destroyed in the opposite order.  So if class A depends on class
+    B, then do setupClass([B, A]) and B won't be destroyed or cleared
+    until after A is destroyed or cleared.
     """
+    if not isinstance(soClasses, (list, tuple)):
+        soClasses = [soClasses]
     connection = getConnection()
-    soClass._connection = connection
-    installOrClear(soClass)
-    return soClass
+    for soClass in soClasses:
+        soClass._connection = connection
+    installOrClear(soClasses)
+    return soClasses
 
 installedDBFilename = os.path.join(os.getcwd(), 'dbs_data.tmp')
 
@@ -82,27 +91,32 @@ class InstalledTestDatabase(sqlobject.SQLObject):
     createSQL = sqlobject.StringCol(notNull=True)
     connectionURI = sqlobject.StringCol(notNull=True)
 
-    def installOrClear(cls, soClass):
+    def installOrClear(cls, soClasses):
         cls.setup()
-        table = soClass._table
-        if not soClass._connection.tableExists(table):
-            cls.install(soClass)
-        items = list(cls.selectBy(
-            tableName=table,
-            connectionURI=soClass._connection.uri()))
-        if items:
-            instance = items[0]
-            sql = instance.createSQL
-        else:
-            sql = None
-        newSQL = soClass.createTableSQL()
-        if sql != newSQL:
-            if sql is not None:
-                instance.destroySelf()
-            cls.drop(soClass)
-            cls.install(soClass)
-        else:
-            cls.clear(soClass)
+        reversed = list(soClasses)[:]
+        reversed.reverse()
+        for soClass in reversed:
+            table = soClass._table
+            if not soClass._connection.tableExists(table):
+                continue
+            items = list(cls.selectBy(
+                tableName=table,
+                connectionURI=soClass._connection.uri()))
+            if items:
+                instance = items[0]
+                sql = instance.createSQL
+            else:
+                sql = None
+            newSQL = soClass.createTableSQL()
+            if sql != newSQL:
+                if sql is not None:
+                    instance.destroySelf()
+                cls.drop(soClass)
+            else:
+                cls.clear(soClass)
+        for soClass in soClasses:
+            if not soClass._connection.tableExists(table):
+                cls.install(soClass)
     installOrClear = classmethod(installOrClear)
 
     def install(cls, soClass):
