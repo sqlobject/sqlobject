@@ -329,6 +329,9 @@ class SQLObjectTable(Table):
 
     def __init__(self, soClass):
         self.soClass = soClass
+        assert soClass._table, (
+            "Bad table name in class %r: %r"
+            % (soClass, soClass._table))
         Table.__init__(self, soClass._table)
 
     def __getattr__(self, attr):
