@@ -732,7 +732,7 @@ if datetime_available:
                 return value
             if mxdatetime_available and isinstance(value, DateTimeType):
                 # convert mxDateTime instance to datetime
-                if ("%H" in self.format) or ("%T" in self.format):
+                if (self.format.find("%H") >= 0) or (self.format.find("%T")) >= 0:
                     return datetime.datetime(value.year, value.month, value.day,
                         value.hour, value.minute, int(value.second))
                 else:
