@@ -498,30 +498,14 @@ class SQLObject(object):
     _lazyUpdate = _sqlmeta_attr('lazyUpdate', 2)
 
     def _cleanDeprecatedAttrs(cls, new_attrs):
-        if new_attrs.has_key('_table'):
-            deprecated("'_table' is deprecated; please set the 'table' "
-                       "attribute in sqlmeta instead", level=2)
-            cls.sqlmeta.table = cls._table
-            del cls._table
-
-        if new_attrs.has_key('_lazyUpdate'):
-            deprecated("'_lazyUpdate' is deprecated; please set the "
-                       "'lazyUpdate' attribute in sqlmeta instead",
-                       level=2)
-            cls.sqlmeta.lazyUpdate = cls._lazyUpdate
-            del cls._lazyUpdate
-
-        if new_attrs.has_key('_style'):
-            deprecated("'_style' is deprecated; please set the 'style' "
-                       "attribute in sqlmeta instead", level=2)
-            cls.sqlmeta.style = cls._style
-            del cls._style
-
-        if new_attrs.has_key('_idName'):
-            deprecated("'_idName' is deprecated; please set the 'idName' "
-                       "attribute in sqlmeta instead", level=2)
-            cls.sqlmeta.idName = cls._idName
-            del cls._idName
+        for attr in ['_table', '_lazyUpdate', '_style', '_idName']:
+            if new_attrs.has_key(attr):
+                new_name = attr[1:]
+                deprecated("'%s' is deprecated; please set the '%s' "
+                           "attribute in sqlmeta instead" %
+                           (attr, new_name), level=2)
+                setattr(cls.sqlmeta, new_name, new_attrs[attr])
+                delattr(cls, attr)
 
     _cleanDeprecatedAttrs = classmethod(_cleanDeprecatedAttrs)
 
