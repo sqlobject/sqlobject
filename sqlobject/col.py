@@ -346,11 +346,15 @@ class UnicodeStringValidator(validators.Validator):
     def fromPython(self, value, state):
         if value is None:
             return None
+        if isinstance(value, str):
+            return value
         return value.encode(self.db_encoding)
 
     def toPython(self, value, state):
         if value is None:
             return None
+        if isinstance(value, unicode):
+           return value
         return unicode(value, self.db_encoding)
 
 class SOUnicodeCol(SOStringCol):
