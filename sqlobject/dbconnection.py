@@ -480,6 +480,10 @@ class DBAPI(DBConnection):
         self.close()
 
     def close(self):
+        if not hasattr(self, '_pool'):
+            # Probably there was an exception while creating this
+            # instance, so it is incomplete.
+            return
         if not self._pool:
             return
         self._poolLock.acquire()
