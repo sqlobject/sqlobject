@@ -62,6 +62,10 @@ class TestCase1(SQLObjectTest):
         bob.name = testString
         self.failUnless(bob.name == testString, (bob.name, testString))
 
+    def testCount(self):
+        self.assertEqual(self.MyClass.selectBy(name='bob').count(), 1)
+        self.assertEqual(self.MyClass.select(self.MyClass.q.name == 'bob').count(), 1)
+        self.assertEqual(self.MyClass.select().count(), len(list(self.MyClass.select())))
 
 class TestCaseGetSet(TestCase1):
 

@@ -1314,7 +1314,7 @@ class SelectResults(object):
 
     def count(self):
         """ Counting elements of current select results """
-        assert not self.ops['distinct'], "It is not currently supported to count distinct objects"
+        assert not self.ops.get('distinct'), "It is not currently supported to count distinct objects"
             
         count = self.accumulate('COUNT(*)')
         if self.ops.get('start'):
