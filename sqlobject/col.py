@@ -2,8 +2,8 @@
 Col
 """
 
+import re, time
 import sqlbuilder
-import re
 # Sadly the name "constraints" conflicts with many of the function
 # arguments in this module, so we rename it:
 import constraints as consts
@@ -12,6 +12,43 @@ from include import validators
 NoDefault = sqlbuilder.NoDefault
 True, False = 1==1, 0==1
 
+try:
+    import datetime
+except ImportError: # Python 2.2
+    datetime_available = False
+else:
+    datetime_available = True
+
+try:
+    from mx import DateTime
+except ImportError:
+    try:
+        import DateTime # old version of mxDateTime
+    except ImportError:
+        mxdatetime_available = False
+    else:
+        mxdatetime_available = True
+else:
+    mxdatetime_available = True
+
+if datetime_available:
+    DATETIME_IMPLEMENTATION = "datetime"
+
+if mxdatetime_available:
+    MXDATETIME_IMPLEMENTATION = "mxDateTime"
+    DateTimeType = type(DateTime.now())
+
+if datetime_available:
+    default_datetime_implementation = DATETIME_IMPLEMENTATION
+elif mxdatetime_available:
+    default_datetime_implementation = MXDATETIME_IMPLEMENTATION
+else:
+    default_datetime_implementation = None
+
+__all__ = ["datetime_available", "mxdatetime_available",
+    "DATETIME_IMPLEMENTATION", "MXDATETIME_IMPLEMENTATION",
+    "default_datetime_implementation"
+]
 
 ########################################
 ## Columns
@@ -620,10 +657,83 @@ class SOEnumCol(SOCol):
 class EnumCol(Col):
     baseClass = SOEnumCol
 
-class SODateTimeCol(SOCol):
 
-    # 3-03 @@: provide constraints; right now we let the database
-    # do any parsing and checking.  And DATE and TIME?
+class DateTimeValidator(validators.DateValidator):
+    def fromPython(self, value, state):
+        if value is None:
+            return None
+        if isinstance(value, (datetime.date, datetime.datetime)):
+            return value
+        if hasattr(value, "strftime"):
+            return value.strftime(self.format)
+        raise validators.InvalidField("expected a datetime in the DateTimeCol '%s', got %s instead" % \
+            (self.name, type(value)), value, state)
+
+    def toPython(self, value, state):
+        if value is None:
+            return None
+        if isinstance(value, (datetime.date, datetime.datetime)):
+            return value
+        if mxdatetime_available: # convert mxDateTime instance to datetime
+            if isinstance(value, DateTimeType):
+                if hasattr(value, "hour"):
+                    return datetime.datetime(value.year, value.month, value.day,
+                        value.hour, value.minute, value.second)
+                else:
+                    return datetime.date(value.year, value.month, value.day)
+        try:
+            stime = time.strptime(value, self.format)
+        except:
+            raise validators.InvalidField("expected an ISO date/time string in the DateTimeCol '%s', got %s instead" % \
+                (self.name, type(value)), value, state)
+        secs = time.mktime(stime)
+        return datetime.datetime.fromtimestamp(secs)
+
+class MXDateTimeValidator(validators.DateValidator):
+    def fromPython(self, value, state):
+        if value is None:
+            return None
+        if isinstance(value, DateTimeType):
+            return value
+        if hasattr(value, "strftime"):
+            return value.strftime(self.format)
+        raise validators.InvalidField("expected a mxDateTime in the DateTimeCol '%s', got %s instead" % \
+            (self.name, type(value)), value, state)
+
+    def toPython(self, value, state):
+        if value is None:
+            return None
+        if isinstance(value, DateTimeType):
+            return value
+        if datetime_available: # convert datetime instance to mxDateTime
+            if isinstance(value, (datetime.date, datetime.datetime)):
+                if hasattr(value, "hour"):
+                    return DateTime.DateTime(value.year, value.month, value.day,
+                        value.hour, value.minute, value.second)
+                else:
+                    return DateTime.Date(value.year, value.month, value.day)
+        try:
+            stime = time.strptime(value, self.format)
+        except:
+            raise validators.InvalidField("expected an ISO date/time string in the DateTimeCol '%s', got %s instead" % \
+                (self.name, type(value)), value, state)
+        return DateTime.DateTime.mktime(stime)
+
+class SODateTimeCol(SOCol):
+    if default_datetime_implementation == DATETIME_IMPLEMENTATION:
+        validatorClass = DateTimeValidator # can be overriden in descendants
+    elif default_datetime_implementation == MXDATETIME_IMPLEMENTATION:
+        validatorClass = MXDateTimeValidator # can be overriden in descendants
+    datetimeFormat = '%Y-%m-%d %H:%M:%S'
+
+    def __init__(self, **kw):
+        SOCol.__init__(self, **kw)
+        if default_datetime_implementation:
+            self.validator = validators.All.join(self.createValidator(), self.validator)
+
+    def createValidator(self):
+        """Create a validator for the column. Can be overriden in descendants."""
+        return self.validatorClass(name=self.name, format=self.datetimeFormat)
 
     def _mysqlType(self):
         return 'DATETIME'
@@ -647,9 +757,20 @@ class DateTimeCol(Col):
     baseClass = SODateTimeCol
 
 class SODateCol(SOCol):
+    if default_datetime_implementation == DATETIME_IMPLEMENTATION:
+        validatorClass = DateTimeValidator # can be overriden in descendants
+    elif default_datetime_implementation == MXDATETIME_IMPLEMENTATION:
+        validatorClass = MXDateTimeValidator # can be overriden in descendants
+    dateFormat = '%Y-%m-%d'
 
-    # 3-03 @@: provide constraints; right now we let the database
-    # do any parsing and checking.  And DATE and TIME?
+    def __init__(self, **kw):
+        SOCol.__init__(self, **kw)
+        if default_datetime_implementation:
+            self.validator = validators.All.join(self.createValidator(), self.validator)
+
+    def createValidator(self):
+        """Create a validator for the column. Can be overriden in descendants."""
+        return self.validatorClass(name=self.name, format=self.dateFormat)
 
     def _mysqlType(self):
         return 'DATE'
@@ -671,6 +792,7 @@ class SODateCol(SOCol):
 
 class DateCol(Col):
     baseClass = SODateCol
+
 
 class SODecimalCol(SOCol):
 
@@ -712,6 +834,7 @@ def pushKey(kw, name, value):
 
 all = []
 for key, value in globals().items():
-    if isinstance(value, type) and issubclass(value, Col):
+    if isinstance(value, type) and issubclass(value, (Col, SOCol)):
         all.append(key)
-__all__ = all
+__all__.extend(all)
+del all

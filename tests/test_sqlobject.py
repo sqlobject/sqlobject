@@ -19,7 +19,11 @@ from SQLObjectTest import *
 from sqlobject import *
 from sqlobject.include import validators
 from sqlobject import classregistry
-from mx import DateTime
+if default_datetime_implementation == DATETIME_IMPLEMENTATION:
+    from datetime import datetime
+    now = datetime.now
+elif default_datetime_implementation == MXDATETIME_IMPLEMENTATION:
+    from mx.DateTime import now
 global curr_db
 curr_db = None
 from sqlobject import cache
@@ -704,12 +708,12 @@ class AutoTest(SQLObjectTest):
         john = AutoTest(firstName='john',
                         lastName='doe',
                         age=10,
-                        created=DateTime.now(),
+                        created=now(),
                         wannahavefun=False)
         jane = AutoTest(firstName='jane',
                         lastName='doe',
                         happy='N',
-                        created=DateTime.now(),
+                        created=now(),
                         wannahavefun=True)
         self.failIf(john.wannahavefun)
         self.failUnless(jane.wannahavefun)
@@ -1283,6 +1287,27 @@ class UnicodeTest(SQLObjectTest):
         for count, col1, col2 in rows:
             self.assertEqual(self.data[count].encode('utf-8'), col1)
             self.assertEqual(self.data[count].encode('latin1'), col2)
+
+########################################
+## Date/time columns
+########################################
+
+class DateTime1(SQLObject):
+    col1 = DateCol()
+    col2 = DateTimeCol()
+
+class DateTimeTest(SQLObjectTest):
+
+    classes = [DateTime1]
+
+    def testNow(self):
+        _now = now()
+        dt1 = DateTime1(col1=_now, col2=_now)
+
+        today_str = _now.strftime(SODateCol.dateFormat)
+        now_str = _now.strftime(SODateTimeCol.datetimeFormat)
+        self.assertEqual(str(dt1.col1), today_str)
+        self.assertEqual(str(dt1.col2), now_str)
 
 ########################################
 ## Run from command-line:
