@@ -28,12 +28,6 @@ def mysqlConnection():
         supportTransactions=False,
         supportExpressionIndex=False)
 
-def dbmConnection():
-    return 'dbm:///data', d(
-        supportAuto=False,
-        supportRestrictedEnum=False,
-        supportTransactions=False)
-
 def postgresConnection():
     return 'postgres:///test', d()
 

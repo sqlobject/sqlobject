@@ -15,6 +15,8 @@ Interface Changes
 
 * The long broken and unused ``DBMConnection`` has been removed.
 
+* Removed DBMConnection.
+
 Features
 --------
 
