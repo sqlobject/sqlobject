@@ -34,11 +34,6 @@ def SQLiteConnection(*args, **kw):
     _warn('SQLiteConnection is deprecated; use connectionForURI("sqlite://...") or "from sqlobject.sqlite import builder; SQLiteConnection = builder()"')
     return _sqlite.builder()(*args, **kw)
 
-import dbm as _dbm
-def DBMConnection(*args, **kw):
-    _warn('DBMConnection is deprecated; use connectionForURI("dbm://...") or "from sqlobject.dbm import builder; DBMConnection = builder()"')
-    return _dbm.builder()(*args, **kw)
-
 import sybase as _sybase
 def SybaseConnection(*args, **kw):
     _warn('SybaseConnection is deprecated; use connectionForURI("sybase://...") or "from sqlobject.sybase import builder; SybaseConnection = builder()"')
