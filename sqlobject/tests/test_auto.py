@@ -1,6 +1,11 @@
 from sqlobject import *
 from sqlobject.tests.dbtest import *
 from sqlobject import classregistry
+try:
+    from datetime import datetime
+    now = datetime.now
+except ImportError:
+    from mx.DateTime import now
     
 ########################################
 ## Dynamic column tests
@@ -115,29 +120,42 @@ class TestAuto:
     DROP TABLE auto_test
     """
 
-    _table = 'auto_test'
+    def setup_method(self, meth):
+        conn = getConnection()
+        dbName = conn.dbName
+        creator = getattr(self, dbName + 'Create', None)
+        if creator:
+            conn.query(creator)
+
+    def teardown_method(self, meth):
+        conn = getConnection()
+        dbName = conn.dbName
+        dropper = getattr(self, dbName + 'Drop', None)
+        if dropper:
+            conn.query(dropper)
 
     def test_classCreate(self):
         if not supports('fromDatabase'):
             return
         class AutoTest(SQLObject):
             _fromDatabase = True
-            _idName = 'auto_id'
-            _connection = connection()
+            _connection = getConnection()
+            class sqlmeta(sqlmeta):
+                idName = 'auto_id'
         john = AutoTest(firstName='john',
                         lastName='doe',
                         age=10,
                         created=now(),
                         wannahavefun=False,
-                        long_field='x'*1000)
+                        longField='x'*1000)
         jane = AutoTest(firstName='jane',
                         lastName='doe',
                         happy='N',
                         created=now(),
                         wannahavefun=True,
-                        long_field='x'*1000)
+                        longField='x'*1000)
         assert not john.wannahavefun
         assert jane.wannahavefun
-        assert john.long_field == 'x'*1000
-        assert jane.long_field == 'x'*1000
+        assert john.longField == 'x'*1000
+        assert jane.longField == 'x'*1000
         del classregistry.registry(AutoTest._registry).classes['AutoTest']
