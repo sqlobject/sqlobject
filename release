@@ -1,14 +1,14 @@
 #!/bin/sh
 
-echo 'Installing...'
-sudo python ./setup.py install
-echo 'installation done.'
+#echo 'Installing...'
+#sudo python ./setup.py install
+#echo 'installation done.'
 
-pushd tests > /dev/null
-echo 'Testing...'
-python ./test.py
-echo 'testing done.'
-popd
+#pushd tests > /dev/null
+#echo 'Testing...'
+#python ./test.py
+#echo 'testing done.'
+#popd
 
 echo 'Building...'
 python ./setup.py sdist

@@ -3,5 +3,5 @@
 pushd ../examples > /dev/null
 ./examplestripper.py
 popd > /dev/null
-buildhtml.py --no-toc-backlinks 
+buildhtml.py --report=2 --prune=.svn --prune=europython --silent --no-toc-backlinks
 
