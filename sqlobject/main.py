@@ -189,11 +189,18 @@ class _sqlmeta_attr(object):
 # something.  Turning it on gives earlier warning about things
 # that will be deprecated (having this off we won't flood people
 # with warnings right away).
-strict_warnings = False
+warnings_level = 1
+exception_level = None
+# Current levels:
+#  1) Actively deprecated in version after 0.6.1 (0.7?); removed after
+#  2) Deprecated after 1 (0.8?)
+#  3) Deprecated after 2 (0.9?)
 
-def deprecated(message):
-    if strict_warnings:
-        warnings.warn(message, DeprecationWarning, stacklevel=1)
+def deprecated(message, level=1):
+    if exception_level is not None and exception_level <= level:
+        raise NotImplementedError(message)
+    if warnings_level is not None and warnings_level <= level:
+        warnings.warn(message, DeprecationWarning, stacklevel=2)
 
 # SQLObject is the superclass for all SQLObject classes, of
 # course.  All the deeper magic is done in MetaSQLObject, and
@@ -294,7 +301,7 @@ class SQLObject(object):
 
         if (new_attrs.has_key('_table') and not is_base):
             deprecated("'_table' is deprecated; please set the 'table' "
-                       "attribute in sqlmeta instead")
+                       "attribute in sqlmeta instead", level=2)
             cls.sqlmeta.table = cls._table
             del cls._table
 
@@ -349,7 +356,7 @@ class SQLObject(object):
 
         if (new_attrs.has_key('_style') and not is_base):
             deprecated("'_style' is deprecated; please set the 'style' "
-                       "attribute in sqlmeta instead")
+                       "attribute in sqlmeta instead", level=2)
             cls.sqlmeta.style = cls._style
             del cls._style
 
@@ -372,7 +379,7 @@ class SQLObject(object):
 
         if (new_attrs.has_key('_idName') and not is_base):
             deprecated("'_idName' is deprecated; please set the 'idName' "
-                       "attribute in sqlmeta instead")
+                       "attribute in sqlmeta instead", level=2)
             cls.sqlmeta.idName = cls._idName
             del cls._idName
 
@@ -1450,6 +1457,6 @@ def getObject(obj, klass):
     else:
         return obj
 
-__all__ = ['NoDefault', 'SQLObject',
+__all__ = ['NoDefault', 'SQLObject', 'sqlmeta',
            'getID', 'getObject',
            'SQLObjectNotFound']
