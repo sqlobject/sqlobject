@@ -2,6 +2,7 @@ import sqlbuilder
 NoDefault = sqlbuilder.NoDefault
 import styles
 import classregistry
+from col import popKey
 
 __all__ = ['MultipleJoin', 'RelatedJoin']
 
@@ -18,7 +19,7 @@ class Join(object):
         kw['joinDef'] = self
         self.kw = kw
         if self.kw.has_key('joinMethodName'):
-            self._joinMethodName = self.kw.pop('joinMethodName')
+            self._joinMethodName = popKey(self.kw, 'joinMethodName')
         else:
             self._joinMethodName = None
 
