@@ -309,25 +309,9 @@ class SQLObject(object):
     # when necessary: (bad clever? maybe)
     _expired = False
 
-    def __new__(cls, id, connection=None, selectResults=None):
+    def get(cls, id, connection=None, selectResults=None):
 
         assert id is not None, 'None is not a possible id for %s' % cls.__name
-
-        # When id is CreateNewSQLObject, that means we are trying to
-        # create a new object.  This is a contract of sorts with the
-        # `new()` method.
-        if id is CreateNewSQLObject:
-            # Create an actual new object:
-            inst = object.__new__(cls)
-            inst._SO_creating = True
-            inst._SO_validatorState = SQLObjectState(inst)
-            # This is a dictionary of column-names to
-            # column-values for the new row:
-            inst._SO_createValues = {}
-            if connection is not None:
-                inst._connection = connection
-            assert selectResults is None
-            return inst
 
         # Some databases annoyingly return longs for INT
         if isinstance(id, long):
@@ -343,13 +327,15 @@ class SQLObject(object):
         val = cache.get(id, cls)
         if val is None:
             try:
-                val = object.__new__(cls)
+                val = cls(_SO_fetch_no_create=1)
                 val._SO_validatorState = SQLObjectState(val)
                 val._init(id, connection, selectResults)
                 cache.put(id, cls, val)
             finally:
                 cache.finishPut(cls)
         return val
+
+    get = classmethod(get)
 
     def addColumn(cls, columnDef, changeSchema=False):
         column = columnDef.withClass(cls)
@@ -755,22 +741,25 @@ class SQLObject(object):
         if id is None:
             return None
         elif self._SO_perConnection:
-            return joinClass(id, connection=self._connection)
+            return joinClass.get(id, connection=self._connection)
         else:
-            return joinClass(id)
+            return joinClass.get(id)
 
-    def new(cls, **kw):
-        # This is what creates a new row, plus the new Python
-        # object to go with it.
-
+    def __init__(self, **kw):
+        # The get() classmethod/constructor uses a magic keyword
+        # argument when it wants an empty object, fetched from the
+        # database.  So we have nothing more to do in that case:
+        if kw.has_key('_SO_fetch_no_create'):
+            return
+        
         # Pass the connection object along if we were given one.
         # Passing None for the ID tells __new__ we want to create
         # a new object.
         if kw.has_key('connection'):
-            inst = cls(CreateNewSQLObject, connection=kw['connection'])
+            self._connection = kw['connection']
+            self._SO_perConnection = True
             del kw['connection']
-        else:
-            inst = cls(CreateNewSQLObject)
+        self._SO_writeLock = threading.Lock()
 
         if kw.has_key('id'):
             id = kw['id']
@@ -778,9 +767,13 @@ class SQLObject(object):
         else:
             id = None
 
+        self._SO_creating = True
+        self._SO_createValues = {}
+        self._SO_validatorState = SQLObjectState(self)
+
         # First we do a little fix-up on the keywords we were
         # passed:
-        for column in inst._SO_columns:
+        for column in self._SO_columns:
 
             # If a foreign key is given, we get the ID of the object
             # and put that in instead
@@ -805,27 +798,25 @@ class SQLObject(object):
         forDB = {}
         others = {}
         for name, value in kw.items():
-            if name in inst._SO_plainSetters:
+            if name in self._SO_plainSetters:
                 forDB[name] = value
             else:
                 others[name] = value
 
         # We take all the straight-to-DB values and use set() to
         # set them:
-        inst.set(**forDB)
+        self.set(**forDB)
 
         # The rest go through setattr():
         for name, value in others.items():
             try:
-                getattr(cls, name)
+                getattr(self.__class__, name)
             except AttributeError:
-                raise TypeError, "%s.new() got an unexpected keyword argument %s" % (cls.__name__, name)
-            setattr(inst, name, value)
+                raise TypeError, "%s.new() got an unexpected keyword argument %s" % (self.__class__.__name__, name)
+            setattr(self, name, value)
 
         # Then we finalize the process:
-        inst._SO_finishCreate(id)
-        return inst
-    new = classmethod(new)
+        self._SO_finishCreate(id)
 
     def _SO_finishCreate(self, id=None):
         # Here's where an INSERT is finalized.
@@ -863,9 +854,9 @@ class SQLObject(object):
         if not result:
             raise SQLObjectNotFound, "The %s by alternateID %s=%s does not exist" % (cls.__name__, dbIDName, repr(value))
         if connection:
-            obj = cls(result[0], connection=connection)
+            obj = cls.get(result[0], connection=connection)
         else:
-            obj = cls(result[0])
+            obj = cls.get(result[0])
         if not obj._cacheValues:
             obj._SO_writeLock.acquire()
             try:

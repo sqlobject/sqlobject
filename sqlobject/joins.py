@@ -115,7 +115,7 @@ class SOMultipleJoin(SOJoin):
             conn = inst._connection
         else:
             conn = None
-        return self._applyOrderBy([self.otherClass(id, conn) for (id,) in ids if id is not None], self.otherClass)
+        return self._applyOrderBy([self.otherClass.get(id, conn) for (id,) in ids if id is not None], self.otherClass)
 
 class MultipleJoin(Join):
     baseClass = SOMultipleJoin
@@ -155,7 +155,7 @@ class SORelatedJoin(SOMultipleJoin):
             conn = inst._connection
         else:
             conn = None
-        return self._applyOrderBy([self.otherClass(id, conn) for (id,) in ids if id is not None], self.otherClass)
+        return self._applyOrderBy([self.otherClass.get(id, conn) for (id,) in ids if id is not None], self.otherClass)
 
     def remove(self, inst, other):
         inst._connection._SO_intermediateDelete(

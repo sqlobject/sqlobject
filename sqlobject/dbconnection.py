@@ -176,10 +176,10 @@ class DBAPI(DBConnection):
                     self.releaseConnection(conn)
                 break
             if select.ops.get('lazyColumns', 0):
-                obj = select.sourceClass(result[0], connection=withConnection)
+                obj = select.sourceClass.get(result[0], connection=withConnection)
                 yield obj
             else:
-                obj = select.sourceClass(result[0], selectResults=result[1:], connection=withConnection)
+                obj = select.sourceClass.get(result[0], selectResults=result[1:], connection=withConnection)
                 yield obj
 
     def iterSelect(self, select):
@@ -1358,7 +1358,7 @@ class DBMSelectResults(object):
                 if not self._maxNext:
                     raise StopIteration
                 self._maxNext -= 1
-                return self.select.sourceClass(int(idList[self.tableDict[self.select.sourceClass._table]]))
+                return self.select.sourceClass.get(int(idList[self.tableDict[self.select.sourceClass._table]]))
         raise StopIteration
 
     def field(self, table, field):
