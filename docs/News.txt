@@ -38,6 +38,15 @@ Bugs
 
 * SQLite booleans fixed.
 
+SQLObject 0.5.3
+===============
+
+Bugs
+----
+
+* Python 2.2 booleans fixed (SF: 903488)
+
+
 SQLObject 0.5.2
 ===============
 

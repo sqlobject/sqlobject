@@ -122,7 +122,11 @@ def BoolConverter(value, db):
         else:
             return '0'
 
-registerConverter(type(TRUE), BoolConverter)
+if type(TRUE) == InstanceType:
+    # Python 2.2 compatibility:
+    registerConverter(BOOL, BoolConverter)
+else:
+    registerConverter(type(TRUE), BoolConverter)
 
 def FloatConverter(value, db):
     return repr(value)
