@@ -2,10 +2,17 @@
 The framework for making database tests.
 """
 
+import sys
 import os
 import re
 import sqlobject
 from py.test import raises
+
+if sys.platform[:3] == "win":
+    def getcwd():
+        return os.getcwd().replace(':', '|')
+else:
+    getcwd = os.getcwd
 
 connectionShortcuts = {
     'mysql': 'mysql://test@localhost/test',
@@ -13,7 +20,7 @@ connectionShortcuts = {
     'postgres': 'postgres:///test',
     'postgresql': 'postgres:///test',
     'pygresql': 'pygresql://localhost/test',
-    'sqlite': 'sqlite:///%s/data/sqlite.data' % os.getcwd(),
+    'sqlite': 'sqlite:///%s/data/sqlite.data' % getcwd(),
     'sybase': 'sybase://test:test123@sybase/test?autoCommit=0',
     'firebird': 'firebird://sysdba:masterkey@localhost/var/lib/firebird/data/test.gdb',
     }
@@ -64,7 +71,7 @@ def setupClass(soClasses):
     installOrClear(soClasses)
     return soClasses
 
-installedDBFilename = os.path.join(os.getcwd(), 'dbs_data.tmp')
+installedDBFilename = os.path.join(getcwd(), 'dbs_data.tmp')
 
 installedDBTracker = sqlobject.connectionForURI(
     'sqlite:///' + installedDBFilename)
