@@ -158,4 +158,37 @@ class SelectResults(object):
             expression = sqlbuilder.func.SUM(attribute)
         return self.accumulate(expression)
 
+    def min(self, attribute):
+        """ Giving the min of a given select result attribute.
+            `attribute` can be a column name (like 'a_column')
+            or a dot-q attribute (like Table.q.aColumn)
+        """
+        if type(attribute) == type(''):
+            expression = 'MIN(%s)' % attribute
+        else:
+            expression = sqlbuilder.func.MIN(attribute)
+        return self.accumulate(expression)
+
+    def avg(self, attribute):
+        """ Giving the average of a given select result attribute.
+            `attribute` can be a column name (like 'a_column')
+            or a dot-q attribute (like Table.q.aColumn)
+        """
+        if type(attribute) == type(''):
+            expression = 'AVG(%s)' % attribute
+        else:
+            expression = sqlbuilder.func.AVG(attribute)
+        return self.accumulate(expression)
+
+    def max(self, attribute):
+        """ Giving the max of a given select result attribute.
+            `attribute` can be a column name (like 'a_column')
+            or a dot-q attribute (like Table.q.aColumn)
+        """
+        if type(attribute) == type(''):
+            expression = 'MAX(%s)' % attribute
+        else:
+            expression = sqlbuilder.func.MAX(attribute)
+        return self.accumulate(expression)
+
 __all__ = ['SelectResults']
