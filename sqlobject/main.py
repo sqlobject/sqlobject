@@ -159,7 +159,7 @@ class MetaSQLObject(type):
         # _columns where the attribute has been set to None in this
         # class.  If so, then we need to remove that column from
         # _columns.
-        for column in newClass._columns:
+        for column in newClass._columns[:]:
             if d.has_key(column.name) and d[column.name] is None:
                 newClass._columns.remove(column)
 
