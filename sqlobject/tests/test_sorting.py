@@ -3,7 +3,8 @@ from sqlobject.tests.dbtest import *
 
 class Names(SQLObject):
 
-    _table = 'names_table'
+    class sqlmeta(sqlmeta):
+        table = 'names_table'
 
     firstName = StringCol(length=30)
     lastName = StringCol(length=30)

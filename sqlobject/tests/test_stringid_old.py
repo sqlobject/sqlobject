@@ -1,14 +1,15 @@
 from sqlobject import *
 from sqlobject.tests.dbtest import *
 
+deprecated_module()
+
 ########################################
 ## String ID test
 ########################################
 
-class SOStringID(SQLObject):
+class OldSOStringID(SQLObject):
 
-    class sqlmeta(sqlmeta):
-        table = 'so_string_id'
+    _table = 'so_string_id'
     _idType = str
     val = StringCol(alternateID=True)
 
@@ -55,10 +56,10 @@ class SOStringID(SQLObject):
 
 
 def test_stringID():
-    setupClass(SOStringID)
-    t = SOStringID(id='hey', val='whatever')
-    t2 = SOStringID.byVal('whatever')
+    setupClass(OldSOStringID)
+    t = OldSOStringID(id='hey', val='whatever')
+    t2 = OldSOStringID.byVal('whatever')
     assert t == t2
-    t3 = SOStringID(id='you', val='nowhere')
-    t4 = SOStringID.get('you')
+    t3 = OldSOStringID(id='you', val='nowhere')
+    t4 = OldSOStringID.get('you')
     assert t3 == t4

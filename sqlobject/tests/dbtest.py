@@ -229,5 +229,27 @@ def supports(feature):
 # To avoid name clashes:
 _inserts = inserts
 
+def deprecated_module():
+    sqlobject.main.warnings_level = None
+    sqlobject.main.exception_level = None
+    
+def setup_module(mod):
+    # modules with '_old' test backward compatible methods, so they
+    # don't get warnings or errors.
+    mod_name = str(mod.__name__)
+    if mod_name.endswith('/py'):
+        mod_name = mod_name[:-3]
+    if mod_name.endswith('_old'):
+        sqlobject.main.warnings_level = None
+        sqlobject.main.exception_level = None
+    else:
+        sqlobject.main.warnings_level = None
+        sqlobject.main.exception_level = 0
+
+def teardown_module(mod=None):
+    sqlobject.main.warnings_level = None
+    sqlobject.main.exception_level = 0
+
 __all__ = ['getConnection', 'setupClass', 'Dummy', 'raises',
-           'd', 'inserts', 'supports']
+           'd', 'inserts', 'supports', 'deprecated_module',
+           'setup_module', 'teardown_module']

@@ -2,6 +2,8 @@ from sqlobject import *
 from sqlobject.tests.dbtest import *
 from sqlobject import styles
 
+deprecated_module()
+
 class AnotherStyle(styles.MixedCaseUnderscoreStyle):
     def pythonAttrToDBColumn(self, attr):
         if attr.lower().endswith('id'):
@@ -9,21 +11,21 @@ class AnotherStyle(styles.MixedCaseUnderscoreStyle):
         else:
             return styles.MixedCaseUnderscoreStyle.pythonAttrToDBColumn(self, attr)
 
-class SOStyleTest1(SQLObject):
+class OldSOStyleTest1(SQLObject):
     a = StringCol()
-    st2 = ForeignKey('SOStyleTest2')
-    class sqlmeta(sqlmeta):
-        style = AnotherStyle()
+    st2 = ForeignKey('OldSOStyleTest2')
+    _style = AnotherStyle()
 
-class SOStyleTest2(SQLObject):
+class OldSOStyleTest2(SQLObject):
     b = StringCol()
-    class sqlmeta(sqlmeta):
-        style = AnotherStyle()
+    _style = AnotherStyle()
 
 def test_style():
-    setupClass([SOStyleTest2, SOStyleTest1])
-    st1 = SOStyleTest1(a='something', st2=None)
-    st2 = SOStyleTest2(b='whatever')
+    setupClass([OldSOStyleTest2, OldSOStyleTest1])
+    st1 = OldSOStyleTest1(a='something', st2=None)
+    st2 = OldSOStyleTest2(b='whatever')
     st1.st2 = st2
     assert st1._SO_columnDict['st2ID'].dbName == 'idst2'
     assert st1.st2 == st2
+
+teardown_module()

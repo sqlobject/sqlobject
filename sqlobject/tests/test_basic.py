@@ -5,9 +5,7 @@ class TestSO1(SQLObject):
 
     name = StringCol(length=50, dbName='name_col')
     _cacheValues = False
-    _columns = [
-        StringCol('passwd', length=10),
-        ]
+    passwd = StringCol(length=10)
 
     def _set_passwd(self, passwd):
         self._SO_set_passwd(passwd.encode('rot13'))
