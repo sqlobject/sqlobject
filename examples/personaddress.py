@@ -56,6 +56,11 @@ print list(peeps)
 #        SELECT person.id FROM person WHERE person.first_name = 'John';
 ## end snippet
 
+## Snippet "person-select-by"
+peeps = Person.selectBy(firstName="John", lastName="Doe")
+## end snippet
+list(peeps)
+
 ## Snippet "person-select2"
 peeps = Person.select(
             AND(Address.q.personID == Person.q.id,
