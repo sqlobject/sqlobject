@@ -13,3 +13,4 @@ Contributions have been made by:
 * James Ralston <jralston at hotmail.com>
 * Sidnei da Silva <sidnei at awkly.org>
 * Brad Bollenbach <brad at bbnet.ca>
+* Oleg Broytmann <phd at phd.pp.ru>
