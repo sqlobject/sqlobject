@@ -1,0 +1,19 @@
+Source: sqlobject
+Section: python
+Priority: optional
+Maintainer: Philippe Normand (phil) <sweafty@free.fr>
+Build-Depends: debhelper (>= 4.0.0), python-dev (>= 2.3)
+Standards-Version: 3.6.1
+
+Package: python-sqlobject
+#Section: python
+Architecture: any
+Depends: ${python:Depends}
+Recommends: python-mysqldb (>= 0.9.2-0.4), python-sqlite (>= 0.4.3-2), python-psycopg (>= 1.1.13-1), python-kinterbasdb (>= 3.0.1-3.1), python-maxdb (>= 7.5.00.12-1)
+Description: An object-relational mapper for Python
+ It allows you to translate RDBMS table rows into Python objects,
+ and manipulate those objects to transparently manipulate the 
+ database.
+ .
+ Homepage: http://sqlobject.org
+
