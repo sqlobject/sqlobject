@@ -65,12 +65,12 @@ class MetaSQLObject(type):
         implicitJoins = []
         for attr, value in d.items():
             if isinstance(value, col.Col):
-                value.setName(attr)
+                value.name = attr
                 implicitColumns.append(value)
                 del d[attr]
                 continue
             if isinstance(value, joins.Join):
-                value.setName(attr)
+                value.joinMethodName = attr
                 implicitJoins.append(value)
                 del d[attr]
                 continue
@@ -155,7 +155,15 @@ class MetaSQLObject(type):
         # more.
         newClass.q = sqlbuilder.SQLObjectTable(newClass)
 
-        for column in newClass._columns[:]:
+        # We have to check if there are columns in the inherited
+        # _columns where the attribute has been set to None in this
+        # class.  If so, then we need to remove that column from
+        # _columns.
+        for column in newClass._columns:
+            if d.has_key(column.name) and d[column.name] is None:
+                newClass._columns.remove(column)
+
+        for column in newClass._columns:
             newClass.addColumn(column)
         if newClass._fromDatabase:
             newClass.addColumnsFromDatabase()
@@ -318,13 +326,16 @@ class SQLObject(object):
 
     _lazyUpdate = False
 
+    # This function is used to coerce IDs into the proper format,
+    # so you should replace it with str, or another function, if you
+    # aren't using integer IDs
+    _idType = int
+
     def get(cls, id, connection=None, selectResults=None):
 
         assert id is not None, 'None is not a possible id for %s' % cls.__name
-
-        # Some databases annoyingly return longs for INT
-        if isinstance(id, long):
-            id = int(id)
+        
+        id = cls._idType(id)
 
         if connection is None:
             cache = cls._connection.cache
@@ -417,7 +428,7 @@ class SQLObject(object):
             if cls._cacheValues:
                 # self._SO_class_className is a reference
                 # to the class in question.
-                getter = eval('lambda self: self._SO_foreignKey(self.%s, self._SO_class_%s)' % (instanceName(name), column.foreignKey))
+                getter = eval('lambda self: self._SO_foreignKey(self._SO_loadValue(%r), self._SO_class_%s)' % (instanceName(name), column.foreignKey))
             else:
                 # Same non-caching version as above.
                 getter = eval('lambda self: self._SO_foreignKey(self._SO_getValue(%s), self._SO_class_%s)' % (repr(name), column.foreignKey))
@@ -810,10 +821,14 @@ class SQLObject(object):
         self._SO_writeLock = threading.Lock()
 
         if kw.has_key('id'):
-            id = kw['id']
+            id = self._idType(kw['id'])
             del kw['id']
         else:
             id = None
+
+        self._create(id, **kw)
+
+    def _create(self, id, **kw):
 
         self._SO_creating = True
         self._SO_createValues = {}
@@ -861,7 +876,10 @@ class SQLObject(object):
                 getattr(self.__class__, name)
             except AttributeError:
                 raise TypeError, "%s.new() got an unexpected keyword argument %s" % (self.__class__.__name__, name)
-            setattr(self, name, value)
+            try:
+                setattr(self, name, value)
+            except AttributeError, e:
+                raise AttributeError, '%s (with attribute %r)' % (e, name)
 
         # Then we finalize the process:
         self._SO_finishCreate(id)
@@ -887,7 +905,7 @@ class SQLObject(object):
         # Do the insert -- most of the SQL in this case is left
         # up to DBConnection, since getting a new ID is
         # non-standard.
-        id = self._connection.queryInsertID(self._table, self._idName,
+        id = self._connection.queryInsertID(self,
                                             id, names, values)
         cache = self._connection.cache
         cache.created(id, self.__class__, self)
@@ -1042,6 +1060,14 @@ class SQLObject(object):
         return cls._connection.sqlrepr(value)
 
     sqlrepr = classmethod(sqlrepr)
+
+    def coerceID(cls, value):
+        if isinstance(value, cls):
+            return value.id
+        else:
+            return self._idType(value)
+
+    coerceID = classmethod(coerceID)
 
     def _reprItems(self):
         items = []
@@ -1246,7 +1272,10 @@ def getID(obj):
     elif type(obj) is type(1L):
         return int(obj)
     elif type(obj) is type(""):
-        return int(obj)
+        try:
+            return int(obj)
+        except ValueError:
+            return obj
     elif obj is None:
         return None
 
