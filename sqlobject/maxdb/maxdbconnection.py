@@ -1,5 +1,6 @@
 """
-Contributed by Edigram SAS,Paris 
+Contributed by Edigram SAS,Paris  France
+Tel:01 44 77 94 00
 Ahmed MOHAMED ALI <ahmedmoali@yahoo.com> 27 April 2004
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
