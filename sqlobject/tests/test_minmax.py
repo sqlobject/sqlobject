@@ -1,4 +1,5 @@
 from sqlobject import *
+from sqlobject.sresults import *
 from sqlobject.tests.dbtest import *
 
 # Test MIN, AVG, MAX, SUM
@@ -44,3 +45,15 @@ def test_float():
     assert floatcmp(FloatAccumulator.select().avg(FloatAccumulator.q.value), 2.5) == 0
     assert floatcmp(FloatAccumulator.select().max(FloatAccumulator.q.value), 3.8) == 0
     assert floatcmp(FloatAccumulator.select().sum(FloatAccumulator.q.value), 7.4) == 0
+
+
+def test_many():
+    setupClass(IntAccumulator)
+    IntAccumulator(value=1)
+    IntAccumulator(value=2)
+    IntAccumulator(value=3)
+
+    select = IntAccumulator.select()
+    attribute = IntAccumulator.q.value
+    expression = accumulateMany(("MIN", attribute), ("AVG", attribute), ("MAX", attribute))
+    assert select.accumulate(*expression) == (1, 2, 3)

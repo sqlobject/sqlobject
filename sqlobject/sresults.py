@@ -127,14 +127,14 @@ class SelectResults(object):
         conn = self.ops.get('connection', self.sourceClass._connection)
         return conn.iterSelect(self)
 
-    def accumulate(self, expression):
-        """ Use an accumulate expression to select result
+    def accumulate(self, *expressions):
+        """ Use accumulate expression(s) to select result
             using another SQL select through current
             connection.
             Return the accumulate result
         """
         conn = self.ops.get('connection', self.sourceClass._connection)
-        return conn.accumulateSelect(self, expression)
+        return conn.accumulateSelect(self, *expressions)
 
     def count(self):
         """ Counting elements of current select results """
@@ -147,48 +147,41 @@ class SelectResults(object):
             count = min(self.ops['end'] - self.ops.get('start', 0), count)
         return count
 
-    def sum(self, attribute):
-        """ Making the sum of a given select result attribute.
+    def _accumulateOne(self, func_name, attribute):
+        """ Making the sum/min/max/avg of a given select result attribute.
             `attribute` can be a column name (like 'a_column')
             or a dot-q attribute (like Table.q.aColumn)
         """
-        if type(attribute) == type(''):
-            expression = 'SUM(%s)' % attribute
-        else:
-            expression = sqlbuilder.func.SUM(attribute)
-        return self.accumulate(expression)
+        return self.accumulate(*accumulateMany((func_name, attribute)))
+
+    def sum(self, attribute):
+        return self._accumulateOne("SUM", attribute)
 
     def min(self, attribute):
-        """ Giving the min of a given select result attribute.
-            `attribute` can be a column name (like 'a_column')
-            or a dot-q attribute (like Table.q.aColumn)
-        """
-        if type(attribute) == type(''):
-            expression = 'MIN(%s)' % attribute
-        else:
-            expression = sqlbuilder.func.MIN(attribute)
-        return self.accumulate(expression)
+        return self._accumulateOne("MIN", attribute)
 
     def avg(self, attribute):
-        """ Giving the average of a given select result attribute.
-            `attribute` can be a column name (like 'a_column')
-            or a dot-q attribute (like Table.q.aColumn)
-        """
-        if type(attribute) == type(''):
-            expression = 'AVG(%s)' % attribute
-        else:
-            expression = sqlbuilder.func.AVG(attribute)
-        return self.accumulate(expression)
+        return self._accumulateOne("AVG", attribute)
 
     def max(self, attribute):
-        """ Giving the max of a given select result attribute.
-            `attribute` can be a column name (like 'a_column')
-            or a dot-q attribute (like Table.q.aColumn)
-        """
-        if type(attribute) == type(''):
-            expression = 'MAX(%s)' % attribute
-        else:
-            expression = sqlbuilder.func.MAX(attribute)
-        return self.accumulate(expression)
+        return self._accumulateOne("MAX", attribute)
 
-__all__ = ['SelectResults']
+StringType = type('')
+
+def accumulateMany(*attributes):
+    """ Making the expressions for sum/min/max/avg
+        of a given select result attributes.
+        `attributes` must be a list/tuple of pairs (func_name, attribute);
+        `attribute` can be a column name (like 'a_column')
+        or a dot-q attribute (like Table.q.aColumn)
+    """
+    expressions = []
+    for func_name, attribute in attributes:
+        if type(attribute) == StringType:
+            expression = '%s(%s)' % (func_name, attribute)
+        else:
+            expression = getattr(sqlbuilder.func, func_name)(attribute)
+        expressions.append(expression)
+    return expressions
+
+__all__ = ['SelectResults', 'accumulateMany']

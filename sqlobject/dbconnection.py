@@ -264,14 +264,16 @@ class DBAPI(DBConnection):
         return select.IterationClass(self, self.getConnection(),
                          select, keepConnection=False)
 
-    def accumulateSelect(self, select, expression):
-        """ Apply an accumulate function (SUM, COUNT, MIN, AVG, MAX, etc...)
+    def accumulateSelect(self, select, *expressions):
+        """ Apply an accumulate function(s) (SUM, COUNT, MIN, AVG, MAX, etc...)
             to the select object.
         """
-        q = "SELECT %s" % expression
+        q = "SELECT %s" % ", ".join([str(expression) for expression in expressions])
         q += " FROM %s WHERE" % ", ".join(select.tables)
         q = self._addWhereClause(select, q, limit=0, order=0)
-        val = self.queryOne(q)[0]
+        val = self.queryOne(q)
+        if len(expressions) == 1:
+            val = val[0]
         return val
 
     def queryForSelect(self, select):
