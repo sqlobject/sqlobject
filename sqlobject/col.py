@@ -386,7 +386,7 @@ class BoolValidator(validators.Validator):
             return sqlbuilder.FALSE
 
     def toPython(self, value, state):
-        if not value or not int(value):
+        if not value:
             return sqlbuilder.FALSE
         else:
             return sqlbuilder.TRUE
