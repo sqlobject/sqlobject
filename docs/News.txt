@@ -41,11 +41,41 @@ Bugs
 SQLObject 0.5.2
 ===============
 
+We're now using Subversion instead of CVS.  The repository is located
+at svn://colorstudy.com/trunk/SQLObject
+
+Interface Changes
+-----------------
+
+* If you commit or rollback a transaction, you must call
+  ``trans.begin()`` to restart the transaction.  Any database access on
+  the transaction inbetween commit/rollback and being will result in an
+  AssertionError.  (It's also acceptable to create a new transaction
+  object instead of reusing the old one, but objects in that
+  transaction will be invalid)
+
 Bugs
 ----
 
+* Using .select() would hold on to a connection, and also release it
+  back to the connection pool.  Very un-threadsafe and all-around
+  bad.
 * Fixed bug which did not release connections after database (query)
   error.
+* When setting columns that use validators, the Pythonic
+  (vs. database) representation wasn't being stored in the column.
+  Now we roundtrip (through toPython and fromPython) the values when
+  they get set.
+* PostgreConnection is back to using sequences for ID generation,
+  instead of oids.  Long explanation -- oids can be unindexed in some
+  versions of Postgres, or not even exist.
+* When turning caching off and using transactions, got an attribute
+  error on rollback.
+* Rollback or commit didn't find objects that were expired from the
+  cache but still in memory.
+* Rollback or commit didn't free the connection object, so as you
+  created more transactions it stole connections and didn't put them
+  back in the pool.
 
 SQLObject 0.5.1
 ===============
