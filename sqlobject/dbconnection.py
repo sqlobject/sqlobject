@@ -448,7 +448,7 @@ class Iteration(object):
             return obj
 
     def _cleanup(self):
-        if self.query is None:
+        if getattr(self, 'query', None) is None:
             # already cleaned up
             return
         self.query = None
