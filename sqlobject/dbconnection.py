@@ -194,29 +194,9 @@ class DBAPI(DBConnection):
     def queryInsertID(self, table, idName, id, names, values):
         return self._runWithConnection(self._queryInsertID, table, idName, id, names, values)
 
-    def _iterSelect(self, conn, select, withConnection=None,
-                    keepConnection=False):
-        cursor = conn.cursor()
-        query = self.queryForSelect(select)
-        if self.debug:
-            self.printDebug(conn, query, 'Select')
-        cursor.execute(query)
-        while 1:
-            result = cursor.fetchone()
-            if result is None:
-                if not keepConnection:
-                    self.releaseConnection(conn)
-                break
-            if select.ops.get('lazyColumns', 0):
-                obj = select.sourceClass.get(result[0], connection=withConnection)
-                yield obj
-            else:
-                obj = select.sourceClass.get(result[0], selectResults=result[1:], connection=withConnection)
-                yield obj
-
     def iterSelect(self, select):
-        return self._runWithConnection(self._iterSelect, select, self,
-                                       False)
+        return Iteration(self, self.getConnection(),
+                         select, keepConnection=False)
 
     def countSelect(self, select):
         q = "SELECT COUNT(*) FROM %s WHERE" % \
@@ -399,6 +379,36 @@ class DBAPI(DBConnection):
     def sqlrepr(self, v):
         return sqlrepr(v, self.dbName)
 
+class Iteration(object):
+
+    def __init__(self, dbconn, rawconn, select, keepConnection=False):
+        self.dbconn = dbconn
+        self.rawconn = rawconn
+        self.select = select
+        self.keepConnection = keepConnection
+        self.cursor = rawconn.cursor()
+        self.query = self.dbconn.queryForSelect(select)
+        if dbconn.debug:
+            dbconn.printDebug(rawconn, self.query, 'Select')
+        self.cursor.execute(self.query)
+        
+    def next(self):
+        result = self.cursor.fetchone()
+        if result is None:
+            if not self.keepConnection:
+                self.dbconn.releaseConnection(self.rawconn)
+            raise StopIteration
+        if self.select.ops.get('lazyColumns', 0):
+            obj = self.select.sourceClass.get(result[0], connection=self.dbconn)
+            return obj
+        else:
+            obj = self.select.sourceClass.get(result[0], selectResults=result[1:], connection=self.dbconn)
+            return obj
+
+    def __del__(self):
+        if not self.keepConnection:
+            self.dbconn.releaseConnection(self.rawconn)
+
 
 class Transaction(object):
 
@@ -425,9 +435,8 @@ class Transaction(object):
         # @@: Bad stuff here, because the connection will be used
         # until the iteration is over, or at least a cursor from
         # the connection, which not all database drivers support.
-        return self._dbConnection._iterSelect(
-            self._connection, select, withConnection=self,
-            keepConnection=True)
+        return Iteration(self, self._connection,
+                         select, keepConnection=True)
 
     def commit(self):
         if self._dbConnection.debug:
