@@ -491,6 +491,9 @@ class SODateTimeCol(SOCol):
     def _sybaseType(self):
         return 'DATETIME'
 
+    def _sqliteType(self):
+        return 'TIMESTAMP'
+
 class DateTimeCol(Col):
     baseClass = SODateTimeCol
 
