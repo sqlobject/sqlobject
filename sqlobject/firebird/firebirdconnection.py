@@ -1,6 +1,7 @@
 from sqlobject.dbconnection import DBAPI
 kinterbasdb = None
 import re
+import os
 
 class FirebirdConnection(DBAPI):
 
@@ -33,6 +34,7 @@ class FirebirdConnection(DBAPI):
             password = 'masterkey'
         if not auth:
             auth='sysdba'
+        path = path.replace('/', os.path.sep)
         return cls(host, db=path, user=auth, passwd=password, **args)
     connectionFromURI = classmethod(connectionFromURI)
     
