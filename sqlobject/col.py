@@ -450,7 +450,7 @@ class SOForeignKey(SOKeyCol):
         tName = other._table
         idName = other._idName
         if self.cascade is not None:
-            if self.cascade.lower() == 'null':
+            if self.cascade == 'null':
                 action = 'ON DELETE SET NULL'
             elif self.cascade:
                 action = 'ON DELETE CASCADE'
@@ -458,7 +458,7 @@ class SOForeignKey(SOKeyCol):
                 action = 'ON DELETE RESTRICT'
         else:
             action = ''
-        constraint = ('CONSTRAINT %(tName)s_exists '
+        constraint = ('CONSTRAINT %(colName)s_exists '
                       'FOREIGN KEY (%(colName)s) '
                       'REFERENCES %(tName)s (%(idName)s) '
                       '%(action)s' %
