@@ -639,7 +639,7 @@ class AutoTest(SQLObjectTest):
 
     postgresCreate = """
     CREATE TABLE auto_test (
-      auto_id SERIAL,
+      auto_id SERIAL PRIMARY KEY,
       first_name VARCHAR(100),
       last_name VARCHAR(200) NOT NULL,
       age INT DEFAULT 0,

@@ -12,8 +12,7 @@ class PostgresConnection(DBAPI):
     schemes = [dbName, 'postgresql', 'psycopg']
 
     def __init__(self, dsn=None, host=None, db=None,
-                 user=None, passwd=None, autoCommit=1,
-                 usePygresql=False,
+                 user=None, passwd=None, usePygresql=False,
                  **kw):
         global psycopg, pgdb
         if usePygresql:
@@ -25,7 +24,6 @@ class PostgresConnection(DBAPI):
                 import psycopg
             self.pgmodule = psycopg
 
-        self.autoCommit = autoCommit
         if dsn is None:
             dsn = []
             if db:
@@ -116,7 +114,7 @@ class PostgresConnection(DBAPI):
         keyQuery = """
         SELECT pg_catalog.pg_get_constraintdef(oid) as condef
         FROM pg_catalog.pg_constraint r
-        WHERE r.conrelid = '%s'::regclass AND r.contype = 'f'"""
+        WHERE r.conrelid = %s::regclass AND r.contype = 'f'"""
 
         colQuery = """
         SELECT a.attname,
@@ -124,22 +122,48 @@ class PostgresConnection(DBAPI):
         (SELECT substring(d.adsrc for 128) FROM pg_catalog.pg_attrdef d
         WHERE d.adrelid=a.attrelid AND d.adnum = a.attnum)
         FROM pg_catalog.pg_attribute a
-        WHERE a.attrelid ='%s'::regclass
+        WHERE a.attrelid =%s::regclass
         AND a.attnum > 0 AND NOT a.attisdropped
         ORDER BY a.attnum"""
 
-        keyData = self.queryAll(keyQuery % tableName)
-        keyRE = re.compile("\((.+)\) REFERENCES (.+)\(")
+        primaryKeyQuery = """
+        SELECT pg_index.indisprimary,
+            pg_catalog.pg_get_indexdef(pg_index.indexrelid)
+        FROM pg_catalog.pg_class c, pg_catalog.pg_class c2,
+            pg_catalog.pg_index AS pg_index
+        WHERE c.relname = %s
+            AND c.oid = pg_index.indrelid
+            AND pg_index.indexrelid = c2.oid
+            AND pg_index.indisprimary
+        """
+
+        keyData = self.queryAll(keyQuery % self.sqlrepr(tableName))
+        keyRE = re.compile(r"\((.+)\) REFERENCES (.+)\(")
         keymap = {}
+        
         for (condef,) in keyData:
             match = keyRE.search(condef)
             if match:
                 field, reftable = match.groups()
                 keymap[field] = reftable.capitalize()
-        colData = self.queryAll(colQuery % tableName)
+
+        primaryData = self.queryAll(primaryKeyQuery % self.sqlrepr(tableName))
+        primaryRE = re.compile(r'CREATE .*? USING .* \((.+?)\)')
+        primaryKey = None
+        for isPrimary, indexDef in primaryData:
+            match = primaryRE.search(indexDef)
+            assert match, "Unparseable contraint definition: %r" % indexDef
+            assert primaryKey is None, "Already found primary key (%r), then found: %r" % (primaryKey, indexDef)
+            primaryKey = match.group(1)
+        assert primaryKey, "No primary key found in table %r" % tableName
+        if primaryKey.startswith('"'):
+            assert primaryKey.endswith('"')
+            primaryKey = primaryKey[1:-1]
+
+        colData = self.queryAll(colQuery % self.sqlrepr(tableName))
         results = []
         for field, t, notnull, defaultstr in colData:
-            if field == 'id':
+            if field == primaryKey:
                 continue
             colClass, kw = self.guessClass(t)
             kw['name'] = soClass._style.dbColumnToPythonAttr(field)
