@@ -11,7 +11,7 @@ from include import validators
 
 NoDefault = sqlbuilder.NoDefault
 True, False = 1==1, 0==1
-    
+
 
 ########################################
 ## Columns
@@ -208,7 +208,7 @@ class SOCol(object):
 
     def _firebirdType(self):
         return self._sqlType()
-        
+
     def _maxdbType(self):
         return self._sqlType()
 
@@ -328,7 +328,7 @@ class SOStringCol(SOCol):
             return 'BLOB SUB_TYPE TEXT'
         else:
             return self._sqlType()
-            
+
     def _maxdbType(self):
         if not self.length:
             return 'LONG ASCII'
@@ -344,9 +344,13 @@ class UnicodeStringValidator(validators.Validator):
         self.db_encoding = db_encoding
 
     def fromPython(self, value, state):
+        if value is None:
+            return None
         return value.encode(self.db_encoding)
 
     def toPython(self, value, state):
+        if value is None:
+            return None
         return unicode(value, self.db_encoding)
 
 class SOUnicodeCol(SOStringCol):
@@ -407,7 +411,7 @@ class SOBoolCol(SOCol):
 
     def _firebirdType(self):
         return 'INT'
-        
+
     def _maxdbType(self):
         return "BOOLEAN"
 
@@ -452,7 +456,7 @@ class SOKeyCol(SOCol):
 
     def _firebirdType(self):
         return 'INT'
-        
+
     def _maxdbType(self):
         return 'INT'
 
@@ -510,7 +514,7 @@ class SOForeignKey(SOKeyCol):
                       'idName':idName})
         sql = ' '.join([sql, reference])
         return sql
-        
+
     def maxdbCreateSQL(self):
         from main import findClass
         other = findClass(self.foreignKey)
@@ -562,7 +566,7 @@ class SOEnumCol(SOCol):
         checkConstraint = "CHECK (%s in (%s))" % (self.dbName, enumValues)
         #NB. Return a tuple, not a string here
         return "VARCHAR(%i)" % (length), checkConstraint
- 
+
     def _maxdbType(self):
         raise "Enum type is not supported"
 
@@ -588,7 +592,7 @@ class SODateTimeCol(SOCol):
 
     def _firebirdType(self):
         return 'TIMESTAMP'
-        
+
     def _maxdbType(self):
         return 'TIMESTAMP'
 
@@ -611,7 +615,7 @@ class SODateCol(SOCol):
 
     def _firebirdType(self):
         return 'DATE'
-        
+
     def _maxdbType(self):
         return  'DATE'
 
