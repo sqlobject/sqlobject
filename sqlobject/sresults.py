@@ -11,7 +11,7 @@ class SelectResults(object):
             clause = sqlbuilder.SQLTrueClause
         self.clause = clause
         tablesDict = sqlbuilder.tablesUsedDict(self.clause)
-        tablesDict[sourceClass._table] = 1
+        tablesDict[sourceClass.sqlmeta.table] = 1
         if clauseTables:
             for table in clauseTables:
                 tablesDict[table] = 1

@@ -180,10 +180,15 @@ class sqlmeta(object):
 
 class _sqlmeta_attr(object):
 
-    def __init__(self, name):
+    def __init__(self, name, deprecation_level):
         self.name = name
+        self.deprecation_level = deprecation_level
 
     def __get__(self, obj, type=None):
+        if self.deprecation_level is not None:
+            deprecated(
+                'Use of this attribute should be replaced with '
+                '.sqlmeta.%s' % self.name, level=self.deprecation_level)
         return getattr((type or obj).sqlmeta, self.name)
 
 
@@ -479,9 +484,9 @@ class SQLObject(object):
 
         classregistry.registry(cls._registry).addClass(cls)
 
-    _style = _sqlmeta_attr('style')
-    _table = _sqlmeta_attr('table')
-    _idName = _sqlmeta_attr('idName')
+    _style = _sqlmeta_attr('style', 2)
+    _table = _sqlmeta_attr('table', 2)
+    _idName = _sqlmeta_attr('idName', 2)
 
     def get(cls, id, connection=None, selectResults=None):
 
@@ -624,7 +629,7 @@ class SQLObject(object):
 
         if changeSchema:
             conn = connection or cls._connection
-            conn.addColumn(cls._table, column)
+            conn.addColumn(cls.sqlmeta.table, column)
 
         if cls._SO_finishedClassCreation:
             makeProperties(cls)
@@ -633,7 +638,7 @@ class SQLObject(object):
 
     def addColumnsFromDatabase(cls, connection=None):
         conn = connection or cls._connection
-        for columnDef in conn.columnsFromSchema(cls._table, cls):
+        for columnDef in conn.columnsFromSchema(cls.sqlmeta.table, cls):
             alreadyExists = False
             for c in cls._columns:
                 if c.name == columnDef.name:
@@ -674,7 +679,7 @@ class SQLObject(object):
 
         if changeSchema:
             conn = connection or cls._connection
-            conn.delColumn(cls._table, column)
+            conn.delColumn(cls.sqlmeta.table, column)
 
         if cls._SO_finishedClassCreation:
             unmakeProperties(cls)
@@ -1090,7 +1095,7 @@ class SQLObject(object):
     def _SO_fetchAlternateID(cls, dbIDName, value, connection=None):
         result = (connection or cls._connection)._SO_selectOneAlt(
             cls,
-            [cls._idName] +
+            [cls.sqlmeta.idName] +
             [col.dbName for col in cls._SO_columns],
             dbIDName,
             value)
@@ -1139,9 +1144,9 @@ class SQLObject(object):
     def dropTable(cls, ifExists=False, dropJoinTables=True, cascade=False,
                   connection=None):
         conn = connection or cls._connection
-        if ifExists and not conn.tableExists(cls._table):
+        if ifExists and not conn.tableExists(cls.sqlmeta.table):
             return
-        conn.dropTable(cls._table, cascade)
+        conn.dropTable(cls.sqlmeta.table, cascade)
         if dropJoinTables:
             cls.dropJoinTables(ifExists=ifExists, connection=conn)
     dropTable = classmethod(dropTable)
@@ -1150,7 +1155,7 @@ class SQLObject(object):
                     createIndexes=True,
                     connection=None):
         conn = connection or cls._connection
-        if ifNotExists and conn.tableExists(cls._table):
+        if ifNotExists and conn.tableExists(cls.sqlmeta.table):
             return
         conn.createTable(cls)
         if createJoinTables:
@@ -1227,7 +1232,7 @@ class SQLObject(object):
         # 3-03 @@: Maybe this should check the cache... but it's
         # kind of crude anyway, so...
         conn = connection or cls._connection
-        conn.clearTable(cls._table)
+        conn.clearTable(cls.sqlmeta.table)
     clearTable = classmethod(clearTable)
 
     def destroySelf(self):

@@ -115,8 +115,8 @@ def getStyle(soClass, dbConnection=None):
     if dbConnection is None:
         if hasattr(soClass, '_connection'):
             dbConnection = soClass._connection
-    if hasattr(soClass, '_style') and soClass._style:
-        return soClass._style
+    if hasattr(soClass.sqlmeta, 'style') and soClass.sqlmeta.style:
+        return soClass.sqlmeta.style
     elif dbConnection and dbConnection.style:
         return dbConnection.style
     else:

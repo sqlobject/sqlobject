@@ -41,8 +41,8 @@ class MySQLConnection(DBAPI):
                     raise
 
     def _queryInsertID(self, conn, soInstance, id, names, values):
-        table = soInstance._table
-        idName = soInstance._idName
+        table = soInstance.sqlmeta.table
+        idName = soInstance.sqlmeta.idName
         c = conn.cursor()
         if id is not None:
             names = [idName] + names
@@ -71,7 +71,7 @@ class MySQLConnection(DBAPI):
         return index.mysqlCreateIndexSQL(soClass)
 
     def createIDColumn(self, soClass):
-        return '%s INT PRIMARY KEY AUTO_INCREMENT' % soClass._idName
+        return '%s INT PRIMARY KEY AUTO_INCREMENT' % soClass.sqlmeta.idName
 
     def joinSQLType(self, join):
         return 'INT NOT NULL'
@@ -100,7 +100,7 @@ class MySQLConnection(DBAPI):
             if field == 'id':
                 continue
             colClass, kw = self.guessClass(t)
-            kw['name'] = soClass._style.dbColumnToPythonAttr(field)
+            kw['name'] = soClass.sqlmeta.style.dbColumnToPythonAttr(field)
             kw['notNone'] = not nullAllowed
             kw['default'] = default
             # @@ skip key...

@@ -271,18 +271,18 @@ class DBAPI(DBConnection):
             q = 'SELECT '
         if ops.get('lazyColumns', 0):
             q += "%s.%s FROM %s WHERE " % \
-                 (cls._table, cls._idName,
+                 (cls.sqlmeta.table, cls.sqlmeta.idName,
                   ", ".join(select.tables))
         else:
-            columns = ", ".join(["%s.%s" % (cls._table, col.dbName)
+            columns = ", ".join(["%s.%s" % (cls.sqlmeta.table, col.dbName)
                                  for col in cls._SO_columns])
             if columns:
                 q += "%s.%s, %s FROM %s WHERE " % \
-                     (cls._table, cls._idName, columns,
+                     (cls.sqlmeta.table, cls.sqlmeta.idName, columns,
                       ", ".join(select.tables))
             else:
                 q += "%s.%s FROM %s WHERE " % \
-                     (cls._table, cls._idName,
+                     (cls.sqlmeta.table, cls.sqlmeta.idName,
                       ", ".join(select.tables))
 
         return self._addWhereClause(select, q)
@@ -360,7 +360,7 @@ class DBAPI(DBConnection):
 
     def createTableSQL(self, soClass):
         return ('CREATE TABLE %s (\n%s\n)' % 
-                (soClass._table, self.createColumns(soClass)))
+                (soClass.sqlmeta.table, self.createColumns(soClass)))
 
     def createColumns(self, soClass):
         columnDefs = [self.createIDColumn(soClass)] \
@@ -396,36 +396,45 @@ class DBAPI(DBConnection):
 
     def _SO_update(self, so, values):
         self.query("UPDATE %s SET %s WHERE %s = %s" %
-                   (so._table,
+                   (so.sqlmeta.table,
                     ", ".join(["%s = %s" % (dbName, self.sqlrepr(value))
                                for dbName, value in values]),
-                    so._idName,
+                    so.sqlmeta.idName,
                     self.sqlrepr(so.id)))
 
     def _SO_selectOne(self, so, columnNames):
-        return self.queryOne("SELECT %s FROM %s WHERE %s = %s" %
-                             (", ".join(columnNames),
-                              so._table,
-                              so._idName,
-                              self.sqlrepr(so.id)))
+        columns = ", ".join(columnNames)
+        if columns:
+            return self.queryOne(
+                "SELECT %s FROM %s WHERE %s = %s" %
+                (columns,
+                 so.sqlmeta.table,
+                 so.sqlmeta.idName,
+                 self.sqlrepr(so.id)))
+        else:
+            return self.queryOne(
+                "SELECT NULL FROM %s WHERE %s = %s" %
+                (so.sqlmeta.table,
+                 so.sqlmeta.idName,
+                 self.sqlrepr(so.id)))
 
     def _SO_selectOneAlt(self, cls, columnNames, column, value):
         return self.queryOne("SELECT %s FROM %s WHERE %s = %s" %
                              (", ".join(columnNames),
-                              cls._table,
+                              cls.sqlmeta.table,
                               column,
                               self.sqlrepr(value)))
 
     def _SO_delete(self, so):
         self.query("DELETE FROM %s WHERE %s = %s" %
-                   (so._table,
-                    so._idName,
+                   (so.sqlmeta.table,
+                    so.sqlmeta.idName,
                     self.sqlrepr(so.id)))
 
     def _SO_selectJoin(self, soClass, column, value):
         return self.queryAll("SELECT %s FROM %s WHERE %s = %s" %
-                             (soClass._idName,
-                              soClass._table,
+                             (soClass.sqlmeta.idName,
+                              soClass.sqlmeta.table,
                               column,
                               self.sqlrepr(value)))
 

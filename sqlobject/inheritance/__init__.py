@@ -19,7 +19,7 @@ class InheritableSelectResults(SelectResults):
         if clause is None or isinstance(clause, str) and clause == 'all':
             clause = sqlbuilder.SQLTrueClause
         tablesDict = sqlbuilder.tablesUsedDict(clause)
-        tablesDict[sourceClass._table] = 1
+        tablesDict[sourceClass.sqlmeta.table] = 1
         orderBy = ops.get('orderBy')
         if orderBy and not isinstance(orderBy, basestring):
             tablesDict.update(sqlbuilder.tablesUsedDict(orderBy))
@@ -33,11 +33,11 @@ class InheritableSelectResults(SelectResults):
             tableRegistry = {}
             allClasses = classregistry.registry(sourceClass._registry).allClasses()
             for registryClass in allClasses:
-                if registryClass._table in tablesDict:
+                if registryClass.sqlmeta.table in tablesDict:
                     #DSM: By default, no parents are needed for the clauses
                     tableRegistry[registryClass] = registryClass
             for registryClass in allClasses:
-                if registryClass._table in tablesDict:
+                if registryClass.sqlmeta.table in tablesDict:
                     currentClass = registryClass
                     while currentClass._parentClass:
                         currentClass = currentClass._parentClass
@@ -56,7 +56,7 @@ class InheritableSelectResults(SelectResults):
                     parentClass = currentClass._parentClass
                     parentClause.append(currentClass.q.id == parentClass.q.id)
                     currentClass = parentClass
-                    tablesDict[currentClass._table] = 1
+                    tablesDict[currentClass.sqlmeta.table] = 1
             clause = reduce(sqlbuilder.AND, parentClause, clause)
 
         super(InheritableSelectResults, self).__init__(sourceClass, clause, clauseTables,

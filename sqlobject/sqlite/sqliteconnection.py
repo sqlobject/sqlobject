@@ -42,8 +42,8 @@ class SQLiteConnection(DBAPI):
         return self._conn
 
     def _queryInsertID(self, conn, soInstance, id, names, values):
-        table = soInstance._table
-        idName = soInstance._idName
+        table = soInstance.sqlmeta.table
+        idName = soInstance.sqlmeta.idName
         c = conn.cursor()
         if id is not None:
             names = [idName] + names
@@ -59,6 +59,15 @@ class SQLiteConnection(DBAPI):
             self.printDebug(conn, id, 'QueryIns', 'result')
         return id
 
+    def _insertSQL(self, table, names, values):
+        if not names:
+            assert not values
+            # INSERT INTO table () VALUES () isn't allowed in
+            # SQLite (though it is in other databases)
+            return ("INSERT INTO %s VALUES (NULL)" % table)
+        else:
+            return DBAPI._insertSQL(self, table, names, values)
+
     def _queryAddLimitOffset(self, query, start, end):
         if not start:
             return "%s LIMIT %i" % (query, end)
@@ -70,7 +79,7 @@ class SQLiteConnection(DBAPI):
         return col.sqliteCreateSQL()
 
     def createIDColumn(self, soClass):
-        return '%s INTEGER PRIMARY KEY' % soClass._idName
+        return '%s INTEGER PRIMARY KEY' % soClass.sqlmeta.idName
 
     def joinSQLType(self, join):
         return 'INT NOT NULL'

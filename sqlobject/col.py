@@ -159,7 +159,7 @@ class SOCol(object):
         # the column, we separate the mixedCase into mixed_case
         # and assume that.
         if dbName is None:
-            self.dbName = soClass._style.pythonAttrToDBColumn(self.name)
+            self.dbName = soClass.sqlmeta.style.pythonAttrToDBColumn(self.name)
         else:
             self.dbName = dbName
 
@@ -607,7 +607,7 @@ class SOForeignKey(SOKeyCol):
 
     def __init__(self, **kw):
         foreignKey = kw['foreignKey']
-        style = kw['soClass']._style
+        style = kw['soClass'].sqlmeta.style
         if not kw.get('name'):
             kw['name'] = style.instanceAttrToIDAttr(style.pythonClassToAttr(foreignKey))
         else:
@@ -619,8 +619,8 @@ class SOForeignKey(SOKeyCol):
     def postgresCreateSQL(self):
         sql = SOKeyCol.postgresCreateSQL(self)
         other = findClass(self.foreignKey)
-        tName = other._table
-        idName = other._idName
+        tName = other.sqlmeta.table
+        idName = other.sqlmeta.idName
         if self.cascade is not None:
             if self.cascade == 'null':
                 action = 'ON DELETE SET NULL'
@@ -644,8 +644,8 @@ class SOForeignKey(SOKeyCol):
     def sybaseCreateSQL(self):
         sql = SOKeyCol.sybaseCreateSQL(self)
         other = findClass(self.foreignKey)
-        tName = other._table
-        idName = other._idName
+        tName = other.sqlmeta.table
+        idName = other.sqlmeta.idName
         reference = ('REFERENCES %(tName)s(%(idName)s) ' %
                      {'tName':tName,
                       'idName':idName})
@@ -657,8 +657,8 @@ class SOForeignKey(SOKeyCol):
         fidName = self.dbName
         #I assume that foreign key name is identical to the id of the reference table
         sql = ' '.join([fidName, self._maxdbType()])
-        tName = other._table
-        idName  = other._idName
+        tName = other.sqlmeta.table
+        idName  = other.sqlmeta.idName
         sql=sql + ',' + '\n' 
         sql=sql + 'FOREIGN KEY (%s) REFERENCES %s(%s)'%(fidName,tName,idName)
         return sql

@@ -329,16 +329,16 @@ class SQLObjectTable(Table):
 
     def __init__(self, soClass):
         self.soClass = soClass
-        assert soClass._table, (
+        assert soClass.sqlmeta.table, (
             "Bad table name in class %r: %r"
-            % (soClass, soClass._table))
-        Table.__init__(self, soClass._table)
+            % (soClass, soClass.sqlmeta.table))
+        Table.__init__(self, soClass.sqlmeta.table)
 
     def __getattr__(self, attr):
         if attr.startswith('__'):
             raise AttributeError
         if attr == 'id':
-            return SQLObjectField(self.tableName, self.soClass._idName, attr)
+            return SQLObjectField(self.tableName, self.soClass.sqlmeta.idName, attr)
         else:
             return SQLObjectField(self.tableName,
                                   self.soClass._SO_columnDict[attr].dbName,

@@ -69,8 +69,8 @@ class SybaseConnection(DBAPI):
         return r is not None
         
     def _queryInsertID(self, conn, soInstance, id, names, values):
-        table = soInstance._table
-        idName = soInstance._idName
+        table = soInstance.sqlmeta.table
+        idName = soInstance.sqlmeta.idName
         c = conn.cursor()
         if id is not None:
             names = [idName] + names
@@ -103,7 +103,7 @@ class SybaseConnection(DBAPI):
         return col.sybaseCreateSQL()
 
     def createIDColumn(self, soClass):
-        return '%s NUMERIC(18,0) IDENTITY UNIQUE' % soClass._idName
+        return '%s NUMERIC(18,0) IDENTITY UNIQUE' % soClass.sqlmeta.idName
 
     def createIndexSQL(self, soClass, index):
         return index.sybaseCreateIndexSQL(soClass)
@@ -138,7 +138,7 @@ class SybaseConnection(DBAPI):
             if field == 'id':
                 continue
             colClass, kw = self.guessClass(t)
-            kw['name'] = soClass._style.dbColumnToPythonAttr(field)
+            kw['name'] = soClass.sqlmeta.style.dbColumnToPythonAttr(field)
             kw['notNone'] = not nullAllowed
             kw['default'] = default
             # @@ skip key...

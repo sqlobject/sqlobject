@@ -63,7 +63,8 @@ class SOJoin(object):
             # Here we set up the basic join, which is
             # one-to-many, where the other class points to
             # us.
-            self.joinColumn = styles.getStyle(self.soClass).tableReference(self.soClass._table)
+            self.joinColumn = styles.getStyle(
+                self.soClass).tableReference(self.soClass.sqlmeta.table)
 
     def _setOtherClass(self, cls):
         self.otherClass = cls
@@ -149,12 +150,13 @@ class SORelatedJoin(SOMultipleJoin):
 
     def _setOtherRelatedClass(self, otherClass):
         if not self.intermediateTable:
-            names = [self.soClass._table,
-                     otherClass._table]
+            names = [self.soClass.sqlmeta.table,
+                     otherClass.sqlmeta.table]
             names.sort()
             self.intermediateTable = '%s_%s' % (names[0], names[1])
         if not self.otherColumn:
-            self.otherColumn = self.soClass._style.tableReference(otherClass._table)
+            self.otherColumn = self.soClass.sqlmeta.style.tableReference(
+                otherClass.sqlmeta.table)
 
 
     def hasIntermediateTable(self):

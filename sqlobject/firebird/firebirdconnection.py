@@ -86,8 +86,8 @@ class FirebirdConnection(DBAPI):
         """Firebird uses 'generators' to create new ids for a table.
         The users needs to create a generator named GEN_<tablename>
         for each table this method to work."""
-        table = soInstance._table
-        idName = soInstance._idName
+        table = soInstance.sqlmeta.table
+        idName = soInstance.sqlmeta.idName
         sequenceName = getattr(soInstance, '_idSequence',
                                'GEN_%s' % table)
         if id is None:
@@ -122,14 +122,14 @@ class FirebirdConnection(DBAPI):
 
     def createTable(self, soClass):
         self.query('CREATE TABLE %s (\n%s\n)' % \
-                   (soClass._table, self.createColumns(soClass)))
-        self.query("CREATE GENERATOR GEN_%s" % soClass._table)
+                   (soClass.sqlmeta.table, self.createColumns(soClass)))
+        self.query("CREATE GENERATOR GEN_%s" % soClass.sqlmeta.table)
 
     def createColumn(self, soClass, col):
         return col.firebirdCreateSQL()
 
     def createIDColumn(self, soClass):
-        return '%s INT NOT NULL PRIMARY KEY' % soClass._idName
+        return '%s INT NOT NULL PRIMARY KEY' % soClass.sqlmeta.idName
 
     def createIndexSQL(self, soClass, index):
         return index.firebirdCreateIndexSQL(soClass)
@@ -188,7 +188,7 @@ class FirebirdConnection(DBAPI):
             if field == 'id':
                 continue
             colClass, kw = self.guessClass(t, flength, fscale)
-            kw['name'] = soClass._style.dbColumnToPythonAttr(field)
+            kw['name'] = soClass.sqlmeta.style.dbColumnToPythonAttr(field)
             kw['notNone'] = not nullAllowed
             kw['default'] = thedefault
             results.append(colClass(**kw))

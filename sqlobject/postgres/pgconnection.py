@@ -74,8 +74,8 @@ class PostgresConnection(DBAPI):
         return conn
 
     def _queryInsertID(self, conn, soInstance, id, names, values):
-        table = soInstance._table
-        idName = soInstance._idName
+        table = soInstance.sqlmeta.table
+        idName = soInstance.sqlmeta.idName
         sequenceName = getattr(soInstance, '_idSequence',
                                '%s_%s_seq' % (table, idName))
         c = conn.cursor()
@@ -106,7 +106,7 @@ class PostgresConnection(DBAPI):
         return index.postgresCreateIndexSQL(soClass)
 
     def createIDColumn(self, soClass):
-        return '%s SERIAL PRIMARY KEY' % soClass._idName
+        return '%s SERIAL PRIMARY KEY' % soClass.sqlmeta.idName
 
     def dropTable(self, tableName, cascade=False):
         if self.server_version[:3] <= "7.2":
@@ -189,7 +189,7 @@ class PostgresConnection(DBAPI):
             if field == primaryKey:
                 continue
             colClass, kw = self.guessClass(t)
-            kw['name'] = soClass._style.dbColumnToPythonAttr(field)
+            kw['name'] = soClass.sqlmeta.style.dbColumnToPythonAttr(field)
             kw['notNone'] = notnull
             if defaultstr is not None:
                 kw['default'] = getattr(sqlbuilder.const, defaultstr)

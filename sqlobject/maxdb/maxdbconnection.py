@@ -119,8 +119,8 @@ class MaxdbConnection(DBAPI):
         return conn
 
     def _queryInsertID(self, conn, soInstance, id, names, values):
-        table = soInstance._table
-        idName = soInstance._idName
+        table = soInstance.sqlmeta.table
+        idName = soInstance.sqlmeta.idName
         c = conn.cursor()
         if id is None:
             c.execute('SELECT %s.NEXTVAL FROM DUAL' % (self.createSequenceName(table)))
@@ -158,21 +158,21 @@ class MaxdbConnection(DBAPI):
         #i tried to use the transaction class but i get a recursion limit error    
         #t=self.transaction()
         # t.query('CREATE TABLE %s (\n%s\n)' % \
-        #            (soClass._table, self.createColumns(soClass)))
+        #            (soClass.sqlmeta.table, self.createColumns(soClass)))
         # 
-        # t.query("CREATE SEQUENCE %s" % self.createSequenceName(soClass._table))
+        # t.query("CREATE SEQUENCE %s" % self.createSequenceName(soClass.sqlmeta.table))
         # t.commit()
         #so use transaction when the problem will be solved
         self.query('CREATE TABLE %s (\n%s\n)' % \
-                   (soClass._table, self.createColumns(soClass)))
+                   (soClass.sqlmeta.table, self.createColumns(soClass)))
         self.query("CREATE SEQUENCE %s"
-                   % self.createSequenceName(soClass._table))
+                   % self.createSequenceName(soClass.sqlmeta.table))
  
     def createColumn(self, soClass, col):
         return col.maxdbCreateSQL()
 
     def createIDColumn(self, soClass):
-        return '%s INT PRIMARY KEY' % soClass._idName
+        return '%s INT PRIMARY KEY' % soClass.sqlmeta.idName
 
     def createIndexSQL(self, soClass, index):
         return index.maxdbCreateIndexSQL(soClass)

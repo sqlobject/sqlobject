@@ -71,9 +71,9 @@ class SODatabaseIndex(object):
                 spec.append(desc['column'].dbName)
         ret = 'CREATE %s %s_%s ON %s (%s)' % \
               (uniqueOrIndex,
-               self.soClass._table,
+               self.soClass.sqlmeta.table,
                self.name,
-               self.soClass._table,
+               self.soClass.sqlmeta.table,
                ', '.join(spec))
         return ret
 
@@ -94,7 +94,7 @@ class SODatabaseIndex(object):
                 spec.append(desc['column'].dbName)
 
         return 'ALTER TABLE %s ADD %s %s (%s)' % \
-               (soClass._table, uniqueOrIndex,
+               (soClass.sqlmeta.table, uniqueOrIndex,
                 self.name, 
                 ', '.join(spec))
 
