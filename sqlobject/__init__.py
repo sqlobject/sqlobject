@@ -11,7 +11,7 @@ from dbconnection import connectionForURI
 
 def _warn(msg):
     import warnings
-    warnings.warn(msg, warnings.DeprecationWarning, stacklevel=2)
+    warnings.warn(msg, DeprecationWarning, stacklevel=2)
 
 import firebird
 _firebird = firebird
