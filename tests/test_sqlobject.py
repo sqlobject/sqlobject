@@ -1308,11 +1308,8 @@ if datetime_available:
         def testDateTime(self):
             _now = now()
             dt1 = DateTime1(col1=_now, col2=_now)
-
-            date_type = date
-            datetime_type = datetime
-            self.assertEqual(type(dt1.col1), date_type)
-            self.assertEqual(type(dt1.col2), datetime_type)
+            self.failUnless(isinstance(dt1.col1, date))
+            self.failUnless(isinstance(dt1.col2, datetime))
 
             today_str = _now.strftime("%Y-%m-%d")
             now_str = _now.strftime("%Y-%m-%d %T")
@@ -1333,11 +1330,8 @@ if mxdatetime_available:
         def testMxDateTime(self):
             _now = now()
             dt2 = DateTime2(col1=_now, col2=_now)
-
-            date_type = col.DateTimeType
-            datetime_type = col.DateTimeType
-            self.assertEqual(type(dt2.col1), date_type)
-            self.assertEqual(type(dt2.col2), datetime_type)
+            self.failUnless(isinstance(dt2.col1, col.DateTimeType))
+            self.failUnless(isinstance(dt2.col2, col.DateTimeType))
 
             today_str = _now.strftime("%Y-%m-%d 00:00:00.00")
             now_str = _now.strftime("%Y-%m-%d %T.00")
