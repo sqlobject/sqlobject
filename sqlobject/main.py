@@ -762,8 +762,9 @@ class SQLObject(object):
         is_column = self._SO_plainSetters.has_key
         f_is_column = lambda item: is_column(item[0])
         f_not_column = lambda item: not is_column(item[0])
-        extra = dict(filter(f_not_column, kw.items()))
-        kw = dict(filter(f_is_column, kw.items()))
+        items = kw.items()
+        extra = dict(filter(f_not_column, items))
+        kw = dict(filter(f_is_column, items))
 
         # _SO_creating is special, see _SO_setValue
         if self._SO_creating or self._lazyUpdate:
@@ -773,7 +774,15 @@ class SQLObject(object):
                     kw[name] = fromPy(value, self._SO_validatorState)
                 setattr(self, instanceName(name), value)
             for name, value in extra.items():
-                setattr(self, name, value)
+                try:
+                    getattr(self.__class__, name)
+                except AttributeError:
+                    raise TypeError, "%s.set() got an unexpected keyword argument %s" % (self.__class__.__name__, name)
+                try:
+                    setattr(self, name, value)
+                except AttributeError, e:
+                    raise AttributeError, '%s (with attribute %r)' % (e, name)
+
             self._SO_createValues.update(kw)
             self.dirty = True
             return
@@ -800,7 +809,14 @@ class SQLObject(object):
                 if self._cacheValues:
                     setattr(self, instanceName(name), value)
             for name, value in extra.items():
-                setattr(self, name, value)
+                try:
+                    getattr(self.__class__, name)
+                except AttributeError:
+                    raise TypeError, "%s.set() got an unexpected keyword argument %s" % (self.__class__.__name__, name)
+                try:
+                    setattr(self, name, value)
+                except AttributeError, e:
+                    raise AttributeError, '%s (with attribute %r)' % (e, name)
 
             if toUpdate:
                 args = [(self._SO_columnDict[name].dbName, value)
@@ -891,30 +907,7 @@ class SQLObject(object):
                 # that keyword:
                 kw[column.name] = default
 
-        # We sort out what columns go straight into the database,
-        # and which ones need setattr() directly here:
-        forDB = {}
-        others = {}
-        for name, value in kw.items():
-            if name in self._SO_plainSetters:
-                forDB[name] = value
-            else:
-                others[name] = value
-
-        # We take all the straight-to-DB values and use set() to
-        # set them:
-        self.set(**forDB)
-
-        # The rest go through setattr():
-        for name, value in others.items():
-            try:
-                getattr(self.__class__, name)
-            except AttributeError:
-                raise TypeError, "%s() got an unexpected keyword argument %s" % (self.__class__.__name__, name)
-            try:
-                setattr(self, name, value)
-            except AttributeError, e:
-                raise AttributeError, '%s (with attribute %r)' % (e, name)
+        self.set(**kw)
 
         # Then we finalize the process:
         self._SO_finishCreate(id)
