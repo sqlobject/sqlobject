@@ -252,8 +252,6 @@ class SQLObject(object):
 
     _fromDatabase = False
 
-    _style = None
-
     _registry = None
 
     # Default is false, but we set it to true for the *instance*
