@@ -357,7 +357,7 @@ class SQLObject(object):
 
     get = classmethod(get)
 
-    def addColumn(cls, columnDef, changeSchema=False):
+    def addColumn(cls, columnDef, changeSchema=False, connection=None):
         column = columnDef.withClass(cls)
         name = column.name
         assert name != 'id', "The 'id' column is implicit, and should not be defined as a column"
@@ -462,15 +462,17 @@ class SQLObject(object):
             setattr(cls, column.alternateMethodName, classmethod(func))
 
         if changeSchema:
-            cls._connection.addColumn(cls._table, column)
+            conn = connection or cls._connection
+            conn.addColumn(cls._table, column)
 
         if cls._SO_finishedClassCreation:
             makeProperties(cls)
 
     addColumn = classmethod(addColumn)
 
-    def addColumnsFromDatabase(cls):
-        for columnDef in cls._connection.columnsFromSchema(cls._table, cls):
+    def addColumnsFromDatabase(cls, connection=None):
+        conn = connection or cls._connection
+        for columnDef in conn.columnsFromSchema(cls._table, cls):
             alreadyExists = False
             for c in cls._columns:
                 if c.name == columnDef.name:
@@ -481,7 +483,7 @@ class SQLObject(object):
 
     addColumnsFromDatabase = classmethod(addColumnsFromDatabase)
 
-    def delColumn(cls, column, changeSchema=False):
+    def delColumn(cls, column, changeSchema=False, connection=None):
         if isinstance(column, str):
             column = cls._SO_columnDict[column]
         if isinstance(column, col.Col):
@@ -510,7 +512,8 @@ class SQLObject(object):
             delattr(cls, column.alternateMethodName)
 
         if changeSchema:
-            cls._connection.delColumn(cls._table, column)
+            conn = connection or cls._connection
+            conn.delColumn(cls._table, column)
 
         if cls._SO_finishedClassCreation:
             unmakeProperties(cls)
@@ -954,48 +957,56 @@ class SQLObject(object):
     select = classmethod(select)
 
     def selectBy(cls, connection=None, **kw):
+        conn = connection or cls._connection
         return SelectResults(cls,
-                             cls._connection._SO_columnClause(cls, kw),
-                             connection=connection)
+                             conn._SO_columnClause(cls, kw),
+                             connection=conn)
 
     selectBy = classmethod(selectBy)
 
-    # 3-03 @@: Should these have a connection argument?
-    def dropTable(cls, ifExists=False, dropJoinTables=True, cascade=False):
-        if ifExists and not cls._connection.tableExists(cls._table):
+    def dropTable(cls, ifExists=False, dropJoinTables=True, cascade=False,
+                  connection=None):
+        conn = connection or conn._connection
+        if ifExists and not conn.tableExists(cls._table):
             return
-        cls._connection.dropTable(cls._table, cascade)
+        conn.dropTable(cls._table, cascade)
         if dropJoinTables:
-            cls.dropJoinTables(ifExists=ifExists)
+            cls.dropJoinTables(ifExists=ifExists, connection=conn)
     dropTable = classmethod(dropTable)
 
-    def createTable(cls, ifNotExists=False, createJoinTables=True):
-        if ifNotExists and cls._connection.tableExists(cls._table):
+    def createTable(cls, ifNotExists=False, createJoinTables=True,
+                    connection=None):
+        conn = connection or cls._connection
+        if ifNotExists and conn.tableExists(cls._table):
             return
-        cls._connection.createTable(cls)
+        conn.createTable(cls)
         if createJoinTables:
-            cls.createJoinTables(ifNotExists=ifNotExists)
+            cls.createJoinTables(ifNotExists=ifNotExists,
+                                 connection=conn)
     createTable = classmethod(createTable)
 
-    def createTableSQL(cls, createJoinTables=True):
-        sql = cls._connection.createTableSQL(cls)
+    def createTableSQL(cls, createJoinTables=True, connection=None):
+        conn = connection or cls._connection
+        sql = conn.createTableSQL(cls)
         if createJoinTables:
-            sql += '\n' + cls.createJoinTablesSQL()
+            sql += '\n' + cls.createJoinTablesSQL(connection=conn)
         return sql
     createTableSQL = classmethod(createTableSQL)
 
-    def createJoinTables(cls, ifNotExists=False):
+    def createJoinTables(cls, ifNotExists=False, connection=None):
+        conn = connection or cls._connection
         for join in cls._getJoinsToCreate():
             if ifNotExists and \
-               cls._connection.tableExists(join.intermediateTable):
+               conn.tableExists(join.intermediateTable):
                 continue
-            cls._connection._SO_createJoinTable(join)
+            conn._SO_createJoinTable(join)
     createJoinTables = classmethod(createJoinTables)
 
-    def createJoinTablesSQL(cls):
+    def createJoinTablesSQL(cls, connection=None):
+        conn = connection or cls._connection
         sql = []
         for join in cls._getJoinsToCreate():
-            sql.append(cls._connection._SO_createJoinTableSQL(join))
+            sql.append(conn._SO_createJoinTableSQL(join))
         return '\n'.join(sql)
     createJoinTablesSQL = classmethod(createJoinTablesSQL)
 
@@ -1012,7 +1023,8 @@ class SQLObject(object):
         return joins
     _getJoinsToCreate = classmethod(_getJoinsToCreate)
 
-    def dropJoinTables(cls, ifExists=False):
+    def dropJoinTables(cls, ifExists=False, connection=None):
+        conn = connection or cls._connection
         for join in cls._SO_joinList:
             if not join:
                 continue
@@ -1021,16 +1033,17 @@ class SQLObject(object):
             if join.soClass.__name__ > join.otherClass.__name__:
                 continue
             if ifExists and \
-               not cls._connection.tableExists(join.intermediateTable):
+               not conn.tableExists(join.intermediateTable):
                 continue
-            cls._connection._SO_dropJoinTable(join)
+            conn._SO_dropJoinTable(join)
 
     dropJoinTables = classmethod(dropJoinTables)
 
-    def clearTable(cls):
+    def clearTable(cls, connection=None):
         # 3-03 @@: Maybe this should check the cache... but it's
         # kind of crude anyway, so...
-        cls._connection.clearTable(cls._table)
+        conn = connection or cls._connection
+        conn.clearTable(cls._table)
     clearTable = classmethod(clearTable)
 
     def destroySelf(self):
@@ -1074,8 +1087,8 @@ class SQLObject(object):
                   self.id,
                   ' '.join(['%s=%s' % (name, repr(value)) for name, value in self._reprItems()]))
 
-    def sqlrepr(cls, value):
-        return cls._connection.sqlrepr(value)
+    def sqlrepr(cls, value, connection=None):
+        return (connection or cls._connection).sqlrepr(value)
 
     sqlrepr = classmethod(sqlrepr)
 
