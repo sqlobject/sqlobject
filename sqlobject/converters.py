@@ -154,12 +154,12 @@ if hasattr(time, 'struct_time'):
 
 if datetime:
     def DateTimeConverter(value, db):
-        return value.strftime("'%Y-%m-%d %H:%M:%s'")
+        return value.strftime("'%Y-%m-%d %H:%M:%S'")
 
     registerConverter(datetime.datetime, DateTimeConverter)
 
     def TimeConverter(value, db):
-        return value.strftime("'%H:%M:%s'")
+        return value.strftime("'%H:%M:%S'")
 
     registerConverter(datetime.time, TimeConverter)
 
