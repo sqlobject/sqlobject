@@ -46,9 +46,12 @@ else:
     default_datetime_implementation = None
 
 __all__ = ["datetime_available", "mxdatetime_available",
-    "DATETIME_IMPLEMENTATION", "MXDATETIME_IMPLEMENTATION",
     "default_datetime_implementation"
 ]
+if datetime_available:
+    __all__.append("DATETIME_IMPLEMENTATION")
+if mxdatetime_available:
+    __all__.append("MXDATETIME_IMPLEMENTATION")
 
 ########################################
 ## Columns
@@ -658,82 +661,85 @@ class EnumCol(Col):
     baseClass = SOEnumCol
 
 
-class DateTimeValidator(validators.DateValidator):
-    def fromPython(self, value, state):
-        if value is None:
-            return None
-        if isinstance(value, (datetime.date, datetime.datetime)):
-            return value
-        if hasattr(value, "strftime"):
-            return value.strftime(self.format)
-        raise validators.InvalidField("expected a datetime in the DateTimeCol '%s', got %s instead" % \
-            (self.name, type(value)), value, state)
+if datetime_available:
+    class DateTimeValidator(validators.DateValidator):
+        def fromPython(self, value, state):
+            if value is None:
+                return None
+            if isinstance(value, (datetime.date, datetime.datetime)):
+                return value
+            if hasattr(value, "strftime"):
+                return value.strftime(self.format)
+            raise validators.InvalidField("expected a datetime in the DateTimeCol '%s', got %s instead" % \
+                (self.name, type(value)), value, state)
 
-    def toPython(self, value, state):
-        if value is None:
-            return None
-        if isinstance(value, (datetime.date, datetime.datetime)):
-            return value
-        if mxdatetime_available: # convert mxDateTime instance to datetime
-            if isinstance(value, DateTimeType):
+        def toPython(self, value, state):
+            if value is None:
+                return None
+            if isinstance(value, (datetime.date, datetime.datetime)):
+                return value
+            if mxdatetime_available and isinstance(value, DateTimeType):
+                # convert mxDateTime instance to datetime
                 if ("%H" in self.format) or ("%T" in self.format):
                     return datetime.datetime(value.year, value.month, value.day,
                         value.hour, value.minute, value.second)
                 else:
                     return datetime.date(value.year, value.month, value.day)
-        try:
-            stime = time.strptime(value, self.format)
-        except:
-            raise validators.InvalidField("expected an ISO date/time string in the DateTimeCol '%s', got %s instead" % \
+            try:
+                stime = time.strptime(value, self.format)
+            except:
+                raise validators.InvalidField("expected an date/time string of the '%s' format in the DateTimeCol '%s', got %s instead" % \
+                    (self.format, self.name, type(value)), value, state)
+            secs = time.mktime(stime)
+            return datetime.datetime.fromtimestamp(secs)
+
+if mxdatetime_available:
+    class MXDateTimeValidator(validators.DateValidator):
+        def fromPython(self, value, state):
+            if value is None:
+                return None
+            if isinstance(value, DateTimeType):
+                return value
+            if hasattr(value, "strftime"):
+                return value.strftime(self.format)
+            raise validators.InvalidField("expected a mxDateTime in the DateTimeCol '%s', got %s instead" % \
                 (self.name, type(value)), value, state)
-        secs = time.mktime(stime)
-        return datetime.datetime.fromtimestamp(secs)
 
-class MXDateTimeValidator(validators.DateValidator):
-    def fromPython(self, value, state):
-        if value is None:
-            return None
-        if isinstance(value, DateTimeType):
-            return value
-        if hasattr(value, "strftime"):
-            return value.strftime(self.format)
-        raise validators.InvalidField("expected a mxDateTime in the DateTimeCol '%s', got %s instead" % \
-            (self.name, type(value)), value, state)
-
-    def toPython(self, value, state):
-        if value is None:
-            return None
-        if isinstance(value, DateTimeType):
-            return value
-        if datetime_available: # convert datetime instance to mxDateTime
-            if isinstance(value, (datetime.date, datetime.datetime)):
-                if hasattr(value, "hour"):
+        def toPython(self, value, state):
+            if value is None:
+                return None
+            if isinstance(value, DateTimeType):
+                return value
+            if datetime_available: # convert datetime instance to mxDateTime
+                if isinstance(value, datetime.datetime):
                     return DateTime.DateTime(value.year, value.month, value.day,
                         value.hour, value.minute, value.second)
-                else:
+                elif isinstance(value, datetime.date):
                     return DateTime.Date(value.year, value.month, value.day)
-        try:
-            stime = time.strptime(value, self.format)
-        except:
-            raise validators.InvalidField("expected an ISO date/time string in the DateTimeCol '%s', got %s instead" % \
-                (self.name, type(value)), value, state)
-        return DateTime.DateTime.mktime(stime)
+            try:
+                stime = time.strptime(value, self.format)
+            except:
+                raise validators.InvalidField("expected an date/time string of the '%s' format in the DateTimeCol '%s', got %s instead" % \
+                    (self.format, self.name, type(value)), value, state)
+            return DateTime.mktime(stime)
 
 class SODateTimeCol(SOCol):
-    if default_datetime_implementation == DATETIME_IMPLEMENTATION:
-        validatorClass = DateTimeValidator # can be overriden in descendants
-    elif default_datetime_implementation == MXDATETIME_IMPLEMENTATION:
-        validatorClass = MXDateTimeValidator # can be overriden in descendants
     datetimeFormat = '%Y-%m-%d %H:%M:%S'
 
     def __init__(self, **kw):
+        datetimeFormat = popKey(kw, 'datetimeFormat')
+        if datetimeFormat: self.datetimeFormat = datetimeFormat
         SOCol.__init__(self, **kw)
         if default_datetime_implementation:
             self.validator = validators.All.join(self.createValidator(), self.validator)
 
     def createValidator(self):
         """Create a validator for the column. Can be overriden in descendants."""
-        return self.validatorClass(name=self.name, format=self.datetimeFormat)
+        if default_datetime_implementation == DATETIME_IMPLEMENTATION:
+            validatorClass = DateTimeValidator
+        elif default_datetime_implementation == MXDATETIME_IMPLEMENTATION:
+            validatorClass = MXDateTimeValidator
+        return validatorClass(name=self.name, format=self.datetimeFormat)
 
     def _mysqlType(self):
         return 'DATETIME'
@@ -757,20 +763,22 @@ class DateTimeCol(Col):
     baseClass = SODateTimeCol
 
 class SODateCol(SOCol):
-    if default_datetime_implementation == DATETIME_IMPLEMENTATION:
-        validatorClass = DateTimeValidator # can be overriden in descendants
-    elif default_datetime_implementation == MXDATETIME_IMPLEMENTATION:
-        validatorClass = MXDateTimeValidator # can be overriden in descendants
     dateFormat = '%Y-%m-%d'
 
     def __init__(self, **kw):
+        dateFormat = popKey(kw, 'dateFormat')
+        if dateFormat: self.dateFormat = dateFormat
         SOCol.__init__(self, **kw)
         if default_datetime_implementation:
             self.validator = validators.All.join(self.createValidator(), self.validator)
 
     def createValidator(self):
         """Create a validator for the column. Can be overriden in descendants."""
-        return self.validatorClass(name=self.name, format=self.dateFormat)
+        if default_datetime_implementation == DATETIME_IMPLEMENTATION:
+            validatorClass = DateTimeValidator
+        elif default_datetime_implementation == MXDATETIME_IMPLEMENTATION:
+            validatorClass = MXDateTimeValidator
+        return validatorClass(name=self.name, format=self.dateFormat)
 
     def _mysqlType(self):
         return 'DATE'

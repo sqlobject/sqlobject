@@ -17,6 +17,7 @@ if '--coverage' in sys.argv:
 
 from SQLObjectTest import *
 from sqlobject import *
+from sqlobject import col
 from sqlobject.include import validators
 from sqlobject import classregistry
 if default_datetime_implementation == DATETIME_IMPLEMENTATION:
@@ -1292,22 +1293,56 @@ class UnicodeTest(SQLObjectTest):
 ## Date/time columns
 ########################################
 
-class DateTime1(SQLObject):
-    col1 = DateCol()
-    col2 = DateTimeCol()
+if datetime_available:
+    col.default_datetime_implementation = DATETIME_IMPLEMENTATION
+    from datetime import date, datetime
 
-class DateTimeTest(SQLObjectTest):
+    class DateTime1(SQLObject):
+        col1 = DateCol()
+        col2 = DateTimeCol()
 
-    classes = [DateTime1]
+    class DateTimeTest1(SQLObjectTest):
 
-    def testNow(self):
-        _now = now()
-        dt1 = DateTime1(col1=_now, col2=_now)
+        classes = [DateTime1]
 
-        today_str = _now.strftime(SODateCol.dateFormat)
-        now_str = _now.strftime(SODateTimeCol.datetimeFormat)
-        self.assertEqual(str(dt1.col1), today_str)
-        self.assertEqual(str(dt1.col2), now_str)
+        def testDateTime(self):
+            _now = now()
+            dt1 = DateTime1(col1=_now, col2=_now)
+
+            date_type = date
+            datetime_type = datetime
+            self.assertEqual(type(dt1.col1), date_type)
+            self.assertEqual(type(dt1.col2), datetime_type)
+
+            today_str = _now.strftime("%Y-%m-%d")
+            now_str = _now.strftime("%Y-%m-%d %T")
+            self.assertEqual(str(dt1.col1), today_str)
+            self.assertEqual(str(dt1.col2), now_str)
+
+if mxdatetime_available:
+    col.default_datetime_implementation = MXDATETIME_IMPLEMENTATION
+
+    class DateTime2(SQLObject):
+        col1 = DateCol()
+        col2 = DateTimeCol()
+
+    class DateTimeTest2(SQLObjectTest):
+
+        classes = [DateTime2]
+
+        def testMxDateTime(self):
+            _now = now()
+            dt2 = DateTime2(col1=_now, col2=_now)
+
+            date_type = col.DateTimeType
+            datetime_type = col.DateTimeType
+            self.assertEqual(type(dt2.col1), date_type)
+            self.assertEqual(type(dt2.col2), datetime_type)
+
+            today_str = _now.strftime("%Y-%m-%d 00:00:00.00")
+            now_str = _now.strftime("%Y-%m-%d %T.00")
+            self.assertEqual(str(dt2.col1), today_str)
+            self.assertEqual(str(dt2.col2), now_str)
 
 ########################################
 ## Run from command-line:
