@@ -1108,7 +1108,7 @@ program quits).  SQLite does not restrict the types you can put in a
 column -- strings can go in integer columns, dates in integers, etc.
 
 SQLiteConnection doesn't support `automatic class generation`_ and
-SQLite does not support `runtime column changes`_ or transactions_.
+SQLite does not support `runtime column changes`_.
 
 SQLite may have concurrency issues, depending on your usage in a
 multi-threaded environment.
