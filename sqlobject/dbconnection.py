@@ -44,13 +44,14 @@ class DBConnection:
         atexit.register(_closeConnection, weakref.ref(self))
 
     def uri(self):
-        auth = self.user or ''
+        auth = getattr(self, 'user', None) or ''
         if auth:
             if self.password:
                 auth = auth + '@' + self.password
             auth = auth + ':'
         else:
-            assert not self.password, 'URIs cannot express passwords without usernames'
+            assert not getattr(self, 'password', None), (
+                'URIs cannot express passwords without usernames')
         uri = '%s://%s' % (self.dbName, auth)
         if self.host:
             uri += self.host + '/'
