@@ -139,7 +139,8 @@ class CacheFactory(object):
             self.lock.release()
 
     def clear(self):
-        self.cache.clear()
+        if self.doCache:
+            self.cache.clear()
         self.expiredCache.clear()
 
     def expire(self, id):
