@@ -64,6 +64,8 @@ Bugs
 * You can now use ``sqlite:/:memory:`` to store the database in
   memory.
 
+* Some bugs resolved when caching is turned off (SF 956847)
+
 SQLObject 0.5.3
 ===============
 
