@@ -2,6 +2,7 @@ from sqlobject.dbconnection import DBAPI
 import re
 from sqlobject import col
 from sqlobject import sqlbuilder
+from sqlobject.converters import registerConverter
 psycopg = None
 pgdb = None
 
@@ -23,6 +24,10 @@ class PostgresConnection(DBAPI):
             if psycopg is None:
                 import psycopg
             self.module = psycopg
+
+            # Register a converter for psycopg Binary type.
+            registerConverter(type(psycopg.Binary('')),
+                              PsycoBinaryConverter)
 
         if dsn is None:
             dsn = []
@@ -49,7 +54,9 @@ class PostgresConnection(DBAPI):
     connectionFromURI = classmethod(connectionFromURI)
 
     def _setAutoCommit(self, conn, auto):
-        conn.autocommit(auto)
+        # psycopg2 does not have an autocommit method.
+        if hasattr(conn, 'autocommit'):
+            conn.autocommit(auto)
 
     def makeConnection(self):
         try:
@@ -57,7 +64,9 @@ class PostgresConnection(DBAPI):
         except self.module.OperationalError, e:
             raise self.module.OperationalError("%s; used connection string %r" % (e, self.dsn))
         if self.autoCommit:
-            conn.autocommit(1)
+            # psycopg2 does not have an autocommit method.
+            if hasattr(conn, 'autocommit'):
+                conn.autocommit(1)
         return conn
 
     def _queryInsertID(self, conn, soInstance, id, names, values):
@@ -199,6 +208,8 @@ class PostgresConnection(DBAPI):
             return col.DateTimeCol, {}
         elif t.startswith('bool'):
             return col.BoolCol, {}
+        elif t.startswith('bytea'):
+            return col.BLOBCol, {}
         else:
             return col.Col, {}
 
@@ -210,3 +221,9 @@ class PostgresConnection(DBAPI):
             self._server_version = server_version.split()[1]
         return self._server_version
     server_version = property(server_version)
+
+
+# Converter for psycopg Binary type.
+def PsycoBinaryConverter(value, db):
+    assert db == 'postgres'
+    return str(value)

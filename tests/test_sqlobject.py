@@ -1339,6 +1339,28 @@ if mxdatetime_available:
             self.assertEqual(str(dt2.col2), now_str)
 
 ########################################
+## BLOB columns
+########################################
+
+class Profile(SQLObject):
+    image = BLOBCol(default='emptydata', length=65535)
+
+class BLOBColTest(SQLObjectTest):
+    classes = [Profile]
+
+    def testBLOBCol(self):
+        data = ''.join([chr(x) for x in range(256)])
+
+        prof = Profile()
+        prof.image = data
+        iid = prof.id
+
+        connection().cache.clear()
+
+        prof2 = Profile.get(iid)
+        assert prof2.image == data
+
+########################################
 ## Run from command-line:
 ########################################
 

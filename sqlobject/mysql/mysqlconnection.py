@@ -120,6 +120,21 @@ class MySQLConnection(DBAPI):
             return col.DateTimeCol, {}
         elif t.startswith('bool'):
             return col.BoolCol, {}
+        elif t.startswith('tinyblob'):
+            return col.BLOBCol, {"length": 2**8-1}
+        elif t.startswith('tinytext'):
+            return col.BLOBCol, {"length": 2**8-1, "varchar": True}
+        elif t.startswith('blob'):
+            return col.BLOBCol, {"length": 2**16-1}
+        elif t.startswith('text'):
+            return col.BLOBCol, {"length": 2**16-1, "varchar": True}
+        elif t.startswith('mediumblob'):
+            return col.BLOBCol, {"length": 2**24-1}
+        elif t.startswith('mediumtext'):
+            return col.BLOBCol, {"length": 2**24-1, "varchar": True}
+        elif t.startswith('longblob'):
+            return col.BLOBCol, {"length": 2**32}
+        elif t.startswith('longtext'):
+            return col.BLOBCol, {"length": 2**32, "varchar": True}
         else:
             return col.Col, {}
-

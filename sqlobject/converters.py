@@ -188,4 +188,3 @@ def sqlrepr(obj, db=None):
     else:
         return reprFunc(db)
 
-

@@ -845,6 +845,46 @@ class SOCurrencyCol(SODecimalCol):
 class CurrencyCol(DecimalCol):
     baseClass = SOCurrencyCol
 
+
+class BinaryValidator(validators.Validator):
+    """
+    Validator for binary types.
+
+    We're assuming that the per-database modules provide some form
+    of wrapper type for binary conversion.
+    """
+
+    def fromPython(self, value, state):
+        return state.soObject._connection.createBinary(value)
+
+class SOBLOBCol(SOStringCol):
+    validatorClass = BinaryValidator # can be overriden in descendants
+
+    def __init__(self, **kw):
+        SOStringCol.__init__(self, **kw)
+        self.validator = validators.All.join(self.createValidator(), self.validator)
+
+    def createValidator(self):
+        return self.validatorClass()
+
+    def _mysqlType(self):
+        length = self.length
+        varchar = self.varchar
+        if length >= 2**24:
+            return varchar and "LONGTEXT" or "LONGBLOB"
+        if length >= 2**16:
+            return varchar and "MEDIUMTEXT" or "MEDIUMBLOB"
+        if length >= 2**8:
+            return varchar and "TEXT" or "BLOB"
+        return varchar and "TINYTEXT" or "TINYBLOB"
+
+    def _postgresType(self):
+        return 'BYTEA'
+
+class BLOBCol(StringCol):
+    baseClass = SOBLOBCol
+
+
 def popKey(kw, name, default=None):
     if not kw.has_key(name):
         return default

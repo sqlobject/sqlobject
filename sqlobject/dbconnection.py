@@ -375,6 +375,13 @@ class DBAPI(DBConnection):
         # that.
         self.query("DELETE FROM %s" % tableName)
 
+    def createBinary(self, value):
+        """
+        Create a binary object wrapper for the given database.
+        """
+        # Default is Binary() function from the connection driver.
+        return self.module.Binary(value)
+
     # The _SO_* series of methods are sorts of "friend" methods
     # with SQLObject.  They grab values from the SQLObject instances
     # or classes freely, but keep the SQLObject class from accessing
