@@ -224,13 +224,11 @@ class CompoundValidator(FancyValidator):
         self.validators = validators
         FancyValidator.__init__(self, ifInvalid=ifInvalid, **kw)
 
-    def _toPython(self, value, state=None):
-        return self.attemptConvert(self, value, state,
-                                   toPython)
+    def toPython(self, value, state=None):
+        return self.attemptConvert(value, state, toPython)
 
-    def _fromPython(self, value, state):
-        return self.attemptConvert(self, value, state,
-                                   fromPython)
+    def fromPython(self, value, state):
+        return self.attemptConvert(value, state, fromPython)
 
     def matchesProtocol(self, validator, state):
         target = validator.protocols
