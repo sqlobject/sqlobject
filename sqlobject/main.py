@@ -30,6 +30,7 @@ import warnings
 import joins
 import index
 import classregistry
+import declarative
 
 import sys
 if sys.version_info[:3] < (2, 2, 0):
@@ -41,167 +42,6 @@ class SQLObjectNotFound(LookupError): pass
 class SQLObjectIntegrityError(Exception): pass
 
 True, False = 1==1, 0==1
-
-# This is the metaclass.  It essentially takes a dictionary
-# of all the attributes (and thus methods) defined in the
-# class definition.  It futzes with them, and spits out the
-# new class definition.
-class MetaSQLObject(type):
-
-    def __new__(cls, className, bases, d):
-
-        # We fix up the columns here -- replacing any strings with
-        # simply-contructed Col objects, and searching the class
-        # variables for instances of Col objects (which get put into
-        # the _columns instance variable and deleted).
-        columns = []
-        for column in d.get('_columns', []):
-            if isinstance(column, str):
-                column = col.Col(column)
-            columns.append(column)
-        if columns:
-            d['_columns'] = columns
-
-        implicitColumns = []
-        implicitJoins = []
-        implicitIndexes = []
-        for attr, value in d.items():
-            if isinstance(value, col.Col):
-                value.name = attr
-                implicitColumns.append(value)
-                del d[attr]
-                continue
-            if isinstance(value, joins.Join):
-                value.joinMethodName = attr
-                implicitJoins.append(value)
-                del d[attr]
-                continue
-            if isinstance(value, index.DatabaseIndex):
-                value.setName(attr)
-                implicitIndexes.append(value)
-                del d[attr]
-                continue                
-
-        # We *don't* want to inherit _table, so we make sure it
-        # is defined in this class (not a superclass)
-        if not d.has_key('_table'):
-            d['_table'] = None
-
-
-        if d.has_key('_connection'):
-            connection = d['_connection']
-            del d['_connection']
-            assert not d.has_key('connection')
-        elif d.has_key('connection'):
-            connection = d['connection']
-            del d['connection']
-        else:
-            connection = None
-
-        # We actually create the class.
-        newClass = type.__new__(cls, className, bases, d)
-        newClass._SO_finishedClassCreation = False
-
-        # We append to _columns, but we don't want to change the
-        # superclass's _columns list, so we make a copy if necessary
-        if not d.has_key('_columns'):
-            newClass._columns = newClass._columns[:]
-        newClass._columns.extend(implicitColumns)
-        if not d.has_key('_joins'):
-            newClass._joins = newClass._joins[:]
-        newClass._joins.extend(implicitJoins)
-        if not d.has_key('_indexes'):
-            newClass._indexes = newClass._indexes[:]
-        newClass._indexes.extend(implicitIndexes)
-
-        ######################################################
-        # Set some attributes to their defaults, if necessary.
-        # First we get the connection:
-        if not connection and not getattr(newClass, '_connection', None):
-            mod = sys.modules[newClass.__module__]
-            # See if there's a __connection__ global in
-            # the module, use it if there is.
-            if hasattr(mod, '__connection__'):
-                connection = mod.__connection__
-
-        if connection or not hasattr(newClass, '_connection'):
-            newClass.setConnection(connection)
-
-        # The style object tells how to map between Python
-        # identifiers and Database identifiers:
-        if not newClass._style:
-            if newClass._connection and newClass._connection.style:
-                newClass._style = newClass._connection.style
-            else:
-                newClass._style = styles.defaultStyle
-
-        # plainSetters are columns that haven't been overridden by the
-        # user, so we can contact the database directly to set them.
-        # Note that these can't set these in the SQLObject class
-        # itself, because they specific to this subclass of SQLObject,
-        # and cannot be shared among classes.
-        newClass._SO_plainSetters = {}
-        newClass._SO_plainGetters = {}
-        newClass._SO_plainForeignSetters = {}
-        newClass._SO_plainForeignGetters = {}
-        newClass._SO_plainJoinGetters = {}
-        newClass._SO_plainJoinAdders = {}
-        newClass._SO_plainJoinRemovers = {}
-
-        # This is a dictionary of columnName: columnObject
-        newClass._SO_columnDict = {}
-        newClass._SO_columns = []
-
-        # If _table isn't given, use style default
-        if not newClass._table:
-            newClass._table = newClass._style.pythonClassToDBTable(className)
-
-        # If _idName isn't given, use style default
-        if not d.has_key('_idName'):
-            newClass._idName = newClass._style.idForTable(newClass._table)
-
-        # We use the magic "q" attribute for accessing lazy
-        # SQL where-clause generation.  See the sql module for
-        # more.
-        newClass.q = sqlbuilder.SQLObjectTable(newClass)
-
-        # We have to check if there are columns in the inherited
-        # _columns where the attribute has been set to None in this
-        # class.  If so, then we need to remove that column from
-        # _columns.
-        for column in newClass._columns[:]:
-            if d.has_key(column.name) and d[column.name] is None:
-                newClass._columns.remove(column)
-
-        for column in newClass._columns:
-            newClass.addColumn(column)
-        if newClass._fromDatabase:
-            newClass.addColumnsFromDatabase()
-
-        ########################################
-        # Now we do the joins:
-
-        # We keep track of the different joins by index,
-        # putting them in this list.
-        newClass._SO_joinList = []
-        newClass._SO_joinDict = {}
-
-        for join in newClass._joins:
-            newClass.addJoin(join)
-
-        # We don't setup the properties until we're finished with the
-        # batch adding of all the columns...
-        newClass._SO_finishedClassCreation = True
-        makeProperties(newClass)
-
-        newClass._SO_indexList = []
-        for idx in newClass._indexes:
-            newClass.addIndex(idx)
-
-        classregistry.registry(newClass._registry).addClass(newClass)
-
-        # And return the class
-        return newClass
 
 def makeProperties(obj):
     """
@@ -302,7 +142,7 @@ class CreateNewSQLObject:
 # MetaSQLObject.
 class SQLObject(object):
 
-    __metaclass__ = MetaSQLObject
+    __metaclass__ = declarative.DeclarativeMeta
 
     # When an object is being created, it has an instance
     # variable _SO_creating, which is true.  This way all the
@@ -351,6 +191,155 @@ class SQLObject(object):
     # so you should replace it with str, or another function, if you
     # aren't using integer IDs
     _idType = int
+
+    def __classinit__(cls, new_attrs):
+        implicitColumns = []
+        implicitJoins = []
+        implicitIndexes = []
+        for attr, value in new_attrs.items():
+            if isinstance(value, col.Col):
+                value.name = attr
+                implicitColumns.append(value)
+                delattr(cls, attr)
+                continue
+            if isinstance(value, joins.Join):
+                value.joinMethodName = attr
+                implicitJoins.append(value)
+                delattr(cls, attr)
+                continue
+            if isinstance(value, index.DatabaseIndex):
+                value.setName(attr)
+                implicitIndexes.append(value)
+                delattr(cls, attr)
+                continue                
+
+        # We *don't* want to inherit _table, so we make sure it
+        # is defined in this class (not a superclass)
+        if not new_attrs.has_key('_table'):
+            cls._table = None
+
+        if new_attrs.has_key('_connection'):
+            connection = new_attrs['_connection']
+            del cls._connection
+            assert not new_attrs.has_key('connection')
+        elif new_attrs.has_key('connection'):
+            connection = new_attrs['connection']
+            del cls.connection
+        else:
+            connection = None
+
+        cls._SO_finishedClassCreation = False
+
+        # We fix up the columns here -- replacing any strings with
+        # simply-contructed Col objects, and searching the class
+        # variables for instances of Col objects (which get put into
+        # the _columns instance variable and deleted).
+        columns = []
+        for column in new_attrs.get('_columns', []):
+            if isinstance(column, str):
+                column = col.Col(column)
+            columns.append(column)
+        if columns:
+            cls._columns = columns
+
+        # We append to _columns, but we don't want to change the
+        # superclass's _columns list, so we make a copy if necessary
+        if not new_attrs.has_key('_columns'):
+            cls._columns = cls._columns[:]
+        cls._columns.extend(implicitColumns)
+        if not new_attrs.has_key('_joins'):
+            cls._joins = cls._joins[:]
+        cls._joins.extend(implicitJoins)
+        if not new_attrs.has_key('_indexes'):
+            cls._indexes = cls._indexes[:]
+        cls._indexes.extend(implicitIndexes)
+
+        ######################################################
+        # Set some attributes to their defaults, if necessary.
+        # First we get the connection:
+        if not connection and not getattr(cls, '_connection', None):
+            mod = sys.modules[cls.__module__]
+            # See if there's a __connection__ global in
+            # the module, use it if there is.
+            if hasattr(mod, '__connection__'):
+                connection = mod.__connection__
+
+        if connection or not hasattr(cls, '_connection'):
+            cls.setConnection(connection)
+
+        # The style object tells how to map between Python
+        # identifiers and Database identifiers:
+        if not cls._style:
+            if cls._connection and cls._connection.style:
+                cls._style = cls._connection.style
+            else:
+                cls._style = styles.defaultStyle
+
+        # plainSetters are columns that haven't been overridden by the
+        # user, so we can contact the database directly to set them.
+        # Note that these can't set these in the SQLObject class
+        # itself, because they specific to this subclass of SQLObject,
+        # and cannot be shared among classes.
+        cls._SO_plainSetters = {}
+        cls._SO_plainGetters = {}
+        cls._SO_plainForeignSetters = {}
+        cls._SO_plainForeignGetters = {}
+        cls._SO_plainJoinGetters = {}
+        cls._SO_plainJoinAdders = {}
+        cls._SO_plainJoinRemovers = {}
+
+        # This is a dictionary of columnName: columnObject
+        cls._SO_columnDict = {}
+        cls._SO_columns = []
+
+        # If _table isn't given, use style default
+        if not cls._table:
+            cls._table = cls._style.pythonClassToDBTable(cls.__name__)
+
+        # If _idName isn't given, use style default
+        if not new_attrs.has_key('_idName'):
+            cls._idName = cls._style.idForTable(cls._table)
+
+        # We use the magic "q" attribute for accessing lazy
+        # SQL where-clause generation.  See the sql module for
+        # more.
+        cls.q = sqlbuilder.SQLObjectTable(cls)
+
+        # We have to check if there are columns in the inherited
+        # _columns where the attribute has been set to None in this
+        # class.  If so, then we need to remove that column from
+        # _columns.
+        for column in cls._columns[:]:
+            if (new_attrs.has_key(column.name)
+                and new_attrs[column.name] is None):
+                cls._columns.remove(column)
+
+        for column in cls._columns:
+            cls.addColumn(column)
+        if cls._fromDatabase:
+            cls.addColumnsFromDatabase()
+
+        ########################################
+        # Now we do the joins:
+
+        # We keep track of the different joins by index,
+        # putting them in this list.
+        cls._SO_joinList = []
+        cls._SO_joinDict = {}
+
+        for join in cls._joins:
+            cls.addJoin(join)
+
+        # We don't setup the properties until we're finished with the
+        # batch adding of all the columns...
+        cls._SO_finishedClassCreation = True
+        makeProperties(cls)
+
+        cls._SO_indexList = []
+        for idx in cls._indexes:
+            cls.addIndex(idx)
+
+        classregistry.registry(cls._registry).addClass(cls)
 
     def get(cls, id, connection=None, selectResults=None):
 
