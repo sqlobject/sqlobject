@@ -363,8 +363,7 @@ class SOUnicodeCol(SOStringCol):
     def __init__(self, **kw):
         self.dbEncoding = popKey(kw, 'dbEncoding', 'UTF-8')
         SOStringCol.__init__(self, **kw)
-        self.validator = validators.All.join(
-            self.createValidator(), self.validator)
+        self.validator = validators.All.join(self.createValidator(), self.validator)
 
     def createValidator(self):
         """Create a validator for the column. Can be overriden in descendants."""
@@ -373,12 +372,40 @@ class SOUnicodeCol(SOStringCol):
 class UnicodeCol(Col):
     baseClass = SOUnicodeCol
 
+
+class IntValidator(validators.Validator):
+
+    def fromPython(self, value, state):
+        if value is None:
+            return None
+        if not isinstance(value, (int, long)):
+            raise TypeError, "expected an int in the IntCol '%s', got %s instead" % \
+                (self.name, type(value))
+        return value
+
+    def toPython(self, value, state):
+        if value is None:
+            return None
+        if not isinstance(value, (int, long)):
+            raise TypeError, "expected an int in the IntCol '%s', got %s instead" % \
+                (self.name, type(value))
+        return value
+
 class SOIntCol(SOCol):
+    validatorClass = IntValidator # can be overriden in descendants
 
     # 3-03 @@: support precision, maybe max and min directly
 
+    def __init__(self, **kw):
+        SOCol.__init__(self, **kw)
+        self.validator = validators.All.join(self.createValidator(), self.validator)
+
     def autoConstraints(self):
         return [consts.isInt]
+
+    def createValidator(self):
+        """Create a validator for the column. Can be overriden in descendants."""
+        return self.validatorClass(name=self.name)
 
     def _sqlType(self):
         return 'INT'
