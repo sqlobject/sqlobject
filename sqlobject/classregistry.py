@@ -66,8 +66,17 @@ class ClassRegistry(object):
         callbacks that are waiting for the class.
         """
         if cls.__name__ in self.classes:
-            raise ValueError("class %s is already in the registry"
-                             % cls.__name__)
+            import sys
+            other = self.classes[cls.__name__]
+            raise ValueError(
+                "class %s is already in the registry (other class is "
+                "%r, from the module %s in %s; attempted new class is "
+                "%r, from the module %s in %s)"
+                % (cls.__name__,
+                   other, other.__module__,
+                   sys.modules[other.__module__].__file__,
+                   cls, cls.__module__,
+                   sys.modules[cls.__module__].__file__))
         self.classes[cls.__name__] = cls
         if self.callbacks.has_key(cls.__name__):
             for callback, args, kw in self.callbacks[cls.__name__]:
