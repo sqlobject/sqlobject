@@ -50,7 +50,7 @@ class DBConnection:
                 auth = auth + '@' + self.password
             auth = auth + ':'
         else:
-            assert not password, 'URIs cannot express passwords without usernames'
+            assert not self.password, 'URIs cannot express passwords without usernames'
         uri = '%s://%s' % (self.dbName, auth)
         if self.host:
             uri += self.host + '/'

@@ -29,6 +29,10 @@ class PostgresConnection(DBAPI):
             registerConverter(type(psycopg.Binary('')),
                               PsycoBinaryConverter)
 
+        self.user = user
+        self.host = host
+        self.db = db
+        self.password = passwd
         if dsn is None:
             dsn = []
             if db:
