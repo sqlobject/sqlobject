@@ -1,16 +1,16 @@
 import unittest
-from SQLObject.SQLBuilder import sqlrepr, TRUE, FALSE
-from SQLObject.SQLBuilder import SQLExpression, SQLObjectField, \
+from sqlobject.sqlbuilder import sqlrepr, TRUE, FALSE
+from sqlobject.sqlbuilder import SQLExpression, SQLObjectField, \
      Select, Insert, Update, Delete, Replace, \
      SQLTrueClauseClass, SQLConstant, SQLPrefix, SQLCall, SQLOp
-from SQLObject.Converters import registerConverter
+from sqlobject.converters import registerConverter
 
 class TestClass:
 
     def __repr__(self):
         return '<TestClass>'
 
-def TestClassConverter(value):
+def TestClassConverter(value, db):
     return repr(value)
 
 registerConverter(TestClass, TestClassConverter)
@@ -22,15 +22,15 @@ class NewTestClass:
     def __repr__(self):
         return '<NewTestClass>'
 
-def NewTestClassConverter(value):
+def NewTestClassConverter(value, db):
     return repr(value)
 
 registerConverter(NewTestClass, NewTestClassConverter)
 
-def _sqlrepr(self):
+def _sqlrepr(self, db):
     return '<%s>' % self.__class__.__name__
 
-SQLExpression.sqlrepr = _sqlrepr
+SQLExpression.__sqlrepr__ = _sqlrepr
 
 class ConvertersTest(unittest.TestCase):
 
@@ -42,20 +42,20 @@ class ConvertersTest(unittest.TestCase):
         self.assertEqual(sqlrepr('A String\nAnother', 'sqlite'), "'A String\nAnother'")
 
     def test_string_tab(self):
-        self.assertEqual(sqlRepr('A String\tAnother', 'postgres'), "'A String\\tAnother'")
+        self.assertEqual(sqlrepr('A String\tAnother', 'postgres'), "'A String\\tAnother'")
 
     def test_string_r(self):
-        self.assertEqual(sqlRepr('A String\rAnother', 'postgres'), "'A String\\rAnother'")
+        self.assertEqual(sqlrepr('A String\rAnother', 'postgres'), "'A String\\rAnother'")
 
     def test_string_b(self):
-        self.assertEqual(sqlRepr('A String\bAnother', 'postgres'), "'A String\\bAnother'")
+        self.assertEqual(sqlrepr('A String\bAnother', 'postgres'), "'A String\\bAnother'")
 
     def test_string_000(self):
-        self.assertEqual(sqlRepr('A String\000Another', 'postgres'), "'A String\\0Another'")
+        self.assertEqual(sqlrepr('A String\000Another', 'postgres'), "'A String\\0Another'")
 
     def test_string_(self):
-        self.assertEqual(sqlRepr('A String\'Another', 'postgres'), "'A String\\\'Another'")
-        self.assertEqual(sqlRepr('A String\'Another', 'firebird'), "'A String''Another'")
+        self.assertEqual(sqlrepr('A String\'Another', 'postgres'), "'A String''Another'")
+        self.assertEqual(sqlrepr('A String\'Another', 'firebird'), "'A String''Another'")
 
     def test_simple_unicode(self):
         self.assertEqual(sqlrepr(u'A String', 'postgres'), "'A String'")
@@ -76,10 +76,10 @@ class ConvertersTest(unittest.TestCase):
         self.assertEqual(sqlrepr(('one','two','three'), 'postgres'), "('one', 'two', 'three')")
 
     def test_bool(self):
-        self.assertEqual(sqlRepr(TRUE, 'postgres'), "'t'")
-        self.assertEqual(sqlRepr(FALSE, 'postgres'), "'f'")
-        self.assertEqual(sqlRepr(TRUE, 'mysql'), "1")
-        self.assertEqual(sqlRepr(FALSE, 'mysql'), "0")
+        self.assertEqual(sqlrepr(TRUE, 'postgres'), "'t'")
+        self.assertEqual(sqlrepr(FALSE, 'postgres'), "'f'")
+        self.assertEqual(sqlrepr(TRUE, 'mysql'), "1")
+        self.assertEqual(sqlrepr(FALSE, 'mysql'), "0")
 
     def test_instance(self):
         instance = TestClass()

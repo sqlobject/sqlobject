@@ -1,5 +1,5 @@
 import unittest
-from SQLObject.Cache import CacheSet
+from sqlobject.cache import CacheSet
 
 class Something(object):
     pass
@@ -15,7 +15,7 @@ class CacheTest(unittest.TestCase):
         x.finishPut(y.__class__)
         j = x.get(1, y.__class__)
         self.assertEqual(j, y)
-        x.purge(1, y.__class__)
+        x.expire(1, y.__class__)
         j = x.get(1, y.__class__)
         self.assertEqual(j, None)
         x.finishPut(y.__class__)
