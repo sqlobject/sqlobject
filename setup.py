@@ -2,6 +2,9 @@ from distutils.core import setup
 import warnings
 warnings.filterwarnings("ignore", "Unknown distribution option")
 
+subpackages = ['dbm', 'firebird', 'include', 'mysql', 'postgres',
+               'sqlite', 'sybase']
+
 import sys
 # patch distutils if it can't cope with the "classifiers" keyword
 if sys.version < '2.2.3':
@@ -30,7 +33,7 @@ Requires Python 2.2+.
       author_email="ianb@colorstudy.com",
       url="http://sqlobject.org",
       license="LGPL",
-      packages=["sqlobject", "sqlobject.include"],
+      packages=["sqlobject"] + ['sqlobject.%s' % package for package in subpackages],
       download_url="http://prdownloads.sourceforge.net/sqlobject/SQLObject-0.6.tar.gz?download")
 
 # Send announce to:

@@ -8,9 +8,14 @@ all require a connection, you can configure that just in this file.
 """
 ## Snippet "connections"
 conn = MySQLConnection(user='test', db='testdb')
+conn = 'mysql://test@localhost/testdb'
 conn = PostgresConnection('user=test dbname=testdb')
+conn = 'postgres://test@localhost/testdb'
 conn = SQLiteConnect('database.db')
+conn = 'sqlite://path/to/database.db'
 conn = DBMConnection('database/')
+conn = 'dbm://path/to/database/'
 ## end snippet
 """
-conn = MySQLConnection(user='test', db='test')
+#conn = MySQLConnection(user='test', db='test')
+conn = 'mysql://test@localhost/test'

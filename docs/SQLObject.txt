@@ -1,5 +1,5 @@
 ```````````````
-SQLObject 0.5
+SQLObject 0.6
 ```````````````
 
 .. contents:: Contents:

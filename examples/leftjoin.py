@@ -1,14 +1,5 @@
 from sqlobject import *
-
-## Use one of these to define your connection:
-"""
-conn = MySQLConnection(user='test', db='testdb')
-conn = PostgresConnection('user=test dbname=testdb')
-conn = SQLiteConnect('database.db')
-conn = DBMConnection('database/')
-"""
-__connection__ = MySQLConnection(user='test', db='test')
-
+from setup import *
 
 class Customer(SQLObject):
 

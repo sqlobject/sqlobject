@@ -14,21 +14,7 @@ import col
 from joins import sorter
 from converters import sqlrepr
 
-# We set these up as globals, which will be set if we end up
-# needing the drivers:
-anydbm = None
-pickle = None
-MySQLdb = None
-psycopg = None
-pgdb = None
-sqlite = None
-kinterbasdb = None
-Sybase = None
-
 warnings.filterwarnings("ignore", "DB-API extension cursor.lastrowid used")
-
-__all__ = ['MySQLConnection', 'PostgresConnection', 'SQLiteConnection',
-           'DBMConnection', 'FirebirdConnection', 'SybaseConnection']
 
 _connections = {}
 
@@ -36,10 +22,7 @@ class DBConnection:
 
     def __init__(self, name=None, debug=False, debugOutput=False,
                  cache=True, style=None, autoCommit=True):
-        if name:
-            assert not _connections.has_key(name), 'A database by the name %s has already been created: %s' % (name, _connections[name])
-            _connections[name] = self
-            self.name = name
+        self.name = name
         self.debug = debug
         self.debugOutput = debugOutput
         self.cache = CacheSet(cache=cache)
@@ -48,9 +31,52 @@ class DBConnection:
         self._connectionNumbers = {}
         self._connectionCount = 1
         self.autoCommit = autoCommit
+        registerConnectionInstance(self)
 
-def connectionForName(name):
-    return _connections[name]
+    def uri(self):
+        auth = self.user or ''
+        if auth:
+            if self.password:
+                auth = auth + '@' + self.password
+            auth = auth + ':'
+        else:
+            assert not password, 'URIs cannot express passwords without usernames'
+        uri = '%s://%s' % (self.dbName, auth)
+        if self.host:
+            uri += self.host + '/'
+        if path.startswith('/'):
+            path = path[1:]
+        return uri + path
+
+    def isSupported(cls):
+        raise NotImplemented
+    isSupported = classmethod(isSupported)
+
+    def connectionFromURI(cls, uri):
+        raise NotImplemented
+    connectionFromURI = classmethod(connectionFromURI)
+
+    def _parseURI(uri, expectHost=True):
+        schema, rest = uri.split(':', 1)
+        rest = rest.strip('/')
+        if expectHost:
+            if rest.find('/') == -1:
+                host, rest = rest, ''
+            else:
+                host, rest = rest.split('/', 1)
+            if host.find('@') != -1:
+                user, host = host.split('@', 1)
+                if user.find(':') != -1:
+                    user, password = user.split(':', 1)
+                else:
+                    password = None
+            else:
+                user = password = None
+        else:
+            host = user = password = None
+        path = '/' + rest
+        return user, password, host, path
+    _parseURI = staticmethod(_parseURI)
 
 class DBAPI(DBConnection):
 
@@ -433,951 +459,44 @@ class Transaction(object):
         self.rollback()
         self._dbConnection.releaseConnection(self._connection)
 
-########################################
-## MySQL connection
-########################################
+class ConnectionURIOpener(object):
 
-class MySQLConnection(DBAPI):
+    def __init__(self):
+        self.allClasses = []
+        self.classSchemes = {}
+        self.instanceNames = {}
 
-    supportTransactions = False
-    dbName = 'mysql'
+    def registerConnectionClass(self, cls):
+        if cls not in self.allClasses:
+            self.allClasses.append(cls)
+        for uriScheme in cls.schemes:
+            assert not self.classSchemes.has_key(uriScheme) \
+                   or self.classSchemes[uriScheme] is cls, \
+                   "A class has already been registered for the URI scheme %s" % uriScheme
+            self.classSchemes[uriScheme] = cls
 
-    def __init__(self, db, user, passwd='', host='localhost', **kw):
-        global MySQLdb
-        if MySQLdb is None:
-            import MySQLdb
-        self.host = host
-        self.db = db
-        self.user = user
-        self.passwd = passwd
-        DBAPI.__init__(self, **kw)
+    def registerConnectionInstance(self, inst):
+        if inst.name:
+            assert not self.instanceNames.has_key(inst.name) \
+                   or self.instanceNames[inst.name] is cls, \
+                   "A instance has already been registered with the name %s" % inst.name
+            assert inst.name.find(':') == -1, "You cannot include ':' in your class names (%r)" % cls.name
+            self.instanceNames[inst.name] = inst
 
-    def makeConnection(self):
-        return MySQLdb.connect(host=self.host, db=self.db,
-                               user=self.user, passwd=self.passwd)
-
-    def _queryInsertID(self, conn, table, idName, id, names, values):
-        c = conn.cursor()
-        if id is not None:
-            names = [idName] + names
-            values = [id] + values
-        q = self._insertSQL(table, names, values)
-        if self.debug:
-            self.printDebug(conn, q, 'QueryIns')
-        c.execute(q)
-        if id is None:
-            id = c.insert_id()
-        if self.debugOutput:
-            self.printDebug(conn, id, 'QueryIns', 'result')
-        return id
-
-    def _queryAddLimitOffset(self, query, start, end):
-        if not start:
-            return "%s LIMIT %i" % (query, end)
-        if not end:
-            return "%s LIMIT %i, -1" % (query, start)
-        return "%s LIMIT %i, %i" % (query, start, end-start)
-
-    def createColumn(self, soClass, col):
-        return col.mysqlCreateSQL()
-
-    def createIDColumn(self, soClass):
-        return '%s INT PRIMARY KEY AUTO_INCREMENT' % soClass._idName
-
-    def joinSQLType(self, join):
-        return 'INT NOT NULL'
-
-    def tableExists(self, tableName):
-        for (table,) in self.queryAll('SHOW TABLES'):
-            if table.lower() == tableName.lower():
-                return True
-        return False
-
-    def addColumn(self, tableName, column):
-        self.query('ALTER TABLE %s ADD COLUMN %s' %
-                   (tableName,
-                    column.mysqlCreateSQL()))
-
-    def delColumn(self, tableName, column):
-        self.query('ALTER TABLE %s DROP COLUMN %s' %
-                   (tableName,
-                    column.dbName))
-
-    def columnsFromSchema(self, tableName, soClass):
-        colData = self.queryAll("SHOW COLUMNS FROM %s"
-                                % tableName)
-        results = []
-        for field, t, nullAllowed, key, default, extra in colData:
-            if field == 'id':
-                continue
-            colClass, kw = self.guessClass(t)
-            kw['name'] = soClass._style.dbColumnToPythonAttr(field)
-            kw['notNone'] = not nullAllowed
-            kw['default'] = default
-            # @@ skip key...
-            # @@ skip extra...
-            results.append(colClass(**kw))
-        return results
-
-    def guessClass(self, t):
-        if t.startswith('int'):
-            return col.IntCol, {}
-        elif t.startswith('varchar'):
-            return col.StringCol, {'length': int(t[8:-1])}
-        elif t.startswith('char'):
-            return col.StringCol, {'length': int(t[5:-1]),
-                                   'varchar': False}
-        elif t.startswith('datetime'):
-            return col.DateTimeCol, {}
-        elif t.startswith('bool'):
-            return col.BoolCol, {}
+    def openURI(self, uri):
+        if uri.find(':') != -1:
+            scheme, rest = uri.split(':', 1)
+            assert self.classSchemes.has_key(scheme), \
+                   "No SQLObject driver exists for %s" % scheme
+            return self.classSchemes[scheme].connectionFromURI(uri)
         else:
-            return col.Col, {}
-
-########################################
-## Postgres connection
-########################################
-
-class PostgresConnection(DBAPI):
-
-    supportTransactions = True
-    dbName = 'postgres'
-
-    def __init__(self, dsn=None, host=None, db=None,
-                 user=None, passwd=None, autoCommit=1,
-                 usePygresql=False,
-                 **kw):
-        global psycopg, pgdb
-        if usePygresql:
-            if pgdb is None:
-                import pgdb
-            self.pgmodule = pgdb
-        else:
-            if psycopg is None:
-                import psycopg
-            self.pgmodule = psycopg
-
-        self.autoCommit = autoCommit
-        if not autoCommit and not kw.has_key('pool'):
-            # Pooling doesn't work with transactions...
-            kw['pool'] = 0
-        if dsn is None:
-            dsn = []
-            if db:
-                dsn.append('dbname=%s' % db)
-            if user:
-                dsn.append('user=%s' % user)
-            if passwd:
-                dsn.append('password=%s' % passwd)
-            if host:
-                # @@: right format?
-                dsn.append('host=%s' % host)
-            dsn = ' '.join(dsn)
-        self.dsn = dsn
-        DBAPI.__init__(self, **kw)
-
-    def _setAutoCommit(self, conn, auto):
-        conn.autocommit(auto)
-
-    def makeConnection(self):
-        conn = self.pgmodule.connect(self.dsn)
-        if self.autoCommit:
-            conn.autocommit(1)
-        return conn
-
-    def _queryInsertID(self, conn, table, idName, id, names, values):
-        c = conn.cursor()
-        if id is not None:
-            names = [idName] + names
-            values = [id] + values
-        q = self._insertSQL(table, names, values)
-        if self.debug:
-            self.printDebug(conn, q, 'QueryIns')
-        c.execute(q)
-        if id is None:
-            c.execute('SELECT %s FROM %s WHERE oid = %s'
-                      % (idName, table, c.lastoid()))
-            id = c.fetchone()[0]
-        if self.debugOutput:
-            self.printDebug(conn, id, 'QueryIns', 'result')
-        return id
-
-    def _queryAddLimitOffset(self, query, start, end):
-        if not start:
-            return "%s LIMIT %i" % (query, end)
-        if not end:
-            return "%s OFFSET %i" % (query, start)
-        return "%s LIMIT %i OFFSET %i" % (query, end-start, start)
-
-    def createColumn(self, soClass, col):
-        return col.postgresCreateSQL()
-
-    def createIDColumn(self, soClass):
-        return '%s SERIAL PRIMARY KEY' % soClass._idName
-
-    def dropTable(self, tableName, cascade=False):
-        self.query("DROP TABLE %s %s" % (tableName,
-                                         cascade and 'CASCADE' or ''))
-
-    def joinSQLType(self, join):
-        return 'INT NOT NULL'
-
-    def tableExists(self, tableName):
-        # @@: obviously broken
-        result = self.queryOne("SELECT COUNT(relname) FROM pg_class WHERE relname = '%s'"
-                               % tableName)
-        return result[0]
-
-    def addColumn(self, tableName, column):
-        self.query('ALTER TABLE %s ADD COLUMN %s' %
-                   (tableName,
-                    column.postgresCreateSQL()))
-
-    def delColumn(self, tableName, column):
-        self.query('ALTER TABLE %s DROP COLUMN %s' %
-                   (tableName,
-                    column.dbName))
-
-    def columnsFromSchema(self, tableName, soClass):
-
-        keyQuery = """
-        SELECT pg_catalog.pg_get_constraintdef(oid) as condef
-        FROM pg_catalog.pg_constraint r
-        WHERE r.conrelid = '%s'::regclass AND r.contype = 'f'"""
-
-        colQuery = """
-        SELECT a.attname,
-        pg_catalog.format_type(a.atttypid, a.atttypmod), a.attnotnull,
-        (SELECT substring(d.adsrc for 128) FROM pg_catalog.pg_attrdef d
-        WHERE d.adrelid=a.attrelid AND d.adnum = a.attnum)
-        FROM pg_catalog.pg_attribute a
-        WHERE a.attrelid ='%s'::regclass
-        AND a.attnum > 0 AND NOT a.attisdropped
-        ORDER BY a.attnum"""
-
-        keyData = self.queryAll(keyQuery % tableName)
-        keyRE = re.compile("\((.+)\) REFERENCES (.+)\(")
-        keymap = {}
-        for (condef,) in keyData:
-            match = keyRE.search(condef)
-            if match:
-                field, reftable = match.groups()
-                keymap[field] = reftable.capitalize()
-        colData = self.queryAll(colQuery % tableName)
-        results = []
-        for field, t, notnull, defaultstr in colData:
-            if field == 'id':
-                continue
-            colClass, kw = self.guessClass(t)
-            kw['name'] = soClass._style.dbColumnToPythonAttr(field)
-            kw['notNone'] = notnull
-            if defaultstr is not None:
-                kw['default'] = getattr(sqlbuilder.const, defaultstr)
-            if keymap.has_key(field):
-                kw['foreignKey'] = keymap[field]
-            results.append(colClass(**kw))
-        return results
-
-    def guessClass(self, t):
-        if t.count('int'):
-            return col.IntCol, {}
-        elif t.count('varying'):
-            return col.StringCol, {'length': int(t[t.index('(')+1:-1])}
-        elif t.startswith('character('):
-            return col.StringCol, {'length': int(t[t.index('(')+1:-1]),
-                                   'varchar': False}
-        elif t == 'text':
-            return col.StringCol, {}
-        elif t.startswith('datetime'):
-            return col.DateTimeCol, {}
-        elif t.startswith('bool'):
-            return col.BoolCol, {}
-        else:
-            return col.Col, {}
-
-
-########################################
-## SQLite connection
-########################################
-
-class SQLiteConnection(DBAPI):
-
-    supportTransactions = True
-    dbName = 'sqlite'
-
-    def __init__(self, filename, autoCommit=1, **kw):
-        global sqlite
-        if sqlite is None:
-            import sqlite
-        self.filename = filename  # full path to sqlite-db-file
-        if not autoCommit and not kw.has_key('pool'):
-            # Pooling doesn't work with transactions...
-            kw['pool'] = 0
-        # use only one connection for sqlite - supports multiple
-        # cursors per connection
-        self._conn = sqlite.connect(self.filename)
-        DBAPI.__init__(self, **kw)
-
-    def _setAutoCommit(self, conn, auto):
-        conn.autocommit = auto
-
-    def makeConnection(self):
-        return self._conn
-
-    def _queryInsertID(self, conn, table, idName, id, names, values):
-        c = conn.cursor()
-        if id is not None:
-            names = [idName] + names
-            values = [id] + values
-        q = self._insertSQL(table, names, values)
-        if self.debug:
-            self.printDebug(conn, q, 'QueryIns')
-        c.execute(q)
-        # lastrowid is a DB-API extension from "PEP 0249":
-        if id is None:
-            id = int(c.lastrowid)
-        if self.debugOutput:
-            self.printDebug(conn, id, 'QueryIns', 'result')
-        return id
-
-    def _queryAddLimitOffset(self, query, start, end):
-        if not start:
-            return "%s LIMIT %i" % (query, end)
-        if not end:
-            return "%s LIMIT 0 OFFSET %i" % (query, start)
-        return "%s LIMIT %i OFFSET %i" % (query, end-start, start)
-
-    def createColumn(self, soClass, col):
-        return col.sqliteCreateSQL()
-
-    def createIDColumn(self, soClass):
-        return '%s INTEGER PRIMARY KEY' % soClass._idName
-
-    def joinSQLType(self, join):
-        return 'INT NOT NULL'
-
-    def tableExists(self, tableName):
-        result = self.queryOne("SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name = '%s'" % tableName)
-        # turn it into a boolean:
-        return not not result
-
-########################################
-## Sybase connection
-########################################
-
-class SybaseConnection(DBAPI):
-
-    supportTransactions = True
-    dbName = 'sybase'
-
-    def __init__(self, db, user, passwd='', host='localhost',
-                 autoCommit=0, **kw):
-        global Sybase
-        if Sybase is None:
-            import Sybase
-            from Sybase import NumericType
-            from Converters import registerConverter, IntConverter
-            registerConverter(NumericType, IntConverter)
-        if not autoCommit and not kw.has_key('pool'):
-            # Pooling doesn't work with transactions...
-            kw['pool'] = 0
-        self.autoCommit=autoCommit
-        self.host = host
-        self.db = db
-        self.user = user
-        self.passwd = passwd
-        DBAPI.__init__(self, **kw)
-
-    def insert_id(self, conn):
-        """
-        Sybase adapter/cursor does not support the
-        insert_id method.
-        """
-        c = conn.cursor()
-        c.execute('SELECT @@IDENTITY')
-        return c.fetchone()[0]
-
-    def makeConnection(self):
-        return Sybase.connect(self.host, self.user, self.passwd,
-                              database=self.db, auto_commit=self.autoCommit)
-
-    def _queryInsertID(self, conn, table, idName, id, names, values):
-        c = conn.cursor()
-        if id is not None:
-            names = [idName] + names
-            values = [id] + values
-            c.execute('SET IDENTITY_INSERT %s ON' % table)
-        else:
-            c.execute('SET IDENTITY_INSERT %s OFF' % table)
-        q = self._insertSQL(table, names, values)
-        if self.debug:
-            print 'QueryIns: %s' % q
-        c.execute(q)
-        if id is None:
-            id = self.insert_id(conn)
-        if self.debugOutput:
-            self.printDebug(conn, id, 'QueryIns', 'result')
-        return id
-
-    def _queryAddLimitOffset(self, query, start, end):
-        # XXX Sybase doesn't support LIMIT
-        return query
-
-    def createColumn(self, soClass, col):
-        return col.sybaseCreateSQL()
-
-    def createIDColumn(self, soClass):
-        return '%s NUMERIC(18,0) IDENTITY' % soClass._idName
-
-    def joinSQLType(self, join):
-        return 'NUMERIC(18,0) NOT NULL'
-
-    SHOW_TABLES="SELECT name FROM sysobjects WHERE type='U'"
-    def tableExists(self, tableName):
-        for (table,) in self.queryAll(self.SHOW_TABLES):
-            if table.lower() == tableName.lower():
-                return True
-        return False
-
-    def addColumn(self, tableName, column):
-        self.query('ALTER TABLE %s ADD COLUMN %s' %
-                   (tableName,
-                    column.sybaseCreateSQL()))
-
-    def delColumn(self, tableName, column):
-        self.query('ALTER TABLE %s DROP COLUMN %s' %
-                   (tableName,
-                    column.dbName))
-
-    SHOW_COLUMNS=("select 'column' = COL_NAME(id, colid) "
-                  "from syscolumns where id = OBJECT_ID(%s)")
-    def columnsFromSchema(self, tableName, soClass):
-        colData = self.queryAll(self.SHOW_COLUMNS
-                                % tableName)
-        results = []
-        for field, t, nullAllowed, key, default, extra in colData:
-            if field == 'id':
-                continue
-            colClass, kw = self.guessClass(t)
-            kw['name'] = soClass._style.dbColumnToPythonAttr(field)
-            kw['notNone'] = not nullAllowed
-            kw['default'] = default
-            # @@ skip key...
-            # @@ skip extra...
-            results.append(colClass(**kw))
-        return results
-
-    def guessClass(self, t):
-        if t.startswith('int'):
-            return col.IntCol, {}
-        elif t.startswith('varchar'):
-            return col.StringCol, {'length': int(t[8:-1])}
-        elif t.startswith('char'):
-            return col.StringCol, {'length': int(t[5:-1]),
-                                   'varchar': False}
-        elif t.startswith('datetime'):
-            return col.DateTimeCol, {}
-        else:
-            return col.Col, {}
-
-########################################
-## Firebird connection
-########################################
-
-class FirebirdConnection(DBAPI):
-
-    supportTransactions = False
-    dbName = 'firebird'
-
-    def __init__(self, host, db, user='sysdba',
-                 passwd='masterkey', autoCommit=1, **kw):
-        global kinterbasdb
-        if kinterbasdb is None:
-            import kinterbasdb
-
-        self.limit_re = re.compile('^\s*(select )(.*)', re.IGNORECASE)
-
-        if not autoCommit and not kw.has_key('pool'):
-            # Pooling doesn't work with transactions...
-            kw['pool'] = 0
-
-        self.host = host
-        self.db = db
-        self.user = user
-        self.passwd = passwd
-
-        DBAPI.__init__(self, **kw)
-
-    def _runWithConnection(self, meth, *args):
-        conn = self.getConnection()
-        # @@: Horrible auto-commit implementation.  Just horrible!
-        try:
-            conn.begin()
-        except kinterbasdb.ProgrammingError:
-            pass
-        try:
-            val = meth(conn, *args)
-            try:
-                conn.commit()
-            except kinterbasdb.ProgrammingError:
-                pass
-        finally:
-            self.releaseConnection(conn)
-        return val
-
-    def _setAutoCommit(self, conn, auto):
-        # Only _runWithConnection does "autocommit", so we don't
-        # need to worry about that.
-        pass
-
-    def makeConnection(self):
-        return kinterbasdb.connect(
-            host = self.host, database = self.db,
-            user = self.user, password = self.passwd
-            )
-
-    def _queryInsertID(self, conn, table, idName, id, names, values):
-        """Firebird uses 'generators' to create new ids for a table.
-        The users needs to create a generator named GEN_<tablename>
-        for each table this method to work."""
-
-        if id is None:
-            row = self.queryOne('SELECT gen_id(GEN_%s,1) FROM rdb$database'
-                                % table)
-            id = row[0]
-        names = [idName] + names
-        values = [id] + values
-        q = self._insertSQL(table, names, values)
-        if self.debug:
-            self.printDebug(conn, q, 'QueryIns')
-        self.query(q)
-        if self.debugOutput:
-            self.printDebug(conn, id, 'QueryIns', 'result')
-        return id
-
-    def _queryAddLimitOffset(self, query, start, end):
-        """Firebird slaps the limit and offset (actually 'first' and
-        'skip', respectively) statement right after the select."""
-        if not start:
-            limit_str =  "SELECT FIRST %i" % end
-        if not end:
-            limit_str = "SELECT SKIP %i" % start
-        else:
-            limit_str = "SELECT FIRST %i SKIP %i" % (end-start, start)
-
-        match = self.limit_re.match(query)
-        if match and len(match.groups()) == 2:
-            return ' '.join([limit_str, match.group(2)])
-        else:
-            return query
-
-    def createTable(self, soClass):
-        self.query('CREATE TABLE %s (\n%s\n)' % \
-                   (soClass._table, self.createColumns(soClass)))
-        self.query("CREATE GENERATOR GEN_%s" % soClass._table)
-
-    def createColumn(self, soClass, col):
-        return col.firebirdCreateSQL()
-
-    def createIDColumn(self, soClass):
-        return '%s INT NOT NULL PRIMARY KEY' % soClass._idName
-
-    def joinSQLType(self, join):
-        return 'INT NOT NULL'
-
-    def tableExists(self, tableName):
-        # there's something in the database by this name...let's
-        # assume it's a table.  By default, fb 1.0 stores EVERYTHING
-        # it cares about in uppercase.
-        result = self.queryOne("SELECT COUNT(rdb$relation_name) FROM rdb$relations WHERE rdb$relation_name = '%s'"
-                               % tableName.upper())
-        return result[0]
-
-    def addColumn(self, tableName, column):
-        self.query('ALTER TABLE %s ADD %s' %
-                   (tableName,
-                    column.firebirdCreateSQL()))
-
-    def dropTable(self, tableName, cascade=False):
-        self.query("DROP TABLE %s" % tableName)
-        self.query("DROP GENERATOR GEN_%s" % tableName)
-
-    def delColumn(self, tableName, column):
-        self.query('ALTER TABLE %s DROP %s' %
-                   (tableName,
-                    column.dbName))
-
-    def columnsFromSchema(self, tableName, soClass):
-        """
-        Look at the given table and create Col instances (or
-        subclasses of Col) for the fields it finds in that table.
-        """
-
-        fieldqry = """\
-        SELECT RDB$RELATION_FIELDS.RDB$FIELD_NAME as field,
-               RDB$TYPES.RDB$TYPE_NAME as t,
-               RDB$FIELDS.RDB$FIELD_LENGTH as flength,
-               RDB$FIELDS.RDB$FIELD_SCALE as fscale,
-               RDB$RELATION_FIELDS.RDB$NULL_FLAG as nullAllowed,
-               RDB$RELATION_FIELDS.RDB$DEFAULT_VALUE as thedefault,
-               RDB$FIELDS.RDB$FIELD_SUB_TYPE as blobtype
-        FROM RDB$RELATION_FIELDS
-        INNER JOIN RDB$FIELDS ON
-            (RDB$RELATION_FIELDS.RDB$FIELD_SOURCE = RDB$FIELDS.RDB$FIELD_NAME)
-        INNER JOIN RDB$TYPES ON (RDB$FIELDS.RDB$FIELD_TYPE =
-                                 RDB$TYPES.RDB$TYPE)
-        WHERE
-            (RDB$RELATION_FIELDS.RDB$RELATION_NAME = '%s')
-            AND (RDB$TYPES.RDB$FIELD_NAME = 'RDB$FIELD_TYPE')"""
-
-        colData = self.queryAll(fieldqry % tableName.upper())
-        results = []
-        for field, t, flength, fscale, nullAllowed, thedefault, blobType in colData:
-            if field == 'id':
-                continue
-            colClass, kw = self.guessClass(t, flength, fscale)
-            kw['name'] = soClass._style.dbColumnToPythonAttr(field)
-            kw['notNone'] = not nullAllowed
-            kw['default'] = thedefault
-            results.append(colClass(**kw))
-        return results
-
-    _intTypes=['INT64', 'SHORT','LONG']
-    _dateTypes=['DATE','TIME','TIMESTAMP']
-
-    def guessClass(self, t, flength, fscale=None):
-        """
-        An internal method that tries to figure out what Col subclass
-        is appropriate given whatever introspective information is
-        available -- both very database-specific.
-        """
-
-        if t in self._intTypes:
-            return col.IntCol, {}
-        elif t == 'VARYING':
-            return col.StringCol, {'length': flength}
-        elif t == 'TEXT':
-            return col.StringCol, {'length': flength,
-                                   'varchar': False}
-        elif t in self._dateTypes:
-            return col.DateTimeCol, {}
-        else:
-            return col.Col, {}
-
-########################################
-## File-based connections
-########################################
-
-class FileConnection(DBConnection):
-
-    """
-    Files connections should deal with setup, and define the
-    methods:
-
-    * ``_fetchDict(self, table, id)``
-    * ``_saveDict(self, table, id, d)``
-    * ``_newID(table)``
-    * ``tableExists(table)``
-    * ``createTable(soClass)``
-    * ``dropTable(table)``
-    * ``clearTable(table)``
-    * ``_SO_delete(so)``
-    * ``_allIDs()``
-    * ``_SO_createJoinTable(join)``
-    """
-
-    def queryInsertID(self, table, idName, id, names, values):
-        if id is None:
-            id = self._newID(table)
-        self._saveDict(table, id, dict(zip(names, values)))
-        return id
-
-    def createColumns(self, soClass):
-        pass
-
-    def _SO_update(self, so, values):
-        d = self._fetchDict(so._table, so.id)
-        for dbName, value in values:
-            d[dbName] = value
-        self._saveDict(so._table, so.id, d)
-
-    def _SO_selectOne(self, so, columnNames):
-        d = self._fetchDict(so._table, so.id)
-        return [d[name] for name in columnNames]
-
-    def _SO_selectOneAlt(self, cls, columnNames, column, value):
-        for id in self._allIDs(cls._table):
-            d = self._fetchDict(cls._table, id)
-            if d[column] == value:
-                d['id'] = id
-                return [d[name] for name in columnNames]
-
-    _createRE = re.compile('CREATE TABLE\s+(IF NOT EXISTS\s+)?([^ ]*)', re.I)
-    _dropRE = re.compile('DROP TABLE\s+(IF EXISTS\s+)?([^ ]*)', re.I)
-
-    def query(self, q):
-        match = self._createRE.search(q)
-        if match:
-            if match.group(1) and self.tableExists(match.group(2)):
-                return
-            class X: pass
-            x = X()
-            x._table = match.group(2)
-            return self.createTable(x)
-        match = self._dropRE.search(q)
-        if match:
-            if match.group(1) and not self.tableExists(match.group(2)):
-                return
-            return self.dropTable(match.group(2))
-
-    def addColumn(self, tableName, column):
-        for id in self._allIDs(tableName):
-            d = self._fetchDict(tableName, id)
-            d[column.dbName] = None
-            self._saveDict(tableName, id, d)
-
-    def delColumn(self, tableName, column):
-        for id in self._allIDs(tableName):
-            d = self._fetchDict(tableName, id)
-            del d[column.dbName]
-            self._saveDict(tableName, id, d)
-
-    def _SO_columnClause(self, soClass, kw):
-        clauses = []
-        for name, value in kw.items():
-            clauses.append(getattr(soClass.q, name) == value)
-        return sqlbuilder.AND(*clauses)
-
-    def _SO_selectJoin(self, soClass, column, value):
-        results = []
-        # @@: seems lame I need to do this...
-        value = int(value)
-        for id in self._allIDs(soClass._table):
-            d = self._fetchDict(soClass._table, id)
-            if d[column] == value:
-                results.append((id,))
-        return results
-
-########################################
-## DBM connection
-########################################
-
-class DBMConnection(FileConnection):
-
-    supportTransactions = False
-    dbName = 'dbm'
-
-    def __init__(self, path, **kw):
-        global anydbm, pickle
-        if anydbm is None:
-            import anydbm
-        if pickle is None:
-            try:
-                import cPickle as pickle
-            except ImportError:
-                import pickle
-        self.path = path
-        try:
-            self._meta = anydbm.open(os.path.join(path, "meta.db"), "w")
-        except anydbm.error:
-            self._meta = anydbm.open(os.path.join(path, "meta.db"), "c")
-        self._tables = {}
-        atexit.register(self.close)
-        self._closed = 0
-        FileConnection.__init__(self, **kw)
-
-    def _newID(self, table):
-        id = int(self._meta["%s.id" % table]) + 1
-        self._meta["%s.id" % table] = str(id)
-        return id
-
-    def _saveDict(self, table, id, d):
-        db = self._getDB(table)
-        db[str(id)] = pickle.dumps(d)
-
-    def _fetchDict(self, table, id):
-        return pickle.loads(self._getDB(table)[str(id)])
-
-    def _getDB(self, table):
-        try:
-            return self._tables[table]
-        except KeyError:
-            db = self._openTable(table)
-            self._tables[table] = db
-            return db
-
-    def close(self):
-        if self._closed:
-            return
-        self._closed = 1
-        self._meta.close()
-        del self._meta
-        for table in self._tables.values():
-            table.close()
-        del self._tables
-
-    def __del__(self):
-        FileConnection.__del__(self)
-        self.close()
-
-    def _openTable(self, table):
-        try:
-            db = anydbm.open(os.path.join(self.path, "%s.db" % table), "w")
-        except anydbm.error:
-            db = anydbm.open(os.path.join(self.path, "%s.db" % table), "c")
-        return db
-
-    def tableExists(self, table):
-        return self._meta.has_key("%s.id" % table) \
-               or os.path.exists(os.path.join(self.path, table + ".db"))
-
-    def createTable(self, soClass):
-        self._meta["%s.id" % soClass._table] = "1"
-
-    def dropTable(self, tableName, cascade=False):
-        try:
-            del self._meta["%s.id" % tableName]
-        except KeyError:
-            pass
-        self.clearTable(tableName)
-
-    def clearTable(self, tableName):
-        if self._tables.has_key(tableName):
-            del self._tables[tableName]
-        filename = os.path.join(self.path, "%s.db" % tableName)
-        if os.path.exists(filename):
-            os.unlink(filename)
-
-    def _SO_delete(self, so):
-        db = self._getDB(so._table)
-        del db[str(so.id)]
-
-    def iterSelect(self, select):
-        return DBMSelectResults(self, select)
-
-    def _allIDs(self, tableName):
-        return self._getDB(tableName).keys()
-
-    def _SO_createJoinTable(self, join):
-        pass
-
-    def _SO_dropJoinTable(self, join):
-        os.unlink(os.path.join(self.path, join.intermediateTable + ".db"))
-
-    def _SO_intermediateJoin(self, table, get, join1, id1):
-        db = self._openTable(table)
-        try:
-            results = db[join1 + str(id1)]
-        except KeyError:
-            return []
-        if not results:
-            return []
-        return [(int(id),) for id in results.split(',')]
-
-    def _SO_intermediateInsert(self, table, join1, id1, join2, id2):
-        db = self._openTable(table)
-        try:
-            results = db[join1 + str(id1)]
-        except KeyError:
-            results = ""
-        if results:
-            db[join1 + str(id1)] = results + "," + str(id2)
-        else:
-            db[join1 + str(id1)] = str(id2)
-
-        try:
-            results = db[join2 + str(id2)]
-        except KeyError:
-            results = ""
-        if results:
-            db[join2 + str(id2)] = results + "," + str(id1)
-        else:
-            db[join2 + str(id2)] = str(id1)
-
-    def _SO_intermediateDelete(self, table, join1, id1, join2, id2):
-        db = self._openTable(table)
-        try:
-            results = db[join1 + str(id1)]
-        except KeyError:
-            results = ""
-        results = map(int, results.split(","))
-        results.remove(int(id2))
-        db[join1 + str(id1)] = ",".join(map(str, results))
-        try:
-            results = db[join2 + str(id2)]
-        except KeyError:
-            results = ""
-        results = map(int, results.split(","))
-        results.remove(int(id1))
-        db[join2 + str(id2)] = ",".join(map(str, results))
-
-class DBMSelectResults(object):
-
-    def __init__(self, conn, select):
-        self.select = select
-        self.conn = conn
-        self.tables = select.tables
-        self.tableDict = {}
-        self._results = None
-        for i in range(len(self.tables)):
-            self.tableDict[self.tables[i]] = i
-        self.comboIter = _iterAllCombinations(
-            [self.conn._getDB(table).keys() for table in self.tables])
-        if select.ops.get('orderBy'):
-            self._maxNext = -1
-            results = self.allResults()
-            results.sort(sorter(select.ops['orderBy']))
-            self._results = results
-            if select.ops.get('start'):
-                if select.ops.get('end'):
-                    self._results = self._results[select.ops['start']:select.ops['end']]
-                else:
-                    self._results = self._results[select.ops['start']:]
-            elif select.ops.get('end'):
-                self._results = self._results[:select.ops['end']]
-        elif select.ops.get('start'):
-            for i in range(select.ops.get('start')):
-                self.next()
-            if select.ops.get('end'):
-                self._maxNext = select.ops['end'] - select.ops['start']
-        elif select.ops.get('end'):
-            self._maxNext = select.ops['end']
-        else:
-            self._maxNext = -1
-
-    def next(self):
-        if self._results is not None:
-            try:
-                return self._results.pop(0)
-            except IndexError:
-                raise StopIteration
-
-        for idList in self.comboIter:
-            self.idList = idList
-            if sqlbuilder.execute(self.select.clause, self):
-                if not self._maxNext:
-                    raise StopIteration
-                self._maxNext -= 1
-                return self.select.sourceClass.get(int(idList[self.tableDict[self.select.sourceClass._table]]))
-        raise StopIteration
-
-    def field(self, table, field):
-        return self.conn._fetchDict(table, self.idList[self.tableDict[table]])[field]
-
-    def allResults(self):
-        results = []
-        while 1:
-            try:
-                results.append(self.next())
-            except StopIteration:
-                return results
-
-
-def _iterAllCombinations(l):
-    if len(l) == 1:
-        for id in l[0]:
-            yield [id]
-    else:
-        for id in l[0]:
-            for idList in _iterAllCombinations(l[1:]):
-                yield [id] + idList
+            # We just have a name, not a URI
+            assert self.instanceNames.has_key(uri), \
+                   "No SQLObject driver exists under the name %s" % uri
+            return self.instanceNames[uri]
+
+TheURIOpener = ConnectionURIOpener()
+
+registerConnectionClass = TheURIOpener.registerConnectionClass
+registerConnectionInstance = TheURIOpener.registerConnectionInstance
+openURI = TheURIOpener.openURI

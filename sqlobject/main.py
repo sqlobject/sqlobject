@@ -107,7 +107,7 @@ class MetaSQLObject(type):
         # If the connection is named, we turn the name into
         # a real connection.
         if isinstance(newClass._connection, str):
-            newClass._connection = dbconnection.connectionForName(
+            newClass._connection = dbconnection.openURI(
                 newClass._connection)
 
         # The style object tells how to map between Python
