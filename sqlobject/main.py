@@ -1033,7 +1033,7 @@ class SQLObject(object):
     delete = classmethod(delete)
 
     def __repr__(self):
-        return '<%s %i %s>' \
+        return '<%s %r %s>' \
                % (self.__class__.__name__,
                   self.id,
                   ' '.join(['%s=%s' % (name, repr(value)) for name, value in self._reprItems()]))
