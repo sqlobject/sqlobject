@@ -4,8 +4,10 @@ from sqlobject.tests.dbtest import *
 class TestSO1(SQLObject):
 
     name = StringCol(length=50, dbName='name_col')
-    _cacheValues = False
     passwd = StringCol(length=10)
+
+    class sqlmeta:
+        cacheValues = False
 
     def _set_passwd(self, passwd):
         self._SO_set_passwd(passwd.encode('rot13'))

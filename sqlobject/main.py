@@ -153,6 +153,7 @@ class sqlmeta(object):
     style = None
     lazyUpdate = False
     defaultOrder = None
+    cacheValues = True
 
     __metaclass__ = declarative.DeclarativeMeta
 
@@ -235,11 +236,6 @@ class SQLObject(object):
     # globally available.  In that case, self._SO_perConnection
     # will be true.  It's false by default:
     _SO_perConnection = False
-
-    # The _cacheValues attribute controls if you cache
-    # values fetched from the database.  We make sure
-    # it's set (default 1).
-    _cacheValues = True
 
     _connection = None
 
@@ -495,10 +491,11 @@ class SQLObject(object):
     _idName = _sqlmeta_attr('idName', 2)
     _lazyUpdate = _sqlmeta_attr('lazyUpdate', 2)
     _defaultOrder = _sqlmeta_attr('defaultOrder', 2)
+    _cacheValues = _sqlmeta_attr('cacheValues', 2)
 
     def _cleanDeprecatedAttrs(cls, new_attrs):
         for attr in ['_table', '_lazyUpdate', '_style', '_idName',
-                     '_defaultOrder']:
+                     '_defaultOrder', '_cacheValues']:
             if new_attrs.has_key(attr):
                 new_name = attr[1:]
                 deprecated("'%s' is deprecated; please set the '%s' "
@@ -558,7 +555,7 @@ class SQLObject(object):
         # we'll alias that to _SO_get_columnName.  This
         # allows a sort of super call, even though there's
         # no superclass that defines the database access.
-        if cls._cacheValues:
+        if cls.sqlmeta.cacheValues:
             # We create a method here, which is just a function
             # that takes "self" as the first argument.
             getter = eval('lambda self: self._SO_loadValue(%s)' % repr(instanceName(name)))
@@ -609,7 +606,7 @@ class SQLObject(object):
             # deal, except chopping off the "ID" ending since
             # we're giving the object, not the ID of the
             # object this time:
-            if cls._cacheValues:
+            if cls.sqlmeta.cacheValues:
                 # self._SO_class_className is a reference
                 # to the class in question.
                 getter = eval('lambda self: self._SO_foreignKey(self._SO_loadValue(%r), self._SO_class_%s)' % (instanceName(name), column.foreignKey))
@@ -911,7 +908,7 @@ class SQLObject(object):
                                     [(self._SO_columnDict[name].dbName,
                                       dbValue)])
 
-        if self._cacheValues:
+        if self.sqlmeta.cacheValues:
             setattr(self, instanceName(name), value)
 
     def set(self, **kw):
@@ -1127,7 +1124,7 @@ class SQLObject(object):
             obj = cls.get(result[0], connection=connection)
         else:
             obj = cls.get(result[0])
-        if not obj._cacheValues:
+        if not obj.sqlmeta.cacheValues:
             obj._SO_writeLock.acquire()
             try:
                 obj._SO_selectInit(result[1:])
