@@ -379,16 +379,16 @@ class IntValidator(validators.Validator):
         if value is None:
             return None
         if not isinstance(value, (int, long, sqlbuilder.SQLExpression)):
-            raise TypeError, "expected an int in the IntCol '%s', got %s instead" % \
-                (self.name, type(value))
+            raise validators.InvalidField("expected an int in the IntCol '%s', got %s instead" % \
+                (self.name, type(value)), value, state)
         return value
 
     def toPython(self, value, state):
         if value is None:
             return None
         if not isinstance(value, (int, long, sqlbuilder.SQLExpression)):
-            raise TypeError, "expected an int in the IntCol '%s', got %s instead" % \
-                (self.name, type(value))
+            raise validators.InvalidField("expected an int in the IntCol '%s', got %s instead" % \
+                (self.name, type(value)), value, state)
         return value
 
 class SOIntCol(SOCol):
