@@ -131,17 +131,17 @@ class DBAPI(DBConnection):
         self._poolLock.acquire()
         try:
             if not self._pool:
-                newConn = self.makeConnection()
-                self._pool.append(newConn)
-                self._connectionNumbers[id(newConn)] = self._connectionCount
+                conn = self.makeConnection()
+                self._connectionNumbers[id(conn)] = self._connectionCount
                 self._connectionCount += 1
-            val = self._pool.pop()
+            else:
+                conn = self._pool.pop()
             if self.debug:
                 s = 'ACQUIRE'
                 if self._pool is not None:
                     s += ' pool=[%s]' % ', '.join([str(self._connectionNumbers[id(v)]) for v in self._pool])
-                self.printDebug(val, s, 'Pool')
-            return val
+                self.printDebug(conn, s, 'Pool')
+            return conn
         finally:
             self._poolLock.release()
 
