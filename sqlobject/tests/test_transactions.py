@@ -10,10 +10,12 @@ class TestSOTrans(SQLObject):
     name = StringCol(length=10, alternateID=True, dbName='name_col')
     _defaultOrderBy = 'name'
 
-def testTransaction():
+def test_transaction():
     if not supports('transactions'):
         return
-    setupClass(TestSOTrans, [d(name='bob'), d(name='tim')])
+    setupClass(TestSOTrans)
+    TestSOTrans(name='bob')
+    TestSOTrans(name='tim')
     trans = TestSOTrans._connection.transaction()
     try:
         TestSOTrans._connection.autoCommit = 'exception'
