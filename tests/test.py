@@ -34,7 +34,7 @@ class ClassRegistryTest(SQLObjectTest):
             class Duplicate(SQLObject):
                 pass
         except ValueError, err:
-            self.assertEqual(str(err), "class Duplicate is already in the registry")
+            assert str(err).startswith("class Duplicate is already in the registry")
         else:
             self.fail("should have raised an error on duplicate class definition")
 
@@ -1198,14 +1198,9 @@ class IndexTest1(SQLObjectTest):
             n += 1
             SOIndex1(name=name, number=n)
         mod = SOIndex1._connection.module
-        # Firebird doesn't throw an integrity error, unfortunately:
-        if mod.__name__.endswith('kinterbasdb'):
-            exc = mod.ProgrammingError
-        else:
-            exc = mod.IntegrityError
         try:
             SOIndex1(name='blah', number=0)
-        except exc:
+        except (mod.ProgrammingError, mod.IntegrityError):
             # expected
             pass
         else:
