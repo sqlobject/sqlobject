@@ -265,15 +265,13 @@ class DBAPI(DBConnection):
                          select, keepConnection=False)
 
     def accumulateSelect(self, select, expression):
-        """ Apply an accumulate function (like SUM, COUNT, ..)
+        """ Apply an accumulate function (SUM, COUNT, MIN, AVG, MAX, etc...)
             to the select object.
-            Return the value resulting from the SQL accumulate function
-            as an integer.
         """
         q = "SELECT %s" % expression
         q += " FROM %s WHERE" % ", ".join(select.tables)
         q = self._addWhereClause(select, q, limit=0, order=0)
-        val = int(self.queryOne(q)[0])
+        val = self.queryOne(q)[0]
         return val
 
     def queryForSelect(self, select):
