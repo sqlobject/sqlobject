@@ -3,6 +3,10 @@ import optparse
 import fnmatch
 import os
 import sys
+try:
+    from wsgikit import pyconfig
+except ImportError:
+    pyconfig = None
 
 import sqlobject
 from sqlobject.util import moduleloader
@@ -65,6 +69,11 @@ def standard_parser(connection=True, simulate=True,
                           help="The database connection URI",
                           metavar='URI',
                           dest='connection_uri')
+        if pyconfig:
+            parser.add_option('-f', '--config-file',
+                              help="The WSGIKit config file that contains the database URI (in the database key)",
+                              metavar="FILE",
+                              dest="config_file")
     parser.add_option('-m', '--module',
                       help="Module in which to find SQLObject classes",
                       action='append',
@@ -138,6 +147,9 @@ class Command(object):
             if not getattr(self.options, var_name, None):
                 self.runner.invalid(
                     'You must provide the option %s' % option_name)
+        conf = self.config()
+        if conf and conf.get('sys_path'):
+            update_sys_path(conf['sys_path'], self.options.verbose)
         self.command()
 
     def classes(self, require_connection=True):
@@ -193,8 +205,24 @@ class Command(object):
         return all
 
     def connection(self):
-        if getattr(self.options, 'connection_uri', None):
+        config = self.config()
+        if config is not None:
+            assert config.get('database'), (
+                "No database variable found in config file %s"
+                % self.options.config_file)
+            return sqlobject.connectionForURI(config['database'])
+        elif getattr(self.options, 'connection_uri', None):
             return sqlobject.connectionForURI(self.options.connection_uri)
+        else:
+            return None
+
+    def config(self):
+        if getattr(self.options, 'config_file', None):
+            assert pyconfig, (
+                "The --config-file option should not be available without wsgikit.pyconfig installed")
+            config = pyconfig.Config()
+            config.load(self.options.config_file)
+            return config
         else:
             return None
 
@@ -417,6 +445,15 @@ class CommandHelp(Command):
                     print '%s (Aliases: %s)' % (
                         ' '*max_len, ', '.join(command.aliases))
                 
+def update_sys_path(paths, verbose):
+    if isinstance(paths, (str, unicode)):
+        paths = [paths]
+    for path in paths:
+        path = os.path.abspath(path)
+        if path not in sys.path:
+            if verbose:
+                print 'Adding %s to path' % path
+            sys.path.append(path)
 
 if __name__ == '__main__':
     the_runner.run(sys.argv)
