@@ -546,13 +546,13 @@ def LIKE(expr, string):
     return SQLOp("LIKE", expr, string)
 
 def STARTSWITH(expr, string):
-    return SQLOp("LIKE", expr, _likeQuote(string) + '%')
+    return SQLOp("LIKE", expr, _LikeQuoted(string) + '%')
 
 def ENDSWITH(expr, string):
-    return SQLOp("LIKE", expr, '%' + _likeQuote(string))
+    return SQLOp("LIKE", expr, '%' + _LikeQuoted(string))
 
 def CONTAINSSTRING(expr, string):
-    return SQLOp("LIKE", expr, '%' + _likeQuote(string) + '%')
+    return SQLOp("LIKE", expr, '%' + _LikeQuoted(string) + '%')
 
 def ISNULL(expr):
     return SQLOp("IS", expr, None)
@@ -560,8 +560,19 @@ def ISNULL(expr):
 def ISNOTNULL(expr):
     return SQLOp("IS NOT", expr, None)
 
-def _likeQuote(s):
-    return s.replace('%', '%%')
+class _LikeQuoted:
+    # @@: I'm not sure what the quoting rules really are for all the
+    # databases
+
+    def __init__(self, expr):
+        self.expr = expr
+
+    def __sqlrepr__(self, db):
+        s = sqlrepr(self.expr, db)
+        if db in ('postgres', 'mysql'):
+            return s.replace('%', '\\%')
+        else:
+            return s.replace('%', '%%')
 
 ########################################
 ## Global initializations
