@@ -405,6 +405,9 @@ class SOFloatCol(SOCol):
     def _sqlType(self):
         return 'FLOAT'
 
+    def _mysqlType(self):
+        return "DOUBLE PRECISION"
+
 class FloatCol(Col):
     baseClass = SOFloatCol
 
@@ -589,6 +592,9 @@ class SODateCol(SOCol):
         
     def _maxdbType(self):
         return  'DATE'
+
+    def _sqliteType(self):
+        return 'DATE'
 
 class DateCol(Col):
     baseClass = SODateCol
