@@ -132,6 +132,10 @@ class CacheFactory(object):
         finally:
             self.lock.release()
 
+    def clear(self):
+        self.cache.clear()
+        self.expiredCache.clear()
+
     def expire(self, id):
         self.lock.acquire()
         try:

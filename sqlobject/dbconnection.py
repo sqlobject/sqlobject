@@ -121,7 +121,7 @@ class DBAPI(DBConnection):
         finally:
             self._poolLock.release()
 
-    def releaseConnection(self, conn):
+    def releaseConnection(self, conn, explicit=False):
         if self.supportTransactions:
             if self.autoCommit == 'exception':
                 if self.debug:
@@ -391,7 +391,7 @@ class Iteration(object):
         if dbconn.debug:
             dbconn.printDebug(rawconn, self.query, 'Select')
         self.cursor.execute(self.query)
-        
+
     def next(self):
         result = self.cursor.fetchone()
         if result is None:

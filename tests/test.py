@@ -912,7 +912,7 @@ class Lazy(SQLObject):
     other = StringCol(default='nothing')
 
 class LazyTest(SQLObjectTest):
-    
+
     classes = [Lazy]
 
     def setUp(self):
@@ -988,6 +988,48 @@ class LazyTest(SQLObjectTest):
         assert not self.conn.didUpdate
         obj.syncUpdate()
         assert self.conn.didUpdate
+        self.conn.didUpdate = False
+
+        # Now, check that get() doesn't screw
+        # cached objects' validator state.
+        obj_id = obj.id
+        old_state = obj._SO_validatorState
+        obj = Lazy.get(obj_id)
+        assert not obj.dirty
+        assert not self.conn.didUpdate
+        assert obj._SO_validatorState is old_state
+        self.assertEqual(obj.name, 'whatever')
+        obj.name = 'unloaded'
+        self.assertEqual(obj.name, 'unloaded')
+        assert obj.dirty
+        assert not self.conn.didUpdate
+        # Fetch the object again with get() and
+        # make sure dirty is still set, as the
+        # object should come from the cache.
+        obj = Lazy.get(obj_id)
+        assert obj.dirty
+        assert not self.conn.didUpdate
+        self.assertEqual(obj.name, 'unloaded')
+        obj.syncUpdate()
+        assert self.conn.didUpdate
+        assert not obj.dirty
+        self.conn.didUpdate = False
+
+        # Then clear the cache, and try a get()
+        # again, to make sure stuf like _SO_createdValues
+        # is properly initialized.
+        self.conn.cache.clear()
+        obj = Lazy.get(obj_id)
+        assert not obj.dirty
+        assert not self.conn.didUpdate
+        self.assertEqual(obj.name, 'unloaded')
+        obj.name = 'spongebob'
+        self.assertEqual(obj.name, 'spongebob')
+        assert obj.dirty
+        assert not self.conn.didUpdate
+        obj.syncUpdate()
+        assert self.conn.didUpdate
+        assert not obj.dirty
         self.conn.didUpdate = False
 
         obj = Lazy(name='last')

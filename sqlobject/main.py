@@ -589,6 +589,7 @@ class SQLObject(object):
         # anytime the object was returned from cache.
         self.id = id
         self._SO_writeLock = threading.Lock()
+
         # If no connection was given, we'll inherit the class
         # instance variable which should have a _connection
         # attribute.
@@ -605,7 +606,8 @@ class SQLObject(object):
             if not selectResults:
                 raise SQLObjectNotFound, "The object %s by the ID %s does not exist" % (self.__class__.__name__, self.id)
         self._SO_selectInit(selectResults)
-        self.dirty = 0
+        self._SO_createValues = {}
+        self.dirty = False
 
     def _SO_loadValue(self, attrName):
         try:
@@ -783,7 +785,7 @@ class SQLObject(object):
         # database.  So we have nothing more to do in that case:
         if kw.has_key('_SO_fetch_no_create'):
             return
-        
+
         # Pass the connection object along if we were given one.
         # Passing None for the ID tells __init__ we want to create
         # a new object.
@@ -1192,7 +1194,7 @@ class SQLObjectState(object):
         self.soObject = soObject
         self.protocol = 'sql'
 
-    
+
 
 ########################################
 ## Utility functions (for external consumption)
