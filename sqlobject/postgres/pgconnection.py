@@ -105,9 +105,8 @@ class PostgresConnection(DBAPI):
         return 'INT NOT NULL'
 
     def tableExists(self, tableName):
-        # @@: obviously broken
-        result = self.queryOne("SELECT COUNT(relname) FROM pg_class WHERE relname = '%s'"
-                               % tableName)
+        result = self.queryOne("SELECT COUNT(relname) FROM pg_class WHERE relname = %s"
+                               % self.sqlrepr(tableName))
         return result[0]
 
     def addColumn(self, tableName, column):
