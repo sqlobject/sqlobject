@@ -41,8 +41,8 @@ methods.  This is a good technique for information that is better to
 keep in files as opposed to the database (such as large, opaque data
 like images).
 
-You can also pass an ``image`` keyword argument to the `new` class
-method or the `set` method, like ``Person.new(..., image=imageText)``.
+You can also pass an ``image`` keyword argument to the constructor
+or the `set` method, like ``Person(..., image=imageText)``.
 
 All of the methods (``_get_``, ``_set_``, etc) are optional -- you can
 use any one of them without using the others (except ``_doc_``, since

@@ -16,7 +16,7 @@ call ``Person.get(10)``.
    method fetches a row.
 
 To create a new object (and row), use class instantiation.  In this
-case you might call ``Person.new(firstName="John", lastName="Doe")``.
+case you might call ``Person(firstName="John", lastName="Doe")``.
 If you had left out ``firstName`` or ``lastName`` you would have
 gotten an error, as no default was given for these columns
 (``middleInitial`` has a default, so it will be set to ``NULL``, the

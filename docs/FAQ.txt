@@ -159,7 +159,7 @@ If you use non-integer IDs, you will not be able to use automatic
 ``CREATE TABLE`` generation (i.e., ``createTable``).  You also will
 have to give your own ID values when creating an object, like::
 
-    color = Something.new(id="blue", r=0, b=100, g=0)
+    color = Something(id="blue", r=0, b=100, g=0)
 
 IDs are, and always will in future versions, be considered immutable.
 Right now that is not enforced; you can assign to the ``id``
