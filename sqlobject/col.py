@@ -352,6 +352,7 @@ class SOStringCol(SOCol):
     def __init__(self, **kw):
         self.length = popKey(kw, 'length')
         self.varchar = popKey(kw, 'varchar', 'auto')
+        self.case_sensitive = popKey(kw, 'case_sensitive', True)
         if not self.length:
             assert self.varchar == 'auto' or not self.varchar, \
                    "Without a length strings are treated as TEXT, not varchar"
@@ -377,19 +378,40 @@ class SOStringCol(SOCol):
         else:
             return 'CHAR(%i)' % self.length
 
+    def _check_case_sensitive(self, db):
+        if not self.case_sensitive:
+            raise ValueError, "%s does not support case-insensitive columns" % db
+
+    def _mysqlType(self):
+        type = self._sqlType()
+        if self.case_sensitive:
+            type += " BINARY"
+        return type
+
+    def _postgresType(self):
+        self._check_case_sensitive("PostgreSQL")
+        return super(SOStringCol, self)._postgresType()
+
+    def _sqliteType(self):
+        self._check_case_sensitive("SQLite")
+        return super(SOStringCol, self)._sqliteType()
+
     def _sybaseType(self):
+        self._check_case_sensitive("SYBASE")
         type = self._sqlType()
         if not self.notNone and not self.alternateID:
             type += ' NULL'
         return type
 
     def _firebirdType(self):
+        self._check_case_sensitive("FireBird")
         if not self.length:
             return 'BLOB SUB_TYPE TEXT'
         else:
             return self._sqlType()
 
     def _maxdbType(self):
+        self._check_case_sensitive("SAP DB/MaxDB")
         if not self.length:
             return 'LONG ASCII'
         else:

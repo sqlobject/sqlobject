@@ -140,10 +140,19 @@ class MySQLConnection(DBAPI):
         if t.startswith('int'):
             return col.IntCol, {}
         elif t.startswith('varchar'):
-            return col.StringCol, {'length': int(t[8:-1])}
+            if t.endswith('binary'):
+                return col.StringCol, {'length': int(t[8:-8])}
+            else:
+                return col.StringCol, {'length': int(t[8:-1]),
+                                       'case_sensitive': False}
         elif t.startswith('char'):
-            return col.StringCol, {'length': int(t[5:-1]),
-                                   'varchar': False}
+            if t.endswith('binary'):
+                return col.StringCol, {'length': int(t[5:-8]),
+                                       'varchar': False}
+            else:
+                return col.StringCol, {'length': int(t[5:-1]),
+                                       'varchar': False,
+                                       'case_sensitive': False}
         elif t.startswith('datetime'):
             return col.DateTimeCol, {}
         elif t.startswith('bool'):
