@@ -29,6 +29,7 @@ class SQLiteConnection(DBAPI):
         assert user is None and password is None, (
             "You may not provide usernames or passwords for SQLite "
             "databases")
+        if path == "/:memory:": path = ":memory:"
         return cls(filename=path, **args)
     connectionFromURI = classmethod(connectionFromURI)
 
