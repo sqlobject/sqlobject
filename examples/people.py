@@ -125,6 +125,18 @@ test3 = """
 >>> print [p.id for p in peeps3]
 """
 
+test4 = """
+>>> bob = Person(firstName="Bob", lastName="Smith", username="bs")
+>>> phone1 = PhoneNumber(person=bob, phoneNumber='123-555-3210', phoneType='home')
+>>> phone2 = PhoneNumber(person=bob, phoneNumber='333-555-8888', phoneType='work')
+>>> alice = Person(firstName="Alice", lastName="Nowak", username="alicen")
+>>> print "Number of people:", Person.select().count()
+3
+>>> print "Number of phones:", PhoneNumber.select().count()
+3
+>>> print "Number of people with phones:", Person.select(Person.q.id == PhoneNumber.q.personID, distinct=True).count()
+2
+"""
 
 ############################################################
 ## Run tests:
@@ -137,6 +149,8 @@ def runTest(s):
             print line
             exec line[4:]
 
+reset()
 runTest(test1)
 runTest(test2)
 runTest(test3)
+runTest(test4)

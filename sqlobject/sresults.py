@@ -140,9 +140,19 @@ class SelectResults(object):
 
     def count(self):
         """ Counting elements of current select results """
-        assert not self.ops.get('distinct'), "It is not currently supported to count distinct objects"
-
-        count = self.accumulate('COUNT(*)')
+        assert not (self.ops.get('distinct') and (self.ops.get('start') 
+                                                  or self.ops.get('end'))), \
+               "distinct-counting of sliced objects is not supported"
+        if self.ops.get('distinct'):
+            # Column must be specified, so we are using unique ID column.
+            # COUNT(DISTINCT column) is supported by MySQL and PostgreSQL,
+            # but not by SQLite. Perhaps more portable would be subquery:
+            #  SELECT COUNT(*) FROM (SELECT DISTINCT id FROM table)
+            count = self.accumulate('COUNT(DISTINCT %s.%s)' % (
+                                             self.sourceClass.sqlmeta.table,
+                                             self.sourceClass.sqlmeta.idName))
+        else:
+            count = self.accumulate('COUNT(*)')
         if self.ops.get('start'):
             count -= self.ops['start']
         if self.ops.get('end'):

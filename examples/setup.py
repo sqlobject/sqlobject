@@ -5,7 +5,7 @@ import sqlobject
 main = sys.modules['__main__']
 
 if '-v' in sys.argv:
-    conn.debug = 1
+    sqlobject.connectionForURI(conn).debug = True
 
 def reset():
     classes = []
