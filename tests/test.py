@@ -24,6 +24,32 @@ global curr_db
 curr_db = None
 from sqlobject import cache
 
+class ClassRegistryTest(SQLObjectTest):
+    def testErrorOnDuplicateClassDefinition(self):
+        """Raise an error if a class is defined more than once."""
+        class Duplicate(SQLObject):
+            pass
+
+        try:
+            class Duplicate(SQLObject):
+                pass
+        except ValueError, err:
+            self.assertEqual(str(err), "class Duplicate is already in the registry")
+        else:
+            self.fail("should have raised an error on duplicate class definition")
+
+## class Billboard(SQLObject):
+##     message = StringCol()
+
+## class UnicodeTest(SQLObjectTest):
+##     classes = [Billboard]
+
+##     def testUnicodeStrings(self):
+##         try:
+##             b = Billboard(message = u"foobar")
+##         except Exception, err:
+##             self.fail("shouldn't have raised an exception.")
+
 ########################################
 ## Basic operation
 ########################################

@@ -65,6 +65,9 @@ class ClassRegistry(object):
         that other classes can find it by name.  We also call any
         callbacks that are waiting for the class.
         """
+        if cls.__name__ in self.classes:
+            raise ValueError("class %s is already in the registry"
+                             % cls.__name__)
         self.classes[cls.__name__] = cls
         if self.callbacks.has_key(cls.__name__):
             for callback, args, kw in self.callbacks[cls.__name__]:
