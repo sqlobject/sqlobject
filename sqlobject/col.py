@@ -304,6 +304,12 @@ class SOStringCol(SOCol):
         else:
             return 'CHAR(%i)' % self.length
 
+    def _sybaseType(self):
+        type = self._sqlType()
+        if not self.notNone and not self.alternateID:
+            type += ' NULL'
+        return type
+
     def _firebirdType(self):
         if not self.length:
             return 'BLOB SUB_TYPE TEXT'
@@ -401,7 +407,7 @@ class SOKeyCol(SOCol):
         return 'INT'
 
     def _sybaseType(self):
-        return 'INT'
+        return 'NUMERIC(18,0) NULL'
 
     def _firebirdType(self):
         return 'INT'
@@ -445,7 +451,7 @@ class SOForeignKey(SOKeyCol):
         return sql
 
     def sybaseCreateSQL(self):
-        from SQLObject import findClass
+        from sqlobject.main import findClass
         sql = SOKeyCol.sybaseCreateSQL(self)
         other = findClass(self.foreignKey)
         tName = other._table

@@ -591,9 +591,10 @@ class String(FancyValidator):
     string.
     """
 
-    def __init__(self, max=None, min=None, **kw):
+    def __init__(self, max=None, min=None, strip_spaces=None, **kw):
         self.max = max
         self.min = min
+        self.strip_spaces = strip_spaces
         FancyValidator.__init__(self, **kw)
 
     def validatePython(self, value, state):
@@ -606,6 +607,11 @@ class String(FancyValidator):
         if value: return str(value)
         if value == 0: return str(value)
         return ""
+
+    def _toPython(self, value, state):
+        if self.strip_spaces:
+            return value.strip()
+        return value
 
 class Set(FancyValidator):
     """This is for when you think you may return multiple values

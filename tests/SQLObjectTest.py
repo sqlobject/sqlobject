@@ -46,8 +46,8 @@ def sybaseConnection():
     SQLObjectTest.supportDynamic = False
     SQLObjectTest.supportAuto = False
     SQLObjectTest.supportRestrictedEnum = False
-    SQLObjectTest.supportTransactions = True
-    return 'sybase://sa:sybasesa@localhost/test'
+    SQLObjectTest.supportTransactions = False
+    return 'sybase://test:test123@sybase/test?autoCommit=0'
 
 def firebirdConnection():
     SQLObjectTest.supportDynamic = True
@@ -97,9 +97,12 @@ class SQLObjectTest(unittest.TestCase):
             __connection__.debug = True
             __connection__.debugOuput = self.debugOutput
 
-        for c in self.classes:
+        classes = self.classes[:] + [self]
+        r_classes = classes[:]
+        r_classes.reverse()
+        for c in classes:
             c._connection = __connection__
-        for c in self.classes + [self]:
+        for c in r_classes:
             if hasattr(c, '%sDrop' % self.databaseName):
                 if __connection__.tableExists(c._table):
                     sql = getattr(c, '%sDrop' % self.databaseName)
@@ -112,6 +115,7 @@ class SQLObjectTest(unittest.TestCase):
             elif hasattr(c, 'dropTable'):
                 c.dropTable(ifExists=True, cascade=True)
 
+        for c in classes:
             if hasattr(c, '%sCreate' % self.databaseName):
                 if not __connection__.tableExists(c._table):
                     sql = getattr(c, '%sCreate' % self.databaseName)
@@ -133,7 +137,9 @@ class SQLObjectTest(unittest.TestCase):
     def tearDown(self):
         unittest.TestCase.tearDown(self)
         __connection__.debug = 0
-        for c in self.classes:
+        classes = self.classes[:]
+        classes.reverse()
+        for c in classes:
             if hasattr(c, 'drop'):
                 __connection__.query(c.drop)
 

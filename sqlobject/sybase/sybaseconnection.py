@@ -3,26 +3,31 @@ Sybase = None
 
 class SybaseConnection(DBAPI):
 
-    supportTransactions = True
+    supportTransactions = False
     dbName = 'sybase'
     schemes = [dbName]
 
     def __init__(self, db, user, passwd='', host='localhost',
-                 autoCommit=0, **kw):
+                 locking=1, **kw):
+        db = db.strip('/')
         global Sybase
         if Sybase is None:
             import Sybase
+            Sybase._ctx.debug = 0
             from Sybase import NumericType
-            from Converters import registerConverter, IntConverter
+            from sqlobject.converters import registerConverter, IntConverter
             registerConverter(NumericType, IntConverter)
-        if not autoCommit and not kw.has_key('pool'):
-            # Pooling doesn't work with transactions...
-            kw['pool'] = 0
-        self.autoCommit=autoCommit
+        self.locking = int(locking)
         self.host = host
         self.db = db
         self.user = user
         self.passwd = passwd
+        autoCommit = kw.get('autoCommit')
+        if autoCommit:
+           autoCommmit = int(autoCommit)
+        else:
+            autoCommit = None
+        kw['autoCommit'] = autoCommit
         DBAPI.__init__(self, **kw)
 
     def connectionFromURI(cls, uri):
@@ -42,20 +47,45 @@ class SybaseConnection(DBAPI):
 
     def makeConnection(self):
         return Sybase.connect(self.host, self.user, self.passwd,
-                              database=self.db, auto_commit=self.autoCommit)
+                              database=self.db, auto_commit=self.autoCommit,
+                              locking=self.locking)
 
+        
+    HAS_IDENTITY = """
+       SELECT col.name, col.status, obj.name
+       FROM syscolumns col
+       JOIN sysobjects obj
+       ON obj.id = col.id
+       WHERE obj.name = '%s'
+             AND (col.status & 0x80) = 0x80
+             
+    """
+    def _hasIdentity(self, conn, table):
+        query = self.HAS_IDENTITY % table
+        c = conn.cursor()
+        c.execute(query)
+        r = c.fetchone()
+        return r is not None
+        
     def _queryInsertID(self, conn, table, idName, id, names, values):
         c = conn.cursor()
         if id is not None:
             names = [idName] + names
             values = [id] + values
-            c.execute('SET IDENTITY_INSERT %s ON' % table)
-        else:
-            c.execute('SET IDENTITY_INSERT %s OFF' % table)
+
+        has_identity = self._hasIdentity(conn, table)
+        if has_identity:
+            if id is not None:
+                c.execute('SET IDENTITY_INSERT %s ON' % table)
+            else:
+                c.execute('SET IDENTITY_INSERT %s OFF' % table)
+
         q = self._insertSQL(table, names, values)
         if self.debug:
             print 'QueryIns: %s' % q
         c.execute(q)
+        if has_identity:
+            c.execute('SET IDENTITY_INSERT %s OFF' % table)
         if id is None:
             id = self.insert_id(conn)
         if self.debugOutput:
@@ -70,7 +100,7 @@ class SybaseConnection(DBAPI):
         return col.sybaseCreateSQL()
 
     def createIDColumn(self, soClass):
-        return '%s NUMERIC(18,0) IDENTITY' % soClass._idName
+        return '%s NUMERIC(18,0) IDENTITY UNIQUE' % soClass._idName
 
     def joinSQLType(self, join):
         return 'NUMERIC(18,0) NOT NULL'
@@ -109,6 +139,9 @@ class SybaseConnection(DBAPI):
             # @@ skip extra...
             results.append(colClass(**kw))
         return results
+
+    def _setAutoCommit(self, conn, auto):
+        conn.auto_commit = auto
 
     def guessClass(self, t):
         if t.startswith('int'):

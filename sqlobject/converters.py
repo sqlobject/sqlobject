@@ -89,10 +89,10 @@ registerConverter = converters.registerConverter
 lookupConverter = converters.lookupConverter
 
 def StringLikeConverter(value, db):
-    if db in ('mysql', 'postgres', 'sybase'):
+    if db in ('mysql', 'postgres'):
         for orig, repl in sqlStringReplace:
             value = value.replace(orig, repl)
-    elif db in ('sqlite', 'firebird','maxdb'):
+    elif db in ('sqlite', 'firebird', 'sybase', 'maxdb'):
         value = value.replace("'", "''")
     else:
         assert 0, "Database %s unknown" % db
