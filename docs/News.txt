@@ -7,6 +7,17 @@ News
 
 .. _start:
 
+SQLObject 0.7.0
+===============
+
+Features
+--------
+
+* Inheritance. See Inheritance.html_
+
+.. _Inheritance.html: Inheritance.html
+
+
 SQLObject 0.6.1
 ===============
 
