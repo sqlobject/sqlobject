@@ -225,7 +225,7 @@ class CacheFactory(object):
         self.lock.acquire()
         try:
             for key, value in self.cache.items():
-                self.expiredCache[key] = ref(obj)
+                self.expiredCache[key] = ref(value)
             self.cache = {}
         finally:
             self.lock.release()

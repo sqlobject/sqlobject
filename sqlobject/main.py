@@ -649,7 +649,7 @@ class SQLObject(object):
                 cls, '_SO_class_%s' % column.foreignKey)
 
         if column.alternateMethodName:
-            func = eval('lambda cls, val, connection=None: cls._SO_fetchAlternateID(%s, val, connection=connection)' % repr(column.dbName))
+            func = eval('lambda cls, val, connection=None: cls._SO_fetchAlternateID(%s, %s, val, connection=connection)' % (repr(column.name), repr(column.dbName)))
             setattr(cls, column.alternateMethodName, classmethod(func))
 
         if changeSchema:
@@ -1119,19 +1119,19 @@ class SQLObject(object):
     def _SO_getID(self, obj):
         return getID(obj)
 
-    def _findAlternateID(cls, dbIDName, value, connection=None):
+    def _findAlternateID(cls, name, dbName, value, connection=None):
         return (connection or cls._connection)._SO_selectOneAlt(
             cls,
             [cls.sqlmeta.idName] +
             [col.dbName for col in cls.sqlmeta._columns],
-            dbIDName,
+            dbName,
             value), None
     _findAlternateID = classmethod(_findAlternateID)
 
-    def _SO_fetchAlternateID(cls, dbIDName, value, connection=None):
-        result, obj = cls._findAlternateID(dbIDName, value, connection)
+    def _SO_fetchAlternateID(cls, name, dbName, value, connection=None):
+        result, obj = cls._findAlternateID(name, dbName, value, connection)
         if not result:
-            raise SQLObjectNotFound, "The %s by alternateID %s=%s does not exist" % (cls.__name__, dbIDName, repr(value))
+            raise SQLObjectNotFound, "The %s by alternateID %s=%s does not exist" % (cls.__name__, name, repr(value))
         if obj:
            return obj
         if connection:
