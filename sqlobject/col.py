@@ -222,7 +222,7 @@ class SOCol(object):
         if not isinstance(self, SOEnumCol):
             return ' '.join([self.dbName, self._firebirdType()] + self._extraSQL())
         else:
-            return ' '.join([self.dbName] + self._extraSQL() + [self._firebirdType()])
+            return ' '.join([self.dbName] + [self._firebirdType()[0]] + self._extraSQL() + [self._firebirdType()[1]])
 
     def __get__(self, obj, type=None):
         if obj is None:
@@ -472,7 +472,11 @@ class SOEnumCol(SOCol):
         return self._postgresType()
 
     def _firebirdType(self):
-        return self._postgresType()
+        length = max(map(len, self.enumValues))
+        enumValues = ', '.join([sqlbuilder.sqlrepr(v, 'firebird') for v in self.enumValues])
+        checkConstraint = "CHECK (%s in (%s))" % (self.dbName, enumValues)
+        #NB. Return a tuple, not a string here
+        return "VARCHAR(%i)" % (length), checkConstraint
 
 class EnumCol(Col):
     baseClass = SOEnumCol
@@ -494,6 +498,9 @@ class SODateTimeCol(SOCol):
     def _sqliteType(self):
         return 'TIMESTAMP'
 
+    def _firebirdType(self):
+        return 'TIMESTAMP'
+
 class DateTimeCol(Col):
     baseClass = SODateTimeCol
 
@@ -510,6 +517,9 @@ class SODateCol(SOCol):
 
     def _sybaseType(self):
         return self._postgresType()
+
+    def _firebirdType(self):
+        return 'DATE'
 
 class DateCol(Col):
     baseClass = SODateCol
