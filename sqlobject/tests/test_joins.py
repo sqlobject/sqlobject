@@ -68,10 +68,12 @@ class PersonJoiner2(SQLObject):
 
 class AddressJoiner2(SQLObject):
 
+    class sqlmeta:
+        defaultOrder = ['-zip', 'plus4']
+
     _columns = [StringCol('zip', length=5),
                 StringCol('plus4', length=4, default=None),
                 ForeignKey('PersonJoiner2')]
-    _defaultOrder = ['-zip', 'plus4']
 
 class TestJoin2:
 

@@ -5,11 +5,11 @@ class Names(SQLObject):
 
     class sqlmeta(sqlmeta):
         table = 'names_table'
+        defaultOrder = ['lastName', 'firstName']
 
     firstName = StringCol(length=30)
     lastName = StringCol(length=30)
 
-    _defaultOrder = ['lastName', 'firstName']
 
 def setupNames():
     setupClass(Names)

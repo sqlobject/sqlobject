@@ -74,7 +74,7 @@ class SOJoin(object):
 
     def _applyOrderBy(self, results, defaultSortClass):
         if self.orderBy is NoDefault:
-            self.orderBy = defaultSortClass._defaultOrder
+            self.orderBy = defaultSortClass.sqlmeta.defaultOrder
         if self.orderBy is not None:
             results.sort(sorter(self.orderBy))
         return results

@@ -13,13 +13,15 @@ except ImportError:
 
 class Person(SQLObject):
 
+    class sqlmeta:
+        defaultOrder = 'name'
     _columns = [StringCol('name', length=100, dbName='name_col')]
-    _defaultOrder = 'name'
 
 class Phone(SQLObject):
 
+    class sqlmeta:
+        defaultOrder = 'phone'
     _columns = [StringCol('phone', length=12)]
-    _defaultOrder = 'phone'
 
 class TestPeople:
 
@@ -34,7 +36,7 @@ class TestPeople:
 
     def test_defaultOrder(self):
         assert (list(Person.select('all')) ==
-                list(Person.select('all', orderBy=Person._defaultOrder)))
+                list(Person.select('all', orderBy=Person.sqlmeta.defaultOrder)))
 
     def test_dynamicColumn(self):
         if not supports('dynamicColumn'):

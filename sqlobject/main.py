@@ -152,6 +152,7 @@ class sqlmeta(object):
     idName = None
     style = None
     lazyUpdate = False
+    defaultOrder = None
 
     __metaclass__ = declarative.DeclarativeMeta
 
@@ -204,11 +205,11 @@ exception_level = None
 #  2) Deprecated after 1 (0.8?)
 #  3) Deprecated after 2 (0.9?)
 
-def deprecated(message, level=1):
+def deprecated(message, level=1, stacklevel=2):
     if exception_level is not None and exception_level <= level:
         raise NotImplementedError(message)
     if warnings_level is not None and warnings_level <= level:
-        warnings.warn(message, DeprecationWarning, stacklevel=2)
+        warnings.warn(message, DeprecationWarning, stacklevel=stacklevel)
 
 # SQLObject is the superclass for all SQLObject classes, of
 # course.  All the deeper magic is done in MetaSQLObject, and
@@ -239,9 +240,6 @@ class SQLObject(object):
     # values fetched from the database.  We make sure
     # it's set (default 1).
     _cacheValues = True
-
-    # The _defaultOrder is used by SelectResults
-    _defaultOrder = None
 
     _connection = None
 
@@ -496,14 +494,17 @@ class SQLObject(object):
     _table = _sqlmeta_attr('table', 2)
     _idName = _sqlmeta_attr('idName', 2)
     _lazyUpdate = _sqlmeta_attr('lazyUpdate', 2)
+    _defaultOrder = _sqlmeta_attr('defaultOrder', 2)
 
     def _cleanDeprecatedAttrs(cls, new_attrs):
-        for attr in ['_table', '_lazyUpdate', '_style', '_idName']:
+        for attr in ['_table', '_lazyUpdate', '_style', '_idName',
+                     '_defaultOrder']:
             if new_attrs.has_key(attr):
                 new_name = attr[1:]
                 deprecated("'%s' is deprecated; please set the '%s' "
                            "attribute in sqlmeta instead" %
-                           (attr, new_name), level=2)
+                           (attr, new_name), level=2,
+                           stacklevel=5)
                 setattr(cls.sqlmeta, new_name, new_attrs[attr])
                 delattr(cls, attr)
 

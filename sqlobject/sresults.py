@@ -19,7 +19,7 @@ class SelectResults(object):
         self.tables = tablesDict.keys()
         self.ops = ops
         if self.ops.get('orderBy', sqlbuilder.NoDefault) is sqlbuilder.NoDefault:
-            self.ops['orderBy'] = sourceClass._defaultOrder
+            self.ops['orderBy'] = sourceClass.sqlmeta.defaultOrder
         orderBy = self.ops['orderBy']
         if isinstance(orderBy, list) or isinstance(orderBy, tuple):
             orderBy = map(self._mungeOrderBy, orderBy)
