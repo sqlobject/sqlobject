@@ -478,10 +478,11 @@ class DBAPI(DBConnection):
                     self.sqlrepr(secondValue)))
 
     def _SO_columnClause(self, soClass, kw):
+        ops = {None: "IS"}
         return ' AND '.join(
-            ['%s = %s' %
+            ['%s %s %s' %
              (soClass.sqlmeta._columnDict[key].dbName,
-              self.sqlrepr(value))
+              ops.get(value, "="), self.sqlrepr(value))
              for key, value
              in kw.items()])
 

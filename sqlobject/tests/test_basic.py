@@ -34,6 +34,7 @@ def test_newline():
 
 def test_count():
     setupGetters(TestSO1)
+    assert TestSO1.selectBy(name=None).count() == 0
     assert TestSO1.selectBy(name='bob').count() == 1
     assert TestSO1.select(TestSO1.q.name == 'bob').count() == 1
     assert TestSO1.select().count() == len(list(TestSO1.select()))
