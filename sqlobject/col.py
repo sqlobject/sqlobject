@@ -352,7 +352,7 @@ class SOStringCol(SOCol):
     def __init__(self, **kw):
         self.length = popKey(kw, 'length')
         self.varchar = popKey(kw, 'varchar', 'auto')
-        self.case_sensitive = popKey(kw, 'case_sensitive', True)
+        self.char_binary = popKey(kw, 'char_binary', None) # A hack for MySQL
         if not self.length:
             assert self.varchar == 'auto' or not self.varchar, \
                    "Without a length strings are treated as TEXT, not varchar"
@@ -379,12 +379,12 @@ class SOStringCol(SOCol):
             return 'CHAR(%i)' % self.length
 
     def _check_case_sensitive(self, db):
-        if not self.case_sensitive:
-            raise ValueError, "%s does not support case-insensitive columns" % db
+        if self.char_binary:
+            raise ValueError, "%s does not support binary character columns" % db
 
     def _mysqlType(self):
         type = self._sqlType()
-        if self.case_sensitive:
+        if self.char_binary:
             type += " BINARY"
         return type
 
