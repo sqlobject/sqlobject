@@ -137,6 +137,8 @@ class CacheFactory(object):
         self.expiredCache.clear()
 
     def expire(self, id):
+        if not self.doCache:
+            return
         self.lock.acquire()
         try:
             if self.cache.has_key(id):
