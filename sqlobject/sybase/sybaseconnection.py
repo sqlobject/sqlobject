@@ -26,9 +26,9 @@ class SybaseConnection(DBAPI):
         DBAPI.__init__(self, **kw)
 
     def connectionFromURI(cls, uri):
-        user, password, host, path = cls._parseURI(uri)
+        user, password, host, path, args = cls._parseURI(uri)
         return cls(user=user, passwd=password, host=host or 'localhost',
-                   db=path)
+                   db=path, **args)
     connectionFromURI = classmethod(connectionFromURI)
 
     def insert_id(self, conn):

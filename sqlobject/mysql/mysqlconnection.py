@@ -19,14 +19,26 @@ class MySQLConnection(DBAPI):
         DBAPI.__init__(self, **kw)
 
     def connectionFromURI(cls, uri):
-        user, password, host, path = cls._parseURI(uri)
+        user, password, host, path, args = cls._parseURI(uri)
         return cls(db=path.strip('/'), user=user or '', passwd=password or '',
-                   host=host or 'localhost')
+                   host=host or 'localhost', **args)
     connectionFromURI = classmethod(connectionFromURI)
 
     def makeConnection(self):
         return MySQLdb.connect(host=self.host, db=self.db,
                                user=self.user, passwd=self.passwd)
+
+    def _executeRetry(self, conn, cursor, query):
+        while 1:
+            try:
+                return cursor.execute(query)
+            except MySQLdb.OperationalError, e:
+                if e.args[0] == 2013:
+                    # This is a 
+                    if self.debug:
+                        self.printDebug(conn, str(e), 'ERROR')
+                else:
+                    raise
 
     def _queryInsertID(self, conn, table, idName, id, names, values):
         c = conn.cursor()
@@ -36,7 +48,7 @@ class MySQLConnection(DBAPI):
         q = self._insertSQL(table, names, values)
         if self.debug:
             self.printDebug(conn, q, 'QueryIns')
-        c.execute(q)
+        self._executeRetry(conn, c, q)
         if id is None:
             id = c.insert_id()
         if self.debugOutput:

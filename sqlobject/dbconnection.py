@@ -13,6 +13,7 @@ from cache import CacheSet
 import col
 from joins import sorter
 from converters import sqlrepr
+import urllib
 
 warnings.filterwarnings("ignore", "DB-API extension cursor.lastrowid used")
 
@@ -21,10 +22,12 @@ _connections = {}
 class DBConnection:
 
     def __init__(self, name=None, debug=False, debugOutput=False,
-                 cache=True, style=None, autoCommit=True):
+                 cache=True, style=None, autoCommit=True,
+                 debugThreading=False):
         self.name = name
         self.debug = debug
         self.debugOutput = debugOutput
+        self.debugThreading = debugThreading
         self.cache = CacheSet(cache=cache)
         self.doCache = cache
         self.style = style
@@ -81,7 +84,15 @@ class DBConnection:
         else:
             user = password = None
         path = '/' + rest
-        return user, password, host, path
+        args = {}
+        if path.find('?') != -1:
+            path, arglist = path.split('?', 1)
+            arglist = arglist.split('&')
+            for single in arglist:
+                argname, argvalue = single.split('=', 1)
+                argvalue = urllib.unquote(argvalue)
+                args[argname] = argvalue
+        return user, password, host, path, args
     _parseURI = staticmethod(_parseURI)
 
 class DBAPI(DBConnection):
@@ -117,11 +128,26 @@ class DBAPI(DBConnection):
                 self._connectionNumbers[id(newConn)] = self._connectionCount
                 self._connectionCount += 1
             val = self._pool.pop()
+            if self.debug:
+                s = 'ACQUIRE'
+                if self._pool is not None:
+                    s += ' pool=[%s]' % ', '.join([str(self._connectionNumbers[id(v)]) for v in self._pool])
+                self.printDebug(val, s, 'Pool')
             return val
         finally:
             self._poolLock.release()
 
     def releaseConnection(self, conn, explicit=False):
+        if self.debug:
+            if explicit:
+                s = 'RELEASE (explicit)'
+            else:
+                s = 'RELEASE (implicit, autocommit=%s)' % self.autoCommit
+            if self._pool is None:
+                s += ' no pooling'
+            else:
+                s += ' pool=[%s]' % ', '.join([str(self._connectionNumbers[id(v)]) for v in self._pool])
+            self.printDebug(conn, s, 'Pool')
         if self.supportTransactions:
             if self.autoCommit == 'exception':
                 if self.debug:
@@ -137,7 +163,11 @@ class DBAPI(DBConnection):
                     self.printDebug(conn, 'auto', 'ROLLBACK')
                 conn.rollback()
         if self._pool is not None:
-            self._pool.append(conn)
+            if conn not in self._pool:
+                # @@: We can get duplicate releasing of connections with
+                # the __del__ in Iteration (unfortunately, not sure why
+                # it happens)
+                self._pool.append(conn)
 
     def printDebug(self, conn, s, name, type='query'):
         if type == 'query':
@@ -147,12 +177,20 @@ class DBAPI(DBConnection):
             s = repr(s)
         n = self._connectionNumbers[id(conn)]
         spaces = ' '*(8-len(name))
-        print '%(n)2i/%(name)s%(spaces)s%(sep)s %(s)s' % locals()
+        if self.debugThreading:
+            threadName = threading.currentThread().getName()
+            threadName = (':' + threadName + ' '*(8-len(threadName)))
+        else:
+            threadName = ''
+        print '%(n)2i%(threadName)s/%(name)s%(spaces)s%(sep)s %(s)s' % locals()
+
+    def _executeRetry(self, conn, cursor, query):
+        return cursor.execute(query)
 
     def _query(self, conn, s):
         if self.debug:
             self.printDebug(conn, s, 'Query')
-        conn.cursor().execute(s)
+        self._executeRetry(conn, conn.cursor(), s)
 
     def query(self, s):
         return self._runWithConnection(self._query, s)
@@ -161,7 +199,7 @@ class DBAPI(DBConnection):
         if self.debug:
             self.printDebug(conn, s, 'QueryAll')
         c = conn.cursor()
-        c.execute(s)
+        self._executeRetry(conn, c, s)
         value = c.fetchall()
         if self.debugOutput:
             self.printDebug(conn, value, 'QueryAll', 'result')
@@ -174,7 +212,7 @@ class DBAPI(DBConnection):
         if self.debug:
             self.printDebug(conn, s, 'QueryOne')
         c = conn.cursor()
-        c.execute(s)
+        self._executeRetry(conn, c, s)
         value = c.fetchone()
         if self.debugOutput:
             self.printDebug(conn, value, 'QueryOne', 'result')
@@ -390,13 +428,12 @@ class Iteration(object):
         self.query = self.dbconn.queryForSelect(select)
         if dbconn.debug:
             dbconn.printDebug(rawconn, self.query, 'Select')
-        self.cursor.execute(self.query)
+        self.dbconn._executeRetry(self.rawconn, self.cursor, self.query)
 
     def next(self):
         result = self.cursor.fetchone()
         if result is None:
-            if not self.keepConnection:
-                self.dbconn.releaseConnection(self.rawconn)
+            self._cleanup()
             raise StopIteration
         if self.select.ops.get('lazyColumns', 0):
             obj = self.select.sourceClass.get(result[0], connection=self.dbconn)
@@ -405,9 +442,18 @@ class Iteration(object):
             obj = self.select.sourceClass.get(result[0], selectResults=result[1:], connection=self.dbconn)
             return obj
 
-    def __del__(self):
+    def _cleanup(self):
+        if self.query is None:
+            # already cleaned up
+            return
+        self.query = None
         if not self.keepConnection:
             self.dbconn.releaseConnection(self.rawconn)
+        self.dbconn = self.rawconn = self.select = self.cursor = None
+
+    def __del__(self):
+        self._cleanup()
+    
 
 
 class Transaction(object):
@@ -441,8 +487,13 @@ class Transaction(object):
 
     def iterSelect(self, select):
         self.assertActive()
-        return Iteration(self, self._connection,
-                         select, keepConnection=True)
+        # We can't keep the cursor open with results in a transaction,
+        # because we might want to use the connection while we're
+        # still iterating through the results.
+        # @@: But would it be okay for psycopg, with threadsafety
+        # level 2?
+        return list(Iteration(self, self._connection,
+                              select, keepConnection=True))
 
     def commit(self):
         if self._obsolete:

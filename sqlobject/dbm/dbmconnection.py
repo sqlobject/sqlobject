@@ -127,12 +127,12 @@ class DBMConnection(FileConnection):
         FileConnection.__init__(self, **kw)
 
     def connectionFromURI(cls, uri):
-        user, password, host, path = self._parseURI(uri, expectHost=False)
+        user, password, host, path, args = self._parseURI(uri, expectHost=False)
         assert host is None
         assert user is None and password is None, \
-               "SQLite cannot accept usernames or passwords"
+               "DBM cannot accept usernames or passwords"
         path = '/' + path
-        return cls(path)
+        return cls(path, **args)
     connectionFromURI = classmethod(connectionFromURI)
 
     def _newID(self, table):

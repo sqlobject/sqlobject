@@ -28,12 +28,12 @@ class FirebirdConnection(DBAPI):
         DBAPI.__init__(self, **kw)
 
     def connectionFromURI(cls, uri):
-        auth, password, host, path = cls._parseURI(uri)
+        auth, password, host, path, args = cls._parseURI(uri)
         if not password:
             password = 'masterkey'
         if not auth:
             auth='sysdba'
-        return cls(host, db=path, user=auth, passwd=password)
+        return cls(host, db=path, user=auth, passwd=password, **args)
     connectionFromURI = classmethod(connectionFromURI)
     
     def _runWithConnection(self, meth, *args):

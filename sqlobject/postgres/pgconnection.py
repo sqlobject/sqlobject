@@ -42,16 +42,15 @@ class PostgresConnection(DBAPI):
         DBAPI.__init__(self, **kw)
 
     def connectionFromURI(cls, uri):
-        user, password, host, path = cls._parseURI(uri)
+        user, password, host, path, args = cls._parseURI(uri)
         path = path.strip('/')
-        return cls(host=host, db=path, user=user, passwd=password)
+        return cls(host=host, db=path, user=user, passwd=password, **args)
     connectionFromURI = classmethod(connectionFromURI)
 
     def _setAutoCommit(self, conn, auto):
         conn.autocommit(auto)
 
     def makeConnection(self):
-        print 'DSN', self.dsn
         conn = self.pgmodule.connect(self.dsn)
         if self.autoCommit:
             conn.autocommit(1)
