@@ -450,7 +450,9 @@ class SOForeignKey(SOKeyCol):
         tName = other._table
         idName = other._idName
         if self.cascade is not None:
-            if self.cascade:
+            if self.cascade.lower() == 'null':
+                action = 'ON DELETE SET NULL'
+            elif self.cascade:
                 action = 'ON DELETE CASCADE'
             else:
                 action = 'ON DELETE RESTRICT'

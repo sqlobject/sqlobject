@@ -43,10 +43,10 @@ Interface Changes
 * ``*Col`` constructors now support cascade: ``cascade=None``
   (default) means no constraint; ``cascade=True`` means that if the
   foreign key is deleted, the object will be deleted;
-  ``cascade=False`` means that the delete will fail.  ``SET NULL`` is
-  not implemented, and the constraints are only implemented in the
-  DBMS, not in SQLObject (i.e., they will not work in databases like
-  MySQL and SQLite).
+  ``cascade=False`` means that the delete will fail;
+  ``cascade="null"`` means that the column will be set to NULL.  The
+  constraints are only implemented in the DBMS, not in SQLObject
+  (i.e., they will not work in databases like MySQL and SQLite).
 
 * New ``_create(id, **kw)`` method that can be overridden to intercept
   and modify attempts to insert rows in the database.
