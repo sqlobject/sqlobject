@@ -482,13 +482,17 @@ class IntCol(Col):
 class BoolValidator(validators.Validator):
 
     def fromPython(self, value, state):
-        if value:
+        if value is None:
+            return None
+        elif value:
             return sqlbuilder.TRUE
         else:
             return sqlbuilder.FALSE
 
     def toPython(self, value, state):
-        if not value:
+        if value is None:
+            return None
+        elif not value:
             return sqlbuilder.FALSE
         else:
             return sqlbuilder.TRUE
