@@ -76,8 +76,7 @@ class AddressJoiner2(SQLObject):
 class TestJoin2:
 
     def setup_method(self, meth):
-        setupClass(PersonJoiner2)
-        setupClass(AddressJoiner2)
+        setupClass([PersonJoiner2, AddressJoiner2])
         p1 = PersonJoiner2(name='bob')
         p2 = PersonJoiner2(name='sally')
         for z in ['11111', '22222', '33333']:

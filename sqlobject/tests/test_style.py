@@ -19,8 +19,7 @@ class SOStyleTest2(SQLObject):
     _style = AnotherStyle()
 
 def test_style():
-    setupClass(SOStyleTest2)
-    setupClass(SOStyleTest1)
+    setupClass([SOStyleTest2, SOStyleTest1])
     st1 = SOStyleTest1(a='something', st2=None)
     st2 = SOStyleTest2(b='whatever')
     st1.st2 = st2

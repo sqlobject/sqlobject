@@ -18,8 +18,7 @@ def count(select):
     return result
 
 def test_distinct():
-    setupClass(Distinct1)
-    setupClass(Distinct2)
+    setupClass([Distinct1, Distinct2])
     obs = [Distinct1(n=i) for i in range(3)]
     Distinct2(other=obs[0])
     Distinct2(other=obs[0])
