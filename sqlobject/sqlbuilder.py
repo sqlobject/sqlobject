@@ -152,9 +152,14 @@ class SQLExpression:
         return SQLCall(self, args)
 
     def __repr__(self):
-        return self.__sqlrepr__(None)
+        try:
+            return self.__sqlrepr__(None)
+        except AssertionError:
+            return '<%s %s>' % (
+                self.__class__.__name__, hex(id(self))[2:])
+        
     def __str__(self):
-        return self.__sqlrepr__(None)
+        return repr(self)
 
     def __cmp__(self, other):
         raise VersionError, "Python 2.1+ required"
