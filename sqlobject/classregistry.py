@@ -46,6 +46,7 @@ class ClassRegistry(object):
         self.name = name
         self.classes = {}
         self.callbacks = {}
+        self.genericCallbacks = []
 
     def addClassCallback(self, className, callback, *args, **kw):
         """
@@ -58,6 +59,15 @@ class ClassRegistry(object):
             callback(self.classes[className], *args, **kw)
         else:
             self.callbacks.setdefault(className, []).append((callback, args, kw))
+
+    def addCallback(self, callback, *args, **kw):
+        """
+        This callback is called for all classes, not just specific
+        ones (like addClassCallback).
+        """
+        self.genericCallbacks.append((callback, args, kw))
+        for cls in self.classes.values():
+            callback(cls, *args, **kw)
 
     def addClass(self, cls):
         """
@@ -84,6 +94,8 @@ class ClassRegistry(object):
             for callback, args, kw in self.callbacks[cls.__name__]:
                 callback(cls, *args, **kw)
             del self.callbacks[cls.__name__]
+        for callback, args, kw in self.genericCallbacks:
+            callback(cls, *args, **kw)
 
     def getClass(self, className):
         return self.classes[className]

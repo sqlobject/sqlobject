@@ -8,14 +8,16 @@ import warnings
 import atexit
 import os
 import new
+import types
+import urllib
+import weakref
+import inspect
 import sqlbuilder
 from cache import CacheSet
 import col
 from joins import sorter
 from converters import sqlrepr
-import urllib
-import weakref
-from classregistry import findClass
+import classregistry
 
 warnings.filterwarnings("ignore", "DB-API extension cursor.lastrowid used")
 
@@ -30,7 +32,7 @@ class DBConnection:
 
     def __init__(self, name=None, debug=False, debugOutput=False,
                  cache=True, style=None, autoCommit=True,
-                 debugThreading=False):
+                 debugThreading=False, registry=None):
         self.name = name
         self.debug = debug
         self.debugOutput = debugOutput
@@ -41,6 +43,9 @@ class DBConnection:
         self._connectionNumbers = {}
         self._connectionCount = 1
         self.autoCommit = autoCommit
+        self.registry = registry or None
+        classregistry.registry(self.registry).addCallback(
+            self.soClassAdded)
         registerConnectionInstance(self)
         atexit.register(_closeConnection, weakref.ref(self))
 
@@ -118,6 +123,75 @@ class DBConnection:
                 args[argname] = argvalue
         return user, password, host, port, path, args
     _parseURI = staticmethod(_parseURI)
+
+    def soClassAdded(self, soClass):
+        """
+        This is called for each new class; we use this opportunity
+        to create an instance method that is bound to the class
+        and this connection.
+        """
+        name = soClass.__name__
+        assert not hasattr(self, name), (
+            "Connection %r already has an attribute with the name "
+            "%r (and you just created the conflicting class %r)"
+            % (self, name, soClass))
+        setattr(self, name, ConnWrapper(soClass, self))
+
+class ConnWrapper(object):
+
+    """
+    This represents a SQLObject class that is bound to a specific
+    connection (instances have a connection instance variable, but
+    classes are global, so this is binds the connection variable
+    lazily when a class method is accessed)
+    """
+    # @@: methods that take connection arguments should be explicitly
+    # marked up instead of the implicit use of a connection argument
+    # and inspect.getargspec()
+
+    def __init__(self, soClass, connection):
+        self._soClass = soClass
+        self._connection = connection
+
+    def __call__(self, *args, **kw):
+        kw['connection'] = self._connection
+        return self._soClass(*args, **kw)
+
+    def __getattr__(self, attr):
+        meth = getattr(self._soClass, attr)
+        if not isinstance(meth, types.MethodType):
+            # We don't need to wrap non-methods
+            return meth
+        try:
+            takes_conn = meth.takes_connection
+        except AttributeError:
+            args, varargs, varkw, defaults = inspect.getargspec(meth)
+            assert not varkw and not varargs, (
+                "I cannot tell whether I must wrap this method, "
+                "because it takes **kw: %r"
+                % meth)
+            takes_conn = 'connection' in args
+            meth.im_func.takes_connection = takes_conn
+        if not takes_conn:
+            return meth
+        return ConnMethodWrapper(meth, self._connection)
+
+class ConnMethodWrapper(object):
+
+    def __init__(self, method, connection):
+        self._method = method
+        self._connection = connection
+
+    def __getattr__(self, attr):
+        return getattr(self._method, attr)
+
+    def __call__(self, *args, **kw):
+        kw['connection'] = self._connection
+        return self._method(*args, **kw)
+
+    def __repr__(self):
+        return '<Wrapped %r with connection %r>' % (
+            self._method, self._connection)
 
 class DBAPI(DBConnection):
 
@@ -627,7 +701,10 @@ class Transaction(object):
         try:
             func = attr.im_func
         except AttributeError:
-            return attr
+            if isinstance(attr, ConnWrapper):
+                return ConnWrapper(attr._soClass, self)
+            else:
+                return attr
         else:
             meth = new.instancemethod(func, self, self.__class__)
             return meth
@@ -674,13 +751,18 @@ class ConnectionURIOpener(object):
             assert inst.name.find(':') == -1, "You cannot include ':' in your class names (%r)" % cls.name
             self.instanceNames[inst.name] = inst
 
-    def connectionForURI(self, uri):
+    def connectionForURI(self, uri, **args):
+        if args:
+            if '?' not in uri:
+                uri += '?'
+            uri += urllib.urlencode(args)
         if self.cachedURIs.has_key(uri):
             return self.cachedURIs[uri]
         if uri.find(':') != -1:
             scheme, rest = uri.split(':', 1)
-            assert self.schemeBuilders.has_key(scheme), \
-                   "No SQLObject driver exists for %s" % scheme
+            assert self.schemeBuilders.has_key(scheme), (
+                   "No SQLObject driver exists for %s (only %s)"
+                   % (scheme, ', '.join(self.schemeBuilders.keys())))
             conn = self.schemeBuilders[scheme]().connectionFromURI(uri)
         else:
             # We just have a name, not a URI

@@ -69,12 +69,12 @@ installedDBFilename = os.path.join(os.getcwd(), 'dbs_data.tmp')
 installedDBTracker = sqlobject.connectionForURI(
     'sqlite:///' + installedDBFilename)
 
-def getConnection():
+def getConnection(**kw):
     name = os.environ.get('TESTDB')
     assert name, 'You must set $TESTDB to do database operations'
     if connectionShortcuts.has_key(name):
         name = connectionShortcuts[name]
-    return sqlobject.connectionForURI(name)
+    return sqlobject.connectionForURI(name, **kw)
 
 connection = getConnection()
 
