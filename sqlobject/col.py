@@ -698,7 +698,7 @@ if datetime_available:
                 # convert mxDateTime instance to datetime
                 if ("%H" in self.format) or ("%T" in self.format):
                     return datetime.datetime(value.year, value.month, value.day,
-                        value.hour, value.minute, value.second)
+                        value.hour, value.minute, int(value.second))
                 else:
                     return datetime.date(value.year, value.month, value.day)
             try:
