@@ -890,6 +890,8 @@ class BinaryValidator(validators.Validator):
     """
 
     def fromPython(self, value, state):
+        if value is None:
+            return None
         return state.soObject._connection.createBinary(value)
 
 class SOBLOBCol(SOStringCol):
