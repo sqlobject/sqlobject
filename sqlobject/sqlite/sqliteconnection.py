@@ -18,7 +18,7 @@ class SQLiteConnection(DBAPI):
             kw['pool'] = 0
         # use only one connection for sqlite - supports multiple
         # cursors per connection
-        self._conn = sqlite.connect(self.filename)
+        self._conn = sqlite.connect(self.filename, autocommit=autoCommit)
         DBAPI.__init__(self, **kw)
 
     def connectionFromURI(cls, uri):
