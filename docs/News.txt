@@ -37,8 +37,16 @@ Interface Changes
 * We're now using a Subversion repository instead of CVS.  It is
   located at svn://colorstudy.com/trunk/SQLObject 
 
-* If you pass ``forceDBName=True`` to the `*Col` constructors, then
+* If you pass ``forceDBName=True`` to the ``*Col`` constructors, then
   your column name doesn't have to be restricted to a-z, 0-9, and _.
+
+* ``*Col`` constructors now support cascade: ``cascade=None``
+  (default) means no constraint; ``cascade=True`` means that if the
+  foreign key is deleted, the object will be deleted;
+  ``cascade=False`` means that the delete will fail.  ``SET NULL`` is
+  not implemented, and the constraints are only implemented in the
+  DBMS, not in SQLObject (i.e., they will not work in databases like
+  MySQL and SQLite).
 
 Bugs
 ----
