@@ -477,7 +477,7 @@ class Update(SQLExpression):
                     update += ","
                 update += " %s=%s" % (key, sqlrepr(value, db))
         if self.whereClause is not NoDefault:
-            update += " WHERE %s" % repr(self.whereClause)
+            update += " WHERE %s" % sqlrepr(self.whereClause, db)
         return update
     def sqlName(self):
         return "UPDATE"
