@@ -474,7 +474,7 @@ Select-By Method
 An alternative to ``.select`` is ``.selectBy``.  It works like:
 
 .. raw:: html
-   :file: ../examples/snippets/select-by.html
+   :file: ../examples/snippets/person-select-by.html
 
 Each keyword argument is a column, and all the keyword arguments
 are ANDed together.  The return value is a `SelectResult`, so you

@@ -1,7 +1,7 @@
 #!/bin/sh
 
-pushd ../examples > /dev/null
+cd ../examples
 ./examplestripper.py
-popd > /dev/null
+cd ../docs
 buildhtml.py --report=2 --prune=.svn --prune=europython --silent --no-toc-backlinks
 
