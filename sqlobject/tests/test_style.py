@@ -25,5 +25,5 @@ def test_style():
     st1 = SOStyleTest1(a='something', st2=None)
     st2 = SOStyleTest2(b='whatever')
     st1.st2 = st2
-    assert st1._SO_columnDict['st2ID'].dbName == 'idst2'
+    assert st1.sqlmeta._columnDict['st2ID'].dbName == 'idst2'
     assert st1.st2 == st2

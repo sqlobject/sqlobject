@@ -275,7 +275,7 @@ class DBAPI(DBConnection):
                   ", ".join(select.tables))
         else:
             columns = ", ".join(["%s.%s" % (cls.sqlmeta.table, col.dbName)
-                                 for col in cls._SO_columns])
+                                 for col in cls.sqlmeta._columns])
             if columns:
                 q += "%s.%s, %s FROM %s WHERE " % \
                      (cls.sqlmeta.table, cls.sqlmeta.idName, columns,
@@ -310,8 +310,8 @@ class DBAPI(DBConnection):
                 else:
                     desc = False
                 assert sqlbuilder.sqlIdentifier(s), "Strings in clauses are expected to be column identifiers.  I got: %r" % s
-                if select.sourceClass._SO_columnDict.has_key(s):
-                    s = select.sourceClass._SO_columnDict[s].dbName
+                if select.sourceClass.sqlmeta._columnDict.has_key(s):
+                    s = select.sourceClass.sqlmeta._columnDict[s].dbName
                 if desc:
                     return sqlbuilder.DESC(sqlbuilder.SQLConstant(s))
                 else:
@@ -365,7 +365,7 @@ class DBAPI(DBConnection):
     def createColumns(self, soClass):
         columnDefs = [self.createIDColumn(soClass)] \
                      + [self.createColumn(soClass, col)
-                        for col in soClass._SO_columns]
+                        for col in soClass.sqlmeta._columns]
         return ",\n".join(["    %s" % c for c in columnDefs])
 
     def createColumn(self, soClass, col):
@@ -464,27 +464,12 @@ class DBAPI(DBConnection):
                     self.sqlrepr(secondValue)))
 
     def _SO_columnClause(self, soClass, kw):
-        return ' AND '.join(['%s = %s' %
-                         (soClass._SO_columnDict[key].dbName,
-                          self.sqlrepr(value))
-                         for key, value
-                         in kw.items()])
-        terms = []
-        for key, value in kw.items():
-            if hasattr(value, '_SO_joinDict'): #handle an object value
-                # find the joinColumn 
-                for join in value._SO_joinDict.values():
-                    if join.otherClass is soClass:
-                        dbName = join.joinColumn
-                        break
-                else: #if nothing found
-                    raise TypeError, "Cannot selectBy(%s=%r)" % (key, value)
-                value = value.id
-            else:
-                dbName = soClass._SO_columnDict[key].dbName
-            term = '%s = %s' % (dbName, self.sqlrepr(value))
-            terms.append(term)
-        return ' AND '.join(terms)
+        return ' AND '.join(
+            ['%s = %s' %
+             (soClass.sqlmeta._columnDict[key].dbName,
+              self.sqlrepr(value))
+             for key, value
+             in kw.items()])
 
     def sqlrepr(self, v):
         return sqlrepr(v, self.dbName)

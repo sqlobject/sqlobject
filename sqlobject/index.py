@@ -37,7 +37,7 @@ class SODatabaseIndex(object):
             columnName = desc['column']
             if not isinstance(columnName, str):
                 columnName = columnName.name
-            colDict = self.soClass._SO_columnDict
+            colDict = self.soClass.sqlmeta._columnDict
             if not colDict.has_key(columnName):
                 for possible in colDict.values():
                     if possible.origName == columnName:

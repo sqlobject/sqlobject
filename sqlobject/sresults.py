@@ -36,8 +36,8 @@ class SelectResults(object):
         else:
             desc = False
         if isinstance(orderBy, (str, unicode)):
-            if self.sourceClass._SO_columnDict.has_key(orderBy):
-                val = self.sourceClass._SO_columnDict[orderBy].dbName
+            if self.sourceClass.sqlmeta._columnDict.has_key(orderBy):
+                val = self.sourceClass.sqlmeta._columnDict[orderBy].dbName
                 if desc:
                     return '-' + val
                 else:

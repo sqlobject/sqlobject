@@ -44,6 +44,8 @@ def test_getset():
     assert bob.name == 'bob'
     bob.name = 'joe'
     assert bob.name == 'joe'
+    bob.set(name='joebob', passwd='testtest')
+    assert bob.name == 'joebob'
 
 class TestSO2(SQLObject):
     name = StringCol(length=50, dbName='name_col')

@@ -341,7 +341,7 @@ class SQLObjectTable(Table):
             return SQLObjectField(self.tableName, self.soClass.sqlmeta.idName, attr)
         else:
             return SQLObjectField(self.tableName,
-                                  self.soClass._SO_columnDict[attr].dbName,
+                                  self.soClass.sqlmeta._columnDict[attr].dbName,
                                   attr)
 
 class Field(SQLExpression):

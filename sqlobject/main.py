@@ -127,7 +127,7 @@ def findDependencies(name, registry=None):
 
 def findDependantColumns(name, klass):
     depends = []
-    for col in klass._SO_columns:
+    for col in klass.sqlmeta._columns:
         if col.foreignKey == name and col.cascade is not None:
             depends.append(col)
     return depends
@@ -159,7 +159,22 @@ class sqlmeta(object):
     __metaclass__ = declarative.DeclarativeMeta
 
     # These attributes shouldn't be shared with superclasses:
-    _unshared_attributes = ['table']
+    _unshared_attributes = ['table', 'idName']
+
+    # These are internal bookkeeping attributes; the class-level
+    # definition is a default for the instances, instances will
+    # reset these values.
+
+    # When an object is being created, it has an instance
+    # variable _creating, which is true.  This way all the
+    # setters can be captured until the object is complete,
+    # and then the row is inserted into the database.  Once
+    # that happens, _creating is deleted from the instance,
+    # and only the class variable (which is always false) is
+    # left.
+    _creating = False
+    _obsolete = False
+    _perConnection = False
 
     def __classinit__(cls, new_attrs):
         for attr in cls._unshared_attributes:
@@ -180,6 +195,30 @@ class sqlmeta(object):
             cls.table = cls.style.pythonClassToDBTable(cls.soClass.__name__)
         if cls.idName is None:
             cls.idName = cls.style.idForTable(cls.table)
+
+        # plainSetters are columns that haven't been overridden by the
+        # user, so we can contact the database directly to set them.
+        # Note that these can't set these in the SQLObject class
+        # itself, because they specific to this subclass of SQLObject,
+        # and cannot be shared among classes.
+        cls._plainSetters = {}
+        cls._plainGetters = {}
+        cls._plainForeignSetters = {}
+        cls._plainForeignGetters = {}
+        cls._plainJoinGetters = {}
+        cls._plainJoinAdders = {}
+        cls._plainJoinRemovers = {}
+
+        # This is a dictionary of columnName: columnObject
+        cls._columnDict = {}
+        cls._columns = []
+
+        # We keep track of the different joins by index,
+        # putting them in this list.
+        cls._joinList = []
+        cls._joinDict = {}
+        cls._indexList = []
+
     setClass = classmethod(setClass)
 
 class _sqlmeta_attr(object):
@@ -222,16 +261,6 @@ def deprecated(message, level=1, stacklevel=2):
 class SQLObject(object):
 
     __metaclass__ = declarative.DeclarativeMeta
-
-    # When an object is being created, it has an instance
-    # variable _SO_creating, which is true.  This way all the
-    # setters can be captured until the object is complete,
-    # and then the row is inserted into the database.  Once
-    # that happens, _SO_creating is deleted from the instance,
-    # and only the class variable (which is always false) is
-    # left.
-    _SO_creating = False
-    _SO_obsolete = False
 
     # Sometimes an intance is attached to a connection, not
     # globally available.  In that case, self._SO_perConnection
@@ -417,23 +446,6 @@ class SQLObject(object):
         if connection or not hasattr(cls, '_connection'):
             cls.setConnection(connection)
 
-        # plainSetters are columns that haven't been overridden by the
-        # user, so we can contact the database directly to set them.
-        # Note that these can't set these in the SQLObject class
-        # itself, because they specific to this subclass of SQLObject,
-        # and cannot be shared among classes.
-        cls._SO_plainSetters = {}
-        cls._SO_plainGetters = {}
-        cls._SO_plainForeignSetters = {}
-        cls._SO_plainForeignGetters = {}
-        cls._SO_plainJoinGetters = {}
-        cls._SO_plainJoinAdders = {}
-        cls._SO_plainJoinRemovers = {}
-
-        # This is a dictionary of columnName: columnObject
-        cls._SO_columnDict = {}
-        cls._SO_columns = []
-
         # We have to check if there are columns in the inherited
         # _columns where the attribute has been set to None in this
         # class.  If so, then we need to remove that column from
@@ -451,11 +463,6 @@ class SQLObject(object):
         ########################################
         # Now we do the joins:
 
-        # We keep track of the different joins by index,
-        # putting them in this list.
-        cls._SO_joinList = []
-        cls._SO_joinDict = {}
-
         for join in cls._joins:
             cls.addJoin(join)
 
@@ -464,7 +471,6 @@ class SQLObject(object):
         cls._SO_finishedClassCreation = True
         makeProperties(cls)
 
-        cls._SO_indexList = []
         for idx in cls._indexes:
             cls.addIndex(idx)
 
@@ -535,15 +541,15 @@ class SQLObject(object):
 
     def addIndex(cls, indexDef):
         index = indexDef.withClass(cls)
-        cls._SO_indexList.append(index)
+        cls.sqlmeta._indexList.append(index)
     addIndex = classmethod(addIndex)
 
     def addColumn(cls, columnDef, changeSchema=False, connection=None):
         column = columnDef.withClass(cls)
         name = column.name
         assert name != 'id', "The 'id' column is implicit, and should not be defined as a column"
-        cls._SO_columnDict[name] = column
-        cls._SO_columns.append(column)
+        cls.sqlmeta._columnDict[name] = column
+        cls.sqlmeta._columns.append(column)
 
         if columnDef not in cls._columns:
             cls._columns.append(columnDef)
@@ -572,7 +578,7 @@ class SQLObject(object):
         # _SO_get_columnName definition.
         if not hasattr(cls, getterName(name)) or (name == 'childName'):
             setattr(cls, getterName(name), getter)
-            cls._SO_plainGetters[name] = 1
+            cls.sqlmeta._plainGetters[name] = 1
 
         #################################################
         # Create the setter function(s)
@@ -593,7 +599,7 @@ class SQLObject(object):
                 # We keep track of setters that haven't been
                 # overridden, because we can combine these
                 # set columns into one SQL UPDATE query.
-                cls._SO_plainSetters[name] = 1
+                cls.sqlmeta._plainSetters[name] = 1
 
         ##################################################
         # Here we check if the column is a foreign key, in
@@ -623,7 +629,7 @@ class SQLObject(object):
             # (sans ID ending)
             if not hasattr(cls, getterName(name)[:-2]):
                 setattr(cls, getterName(name)[:-2], getter)
-                cls._SO_plainForeignGetters[name[:-2]] = 1
+                cls.sqlmeta._plainForeignGetters[name[:-2]] = 1
 
             if not column.immutable:
                 # The setter just gets the ID of the object,
@@ -632,7 +638,7 @@ class SQLObject(object):
                 setattr(cls, rawSetterName(name)[:-2], setter)
                 if not hasattr(cls, setterName(name)[:-2]):
                     setattr(cls, setterName(name)[:-2], setter)
-                    cls._SO_plainForeignSetters[name[:-2]] = 1
+                    cls.sqlmeta._plainForeignSetters[name[:-2]] = 1
 
             # We'll need to put in a real reference at
             # some point.  See needSet at the top of the
@@ -670,28 +676,28 @@ class SQLObject(object):
 
     def delColumn(cls, column, changeSchema=False, connection=None):
         if isinstance(column, str):
-            column = cls._SO_columnDict[column]
+            column = cls.sqlmeta._columnDict[column]
         if isinstance(column, col.Col):
-            for c in cls._SO_columns:
+            for c in cls.sqlmeta._columns:
                 if column is c.columnDef:
                     column = c
                     break
-        cls._SO_columns.remove(column)
+        cls.sqlmeta._columns.remove(column)
         cls._columns.remove(column.columnDef)
         name = column.name
-        del cls._SO_columnDict[name]
+        del cls.sqlmeta._columnDict[name]
         delattr(cls, rawGetterName(name))
-        if cls._SO_plainGetters.has_key(name):
+        if cls.sqlmeta._plainGetters.has_key(name):
             delattr(cls, getterName(name))
         delattr(cls, rawSetterName(name))
-        if cls._SO_plainSetters.has_key(name):
+        if cls.sqlmeta._plainSetters.has_key(name):
             delattr(cls, setterName(name))
         if column.foreignKey:
             delattr(cls, rawGetterName(name)[:-2])
-            if cls._SO_plainForeignGetters.has_key(name[:-2]):
+            if cls.sqlmeta._plainForeignGetters.has_key(name[:-2]):
                 delattr(cls, getterName(name)[:-2])
             delattr(cls, rawSetterName(name)[:-2])
-            if cls._SO_plainForeignSetters.has_key(name[:-2]):
+            if cls.sqlmeta._plainForeignSetters.has_key(name[:-2]):
                 delattr(cls, setterName(name)[:-2])
         if column.alternateMethodName:
             delattr(cls, column.alternateMethodName)
@@ -711,23 +717,23 @@ class SQLObject(object):
         # join class.
         join = joinDef.withClass(cls)
         meth = join.joinMethodName
-        cls._SO_joinDict[joinDef] = join
+        cls.sqlmeta._joinDict[joinDef] = join
 
-        cls._SO_joinList.append(join)
-        index = len(cls._SO_joinList)-1
+        cls.sqlmeta._joinList.append(join)
+        index = len(cls.sqlmeta._joinList)-1
         if joinDef not in cls._joins:
             cls._joins.append(joinDef)
 
         # The function fetches the join by index, and
         # then lets the join object do the rest of the
         # work:
-        func = eval('lambda self: self._SO_joinList[%i].performJoin(self)' % index)
+        func = eval('lambda self: self.sqlmeta._joinList[%i].performJoin(self)' % index)
 
         # And we do the standard _SO_get_... _get_... deal
         setattr(cls, rawGetterName(meth), func)
         if not hasattr(cls, getterName(meth)):
             setattr(cls, getterName(meth), func)
-            cls._SO_plainJoinGetters[meth] = 1
+            cls.sqlmeta._plainJoinGetters[meth] = 1
 
         # Some joins allow you to remove objects from the
         # join.
@@ -735,21 +741,21 @@ class SQLObject(object):
 
             # Again, we let it do the remove, and we do the
             # standard naming trick.
-            func = eval('lambda self, obj: self._SO_joinList[%i].remove(self, obj)' % index)
+            func = eval('lambda self, obj: self.sqlmeta._joinList[%i].remove(self, obj)' % index)
             setattr(cls, '_SO_remove' + join.addRemoveName, func)
             if not hasattr(cls, 'remove' + join.addRemoveName):
                 setattr(cls, 'remove' + join.addRemoveName, func)
-                cls._SO_plainJoinRemovers[meth] = 1
+                cls.sqlmeta._plainJoinRemovers[meth] = 1
 
         # Some joins allow you to add objects.
         if hasattr(join, 'add'):
 
             # And again...
-            func = eval('lambda self, obj: self._SO_joinList[%i].add(self, obj)' % (len(cls._SO_joinList)-1))
+            func = eval('lambda self, obj: self.sqlmeta._joinList[%i].add(self, obj)' % (len(cls.sqlmeta._joinList)-1))
             setattr(cls, '_SO_add' + join.addRemoveName, func)
             if not hasattr(cls, 'add' + join.addRemoveName):
                 setattr(cls, 'add' + join.addRemoveName, func)
-                cls._SO_plainJoinAdders[meth] = 1
+                cls.sqlmeta._plainJoinAdders[meth] = 1
 
         if cls._SO_finishedClassCreation:
             makeProperties(cls)
@@ -757,25 +763,25 @@ class SQLObject(object):
     addJoin = classmethod(addJoin)
 
     def delJoin(cls, joinDef):
-        join = cls._SO_joinDict[joinDef]
+        join = cls.sqlmeta._joinDict[joinDef]
         meth = join.joinMethodName
         cls._joins.remove(joinDef)
-        del cls._SO_joinDict[joinDef]
-        for i in range(len(cls._SO_joinList)):
-            if cls._SO_joinList[i] is joinDef:
+        del cls.sqlmeta._joinDict[joinDef]
+        for i in range(len(cls.sqlmeta._joinList)):
+            if cls.sqlmeta._joinList[i] is joinDef:
                 # Have to leave None, because we refer to joins
                 # by index.
-                cls._SO_joinList[i] = None
+                cls.sqlmeta._joinList[i] = None
         delattr(cls, rawGetterName(meth))
-        if cls._SO_plainJoinGetters.has_key(meth):
+        if cls.sqlmeta._plainJoinGetters.has_key(meth):
             delattr(cls, getterName(meth))
         if hasattr(join, 'remove'):
             delattr(cls, '_SO_remove' + join.addRemovePrefix)
-            if cls._SO_plainJoinRemovers.has_key(meth):
+            if cls.sqlmeta._plainJoinRemovers.has_key(meth):
                 delattr(cls, 'remove' + join.addRemovePrefix)
         if hasattr(join, 'add'):
             delattr(cls, '_SO_add' + join.addRemovePrefix)
-            if cls._SO_plainJoinAdders.has_key(meth):
+            if cls.sqlmeta._plainJoinAdders.has_key(meth):
                 delattr(cls, 'add' + join.addRemovePrefix)
 
         if cls._SO_finishedClassCreation:
@@ -806,7 +812,7 @@ class SQLObject(object):
             self._SO_perConnection = True
 
         if not selectResults:
-            dbNames = [col.dbName for col in self._SO_columns]
+            dbNames = [col.dbName for col in self.sqlmeta._columns]
             selectResults = self._connection._SO_selectOne(self, dbNames)
             if not selectResults:
                 raise SQLObjectNotFound, "The object %s by the ID %s does not exist" % (self.__class__.__name__, self.id)
@@ -833,7 +839,7 @@ class SQLObject(object):
                 else:
                     return result
                 self._expired = False
-                dbNames = [col.dbName for col in self._SO_columns]
+                dbNames = [col.dbName for col in self.sqlmeta._columns]
                 selectResults = self._connection._SO_selectOne(self, dbNames)
                 if not selectResults:
                     raise SQLObjectNotFound, "The object %s by the ID %s has been deleted" % (self.__class__.__name__, self.id)
@@ -848,7 +854,7 @@ class SQLObject(object):
             self.syncUpdate()
         self._SO_writeLock.acquire()
         try:
-            dbNames = [col.dbName for col in self._SO_columns]
+            dbNames = [col.dbName for col in self.sqlmeta._columns]
             selectResults = self._connection._SO_selectOne(self, dbNames)
             if not selectResults:
                 raise SQLObjectNotFound, "The object %s by the ID %s has been deleted" % (self.__class__.__name__, self.id)
@@ -862,8 +868,9 @@ class SQLObject(object):
             return
         self._SO_writeLock.acquire()
         try:
-            if self._SO_columnDict:
-                values = [(self._SO_columnDict[v[0]].dbName, v[1]) for v in self._SO_createValues.items()]
+            if self.sqlmeta._columnDict:
+                values = [(self.sqlmeta._columnDict[v[0]].dbName, v[1])
+                          for v in self._SO_createValues.items()]
                 self._connection._SO_update(self, values)
             self.dirty = False
             self._SO_createValues = {}
@@ -877,7 +884,7 @@ class SQLObject(object):
         try:
             if self._expired:
                 return
-            for column in self._SO_columns:
+            for column in self.sqlmeta._columns:
                 delattr(self, instanceName(column.name))
             self._expired = True
             self._connection.cache.expire(self.id, self.__class__)
@@ -888,7 +895,7 @@ class SQLObject(object):
         # This is the place where we actually update the
         # database.
 
-        # If we are _SO_creating, the object doesn't yet exist
+        # If we are _creating, the object doesn't yet exist
         # in the database, and we can't insert it until all
         # the parts are set.  So we just keep them in a
         # dictionary until later:
@@ -898,15 +905,15 @@ class SQLObject(object):
             dbValue = value
         if toPython:
             value = toPython(dbValue, self._SO_validatorState)
-        if self._SO_creating or self.sqlmeta.lazyUpdate:
+        if self.sqlmeta._creating or self.sqlmeta.lazyUpdate:
             self.dirty = True
             self._SO_createValues[name] = dbValue
             setattr(self, instanceName(name), value)
             return
 
-        self._connection._SO_update(self,
-                                    [(self._SO_columnDict[name].dbName,
-                                      dbValue)])
+        self._connection._SO_update(
+            self, [(self.sqlmeta._columnDict[name].dbName,
+                    dbValue)])
 
         if self.sqlmeta.cacheValues:
             setattr(self, instanceName(name), value)
@@ -918,15 +925,15 @@ class SQLObject(object):
         # Filter out items that don't map to column names.
         # Those will be set directly on the object using
         # setattr(obj, name, value).
-        is_column = self._SO_plainSetters.has_key
+        is_column = self.sqlmeta._plainSetters.has_key
         f_is_column = lambda item: is_column(item[0])
         f_not_column = lambda item: not is_column(item[0])
         items = kw.items()
         extra = dict(filter(f_not_column, items))
         kw = dict(filter(f_is_column, items))
 
-        # _SO_creating is special, see _SO_setValue
-        if self._SO_creating or self.sqlmeta.lazyUpdate:
+        # _creating is special, see _SO_setValue
+        if self.sqlmeta._creating or self.sqlmeta.lazyUpdate:
             for name, value in kw.items():
                 fromPython = getattr(self, '_SO_fromPython_%s' % name, None)
                 if fromPython:
@@ -941,7 +948,7 @@ class SQLObject(object):
                 try:
                     getattr(self.__class__, name)
                 except AttributeError:
-                    if name not in self._SO_columnDict:
+                    if name not in self.sqlmeta._columnDict:
                         raise TypeError, "%s.set() got an unexpected keyword argument %s" % (self.__class__.__name__, name)
                 try:
                     setattr(self, name, value)
@@ -973,14 +980,14 @@ class SQLObject(object):
                 toPython = getattr(self, '_SO_toPython_%s' % name, None)
                 if toPython:
                     value = toPython(dbValue, self._SO_validatorState)
-                if self._cacheValues:
+                if self.sqlmeta.cacheValues:
                     setattr(self, instanceName(name), value)
                 toUpdate[name] = dbValue
             for name, value in extra.items():
                 try:
                     getattr(self.__class__, name)
                 except AttributeError:
-                    if name not in self._SO_columnDict:
+                    if name not in self.sqlmeta._columnDict:
                         raise TypeError, "%s.set() got an unexpected keyword argument %s" % (self.__class__.__name__, name)
                 try:
                     setattr(self, name, value)
@@ -988,25 +995,26 @@ class SQLObject(object):
                     raise AttributeError, '%s (with attribute %r)' % (e, name)
 
             if toUpdate:
-                args = [(self._SO_columnDict[name].dbName, value)
+                args = [(self.sqlmeta._columnDict[name].dbName, value)
                         for name, value in toUpdate.items()]
                 self._connection._SO_update(self, args)
         finally:
             self._SO_writeLock.release()
 
     def _SO_selectInit(self, row):
-        for col, colValue in zip(self._SO_columns, row):
+        for col, colValue in zip(self.sqlmeta._columns, row):
             if col.toPython:
                 colValue = col.toPython(colValue, self._SO_validatorState)
             setattr(self, instanceName(col.name), colValue)
 
     def _SO_getValue(self, name):
         # Retrieves a single value from the database.  Simple.
-        assert not self._SO_obsolete, "%s with id %s has become obsolete" \
-               % (self.__class__.__name__, self.id)
+        assert not self.sqlmeta._obsolete, (
+            "%s with id %s has become obsolete" \
+            % (self.__class__.__name__, self.id))
         # @@: do we really need this lock?
         #self._SO_writeLock.acquire()
-        column = self._SO_columnDict[name]
+        column = self.sqlmeta._columnDict[name]
         results = self._connection._SO_selectOne(self, [column.dbName])
         #self._SO_writeLock.release()
         assert results != None, "%s with id %s is not in the database" \
@@ -1050,13 +1058,13 @@ class SQLObject(object):
 
     def _create(self, id, **kw):
 
-        self._SO_creating = True
+        self.sqlmeta._creating = True
         self._SO_createValues = {}
         self._SO_validatorState = SQLObjectState(self)
 
         # First we do a little fix-up on the keywords we were
         # passed:
-        for column in self._SO_columns:
+        for column in self.sqlmeta._columns:
 
             # If a foreign key is given, we get the ID of the object
             # and put that in instead
@@ -1087,7 +1095,7 @@ class SQLObject(object):
         # to be set, but were delayed until now:
         setters = self._SO_createValues.items()
         # Here's their database names:
-        names = [self._SO_columnDict[v[0]].dbName for v in setters]
+        names = [self.sqlmeta._columnDict[v[0]].dbName for v in setters]
         values = [v[1] for v in setters]
         # Get rid of _SO_create*, we aren't creating anymore.
         # Doesn't have to be threadsafe because we're still in
@@ -1097,7 +1105,7 @@ class SQLObject(object):
             del self._SO_createValues
         else:
             self._SO_createValues = {}
-        del self._SO_creating
+        del self.sqlmeta._creating
 
         # Do the insert -- most of the SQL in this case is left
         # up to DBConnection, since getting a new ID is
@@ -1115,7 +1123,7 @@ class SQLObject(object):
         result = (connection or cls._connection)._SO_selectOneAlt(
             cls,
             [cls.sqlmeta.idName] +
-            [col.dbName for col in cls._SO_columns],
+            [col.dbName for col in cls.sqlmeta._columns],
             dbIDName,
             value)
         if not result:
@@ -1212,7 +1220,7 @@ class SQLObject(object):
 
     def createIndexes(cls, ifNotExists=False, connection=None):
         conn = connection or cls._connection
-        for index in cls._SO_indexList:
+        for index in cls.sqlmeta._indexList:
             if not index:
                 continue
             conn._SO_createIndex(cls, index)
@@ -1220,7 +1228,7 @@ class SQLObject(object):
 
     def _getJoinsToCreate(cls):
         joins = []
-        for join in cls._SO_joinList:
+        for join in cls.sqlmeta._joinList:
             if not join:
                 continue
             if not join.hasIntermediateTable():
@@ -1233,7 +1241,7 @@ class SQLObject(object):
 
     def dropJoinTables(cls, ifExists=False, connection=None):
         conn = connection or cls._connection
-        for join in cls._SO_joinList:
+        for join in cls.sqlmeta._joinList:
             if not join:
                 continue
             if not join.hasIntermediateTable():
@@ -1279,7 +1287,7 @@ class SQLObject(object):
                     (klass.__name__, self.id, k.__name__))
             for row in results:
                 row.destroySelf()
-        self._SO_obsolete = True
+        self.sqlmeta._obsolete = True
         self._connection._SO_delete(self)
         self._connection.cache.expire(self.id, self.__class__)
 
@@ -1310,7 +1318,7 @@ class SQLObject(object):
 
     def _reprItems(self):
         items = []
-        for col in self._SO_columns:
+        for col in self.sqlmeta._columns:
             value = getattr(self, col.name)
             r = repr(value)
             if len(r) > 20:
