@@ -22,7 +22,7 @@ def test_autogetter():
     TestSimple.dropTable(connection=conn, ifExists=True)
     TestSimple.createTable(connection=conn, ifNotExists=True)
     TestJoined.createTable(connection=conn, ifNotExists=True)
-    assert conn.TestSimple.__sqlobject_class__ is TestSimple
+    assert conn.TestSimple._soClass is TestSimple
     obj = conn.TestSimple(name='test')
     assert (TestSimple.get(obj.id, connection=conn) is obj)
     assert obj._connection is conn
