@@ -77,8 +77,8 @@ class TestSO4(SQLObject):
     me = StringCol(length=10)
 
 def test_foreignKey():
-    setupClass(TestSO3)
     setupClass(TestSO4)
+    setupClass(TestSO3)
     tc3 = TestSO3(name='a')
     assert tc3.other is None
     assert tc3.other2 is None
