@@ -3,7 +3,7 @@ from __future__ import generators
 True, False = 1==1, 0==1
 
 import threading
-from threadinglocal import local as threading_local
+from util.threadinglocal import local as threading_local
 import re
 import warnings
 import atexit
