@@ -717,7 +717,7 @@ if datetime_available:
         def fromPython(self, value, state):
             if value is None:
                 return None
-            if isinstance(value, (datetime.date, datetime.datetime)):
+            if isinstance(value, (datetime.date, datetime.datetime, sqlbuilder.SQLExpression)):
                 return value
             if hasattr(value, "strftime"):
                 return value.strftime(self.format)
@@ -727,7 +727,7 @@ if datetime_available:
         def toPython(self, value, state):
             if value is None:
                 return None
-            if isinstance(value, (datetime.date, datetime.datetime)):
+            if isinstance(value, (datetime.date, datetime.datetime, sqlbuilder.SQLExpression)):
                 return value
             if mxdatetime_available and isinstance(value, DateTimeType):
                 # convert mxDateTime instance to datetime
@@ -749,7 +749,7 @@ if mxdatetime_available:
         def fromPython(self, value, state):
             if value is None:
                 return None
-            if isinstance(value, DateTimeType):
+            if isinstance(value, (DateTimeType, sqlbuilder.SQLExpression)):
                 return value
             if hasattr(value, "strftime"):
                 return value.strftime(self.format)
@@ -759,7 +759,7 @@ if mxdatetime_available:
         def toPython(self, value, state):
             if value is None:
                 return None
-            if isinstance(value, DateTimeType):
+            if isinstance(value, (DateTimeType, sqlbuilder.SQLExpression)):
                 return value
             if datetime_available: # convert datetime instance to mxDateTime
                 if isinstance(value, datetime.datetime):
