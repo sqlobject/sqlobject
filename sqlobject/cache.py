@@ -46,6 +46,8 @@ class CacheFactory(object):
         self.lock = threading.Lock()
 
     def tryGet(self, id):
+        if not self.doCache:
+            return None
         return self.cache.get(id)
 
     def get(self, id):
@@ -164,7 +166,7 @@ class CacheFactory(object):
             all = self.cache.keys()
         else:
             all = []
-        for id, value in self.expiredCache:
+        for id, value in self.expiredCache.items():
             if value():
                 all.append(id)
         return all
