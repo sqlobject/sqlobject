@@ -4,57 +4,62 @@ import os
 
 True, False = 1==1, 0==1
 
+def d(**kw): return kw
+
+defaultOptions = d(
+    # Add columns at runtime
+    supportDynamic=True,
+    # Automatically detect the columns
+    supportAuto=True,
+    # ENUM() columns that complain if you mis-assign
+    supportRestrictedEnum=True,
+    # Transcations, of course:
+    supportTransactions=True,
+    # If you can index on expressions
+    supportExpressionIndex=True,
+    )
+
 def mysqlConnection():
-    SQLObjectTest.supportDynamic = True
-    SQLObjectTest.supportAuto = True
-    # @@: MySQL *should* support this, but it appears not to
-    # care when you assign incorrect to an ENUM...
-    SQLObjectTest.supportRestrictedEnum = False
-    # Technically it does, but now how we're using it:
-    SQLObjectTest.supportTransactions = False
-    return 'mysql://test@localhost/test'
+    return 'mysql://test@localhost/test', d(
+        # @@: MySQL *should* support this, but it appears not to
+        # care when you assign incorrect to an ENUM...
+        supportRestrictedEnum=False,
+        # Technically it does, but not how we're using it:
+        supportTransactions=False,
+        supportExpressionIndex=False)
 
 def dbmConnection():
-    SQLObjectTest.supportDynamic = True
-    SQLObjectTest.supportAuto = False
-    SQLObjectTest.supportRestrictedEnum = False
-    SQLObjectTest.supportTransactions = False
-    return 'dbm:///data'
+    return 'dbm:///data', d(
+        supportAuto=False,
+        supportRestrictedEnum=False,
+        supportTransactions=False)
 
 def postgresConnection():
-    SQLObjectTest.supportDynamic = True
-    SQLObjectTest.supportAuto = True
-    SQLObjectTest.supportRestrictedEnum = True
-    SQLObjectTest.supportTransactions = True
-    return 'postgres:///test'
+    return 'postgres:///test', d()
 
 def pygresConnection():
-    SQLObjectTest.supportDynamic = True
-    SQLObjectTest.supportAuto = True
-    SQLObjectTest.supportRestrictedEnum = True
-    SQLObjectTest.supportTransactions = True
-    return 'pygresql://localhost/test'
+    return 'pygresql://localhost/test', d()
 
 def sqliteConnection():
-    SQLObjectTest.supportDynamic = False
-    SQLObjectTest.supportAuto = False
-    SQLObjectTest.supportRestrictedEnum = False
     SQLObjectTest.supportTransactions = True
-    return 'sqlite:///%s/data/sqlite.data' % os.getcwd()
+    return 'sqlite:///%s/data/sqlite.data' % os.getcwd(), d(
+        supportDynamic=False,
+        supportAuto=False,
+        supportRestrictedEnum=False,
+        supportExpressionIndex=False)
 
 def sybaseConnection():
-    SQLObjectTest.supportDynamic = False
-    SQLObjectTest.supportAuto = False
-    SQLObjectTest.supportRestrictedEnum = False
-    SQLObjectTest.supportTransactions = False
-    return 'sybase://test:test123@sybase/test?autoCommit=0'
+    return 'sybase://test:test123@sybase/test?autoCommit=0', d(
+        # This seems awfully pessimistic:
+        supportDynamic=False,
+        supportAuto=False,
+        supportRestrictedEnum=False)
 
 def firebirdConnection():
-    SQLObjectTest.supportDynamic = True
-    SQLObjectTest.supportAuto = False
-    SQLObjectTest.supportRestrictedEnum = True
-    SQLObjectTest.supportTransactions = True
-    return 'firebird://sysdba:masterkey@localhost/var/lib/firebird/data/test.gdb'
+    return 'firebird://sysdba:masterkey@localhost/var/lib/firebird/data/test.gdb', d(
+        supportAuto=False,
+        supportExpressionIndex=False)
+
 
 _supportedDatabases = {
     'mysql': 'MySQLdb',
@@ -85,6 +90,14 @@ class SQLObjectTest(unittest.TestCase):
 
     databaseName = None
 
+    requireSupport = ()
+
+    def hasSupport(self):
+        for attr in self.requireSupport:
+            if not getattr(self, attr):
+                return False
+        return True
+
     def setUp(self):
         global __connection__
         if isinstance(__connection__, str):
@@ -93,6 +106,8 @@ class SQLObjectTest(unittest.TestCase):
             print
             print '#' * 70
         unittest.TestCase.setUp(self)
+        if not self.hasSupport():
+            return
         if self.debugInserts:
             __connection__.debug = True
             __connection__.debugOuput = self.debugOutput
@@ -136,6 +151,8 @@ class SQLObjectTest(unittest.TestCase):
 
     def tearDown(self):
         unittest.TestCase.tearDown(self)
+        if not self.hasSupport():
+            return
         __connection__.debug = 0
         classes = self.classes[:]
         classes.reverse()
@@ -146,7 +163,13 @@ class SQLObjectTest(unittest.TestCase):
 def setDatabaseType(t):
     global __connection__
     try:
-        conn = globals()[t + "Connection"]()
+        conn, ops = globals()[t + "Connection"]()
+        default = defaultOptions.copy()
+        default.update(ops)
+        ops = default
+        for name, value in ops.items():
+            setattr(SQLObjectTest, name, value)
+        
     except KeyError:
         raise KeyError, 'No connection by the type %s is known' % t
     SQLObjectTest.databaseName = t

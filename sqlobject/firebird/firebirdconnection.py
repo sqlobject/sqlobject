@@ -15,7 +15,8 @@ class FirebirdConnection(DBAPI):
         global kinterbasdb
         if kinterbasdb is None:
             import kinterbasdb
-
+        self.module = kinterbasdb
+        
         self.limit_re = re.compile('^\s*(select )(.*)', re.IGNORECASE)
 
         if not autoCommit and not kw.has_key('pool'):
@@ -26,7 +27,10 @@ class FirebirdConnection(DBAPI):
         self.db = db
         self.user = user
         self.passwd = passwd
-        self.dialect = int(dialect)
+        if dialect:
+            self.dialect = int(dialect)
+        else:
+            self.dialect = None
         self.role = role
         self.charset = charset
 
@@ -65,14 +69,17 @@ class FirebirdConnection(DBAPI):
         pass
 
     def makeConnection(self):
+        extra = {}
+        if self.dialect:
+            extra['dialect'] = self.dialect
         return kinterbasdb.connect(
             host=self.host,
             database=self.db,
             user=self.user,
             password=self.passwd,
-            dialect=self.dialect,
             role=self.role,
             charset=self.charset,
+            **extra
             )
 
     def _queryInsertID(self, conn, soInstance, id, names, values):
@@ -123,6 +130,9 @@ class FirebirdConnection(DBAPI):
 
     def createIDColumn(self, soClass):
         return '%s INT NOT NULL PRIMARY KEY' % soClass._idName
+
+    def createIndexSQL(self, soClass, index):
+        return index.firebirdCreateIndexSQL(soClass)
 
     def joinSQLType(self, join):
         return 'INT NOT NULL'

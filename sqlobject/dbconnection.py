@@ -326,6 +326,12 @@ class DBAPI(DBConnection):
     def _SO_dropJoinTable(self, join):
         self.query("DROP TABLE %s" % join.intermediateTable)
 
+    def _SO_createIndex(self, soClass, index):
+        self.query(self.createIndexSQL(soClass, index))
+
+    def createIndexSQL(self, soClass, index):
+        assert 0, 'Implement in subclasses'
+
     def createTable(self, soClass):
         self.query(self.createTableSQL(soClass))
 

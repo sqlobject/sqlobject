@@ -65,6 +65,7 @@ class MaxdbConnection(DBAPI):
         global dbapi
         if dbapi is None:
             from sapdb import dbapi
+        self.module = dbapi
         self.autoCommit = autoCommit
         self.user      = user
         self.password  = password
@@ -172,6 +173,9 @@ class MaxdbConnection(DBAPI):
 
     def createIDColumn(self, soClass):
         return '%s INT PRIMARY KEY' % soClass._idName
+
+    def createIndexSQL(self, soClass, index):
+        return index.maxdbCreateIndexSQL(soClass)
 
     def dropTable(self, tableName,cascade=False):
         #we drop the table in a transaction because the removal of the

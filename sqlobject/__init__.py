@@ -3,6 +3,7 @@ from col import *
 from sqlbuilder import AND, OR, NOT, IN, LIKE, CONTAINSSTRING, const, func
 from styles import *
 from joins import *
+from index import *
 from include import validators
 from dbconnection import connectionForURI
 

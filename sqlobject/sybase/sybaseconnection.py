@@ -17,6 +17,7 @@ class SybaseConnection(DBAPI):
             from Sybase import NumericType
             from sqlobject.converters import registerConverter, IntConverter
             registerConverter(NumericType, IntConverter)
+        self.module = Sybase
         self.locking = int(locking)
         self.host = host
         self.db = db
@@ -103,6 +104,9 @@ class SybaseConnection(DBAPI):
 
     def createIDColumn(self, soClass):
         return '%s NUMERIC(18,0) IDENTITY UNIQUE' % soClass._idName
+
+    def createIndexSQL(self, soClass, index):
+        return index.sybaseCreateIndexSQL(soClass)
 
     def joinSQLType(self, join):
         return 'NUMERIC(18,0) NOT NULL'

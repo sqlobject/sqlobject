@@ -28,6 +28,7 @@ import styles
 import types
 import warnings
 import joins
+import index
 import classregistry
 
 import sys
@@ -63,6 +64,7 @@ class MetaSQLObject(type):
 
         implicitColumns = []
         implicitJoins = []
+        implicitIndexes = []
         for attr, value in d.items():
             if isinstance(value, col.Col):
                 value.name = attr
@@ -74,6 +76,11 @@ class MetaSQLObject(type):
                 implicitJoins.append(value)
                 del d[attr]
                 continue
+            if isinstance(value, index.DatabaseIndex):
+                value.setName(attr)
+                implicitIndexes.append(value)
+                del d[attr]
+                continue                
 
         # We *don't* want to inherit _table, so we make sure it
         # is defined in this class (not a superclass)
@@ -103,6 +110,9 @@ class MetaSQLObject(type):
         if not d.has_key('_joins'):
             newClass._joins = newClass._joins[:]
         newClass._joins.extend(implicitJoins)
+        if not d.has_key('_indexes'):
+            newClass._indexes = newClass._indexes[:]
+        newClass._indexes.extend(implicitIndexes)
 
         ######################################################
         # Set some attributes to their defaults, if necessary.
@@ -184,6 +194,10 @@ class MetaSQLObject(type):
         newClass._SO_finishedClassCreation = True
         makeProperties(newClass)
 
+        newClass._SO_indexList = []
+        for idx in newClass._indexes:
+            newClass.addIndex(idx)
+
         classregistry.registry(newClass._registry).addClass(newClass)
 
         # And return the class
@@ -228,7 +242,12 @@ def makeProperties(obj):
         if d.has_key(var):
             if isinstance(d[var], types.MethodType) \
                    or isinstance(d[var], types.FunctionType):
-                warnings.warn("""I tried to set the property "%s", but it was already set, as a method.  Methods have significantly different semantics than properties, and this may be a sign of a bug in your code.""" % var)
+                warnings.warn(
+                    "I tried to set the property %r, but it was "
+                    "already set, as a method (%r).  Methods have "
+                    "significantly different semantics than properties, "
+                    "and this may be a sign of a bug in your code."
+                    % (var, d[var]))
             continue
         setFunc(var,
                 property(setters.get('get'), setters.get('set'),
@@ -314,6 +333,8 @@ class SQLObject(object):
 
     _joins = []
 
+    _indexes = []
+
     _fromDatabase = False
 
     _style = None
@@ -356,6 +377,11 @@ class SQLObject(object):
         return val
 
     get = classmethod(get)
+
+    def addIndex(cls, indexDef):
+        index = indexDef.withClass(cls)
+        cls._SO_indexList.append(index)
+    addIndex = classmethod(addIndex)
 
     def addColumn(cls, columnDef, changeSchema=False, connection=None):
         column = columnDef.withClass(cls)
@@ -432,7 +458,11 @@ class SQLObject(object):
             else:
                 # Same non-caching version as above.
                 getter = eval('lambda self: self._SO_foreignKey(self._SO_getValue(%s), self._SO_class_%s)' % (repr(name), column.foreignKey))
-            setattr(cls, rawGetterName(name)[:-2], getter)
+            if column.origName.upper().endswith('ID'):
+                origName = column.origName[:-2]
+            else:
+                origName = column.origName
+            setattr(cls, rawGetterName(origName), getter)
 
             # And we set the _get_columnName version
             # (sans ID ending)
@@ -975,6 +1005,7 @@ class SQLObject(object):
     dropTable = classmethod(dropTable)
 
     def createTable(cls, ifNotExists=False, createJoinTables=True,
+                    createIndexes=True,
                     connection=None):
         conn = connection or cls._connection
         if ifNotExists and conn.tableExists(cls._table):
@@ -983,6 +1014,9 @@ class SQLObject(object):
         if createJoinTables:
             cls.createJoinTables(ifNotExists=ifNotExists,
                                  connection=conn)
+        if createIndexes:
+            cls.createIndexes(ifNotExists=ifNotExists,
+                              connection=conn)
     createTable = classmethod(createTable)
 
     def createTableSQL(cls, createJoinTables=True, connection=None):
@@ -1009,6 +1043,14 @@ class SQLObject(object):
             sql.append(conn._SO_createJoinTableSQL(join))
         return '\n'.join(sql)
     createJoinTablesSQL = classmethod(createJoinTablesSQL)
+
+    def createIndexes(cls, ifNotExists=False, connection=None):
+        conn = connection or cls._connection
+        for index in cls._SO_indexList:
+            if not index:
+                continue
+            conn._SO_createIndex(cls, index)
+    createIndexes = classmethod(createIndexes)
 
     def _getJoinsToCreate(cls):
         joins = []

@@ -18,11 +18,11 @@ class PostgresConnection(DBAPI):
         if usePygresql:
             if pgdb is None:
                 import pgdb
-            self.pgmodule = pgdb
+            self.module = pgdb
         else:
             if psycopg is None:
                 import psycopg
-            self.pgmodule = psycopg
+            self.module = psycopg
 
         if dsn is None:
             dsn = []
@@ -50,9 +50,9 @@ class PostgresConnection(DBAPI):
 
     def makeConnection(self):
         try:
-            conn = self.pgmodule.connect(self.dsn)
-        except self.pgmodule.OperationalError, e:
-            raise self.pgmodule.OperationalError("%s; used connection string %r" % (e, self.dsn))
+            conn = self.module.connect(self.dsn)
+        except self.module.OperationalError, e:
+            raise self.module.OperationalError("%s; used connection string %r" % (e, self.dsn))
         if self.autoCommit:
             conn.autocommit(1)
         return conn
@@ -85,6 +85,9 @@ class PostgresConnection(DBAPI):
 
     def createColumn(self, soClass, col):
         return col.postgresCreateSQL()
+
+    def createIndexSQL(self, soClass, index):
+        return index.postgresCreateIndexSQL(soClass)
 
     def createIDColumn(self, soClass):
         return '%s SERIAL PRIMARY KEY' % soClass._idName

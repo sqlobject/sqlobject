@@ -40,7 +40,8 @@ class SOCol(object):
                  cascade=None,
                  lazy=False,
                  noCache=False,
-                 forceDBName=False):
+                 forceDBName=False,
+                 origName=None):
 
         # This isn't strictly true, since we *could* use backquotes or
         # " or something (database-specific) around column names, but
@@ -118,6 +119,9 @@ class SOCol(object):
         self.validator = validator
         self.noCache = noCache
         self.lazy = lazy
+        # this is in case of ForeignKey, where we rename the column
+        # and append an ID
+        self.origName = origName or name
 
     def _set_validator(self, value):
         self._validator = value
@@ -439,6 +443,7 @@ class SOForeignKey(SOKeyCol):
         if not kw.get('name'):
             kw['name'] = style.instanceAttrToIDAttr(style.pythonClassToAttr(foreignKey))
         else:
+            kw['origName'] = kw['name']
             if not kw['name'].upper().endswith('ID'):
                 kw['name'] = style.instanceAttrToIDAttr(kw['name'])
         SOKeyCol.__init__(self, **kw)

@@ -15,6 +15,15 @@ Interface Changes
 
 * Added a connection parameter to all class methods (patch 974755)
 
+* Added indexing (from Jeremy Fitzhardinge).  See `the
+  documentation`__ for more.
+
+__: SQLObject.html#indexes
+
+* Connection objects have a ``.module`` attribute, which points to
+  the DB-API module.  This is useful for getting access to the
+  exception objects.
+
 SQLObject 0.6
 =============
 

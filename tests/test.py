@@ -1137,6 +1137,62 @@ class LazyTest(SQLObjectTest):
 
 
 ########################################
+## Indexes
+########################################
+
+class SOIndex1(SQLObject):
+    name = StringCol(length=100)
+    number = IntCol()
+
+    nameIndex = DatabaseIndex('name', unique=True)
+    nameIndex2 = DatabaseIndex(name, number)
+    nameIndex3 = DatabaseIndex({'column': name,
+                                'length': 3})
+
+class SOIndex2(SQLObject):
+
+    name = StringCol()
+
+    nameIndex = DatabaseIndex({'expression': 'lower(name)'})
+
+class IndexTest1(SQLObjectTest):
+
+    classes = [SOIndex1]
+
+    def test(self):
+        n = 0
+        for name in 'blah blech boring yep yort snort'.split():
+            n += 1
+            SOIndex1(name=name, number=n)
+        mod = SOIndex1._connection.module
+        # Firebird doesn't throw an integrity error, unfortunately:
+        if mod.__name__.endswith('kinterbasdb'):
+            exc = mod.ProgrammingError
+        else:
+            exc = mod.IntegrityError
+        try:
+            SOIndex1(name='blah', number=0)
+        except exc:
+            # expected
+            pass
+        else:
+            assert 0, "Exception expected."
+
+class IndexTest2(SQLObjectTest):
+
+    classes = [SOIndex2]
+
+    requireSupport = ('supportExpressionIndex',)
+    
+    def test(self):
+        # Not much to test, just want to make sure the table works
+        # properly
+        if not self.hasSupport():
+            return
+        SOIndex2(name='')
+
+
+########################################
 ## Run from command-line:
 ########################################
 
@@ -1254,3 +1310,4 @@ if __name__ == '__main__':
     if doCoverage:
         coverage.stop()
         coverModules()
+

@@ -824,6 +824,41 @@ A column type is indicated by using a subclass of `Col`:
     only give the name of the foreign class that is referenced.
     `ForeignKey` implies an ``INT`` column.
 
+Indexes
+~~~~~~~
+
+You can also define indexes for your tables, which is only meaningful
+when creating your tables through SQLObject (SQLObject relies on the
+database to implement the indexes).  You do this again with attribute
+assignment, like::
+
+    firstLastIndex = DatabaseIndex('firstName', 'lastName')
+
+This creates an index on two columns, useful if you are selecting a
+particular name.  Of course, you can give a single column, and you can
+give the column object (``firstName``) instead of the string name.
+Note that if you use ``unique`` or ``alternateID`` (which implies
+``unique``) the database may make an index for you, and primary keys
+are always indexed.
+
+If you give the keyword argument ``unique`` to `DatabaseIndex` you'll
+create a unique index -- the combination of columns must be unique.
+
+You can also use dictionaries in place of the column names, to add
+extra options.  E.g.::
+
+    lastNameIndex = DatabaseIndex({'expression': 'lower(last_name)'})
+
+In that case, the index will be on the lower-case version of the
+column.  It seems that only PostgreSQL supports this.  You can also
+do::
+
+    lastNameIndex = DatabaseIndex({'column': lastName, 'length': 10})
+
+Which asks the database to only pay attention to the first ten
+characters.  Only MySQL supports this, but it is ignored in other
+databases.
+
 Creating and Dropping Tables
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -1050,6 +1085,12 @@ pre-fetch all the results of a select).
 Firebird support uses the kinterbasdb_ Python library.
 
 .. _kinterbasdb: http://kinterbasdb.sourceforge.net/
+
+If you are using indexes and get an error like *key size exceeds
+implementation restriction for index*, see `this page`_ to understand
+the restrictions on your indexing.
+
+.. _this page: http://www.volny.cz/iprenosil/interbase/ip_ib_indexcalculator.htm
 
 DBMConnection
 -------------

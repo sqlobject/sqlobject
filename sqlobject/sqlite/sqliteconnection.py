@@ -11,6 +11,7 @@ class SQLiteConnection(DBAPI):
         global sqlite
         if sqlite is None:
             import sqlite
+        self.module = sqlite
         self.filename = filename  # full path to sqlite-db-file
         if not autoCommit and not kw.has_key('pool'):
             # Pooling doesn't work with transactions...
@@ -71,3 +72,6 @@ class SQLiteConnection(DBAPI):
         result = self.queryOne("SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name = '%s'" % tableName)
         # turn it into a boolean:
         return not not result
+
+    def createIndexSQL(self, soClass, index):
+        return index.sqliteCreateIndexSQL(soClass)

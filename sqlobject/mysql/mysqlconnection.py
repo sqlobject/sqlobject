@@ -12,6 +12,7 @@ class MySQLConnection(DBAPI):
         global MySQLdb
         if MySQLdb is None:
             import MySQLdb
+        self.module = MySQLdb
         self.host = host
         self.db = db
         self.user = user
@@ -66,6 +67,9 @@ class MySQLConnection(DBAPI):
 
     def createColumn(self, soClass, col):
         return col.mysqlCreateSQL()
+
+    def createIndexSQL(self, soClass, index):
+        return index.mysqlCreateIndexSQL(soClass)
 
     def createIDColumn(self, soClass):
         return '%s INT PRIMARY KEY AUTO_INCREMENT' % soClass._idName
