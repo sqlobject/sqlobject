@@ -1,4 +1,5 @@
 from sqlobject.dbconnection import DBAPI
+from sqlobject.col import popKey
 sqlite = None
 
 class SQLiteConnection(DBAPI):
@@ -16,9 +17,17 @@ class SQLiteConnection(DBAPI):
         if not autoCommit and not kw.has_key('pool'):
             # Pooling doesn't work with transactions...
             kw['pool'] = 0
-        # use only one connection for sqlite - supports multiple
+        # connection options
+        opts = {'autocommit': autoCommit}
+        if 'encoding' in kw:
+            opts['encoding'] = popKey(kw, 'encoding')
+        if 'mode' in kw:
+            opts['mode'] = int(popKey(kw, 'mode'), 0)
+        if 'timeout' in kw:
+            opts['timeout'] = float(popKey(kw, 'timeout'))
+        # use only one connection for sqlite - supports multiple)
         # cursors per connection
-        self._conn = sqlite.connect(self.filename, autocommit=autoCommit)
+        self._conn = sqlite.connect(self.filename, **opts)
         DBAPI.__init__(self, **kw)
 
     def connectionFromURI(cls, uri):
