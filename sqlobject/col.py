@@ -1,5 +1,21 @@
 """
-Col
+Col -- SQLObject columns
+
+Note that each column object is named BlahBlahCol, and these are used
+in class definitions.  But there's also a corresponding SOBlahBlahCol
+object, which is used in SQLObject *classes*.
+
+An explanation: when a SQLObject subclass is created, the metaclass
+looks through your class definition for any subclasses of Col.  It
+collects them together, and indexes them to do all the database stuff
+you like, like the magic attributes and whatnot.  It then asks the Col
+object to create an SOCol object (usually a subclass, actually).  The
+SOCol object contains all the interesting logic, as well as a record
+of the attribute name you used and the class it is bound to (set by
+the metaclass).
+
+So, in summary: Col objects are what you define, but SOCol objects
+are what gets used.
 """
 
 import re, time
