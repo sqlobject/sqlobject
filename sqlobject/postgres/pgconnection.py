@@ -39,6 +39,9 @@ class PostgresConnection(DBAPI):
         self.dsn = dsn
         DBAPI.__init__(self, **kw)
 
+        # Server version cache
+        self._server_version = None # Not yet initialized
+
     def connectionFromURI(cls, uri):
         user, password, host, path, args = cls._parseURI(uri)
         path = path.strip('/')
@@ -93,6 +96,8 @@ class PostgresConnection(DBAPI):
         return '%s SERIAL PRIMARY KEY' % soClass._idName
 
     def dropTable(self, tableName, cascade=False):
+        if self.server_version[:3] <= "7.2":
+            cascade=False
         self.query("DROP TABLE %s %s" % (tableName,
                                          cascade and 'CASCADE' or ''))
 
@@ -198,3 +203,11 @@ class PostgresConnection(DBAPI):
         else:
             return col.Col, {}
 
+    def server_version(self):
+        if self._server_version is None:
+            # The result is something like
+            # ' PostgreSQL 7.2.1 on i686-pc-linux-gnu, compiled by GCC 2.95.4'
+            server_version = self.queryOne("SELECT version()")[0]
+            self._server_version = server_version.split()[1]
+        return self._server_version
+    server_version = property(server_version)
