@@ -59,17 +59,15 @@ class PostgresConnection(DBAPI):
 
     def _queryInsertID(self, conn, table, idName, id, names, values):
         c = conn.cursor()
-        if id is not None:
-            names = [idName] + names
-            values = [id] + values
+        if id is None:
+            c.execute("SELECT NEXTVAL('%s_%s_seq')" % (table, idName))
+            id = c.fetchone()[0]
+        names = [idName] + names
+        values = [id] + values
         q = self._insertSQL(table, names, values)
         if self.debug:
             self.printDebug(conn, q, 'QueryIns')
         c.execute(q)
-        if id is None:
-            c.execute('SELECT %s FROM %s WHERE oid = %s'
-                      % (idName, table, c.lastoid()))
-            id = c.fetchone()[0]
         if self.debugOutput:
             self.printDebug(conn, id, 'QueryIns', 'result')
         return id
