@@ -52,7 +52,7 @@ class MySQLConnection(DBAPI):
             self.printDebug(conn, q, 'QueryIns')
         self._executeRetry(conn, c, q)
         if id is None:
-            id = c.insert_id()
+            id = c.lastrowid
         if self.debugOutput:
             self.printDebug(conn, id, 'QueryIns', 'result')
         return id
