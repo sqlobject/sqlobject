@@ -16,7 +16,7 @@ class MySQLConnection(DBAPI):
         self.host = host
         self.db = db
         self.user = user
-        self.passwd = passwd
+        self.password = passwd
         DBAPI.__init__(self, **kw)
 
     def connectionFromURI(cls, uri):
@@ -27,7 +27,7 @@ class MySQLConnection(DBAPI):
 
     def makeConnection(self):
         return MySQLdb.connect(host=self.host, db=self.db,
-                               user=self.user, passwd=self.passwd)
+                               user=self.user, passwd=self.password)
 
     def _executeRetry(self, conn, cursor, query):
         while 1:

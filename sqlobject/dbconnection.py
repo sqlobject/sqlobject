@@ -47,9 +47,10 @@ class DBConnection:
         uri = '%s://%s' % (self.dbName, auth)
         if self.host:
             uri += self.host + '/'
-        if path.startswith('/'):
-            path = path[1:]
-        return uri + path
+        db = self.db
+        if db.startswith('/'):
+            db = path[1:]
+        return uri + db
 
     def isSupported(cls):
         raise NotImplemented
