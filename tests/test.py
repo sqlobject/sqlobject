@@ -22,6 +22,7 @@ from sqlobject import classregistry
 from mx import DateTime
 global curr_db
 curr_db = None
+from sqlobject import cache
 
 ########################################
 ## Basic operation
@@ -394,6 +395,28 @@ class DeleteSelectTest(TestCase1):
             obj.destroySelf()
         self.assertEqual(list(TestSO1.select('all')), [])
 
+########################################
+## Delete without caching
+########################################
+
+class NoCache(SQLObject):
+    name = StringCol()
+
+class TestNoCache(SQLObjectTest):
+
+    classes=[NoCache]
+
+    def setUp(self):
+        SQLObjectTest.setUp(self)
+        NoCache._connection.cache = cache.CacheSet(cache=False)
+
+    def tearDown(self):
+        NoCache._connection.cache = cache.CacheSet(cache=True)
+        SQLObjectTest.tearDown(self)
+
+    def testDestroySelf(self):
+        value = NoCache(name='test')
+        value.destroySelf()
 
 ########################################
 ## Transaction test
