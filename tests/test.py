@@ -997,9 +997,13 @@ class LazyTest(SQLObjectTest):
         SQLObjectTest.setUp(self)
         self.conn = Lazy._connection
         self.conn.didUpdate = False
-        oldUpdate = self.conn._SO_update
-        newUpdate = lambda so, values, s=self, c=self.conn, o=oldUpdate: self._alternateUpdate(so, values, c, o)
+        self._oldUpdate = self.conn._SO_update
+        newUpdate = lambda so, values, s=self, c=self.conn, o=self._oldUpdate: self._alternateUpdate(so, values, c, o)
         self.conn._SO_update = newUpdate
+
+    def tearDown(self):
+        self.conn._SO_update = self._oldUpdate
+        del self._oldUpdate
 
     def _alternateUpdate(self, so, values, conn, oldUpdate):
         conn.didUpdate = True
