@@ -41,6 +41,10 @@ class MySQLConnection(DBAPI):
 
         return conn
 
+    def _setAutoCommit(self, conn, auto):
+        if hasattr(conn, 'autocommit'):
+            conn.autocommit(auto)
+
     def _executeRetry(self, conn, cursor, query):
         while 1:
             try:
