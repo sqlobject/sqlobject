@@ -180,6 +180,8 @@ Instead of ``str()`` you may use ``int()`` or whatever else you want.
 This will be resolved in a future version when ID column types can be
 declared like other columns.
 
+Additionally you can set _idType = str in you SQLObject class.
+
 
 Binary Values
 -------------
