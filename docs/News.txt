@@ -7,27 +7,13 @@ News
 
 .. _start:
 
-SQLObject 0.6.2
-===============
+SVN trunk
+=========
 
 Interface Changes
 -----------------
 
 * The long broken and unused ``DBMConnection`` has been removed.
-
-* Removed DBMConnection.
-
-Features
---------
-
-* New ``UnicodeCol()`` that converts to and from Unicode
-  in the database.
-
-SQLObject 0.6.1
-===============
-
-Interface Changes
------------------
 
 * Added a connection parameter to all class methods (patch 974755)
 
@@ -37,6 +23,11 @@ Interface Changes
 
 Features
 --------
+
+* New ``UnicodeCol()`` that converts to and from Unicode
+  in the database.  See docs_.
+
+.. _docs: SQLObject.html#subclasses-of-col
 
 * Added indexing (from Jeremy Fitzhardinge).  See `the
   documentation`__ for more.
