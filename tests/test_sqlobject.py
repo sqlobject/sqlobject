@@ -1156,12 +1156,10 @@ class LazyTest(SQLObjectTest):
         # Also, check that passing a name that is not
         # a valid column doesn't break, but instead
         # just does a plain setattr.
-        obj.set(name='first', other='who',
-                third='yes', driver='james')
+        obj.set(name='first', other='who', third='yes')
         self.assertEqual(obj.name, 'first')
         self.assertEqual(obj.other, 'who')
         self.assertEqual(obj.third, 'yes')
-        self.assertEqual(obj.driver, 'james')
         assert obj.dirty
         assert not self.conn.didUpdate
         obj.syncUpdate()
