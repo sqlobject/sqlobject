@@ -1,0 +1,96 @@
+Legacy Database Schemas
+=======================
+
+Often you will have a database that already exists, and does not use
+the naming conventions that SQLObject expects, or does not use any
+naming convention at all.
+
+SQLObject requirements
+----------------------
+
+While SQLObject tries not to make too many requirements on your
+schema, some assumptions are made.  Some of these may be relaxed in
+the future.
+
+All tables that you want to turn into a class need to have an integer
+primary key.  That key should be defined like:
+
+MySQL:
+    ``INT PRIMARY KEY AUTO_INCREMENT``
+Postgres:
+    ``SERIAL PRIMARY KEY``
+SQLite:
+    ``INTEGER PRIMARY KEY``
+
+SQLObject does not support non-integer keys (that may change).  It
+does not support sequences in Postgres (that will change -- ``SERIAL``
+uses an implicit sequence).  It does not support primary keys made up
+of multiple columns (that probably won't change).  It does not
+generally support tables with primary keys with business meaning --
+i.e., primary keys are assumed to be immutable (that won't change).
+
+At the moment foreign key column names must end in ``"ID"``
+(case-insensitive).  This restriction will probably be removed in the
+next release.
+
+Changing the Naming Style
+-------------------------
+
+By default names in SQLObject are expected to be mixed case in Python
+(like ``mixedCase``), and underscore-separated in SQL (like
+``mixed_case``).  This applies to table and column names.  The primary
+key is assumed to be simply ``id``.
+
+Other styles exist.  A typical one is mixed case column names, and a
+primary key that includes the table name, like ``ProductID``.  You can
+use a different "Style" object to indicate a different naming
+convention.  For instance:
+
+.. raw:: html
+   :file: ../examples/snippets/style1.html
+
+If you use ``Person.createTable()``, you'll get::
+
+    CREATE TABLE Person (
+        PersonID INT PRIMARY KEY,
+        FirstName Text,
+        LastName Text
+    )
+
+The `MixedCaseStyle` object handles the initial capitalization of
+words, but otherwise leaves them be.  By using ``longID=True``, we
+indicate that the primary key should look like a normal reference
+(``PersonID`` for `MixedCaseStyle`, or ``person_id`` for the default
+style).
+
+If you wish to change the style globally, assign the style to the
+connection, like:
+
+.. raw:: html
+   :file: ../examples/snippets/default-style.html
+
+Irregular Naming
+----------------
+
+While naming conventions are nice, they are not always present.  You
+can control most of the names that SQLObject uses, independent of the
+Python names (so at least you don't have to propagate the
+irregularity to your brand-spanking new Python code).
+
+Here's a simple example:
+
+.. raw:: html
+   :file: ../examples/snippets/style-table.html
+
+The attribute `_table` overrides the table name.  `_idName` provides
+an alternative to ``id``.  The ``dbName`` keyword argument gives the
+column name.
+
+Non-Integer Keys
+----------------
+
+While not strictly a legacy database issue, this fits into the
+category of "irregularities".  If you use non-integer keys, all
+primary key management is up to you.  You must create the table
+yourself, and when you create instances you must pass a ``id`` keyword
+argument into ``new`` (like ``Person.new(id='555-55-5555', ...)``).

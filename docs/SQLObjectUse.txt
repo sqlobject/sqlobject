@@ -1,0 +1,65 @@
+Using the Class
+---------------
+
+Now that you have a class, how will you use it?  We'll be considering
+the class defined above.
+
+You can use the class method `.get()` to fetch instances that
+already exist.  So if you wanted to fetch the Person by id 10, you'd
+call ``Person.get(10)``.
+
+.. warning::
+   This is a change from SQLObject 0.5 -- before the standard
+   constructor fetched rows from the database, and the `.new()`
+   method created new rows.  Now SQLObject is more like Python, where
+   the class constructor creates a new object/row, and the `.get()`
+   method fetches a row.
+
+To create a new object (and row), use class instantiation.  In this
+case you might call ``Person.new(firstName="John", lastName="Doe")``.
+If you had left out ``firstName`` or ``lastName`` you would have
+gotten an error, as no default was given for these columns
+(``middleInitial`` has a default, so it will be set to ``NULL``, the
+SQL equivalent of ``None``).
+
+When you create an object, it is immediately inserted into the
+database.  SQLObject generally uses the database as immediate storage.
+
+Here's an example of using the class:
+
+.. raw:: html
+   :file: ../examples/snippets/simpleaddress-person1-use.html
+
+You'll note that columns are accessed like attributes.  (This uses the
+``property`` feature of Python 2.2, so that retrieving and setting
+these attributes executes code).  You'll also note that objects are
+unique -- there is generally only one ``Person`` instance of a
+particular id in memory at any one time.  If you ask for more than one
+person by a particular ID, you'll get back the same instance.  This
+way you can be sure of a certain amount of consistency if you have
+multiple threads accessing the same data (though of course across
+processes there can be no sharing of an instance).  This isn't true if
+you're using transactions_.
+
+To get an idea of what's happening behind the surface, I'll give the
+same actions with the SQL that is sent, along with some commentary:
+
+.. raw:: html
+   :file: ../examples/snippets/simpleaddress-person1-use-debug.html
+
+Hopefully you see that the SQL that gets sent is pretty clear and
+predictable.  To view the SQL being sent, pass the keyword argument
+``debug=1`` to your connection object -- all SQL will be printed to
+the console.  This can be reassuring, and I would encourage you to try
+it.
+
+As a small optimization, instead of assigning each attribute
+individually, you can assign a number of them using the ``set``
+method, like:
+
+.. raw:: html
+   :file: ../examples/snippets/simpleaddress-person1-use-set.html
+
+This will send only one ``UPDATE`` statement.  You can also use `set`
+with non-database properties (there's no benefit, but it helps hide
+the difference between database and non-database attributes).

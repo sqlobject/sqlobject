@@ -1,0 +1,34 @@
+Author, Site, and License
+=========================
+
+SQLObject is by Ian Bicking (ianb@colorstudy.com).  The website
+is sqlobject.org__.
+
+__ http://sqlobject.org
+
+The code is licensed under the `Lesser General Public License`_
+(LGPL).
+
+.. _`Lesser General Public License`: http://www.gnu.org/copyleft/lesser.html
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+Introduction
+============
+
+SQLObject is an *object-relational mapper*.  It allows you to
+translate RDBMS table rows into Python objects, and manipulate those
+objects to transparently manipulate the database.
+
+In using SQLObject, you will create a class definition that will
+describe how the object translates to the database table.  SQLObject
+will produce the code to access the database, and update the database
+with your changes.  The generated interface looks similar to any other
+interface, and callers need not be aware of the database backend.
+
+SQLObject also includes a novel feature to avoid generating,
+textually, your SQL queries.  This also allows non-SQL databases to be
+used with the same query syntax.

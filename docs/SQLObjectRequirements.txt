@@ -1,0 +1,12 @@
+Requirements
+============
+
+Currently SQLObject supports MySQL_, PostgreSQL_ (via ``psycopg``),
+SQLite_, Firebird_, Sybase_, and `MAX DB`_ (also known as SAP DB).
+
+.. _PostgreSQL: http://postgresql.org
+.. _SQLite: http://sqlite.org
+.. _Firebird: http://firebird.sourceforge.net
+
+Python 2.2 or higher is required.  SQLObject makes extensive use of
+new-style classes.

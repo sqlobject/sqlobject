@@ -1,0 +1,30 @@
+One-to-Many Relationships
+-------------------------
+
+A real address book should have people, but also addresses.  These
+examples are in ``personaddress.py``
+
+First, let's define the new address table.  People can have multiple
+addresses, of course:
+
+.. raw:: html
+   :file: ../examples/snippets/address-address.html
+
+Note the column ``person = ForeignKey("Person")``.  This is a
+reference to a `Person` object.  We refer to other classes by name
+(with a string) to avoid circular dependencies.  In the database
+there will be a ``person_id`` column, type ``INT``, which points to
+the ``person`` column.
+
+Here's the `Person` class:
+
+.. raw:: html
+   :file: ../examples/snippets/address-person.html
+
+We get the backreference with ``addresses = MultipleJoin('Address')``.
+When we access a person's `addresses` attribute, we will get back a
+list of all the `Address` objects associated with that person.  An
+example:
+
+.. raw:: html
+   :file: ../examples/snippets/address-use1.html

@@ -1,0 +1,13 @@
+Lazy Updates
+------------
+
+By default SQLObject sends an ``UPDATE`` to the database for every
+attribute you set, or everytime you call ``.set()``.  If you want to
+avoid this many updates, add ``_lazyUpdate = True`` to your class
+definition.  Then updates will only be written to the database when
+you call ``inst.syncUpdate()`` or ``obj.sync()``: ``.sync()`` also
+refetches the data from the database, which ``.syncUpdate()`` does not
+do.
+
+When enabled instances will have a property ``dirty``, which indicates
+if there are pending updates.  Inserts are still done immediately.

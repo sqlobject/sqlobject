@@ -1,0 +1,41 @@
+SQLObject Class: Specifying Your Class
+--------------------------------------
+
+In addition to the columns, there are a number of other special
+attributes you can set in your class.
+
+`_connection`:
+    The connection object to use, from `DBConnection`.  You can also
+    set the variable `__connection__` in the enclosing module and it
+    will be picked up (be sure to define `__connection__` before you
+    class).  You can also pass a connection object in at instance
+    creation time, as described in transactions_.
+
+`_table`:
+    The database name of the table for this class.  If you don't give
+    a name, then the standard ``MixedCase`` to ``mixed_case``
+    translation is performed.
+
+`_joins`:
+    A list of `Join` objects.  This is covered below.
+
+`_cacheValues`:
+    If set to ``False`` then values for attributes from the database
+    won't be cached.  So everytime you access an attribute in the
+    object the database will be queried for a value.  If you want to
+    handle concurrent access to the database from multiple processes
+    then this is probably the way to do so.  You should also use
+    it with transactions_ (it is not implied).
+
+.. _idName:
+
+`_idName`:
+    The name of the primary key column (default ``id``).
+
+`_style`:
+    A style object -- this object allows you to use other algorithms
+    for translating between Python attribute and class names, and the
+    database's column and table names.  See `Changing the Naming
+    Style`_ for more.
+
+.. Relationships_:

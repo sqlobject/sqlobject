@@ -1,0 +1,72 @@
+Declaring the Class
+-------------------
+
+To begin with, let's make a database connection.  Choose from one of
+`MySQLConnection`, `PostgresConnection`, `SQLiteConnection`, and
+`FirebirdConnection`, depending on what database you use.
+
+.. raw:: html
+   :file: ../examples/snippets/connections.html
+
+The rest of this will be written more-or-less in a database-agnostic
+manner, using the connection you define.  Use `SQLite` if you don't
+have another database installed or ready -- it requires PySQLite_, but
+doesn't require a client/server setup.
+
+.. _PySQLite: http://pysqlite.sourceforge.net/
+
+We'll develop a simple addressbook-like database.  We could create the
+tables ourselves, and just have SQLObject access those tables, but for
+now we'll let SQLObject do that work.  First, the class:
+
+.. raw:: html
+   :file: ../examples/snippets/simpleaddress-person1.html
+
+Many basic table schemas won't be any more complicated than that.
+The special attribute `_connection` defines the connection we should
+use (you can also set a module-level variable `__connection__` which
+would automatically be picked up if you don't specify `_connection`).
+
+.. warning::
+   The `__connection__` magic variable can be a little fragile -- it
+   has to be defined before the class is defined.  This means it
+   *must* be assigned above the ``class ...:`` line.
+
+`firstName`, `middleInitial`, and `lastName` are all columns in the
+database.  The general schema implied by this class definition is:
+
+.. raw:: html
+   :file: ../examples/snippets/simpleaddress-schema-person1.html
+
+This is for MySQL.  The schema for other databases looks slightly
+different (especially the ``id`` column).  You'll notice the names
+were changed from mixedCase to underscore_separated -- this is done by
+the `style object`_.  There are a variety of ways to handle that names
+that don't fit conventions (see `Irregular Naming`_).
+
+.. _`style object`: `Changing the Naming Style`_
+
+The tables don't yet exist.  We'll let SQLObject create them:
+
+.. raw:: html
+   :file: ../examples/snippets/simpleaddress-person1-create.html
+
+We can change the type of the various columns by using something other
+than `StringCol`, or using different arguments.  More about this in
+`Subclasses of Col`_.
+
+If you don't want to do table creation (you already have tables, or
+you want to create the tables yourself), you can just use the vague
+`Col` class.  SQLObject doesn't do much type checking, allowing the
+database and the adapter to handle most of the type conversion.
+Databases generally do their own type coercion on inputs.
+
+You'll note that the ``id`` column is not given in the class
+definition, it is implied.  For MySQL databases it should be defined
+as ``INT PRIMARY KEY AUTO_INCREMENT``, in Postgres ``SERIAL PRIMARY
+KEY``, and in SQLite as ``INTEGER PRIMARY KEY``.  You can `override the
+name`__, but some integer primary key must exist (though `you can use
+non-integer keys`_ with some extra effort).
+
+__ idName_
+.. _`you can use non-integer keys`: `Non-Integer Keys`_

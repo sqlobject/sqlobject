@@ -1,0 +1,49 @@
+Dynamic Classes
+===============
+
+SQLObject classes can be manipulated dynamically.  This leaves open
+the possibility of constructing SQLObject classes from an XML file,
+from database introspection, or from a graphical interface.
+
+Automatic Class Generation
+---------------------------
+
+SQLObject can read the table description from the database, and fill
+in the class columns (as would normally be described in the `_columns`
+attribute).  Do this like::
+
+    class Person(SQLObject):
+
+        _fromDatabase = True
+
+You can still specify columns (in `_columns`), and only missing
+columns will be added.  
+
+*This is not supported in SQLite*
+
+Runtime Column Changes
+----------------------
+
+*SQLite does not support this feature*
+
+You can add and remove columns to your class at runtime.  Such changes
+will effect all instances, since changes are made inplace to the
+class.  There are two methods, `addColumn` and `delColumn`, both of
+which take a `Col` object (or subclass) as an argument.  There's also
+an option argument `changeSchema` which, if True, will add or drop the
+column from the database (typically with an ``ALTER`` command).
+
+When adding columns, you must pass the name as part of the column
+constructor, like ``StringCol("username", length=20)``.  When removing
+columns, you can either use the Col object (as found in `_columns`, or
+which you used in `addColumn`), or you can use the column name (like
+``MyClass.delColumn("username")``).
+
+.. _addJoin:
+
+You can also add Joins__, like 
+``MyClass.addJoin(MultipleJoin("MyOtherClass"))``, and remove joins with
+`delJoin`.  `delJoin` does not take strings, you have to get the join
+object out of the `_joins` attribute.
+
+__ Relationships_:
