@@ -528,12 +528,43 @@ class SOBoolCol(SOCol):
 class BoolCol(Col):
     baseClass = SOBoolCol
 
+
+class FloatValidator(validators.Validator):
+
+    def fromPython(self, value, state):
+        if value is None:
+            return None
+        if not isinstance(value, (int, long, float, sqlbuilder.SQLExpression)):
+            raise validators.InvalidField("expected a float in the FloatCol '%s', got %s instead" % \
+                (self.name, type(value)), value, state)
+        return value
+
+    def toPython(self, value, state):
+        if value is None:
+            return None
+        if isinstance(value, (int, long, float, sqlbuilder.SQLExpression)):
+            return value
+        try:
+            return float(value)
+        except:
+            raise validators.InvalidField("expected a float in the FloatCol '%s', got %s instead" % \
+                (self.name, type(value)), value, state)
+
 class SOFloatCol(SOCol):
+    validatorClass = FloatValidator # can be overriden in descendants
 
     # 3-03 @@: support precision (e.g., DECIMAL)
 
+    def __init__(self, **kw):
+        SOCol.__init__(self, **kw)
+        self.validator = validators.All.join(self.createValidator(), self.validator)
+
     def autoConstraints(self):
         return [consts.isFloat]
+
+    def createValidator(self):
+        """Create a validator for the column. Can be overriden in descendants."""
+        return self.validatorClass(name=self.name)
 
     def _sqlType(self):
         return 'FLOAT'
@@ -543,6 +574,7 @@ class SOFloatCol(SOCol):
 
 class FloatCol(Col):
     baseClass = SOFloatCol
+
 
 class SOKeyCol(SOCol):
 

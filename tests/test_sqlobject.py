@@ -890,6 +890,7 @@ class SOValidation(SQLObject):
     name = StringCol(validator=validators.PlainText(), default='x', dbName='name_col')
     name2 = StringCol(validator=validators.ConfirmType(str), default='y')
     name3 = IntCol(validator=validators.Wrapper(fromPython=int), default=100)
+    name4 = FloatCol(default=2.718)
 
 class ValidationTest(SQLObjectTest):
 
@@ -905,6 +906,10 @@ class ValidationTest(SQLObjectTest):
         t = SOValidation(name2='hey')
         self.assertRaises(validators.InvalidField, setattr, t,
                           'name2', 1)
+        self.assertRaises(validators.InvalidField, setattr, t,
+                          'name3', '1')
+        self.assertRaises(validators.InvalidField, setattr, t,
+                          'name4', '1')
         t.name2 = 'you'
 
     def testWrapType(self):
