@@ -26,9 +26,6 @@ class PostgresConnection(DBAPI):
             self.pgmodule = psycopg
 
         self.autoCommit = autoCommit
-        if not autoCommit and not kw.has_key('pool'):
-            # Pooling doesn't work with transactions...
-            kw['pool'] = 0
         if dsn is None:
             dsn = []
             if db:
