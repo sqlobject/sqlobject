@@ -51,6 +51,11 @@ Interface Changes
 * New ``_create(id, **kw)`` method that can be overridden to intercept
   and modify attempts to insert rows in the database.
 
+* You can specify ``_idType`` in your class, like ``_idType = str``.
+  The default type is ``int``; i.e., IDs are coerced to integers.
+  This is a temporary interface; a more general specifier for primary
+  keys will be added later.
+
 Bugs
 ----
 
