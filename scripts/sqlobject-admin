@@ -11,8 +11,8 @@ except ImportError:
     updir = os.path.join(
         os.path.dirname(os.path.dirname(os.path.abspath(here))),
         'sqlobject')
-    if sys.path.exists(updir):
-        sys.path.insert(0, updir)
+    if os.path.exists(updir):
+        sys.path.insert(0, os.path.dirname(updir))
     else:
         print 'I cannot find the sqlobject module'
         print 'If SQLObject is installed, you may need to set $PYTHONPATH'
