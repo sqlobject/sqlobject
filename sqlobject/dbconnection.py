@@ -105,6 +105,9 @@ class DBConnection:
         else:
             port = None
         path = '/' + rest
+        if os.name == 'nt':
+            if (len(rest) > 1) and (rest[1] == '|'):
+                path = "%s:%s" % (rest[0], rest[2:])
         args = {}
         if path.find('?') != -1:
             path, arglist = path.split('?', 1)

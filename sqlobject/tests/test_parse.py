@@ -1,3 +1,4 @@
+import os
 from sqlobject.dbconnection import DBConnection
 
 ########################################
@@ -54,3 +55,12 @@ def test_parse():
     assert port is None
     assert path == "/:memory:"
     assert args == {}
+
+    if os.name == 'nt':
+        user, password, host, port, path, args = _parseURI("sqlite:/C|/full/path/to/database")
+        assert user is None
+        assert password is None
+        assert host is None
+        assert port is None
+        assert path == "C:/full/path/to/database"
+        assert args == {}
