@@ -53,9 +53,10 @@ div.important, div.note, div.tip, div.warning {
   // margin: 2em ;
   background-color: #cccccc;
   align: center;
-  //width: 60%;
-  // border: medium outset ;
+  width: 40%;
+  border: medium outset ;
   padding: 3px;
+  float: right;
  }
 
 div.attention p.admonition-title, div.caution p.admonition-title,
@@ -64,13 +65,19 @@ div.warning p.admonition-title {
   color: red ;
   font-weight: bold ;
   font-family: sans-serif;
-  text-align: center }
+  text-align: center;
+  display: block;
+  background-color: #999999;
+  margin: 0; }
 
 div.hint p.admonition-title, div.important p.admonition-title,
 div.note p.admonition-title, div.tip p.admonition-title {
   font-weight: bold ;
   font-family: sans-serif;
-  text-align: center }
+  text-align: center;
+  display: block;
+  background-color: #999999;
+  margin: 0; }
 
 div.dedication {
   margin: 2em 5em ;
