@@ -18,6 +18,15 @@ class MySQLConnection(DBAPI):
         self.db = db
         self.user = user
         self.password = passwd
+        self.kw = {}
+        for key in ("unix_socket", "named_pipe", "init_command",
+                "read_default_file", "read_default_group"):
+            if key in kw:
+                self.kw[key] = col.popKey(kw, key)
+        for key in ("connect_time", "compress", "named_pipe", "use_unicode",
+                "client_flag", "local_infile"):
+            if key in kw:
+                self.kw[key] = int(col.popKey(kw, key))
         DBAPI.__init__(self, **kw)
 
     def connectionFromURI(cls, uri):
@@ -29,7 +38,7 @@ class MySQLConnection(DBAPI):
     def makeConnection(self):
         try:
             conn = self.module.connect(host=self.host, port=self.port,
-                db=self.db, user=self.user, passwd=self.password)
+                db=self.db, user=self.user, passwd=self.password, **self.kw)
         except self.module.OperationalError, e:
             raise self.module.OperationalError(
                 "%s; used connection string: host=%s, port=%s, db=%s, user=%s, pwd=%s" % (
