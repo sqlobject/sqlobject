@@ -26,7 +26,10 @@ Python Style Guide.  Some things to take particular note of:
 
 * I don't stress too much on line length.  But try to break lines up
   by grouping with parenthesis instead of with backslashes (if you
-  can).
+  can).  Do asserts like::
+
+    assert some_condition(a, b), (
+        "Some condition failed, %r isn't right!" % a)
 
 * But if you are having problems with line length, maybe you should
   just break the expression up into multiple statements.
@@ -34,8 +37,8 @@ Python Style Guide.  Some things to take particular note of:
 * Blank lines between methods, unless they are very small and closely
   bound to each other.
 
-* Never use the form ``condition and trueValue or falseValue``.  Break
-  it out and use a variable.
+* *Never* use the form ``condition and trueValue or falseValue``.
+  Break it out and use a variable.
 
 * Careful of namespace pollution.  SQLObject does allow for ``from
   sqlobject import *`` so names should be fairly distinct, or they
@@ -122,26 +125,41 @@ Testing
 Tests are important.  Tests keep everything from falling apart.  All
 new additions should have tests.
 
-Right now all the tests are in one big file ``tests.py``.  Which is
-unfortunate, but that's the way it is.  They may seem complex, but
-they aren't so bad really.  They all subclass from ``SQLObjectTest``.
+Testing uses `py.test`__, an alternative to ``unittest``.  It is
+available via subversion at http://codespeak.net/svn/py/dist.  Read
+its `getting started`_ document for more.
 
-The ``classes`` attribute is special in a test class.  This is a list
-of `SQLObject` subclasses that this test uses.  `SQLObjectTest` will
-create the tables before the tests are run, and destroy them after.
+.. __: http://codespeak.net/py/current/doc/test.html
+.. _getting started: http://codespeak.net/py/current/doc/getting_started.html
 
-You may also define an ``.inserts()`` method.  This method sets up the
-basic data.  When doing verbose input (``-vv``) you won't see these
-inserts, since they may be overwhelming.  Use the command-line options
-``--inserts`` to show them (as well as the create statement.
+To actually run the test, you have to give it a database to connect
+to.  You do this with the ``TESTDB`` environmental variable (right now
+py.test doesn't have a better way to add custom options).  You can
+give the complete URI to access your test database, or you can give it
+a shortcut like ``mysql`` (these shortcuts are defined in the top of
+``tests/dbtest.py``.
 
-When running tests, use ``-ddbname`` to test with ``dbname`` (e.g.,
-``-dmysql``, ``-dpostgres``, etc), or ``-dall`` to use Postgres,
-MySQL, Firebird, and SQLite (all the core supported databases;
-everything I have installed on my computer).  Please try to test as
-many databases as you can.  At least SQLite and one other should be
-easy, though if you can test both Postgres and MySQL that would be
-much better.
+All the tests are modules in ``sqlobject/tests``.  Each module tests
+one kind of feature, more or less.  If you are testing a module, call
+the test module ``tests/test_modulename.py`` -- only modules that
+start with ``test_`` will be picked up by py.test.
+
+The "framework" for testing is in ``tests/dbtest``.  There's a couple
+important functions:
+
+``setupClass(soClass)`` creates the tables for the class.  It tries to
+avoid recreating tables if not necessary.
+
+``supports(featureName)`` checks if the database backend supports the
+named feature.  What backends support what is defined at the top of
+``dbtest``.
+
+If you ``import *`` you'll also get py.test's version of raises_, an
+``inserts`` function that can create instances for you, and a couple
+miscellaneous functions.
+
+.. _raises: http://codespeak.net/py/current/doc/test.html#id4
+
 
 If you submit a patch or implement a feature without a test, I'll be
 forced to write the test.  That's no fun for me, to just be writing
