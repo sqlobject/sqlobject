@@ -52,7 +52,7 @@ the_runner = CommandRunner()
 register = the_runner.register
 
 def standard_parser(connection=True, simulate=True,
-                    interactive=False):
+                    interactive=False, find_modules=True):
     parser = optparse.OptionParser()
     parser.add_option('-v', '--verbose',
                       help='Be verbose (multiple times for more verbosity)',
@@ -74,24 +74,25 @@ def standard_parser(connection=True, simulate=True,
                               help="The WSGIKit config file that contains the database URI (in the database key)",
                               metavar="FILE",
                               dest="config_file")
-    parser.add_option('-m', '--module',
-                      help="Module in which to find SQLObject classes",
-                      action='append',
-                      metavar='MODULE',
-                      dest='modules',
-                      default=[])
-    parser.add_option('-p', '--package',
-                      help="Package to search for SQLObject classes",
-                      action="append",
-                      metavar="PACKAGE",
-                      dest="packages",
-                      default=[])
-    parser.add_option('--class',
-                      help="Select only named classes (wildcards allowed)",
-                      action="append",
-                      metavar="NAME",
-                      dest="class_matchers",
-                      default=[])
+    if find_modules:
+        parser.add_option('-m', '--module',
+                          help="Module in which to find SQLObject classes",
+                          action='append',
+                          metavar='MODULE',
+                          dest='modules',
+                          default=[])
+        parser.add_option('-p', '--package',
+                          help="Package to search for SQLObject classes",
+                          action="append",
+                          metavar="PACKAGE",
+                          dest="packages",
+                          default=[])
+        parser.add_option('--class',
+                          help="Select only named classes (wildcards allowed)",
+                          action="append",
+                          metavar="NAME",
+                          dest="class_matchers",
+                          default=[])
     if interactive:
         parser.add_option('-i', '--interactive',
                           help="Ask before doing anything (use twice to be more careful)",
@@ -444,6 +445,58 @@ class CommandHelp(Command):
                 if command.aliases:
                     print '%s (Aliases: %s)' % (
                         ' '*max_len, ', '.join(command.aliases))
+
+class CommandExecute(Command):
+
+    name = 'execute'
+    summary = 'Execute SQL statements'
+
+    parser = standard_parser(find_modules=False)
+    parser.add_option('--stdin',
+                      help="Read SQL from stdin (normally takes SQL from the command line)",
+                      dest="use_stdin",
+                      action="store_true")
+
+    max_args = None
+
+    def command(self):
+        args = self.args
+        if self.options.use_stdin:
+            if self.options.verbose:
+                print "Reading additional SQL from stdin (Ctrl-D or Ctrl-Z to finish)..."
+            args.append(sys.stdin.read())
+        self.conn = self.connection().getConnection()
+        self.cursor = self.conn.cursor()
+        for sql in args:
+            self.execute_sql(sql)
+
+    def execute_sql(self, sql):
+        if self.options.verbose:
+            print sql
+        try:
+            self.cursor.execute(sql)
+        except Exception, e:
+            if not self.options.verbose:
+                print sql
+            print "****Error:"
+            print '    ', e
+            return
+        desc = self.cursor.description
+        rows = self.cursor.fetchall()
+        if self.options.verbose:
+            if not self.cursor.rowcount:
+                print "No rows accessed"
+            else:
+                print "%i rows accessed" % self.cursor.rowcount
+        if desc:
+            for name, type_code, display_size, internal_size, precision, scale, null_ok in desc:
+                sys.stdout.write("%s\t" % name)
+            sys.stdout.write("\n")
+        for row in rows:
+            for col in row:
+                sys.stdout.write("%r\t" % col)
+            sys.stdout.write("\n")
+        print
                 
 def update_sys_path(paths, verbose):
     if isinstance(paths, (str, unicode)):
