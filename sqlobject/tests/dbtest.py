@@ -115,6 +115,7 @@ class InstalledTestDatabase(sqlobject.SQLObject):
             else:
                 cls.clear(soClass)
         for soClass in soClasses:
+            table = soClass._table
             if not soClass._connection.tableExists(table):
                 cls.install(soClass)
     installOrClear = classmethod(installOrClear)
