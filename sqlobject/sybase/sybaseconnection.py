@@ -31,16 +31,6 @@ class SybaseConnection(DBAPI):
                    db=path)
     connectionFromURI = classmethod(connectionFromURI)
 
-    def isSupported(cls):
-        global Sybase
-        if Sybase is None:
-            try:
-                import Sybase
-            except ImportError:
-                return False
-        return True
-    isSupported = classmethod(isSupported)
-
     def insert_id(self, conn):
         """
         Sybase adapter/cursor does not support the

@@ -21,21 +21,11 @@ class SQLiteConnection(DBAPI):
         DBAPI.__init__(self, **kw)
 
     def connectionFromURI(cls, uri):
-        user, password, host, path = cls._parseURI(uri, expectHost=False)
-        assert host is None
+        user, password, host, path = cls._parseURI(uri)
+        assert host is None, "SQLite can only be used locally (with a URI like sqlite:///file or sql:/file, not %r)" % uri
         assert user is None and password is None, "You may not provide usernames or passwords for SQLite databases"
         return cls(filename='/' + path)
     connectionFromURI = classmethod(connectionFromURI)
-
-    def isSupported(cls):
-        global sqlite
-        if sqlite is None:
-            try:
-                import sqlite
-            except ImportError:
-                return False
-        return True
-    isSupported = classmethod(isSupported)
 
     def _setAutoCommit(self, conn, auto):
         conn.autocommit = auto

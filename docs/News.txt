@@ -18,6 +18,7 @@ Interface Changes
   ``obj.sync()`` (``sync`` also refetches the data from the database,
   which ``syncUpdate`` does not do).  When enabled, instances have a
   property ``dirty``, which indicates if they have pending updates.
+  Inserts are still done immediately.
 * Separated database drivers (PostgresConnection, MySQLConnection,
   etc.) into separate packages.  You can access the driver through
   URIs, like ``mysql://user:pass@host/dbname`` -- to set drivers after
@@ -31,6 +32,11 @@ Interface Changes
   rows (like class instantiation used to do).
 * We're now using a Subversion repository instead of CVS.  It is
   located at svn://colorstudy.com/trunk/SQLObject
+
+Bugs
+----
+
+* SQLite booleans fixed.
 
 SQLObject 0.5.2
 ===============

@@ -1,5 +1,14 @@
-from sqlobject import dbconnection
-from sqliteconnection import SQLiteConnection
+from sqlobject.dbconnection import registerConnection
 
-dbconnection.registerConnectionClass(
-    SQLiteConnection)
+def builder():
+    import sqliteconnection
+    return sqliteconnection.SQLiteConnection
+
+def isSupported():
+    try:
+        import sqlite
+    except ImportError:
+        return False
+    return True
+
+registerConnection(['sqlite'], builder, isSupported)

@@ -105,7 +105,6 @@ class DBMConnection(FileConnection):
 
     supportTransactions = False
     dbName = 'dbm'
-    schemes = [dbName]
 
     def __init__(self, path, **kw):
         global anydbm, pickle
@@ -135,16 +134,6 @@ class DBMConnection(FileConnection):
         path = '/' + path
         return cls(path)
     connectionFromURI = classmethod(connectionFromURI)
-
-    def isSupported(cls):
-        global anydbm
-        if anydbm is None:
-            try:
-                import anydbm
-            except ImportError:
-                return False
-        return True
-    isSupported = classmethod(isSupported)
 
     def _newID(self, table):
         id = int(self._meta["%s.id" % table]) + 1

@@ -56,24 +56,30 @@ class DBConnection:
         raise NotImplemented
     connectionFromURI = classmethod(connectionFromURI)
 
-    def _parseURI(uri, expectHost=True):
+    def _parseURI(uri):
         schema, rest = uri.split(':', 1)
-        rest = rest.strip('/')
-        if expectHost:
+        assert rest.startswith('/'), "URIs must start with scheme:/ -- you did not include a / (in %r)" % rest
+        if rest.startswith('/') and not rest.startswith('//'):
+            host = None
+            rest = rest[1:]
+        elif rest.startswith('///'):
+            host = None
+            rest = rest[3:]
+        else:
+            rest = rest[2:]
             if rest.find('/') == -1:
-                host, rest = rest, ''
+                host = rest
+                rest = ''
             else:
                 host, rest = rest.split('/', 1)
-            if host.find('@') != -1:
-                user, host = host.split('@', 1)
-                if user.find(':') != -1:
-                    user, password = user.split(':', 1)
-                else:
-                    password = None
+        if host and host.find('@') != -1:
+            user, host = host.split('@', 1)
+            if user.find(':') != -1:
+                user, password = user.split(':', 1)
             else:
-                user = password = None
+                password = None
         else:
-            host = user = password = None
+            user = password = None
         path = '/' + rest
         return user, password, host, path
     _parseURI = staticmethod(_parseURI)
@@ -462,18 +468,18 @@ class Transaction(object):
 class ConnectionURIOpener(object):
 
     def __init__(self):
-        self.allClasses = []
-        self.classSchemes = {}
+        self.schemeBuilders = {}
+        self.schemeSupported = {}
         self.instanceNames = {}
+        self.cachedURIs = {}
 
-    def registerConnectionClass(self, cls):
-        if cls not in self.allClasses:
-            self.allClasses.append(cls)
-        for uriScheme in cls.schemes:
-            assert not self.classSchemes.has_key(uriScheme) \
-                   or self.classSchemes[uriScheme] is cls, \
-                   "A class has already been registered for the URI scheme %s" % uriScheme
-            self.classSchemes[uriScheme] = cls
+    def registerConnection(self, schemes, builder, isSupported):
+        for uriScheme in schemes:
+            assert not self.schemeBuilders.has_key(uriScheme) \
+                   or self.schemeBuilders[uriScheme] is builder, \
+                   "A driver has already been registered for the URI scheme %s" % uriScheme
+            self.schemeBuilders[uriScheme] = builder
+            self.schemeSupported = isSupported
 
     def registerConnectionInstance(self, inst):
         if inst.name:
@@ -483,20 +489,25 @@ class ConnectionURIOpener(object):
             assert inst.name.find(':') == -1, "You cannot include ':' in your class names (%r)" % cls.name
             self.instanceNames[inst.name] = inst
 
-    def openURI(self, uri):
+    def connectionForURI(self, uri):
+        if self.cachedURIs.has_key(uri):
+            return self.cachedURIs[uri]
         if uri.find(':') != -1:
             scheme, rest = uri.split(':', 1)
-            assert self.classSchemes.has_key(scheme), \
+            assert self.schemeBuilders.has_key(scheme), \
                    "No SQLObject driver exists for %s" % scheme
-            return self.classSchemes[scheme].connectionFromURI(uri)
+            conn = self.schemeBuilders[scheme]().connectionFromURI(uri)
         else:
             # We just have a name, not a URI
             assert self.instanceNames.has_key(uri), \
                    "No SQLObject driver exists under the name %s" % uri
-            return self.instanceNames[uri]
+            conn = self.instanceNames[uri]
+        # @@: Do we care if we clobber another connection?
+        self.cachedURIs[uri] = conn
+        return conn
 
 TheURIOpener = ConnectionURIOpener()
 
-registerConnectionClass = TheURIOpener.registerConnectionClass
+registerConnection = TheURIOpener.registerConnection
 registerConnectionInstance = TheURIOpener.registerConnectionInstance
-openURI = TheURIOpener.openURI
+connectionForURI = TheURIOpener.connectionForURI

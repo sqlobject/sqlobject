@@ -1,5 +1,6 @@
 from sqlobject.dbconnection import DBAPI
 kinterbasdb = None
+import re
 
 class FirebirdConnection(DBAPI):
 
@@ -27,23 +28,13 @@ class FirebirdConnection(DBAPI):
         DBAPI.__init__(self, **kw)
 
     def connectionFromURI(cls, uri):
-        auth, password, host, path = self._parseURI(url)
+        auth, password, host, path = cls._parseURI(uri)
         if not password:
             password = 'masterkey'
         if not auth:
             auth='sysdba'
-        return cls(host, db=path, user=user, passwd=password)
+        return cls(host, db=path, user=auth, passwd=password)
     connectionFromURI = classmethod(connectionFromURI)
-
-    def isSupported(cls):
-        global kinterbasdb
-        if kinterbasdb is None:
-            try:
-                import kinterbasdb
-            except ImportError:
-                return False
-        return True
-    isSupported = classmethod(isSupported)
     
     def _runWithConnection(self, meth, *args):
         conn = self.getConnection()

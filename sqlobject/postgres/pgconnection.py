@@ -1,4 +1,7 @@
 from sqlobject.dbconnection import DBAPI
+import re
+from sqlobject import col
+from sqlobject import sqlbuilder
 psycopg = None
 pgdb = None
 
@@ -42,24 +45,16 @@ class PostgresConnection(DBAPI):
         DBAPI.__init__(self, **kw)
 
     def connectionFromURI(cls, uri):
-        user, password, host, path = self._parseURI(uri)
+        user, password, host, path = cls._parseURI(uri)
+        path = path.strip('/')
         return cls(host=host, db=path, user=user, passwd=password)
     connectionFromURI = classmethod(connectionFromURI)
-
-    def isSupported(cls):
-        global psycopg
-        if psycopg is None:
-            try:
-                import psycopg
-            except ImportError:
-                return False
-        return False
-    isSupported = classmethod(isSupported)
 
     def _setAutoCommit(self, conn, auto):
         conn.autocommit(auto)
 
     def makeConnection(self):
+        print 'DSN', self.dsn
         conn = self.pgmodule.connect(self.dsn)
         if self.autoCommit:
             conn.autocommit(1)

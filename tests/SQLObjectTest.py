@@ -1,6 +1,5 @@
 import unittest
 from sqlobject import *
-from sqlobject.dbconnection import openURI
 import os
 
 True, False = 1==1, 0==1
@@ -27,7 +26,7 @@ def postgresConnection():
     SQLObjectTest.supportAuto = True
     SQLObjectTest.supportRestrictedEnum = True
     SQLObjectTest.supportTransactions = True
-    return 'postgres://localhost/test'
+    return 'postgres:///test'
 
 def pygresConnection():
     SQLObjectTest.supportDynamic = True
@@ -89,7 +88,7 @@ class SQLObjectTest(unittest.TestCase):
     def setUp(self):
         global __connection__
         if isinstance(__connection__, str):
-            __connection__ = openURI(__connection__)
+            __connection__ = connectionForURI(__connection__)
         if self.debugSQL:
             print
             print '#' * 70

@@ -1,5 +1,14 @@
-from sqlobject import dbconnection
-from sybaseconnection import SybaseConnection
+from sqlobject.dbconnection import registerConnection
 
-dbconnection.registerConnectionClass(
-    SybaseConnection)
+def builder():
+    import sybaseconnection
+    return sybaseconnection.SybaseConnection
+
+def isSupported(cls):
+    try:
+        import Sybase
+    except ImportError:
+        return False
+    return True
+
+registerConnection(['sybase'], builder, isSupported)

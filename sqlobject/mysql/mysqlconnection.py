@@ -1,4 +1,5 @@
 from sqlobject.dbconnection import DBAPI
+from sqlobject import col
 MySQLdb = None
 
 class MySQLConnection(DBAPI):
@@ -22,16 +23,6 @@ class MySQLConnection(DBAPI):
         return cls(db=path.strip('/'), user=user or '', passwd=password or '',
                    host=host or 'localhost')
     connectionFromURI = classmethod(connectionFromURI)
-
-    def isSupported(cls):
-        global MySQLdb
-        if MySQLdb is None:
-            try:
-                import MySQLdb
-            except ImportError:
-                return False
-        return True
-    isSupported = classmethod(isSupported)
 
     def makeConnection(self):
         return MySQLdb.connect(host=self.host, db=self.db,

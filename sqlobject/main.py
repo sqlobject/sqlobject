@@ -242,7 +242,7 @@ def unmakeProperties(obj):
 
 def findClass(name, registry=None):
     #assert classRegistry.get(registry, {}).has_key(name), "No class by the name %s found (I have %s)" % (repr(name), ', '.join(map(str, classRegistry.keys())))
-    return classRegistry[registry][name]
+    return classregistry.registry(registry).getClass(name)
 
 def findDependencies(name, registry=None):
     depends = []
@@ -652,7 +652,6 @@ class SQLObject(object):
     def syncUpdate(self):
         if not self._SO_createValues:
             return
-        print 'UP:', self._SO_createValues
         self._SO_writeLock.acquire()
         try:
             if self._SO_columnDict:
@@ -1035,7 +1034,7 @@ class SQLObject(object):
 
     def setConnection(cls, value):
         if isinstance(value, (str, unicode)):
-            value = dbconnection.openURI(value)
+            value = dbconnection.connectionForURI(value)
         cls._connection = value
     setConnection = classmethod(setConnection)
 

@@ -1,5 +1,14 @@
-from sqlobject import dbconnection
-from dbmconnection import DBMConnection
+from sqlobject.dbconnection import registerConnection
 
-dbconnection.registerConnectionClass(
-    DBMConnection)
+def builder():
+    import dbmconnection
+    return dbmconnection.DBMConnection
+
+def isSupported():
+    try:
+        import anydbm
+    except ImportError:
+        return False
+    return True
+
+registerConnection(['dbm'], builder, isSupported)

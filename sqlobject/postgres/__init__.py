@@ -1,5 +1,15 @@
-from sqlobject import dbconnection
-from pgconnection import PostgresConnection
+from sqlobject.dbconnection import registerConnection
 
-dbconnection.registerConnectionClass(
-    PostgresConnection)
+def builder():
+    import pgconnection
+    return pgconnection.PostgresConnection
+
+def isSupported():
+    try:
+        import psycopg
+    except ImportError:
+        return False
+    return False
+
+registerConnection(['postgres', 'postgresql', 'psycopg'],
+                   builder, isSupported)

@@ -352,6 +352,9 @@ class SOBoolCol(SOCol):
     def _sybaseType(self):
         return "BIT"
 
+    def _firebirdType(self):
+        return 'INT'
+
 class BoolCol(Col):
     baseClass = SOBoolCol
 
@@ -405,7 +408,7 @@ class SOForeignKey(SOKeyCol):
         SOKeyCol.__init__(self, **kw)
 
     def postgresCreateSQL(self):
-        from SQLObject import findClass
+        from main import findClass
         sql = SOKeyCol.postgresCreateSQL(self)
         if self.cascade is not None:
             other = findClass(self.foreignKey)
