@@ -710,16 +710,17 @@ class SQLObject(object):
         # set() is used to update multiple values at once,
         # potentially with one SQL statement if possible.
 
+        # Filter out items that don't map to column names.
+        # Those will be set directly on the object using
+        # setattr(obj, name, value).
+        is_column = self._SO_plainSetters.has_key
+        f_is_column = lambda item: is_column(item[0])
+        f_not_column = lambda item: not is_column(item[0])
+        extra = dict(filter(f_not_column, kw.items()))
+        kw = dict(filter(f_is_column, kw.items()))
+
         # _SO_creating is special, see _SO_setValue
         if self._SO_creating or self._lazyUpdate:
-            # Filter out items that don't map to column names.
-            # Those will be set directly on the object using
-            # setattr(obj, name, value).
-            is_column = self._SO_plainSetters.has_key
-            f_is_column = lambda item: is_column(item[0])
-            f_not_column = lambda item: not is_column(item[0])
-            extra = dict(filter(f_not_column, kw.items()))
-            kw = dict(filter(f_is_column, kw.items()))
             for name, value in kw.items():
                 fromPy = getattr(self, '_SO_fromPython_%s' % name, None)
                 if fromPy:
@@ -744,18 +745,19 @@ class SQLObject(object):
             # else into a single UPDATE, if necessary.
             toUpdate = {}
             for name, value in kw.items():
-                if self._SO_plainSetters.has_key(name):
-                    fromPython = getattr(self, '_SO_fromPython_%s' % name, None)
-                    if fromPython:
-                        value = fromPython(value, self._SO_validatorState)
-                    toUpdate[name] = value
-                    if self._cacheValues:
-                        setattr(self, instanceName(name), value)
-                else:
-                    setattr(self, name, value)
+                fromPython = getattr(self, '_SO_fromPython_%s' % name, None)
+                if fromPython:
+                    value = fromPython(value, self._SO_validatorState)
+                toUpdate[name] = value
+                if self._cacheValues:
+                    setattr(self, instanceName(name), value)
+            for name, value in extra.items():
+                setattr(self, name, value)
 
             if toUpdate:
-                self._connection._SO_update(self, [(self._SO_columnDict[name].dbName, value) for name, value in toUpdate.items()])
+                args = [(self._SO_columnDict[name].dbName, value)
+                        for name, value in toUpdate.items()]
+                self._connection._SO_update(self, args)
         finally:
             self._SO_writeLock.release()
 
