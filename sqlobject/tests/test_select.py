@@ -26,6 +26,13 @@ def test_00_normal():
         count += 1
     assert count == len(names)
 
+def test_00b_lazy():
+    setupIter()
+    count = 0
+    for test in IterTest.select(lazyColumns=True):
+        count += 1
+    assert count == len(names)
+
 def test_01_turn_to_list():
     count = 0
     for test in list(IterTest.select()):
@@ -46,6 +53,7 @@ def test_03_ranged_indexed():
         test = all[i]
         count += 1
     assert count == len(names)
+        
 
 def test_04_indexed_ended_by_exception():
     all = IterTest.select()
