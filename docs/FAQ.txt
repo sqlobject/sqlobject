@@ -226,3 +226,12 @@ class.
 
 For this reason and several others, reloading modules is highly
 error-prone and difficult to support.
+
+Python Keywords
+---------------
+
+If you have a table column that is a Python keyword, you should know
+that the Python attribute doesn't have to match the name of the
+column.  See `Irregular Naming`_ in the documentation.
+
+.. _Irregular Naming: SQLObject.html#irregular-naming
