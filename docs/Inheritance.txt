@@ -1,0 +1,134 @@
+:Author: Daniel Savard, XSOLI Inc.
+
+Inheritance
+-----------
+
+* As suggested by Ian Bicking, each child class now has the same
+  ID than the parent class.  No more need for childID column and
+  parent foreignKey (with a small speed boost).
+* No more need to call getSubClass as the 'latest' child will always
+  be returned when an instance of a class is created.
+* This version now seems to works correctly with addColumn, delColumn,
+  addJoin and delJoin.
+
+
+The following code::
+
+    class Person(SQLObject):
+        _inheritable = 1        # I want this class to be inherited
+        firstName = StringCol()
+        lastName = StringCol()
+
+    class Employee(Person):
+        _inheritable = 0        # If I don't want this class to be inherited
+        position = StringCol()
+
+will generate the following tables::
+
+    CREATE TABLE person (
+        id INT PRIMARY KEY,
+        child_name TEXT,
+        first_name TEXT,
+        last_name TEXT
+    );
+
+    CREATE TABLE employee (
+        id INT PRIMARY KEY,
+        position TEXT
+    )
+
+
+A new class attribute ``_inheritable`` is added.  When this new
+attribute is set to 1, the class is marked 'inheritable' and a new
+columns will automatically be added: childName (TEXT).
+
+Each class that inherits from a parent class will get the same ID as
+the parent class.  So, there is no need to keep track of parent ID and
+child ID as they are the same.
+
+The column childName will contain the name of the child class (for
+exemple 'Employee').  This will permit to a class to always return its
+child class if available (a person that is also an employee will always
+return an instance of the employee class).
+
+For exemple, the following code::
+
+    p = Person(firstName='John', lastName='Doe')
+    e = Employee(firstName='Jane', lastName='Doe', position='Chief')
+    p2 = Person.get(1)
+
+Will create the following data in the database::
+
+    *Person*
+    id
+        child_name
+        first_name
+        last_name
+    0
+        Null
+        John
+        Doe
+    1
+        Employee
+        Jane
+        Doe
+
+
+    *Employee*
+    id
+        position
+    1
+        Chief
+
+
+You will still be able to ask for the attribute normally:
+e.firstName will return Jane and setting it will write the new value in
+the person table.
+
+If you use p2, as p2 is a person object, you will get an employee
+object.
+person(0) will return a Person instance and will have the following
+attributes: firstName and lastName
+person(1) or employee(1) will each return the same Employee instance and
+will have the following attributes: firstName, lastName and position
+
+Also, deleting a person or an employee that are linked will destroy
+both entries as one would expect.
+
+The SQLObject q magic also work.  Using this select are valid::
+
+    Employee.select(AND(Employee.q.firstName == 'Jane' Employee.q.position == 'Chief')) will return Jane Doe
+    Employee.select(AND(Person.q.firstName == 'Jane', Employee.q.position == 'Chief')) will return Jane Doe
+    Employee.select(Employee.q.lastName == 'Doe') will only return Jane Doe (as Joe isn't an employee)
+    Person.select(Person.q.lastName == 'Doe') will return both entries.
+
+The SQL 'where' clause will contain additional clauses when used with
+'inherited' classes.  These clauses are the link between the id and the
+parent id.  This will look like the following request::
+
+    SELECT employee.id, person.first_name, person.last_name
+    FROM person, employee WHERE person.first_name = 'Jane'
+    AND employee.position = 'Chief' AND person.id = employee.id
+
+Some limitation or notice about this version:
+
+* Only simple inheritance will work.  It is not possible to inherit
+  from multiple SQLObject classes.
+* It is possible to inherit from an inherited class and this will
+  work well.  In the above exemple, you can have a Chief class that
+  inherits from Employee and all parents attributes will be
+  available through the Chief class.
+* You may not redefine columns in an inherited class (this
+  will raise an exception).
+* If you don't want 'childName' columns in your last class (one that
+  will never be inherited), you must set '_inheritable' to 0 in this
+  class.
+* I made it because I needed to be able to have automatic
+  inheritance with linked table.
+* This version works for me, it may not works for you.  I tried to do
+  my best but it is possible that I broke some things... So, there
+  is no warranty that this version will work.
+* Thanks to Ian Bicking for SQLObject, this is a wonderful python
+  module.
+* If you have suggestion, bugs, or patch to this patch, you can
+  contact me at <sqlobject xsoli.com>

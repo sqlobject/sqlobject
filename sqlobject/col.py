@@ -28,6 +28,7 @@ import sqlbuilder
 # arguments in this module, so we rename it:
 import constraints as consts
 from include import validators
+from classregistry import findClass
 
 NoDefault = sqlbuilder.NoDefault
 True, False = 1==1, 0==1
@@ -616,7 +617,6 @@ class SOForeignKey(SOKeyCol):
         SOKeyCol.__init__(self, **kw)
 
     def postgresCreateSQL(self):
-        from main import findClass
         sql = SOKeyCol.postgresCreateSQL(self)
         other = findClass(self.foreignKey)
         tName = other._table
@@ -642,7 +642,6 @@ class SOForeignKey(SOKeyCol):
         return sql
 
     def sybaseCreateSQL(self):
-        from sqlobject.main import findClass
         sql = SOKeyCol.sybaseCreateSQL(self)
         other = findClass(self.foreignKey)
         tName = other._table
@@ -654,7 +653,6 @@ class SOForeignKey(SOKeyCol):
         return sql
 
     def maxdbCreateSQL(self):
-        from main import findClass
         other = findClass(self.foreignKey)
         fidName = self.dbName
         #I assume that foreign key name is identical to the id of the reference table

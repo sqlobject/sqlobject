@@ -13,4 +13,7 @@ Contributions have been made by:
 * James Ralston <jralston at hotmail.com>
 * Sidnei da Silva <sidnei at awkly.org>
 * Brad Bollenbach <brad at bbnet.ca>
+* Daniel Savard, Xsoli Inc <sqlobject at xsoli.com>
+* alexander smishlajev <alex at ank-sia.com>
+* Yaroslav Samchuk <yarcat at ank-sia.com>
 * Oleg Broytmann <phd at phd.pp.ru>

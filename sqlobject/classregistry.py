@@ -110,3 +110,6 @@ class _MasterRegistry(object):
 
 MasterRegistry = _MasterRegistry()
 registry = MasterRegistry.registry
+
+def findClass(name, class_registry=None):
+    return registry(class_registry).getClass(name)

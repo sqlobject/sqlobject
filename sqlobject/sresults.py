@@ -1,6 +1,8 @@
 import sqlbuilder
+import dbconnection
 
 class SelectResults(object):
+    IterationClass = dbconnection.Iteration
 
     def __init__(self, sourceClass, clause, clauseTables=None,
                  **ops):

@@ -107,6 +107,11 @@ since the composition of multiple classes is usually a better solution
 anyway).
 
 
+There is also another kind of inheritance. See Inheritance.txt_
+
+.. _Inheritance.txt: Inheritance.txt
+
+
 Composite/Compound Attributes
 -----------------------------
 

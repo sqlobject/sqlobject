@@ -15,6 +15,7 @@ from joins import sorter
 from converters import sqlrepr
 import urllib
 import weakref
+from classregistry import findClass
 
 warnings.filterwarnings("ignore", "DB-API extension cursor.lastrowid used")
 
@@ -246,7 +247,7 @@ class DBAPI(DBConnection):
         return self._runWithConnection(self._queryInsertID, soInstance, id, names, values)
 
     def iterSelect(self, select):
-        return Iteration(self, self.getConnection(),
+        return select.IterationClass(self, self.getConnection(),
                          select, keepConnection=False)
 
     def accumulateSelect(self, select, expression):
@@ -542,8 +543,6 @@ class Iteration(object):
 
     def __del__(self):
         self._cleanup()
-    
-
 
 class Transaction(object):
 
@@ -581,7 +580,7 @@ class Transaction(object):
         # still iterating through the results.
         # @@: But would it be okay for psycopg, with threadsafety
         # level 2?
-        return iter(list(Iteration(self, self._connection,
+        return iter(list(select.IterationClass(self, self._connection,
                                    select, keepConnection=True)))
 
     def commit(self):

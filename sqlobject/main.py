@@ -4,6 +4,14 @@ SQLObject.py
 SQLObject is a object-relational mapper.  See SQLObject.html or
 SQLObject.txt for more.
 
+Modified by
+    Daniel Savard, Xsoli Inc <sqlobject xsoli.com> 7 Feb 2004
+    - Added support for simple table inheritance.
+
+    Oleg Broytmann, SIA "ANK" <phd@phd.pp.ru> 3 Feb 2005
+    - Split inheritance support into a number of separate modules and classes -
+      InheritableSQLObject at al.
+
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU Lesser General Public License as
 published by the Free Software Foundation; either version 2.1 of the
@@ -110,10 +118,6 @@ def unmakeProperties(obj):
                     delFunc(obj, var)
                     break
 
-def findClass(name, registry=None):
-    #assert classRegistry.get(registry, {}).has_key(name), "No class by the name %s found (I have %s)" % (repr(name), ', '.join(map(str, classRegistry.keys())))
-    return classregistry.registry(registry).getClass(name)
-
 def findDependencies(name, registry=None):
     depends = []
     for klass in classregistry.registry(registry).allClasses():
@@ -181,7 +185,7 @@ class _sqlmeta_attr(object):
 
     def __get__(self, obj, type=None):
         return getattr((type or obj).sqlmeta, self.name)
-    
+
 
 # @@: This should become a public interface or documented or
 # something.  Turning it on gives earlier warning about things
@@ -260,6 +264,17 @@ class SQLObject(object):
 
     sqlmeta = sqlmeta
 
+    #DSM: The _inheritable attribute controls wheter the class can by
+    #DSM: inherited 'logically' with a foreignKey and back reference.
+    _inheritable = False # Does this class is inheritable
+    _parentClass = None # A reference to the parent class
+    _parent = None # A reference to the parent instance
+    _childClasses = {} # Reference to child classes
+    childName = None # Children name (to be able to get a subclass)
+
+    # The law of Demeter: the class should not call another classes by name
+    SelectResultsClass = SelectResults
+
     def __classinit__(cls, new_attrs):
 
         # This is true if we're initializing the SQLObject class,
@@ -329,6 +344,40 @@ class SQLObject(object):
         # superclass's _columns list, so we make a copy if necessary
         if not new_attrs.has_key('_columns'):
             cls._columns = cls._columns[:]
+
+        #DSM: Need to know very soon if the class is a child of an
+        #DSM: inheritable class. If so, we keep a link to our parent class.
+        cls._childClasses = {}
+        for _cls in cls.__bases__:
+            if hasattr(_cls, '_inheritable') and _cls._inheritable:
+                cls._parentClass = _cls
+                cls._parent = None
+                _cls._childClasses[cls.__name__] = cls
+
+        #DSM: If this class is a child of a parent class, we need to do some
+        #DSM: attribute check and a a foreign key to the parent.
+        if cls._parentClass:
+            #DSM: First, look for invalid column name:
+            #DSM: reserved ones or same as a parent
+            parentCols = [column.name for column in cls._columns]
+            for column in implicitColumns:
+                cname = column.name
+                if cname in ['childName']:
+                    raise AttributeError, \
+                        "The column name '%s' is reserved" % cname
+                if cname in parentCols:
+                    raise AttributeError, "The column '%s' is already " \
+                        "defined in an inheritable parent" % cname
+            #DSM: Remove columns if inherited from an inheritable class
+            #DSM: as we don't want them.  All we want is a foreign key
+            #DSM: that will link to our parent
+            cls._columns = []
+        #DSM: If this is inheritable, add some default columns
+        #    to be able to link to children
+        if hasattr(cls, '_inheritable') and cls._inheritable:
+            cls._columns.append(
+                col.StringCol(name='childName',default=None))
+
         cls._columns.extend(implicitColumns)
         if not new_attrs.has_key('_joins'):
             cls._joins = cls._joins[:]
@@ -419,6 +468,15 @@ class SQLObject(object):
         if not is_base:
             cls.q = sqlbuilder.SQLObjectTable(cls)
 
+            #DSM: If we are a child, get the q magic from the parent
+            currentClass = cls
+            while currentClass._parentClass:
+                currentClass = currentClass._parentClass
+                for column in currentClass._columns:
+                    if type(column) == col.ForeignKey: continue
+                    setattr(cls.q, column.name,
+                        getattr(currentClass.q, column.name))
+
         classregistry.registry(cls._registry).addClass(cls)
 
     _style = _sqlmeta_attr('style')
@@ -488,7 +546,7 @@ class SQLObject(object):
         # Here if the _get_columnName method isn't in the
         # definition, we add it with the default
         # _SO_get_columnName definition.
-        if not hasattr(cls, getterName(name)):
+        if not hasattr(cls, getterName(name)) or (name == 'childName'):
             setattr(cls, getterName(name), getter)
             cls._SO_plainGetters[name] = 1
 
@@ -506,7 +564,7 @@ class SQLObject(object):
             setattr(cls, '_SO_toPython_%s' % name, column.toPython)
             setattr(cls, rawSetterName(name), setter)
             # Then do the aliasing
-            if not hasattr(cls, setterName(name)):
+            if not hasattr(cls, setterName(name)) or (name == 'childName'):
                 setattr(cls, setterName(name), setter)
                 # We keep track of setters that haven't been
                 # overridden, because we can combine these
@@ -1060,7 +1118,7 @@ class SQLObject(object):
                lazyColumns=False, reversed=False,
                distinct=False,
                connection=None):
-        return SelectResults(cls, clause,
+        return cls.SelectResultsClass(cls, clause,
                              clauseTables=clauseTables,
                              orderBy=orderBy,
                              limit=limit,
@@ -1072,7 +1130,7 @@ class SQLObject(object):
 
     def selectBy(cls, connection=None, **kw):
         conn = connection or cls._connection
-        return SelectResults(cls,
+        return cls.SelectResultsClass(cls,
                              conn._SO_columnClause(cls, kw),
                              connection=conn)
 
