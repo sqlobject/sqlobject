@@ -1,5 +1,5 @@
 """
-Main (um, only) unit testing for SQLObject.
+Main unit testing for SQLObject.
 
 Use -vv to see SQL queries, -vvv to also see output from queries,
 and together with --inserts to see the SQL from the standard
@@ -8,7 +8,7 @@ insert statements (which are often boring).
 
 from __future__ import generators
 
-import sys
+import sys, os
 if '--coverage' in sys.argv:
     import coverage
     print 'Starting coverage'
@@ -1330,42 +1330,54 @@ def interestingLine(line, unused):
         return False
     return True
 
-if __name__ == '__main__':
-    import unittest, sys, os
+
+def main():
+    import unittest
+    from getopt import getopt, GetoptError
+
+    try:
+        options, arguments = getopt(sys.argv[1:], "d:v",
+            ["database=", "extra-verbose", "super-verbose",
+            "inserts", "coverage"])
+    except GetoptError:
+        usage(1)
+
     dbs = []
     newArgs = []
     doCoverage = False
-    for arg in sys.argv[1:]:
-        if arg.startswith('-d'):
-            dbs.append(arg[2:])
-            continue
-        if arg.startswith('--database='):
-            dbs.append(arg[11:])
-            continue
-        if arg in ('-vv', '--extra-verbose'):
-            SQLObjectTest.debugSQL = True
-        if arg in ('-vvv', '--super-verbose'):
-            SQLObjectTest.debugSQL = True
-            SQLObjectTest.debugOutput = True
-            newArgs.append('-vv')
-            continue
-        if arg in ('--inserts',):
+    verbose = 0
+
+    for option, value in options:
+        if option in ('-d', '--database'):
+            dbs.append(value)
+        elif option == '--inserts':
             SQLObjectTest.debugInserts = True
-            continue
-        if arg in ('--coverage',):
+        elif option == '--coverage':
             # Handled earlier, so we get better coverage
             doCoverage = True
-            continue
-        newArgs.append(arg)
+        elif option == '--extra-verbose':
+            verbose = 1
+        elif option == '--super-verbose':
+            verbose = 2
+        elif option == '-v':
+            verbose += 1
+
+    if verbose >= 1:
+        SQLObjectTest.debugSQL = True
+    if verbose >= 2:
+        SQLObjectTest.debugOutput = True
+        newArgs.append('-vv')
+    newArgs.extend(arguments)
+
     sys.argv = [sys.argv[0]] + newArgs
     if not dbs:
         dbs = ['mysql']
     if dbs == ['all']:
         dbs = supportedDatabases()
     for db in dbs:
+        print 'Testing %s' % db
         curr_db = db
         setDatabaseType(db)
-        print 'Testing %s' % db
         try:
             unittest.main()
         except SystemExit:
@@ -1374,3 +1386,5 @@ if __name__ == '__main__':
         coverage.stop()
         coverModules()
 
+if __name__ == '__main__':
+    main()
