@@ -263,16 +263,21 @@ class Col(object):
     baseClass = SOCol
 
     def __init__(self, name=None, **kw):
-        kw['name'] = name
+        self._name = name
         kw['columnDef'] = self
         self.kw = kw
 
-    def setName(self, value):
-        assert self.kw['name'] is None, "You cannot change a name after it has already been set (from %s to %s)" % (self.kw['name'], value)
-        self.kw['name'] = value
+    def _set_name(self, value):
+        assert self._name is None, "You cannot change a name after it has already been set (from %s to %s)" % (self.name, value)
+        self._name = value
+
+    def _get_name(self):
+        return self._name
+
+    name = property(_get_name, _set_name)
 
     def withClass(self, soClass):
-        return self.baseClass(soClass=soClass, **self.kw)
+        return self.baseClass(soClass=soClass, name=self._name, **self.kw)
 
 class SOStringCol(SOCol):
 

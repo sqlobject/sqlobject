@@ -17,13 +17,19 @@ class Join(object):
         kw['otherClass'] = otherClass
         kw['joinDef'] = self
         self.kw = kw
+        self._joinMethodName = None
 
-    def setName(self, value):
-        assert self.kw.get('joinMethodName') is None or self.kw['joinMethodName'] == value, "You have already given an explicit joinMethodName (%s), and you are now setting it to %s" % (self.kw['joinMethodName'], value)
-        self.kw['joinMethodName'] = value
+    def _set_joinMethodName(self, value):
+        assert self._joinMethodName == value or self._joinMethodName is None, "You have already given an explicit joinMethodName (%s), and you are now setting it to %s" % (self._joinMethodName, value)
+        self._joinMethodName = value
+
+    def _get_joinMethodName(self):
+        return self._joinMethodName
 
     def withClass(self, soClass):
-        return self.baseClass(soClass=soClass, **self.kw)
+        return self.baseClass(soClass=soClass,
+                              joinMethodName=self._joinMethodName,
+                              **self.kw)
 
 # A join is separate from a foreign key, i.e., it is
 # many-to-many, or one-to-many where the *other* class
