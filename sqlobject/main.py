@@ -187,10 +187,12 @@ class sqlmeta(object):
     def setClass(cls, soClass):
         cls.soClass = soClass
         if not cls.style:
-            if cls.soClass._connection and cls.soClass._connection.style:
-                cls.style = cls.soClass._connection.style
-            else:
-                cls.style = styles.defaultStyle
+            cls.style = styles.defaultStyle
+            try:
+                if cls.soClass._connection and cls.soClass._connection.style:
+                    cls.style = cls.soClass._connection.style
+            except AttributeError:
+                pass
         if cls.table is None:
             cls.table = cls.style.pythonClassToDBTable(cls.soClass.__name__)
         if cls.idName is None:
@@ -220,6 +222,8 @@ class sqlmeta(object):
         cls._indexList = []
 
     setClass = classmethod(setClass)
+
+sqlhub = dbconnection.ConnectionHub()
 
 class _sqlmeta_attr(object):
 
@@ -267,7 +271,7 @@ class SQLObject(object):
     # will be true.  It's false by default:
     _SO_perConnection = False
 
-    _connection = None
+    _connection = sqlhub
 
     _columns = []
 
@@ -1397,4 +1401,4 @@ def getObject(obj, klass):
 
 __all__ = ['NoDefault', 'SQLObject', 'sqlmeta',
            'getID', 'getObject',
-           'SQLObjectNotFound']
+           'SQLObjectNotFound', 'sqlhub']

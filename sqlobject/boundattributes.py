@@ -100,8 +100,8 @@ class BoundFactory(BoundAttribute):
 
     factory_class = None
 
-    def make_object(cls, *args, **kw):
-        return cls.factory_class(*args, **kw)
+    def make_object(cls, added_class, attr_name, *args, **kw):
+        return cls.factory_class(added_class, attr_name, *args, **kw)
 
 def bind_attributes(cls, new_attrs):
     for name, value in new_attrs.items():
