@@ -3,7 +3,7 @@ import warnings
 warnings.filterwarnings("ignore", "Unknown distribution option")
 
 subpackages = ['firebird', 'include', 'inheritance', 'mysql', 'postgres',
-               'sqlite', 'sybase', 'maxdb']
+               'sqlite', 'sybase', 'maxdb', 'util', 'manager']
 
 import sys
 # patch distutils if it can't cope with the "classifiers" keyword
@@ -34,6 +34,7 @@ Requires Python 2.2+.
       url="http://sqlobject.org",
       license="LGPL",
       packages=["sqlobject"] + ['sqlobject.%s' % package for package in subpackages],
+      scripts=["scripts/sqlobject-admin"],
       download_url="http://prdownloads.sourceforge.net/sqlobject/SQLObject-0.6.1.tar.gz?download")
 
 # Send announce to:
