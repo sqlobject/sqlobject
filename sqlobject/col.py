@@ -39,14 +39,16 @@ class SOCol(object):
                  immutable=False,
                  cascade=None,
                  lazy=False,
-                 noCache=False):
+                 noCache=False,
+                 forceDBName=False):
 
         # This isn't strictly true, since we *could* use backquotes or
         # " or something (database-specific) around column names, but
         # why would anyone *want* to use a name like that?
         # @@: I suppose we could actually add backquotes to the
         # dbName if we needed to...
-        assert sqlbuilder.sqlIdentifier(name), 'Name must be SQL-safe (letters, numbers, underscores): %s' \
+        if not forceDBName:
+            assert sqlbuilder.sqlIdentifier(name), 'Name must be SQL-safe (letters, numbers, underscores): %s (or use forceDBName=True)' \
                % repr(name)
         assert name != 'id', 'The column name "id" is reserved for SQLObject use (and is implicitly created).'
         assert name, "You must provide a name for all columns"

@@ -19,19 +19,26 @@ Interface Changes
   which ``syncUpdate`` does not do).  When enabled, instances have a
   property ``dirty``, which indicates if they have pending updates.
   Inserts are still done immediately.
+
 * Separated database drivers (PostgresConnection, MySQLConnection,
   etc.) into separate packages.  You can access the driver through
   URIs, like ``mysql://user:pass@host/dbname`` -- to set drivers after
   class creation you should use `sqlobject.dbconnection.openURI()`.
+
 * The ``SQLObject`` package has been renamed to ``sqlobject``.  This
   makes it similar to several other packages, and emphasizes the
   distinction between the ``sqlobject`` package and the ``SQLObject``
   class.
+
 * Class instantiation now creates new rows (like `.new()` used to
   do), and the `.get()` method now retrieves objects that already have
   rows (like class instantiation used to do).
+
 * We're now using a Subversion repository instead of CVS.  It is
   located at svn://colorstudy.com/trunk/SQLObject 
+
+* If you pass ``forceDBName=True`` to the `*Col` constructors, then
+  your column name doesn't have to be restricted to a-z, 0-9, and _.
 
 Bugs
 ----
