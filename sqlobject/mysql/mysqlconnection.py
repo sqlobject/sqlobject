@@ -8,12 +8,13 @@ class MySQLConnection(DBAPI):
     dbName = 'mysql'
     schemes = [dbName]
 
-    def __init__(self, db, user, passwd='', host='localhost', **kw):
+    def __init__(self, db, user, passwd='', host='localhost', port=None, **kw):
         global MySQLdb
         if MySQLdb is None:
             import MySQLdb
         self.module = MySQLdb
         self.host = host
+        self.port = port
         self.db = db
         self.user = user
         self.password = passwd
@@ -26,7 +27,7 @@ class MySQLConnection(DBAPI):
     connectionFromURI = classmethod(connectionFromURI)
 
     def makeConnection(self):
-        return MySQLdb.connect(host=self.host, db=self.db,
+        return MySQLdb.connect(host=self.host, port=self.port, db=self.db,
                                user=self.user, passwd=self.password)
 
     def _executeRetry(self, conn, cursor, query):
