@@ -202,7 +202,7 @@ class SOCol(object):
 
     def _firebirdType(self):
         return self._sqlType()
-        
+               
     def _maxdbType(self):
 		return self._sqlType()        
 	        
