@@ -11,8 +11,8 @@ fi
 if [ "$1" = "cover" ] ; then
   shift
   sudo python$VERSION setup.py -q install
-  python$VERSION ./tests/coverage.py -x tests/test.py $*
+  python$VERSION ./tests/coverage.py -x tests/test_sqlobject.py $*
   ./tests/coverage.py -a `find tests SQLObject -name '*.py'`
 else
-  sudo python$VERSION setup.py -q install && python$VERSION tests/test.py $*
+  sudo python$VERSION setup.py -q install && python$VERSION tests/test_sqlobject.py $*
 fi
