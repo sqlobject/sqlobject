@@ -553,8 +553,7 @@ class Transaction(object):
         self._obsolete = False
         self._connection = self._dbConnection.getConnection()
 
-    def __xdel__(self):
-        # XXX Was getting excessive recursion here
+    def __del__(self):
         if self._obsolete:
             return
         self.rollback()
