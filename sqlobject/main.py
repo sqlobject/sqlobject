@@ -143,8 +143,57 @@ class sqlmeta(object):
     alongside every SQLObject instance.
     """
 
+    table = None
+    idName = None
+    style = None
+
+    __metaclass__ = declarative.DeclarativeMeta
+
+    # These attributes shouldn't be shared with superclasses:
+    _unshared_attributes = ['table']
+
+    def __classinit__(cls, new_attrs):
+        for attr in cls._unshared_attributes:
+            if not new_attrs.has_key(attr):
+                setattr(cls, attr, None)
+
     def __init__(self, instance):
         self.instance = instance
+
+    def setClass(cls, soClass):
+        cls.soClass = soClass
+    setClass = classmethod(setClass)
+
+    def finishClass(cls):
+        if not cls.style:
+            if cls.soClass._connection and cls.soClass._connection.style:
+                cls.style = cls.soClass._connection.style
+            else:
+                cls.style = styles.defaultStyle
+        if cls.table is None:
+            cls.table = cls.style.pythonClassToDBTable(cls.soClass.__name__)
+        if cls.idName is None:
+            cls.idName = cls.style.idForTable(cls.table)
+    finishClass = classmethod(finishClass)
+
+class _sqlmeta_attr(object):
+
+    def __init__(self, name):
+        self.name = name
+
+    def __get__(self, obj, type=None):
+        return getattr((type or obj).sqlmeta, self.name)
+    
+
+# @@: This should become a public interface or documented or
+# something.  Turning it on gives earlier warning about things
+# that will be deprecated (having this off we won't flood people
+# with warnings right away).
+strict_warnings = False
+
+def deprecated(message):
+    if strict_warnings:
+        warnings.warn(message, DeprecationWarning, stacklevel=1)
 
 # SQLObject is the superclass for all SQLObject classes, of
 # course.  All the deeper magic is done in MetaSQLObject, and
@@ -208,13 +257,20 @@ class SQLObject(object):
 
     def __classinit__(cls, new_attrs):
 
+        # This is true if we're initializing the SQLObject class,
+        # instead of a subclass:
+        is_base = cls.__bases__ == (object,)
+
         if (not new_attrs.has_key('sqlmeta')
-            and not cls.__bases__ == (object,)):
+            and not is_base):
             # We have to create our own subclass, usually.
             # type(className, bases_tuple, attr_dict) creates a new
             # subclass:
+            #cls.sqlmeta = cls.sqlmeta.clone()
             cls.sqlmeta = type('sqlmeta', (cls.sqlmeta,), {})
-        cls.sqlmeta.soClass = cls
+        cls.sqlmeta.setClass(cls)
+        cls.sqlmeta.finishClass()
+
         
         implicitColumns = []
         implicitJoins = []
@@ -236,10 +292,11 @@ class SQLObject(object):
                 delattr(cls, attr)
                 continue                
 
-        # We *don't* want to inherit _table, so we make sure it
-        # is defined in this class (not a superclass)
-        if not new_attrs.has_key('_table'):
-            cls._table = None
+        if (new_attrs.has_key('_table') and not is_base):
+            deprecated("'_table' is deprecated; please set the 'table' "
+                       "attribute in sqlmeta instead")
+            cls.sqlmeta.table = cls._table
+            del cls._table
 
         if new_attrs.has_key('_connection'):
             connection = new_attrs['_connection']
@@ -290,13 +347,11 @@ class SQLObject(object):
         if connection or not hasattr(cls, '_connection'):
             cls.setConnection(connection)
 
-        # The style object tells how to map between Python
-        # identifiers and Database identifiers:
-        if not cls._style:
-            if cls._connection and cls._connection.style:
-                cls._style = cls._connection.style
-            else:
-                cls._style = styles.defaultStyle
+        if (new_attrs.has_key('_style') and not is_base):
+            deprecated("'_style' is deprecated; please set the 'style' "
+                       "attribute in sqlmeta instead")
+            cls.sqlmeta.style = cls._style
+            del cls._style
 
         # plainSetters are columns that haven't been overridden by the
         # user, so we can contact the database directly to set them.
@@ -315,18 +370,11 @@ class SQLObject(object):
         cls._SO_columnDict = {}
         cls._SO_columns = []
 
-        # If _table isn't given, use style default
-        if not cls._table:
-            cls._table = cls._style.pythonClassToDBTable(cls.__name__)
-
-        # If _idName isn't given, use style default
-        if not new_attrs.has_key('_idName'):
-            cls._idName = cls._style.idForTable(cls._table)
-
-        # We use the magic "q" attribute for accessing lazy
-        # SQL where-clause generation.  See the sql module for
-        # more.
-        cls.q = sqlbuilder.SQLObjectTable(cls)
+        if (new_attrs.has_key('_idName') and not is_base):
+            deprecated("'_idName' is deprecated; please set the 'idName' "
+                       "attribute in sqlmeta instead")
+            cls.sqlmeta.idName = cls._idName
+            del cls._idName
 
         # We have to check if there are columns in the inherited
         # _columns where the attribute has been set to None in this
@@ -362,7 +410,17 @@ class SQLObject(object):
         for idx in cls._indexes:
             cls.addIndex(idx)
 
+        # We use the magic "q" attribute for accessing lazy
+        # SQL where-clause generation.  See the sql module for
+        # more.
+        if not is_base:
+            cls.q = sqlbuilder.SQLObjectTable(cls)
+
         classregistry.registry(cls._registry).addClass(cls)
+
+    _style = _sqlmeta_attr('style')
+    _table = _sqlmeta_attr('table')
+    _idName = _sqlmeta_attr('idName')
 
     def get(cls, id, connection=None, selectResults=None):
 
@@ -1329,7 +1387,7 @@ class SelectResults(object):
             Return the accumulate result
         """
         conn = self.ops.get('connection', self.sourceClass._connection)
-        return conn.accumulateSelect(self,expression)
+        return conn.accumulateSelect(self, expression)
 
     def count(self):
         """ Counting elements of current select results """
