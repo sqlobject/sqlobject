@@ -910,6 +910,7 @@ class Lazy(SQLObject):
     _lazyUpdate = True
     name = StringCol()
     other = StringCol(default='nothing')
+    third = StringCol(default='third')
 
 class LazyTest(SQLObjectTest):
 
@@ -1037,6 +1038,26 @@ class LazyTest(SQLObjectTest):
         obj.syncUpdate()
         assert not self.conn.didUpdate
         assert not obj.dirty
+        # Check that setting multiple values
+        # actually works. This was broken
+        # and just worked because we were testing
+        # only one value at a time, so 'name'
+        # had the right value after the for loop *wink*
+        # Also, check that passing a name that is not
+        # a valid column doesn't break, but instead
+        # just does a plain setattr.
+        obj.set(name='first', other='who',
+                third='yes', driver='james')
+        self.assertEqual(obj.name, 'first')
+        self.assertEqual(obj.other, 'who')
+        self.assertEqual(obj.third, 'yes')
+        self.assertEqual(obj.driver, 'james')
+        assert obj.dirty
+        assert not self.conn.didUpdate
+        obj.syncUpdate()
+        assert self.conn.didUpdate
+        assert not obj.dirty
+
 
 ########################################
 ## Run from command-line:

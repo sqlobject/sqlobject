@@ -712,13 +712,23 @@ class SQLObject(object):
 
         # _SO_creating is special, see _SO_setValue
         if self._SO_creating or self._lazyUpdate:
+            # Filter out items that don't map to column names.
+            # Those will be set directly on the object using
+            # setattr(obj, name, value).
+            is_column = self._SO_plainSetters.has_key
+            f_is_column = lambda item: is_column(item[0])
+            f_not_column = lambda item: not is_column(item[0])
+            extra = dict(filter(f_not_column, kw.items()))
+            kw = dict(filter(f_is_column, kw.items()))
             for name, value in kw.items():
-                fromPython = getattr(self, '_SO_fromPython_%s' % name)
-                if fromPython:
-                    kw[name] = fromPython(value, self._SO_validatorState)
+                fromPy = getattr(self, '_SO_fromPython_%s' % name, None)
+                if fromPy:
+                    kw[name] = value = fromPy(value, self._SO_validatorState)
+                setattr(self, instanceName(name), value)
+            for name, value in extra.items():
+                setattr(self, name, value)
             self._SO_createValues.update(kw)
             self.dirty = True
-            setattr(self, instanceName(name), value)
             return
 
         self._SO_writeLock.acquire()
@@ -735,7 +745,7 @@ class SQLObject(object):
             toUpdate = {}
             for name, value in kw.items():
                 if self._SO_plainSetters.has_key(name):
-                    fromPython = getattr(self, '_SO_fromPython_%s' % name)
+                    fromPython = getattr(self, '_SO_fromPython_%s' % name, None)
                     if fromPython:
                         value = fromPython(value, self._SO_validatorState)
                     toUpdate[name] = value
@@ -998,7 +1008,7 @@ class SQLObject(object):
                     restrict = True
                 query.append("%s = %s" % (col.dbName, self.id))
             query = ' OR '.join(query)
-            results = k.select(query)
+            results = k.select(query, connection=self._connection)
             if restrict and results.count():
                 # Restrictions only apply if there are
                 # matching records on the related table
