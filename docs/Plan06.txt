@@ -116,36 +116,45 @@ In addition to this, there should be more cache control.  This means
 explicit ways to control things like:
 
 1. Caching of instances:
-   + Application/process-global definition.
-   + Database-level definition.
-   + Transaction/EditingContext-level definition.
-   + Class-level definition.
+
+   * Application/process-global definition.
+   * Database-level definition.
+   * Transaction/EditingContext-level definition.
+   * Class-level definition.
+
 2. Caching of columns:
-   + Class-level.
+
+   * Class-level.
+
 3. Cache sweep frequency:
-   + Application/process-global.
-   + Database-level.
-   + Class-level.
-   + Doesn't need to be as complete as 1; maybe on the class level you
+
+   * Application/process-global.
+   * Database-level.
+   * Class-level.
+   * Doesn't need to be as complete as 1; maybe on the class level you
      could only indicate that a certain class should not be sweeped.
-   + Sweep during a fetch (e.g., every 100 fetches), by time or fetch
+   * Sweep during a fetch (e.g., every 100 fetches), by time or fetch
      frequency, or sweep with an explicit call (e.g., to do sweeps in
      a separate thread).
+
 4. Cache sweep policy:
-   + Maximum age.
-   + Least-recently-used (actually, least-recently-fetched).
-   + Random (the current policy).
-   + Multi-level (randomly move objects to a lower-priority cache,
+
+   * Maximum age.
+   * Least-recently-used (actually, least-recently-fetched).
+   * Random (the current policy).
+   * Multi-level (randomly move objects to a lower-priority cache,
      raise level when the object is fetched again).
-   + Target cache size (keep trimming until the cache is small
+   * Target cache size (keep trimming until the cache is small
      enough).
-   + Simple policy (if enough objects qualify, cache can be of any
+   * Simple policy (if enough objects qualify, cache can be of any
      size).
-   + Percentage culling (e.g., kill 33% of objects for each sweep;
+   * Percentage culling (e.g., kill 33% of objects for each sweep;
      this is the current policy).
+
 5. Batching of updates (whether updates should immediately go to the
    database, or whether it would be batched until a commit or other
    signal).
+
 6. Natural expiring of objects.  Even if an object must persist
    because there are still references, we could expire it so that
    future accesses re-query the database.  To avoid stale data.
