@@ -19,4 +19,7 @@ def test_BLOBCol():
     ImageData._connection.cache.clear()
 
     prof2 = ImageData.get(iid)
+    # @@: This seems to fail in SQLite, which trims off the
+    # first and last character (\x00 and \xff).  We should write
+    # a test for the upstream driver, as the error might be there.
     assert prof2.image == data
