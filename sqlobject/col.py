@@ -329,10 +329,10 @@ class BoolValidator(validators.Validator):
             return sqlbuilder.FALSE
 
     def toPython(self, value, state):
-        if int(value):
-            return sqlbuilder.TRUE
-        else:
+        if not value or not int(value):
             return sqlbuilder.FALSE
+        else:
+            return sqlbuilder.TRUE
 
 class SOBoolCol(SOCol):
 
