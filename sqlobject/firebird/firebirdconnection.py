@@ -26,7 +26,7 @@ class FirebirdConnection(DBAPI):
         self.db = db
         self.user = user
         self.passwd = passwd
-        self.dialect = dialect
+        self.dialect = int(dialect)
         self.role = role
         self.charset = charset
 
