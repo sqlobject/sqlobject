@@ -31,7 +31,7 @@ Interface Changes
   do), and the `.get()` method now retrieves objects that already have
   rows (like class instantiation used to do).
 * We're now using a Subversion repository instead of CVS.  It is
-  located at svn://colorstudy.com/trunk/SQLObject
+  located at svn://colorstudy.com/trunk/SQLObject 
 
 Bugs
 ----
