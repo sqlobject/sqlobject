@@ -46,6 +46,10 @@ class CacheFactory(object):
         self.lock = threading.Lock()
 
     def tryGet(self, id):
+        value = self.expiredCache.get(id)
+        if value:
+            # it's actually a weakref:
+            return value()
         if not self.doCache:
             return None
         return self.cache.get(id)
