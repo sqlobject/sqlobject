@@ -114,7 +114,8 @@ class MetaSQLObject(type):
             if hasattr(mod, '__connection__'):
                 connection = mod.__connection__
 
-        newClass.setConnection(connection)
+        if connection or not hasattr(newClass, '_connection'):
+            newClass.setConnection(connection)
 
         # The style object tells how to map between Python
         # identifiers and Database identifiers:
