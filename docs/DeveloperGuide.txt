@@ -1,0 +1,149 @@
++++++++++++++++++++++++++
+SQLObject Developer Guide
++++++++++++++++++++++++++
+
+.. contents::
+   :backlinks: none
+
+.. _start:
+
+These are some notes on developing SQLObject.  I'll try to expand them
+as things come up.  If you are committing to the SQLObject repository,
+please also read ``/using-this-repository.txt``, which is just about
+file layout and repository cooperation.
+
+  -- Ian Bicking
+
+Style Guide
+===========
+
+Generally you should follow the recommendations in `PEP 8`_, the
+Python Style Guide.  Some things to take particular note of:
+
+.. _PEP 8: http://www.python.org/peps/pep-0008.html
+
+* **No tabs**.  Not anywhere.  Always indent with 4 spaces.
+
+* I don't stress too much on line length.  But try to break lines up
+  by grouping with parenthesis instead of with backslashes (if you
+  can).
+
+* But if you are having problems with line length, maybe you should
+  just break the expression up into multiple statements.
+
+* Blank lines between methods, unless they are very small and closely
+  bound to each other.
+
+* Never use the form ``condition and trueValue or falseValue``.  Break
+  it out and use a variable.
+
+* Careful of namespace pollution.  SQLObject does allow for ``from
+  sqlobject import *`` so names should be fairly distinct, or they
+  shouldn't be exported in ``sqlobject.__init__``.
+
+* I'm very picky about whitespace.  There's one and only one right way
+  to do it.  Good examples::
+
+    short = 3
+    longerVar = 4
+
+    if x == 4:
+        do stuff
+
+    func(arg1='a', arg2='b')
+    func((a + b)*10)
+
+  **Bad** examples::
+
+    short    =3
+    longerVar=4
+
+    if x==4: do stuff
+
+    func(arg1 = 'a', arg2 = 'b')
+    func(a,b)
+    func( a, b )
+    [ 1, 2, 3 ]
+
+  To me, the poor use of whitespace seems lazy.  I'll think less of
+  your code (justified or not) for this very trivial reason.  I will
+  fix all your code for you if you don't do it yourself, because I
+  can't bear to look at sloppy whitespace.
+
+* Use ``@@`` to mark something that is suboptimal, or where you have a
+  concern that it's not right.  Try to also date it and put your
+  username there.
+
+* Docstrings are good.  They should look like::
+
+    class AClass(object):
+        """
+        doc string...
+        """
+
+  Don't use single quotes (''').  Don't bother trying make the string
+  less vertically compact.
+
+* Comments go right before the thing they are commenting on.
+
+* Methods never, ever, ever start with capital letters.  Generally
+  only classes are capitalized.  But definitely never methods.
+
+* mixedCase is preferred.
+
+* Use ``cls`` to refer to a class.  Use ``meta`` to refer to a
+  metaclass (which also happens to be a class, but calling a metaclass
+  ``cls`` will be confusing).
+
+* Use ``isinstance`` instead of comparing types.  E.g.::
+
+    if isinstance(var, str): ...
+    # Bad:
+    if type(var) is StringType: ...
+
+* Never, ever use two leading underscores.  This is annoyingly
+  private.  If name clashes are a concern, use name mangling instead
+  (e.g., ``_SO_blahblah``).  This is essentially the same thing as
+  double-underscore, only it's transparent where double underscore
+  obscures.
+
+* Module names should be unique in the package.  Subpackages shouldn't
+  share module names with sibling or parent packages.  Sadly this
+  isn't possible for ``__init__``, but it's otherwise easy enough.
+
+* Module names should be all lower case, and probably have no
+  underscores (smushedwords).
+
+
+
+Testing
+=======
+
+Tests are important.  Tests keep everything from falling apart.  All
+new additions should have tests.
+
+Right now all the tests are in one big file ``tests.py``.  Which is
+unfortunate, but that's the way it is.  They may seem complex, but
+they aren't so bad really.  They all subclass from ``SQLObjectTest``.
+
+The ``classes`` attribute is special in a test class.  This is a list
+of `SQLObject` subclasses that this test uses.  `SQLObjectTest` will
+create the tables before the tests are run, and destroy them after.
+
+You may also define an ``.inserts()`` method.  This method sets up the
+basic data.  When doing verbose input (``-vv``) you won't see these
+inserts, since they may be overwhelming.  Use the command-line options
+``--inserts`` to show them (as well as the create statement.
+
+When running tests, use ``-ddbname`` to test with ``dbname`` (e.g.,
+``-dmysql``, ``-dpostgres``, etc), or ``-dall`` to use Postgres,
+MySQL, Firebird, and SQLite (all the core supported databases;
+everything I have installed on my computer).  Please try to test as
+many databases as you can.  At least SQLite and one other should be
+easy, though if you can test both Postgres and MySQL that would be
+much better.
+
+If you submit a patch or implement a feature without a test, I'll be
+forced to write the test.  That's no fun for me, to just be writing
+tests.  So please, write tests; everything at least needs to be
+exercised, even if the tests are absolutely complete.
