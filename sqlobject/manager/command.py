@@ -116,11 +116,12 @@ class Command(object):
         self.runner = runner
 
     def run(self):
-        self.parser.usage = "%%prog [options]\n%s" % (
-            self.description or self.summary)
+        self.parser.usage = "%%prog [options]\n%s" % self.summary
         self.parser.prog = '%s %s' % (
             os.path.basename(self.invoked_as),
             self.command_name)
+        if self.description:
+            self.parser.description = description
         self.options, self.args = self.parser.parse_args(self.raw_args)
         if (getattr(self.options, 'simulate', False)
             and not self.options.verbose):
@@ -192,7 +193,7 @@ class Command(object):
         return all
 
     def connection(self):
-        if self.options.connection_uri:
+        if getattr(self.options, 'connection_uri', None):
             return sqlobject.connectionForURI(self.options.connection_uri)
         else:
             return None
@@ -323,6 +324,70 @@ class CommandDrop(Command):
         if v >= 1:
             print '%i tables dropped (%i didn\'t exist)' % (
                 dropped, not_existing)
+
+class CommandStatus(Command):
+
+    name = 'status'
+    summary = 'Show status of classes vs. database'
+
+    parser = standard_parser(simulate=False)
+
+    def print_class(self, soClass):
+        if self.printed:
+            return
+        self.printed = True
+        print 'Checking %s...' % soClass.__name__
+
+    def command(self):
+        good = 0
+        bad = 0
+        missing_tables = 0
+        columnsFromSchema_warning = False
+        for soClass in self.classes():
+            conn = soClass._connection
+            self.printed = False
+            if self.options.verbose:
+                self.print_class(soClass)
+            if not conn.tableExists(soClass.sqlmeta.table):
+                self.print_class(soClass)
+                print '  Does not exist in database'
+                missing_tables += 1
+                continue
+            try:
+                columns = conn.columnsFromSchema(soClass.sqlmeta.table,
+                                                 soClass)
+            except AttributeError:
+                if not columnsFromSchema_warning:
+                    print 'Database does not support reading columns'
+                    columnsFromSchema_warning = True
+                good += 1
+                continue
+            existing = {}
+            for col in columns:
+                col = col.withClass(soClass)
+                existing[col.dbName] = col
+            missing = {}
+            for col in soClass.sqlmeta._columns:
+                if existing.has_key(col.dbName):
+                    del existing[col.dbName]
+                else:
+                    missing[col.dbName] = col
+            if existing:
+                self.print_class(soClass)
+                for col in existing.values():
+                    print '  Database has extra column: %s' % col.dbName
+            if missing:
+                self.print_class(soClass)
+                for col in missing.values():
+                    print '  Database missing column: %s' % col.dbName
+            if existing or missing:
+                bad += 1
+            else:
+                good += 1
+        if self.options.verbose:
+            print '%i in sync; %i out of sync; %i not in database' % (
+                good, bad, missing_tables)
+            
 
 class CommandHelp(Command):
 
