@@ -1340,7 +1340,7 @@ def main():
             ["database=", "extra-verbose", "super-verbose",
             "inserts", "coverage"])
     except GetoptError:
-        usage(1)
+        sys.exit("Usage: %s [-d|--database all|type] [-v[v]] [--extra-verbose|--super-verbose] [--inserts] [--coverage]" % sys.argv[0])
 
     dbs = []
     newArgs = []
