@@ -604,7 +604,7 @@ class AutoTest(SQLObjectTest):
 
     mysqlCreate = """
     CREATE TABLE IF NOT EXISTS auto_test (
-      id INT AUTO_INCREMENT PRIMARY KEY,
+      auto_id INT AUTO_INCREMENT PRIMARY KEY,
       first_name VARCHAR(100),
       last_name VARCHAR(200) NOT NULL,
       age INT DEFAULT NULL,
@@ -616,7 +616,7 @@ class AutoTest(SQLObjectTest):
 
     postgresCreate = """
     CREATE TABLE auto_test (
-      id SERIAL,
+      auto_id SERIAL,
       first_name VARCHAR(100),
       last_name VARCHAR(200) NOT NULL,
       age INT DEFAULT 0,
@@ -628,7 +628,7 @@ class AutoTest(SQLObjectTest):
 
     sybaseCreate = """
     CREATE TABLE auto_test (
-      id integer,
+      auto_id integer,
       first_name VARCHAR(100),
       last_name VARCHAR(200) NOT NULL,
       age INT DEFAULT 0,
@@ -656,6 +656,7 @@ class AutoTest(SQLObjectTest):
             return
         class AutoTest(SQLObject):
             _fromDatabase = True
+            _idName = 'auto_id'
             _connection = connection()
         john = AutoTest(firstName='john',
                         lastName='doe',

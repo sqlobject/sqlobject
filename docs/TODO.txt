@@ -1,0 +1,10 @@
+TODO
+----
+
+See also some `long-term ideas`__.
+
+.. __: Plan06.html
+
+* ``_fromDatabase`` currently doesn't support IDs that don't fit into
+  the normal naming scheme.  It should do so.  You can still use
+  ``_idName`` with ``_fromDatabase``.
