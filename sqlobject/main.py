@@ -782,7 +782,8 @@ class SQLObject(object):
                 try:
                     getattr(self.__class__, name)
                 except AttributeError:
-                    raise TypeError, "%s.set() got an unexpected keyword argument %s" % (self.__class__.__name__, name)
+                    if name not in self._SO_columnDict:
+                        raise TypeError, "%s.set() got an unexpected keyword argument %s" % (self.__class__.__name__, name)
                 try:
                     setattr(self, name, value)
                 except AttributeError, e:
@@ -820,7 +821,8 @@ class SQLObject(object):
                 try:
                     getattr(self.__class__, name)
                 except AttributeError:
-                    raise TypeError, "%s.set() got an unexpected keyword argument %s" % (self.__class__.__name__, name)
+                    if name not in self._SO_columnDict:
+                        raise TypeError, "%s.set() got an unexpected keyword argument %s" % (self.__class__.__name__, name)
                 try:
                     setattr(self, name, value)
                 except AttributeError, e:
