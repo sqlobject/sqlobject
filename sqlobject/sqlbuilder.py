@@ -566,13 +566,24 @@ class _LikeQuoted:
 
     def __init__(self, expr):
         self.expr = expr
+        self.prefix = ''
+        self.postfix = ''
+
+    def __radd__(self, s):
+        self.prefix = s + self.prefix
+        return self
+
+    def __add__(self, s):
+        self.postfix += s
+        return self
 
     def __sqlrepr__(self, db):
-        s = sqlrepr(self.expr, db)
+        s = sqlrepr(self.expr, db)[1:-1] # remove quotes
         if db in ('postgres', 'mysql'):
-            return s.replace('%', '\\%')
+            s = s.replace('%', '\\%')
         else:
-            return s.replace('%', '%%')
+            s = s.replace('%', '%%')
+        return "'%s%s%s'" % (self.prefix, s, self.postfix)
 
 ########################################
 ## Global initializations
