@@ -499,6 +499,17 @@ class SelectTest(SQLObjectTest):
     def counterEqual(self, counters, value):
         self.assertEquals([(c.n1, c.n2) for c in counters], value)
 
+    def accumulateEqual(self, func, counters, value):
+        self.assertEqual(func([ c.n1 for c in counters]), value)
+
+    def test1(self):
+        self.accumulateEqual(sum,Counter2.select('n1', orderBy='n1'),
+                             sum(range(10)) * 10)
+
+    def test2(self):
+        self.accumulateEqual(len,Counter2.select('all'), 100)
+
+    
 ########################################
 ## Dynamic column tests
 ########################################

@@ -236,9 +236,14 @@ class DBAPI(DBConnection):
         return Iteration(self, self.getConnection(),
                          select, keepConnection=False)
 
-    def countSelect(self, select):
-        q = "SELECT COUNT(*) FROM %s WHERE" % \
-            ", ".join(select.tables)
+    def accumulateSelect(self, select, expression):
+        """ Apply an accumulate function (like SUM, COUNT, ..)
+            to the select object.
+            Return the value resulting from the SQL accumulate function
+            as an integer.
+        """
+        q = "SELECT %s" % expression
+        q += " FROM %s WHERE" % ", ".join(select.tables)
         q = self._addWhereClause(select, q, limit=0, order=0)
         val = int(self.queryOne(q)[0])
         return val

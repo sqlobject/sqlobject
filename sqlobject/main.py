@@ -1191,14 +1191,34 @@ class SelectResults(object):
         conn = self.ops.get('connection', self.sourceClass._connection)
         return conn.iterSelect(self)
 
-    def count(self):
+    def accumulate(self, expression):
+        """ Use an accumulate expression to select result
+            using another SQL select through current
+            connection.
+            Return the accumulate result
+        """
         conn = self.ops.get('connection', self.sourceClass._connection)
-        count = conn.countSelect(self)
+        return conn.accumulateSelect(self,expression)
+
+    def count(self):
+        """ Counting elements of current select results """
+        count = self.accumulate('COUNT(*)')
         if self.ops.get('start'):
             count -= self.ops['start']
         if self.ops.get('end'):
             count = min(self.ops['end'] - self.ops.get('start', 0), count)
         return count
+
+    def sum(self, attribute):
+        """ Making the sum of a given select result attribute.
+            `attribute` can be a column name (like 'a_column')
+            or a dot-q attribute (like Table.q.aColumn)
+        """
+        if type(attribute) == type(''):
+            expression = 'SUM(%s)' % attribute
+        else:
+            expression = sqlbuilder.func.SUM(attribute)
+        return self.accumulate(expression)
 
 class SQLObjectState(object):
 
