@@ -966,7 +966,7 @@ class SQLObject(object):
 
     def dropTable(cls, ifExists=False, dropJoinTables=True, cascade=False,
                   connection=None):
-        conn = connection or conn._connection
+        conn = connection or cls._connection
         if ifExists and not conn.tableExists(cls._table):
             return
         conn.dropTable(cls._table, cascade)
