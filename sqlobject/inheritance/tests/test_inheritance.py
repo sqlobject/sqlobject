@@ -8,12 +8,11 @@ from sqlobject.inheritance import InheritableSQLObject
 
 
 class InherPerson(InheritableSQLObject):
-    _inheritable = 1        # I want this class to be inherited
     firstName = StringCol()
     lastName = StringCol(alternateID=True)
 
 class Employee(InherPerson):
-    _inheritable = 0        # If I don't want this class to be inherited
+    _inheritable = False
     position = StringCol()
 
 def setup():

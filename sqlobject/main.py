@@ -396,10 +396,11 @@ class SQLObject(object):
         #DSM: inheritable class. If so, we keep a link to our parent class.
         cls._childClasses = {}
         for _cls in cls.__bases__:
-            if hasattr(_cls, '_inheritable') and _cls._inheritable:
-                cls._parentClass = _cls
-                cls._parent = None
-                _cls._childClasses[cls.__name__] = cls
+            if hasattr(_cls, '_inheritable') and _cls._inheritable and \
+                _cls.__name__ <> "InheritableSQLObject":
+                    cls._parentClass = _cls
+                    cls._parent = None
+                    _cls._childClasses[cls.__name__] = cls
 
         #DSM: If this class is a child of a parent class, we need to do some
         #DSM: attribute check and a a foreign key to the parent.
@@ -421,9 +422,11 @@ class SQLObject(object):
             cls._columns = []
         #DSM: If this is inheritable, add some default columns
         #    to be able to link to children
-        if hasattr(cls, '_inheritable') and cls._inheritable:
-            cls._columns.append(
-                col.StringCol(name='childName',default=None))
+        if hasattr(cls, '_inheritable') and cls._inheritable and \
+            cls.__name__ <> "InheritableSQLObject":
+                cls._columns.append(
+                    col.StringCol(name='childName', default=None)
+                )
 
         cls._columns.extend(implicitColumns)
         if not new_attrs.has_key('_joins'):

@@ -21,13 +21,13 @@ reconstructed at run-time using the hierarchy of Python classes.
 
 The following code::
 
-    class Person(SQLObject):
-        _inheritable = 1        # I want this class to be inherited
+    frim sqlobject.inheritance import InheritableSQLObject
+    class Person(InheritableSQLObject):
         firstName = StringCol()
         lastName = StringCol()
 
     class Employee(Person):
-        _inheritable = 0        # If I don't want this class to be inherited
+        _inheritable = False
         position = StringCol()
 
 will generate the following tables::
@@ -128,7 +128,7 @@ Some limitation or notice about this version:
 * You may not redefine columns in an inherited class (this
   will raise an exception).
 * If you don't want 'childName' columns in your last class (one that
-  will never be inherited), you must set '_inheritable' to 0 in this
+  will never be inherited), you must set '_inheritable' to False in this
   class.
 * I made it because I needed to be able to have automatic
   inheritance with linked table.
@@ -138,4 +138,4 @@ Some limitation or notice about this version:
 * Thanks to Ian Bicking for SQLObject, this is a wonderful python
   module.
 * If you have suggestion, bugs, or patch to this patch, you can
-  contact me at <sqlobject xsoli.com>
+  contact SQLObject team: <sqlobject-discuss at lists.sourceforge.net>

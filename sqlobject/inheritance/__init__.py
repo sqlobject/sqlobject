@@ -65,6 +65,7 @@ class InheritableSelectResults(SelectResults):
 
 
 class InheritableSQLObject(SQLObject):
+    _inheritable = True
     SelectResultsClass = InheritableSelectResults
 
     def get(cls, id, connection=None, selectResults=None, childResults=None, childUpdate=False):
