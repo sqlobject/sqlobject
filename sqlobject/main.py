@@ -978,11 +978,15 @@ class SQLObject(object):
     def select(cls, clause=None, clauseTables=None,
                orderBy=NoDefault, limit=None,
                lazyColumns=False, reversed=False,
+               distinct=False,
                connection=None):
-        return SelectResults(cls, clause, clauseTables=clauseTables,
+        return SelectResults(cls, clause,
+                             clauseTables=clauseTables,
                              orderBy=orderBy,
-                             limit=limit, lazyColumns=lazyColumns,
+                             limit=limit,
+                             lazyColumns=lazyColumns,
                              reversed=reversed,
+                             distinct=distinct,
                              connection=connection)
     select = classmethod(select)
 
@@ -1243,6 +1247,9 @@ class SelectResults(object):
     def reversed(self):
         return self.clone(reversed=not self.ops.get('reversed', False))
 
+    def distinct(self):
+        return self.clone(distinct=True)
+
     def __getitem__(self, value):
         if type(value) is type(slice(1)):
             assert not value.step, "Slices do not support steps"
@@ -1307,6 +1314,8 @@ class SelectResults(object):
 
     def count(self):
         """ Counting elements of current select results """
+        assert not self.ops['distinct'], "It is not currently supported to count distinct objects"
+            
         count = self.accumulate('COUNT(*)')
         if self.ops.get('start'):
             count -= self.ops['start']

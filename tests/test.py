@@ -1193,6 +1193,41 @@ class IndexTest2(SQLObjectTest):
 
 
 ########################################
+## Distinct
+########################################
+
+class Distinct1(SQLObject):
+    n = IntCol()
+
+class Distinct2(SQLObject):
+    other = ForeignKey('Distinct1')
+
+class DistinctTest(SQLObjectTest):
+
+    classes = [Distinct1, Distinct2]
+
+    def inserts(self):
+        obs = [Distinct1(n=i) for i in range(3)]
+        Distinct2(other=obs[0])
+        Distinct2(other=obs[0])
+        Distinct2(other=obs[1])
+
+    def count(self, select):
+        result = {}
+        for ob in select:
+            result[int(ob.n)] = result.get(int(ob.n), 0)+1
+        return result
+
+    def testDistinct(self):
+        query = (Distinct2.q.otherID==Distinct1.q.id)
+        sel = Distinct1.select(query)
+        self.assertEqual(self.count(sel),
+                         {0: 2, 1: 1})
+        sel = Distinct1.select(query, distinct=True)
+        self.assertEqual(self.count(sel),
+                         {0: 1, 1:1})
+
+########################################
 ## Run from command-line:
 ########################################
 

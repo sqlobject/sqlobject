@@ -18,11 +18,14 @@ Interface Changes
 * Added indexing (from Jeremy Fitzhardinge).  See `the
   documentation`__ for more.
 
-__: SQLObject.html#indexes
+.. __: SQLObject.html#indexes
 
 * Connection objects have a ``.module`` attribute, which points to
   the DB-API module.  This is useful for getting access to the
   exception objects.
+
+* New ``distinct`` option to selects, like ``MyClass.select(...,
+  distinct=True)``
 
 SQLObject 0.6
 =============

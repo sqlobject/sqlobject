@@ -251,16 +251,20 @@ class DBAPI(DBConnection):
     def queryForSelect(self, select):
         ops = select.ops
         cls = select.sourceClass
-        if ops.get('lazyColumns', 0):
-            q = "SELECT %s.%s FROM %s WHERE " % \
-                (cls._table, cls._idName,
-                 ", ".join(select.tables))
+        if ops.get('distinct', False):
+            q = 'SELECT DISTINCT '
         else:
-            q = "SELECT %s.%s, %s FROM %s WHERE " % \
-                (cls._table, cls._idName,
-                 ", ".join(["%s.%s" % (cls._table, col.dbName)
-                            for col in cls._SO_columns]),
-                 ", ".join(select.tables))
+            q = 'SELECT '
+        if ops.get('lazyColumns', 0):
+            q += "%s.%s FROM %s WHERE " % \
+                 (cls._table, cls._idName,
+                  ", ".join(select.tables))
+        else:
+            q += "%s.%s, %s FROM %s WHERE " % \
+                 (cls._table, cls._idName,
+                  ", ".join(["%s.%s" % (cls._table, col.dbName)
+                             for col in cls._SO_columns]),
+                  ", ".join(select.tables))
 
         return self._addWhereClause(select, q)
 

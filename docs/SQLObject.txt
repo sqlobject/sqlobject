@@ -417,6 +417,10 @@ the end of the SQL query.  If the slice cannot be performed in the SQL
 performed on the list of results.  This will only happen when you use
 negative indexes.
 
+In certain cases, you may get a select result with an object in it
+more than once, e.g., in some joins.  If you don't want this, you can
+add the keyword argument ``MyClass.select(..., distinct=True)``.
+
 You can get the length of the result without fetching all the results
 by calling ``count`` on the result object, like
 ``MyClass.select().count()``.  A ``COUNT(*)`` query is used -- the
