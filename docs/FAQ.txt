@@ -1,0 +1,199 @@
++++++++++++++
+SQLObject FAQ
++++++++++++++
+
+.. contents::
+
+How can I do a LEFT JOIN?
+-------------------------
+
+The short: you can't.  You don't need to.  That's a relational way of
+thinking, not an object way of thinking.  But it's okay!  It's not
+hard to do the same thing, even if it's not with the same query.
+
+For these examples, imagine you have a bunch of customers, with
+contacts.  Not all customers have a contact, some have several.  The
+left join would look like::
+
+    SELECT customer.id, customer.first_name, customer.last_name, 
+           contact.id, contact.address
+    FROM customer
+    LEFT JOIN contact ON contact.customer_id = customer.id
+
+Simple
+~~~~~~
+
+.. raw:: html
+   :file: ../examples/snippets/leftjoin-simple.html
+
+The effect is the same as the left join -- you get all the customers,
+and you get all their contacts.  The problem, however, is that you
+will be executing more queries -- a query for each customer to fetch
+the contacts -- where with the left join you'd only do one query.  The
+actual amount of information returned from the database will be the
+same.  There's a good chance that this won't be significantly slower.
+I'd advise doing it this way unless you hit an actual performance
+problem.
+
+Efficient
+~~~~~~~~~
+
+Lets say you really don't want to do all those queries.  Okay, fine:
+
+.. raw:: html
+   :file: ../examples/snippets/leftjoin-more.html
+
+This way there will only be at most two queries.  It's a little more
+crude, but this is an optimization, and optimizations often look less
+than pretty.
+
+But, say you don't want to get everyone, just some group of people
+(presumably a large enough group that you still need this
+optimization):
+
+.. raw:: html
+   :file: ../examples/snippets/leftjoin-more-query.html
+
+How Does Inheritance Work?
+--------------------------
+
+SQLObject is not intended to represent every Python inheritance
+structure in an RDBMS -- rather it is intended to represent RDBMS
+structures as Python objects.  So lots of things you can do in Python
+you can't do with SQLObject classes.  However, some form of
+inheritance is possible.
+
+One way of using this is to create local conventions.  Perhaps:
+
+.. raw:: html
+   :file: ../examples/snippets/site-sqlobject.html
+
+Since SQLObject doesn't have a firm introspection mechanism (at least
+not yet) the example shows the beginnings of a bit of ad hoc
+introspection (in this case exposing the ``_columns`` attribute in a
+more pleasing/public interface).
+
+However, this doesn't relate to *database* inheritance at all, since
+we didn't define any columns.  What if we do?
+
+.. raw:: html
+   :file: ../examples/snippets/inheritance.html
+
+Unfortunately, the resultant schema probably doesn't look like what
+you might have wanted:
+
+.. raw:: html
+   :file: ../examples/snippets/inheritance-schema.html
+
+All the columns from ``person`` are just repeated in the ``employee``
+table.  What's more, an ID for a Person is distinct from an ID for an
+employee, so for instance you must choose ``ForeignKey("Person")`` or
+``ForeignKey("Employee")``, you can't have a foreign key that
+sometimes refers to one, and sometimes refers to the other.
+
+Altogether, not very useful.  You probably want a ``person`` table,
+and then an ``employee`` table with a one-to-one relation between the
+two.  Of course, you can have that, just create the appropriate
+classes/tables -- but it will appear as two distinct classes, and
+you'd have to do something like ``Person(1).employee.position``.  Of
+course, you can always create the necessary shortcuts, like:
+
+.. raw:: html
+   :file: ../examples/snippets/inheritance-faked.html
+
+It's not the most elegant setup, but it's functional and flexible.
+There are no plans for further support for inheritance (especially
+since the composition of multiple classes is usually a better solution
+anyway).
+
+
+Composite/Compound Attributes
+-----------------------------
+
+A composite attribute is an attribute formed from two columns.  For
+example:  
+
+.. raw:: html
+   :file: ../examples/snippets/composite-schema.html
+
+Now, you'll probably want to deal with one amount/currency value,
+instead of two columns.  SQLObject doesn't directly support this, but
+it's easy (and encouraged) to do it on your own:
+
+.. raw:: html
+   :file: ../examples/snippets/composite.html
+
+You'll note we go to some trouble to make sure that ``Price`` is an
+immutable object.  This is important, because if ``Price`` wasn't and
+someone changed an attribute, the containing ``InvoiceItem`` instance
+wouldn't detect the change and update the database.  (Also, since
+``Price`` doesn't subclass ``SQLObject``, we have to be explicit about
+creating properties)  Some people refer to this sort of class as a
+*Value Object*, that can be used similar to how an integer or string
+is used.
+
+You could also use a mutable composite class:
+
+.. raw:: html
+   :file: ../examples/snippets/composite-mutable.html
+
+Pretty much a proxy, really, but ``SOCoords`` could contain other
+logic, could interact with non-SQLObject-based latitude/longitude
+values, or could be used among several objects that have
+latitude/longitude columns.
+
+
+Non-Integer IDs
+---------------
+
+Yes, you can use non-integer IDs, but only in CVS_ now.
+
+.. _CVS: http://sqlobject.org/#anonymous-cvs
+
+If you use non-integer IDs, you will not be able to use automatic
+``CREATE TABLE`` generation (i.e., ``createTable``).  You also will
+have to give your own ID values when creating an object, like::
+
+    color = Something.new(id="blue", r=0, b=100, g=0)
+
+IDs are, and always will in future versions, be considered immutable.
+Right now that is not enforced; you can assign to the ``id``
+attribute.  But if you do you'll just mess everything up.  This will
+probably be taken away sometime to avoid possibly confusing bugs
+(actually, assigning to ``id`` is almost certain to cause confusing
+bugs).
+
+If you are concerned about enforcing the type of IDs (which can be a
+problem even with integer IDs) you may want to do this::
+
+    def Color(SQLObject):
+        def _init(self, id, connection=None):
+            id = str(id)
+            SQLObject._init(self, id, connection)
+
+Instead of ``str()`` you may use ``int()`` or whatever else you want.
+This will be resolved in a future version when ID column types can be
+declared like other columns.
+
+
+Binary Values
+-------------
+
+Binary values can be difficult to store in databases, as SQL doesn't
+have a widely-implemented way to express binaries as literals, and
+there's differing support in database.
+
+A possible way to keep this data in a database is by using encoding.
+Base 64 is a good encoding, reasonably compact but also safe.  As
+an example, imagine you want to store images in the database:
+
+.. raw:: html
+   :file: ../examples/snippets/image-binary.html
+
+SQLite does not respect backslash quoting, so for instance ``\n`` is
+not interpreted as a newline.  For the moment there's no resolution,
+and this will mess up your base64-encoded values.  As a workaround:
+
+.. raw:: html
+   :file: ../examples/snippets/image-binary-sqlite.html
+

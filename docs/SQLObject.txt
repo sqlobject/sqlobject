@@ -1,0 +1,1068 @@
+```````````````
+SQLObject 0.5
+```````````````
+
+.. contents:: Contents:
+
+Author, Site, and License
+=========================
+
+SQLObject is by Ian Bicking (ianb@colorstudy.com).  The website
+is sqlobject.org__.
+
+__ http://sqlobject.org
+
+The code is licensed under the `Lesser General Public License`_
+(LGPL).
+
+.. _`Lesser General Public License`: http://www.gnu.org/copyleft/lesser.html
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+Introduction
+============
+
+SQLObject is an *object-relational mapper*.  It allows you to
+translate RDBMS table rows into Python objects, and manipulate those
+objects to transparently manipulate the database.
+
+In using SQLObject, you will create a class definition that will
+describe how the object translates to the database table.  SQLObject
+will produce the code to access the database, and update the database
+with your changes.  The generated interface looks similar to any other
+interface, and callers need not be aware of the database backend.
+
+SQLObject also includes a novel feature to avoid generating,
+textually, your SQL queries.  This also allows non-SQL databases to be
+used with the same query syntax.
+
+Requirements
+============
+
+Currently SQLObject supports MySQL_, PostgreSQL_ (via ``psycopg``),
+SQLite_, Firebird_, and a DBM-based store.  The DBM backend is
+experimental.
+
+.. _PostgreSQL: http://postgresql.org
+.. _SQLite: http://sqlite.org
+.. _Firebird: http://firebird.sourceforge.net
+
+Python 2.2 or higher is required.  SQLObject makes extensive use of
+new-style classes.
+
+Compared To Other Database Wrappers
+===================================
+
+There are several object-relational mappers (ORM) for Python.  I
+honestly can't comment deeply on the quality of those packages, but
+I'll try to place SQLObject in perspective.
+
+SQLObject uses new-style classes extensively.  The resultant objects
+have a new-style feel as a result -- setting attributes has side
+effects (it changes the database), and defining classes has side
+effects (through the use of metaclasses).  Attributes are generally
+exposed, not marked private, knowing that they can be made dynamic
+later.
+
+SQLObject creates objects that feel similar to normal Python objects
+(with the semantics of new-style classes).  An attribute attached to a
+column doesn't look different than an attribute that's attached to a
+file, or an attribute that is calculated.  It is a specific goal that
+you be able to change the database without changing the interface,
+including changing the scope of the database, making it more or less
+prominent as a storage mechanism.
+
+This is in contrast to some ORMs that provide a dictionary-like
+interface to the database (for example, PyDO_).  The dictionary
+interface distinguishes the row from a normal Python object.  I also
+don't care for the use of strings where an attribute seems more
+natural -- columns are limited in number and predefined, just like
+attributes.  (Note: newer version of PyDO apparently allow attribute
+access as well)
+
+.. _PyDO: http://skunkweb.sourceforge.net/pydo.html
+
+SQLObject is, to my knowledge, unique in using metaclasses to
+facilitate this seemless integration.  Some other ORMs use code
+generation to create an interface, expressing the schema in a CSV or
+XML file (for example, MiddleKit, part of Webware_).  By using
+metaclasses you are able to comfortably define your schema in the
+Python source code.  No code generation, no weird tools, no
+compilation step.
+
+.. _Webware: http://webware.sourceforge.net
+
+SQLObject provides a strong database abstraction, allowing
+cross-database compatibility (so long as you don't specifically go
+around SQLObject).  This compatibility extends not just to several
+databases, but also to currently one non-SQL, non-relational backend
+(based on the `dbm` module).
+
+SQLObject has joins, one-to-many, and many-to-many, something which
+many ORMs do not have.  The join system is also intended to be
+extensible.
+
+You can map between database names and Python attribute and class
+names; often these two won't match, or the database style would be
+inappropriate for a Python attribute.  This way your database schema
+does not have to be designed with SQLObject in mind, and the resulting
+classes 
+
+Future
+======
+
+Here are some things I plan:
+
+* More databases supported.  There has been interest and some work in
+  the progress for Oracle, Sybase, and MS-SQL support.
+* Better transaction support -- right now you can use transactions
+  for the database, but the object isn't transaction-aware, so
+  non-database persistence won't be able to be rolled back.  
+* Optimistic locking and other techniques to handle concurrency.
+* Profile of SQLObject performance, so that I can identify bottlenecks.
+* Increase hooks with FormEncode (unreleased) validation and form
+  generation package, so SQLObject classes (read: schemas) can be
+  published for editing more directly and easily.
+* Automatic joins in select queries.
+* More kinds of joins, and more powerful join results (closer to how
+  `select` works).
+
+Using SQLObject: An Introduction
+================================
+
+Let's start off quickly...
+
+Declaring the Class
+-------------------
+
+To begin with, let's make a database connection.  Choose from one of
+`MySQLConnection`, `PostgresConnection`, `SQLiteConnection`, and
+`FirebirdConnection`, depending on what database you use.
+
+.. raw:: html
+   :file: ../examples/snippets/connections.html
+
+The rest of this will be written more-or-less in a database-agnostic
+manner, using the connection you define.  Use `SQLite` if you don't
+have another database installed or ready -- it requires PySQLite_, but
+doesn't require a client/server setup.
+
+.. _PySQLite: http://pysqlite.sourceforge.net/
+
+We'll develop a simple addressbook-like database.  We could create the
+tables ourselves, and just have SQLObject access those tables, but for
+now we'll let SQLObject do that work.  First, the class:
+
+.. raw:: html
+   :file: ../examples/snippets/simpleaddress-person1.html
+
+Many basic table schemas won't be any more complicated than that.
+The special attribute `_connection` defines the connection we should
+use (you can also set a module-level variable `__connection__` which
+would automatically be picked up if you don't specify `_connection`).
+
+`firstName`, `middleInitial`, and `lastName` are all columns in the
+database.  The general schema implied by this class definition is:
+
+.. raw:: html
+   :file: ../examples/snippets/simpleaddress-schema-person1.html
+
+This is for MySQL.  The schema for other databases looks slightly
+different (especially the ``id`` column).  You'll notice the names
+were changed from mixedCase to underscore_separated -- this is done by
+the `style object`_.  There are a variety of ways to handle that names
+that don't fit conventions (see `Irregular Naming`_).
+
+.. _`style object`: `Changing the Naming Style`_
+
+The tables don't yet exist.  We'll let SQLObject create them:
+
+.. raw:: html
+   :file: ../examples/snippets/simpleaddress-person1-create.html
+
+We can change the type of the various columns by using something other
+than `StringCol`, or using different arguments.  More about this in
+`Subclasses of Col`_.
+
+If you don't want to do table creation (you already have tables, or
+you want to create the tables yourself), you can just use the vague
+`Col` class.  SQLObject doesn't do much type checking, allowing the
+database and the adapter to handle most of the type conversion.
+Databases usually do their own type coercion anyway.
+
+You'll note that the ``id`` column is not given in the class
+definition, it is implied.  For MySQL databases it should be defined
+as ``INT PRIMARY KEY AUTO_INCREMENT``, in Postgres ``SERIAL PRIMARY
+KEY``, and in SQLite as ``INTEGER PRIMARY KEY``.  You can `override the
+name`__, but some integer primary key must exist (though `you can use
+non-integer keys`_ with some extra effort).
+
+__ idName_
+.. _`you can use non-integer keys`: `Non-Integer Keys`_
+
+Using the Class
+---------------
+
+Now that you have a class, how will you use it?  We'll be considering
+the class defined above.
+
+You can use the standard constructor to fetch instances that *already
+exist*.  So if you wanted to fetch the Person by id 10, you'd call
+``Person(10)``.
+
+To create a new object (and row), use the `.new()` class method.  In
+this case you might call ``Person.new(firstName="John",
+lastName="Doe")``.  If you had left out ``firstName`` or ``lastName``
+you would have gotten an error, as no default was given for these
+columns (``middleInitial`` has a default, so it will be set to
+``NULL``, the SQL equivalent of ``None``).
+
+When you create an object, it is immediately inserted into the
+database.  SQLObject generally uses the database as immediate storage.
+
+Here's an example of using the class:
+
+.. raw:: html
+   :file: ../examples/snippets/simpleaddress-person1-use.html
+
+You'll note that columns are accessed like attributes.  (This uses the
+``property`` feature of Python 2.2, so that retrieving and setting
+these attributes executes code).  You'll also note that objects are
+unique -- there is generally only one ``Person`` instance of a
+particular id in memory at any one time.  If you ask for more than one
+person by a particular ID, you'll get back the same instance.  This
+way you can be sure of a certain amount of consistency if you have
+multiple threads accessing the same data (though of course across
+processes there can be no sharing of an instance).  This changes if
+you're using transactions_.
+
+To get an idea of what's happening behind the surface, I'll give the
+same actions with the SQL that is sent, along with some commentary:
+
+.. raw:: html
+   :file: ../examples/snippets/simpleaddress-person1-use-debug.html
+
+Hopefully you see that the SQL that gets sent is pretty clear and
+predictable.  To view the SQL being sent, pass the keyword argument
+``debug=1`` to your connection object -- all SQL will be printed to
+the console.  This can be reassuring, and I would encourage you to try
+it.
+
+As a small optimization, instead of assigning each attribute
+individually, you can assign a number of them using the ``set``
+method, like:
+
+.. raw:: html
+   :file: ../examples/snippets/simpleaddress-person1-use-set.html
+
+This will send only one ``UPDATE`` statement.  You can also use `set`
+with non-database properties (there's no benefit, but the distinction
+between database columns and other attributes thus remains somewhat
+hidden).
+
+One-to-Many Relationships
+-------------------------
+
+Well, a real address book should have people, but also addresses.
+These examples are in ``personaddress.py``
+
+First, let's define the new address table.  People can have multiple
+addresses, of course:
+
+.. raw:: html
+   :file: ../examples/snippets/address-address.html
+
+Note the column ``person = ForeignKey('Person')``.  This is a
+reference to a `Person` object.  We refer to other classes by name
+(with a string) to avoid circular dependencies.  In the database
+there will be a ``person_id`` column, type ``INT``, which points to
+the ``person`` column.
+
+Here's the `Person` class:
+
+.. raw:: html
+   :file: ../examples/snippets/address-person.html
+
+We get the backreference with ``addresses =
+MultipleJoin('Address')``.  When we access a person's `addresses`
+attribute, we will get back a (dynamic) list of all the `Address`
+objects associated with that person.  An example:
+
+.. raw:: html
+   :file: ../examples/snippets/address-use1.html
+
+Many-to-Many Relationships
+--------------------------
+
+For this example we will have user and role objects.  The two have a
+many-to-many relationship, which is represented with the
+`RelatedJoin`.
+
+.. raw:: html
+   :file: ../examples/snippets/userrole-classes.html
+
+And usage:
+
+.. raw:: html
+   :file: ../examples/snippets/userrole-use.html
+
+In the process an intermediate table is created, ``role_user``, which
+references both of the other classes.  This table is never exposed as
+a class, and its rows do not have equivalent Python objects -- this
+hides some of the nuisance of a many-to-many relationship.
+
+You may notice that the columns have the extra keyword argument
+`alternateID`.  If True, this means that the column uniquely
+identifies rows -- like a username uniquely identifies a user.  This
+identifier is in addition to the primary key (``id``), which is always
+present.
+
+A alternateID column creates a class method, like ``byUsername`` for a
+column named ``username`` (or you can use the `alternateMethodName`
+keyword argument to override this).  Its use:
+
+.. raw:: html
+   :file: ../examples/snippets/userrole-use-alternate.html
+
+
+Selecting Multiple Objects
+--------------------------
+
+While the full power of all the kinds of joins you can do with a
+database are not revealed in SQLObject, a simple ``SELECT`` is
+available.
+
+``select`` is a class method, and you call it like (with the SQL
+that's generated):
+
+.. raw:: html
+   :file: ../examples/snippets/person-select1.html
+
+This example returns everyone with the first name John.  An expression
+could be more complicated as well, like:
+
+.. raw:: html
+   :file: ../examples/snippets/person-select2.html
+
+You'll note that classes have an attribute ``q``, which gives access
+to special objects for constructing query clauses.  All attributes
+under ``q`` refer to column names and if you construct logical
+statements with these it'll give you the SQL for that statement.  You
+can also work like this:
+
+.. raw:: html
+   :file: ../examples/snippets/person-select3.html
+
+You may wish to use `MyClass.sqlrepr` to quote any values you use
+if you use this technique (quoting is automatic if you use ``q``).
+Tables given in `clauseTables` will be added to the ``FROM`` portion
+(again, they are automatically picked up when using ``q``).  The table
+you're selecting is always assumed to be included, of course.
+
+.. _orderBy:
+
+You can use the keyword arguments `orderBy` to create ``ORDER BY`` in
+the select statements: `orderBy` takes a string, which should be the
+*database* name of the column, or a column in the form
+``Person.q.firstName``; `groupBy` is similar.  Both accept lists or
+tuples of arguments.  You can use ``"-colname"`` to specify descending
+order, or call ``MyClass.select().reversed()``.
+
+You can use the special class variable `_defaultOrder` to give a
+default ordering for all selects.  To get an unordered result when
+`_defaultOrder` is used, use ``orderBy=None``.
+
+Select results are generators, which are lazily evaluated.  So the SQL
+is only executed when you iterate over the select results, or if you
+use ``list()`` to force the result to be executed.  When you iterate
+over the select results, rows are fetched one at a time.  This way you
+can iterate over large results without keeping the entire result set
+in memory.
+
+You can also slice select results.  The results are used in the SQL
+query, so ``peeps[:10]`` will result in ``LIMIT 10`` being added to
+the end of the SQL query.  If the slice cannot be performed in the SQL
+(e.g., peeps[:-10]), then the select is executed, and the slice is
+performed on the list of results.  This will only happen when you use
+negative indexes.
+
+You can get the length of the result without fetching all the results
+by calling ``count`` on the result object, like
+``MyClass.select().count()``.  A ``COUNT(*)`` query is used -- the
+actual objects are not fetched from the database.  Together with
+slicing, this makes batched queries easy to write:
+
+.. raw:: html
+   :file: ../examples/snippets/slicing-batch.html
+
+For more information on the where clause in the queries, see the
+`SQLBuilder documentation`_.
+
+.. _`SQLBuilder documentation`: SQLBuilder.html
+
+Customizing the Objects
+-----------------------
+
+While we haven't done so in the examples, you can include your own
+methods in the class definition.  Writing you own methods should be
+obvious enough (just do so like in any other class), but there are
+some other details to be aware of.
+
+Initializing the Objects
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+With new-style classes, `__init__` is called everytime the class is
+called.  That means it's called when an object is just fetched from
+the cache.  That's useless in most cases, so instead we use a `_init`
+method, which is only called once in an object's life (with one
+argument -- the object's ID).
+
+Adding Magic Attributes (properties)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+You can use all the normal techniques for defining this new-style
+class, including `classmethod`, `staticmethod`, and `property`, but
+you can use a shortcut.  If you have a method that's name starts with
+``_set_``, ``_get_``, ``_del_``, or ``_doc_``, it will be used to
+create a property.  So, for instance, say you have images stored under
+the ID of the person in the ``/var/people/images`` directory:
+
+.. raw:: html
+   :file: ../examples/snippets/person_magicmethod.html
+
+Later, you can use the ``.image`` property just like an attribute, and
+the changes will be reflected in the filesystem by calling these
+methods.  I use this particular technique frequently for information
+that is better to keep in files as opposed to the database.
+
+You can also pass an ``image`` keyword argument to the `new` class
+method or the `set` method, like ``Person.new(..., image=imageText)``.
+
+All of the methods (``_get_``, ``_set_``, etc) are optional -- you can
+use any one of them without using the others (except ``_doc_``, since
+having a doc string that doesn't document anything would be silly).
+So you could define just a ``_get_attr`` method so that ``attr`` was
+read-only.
+
+Overriding Column Attributes
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+It's a little more complicated if you want to override the behavior of
+an database column attribute.  For instance, imagine there's special
+code you want to run whenever someone's name changes -- you could make
+a subclass, and then use ``Person.__setattr__(self, 'lastName',
+value)`` to actually do the deed, but that's obviously very awkward --
+you have to create subclasses without an real inheritance
+relationship, and the whole thing feels architecturally fragile.
+SQLObject creates methods like ``_set_lastName`` for each of your
+columns, but again you can't use this, since there's no superclass to
+reference (and you can't write ``SQLObject._set_lastName(...)``).  You
+want to override that ``_set_lastName`` method yourself.
+
+To deal with this, SQLObject creates two methods for each getter and
+setter, for example: ``_set_lastName`` and ``_SO_set_lastName``.  So
+to intercept all changes to ``lastName``:
+
+.. raw:: html
+   :file: ../examples/snippets/person_magicoverride.html
+
+Or perhaps you want to constrain a phone numbers to be actual
+digits, and of proper length, and make the formatting nice:
+
+.. raw:: html
+   :file: ../examples/snippets/phonenumber_magicoverride.html
+
+Of course, the user may be surprised if the value they set the
+attribute to is not the same value they get back -- in this case we
+removed some of the characters before putting it in the database, and
+then formatted the number into a nice string on the way out.  This is
+one disadvantage of making actual work look like simple attribute
+access.  
+
+Reference
+=========
+
+The instructions above should tell you enough to get you started, and
+be useful for many situations.  Now we'll show how to specify the
+class more completely.
+
+Col Class: Specifying Columns
+-----------------------------
+
+The list of columns is a list of `Col` objects.  These objects don't
+have functionality in themselves, but give you a way to specify the
+column.
+
+`dbName`:
+    This is the name of the column in the database.  If you don't
+    give a name, your Pythonic name will be converted from 
+    mixed-case to underscore-separated.
+`default`:
+    The default value for this column.  Used when creating a new row.
+    If you give a callable object or function, the function will be
+    called, and the return value will be used.  So you can give
+    ``DateTime.now`` to make the default value be the current time.
+    Or you can use ``SQLBuilder.func.NOW()`` to have the database use
+    the ``NOW()`` function internally.  If you don't give a default
+    there will be an exception if this column isn't specified in the
+    call to `new`.
+`alternateID`:
+    This boolean (default False) indicates if the column can be used
+    as an ID for the field (for instance, a username), though it is
+    not a primary key.  If so a class method will be added, like
+    ``byUsername`` which will return that object.  Use
+    `alternateMethodName` if you don't like the ``by*`` name
+    (e.g. ``alternateMethodName="username"``).
+    
+    The column should be declared ``UNIQUE`` in your table schema.
+`unique`:
+    If true, when SQLObject creates a table it will declare this
+    column to be ``UNIQUE``.
+`notNone`:
+    If true, None/``NULL`` is not allowed for this column.  Useful if
+    you are using SQLObject to create your tables.
+`sqlType`:
+    The SQL type for this column (like ``INT``, ``BOOLEAN``, etc).
+    You can use classes (defined below) for this, but if those don't
+    work it's sometimes easiest just to use `sqlType`.  Only necessary
+    if SQLObject is creating your tables.
+
+Subclasses of Col
+~~~~~~~~~~~~~~~~~
+
+The `ForeignKey` class should be used instead of `Col` when the column
+is a reference to another table/class.  It is generally used like
+``ForeignKey('Role')``, in this instance to create a reference to a
+table `Role`.  This is largely equivalent to ``Col(foreignKey='Role',
+sqlType='INT')``.  Two attributes will generally be created, ``role``,
+which returns a `Role` instance, and ``roleID``, which returns an
+integer ID for the related role.
+
+There are some other subclasses of `Col`.  These are used to indicate
+different types of columns, when SQLObject creates your tables.
+
+`BoolCol`:
+    Will create a ``BOOLEAN`` column in Postgres, or ``INT`` in other
+    databses.  It will also convert values to ``"t"/"f"`` or ``0/1``
+    according to the database backend.
+`CurrencyCol`:
+    Equivalent to ``DecimalCol(size=10, precision=2)``.
+`DateTimeCol`:
+    A date and time (usually returned as an mxDateTime object).
+`DecimalCol`:
+    Base-10, precise number.  Uses the keyword arguments `size` for
+    number of digits stored, and `precision` for the number of digits
+    after the decimal point.
+`EnumCol`:
+    One of several string values -- give the possible strings as a
+    list, with the `enumValues` keyword argument.  MySQL has a native
+    ``ENUM`` type, but will work with other databases too (storage
+    just won't be as efficient).
+`FloatCol`:
+    Floats.
+`ForeignKey`:
+    A key to another table/class.  Use like ``user =
+    ForeignKey('User')``.
+`IntCol`:
+    Integers.
+`StringCol`:
+    A string (character) column.  Extra keywords:
+
+    `length`:
+        If given, the type will be something like ``VARCHAR(length)``.
+        If not given, then ``TEXT`` is assumed (i.e., lengthless).
+    `varchar`:
+        A boolean; if you have a length, differentiates between
+        ``CHAR`` and ``VARCHAR``, default True, i.e., use
+        ``VARCHAR``.
+
+SQLObject Class: Specifying Your Class
+--------------------------------------
+
+In addition to the columns, there are a number of other special
+attributes you can set in your class.
+
+`_connection`:
+    The connection object to use, from `DBConnection`.  You can also
+    set the variable `__connection__` in the enclosing module and it
+    will be picked up (be sure to define `__connection__` before you
+    class).  You can also pass a connection object in at instance
+    creation time, as described in transactions_.
+
+`_table`:
+    The database name of the table for this class.  If you don't give
+    a name, then the standard ``MixedCase`` to ``mixed_case``
+    translation is performed.
+
+`_joins`:
+    A list of `Join` objects.  This is covered below.
+
+`_cacheValues`:
+    If set to ``False`` then values for attributes from the database
+    won't be cached.  So everytime you access an attribute in the
+    object the database will be queried for a value.  If you want to
+    handle concurrent access to the database from multiple processes
+    then this is probably the way to do so.  You should also use
+    it with transactions_ (it is not implied).
+
+.. _idName:
+
+`_idName`:
+    The name of the primary key column (default ``id``).
+
+`_style`:
+    A style object -- this object allows you to use other algorithms
+    for translating between Python attribute and class names, and the
+    database's column and table names.  See `Changing the Naming
+    Style`_ for more.
+
+.. Relationships_:
+
+Relationships Between Classes/Tables
+------------------------------------
+
+You can use the `ForeignKey` to handle foreign references in a table,
+but for back references and many-to-many relationships you'll use
+joins.
+
+MultipleJoin: One-to-Many
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+See `One-to-Many Relationships`_ for an example of one-to-many
+relationships.  
+
+Several keyword arguments are allowed to the `MultipleJoin` constructor:
+
+.. _`Multiple Join Keywords`:
+
+`joinColumn`:
+    The column name of the key that points to this table.  So, if you have
+    a table ``Product``, and another table has a column ``ProductNo`` that
+    points to this table, then you'd use ``joinColumn="ProductNo"``.
+`orderBy`:
+    Like the `orderBy`_ argument to `select()`, you can specify
+    the order that the joined objects should be returned in.  `_defaultOrder`
+    will be used if not specified; ``None`` forces unordered results.
+`joinMethodName`:
+    When adding joins dynamically (using the class method `addJoin`_),
+    you can give the name of the accessor for the join.  It can also be
+    created automatically, and is normally implied (i.e., ``addresses = 
+    MultipleJoin(...)`` implies ``joinMethodName="addresses"``).
+
+RelatedJoin: Many-to-Many
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+See `Many-to-Many Relationships`_ for examples of using many-to-many joins.
+
+`RelatedJoin` has all the keyword arguments of `MultipleJoin`__, plus:
+
+__ `Multiple Join Keywords`_
+
+`otherColumn`:
+    Similar to `joinColumn`, but referring to the joined class.
+`intermediateTable`:
+    The name of the intermediate table which references both classes.
+`addRemoveName`:
+    In the `user/role example`__, the methods `addRole(role)` and 
+    `removeRole(role)` are created.  The ``Role`` portion of these
+    method names can be changed by giving a string value here.
+
+__ `Many-to-Many Relationships`_
+
+An example schema that requires the use of `joinColumn`, `otherColumn`,
+and `intermediateTable`::
+
+    CREATE TABLE person (
+        id SERIAL,
+        username VARCHAR(100) NOT NULL UNIQUE
+    );
+
+    CREATE TABLE role (
+        id SERIAL,
+        name VARCHAR(50) NOT NULL UNIQUE
+    );
+
+    CREATE TABLE assigned_roles (
+        person INT NOT NULL,
+        role INT NOT NULL
+    );
+
+Then the usage in a class::
+
+    class Person(SQLObject):
+        username = StringCol(length=100, alternateID=True)
+        roles = RelatedJoin('Role', joinColumn='person', otherColumn='role', 
+                            intermediateTable='assigned_roles')
+    class Role(SQLObject):
+        name = StringCol(length=50, alternateID=True)
+        roles = RelatedJoin('Person', joinColumn='role', otherColumn='person', 
+                            intermediateTable='assigned_roles')
+
+Transactions
+------------
+
+Transaction support in SQLObject is left to the database.
+Transactions can be used like:
+
+.. raw:: html
+   :file: ../examples/snippets/transactions1.html
+
+The ``trans`` object here is essentially a wrapper around a single
+database connection, and `commit` and `rollback` just pass that
+message to the `psycopg` connection.
+
+If you want to use transactions you should also turn `_cacheValues`
+off, like:
+
+.. raw:: html
+   :file: ../examples/snippets/transactions2.html
+
+Automatic Schema Generation
+---------------------------
+
+All the connections support creating and droping tables based on the
+class definition.  First you have to prepare your class definition,
+which means including type information in your columns (though
+DBMConnection_ do not require or use type information).
+
+Columns Types
+~~~~~~~~~~~~~
+
+A column type is indicated by using a subclass of `Col`:
+
+`StringCol`:
+    StringCol represents ``CHAR``, ``VARCHAR``, and ``TEXT``.  The
+    `length` keyword argument indicates the ``CHAR`` or ``VARCHAR``
+    length -- if not given, then ``TEXT`` is assumed.  If you use
+    ``varchar=False`` then ``CHAR`` will be used, otherwise 
+    ``VARCHAR`` is the default.
+`IntCol`:
+    The ``INT`` type.
+`FloatCol`:
+    The ``FLOAT`` type.
+`DecimalCol`:
+    The ``DECIMAL`` SQL type, i.e., base 10 number.  The keyword 
+    arguments `size` and `precision` indicate the scope.  So
+    ``DecimalCol(size=5, precision=2)`` is a number like ###.##,
+    i.e., 5 digits, two of them past the decimal point.
+`CurrencyCol`:
+    Like ``DecimalCol(size=10, precision=2)``.
+`EnumCol`:
+    A MySQL ``ENUM``, i.e., one of a finite number of strings.
+    For other databases this will be a ``VARCHAR``.
+`DateTimeCol`:
+    A moment in time.  ``TIMESTAMP`` in Postgres, and ``DATETIME``
+    in MySQL.  Note the names of these columns match the *Python*
+    type names, not the SQL names.
+`ForeignKey`:
+    This is a reference to another table.  You typically need to
+    only give the name of the foreign class that is referenced.
+    `ForeignKey` implies an ``INT`` column.
+
+Creating and Dropping Tables
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+To create a table call `createTable`.  It takes two arguments:
+
+`ifNotExists`: 
+    If the table already exists, then don't try to create it.  Default
+    False.
+`createJoinTables`: 
+    If you used `Many-to-Many relationships`_, then the intermediate tables
+    will be created (but only for one of the two involved classes).
+    Default True.
+
+`dropTable` takes arguments `ifExists` and `dropJoinTables`,
+self-explanatory.
+
+Dynamic Classes
+===============
+
+SQLObject classes can be manipulated dynamically.  This leaves open
+the possibility of constructing SQLObject classes from an XML file,
+from database introspection, or from a graphical interface.
+
+Automatic Class Generation
+---------------------------
+
+SQLObject can read the table description from the database, and fill
+in the class columns (as would normally be described in the `_columns`
+attribute).  Do this like::
+
+    class Person(SQLObject):
+
+        _fromDatabase = True
+
+You can still specify columns (in `_columns`), and only missing
+columns will be added.  
+
+*This is not supported in SQLite*
+
+Runtime Column Changes
+----------------------
+
+*SQLite does not support this feature*
+
+You can add and remove columns to your class at runtime.  Such changes
+will effect all instances, since changes are made inplace to the
+class.  There are two methods, `addColumn` and `delColumn`, both of
+which take a `Col` object (or subclass) as an argument.  There's also
+an option argument `changeSchema` which, if True, will add or drop the
+column from the database (typically with an ``ALTER`` command).
+
+When adding columns, you must pass the name as part of the column
+constructor, like ``StringCol("username", length=20)``.  When removing
+columns, you can either use the Col object (as found in `_columns`, or
+which you used in `addColumn`), or you can use the column name (like
+``MyClass.delColumn("username")``).
+
+.. _addJoin:
+
+You can also add Joins__, like 
+``MyClass.addJoin(MultipleJoin("MyOtherClass"))``, and remove joins with
+`delJoin`.  `delJoin` does not take strings, you have to get the join
+object out of the `_joins` attribute.
+
+__ Relationships_:
+
+Legacy Database Schemas
+=======================
+
+Often you will have a database that already exists, and does not use
+the naming conventions that SQLObject expects, or does not use any
+naming convention at all.
+
+SQLObject requirements
+----------------------
+
+While SQLObject tries not to make too many requirements on your
+schema, some assumptions are made.  Some of these may be relaxed in
+the future.  (Of course, none of this applies to DBMConnection)
+
+All tables that you want to turn into a class need to have an integer
+primary key.  That key should be defined like:
+
+MySQL:
+    ``INT PRIMARY KEY AUTO_INCREMENT``
+Postgres:
+    ``SERIAL PRIMARY KEY``
+SQLite:
+    ``INTEGER PRIMARY KEY``
+
+SQLObject does not support non-integer keys (that may change).  It
+does not support sequences in Postgres (that will change -- ``SERIAL``
+uses an implicit sequence).  It does not support primary keys made up
+of multiple columns (that probably won't change).  It does not
+generally support tables with primary keys with business meaning --
+i.e., primary keys are assumed to be immutable (that won't change).
+
+At the moment foreign key column names must end in ``"ID"``
+(case-insensitive).  This restriction will probably be removed in the
+next release.
+
+Changing the Naming Style
+-------------------------
+
+By default names in SQLObject are expected to be mixed case in Python
+(like ``mixedCase``), and underscore-separated in SQL (like
+``mixed_case``).  This applies to table and column names.  The primary
+key is assumed to be simply ``id``.
+
+Other styles exist.  A typical one is mixed case column names, and a
+primary key that includes the table name, like ``ProductID``.  You can
+use a different "Style" object to indicate a different naming
+convention.  For instance:
+
+.. raw:: html
+   :file: ../examples/snippets/style1.html
+
+If you use ``Person.createTable()``, you'll get::
+
+    CREATE TABLE Person (
+        PersonID INT PRIMARY KEY,
+        FirstName Text,
+        LastName Text
+    )
+
+The `MixedCaseStyle` object handles the initial capitalization of
+words, but otherwise leaves them be.  By using ``longID=True``, we
+indicate that the primary key should look like a normal reference
+(``PersonID`` for `MixedCaseStyle`, or ``person_id`` for the default
+style).
+
+If you wish to change the style globally, assign the style to the
+connection, like:
+
+.. raw:: html
+   :file: ../examples/snippets/default-style.html
+
+Irregular Naming
+----------------
+
+While naming conventions are nice, they are not always present.  You
+can control most of the names that SQLObject uses, independent of the
+Python names (so at least you don't have to propagate the
+irregularity to your brand-spanking new Python code).
+
+Here's a simple example:
+
+.. raw:: html
+   :file: ../examples/snippets/style-table.html
+
+The attribute `_table` overrides the table name.  `_idName` provides
+an alternative to ``id``.  The ``dbName`` keyword argument gives the
+column name.
+
+Non-Integer Keys
+----------------
+
+While not strictly a legacy database issue, this fits into the
+category of "irregularities".  If you use non-integer keys, all
+primary key management is up to you.  You must create the table
+yourself, and when you create instances you must pass a ``id`` keyword
+argument into ``new`` (like ``Person.new(id='555-55-5555', ...)``).
+
+DBConnection: Database Connections
+==================================
+
+The `DBConnection` module currently has four external classes,
+`MySQLConnection`, `PostgresConnection`, `SQLiteConnection`, 
+and `DBMConnection`.
+
+You can pass the keyword argument `debug` to any connector.  If set to
+true, then any SQL sent to the database will also be printed to the
+console.
+
+MySQL
+-----
+
+`MySQLConnection` takes the keyword arguments `host`, `db`, `user`,
+and `passwd`, just like `MySQLdb.connect` does.
+
+MySQLConnection supports all the features, though MySQL does not
+support transactions_ (except using a special proprietary backend that
+I haven't used).
+
+Postgres
+--------
+
+`PostgresConnection` takes a single connection string, like
+``"dbname=something user=some_user"``, just like `psycopg.connect`.
+You can also use the same keyword arguments as for `MySQLConnection`,
+and a dsn string will be constructed.
+
+PostgresConnection supports transactions and all other features.
+
+SQLite
+------
+
+`SQLiteConnection` takes the a single string, which is the path to the
+database file.  
+
+SQLite puts all data into one file, with a journal file that is opened
+in the same directory during operation (the file is deleted when the
+program quits).  SQLite does not restrict the types you can put in a
+column -- strings can go in integer columns, dates in integers, etc.
+
+SQLiteConnection doesn't support `automatic class generation`_ and
+SQLite does not support `runtime column changes`_ or transactions_.
+
+SQLite may have concurrency issues, depending on your usage in a
+multi-threaded environment.
+
+Firebird
+--------
+
+`FirebirdConnection` takes the arguments `host`, `db`, `user` (default
+``"sysdba"``), `passwd` (default ``"masterkey"``).
+
+Firebird supports all the features.  Support is still young, so there
+may be some issues, especially with concurrent access, and especially
+using lazy selects.  Try ``list(MyClass.select())`` to avoid
+concurrent cursors if you have problems (using ``list()`` will
+pre-fetch all the results of a select).
+
+Firebird support uses the kinterbasdb_ Python library.
+
+.. _kinterbasdb: http://kinterbasdb.sourceforge.net/
+
+DBMConnection
+-------------
+
+`DBMConnection` takes a single string, which is the path to a
+directory in which to store the database.
+
+DBMConnection uses flat hash databases to store all the data.  These
+databases are created by the standard `anydbm` module.  This is
+something of an experiment, and things like safety under concurrent
+access (multithreaded or multiprocess) should not be expected.  The
+select interface using the magic ``q`` attribute is supported, though
+other SQL is not supported.
+
+DBMConnection allows any kind of objects to be put in columns -- all
+values are pickled, and so only normal pickling restrictions apply.
+
+DBMConnection does not support `automatic class generation` or
+transactions_.
+
+Exported Symbols
+================
+
+You can use ``from SQLObject import *``, though you don't have to.  It
+exports a minimal number of symbols.  The symbols exported:
+
+From `SQLObject.SQLObject`:
+
+* `NoDefault`
+* `SQLObject`
+* `getID`
+* `getObject`
+
+From `SQLObject.DBConnection`:
+
+* `MySQLConnection`
+* `PostgresConnection`
+* `SQLiteConnection`
+* `DBMConnection`
+
+From `SQLObject.Col`:
+* `Col`
+* `StringCol`
+* `IntCol`
+* `FloatCol`
+* `KeyCol`
+* `ForeignKey`
+* `EnumCol`
+* `DateTimeCol`
+* `DecimalCol`
+* `CurrencyCol`
+
+From `SQLObject.Join`:
+* `MultipleJoin`
+* `RelatedJoin`
+
+From `SQLObject.Style`:
+* `Style`
+* `MixedCaseUnderscoreStyle`
+* `DefaultStyle`
+* `MixedCaseStyle`
+
+From `SQLObject.SQLBuilder`:
+
+* `AND`
+* `OR`
+* `NOT`
+* `IN`
+* `LIKE`
+* `DESC`
+* `CONTAINSSTRING`
+* `const`
+* `func`
+
+For more information on SQLBuilder, read the `SQLBuilder
+Documentation`_.
+
+.. _`SQLBuilder Documentation`: SQLBuilder.html

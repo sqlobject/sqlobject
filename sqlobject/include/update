@@ -1,0 +1,7 @@
+#!/bin/sh
+
+cd `dirname $0`
+echo cd `dirname $0`
+echo 'Validator.py'
+cp ~/w/Sandbox/ianbicking/FormEncode/Validator.py .
+echo cp ~/w/Sandbox/ianbicking/FormEncode/Validator.py .

@@ -1,0 +1,18 @@
+#!/bin/sh
+VERSION=""
+if [ "$1" = "2.3" ] ; then
+  VERSION=2.3
+  shift
+elif [ "$1" = "2.2" ] ; then
+  VERSION=2.2
+  shift
+fi
+
+if [ "$1" = "cover" ] ; then
+  shift
+  sudo python$VERSION setup.py -q install
+  python$VERSION ./tests/coverage.py -x tests/test.py $*
+  ./tests/coverage.py -a `find tests SQLObject -name '*.py'`
+else
+  sudo python$VERSION setup.py -q install && python$VERSION tests/test.py $*
+fi

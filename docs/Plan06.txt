@@ -1,0 +1,297 @@
+SQLObject 0.6
+=============
+
+*A tentative plan, 20 Jan 2004*
+
+Introduction
+------------
+
+During vacation I thought about some changes that I might like to make
+to SQLObject.  Several of these change the API, but not too
+drastically, and I think they change the API for the better.  And we'd
+not at 1.0 yet, changes are still allowed!  Here's my ideas...
+
+Editing Context
+---------------
+
+Taken from Modeling, the "editing context" is essentially a
+transaction, though it also encompasses some other features.
+Typically it is used to distinguish between separate contexts in a
+multi-threaded program.
+
+This is intended to separate several distinct concepts:
+
+* The database backend (MySQL, PostgreSQL, etc), coupled with the
+  driver (MySQLdb, psycopg, etc).  (Should the driver be part of the
+  connection parameters?)
+* The connection parameters.  Typically these are the server host,
+  username, and password, but they could also be a filename or other
+  path.  Perhaps this could be represented with a URI, ala PEAK, but
+  I also dislike taking structured data and destructuring it (i.e.,
+  packing it into a string).  OTOH, URLs are structured, even if they
+  require some parsing.  Serialization of URLs is free and highly
+  transparent.  Python syntax is well structured and
+  *programmatically* considerably more transparent (in a robust
+  fashion), but also programmatically fairly read-only (because it is
+  embedded in the structure of Python source code).  We can also have
+  both.
+* The database transactional context.
+* The application transactional context (preferably these two would
+  be seemless, but they still represent somewhat distinct entities,
+  and a portability layer might be nice).  The application's
+  transactional context may include other transactions -- e.g.,
+  multiple databases, a ZODB transaction, etc.
+* The cache policy.  There are many different kinds of caches
+  potentially involved, include write batching, and per-object and
+  per-table caches, connection pooling, and so on.
+* Classes, which on the database side are typically tables.  (This
+  proposal does not attempt to de-couple classes and tables)
+
+Example::
+
+    from SQLObject import EditingContext
+    ec = EditingContext()
+    # every editing context automatically picks up all the SQLObject 
+    # classes, all magic like.
+    person = ec.Person.get(1) # by ID
+    ec2 = EditingContext() # separate transaction
+    person2 = ec.Person.get(1)
+    assert person is not person2
+    assert person.id == person2.id
+    assert person.fname == 'Guy'
+    person.fname = 'Gerald'
+    assert person2.fname == 'Guy'
+    ec.commit() # SQL is not sent to server
+    assert person2.fname == 'Guy' # Doesn't see changes
+    person2.fname = 'Norm'
+    # raises exception if locking is turned on; overwrites if locking
+    # is not turned on.  (Locking enabled on a per-class level)
+
+I'm not at all sure about that example.  Mostly the confusing parts
+relate to locking and when the database lookup occurs (and how late a
+conflict exception may be raised).
+
+Somewhere in here, process-level transactions might fit in.  That is,
+even on a backend that doesn't support transactions, we can still
+delay SQL statements until a commit/rollback is performed.  In turn,
+we can create temporary "memory" objects, which is any object which
+hasn't been committed to the database in any way.  To do this we'll
+need sequences -- to preallocate IDs -- which MySQL and SQLite don't
+really provide :(
+
+Nested transactions...?  Maybe they'd fall out of this fairly easily,
+especially if we define a global context, with global caches etc.,
+then further levels of context will come for free.
+
+We still need to think about an auto-commit mode.  Maybe the global
+context would be auto-commit.
+
+Caching
+-------
+
+Really doing transactions right means making caching significantly
+more complex.  If the cache is purely transaction-specific, then we'll
+really be limiting the effectiveness of the cache.  With that in mind,
+a copy-on-write style of object is really called for -- when you fetch
+an object in a transaction, you can use the globally cached instance
+until you write to the object.
+
+Really this isn't copy-on-write, it's more like a proxy object.  Until
+the object is changed, it can delegate all its columns to its global
+object for which it is a proxy.  Of course, traversal via foreign keys
+or joins must also return proxied objects.  As the object is changed
+-- perhaps on a column-by-column basis, or as a whole on the first
+change -- the object takes on the personality of a full SQLObject
+instance.
+
+When the transaction is committed, this transactional object copies
+itself to the global object, and becomes a full proxy.  These
+transactional caches themselves should be pooled -- so that when
+another transaction comes along you have a potentially useful set of
+proxy objects already created for you.  This is a common use case for
+web applications, which have lots of short transactions, which are
+often very repetitive.
+
+In addition to this, there should be more cache control.  This means
+explicit ways to control things like:
+
+1. Caching of instances:
+   + Application/process-global definition.
+   + Database-level definition.
+   + Transaction/EditingContext-level definition.
+   + Class-level definition.
+2. Caching of columns:
+   + Class-level.
+3. Cache sweep frequency:
+   + Application/process-global.
+   + Database-level.
+   + Class-level.
+   + Doesn't need to be as complete as 1; maybe on the class level you
+     could only indicate that a certain class should not be sweeped.
+   + Sweep during a fetch (e.g., every 100 fetches), by time or fetch
+     frequency, or sweep with an explicit call (e.g., to do sweeps in
+     a separate thread).
+4. Cache sweep policy:
+   + Maximum age.
+   + Least-recently-used (actually, least-recently-fetched).
+   + Random (the current policy).
+   + Multi-level (randomly move objects to a lower-priority cache,
+     raise level when the object is fetched again).
+   + Target cache size (keep trimming until the cache is small
+     enough).
+   + Simple policy (if enough objects qualify, cache can be of any
+     size).
+   + Percentage culling (e.g., kill 33% of objects for each sweep;
+     this is the current policy).
+5. Batching of updates (whether updates should immediately go to the
+   database, or whether it would be batched until a commit or other
+   signal).
+6. Natural expiring of objects.  Even if an object must persist
+   because there are still references, we could expire it so that
+   future accesses re-query the database.  To avoid stale data.
+
+Expose some methods of the cache, like getting all objects currently
+in memory.  These would probably be exposed on a class level, e.g.,
+all the Addresses currently in memory via
+``Address.cache.current()`` or something.  What about when there's a
+cached instance in the parent context, but not in the present
+transaction?
+
+Columns as Descriptors
+----------------------
+
+Each column will become a descriptor.  That is, ``Col`` and subclasses
+will return an object with ``__get__`` and ``__set__`` methods.  The
+metaclass will not itself generate methods.
+
+A metaclass will still be used so that the descriptor can be tied to
+its name, e.g., that with ``fname = StringCol()``, the resultant
+descriptor will know that it is bound to ``fname``.
+
+By using descriptors, introspection should become a bit easier -- or
+at least more uniform with respect to other new-style classes.
+Various class-wide indexes of columns will still be necessary, but
+these should be able to remain mostly private.
+
+To customize getters or setters (which you currently do by defining a
+``_get_columnName`` or ``_set_columnName`` method), you will pass
+arguments to the ``Col`` object, like::
+
+    def _get_name(self, dbGetter):
+        return dbGetter().strip()
+
+    name = StringCol(getter=_get_name)
+
+This gets rid of ``_SO_get_columnName`` as well.  We can
+transitionally add something to the metaclass to signal an error if a
+spurious ``_get_columnName`` method is sitting around.
+
+Construction and Fetching
+-------------------------
+
+Currently you fetch an object with class instantiation, e.g.,
+``Address(1)``.  This may or may not create a new instance, and does
+not create a table row.  If you want to create a table row, you do
+something like ``Address.new(city='New York', ...)``.  This is
+somewhat in contrast to normal Python, where class instantiation
+(calling a class) will create a new object, while objects are fetched
+otherwise (with no particular standard interface).
+
+To make SQLObject classes more normal in this case, ``new`` will
+become ``__init__`` (more or less), and classes will have a ``get``
+method that gets an already-existant row.  E.g., ``Address.get(1)``
+vs. ``Address(city='New York', ...)``.  This is perhaps the most
+significant change in SQLObject usage.  Because of the different
+signatures, if you forget to make a change someplace you will get an
+immediate exception, so updating code should not be too hard.
+
+Extra Table Information
+-----------------------
+
+People have increasingly used SQLObject to create tables, and while it
+can make a significant number of schemas, there are several extensions
+of table generation that people occasionally want.  Since these occur
+later in development, it would be convenient if SQLObject could grow
+as the complexity of the programs using it grow.  Some of these
+extensions are:
+
+* Table name (``_table``).
+* Table type for MySQL (e.g., MyISAM vs. InnoDB).
+* Multi-column unique constraints. (Other constraints?)
+* Indexes.  (Function or multi-column indexes?)
+* Primary key type.  (Primary key generation?)
+* Primary key sequence names (for Postgres, Firebird, Oracle, etc).
+* Multi-column primary keys.
+* Naming scheme.
+* Permissions.
+* Locking (e.g., optimistic locking).
+* Inheritance (see Daniel Savard's recent patch).
+* Anything else?
+
+Some of these may be globally defined, or defined for an entire
+database.  For example, typically you'll want to use a common MySQL
+table type for your entire database, even though its defined on a
+per-table basis.  And while MySQL allows global permission
+declarations, Postgres does not and requires tedious repetitions of
+the permissions for each table -- so while it's applied on a per-table
+basis, it's likely that (at least to some degree) a per-database
+declaration is called for.  Naming schemes are also usually
+database-wide.
+
+As these accumulate -- and by partitioning this list differently, the
+list could be even longer -- it's messy to do these all as special
+class variables (``_idName``, etc).  It also makes the class logic and
+its database implementation details difficult to distinguish.  Some
+of these can be handled elegantly like ``id = StringCol()`` or ``id
+= ("fname", "lname")``.  But the others perhaps should be put into a
+single instance variable, perhaps itself a class::
+
+    class Address(SQLObject):
+        class SQLMeta:
+            mysqlType = 'InnoDB'
+            naming = Underscore
+            permission = {'bob': ['select', 'insert'],
+                          'joe': ['select', 'insert', 'update'],
+                          'public': ['select']}
+        street = StringCol()
+        ....
+
+The metadata is found by its name (``SQLMeta``), and is simply a
+container.  The class syntax is easier to write and read than a
+dictionary-like syntax.  Or, it could be a proper class/instance and
+provide a partitioned way to handle introspection.  E.g.,
+``Address.SQLMeta.permission.get('bob')`` or
+``Address.SQLMeta.columns``.  In this case values that weren't
+overridden would be calculated from defaults (like the default naming
+scheme and so on).  
+
+I'm not at all certain about how this should look, or if there are
+other things that should go into the class-meta-data object.
+
+Joins, Foreign Keys
+-------------------
+
+First, the poorly-named ``MultipleJoin`` and ``RelatedJoin`` (which
+are rather ambiguous) will be renamed ``ManyToOneJoin`` and
+``ManyToManyJoin``.  ``OneToOneJoin`` will also be added, while
+``ForeignKey`` remains the related column type.  (Many2Many?
+Many2many?  many2many?)
+
+ForeignKey will be driven by a special validator/converter. (But will
+this make ID access more difficult?)
+
+Joins will return smart objects which can be iterated across.  These
+smart objects will be related to ``SelectResults``, and allow the
+same features like ordering.  In both cases, an option to retrieve
+IDs instead of objects will be allowed.
+
+These smarter objects will allow, in the case of ManyToManyJoin,
+``Set`` like operations to relate (or unrelate) objects.  For
+ManyToOneJoin the list/set operations are not really appropriate,
+because they would reassign the relation, not just add or remove
+relations.
+
+It would be nice to make the Join protocol more explicit and public,
+so other kinds of joins (e.g., three-way) could be more accessible.
+
+

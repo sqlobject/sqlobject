@@ -1,0 +1,48 @@
+BODY
+{
+  margin-left: 1em;
+  margin-right: 1em;
+  border: 0px;
+  padding: 0px;
+  font-family: helvetica, ariel;
+  color: #445566;
+  }
+
+H1, H2 {
+  font-family: helvetica;
+}
+
+PRE
+{
+  padding: 5px;
+  font-family: Courier Bold, Courier;
+  border: thin black solid;
+  background-color: #f5f5f5;
+  font-size: medium;
+}
+
+HR
+{
+  display: inline;
+  }
+
+UL
+{
+  padding: 0px;
+  margin: 0px;
+  margin-left: 1em;
+  padding-left: 1em;
+  border-left: 1em;
+  }
+
+LI
+{
+  padding: 2px;
+  }
+
+.footer
+{
+  position: absolute;
+  bottom: 0.5em;
+  text-align: right;
+}

@@ -1,0 +1,15 @@
+Authors
+=======
+
+SQLObject was originally written and continues to be maintained by Ian
+Bicking <ianb@colorstudy.com>
+
+Contributions have been made by:
+
+* Frank Barknecht <fbar at footils.org>
+* Bud P. Bruegger <bug at sistema.it>
+* David M. Cook <dave at davidcook.org>
+* Luke Opperman <luke at metathusalan.com>
+* James Ralston <jralston at hotmail.com>
+* Sidnei da Silva <sidnei at awkly.org>
+* Brad Bollenbach <brad at bbnet.ca>

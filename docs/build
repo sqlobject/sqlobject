@@ -1,0 +1,7 @@
+#!/bin/sh
+
+pushd ../examples > /dev/null
+./examplestripper.py
+popd > /dev/null
+buildhtml.py --no-toc-backlinks 
+
