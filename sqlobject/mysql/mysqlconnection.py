@@ -27,8 +27,19 @@ class MySQLConnection(DBAPI):
     connectionFromURI = classmethod(connectionFromURI)
 
     def makeConnection(self):
-        return MySQLdb.connect(host=self.host, port=self.port, db=self.db,
-                               user=self.user, passwd=self.password)
+        try:
+            conn = self.module.connect(host=self.host, port=self.port,
+                db=self.db, user=self.user, passwd=self.password)
+        except self.module.OperationalError, e:
+            raise self.module.OperationalError(
+                "%s; used connection string: host=%s, port=%s, db=%s, user=%s, pwd=%s" % (
+                e, self.host, self.port, self.db, self.user, self.password)
+            )
+
+        if hasattr(conn, 'autocommit'):
+            conn.autocommit(self.autoCommit)
+
+        return conn
 
     def _executeRetry(self, conn, cursor, query):
         while 1:
