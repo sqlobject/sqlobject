@@ -1,4 +1,5 @@
 from sqlobject.dbconnection import DBAPI
+from sqlobject import col
 Sybase = None
 
 class SybaseConnection(DBAPI):
@@ -128,13 +129,13 @@ class SybaseConnection(DBAPI):
                    (tableName,
                     column.dbName))
 
-    SHOW_COLUMNS=("select 'column' = COL_NAME(id, colid) "
-                  "from syscolumns where id = OBJECT_ID(%s)")
+    SHOW_COLUMNS=('SELECT COLUMN_NAME, DATA_TYPE, IS_NULLABLE, COLUMN_DEFAULT FROM INFORMATION_SCHEMA.COLUMNS '
+                  'WHERE TABLE_NAME = \'%s\'')
     def columnsFromSchema(self, tableName, soClass):
         colData = self.queryAll(self.SHOW_COLUMNS
                                 % tableName)
         results = []
-        for field, t, nullAllowed, key, default, extra in colData:
+        for field, t, nullAllowed, default in colData:
             if field == 'id':
                 continue
             colClass, kw = self.guessClass(t)
@@ -143,6 +144,7 @@ class SybaseConnection(DBAPI):
             kw['default'] = default
             # @@ skip key...
             # @@ skip extra...
+            kw['forceDBName'] = True
             results.append(colClass(**kw))
         return results
 
