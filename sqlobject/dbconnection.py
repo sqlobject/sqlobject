@@ -268,11 +268,16 @@ class DBAPI(DBConnection):
                  (cls._table, cls._idName,
                   ", ".join(select.tables))
         else:
-            q += "%s.%s, %s FROM %s WHERE " % \
-                 (cls._table, cls._idName,
-                  ", ".join(["%s.%s" % (cls._table, col.dbName)
-                             for col in cls._SO_columns]),
-                  ", ".join(select.tables))
+            columns = ", ".join(["%s.%s" % (cls._table, col.dbName)
+                                 for col in cls._SO_columns])
+            if columns:
+                q += "%s.%s, %s FROM %s WHERE " % \
+                     (cls._table, cls._idName, columns,
+                      ", ".join(select.tables))
+            else:
+                q += "%s.%s FROM %s WHERE " % \
+                     (cls._table, cls._idName,
+                      ", ".join(select.tables))
 
         return self._addWhereClause(select, q)
 
