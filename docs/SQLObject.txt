@@ -1082,9 +1082,10 @@ MySQL
 `MySQLConnection` takes the keyword arguments `host`, `db`, `user`,
 and `passwd`, just like `MySQLdb.connect` does.
 
-MySQLConnection supports all the features, though MySQL does not
-support transactions_ (except using a special proprietary backend that
-I haven't used).
+MySQLConnection supports all the features, though MySQL only supports
+transactions_ when using the InnoDB backend, and SQLObject currently
+does not have support for explicitly defining the backend when using
+``createTable``.
 
 Postgres
 --------
