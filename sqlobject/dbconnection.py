@@ -181,6 +181,8 @@ class DBAPI(DBConnection):
             conn.close()
 
     def printDebug(self, conn, s, name, type='query'):
+        if name == 'Pool' and self.debug != 'Pool':
+            return
         if type == 'query':
             sep = ': '
         else:
