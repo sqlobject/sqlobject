@@ -51,11 +51,10 @@ except ImportError:
 else:
     mxdatetime_available = True
 
-if datetime_available:
-    DATETIME_IMPLEMENTATION = "datetime"
+DATETIME_IMPLEMENTATION = "datetime"
+MXDATETIME_IMPLEMENTATION = "mxDateTime"
 
 if mxdatetime_available:
-    MXDATETIME_IMPLEMENTATION = "mxDateTime"
     DateTimeType = type(DateTime.now())
 
 if datetime_available:
