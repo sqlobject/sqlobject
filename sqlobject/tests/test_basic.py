@@ -115,9 +115,7 @@ class TestSO7(SQLObject):
     name = StringCol(length=10, dbName='name_col')
 
 def test_foreignKeyDestroySelfCascade():
-    setupClass(TestSO7)
-    setupClass(TestSO6)
-    setupClass(TestSO5)
+    setupClass([TestSO7, TestSO6, TestSO5])
     
     tc5 = TestSO5(name='a')
     tc6a = TestSO6(name='1')
@@ -204,8 +202,7 @@ class TestSO9(SQLObject):
     name = StringCol(length=10, dbName='name_col')
 
 def testForeignKeyDestroySelfRestrict():
-    setupClass(TestSO9)
-    setupClass(TestSO8)
+    setupClass([TestSO9, TestSO8])
 
     tc8a = TestSO8(name='a')
     tc9a = TestSO9(name='1')
