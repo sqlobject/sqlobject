@@ -61,9 +61,9 @@ peeps = Person.select(
             AND(Address.q.personID == Person.q.id,
                 Address.q.zip.startswith('504')))
 print list(peeps)
-#        SELECT person.id FROM person, phone_number
-#        WHERE (phone_number.id = person.id AND
-#               phone_number.phone_number LIKE '612%');
+#        SELECT person.id FROM person, address
+#        WHERE (address.person_id = person.id AND
+#               address.zip LIKE '612%');
 ## end snippet
 
 ## Snippet "person-select3"
