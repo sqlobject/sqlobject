@@ -74,9 +74,11 @@ class ClassRegistry(object):
                 "%r, from the module %s in %s)"
                 % (cls.__name__,
                    other, other.__module__,
-                   sys.modules[other.__module__].__file__,
+                   getattr(sys.modules.get(other.__module__),
+                           '__file__', '(unknown)'),
                    cls, cls.__module__,
-                   sys.modules[cls.__module__].__file__))
+                   getattr(sys.modules.get(cls.__module__),
+                           '__file__', '(unknown)')))
         self.classes[cls.__name__] = cls
         if self.callbacks.has_key(cls.__name__):
             for callback, args, kw in self.callbacks[cls.__name__]:
