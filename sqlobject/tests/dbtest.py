@@ -96,7 +96,7 @@ class InstalledTestDatabase(sqlobject.SQLObject):
         reversed = list(soClasses)[:]
         reversed.reverse()
         for soClass in reversed:
-            table = soClass._table
+            table = soClass.sqlmeta.table
             if not soClass._connection.tableExists(table):
                 continue
             items = list(cls.selectBy(
@@ -115,7 +115,7 @@ class InstalledTestDatabase(sqlobject.SQLObject):
             else:
                 cls.clear(soClass)
         for soClass in soClasses:
-            table = soClass._table
+            table = soClass.sqlmeta.table
             if not soClass._connection.tableExists(table):
                 cls.install(soClass)
     installOrClear = classmethod(installOrClear)
@@ -131,7 +131,7 @@ class InstalledTestDatabase(sqlobject.SQLObject):
         else:
             sql = soClass.createTableSQL()
             soClass.createTable()
-        cls(tableName=soClass._table,
+        cls(tableName=soClass.sqlmeta.table,
             createSQL=sql,
             connectionURI=soClass._connection.uri())
     install = classmethod(install)
@@ -158,7 +158,7 @@ class InstalledTestDatabase(sqlobject.SQLObject):
         """
         This sets up *this* table.
         """
-        if not cls._connection.tableExists(cls._table):
+        if not cls._connection.tableExists(cls.sqlmeta.table):
             cls.createTable()
     setup = classmethod(setup)
 
@@ -216,11 +216,11 @@ def supports(feature):
     notSupport = supportsMatrix.get('-' + feature, None)
     if support is not None and dbName in support.split():
         return True
-    else:
+    elif support:
         return False
     if notSupport is not None and dbName in notSupport.split():
         return False
-    else:
+    elif notSupport:
         return True
     assert notSupport is not None or support is not None, (
         "The supportMatrix does not list this feature: %r"
