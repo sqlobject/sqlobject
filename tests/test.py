@@ -916,6 +916,10 @@ class LazyTest(SQLObjectTest):
     classes = [Lazy]
 
     def setUp(self):
+        # All this stuff is so that we can track when the connection
+        # does an actual update; we put in a new _SO_update method
+        # that calls the original and sets an instance variable that
+        # we can later check.
         SQLObjectTest.setUp(self)
         self.conn = Lazy._connection
         self.conn.didUpdate = False
