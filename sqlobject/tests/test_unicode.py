@@ -10,6 +10,15 @@ class Unicode1(SQLObject):
     col1 = UnicodeCol()
     col2 = UnicodeCol(dbEncoding='latin-1')
 
+try:
+    enumerate
+except NameError: # Python 2.2
+    def enumerate(list):
+        new_list = []
+        for i in range(len(list)):
+            new_list.append((i, list[0]))
+        return new_list
+
 def test_create():
     setupClass(Unicode1)
     data = [u'\u00f0', u'test', 'ascii test']

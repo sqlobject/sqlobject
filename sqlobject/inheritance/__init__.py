@@ -4,6 +4,13 @@ from sqlobject.main import SQLObject, SelectResults, True, False, makeProperties
 import iteration
 
 
+try:
+    basestring
+except NameError: # Python 2.2
+    import types
+    basestring = (types.StringType, types.UnicodeType)
+
+
 class InheritableSelectResults(SelectResults):
     IterationClass = iteration.InheritableIteration
 
