@@ -7,6 +7,14 @@ News
 
 .. _start:
 
+SQLObject 0.6.1
+===============
+
+Interface Changes
+-----------------
+
+* Added a connection parameter to all class methods (patch 974755)
+
 SQLObject 0.6
 =============
 
