@@ -15,17 +15,30 @@ Interface Changes
 
 * Added a connection parameter to all class methods (patch 974755)
 
+* Connection objects have a ``.module`` attribute, which points to
+  the DB-API module.  This is useful for getting access to the
+  exception objects.
+
+Features
+--------
+
 * Added indexing (from Jeremy Fitzhardinge).  See `the
   documentation`__ for more.
 
 .. __: SQLObject.html#indexes
 
-* Connection objects have a ``.module`` attribute, which points to
-  the DB-API module.  This is useful for getting access to the
-  exception objects.
+* All connections are explicitly closed, not just garbage collected.
+  Many database drivers don't close database connections properly when
+  the connection object is garbage collected.
 
 * New ``distinct`` option to selects, like ``MyClass.select(...,
   distinct=True)``
+
+* You can now do
+  ``MyClass.selectBy(joinedTable=joinedTableInstance)``, where before
+  you had to do
+  ``MyClass.selectBy(joinedTableID=joinedTableInstance.id)``.  (From
+  Dave Cook)
 
 SQLObject 0.6
 =============

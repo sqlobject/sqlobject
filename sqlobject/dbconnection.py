@@ -442,6 +442,22 @@ class DBAPI(DBConnection):
                           self.sqlrepr(value))
                          for key, value
                          in kw.items()])
+	terms = []
+	for key, value in kw.items():
+	    if hasattr(value, '_SO_joinDict'): #handle an object value
+		# find the joinColumn 
+		for join in value._SO_joinDict.values():
+		    if join.otherClass is soClass:
+			dbName = join.joinColumn
+			break
+		else: #if nothing found
+		    raise TypeError, "Cannot selectBy(%s=%r)" % (key, value)
+		value = value.id
+	    else:
+		dbName = soClass._SO_columnDict[key].dbName
+	    term = '%s = %s' % (dbName, self.sqlrepr(value))
+	    terms.append(term)
+	return ' AND '.join(terms)
 
     def sqlrepr(self, v):
         return sqlrepr(v, self.dbName)
