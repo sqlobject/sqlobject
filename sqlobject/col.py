@@ -534,7 +534,7 @@ class SODateTimeCol(SOCol):
     def _firebirdType(self):
         return 'TIMESTAMP'
         
-	def _maxdbType(self):
+    def _maxdbType(self):
 		return 'TIMESTAMP'
 
 class DateTimeCol(Col):
@@ -557,8 +557,8 @@ class SODateCol(SOCol):
     def _firebirdType(self):
         return 'DATE'
         
-	def _maxdbType(self):
-		return  'DATE'
+    def _maxdbType(self):
+        return  'DATE'
 
 class DateCol(Col):
     baseClass = SODateCol
