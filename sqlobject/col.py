@@ -354,12 +354,17 @@ class UnicodeStringValidator(validators.Validator):
         return unicode(value, self.db_encoding)
 
 class SOUnicodeCol(SOStringCol):
+    validatorClass = UnicodeStringValidator # can be overriden in descendants
 
     def __init__(self, **kw):
         self.dbEncoding = popKey(kw, 'dbEncoding', 'UTF-8')
         SOStringCol.__init__(self, **kw)
         self.validator = validators.All.join(
-            UnicodeStringValidator(self.dbEncoding), self.validator)
+            self.createValidator(), self.validator)
+
+    def createValidator(self):
+        """Create a validator for the column. Can be overriden in descendants."""
+        return self.validatorClass(self.dbEncoding)
 
 class UnicodeCol(Col):
     baseClass = SOUnicodeCol
@@ -392,13 +397,18 @@ class BoolValidator(validators.Validator):
             return sqlbuilder.TRUE
 
 class SOBoolCol(SOCol):
+    validatorClass = BoolValidator # can be overriden in descendants
 
     def __init__(self, **kw):
         SOCol.__init__(self, **kw)
-        self.validator = validators.All.join(BoolValidator(), self.validator)
+        self.validator = validators.All.join(self.createValidator(), self.validator)
 
     def autoConstraints(self):
         return [consts.isBool]
+
+    def createValidator(self):
+        """Create a validator for the column. Can be overriden in descendants."""
+        return self.validatorClass()
 
     def _postgresType(self):
         return 'BOOL'
