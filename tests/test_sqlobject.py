@@ -908,8 +908,6 @@ class ValidationTest(SQLObjectTest):
                           'name3', 'x')
         t.name3 = 1L
         self.assertEqual(t.name3, 1)
-        t.name3 = '1'
-        self.assertEqual(t.name3, 1)
         t.name3 = 0
         self.assertEqual(t.name3, 0)
 
