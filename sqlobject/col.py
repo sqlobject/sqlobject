@@ -386,10 +386,16 @@ class IntValidator(validators.Validator):
     def toPython(self, value, state):
         if value is None:
             return None
-        if not isinstance(value, (int, long, sqlbuilder.SQLExpression)):
+        if isinstance(value, (int, long, sqlbuilder.SQLExpression)):
+            return value
+        try:
+            try:
+                return int(value)
+            except OverflowError: # for Python 2.2
+                return long(value)
+        except:
             raise validators.InvalidField("expected an int in the IntCol '%s', got %s instead" % \
                 (self.name, type(value)), value, state)
-        return value
 
 class SOIntCol(SOCol):
     validatorClass = IntValidator # can be overriden in descendants
