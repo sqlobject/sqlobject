@@ -975,24 +975,40 @@ class SQLObject(object):
             cls.createJoinTables(ifNotExists=ifNotExists)
     createTable = classmethod(createTable)
 
+    def createTableSQL(cls, createJoinTables=True):
+        sql = cls._connection.createTableSQL(cls)
+        if createJoinTables:
+            sql += '\n' + cls.createJoinTablesSQL()
+        return sql
+    createTableSQL = classmethod(createTableSQL)
+
     def createJoinTables(cls, ifNotExists=False):
+        for join in cls._getJoinsToCreate():
+            if ifNotExists and \
+               cls._connection.tableExists(join.intermediateTable):
+                continue
+            cls._connection._SO_createJoinTable(join)
+    createJoinTables = classmethod(createJoinTables)
+
+    def createJoinTablesSQL(cls):
+        sql = []
+        for join in cls._getJoinsToCreate():
+            sql.append(cls._connection._SO_createJoinTableSQL(join))
+        return '\n'.join(sql)
+    createJoinTablesSQL = classmethod(createJoinTablesSQL)
+
+    def _getJoinsToCreate(cls):
+        joins = []
         for join in cls._SO_joinList:
             if not join:
                 continue
             if not join.hasIntermediateTable():
                 continue
-            # This join will show up twice, in each of the
-            # classes, but we only create the table once.  We
-            # arbitrarily create it while we're creating the
-            # alphabetically earlier class.
             if join.soClass.__name__ > join.otherClass.__name__:
                 continue
-            if ifNotExists and \
-               cls._connection.tableExists(join.intermediateTable):
-                continue
-            cls._connection._SO_createJoinTable(join)
-
-    createJoinTables = classmethod(createJoinTables)
+            joins.append(join)
+        return joins
+    _getJoinsToCreate = classmethod(_getJoinsToCreate)
 
     def dropJoinTables(cls, ifExists=False):
         for join in cls._SO_joinList:

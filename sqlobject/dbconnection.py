@@ -313,19 +313,25 @@ class DBAPI(DBConnection):
         return q
 
     def _SO_createJoinTable(self, join):
-        self.query('CREATE TABLE %s (\n%s %s,\n%s %s\n)' %
-                   (join.intermediateTable,
-                    join.joinColumn,
-                    self.joinSQLType(join),
-                    join.otherColumn,
-                    self.joinSQLType(join)))
+        self.query(self._SO_createJoinTableSQL(join))
+
+    def _SO_createJoinTableSQL(self, join):
+        return ('CREATE TABLE %s (\n%s %s,\n%s %s\n)' %
+                (join.intermediateTable,
+                 join.joinColumn,
+                 self.joinSQLType(join),
+                 join.otherColumn,
+                 self.joinSQLType(join)))
 
     def _SO_dropJoinTable(self, join):
         self.query("DROP TABLE %s" % join.intermediateTable)
 
     def createTable(self, soClass):
-        self.query('CREATE TABLE %s (\n%s\n)' % \
-                   (soClass._table, self.createColumns(soClass)))
+        self.query(self.createTableSQL(soClass))
+
+    def createTableSQL(self, soClass):
+        return ('CREATE TABLE %s (\n%s\n)' % 
+                (soClass._table, self.createColumns(soClass)))
 
     def createColumns(self, soClass):
         columnDefs = [self.createIDColumn(soClass)] \

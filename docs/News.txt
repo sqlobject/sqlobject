@@ -56,6 +56,10 @@ Interface Changes
   This is a temporary interface; a more general specifier for primary
   keys will be added later.
 
+* New classmethod ``createTableSQL()`` method for SQLObject classes,
+  which returns the SQL that can be used to create the table.  Analog
+  to ``createTable()``.
+
 Bugs
 ----
 
