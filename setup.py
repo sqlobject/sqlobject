@@ -2,7 +2,7 @@ from distutils.core import setup
 import warnings
 warnings.filterwarnings("ignore", "Unknown distribution option")
 
-subpackages = ['dbm', 'firebird', 'include', 'mysql', 'postgres',
+subpackages = ['firebird', 'include', 'mysql', 'postgres',
                'sqlite', 'sybase', 'maxdb']
 
 import sys
