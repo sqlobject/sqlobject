@@ -42,6 +42,9 @@ class FirebirdConnection(DBAPI):
             password = 'masterkey'
         if not auth:
             auth='sysdba'
+        if os.name == 'nt' and path[0] == '/':
+            # strip the leading slash off of db name/alias
+            path = path[1:]
         path = path.replace('/', os.sep)
         return cls(host, db=path, user=auth, passwd=password, **args)
     connectionFromURI = classmethod(connectionFromURI)
