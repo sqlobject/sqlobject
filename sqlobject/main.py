@@ -770,7 +770,7 @@ class SQLObject(object):
             for name, value in kw.items():
                 fromPy = getattr(self, '_SO_fromPython_%s' % name, None)
                 if fromPy:
-                    kw[name] = dbValue = fromPy(value, self._SO_validatorState)
+                    kw[name] = fromPy(value, self._SO_validatorState)
                 setattr(self, instanceName(name), value)
             for name, value in extra.items():
                 setattr(self, name, value)
