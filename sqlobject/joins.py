@@ -17,7 +17,10 @@ class Join(object):
         kw['otherClass'] = otherClass
         kw['joinDef'] = self
         self.kw = kw
-        self._joinMethodName = None
+        if self.kw.has_key('joinMethodName'):
+            self._joinMethodName = self.kw.pop('joinMethodName')
+        else:
+            self._joinMethodName = None
 
     def _set_joinMethodName(self, value):
         assert self._joinMethodName == value or self._joinMethodName is None, "You have already given an explicit joinMethodName (%s), and you are now setting it to %s" % (self._joinMethodName, value)
