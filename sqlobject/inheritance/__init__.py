@@ -178,11 +178,14 @@ class InheritableSQLObject(SQLObject):
         #DSM: we must first create our parent
         if self._parentClass:
             parentClass = self._parentClass
-            parent_kw = dict(
-               [(name, value) for (name, value) in kw.items()
-                  if hasattr(parentClass, name)
-               ]
-            )
+            new_kw = {}
+            parent_kw = {}
+            for (name, value) in kw.items():
+                    if hasattr(parentClass, name):
+                        parent_kw[name] = value
+                    else:
+                        new_kw[name] = value
+            kw = new_kw
             self._parent = parentClass(kw=parent_kw)
             self._parent.childName = self.__class__.__name__
             id = self._parent.id
