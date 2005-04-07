@@ -450,7 +450,7 @@ class SQLObject(object):
             if hasattr(mod, '__connection__'):
                 connection = mod.__connection__
 
-        if connection or not hasattr(cls, '_connection'):
+        if connection and not hasattr(cls, '_connection'):
             cls.setConnection(connection)
 
         # We have to check if there are columns in the inherited
