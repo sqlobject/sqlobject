@@ -555,12 +555,24 @@ class DBAPI(DBConnection):
 
     def _SO_columnClause(self, soClass, kw):
         ops = {None: "IS"}
+	data = {}
+	if 'id' in kw:
+	    data[soClass.sqlmeta.idName] = kw['id']
+	else:
+	    for key, col in soClass.sqlmeta._columnDict.items():
+	    	if key in kw:
+		    data[col.dbName] = kw[key]
+	    	elif col.foreignName in kw:
+		    obj = kw[col.foreignName]
+		    if obj is None:
+		    	data[col.dbName] = None
+		    else:
+		    	data[col.dbName] = obj.id
         return ' AND '.join(
             ['%s %s %s' %
-             (soClass.sqlmeta._columnDict[key].dbName,
-              ops.get(value, "="), self.sqlrepr(value))
-             for key, value
-             in kw.items()])
+             (dbName, ops.get(value, "="), self.sqlrepr(value))
+             for dbName, value
+             in data.items()])
 
     def sqlrepr(self, v):
         return sqlrepr(v, self.dbName)
