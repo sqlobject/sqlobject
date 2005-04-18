@@ -31,6 +31,13 @@ class SelectResults(object):
         if ops.has_key('connection') and ops['connection'] is None:
             del ops['connection']
 
+    def __repr__(self):
+        return "<%s at %x>" % (self.__class__.__name__, id(self))
+
+    def __str__(self):
+        conn = self.ops.get('connection', self.sourceClass._connection)
+        return conn.queryForSelect(self)
+
     def _mungeOrderBy(self, orderBy):
         if isinstance(orderBy, str) and orderBy.startswith('-'):
             orderBy = orderBy[1:]

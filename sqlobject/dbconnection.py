@@ -344,8 +344,16 @@ class DBAPI(DBConnection):
         """ Apply an accumulate function(s) (SUM, COUNT, MIN, AVG, MAX, etc...)
             to the select object.
         """
+        ops = select.ops
+        join = ops.get('join')
+        if join:
+            tables = self._fixTablesForJoins(select)
+        else:
+            tables = select.tables
         q = "SELECT %s" % ", ".join([str(expression) for expression in expressions])
-        q += " FROM %s WHERE" % ", ".join(select.tables)
+        q += " FROM %s " % ", ".join(tables)
+        if join: q += self._addJoins(select)
+        q += " WHERE"
         q = self._addWhereClause(select, q, limit=0, order=0)
         val = self.queryOne(q)
         if len(expressions) == 1:
@@ -354,28 +362,62 @@ class DBAPI(DBConnection):
 
     def queryForSelect(self, select):
         ops = select.ops
+        join = ops.get('join')
         cls = select.sourceClass
+        if join:
+            tables = self._fixTablesForJoins(select)
+        else:
+            tables = select.tables
         if ops.get('distinct', False):
             q = 'SELECT DISTINCT '
         else:
             q = 'SELECT '
         if ops.get('lazyColumns', 0):
-            q += "%s.%s FROM %s WHERE " % \
+            q += "%s.%s FROM %s " % \
                  (cls.sqlmeta.table, cls.sqlmeta.idName,
-                  ", ".join(select.tables))
+                  ", ".join(tables))
         else:
             columns = ", ".join(["%s.%s" % (cls.sqlmeta.table, col.dbName)
                                  for col in cls.sqlmeta._columns])
             if columns:
-                q += "%s.%s, %s FROM %s WHERE " % \
+                q += "%s.%s, %s FROM %s " % \
                      (cls.sqlmeta.table, cls.sqlmeta.idName, columns,
-                      ", ".join(select.tables))
+                      ", ".join(tables))
             else:
-                q += "%s.%s FROM %s WHERE " % \
+                q += "%s.%s FROM %s " % \
                      (cls.sqlmeta.table, cls.sqlmeta.idName,
-                      ", ".join(select.tables))
+                      ", ".join(tables))
 
+        if join: q += self._addJoins(select)
+        q += " WHERE"
         return self._addWhereClause(select, q)
+
+    def _fixTablesForJoins(self, select):
+        ops = select.ops
+        join = ops.get('join')
+        tables = select.tables
+        if type(join) is str:
+            return tables
+        else:
+            tables = tables[:] # maka a copy for modification
+            if isinstance(join, sqlbuilder.SQLJoin):
+                if join.table1 in tables: tables.remove(join.table1)
+                if join.table2 in tables: tables.remove(join.table2)
+            else:
+                for j in join:
+                    if j.table1 in tables: tables.remove(j.table1)
+                    if j.table2 in tables: tables.remove(j.table2)
+            return tables
+
+    def _addJoins(self, select):
+        ops = select.ops
+        join = ops.get('join')
+        if type(join) is str:
+            return join
+        elif isinstance(join, sqlbuilder.SQLJoin):
+            return self.sqlrepr(join)
+        else:
+            return ", ".join([self.sqlrepr(j) for j in join])
 
     def _addWhereClause(self, select, startSelect, limit=1, order=1):
 

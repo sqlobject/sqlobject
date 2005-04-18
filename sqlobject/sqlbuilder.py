@@ -157,7 +157,7 @@ class SQLExpression:
         except AssertionError:
             return '<%s %s>' % (
                 self.__class__.__name__, hex(id(self))[2:])
-        
+
     def __str__(self):
         return repr(self)
 
@@ -592,6 +592,197 @@ class _LikeQuoted:
         else:
             s = s.replace('%', '%%')
         return "'%s%s%s'" % (self.prefix, s, self.postfix)
+
+########################################
+## SQL JOINs
+########################################
+
+class SQLJoin(SQLExpression):
+    def __init__(self, table1, table2, op=','):
+        if table1 and type(table1) <> str: table1 = table1.sqlmeta.table
+        if type(table2) <> str: table2 = table2.sqlmeta.table
+        self.table1 = table1
+        self.table2 = table2
+        self.op = op
+
+    def __sqlrepr__(self, db):
+        if self.table1:
+            return "%s%s %s" % (self.table1, self.op, self.table2)
+        else:
+            return "%s %s" % (self.op, self.table2)
+
+registerConverter(SQLJoin, SQLExprConverter)
+
+def JOIN(table1, table2):
+    return SQLJoin(table1, table2, " JOIN")
+
+def INNERJOIN(table1, table2):
+    return SQLJoin(table1, table2, " INNER JOIN")
+
+def CROSSJOIN(table1, table2):
+    return SQLJoin(table1, table2, " CROSS JOIN")
+
+def STRAIGHTJOIN(table1, table2):
+    return SQLJoin(table1, table2, " STRAIGHT JOIN")
+
+def LEFTJOIN(table1, table2):
+    return SQLJoin(table1, table2, " LEFT JOIN")
+
+def LEFTOUTERJOIN(table1, table2):
+    return SQLJoin(table1, table2, " LEFT OUTER JOIN")
+
+def NATURALJOIN(table1, table2):
+    return SQLJoin(table1, table2, " NATURAL JOIN")
+
+def NATURALLEFTJOIN(table1, table2):
+    return SQLJoin(table1, table2, " NATURAL LEFT JOIN")
+
+def NATURALLEFTOUTERJOIN(table1, table2):
+    return SQLJoin(table1, table2, " NATURAL LEFT OUTER JOIN")
+
+def RIGHTJOIN(table1, table2):
+    return SQLJoin(table1, table2, " RIGHT JOIN")
+
+def RIGHTOUTERJOIN(table1, table2):
+    return SQLJoin(table1, table2, " RIGHT OUTER JOIN")
+
+def NATURALRIGHTJOIN(table1, table2):
+    return SQLJoin(table1, table2, " NATURAL RIGHT JOIN")
+
+def NATURALRIGHTOUTERJOIN(table1, table2):
+    return SQLJoin(table1, table2, " NATURAL RIGHT OUTER JOIN")
+
+def FULLJOIN(table1, table2):
+    return SQLJoin(table1, table2, " FULL JOIN")
+
+def FULLOUTERJOIN(table1, table2):
+    return SQLJoin(table1, table2, " FULL OUTER JOIN")
+
+def NATURALFULLJOIN(table1, table2):
+    return SQLJoin(table1, table2, " NATURAL FULL JOIN")
+
+def NATURALFULLOUTERJOIN(table1, table2):
+    return SQLJoin(table1, table2, " NATURAL FULL OUTER JOIN")
+
+class SQLJoinConditional(SQLJoin):
+    """Conditional JOIN"""
+    def __init__(self, table1, table2, op, on_condition=None, using_columns=None):
+        """For condition you must give on_condition or using_columns but not both
+
+            on_condition can be a string or SQLExpression, for example
+                Table1.q.col1 == Table2.q.col2
+            using_columns can be a string or a list of columns, e.g.
+                (Table1.q.col1, Table2.q.col2)
+        """
+        if not on_condition and not using_columns:
+            raise TypeError, "You must give ON condition or USING columns"
+        if on_condition and using_columns:
+            raise TypeError, "You must give ON condition or USING columns but not both"
+        SQLJoin.__init__(self, table1, table2, op)
+        self.on_condition = on_condition
+        self.using_columns = using_columns
+
+    def __sqlrepr__(self, db):
+        if self.on_condition:
+            on_condition = self.on_condition
+            if hasattr(on_condition, "__sqlrepr__"):
+                on_condition = sqlrepr(on_condition, db)
+            join = "%s %s ON %s" % (self.op, self.table2, on_condition)
+            if self.table1:
+                join = "%s %s" % (self.table1, join)
+            return join
+        elif self.using_columns:
+            using_columns = []
+            for col in self.using_columns:
+                if hasattr(col, "__sqlrepr__"):
+                    col = sqlrepr(col, db)
+                using_columns.append(col)
+            using_columns = ", ".join()
+            join = "%s %s USING (%s)" % (self.op, self.table2, using_columns)
+            if self.table1:
+                join = "%s %s" % (self.table1, join)
+            return join
+        else:
+            RuntimeError, "Impossible error"
+
+registerConverter(SQLJoinConditional, SQLExprConverter)
+
+def INNERJOINConditional(table1, table2, on_condition=None, using_columns=None):
+    return SQLJoinConditional(table1, table2, "INNER JOIN", on_condition, using_columns)
+
+def LEFTJOINConditional(table1, table2, on_condition=None, using_columns=None):
+    return SQLJoinConditional(table1, table2, "LEFT JOIN", on_condition, using_columns)
+
+def LEFTOUTERJOINConditional(table1, table2, on_condition=None, using_columns=None):
+    return SQLJoinConditional(table1, table2, "LEFT OUTER JOIN", on_condition, using_columns)
+
+def RIGHTJOINConditional(table1, table2, on_condition=None, using_columns=None):
+    return SQLJoinConditional(table1, table2, "RIGHT JOIN", on_condition, using_columns)
+
+def RIGHTOUTERJOINConditional(table1, table2, on_condition=None, using_columns=None):
+    return SQLJoinConditional(table1, table2, "RIGHT OUTER JOIN", on_condition, using_columns)
+
+def FULLJOINConditional(table1, table2, on_condition=None, using_columns=None):
+    return SQLJoinConditional(table1, table2, "FULL JOIN", on_condition, using_columns)
+
+def FULLOUTERJOINConditional(table1, table2, on_condition=None, using_columns=None):
+    return SQLJoinConditional(table1, table2, "FULL OUTER JOIN", on_condition, using_columns)
+
+class SQLJoinOn(SQLJoinConditional):
+    """Conditional JOIN ON"""
+    def __init__(self, table1, table2, op, on_condition):
+        SQLJoinConditional.__init__(self, table1, table2, op, on_condition)
+
+registerConverter(SQLJoinOn, SQLExprConverter)
+
+class SQLJoinUsing(SQLJoinConditional):
+    """Conditional JOIN USING"""
+    def __init__(self, table1, table2, op, using_columns):
+        SQLJoinConditional.__init__(self, table1, table2, op, None, using_columns)
+
+registerConverter(SQLJoinUsing, SQLExprConverter)
+
+def INNERJOINOn(table1, table2, on_condition):
+    return SQLJoinOn(table1, table2, "INNER JOIN", on_condition)
+
+def LEFTJOINOn(table1, table2, on_condition):
+    return SQLJoinOn(table1, table2, "LEFT JOIN", on_condition)
+
+def LEFTOUTERJOINOn(table1, table2, on_condition):
+    return SQLJoinOn(table1, table2, "LEFT OUTER JOIN", on_condition)
+
+def RIGHTJOINOn(table1, table2, on_condition):
+    return SQLJoinOn(table1, table2, "RIGHT JOIN", on_condition)
+
+def RIGHTOUTERJOINOn(table1, table2, on_condition):
+    return SQLJoinOn(table1, table2, "RIGHT OUTER JOIN", on_condition)
+
+def FULLJOINOn(table1, table2, on_condition):
+    return SQLJoinOn(table1, table2, "FULL JOIN", on_condition)
+
+def FULLOUTERJOINOn(table1, table2, on_condition):
+    return SQLJoinOn(table1, table2, "FULL OUTER JOIN", on_condition)
+
+def INNERJOINUsing(table1, table2, using_columns):
+    return SQLJoinUsing(table1, table2, "INNER JOIN", using_columns)
+
+def LEFTJOINUsing(table1, table2, using_columns):
+    return SQLJoinUsing(table1, table2, "LEFT JOIN", using_columns)
+
+def LEFTOUTERJOINUsing(table1, table2, using_columns):
+    return SQLJoinUsing(table1, table2, "LEFT OUTER JOIN", using_columns)
+
+def RIGHTJOINUsing(table1, table2, using_columns):
+    return SQLJoinUsing(table1, table2, "RIGHT JOIN", using_columns)
+
+def RIGHTOUTERJOINUsing(table1, table2, using_columns):
+    return SQLJoinUsing(table1, table2, "RIGHT OUTER JOIN", using_columns)
+
+def FULLJOINUsing(table1, table2, using_columns):
+    return SQLJoinUsing(table1, table2, "FULL JOIN", using_columns)
+
+def FULLOUTERJOINUsing(table1, table2, using_columns):
+    return SQLJoinUsing(table1, table2, "FULL OUTER JOIN", using_columns)
 
 ########################################
 ## Global initializations

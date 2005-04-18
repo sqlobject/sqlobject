@@ -1161,8 +1161,8 @@ class SQLObject(object):
     def select(cls, clause=None, clauseTables=None,
                orderBy=NoDefault, limit=None,
                lazyColumns=False, reversed=False,
-               distinct=False,
-               connection=None):
+               distinct=False, connection=None,
+               join=None):
         return cls.SelectResultsClass(cls, clause,
                              clauseTables=clauseTables,
                              orderBy=orderBy,
@@ -1170,7 +1170,8 @@ class SQLObject(object):
                              lazyColumns=lazyColumns,
                              reversed=reversed,
                              distinct=distinct,
-                             connection=connection)
+                             connection=connection,
+                             join=join)
     select = classmethod(select)
 
     def selectBy(cls, connection=None, **kw):
