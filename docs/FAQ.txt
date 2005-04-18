@@ -54,6 +54,18 @@ optimization):
 .. raw:: html
    :file: ../examples/snippets/leftjoin-more-query.html
 
+SQL-wise
+~~~~~~~~
+
+Use LEFTJOIN() from sqlobject.sqlbuilder.
+
+
+How can I join a table with itself?
+-----------------------------------
+
+Use Alias from sqlobject.sqlbuilder.
+
+
 How Does Inheritance Work?
 --------------------------
 

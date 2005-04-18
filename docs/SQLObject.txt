@@ -38,6 +38,7 @@ class more completely.
 .. include:: SQLObjectLegacy.txt
 .. include:: SQLObjectDBConnection.txt
 .. include:: SQLObjectExported.txt
+.. include:: SQLObjectJoins.txt
 
 For more information on SQLBuilder, read the `SQLBuilder
 Documentation`_.
