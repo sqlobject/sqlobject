@@ -69,6 +69,7 @@ True, False = (1==1), (0==1)
 
 import re, fnmatch
 import operator
+import threading
 from converters import sqlrepr, registerConverter, TRUE, FALSE
 
 safeSQLRE = re.compile(r'^[a-zA-Z][a-zA-Z0-9_\.]*$')
@@ -307,43 +308,6 @@ registerConverter(SQLTrueClauseClass, SQLExprConverter)
 ## Namespaces
 ########################################
 
-class TableSpace:
-    def __getattr__(self, attr):
-        if attr.startswith('__'):
-            raise AttributeError
-        return Table(attr)
-
-class Table(SQLExpression):
-    def __init__(self, tableName):
-        self.tableName = tableName
-    def __getattr__(self, attr):
-        if attr.startswith('__'):
-            raise AttributeError
-        return Field(self.tableName, attr)
-    def __sqlrepr__(self, db):
-        return str(self.tableName)
-    def execute(self, executor):
-        raise ValueError, "Tables don't have values"
-
-class SQLObjectTable(Table):
-
-    def __init__(self, soClass):
-        self.soClass = soClass
-        assert soClass.sqlmeta.table, (
-            "Bad table name in class %r: %r"
-            % (soClass, soClass.sqlmeta.table))
-        Table.__init__(self, soClass.sqlmeta.table)
-
-    def __getattr__(self, attr):
-        if attr.startswith('__'):
-            raise AttributeError
-        if attr == 'id':
-            return SQLObjectField(self.tableName, self.soClass.sqlmeta.idName, attr)
-        else:
-            return SQLObjectField(self.tableName,
-                                  self.soClass.sqlmeta._columnDict[attr].dbName,
-                                  attr)
-
 class Field(SQLExpression):
     def __init__(self, tableName, fieldName):
         self.tableName = tableName
@@ -362,11 +326,97 @@ class SQLObjectField(Field):
 
 registerConverter(SQLObjectField, SQLExprConverter)
 
+class Table(SQLExpression):
+    FieldClass = Field
+
+    def __init__(self, tableName):
+        self.tableName = tableName
+    def __getattr__(self, attr):
+        if attr.startswith('__'):
+            raise AttributeError
+        return self.FieldClass(self.tableName, attr)
+    def __sqlrepr__(self, db):
+        return str(self.tableName)
+    def execute(self, executor):
+        raise ValueError, "Tables don't have values"
+
+class SQLObjectTable(Table):
+    FieldClass = SQLObjectField
+
+    def __init__(self, soClass):
+        self.soClass = soClass
+        assert soClass.sqlmeta.table, (
+            "Bad table name in class %r: %r"
+            % (soClass, soClass.sqlmeta.table))
+        Table.__init__(self, soClass.sqlmeta.table)
+
+    def __getattr__(self, attr):
+        if attr.startswith('__'):
+            raise AttributeError
+        if attr == 'id':
+            return self.FieldClass(self.tableName, self.soClass.sqlmeta.idName, attr)
+        else:
+            return self.FieldClass(self.tableName,
+                                  self.soClass.sqlmeta._columnDict[attr].dbName,
+                                  attr)
+
+class TableSpace:
+    TableClass = Table
+
+    def __getattr__(self, attr):
+        if attr.startswith('__'):
+            raise AttributeError
+        return self.TableClass(attr)
+
 class ConstantSpace:
     def __getattr__(self, attr):
         if attr.startswith('__'):
             raise AttributeError
         return SQLConstant(attr)
+
+
+########################################
+## Table aliases
+########################################
+
+class AliasField(Field):
+    def __init__(self, tableName, fieldName, alias):
+        Field.__init__(self, tableName, fieldName)
+        self.alias = alias
+
+    def __sqlrepr__(self, db):
+        return self.alias + "." + self.fieldName
+
+    def tablesUsedImmediate(self):
+        return ["%s AS %s" % (self.tableName, self.alias)]
+
+class AliasTable(Table):
+    FieldClass = AliasField
+
+    _alias_lock = threading.Lock()
+    _alias_counter = 0
+
+    def __init__(self, tableName, alias=None):
+        Table.__init__(self, tableName)
+        if alias is None:
+            self._alias_lock.acquire()
+            try:
+                AliasTable._alias_counter += 1
+                alias = "%s_alias%d" % (tableName, AliasTable._alias_counter)
+            finally:
+                self._alias_lock.release()
+        self.alias = alias
+
+    def __getattr__(self, attr):
+        if attr.startswith('__'):
+            raise AttributeError
+        return self.FieldClass(self.tableName, attr, self.alias)
+
+class Alias:
+    def __init__(self, table, alias=None):
+        if hasattr(table, "sqlmeta"):
+            table = table.sqlmeta.table
+        self.q = AliasTable(table, alias)
 
 
 ########################################
@@ -599,8 +649,16 @@ class _LikeQuoted:
 
 class SQLJoin(SQLExpression):
     def __init__(self, table1, table2, op=','):
-        if table1 and type(table1) <> str: table1 = table1.sqlmeta.table
-        if type(table2) <> str: table2 = table2.sqlmeta.table
+        if table1 and type(table1) <> str:
+            if isinstance(table1, Alias):
+                table1 = "%s AS %s" % (table1.q.tableName, table1.q.alias)
+            else:
+                table1 = table1.sqlmeta.table
+        if type(table2) <> str:
+            if isinstance(table2, Alias):
+                table2 = "%s AS %s" % (table2.q.tableName, table2.q.alias)
+            else:
+                table2 = table2.sqlmeta.table
         self.table1 = table1
         self.table2 = table2
         self.op = op
