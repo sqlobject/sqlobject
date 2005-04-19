@@ -396,8 +396,14 @@ class AliasTable(Table):
     _alias_lock = threading.Lock()
     _alias_counter = 0
 
-    def __init__(self, tableName, alias=None):
+    def __init__(self, table, alias=None):
+        if hasattr(table, "sqlmeta"):
+            tableName = table.sqlmeta.table
+        else:
+            tableName = table
+            table = None
         Table.__init__(self, tableName)
+        self.table = table
         if alias is None:
             self._alias_lock.acquire()
             try:
@@ -410,12 +416,12 @@ class AliasTable(Table):
     def __getattr__(self, attr):
         if attr.startswith('__'):
             raise AttributeError
+        if self.table:
+            attr = getattr(self.table.q, attr).fieldName
         return self.FieldClass(self.tableName, attr, self.alias)
 
 class Alias:
     def __init__(self, table, alias=None):
-        if hasattr(table, "sqlmeta"):
-            table = table.sqlmeta.table
         self.q = AliasTable(table, alias)
 
 
