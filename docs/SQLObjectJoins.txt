@@ -4,25 +4,32 @@ LEFT JOIN and other JOINs
 First look in the FAQ_, question "How can I do a LEFT JOIN?"
 
 Still here? Well. To perform a JOIN use one of the JOIN helpers from
-sqlobject.sqlbuilder. Pass an instance of the helper to .select() method.
-For example::
+sqlobject.sqlbuilder. Pass an instance of the helper to .select()
+method.  For example::
 
     from sqlobject.sqlbuilder import LEFTJOINOn
-    MyTable.select(join=LEFTJOINOn(Table1, Table2, Table1.q.name == Table2.q.value))
+    MyTable.select(
+        join=LEFTJOINOn(Table1, Table2, 
+                        Table1.q.name == Table2.q.value))
 
 will generate the query::
 
-    SELECT * FROM my_table, table1 LEFT JOIN table2 ON table1.name = table2.value;
+    SELECT * FROM my_table, table1 
+    LEFT JOIN table2 ON table1.name = table2.value;
 
-.. _FAQ: FAQ.html
+.. _FAQ: FAQ.html#how-can-i-do-a-left-join
 
-If you want to join with the primary table - leave the first table None::
+If you want to join with the primary table - leave the first table
+None::
 
-    MyTable.select(join=LEFTJOINOn(None, Table1, MyTable.q.name == Table1.q.value))
+    MyTable.select(
+        join=LEFTJOINOn(None, Table1, 
+                        MyTable.q.name == Table1.q.value))
 
 will generate the query::
 
-    SELECT * FROM my_table LEFT JOIN table2 ON my_table.name = table1.value;
+    SELECT * FROM my_table 
+    LEFT JOIN table2 ON my_table.name = table1.value;
 
 The join argument for .select() can be a JOIN() or a list/tuples of
 JOIN()s.
@@ -39,13 +46,14 @@ Use Alias from sqlobject.sqlbuilder. Example::
 
 will generate the query::
 
-    SELECT * FROM my_table, my_table AS my_table_alias WHERE my_table.name = my_table_alias.value;
+    SELECT * FROM my_table, my_table AS my_table_alias 
+    WHERE my_table.name = my_table_alias.value;
 
 Can I use LEFTJOIN() with aliases?
 ----------------------------------
 
-Sure! That's a situation the JOINs an aliases were primary developed for.
-Code::
+Sure! That's a situation the JOINs and aliases were primary developed
+for.  Code::
 
     from sqlobject.sqlbuilder import LEFTJOINOn, Alias
     alias = Alias(OtherTable, "other_table_alias")
