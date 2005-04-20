@@ -351,7 +351,7 @@ class DBAPI(DBConnection):
         else:
             tables = select.tables
         q = "SELECT %s" % ", ".join([str(expression) for expression in expressions])
-        q += " FROM %s " % ", ".join(tables)
+        q += " FROM %s" % ", ".join(tables)
         if join: q += self._addJoins(select)
         q += " WHERE"
         q = self._addWhereClause(select, q, limit=0, order=0)
@@ -373,18 +373,18 @@ class DBAPI(DBConnection):
         else:
             q = 'SELECT '
         if ops.get('lazyColumns', 0):
-            q += "%s.%s FROM %s " % \
+            q += "%s.%s FROM %s" % \
                  (cls.sqlmeta.table, cls.sqlmeta.idName,
                   ", ".join(tables))
         else:
             columns = ", ".join(["%s.%s" % (cls.sqlmeta.table, col.dbName)
                                  for col in cls.sqlmeta._columns])
             if columns:
-                q += "%s.%s, %s FROM %s " % \
+                q += "%s.%s, %s FROM %s" % \
                      (cls.sqlmeta.table, cls.sqlmeta.idName, columns,
                       ", ".join(tables))
             else:
-                q += "%s.%s FROM %s " % \
+                q += "%s.%s FROM %s" % \
                      (cls.sqlmeta.table, cls.sqlmeta.idName,
                       ", ".join(tables))
 
@@ -413,11 +413,12 @@ class DBAPI(DBConnection):
         ops = select.ops
         join = ops.get('join')
         if type(join) is str:
-            return join
+            pass
         elif isinstance(join, sqlbuilder.SQLJoin):
-            return self.sqlrepr(join)
+            join_str = self.sqlrepr(join)
         else:
-            return ", ".join([self.sqlrepr(j) for j in join])
+            join_str = ", ".join([self.sqlrepr(j) for j in join])
+        return ' ' + join_str
 
     def _addWhereClause(self, select, startSelect, limit=1, order=1):
 

@@ -15,7 +15,7 @@ def test_1syntax():
     alias = Alias(TestJoinAlias)
     select = TestJoinAlias.select(TestJoinAlias.q.parent == alias.q.name)
     assert str(select) == \
-        "SELECT test_join_alias.id, test_join_alias.name, test_join_alias.parent FROM test_join_alias, test_join_alias AS test_join_alias_alias1  WHERE (test_join_alias.parent = test_join_alias_alias1.name)"
+        "SELECT test_join_alias.id, test_join_alias.name, test_join_alias.parent FROM test_join_alias, test_join_alias AS test_join_alias_alias1 WHERE (test_join_alias.parent = test_join_alias_alias1.name)"
 
 def test_2perform_join():
     setupClass(TestJoinAlias)
