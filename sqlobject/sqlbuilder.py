@@ -848,6 +848,69 @@ def FULLJOINUsing(table1, table2, using_columns):
 def FULLOUTERJOINUsing(table1, table2, using_columns):
     return SQLJoinUsing(table1, table2, "FULL OUTER JOIN", using_columns)
 
+
+########################################
+## Subqueries (subselects)
+########################################
+
+class OuterField(Field):
+    def tablesUsedImmediate(self):
+        return []
+
+class OuterTable(Table):
+    FieldClass = OuterField
+
+    def __init__(self, table):
+        if hasattr(table, "sqlmeta"):
+            tableName = table.sqlmeta.table
+        else:
+            tableName = table
+            table = None
+        Table.__init__(self, tableName)
+        self.table = table
+
+class Outer:
+    def __init__(self, table):
+        self.q = OuterTable(table)
+
+
+class INSubquery(SQLExpression):
+    op = "IN"
+
+    def __init__(self, item, subquery):
+        self.item = item
+        self.subquery = subquery
+    def __sqlrepr__(self, db):
+        return "%s %s (%s)" % (sqlrepr(self.item, db), self.op, sqlrepr(self.subquery, db))
+
+class NOTINSubquery(INSubquery):
+    op = "NOT IN"
+
+
+class Subquery(SQLExpression):
+    def __init__(self, op, subquery):
+        self.op = op
+        self.subquery = subquery
+
+    def __sqlrepr__(self, db):
+        return "%s (%s)" % (self.op, sqlrepr(self.subquery, db))
+
+def EXISTS(subquery):
+    return Subquery("EXISTS", subquery)
+
+def NOTEXISTS(subquery):
+    return Subquery("NOT EXISTS", subquery)
+
+def SOME(subquery):
+    return Subquery("SOME", subquery)
+
+def ANY(subquery):
+    return Subquery("ANY", subquery)
+
+def ALL(subquery):
+    return Subquery("ALL", subquery)
+
+
 ########################################
 ## Global initializations
 ########################################
