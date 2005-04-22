@@ -4,7 +4,7 @@ import fnmatch
 import os
 import sys
 try:
-    from wsgikit import pyconfig
+    from paste import pyconfig
 except ImportError:
     pyconfig = None
 
@@ -71,7 +71,7 @@ def standard_parser(connection=True, simulate=True,
                           dest='connection_uri')
         if pyconfig:
             parser.add_option('-f', '--config-file',
-                              help="The WSGIKit config file that contains the database URI (in the database key)",
+                              help="The Paste config file that contains the database URI (in the database key)",
                               metavar="FILE",
                               dest="config_file")
     if find_modules:
@@ -220,7 +220,7 @@ class Command(object):
     def config(self):
         if getattr(self.options, 'config_file', None):
             assert pyconfig, (
-                "The --config-file option should not be available without wsgikit.pyconfig installed")
+                "The --config-file option should not be available without paste.pyconfig installed")
             config = pyconfig.Config()
             config.load(self.options.config_file)
             return config
