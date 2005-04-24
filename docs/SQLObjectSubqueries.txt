@@ -16,3 +16,6 @@ generates the query::
 
 Note the usage of Outer - this is the helper to allow refering to a table
 in the outer query.
+
+Select() is used instead of .select() because you need to control what
+columns and in what order the inner query returns.
