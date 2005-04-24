@@ -603,8 +603,20 @@ def OR(*ops):
 def NOT(op):
     return SQLPrefix("NOT", op)
 
-def IN(item, list):
+def _IN(item, list):
     return SQLOp("IN", item, list)
+
+def IN(item, list):
+    if isinstance(list, Select):
+        return INSubquery(item, list)
+    else:
+        return _IN(item, list)
+
+def NOTIN(item, list):
+    if isinstance(list, Select):
+        return NOTINSubquery(item, list)
+    else:
+        return NOT(_IN(item, list))
 
 def LIKE(expr, string):
     return SQLOp("LIKE", expr, string)

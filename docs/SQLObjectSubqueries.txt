@@ -19,3 +19,7 @@ in the outer query.
 
 Select() is used instead of .select() because you need to control what
 columns and in what order the inner query returns.
+
+Avalable queries are IN(), NOTIN(), EXISTS(), NOTEXISTS(), SOME(), ANY()
+and ALL(). The last 3 are used with comparison operators, like this:
+"somevalue = ANY(Select(...))".
