@@ -4,7 +4,7 @@ import styles
 import classregistry
 from col import popKey
 
-__all__ = ['MultipleJoin', 'RelatedJoin']
+__all__ = ['MultipleJoin', 'SQLMultipleJoin', 'RelatedJoin', 'SQLRelatedJoin']
 
 def getID(obj):
     try:
@@ -35,7 +35,7 @@ class Join(object):
     def withClass(self, soClass):
         if self.kw.has_key('joinMethodName'):
             self._joinMethodName = self.kw['joinMethodName']
-            del self.kw['joinMethodName'] 
+            del self.kw['joinMethodName']
         return self.baseClass(soClass=soClass,
                               joinMethodName=self._joinMethodName,
                               **self.kw)
@@ -133,8 +133,19 @@ class SOMultipleJoin(SOJoin):
             conn = None
         return self._applyOrderBy([self.otherClass.get(id, conn) for (id,) in ids if id is not None], self.otherClass)
 
+class SOSQLMultipleJoin(SOMultipleJoin):
+
+    def performJoin(self, inst):
+        results=self.otherClass.select(getattr(self.otherClass.q, self.soClass.sqlmeta.style.dbColumnToPythonAttr(self.joinColumn))==inst.id)
+        if self.orderBy is NoDefault:
+            self.orderBy = self.otherClass.sqlmeta.defaultOrder
+        return results.orderBy(self.orderBy)
+
 class MultipleJoin(Join):
     baseClass = SOMultipleJoin
+
+class SQLMultipleJoin(Join):
+    baseClass = SOSQLMultipleJoin
 
 # This is a many-to-many join, with an intermediary table
 class SORelatedJoin(SOMultipleJoin):
@@ -191,9 +202,34 @@ class SORelatedJoin(SOMultipleJoin):
             self.otherColumn,
             getID(other))
 
+class SOSQLRelatedJoin(SORelatedJoin):
+    def performJoin(self, inst):
+        options={
+            'otherTable' : self.otherClass.sqlmeta.table,
+            'otherID' : self.otherClass.sqlmeta.idName,
+            'interTable' : self.intermediateTable,
+            'table' : self.soClass.sqlmeta.table,
+            'ID' : self.soClass.sqlmeta.idName,
+            'joinCol' : self.joinColumn,
+            'otherCol' : self.otherColumn,
+            'idValue' : inst.id,
+        }
+        results = self.otherClass.select('''\
+%(otherTable)s.%(otherID)s = %(interTable)s.%(otherCol)s and
+%(interTable)s.%(joinCol)s = %(table)s.%(ID)s and
+%(table)s.%(ID)s = %(idValue)s''' % options, clauseTables=(
+            options['table'],
+            options['otherTable'],
+            options['interTable'],
+        ))
+        # TODO (michelts), apply order by on the selection
+        return results
+
 class RelatedJoin(MultipleJoin):
     baseClass = SORelatedJoin
 
+class SQLRelatedJoin(RelatedJoin):
+    baseClass = SOSQLRelatedJoin
+
 def capitalize(name):
     return name[0].capitalize() + name[1:]
-
