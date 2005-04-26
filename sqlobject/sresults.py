@@ -83,6 +83,13 @@ class SelectResults(object):
     def distinct(self):
         return self.clone(distinct=True)
 
+    def newClause(self, new_clause):
+        return self.__class__(self.sourceClass, new_clause,
+                              self.clauseTables, **self.ops)
+
+    def filter(self, filter_clause):
+        return self.newClause(sqlbuilder.AND(self.clause, filter_clause))
+
     def __getitem__(self, value):
         if type(value) is type(slice(1)):
             assert not value.step, "Slices do not support steps"
