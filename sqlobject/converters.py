@@ -1,3 +1,5 @@
+import array
+
 try:
     import mx.DateTime.ISO
     origISOStr = mx.DateTime.ISO.strGMT
@@ -20,7 +22,7 @@ try:
     import Sybase
     NumericType=Sybase.NumericType
 except ImportError:
-    NumericType = None 
+    NumericType = None
 
 if type(1==1) == type(1):
     class BOOL(object):
@@ -89,6 +91,12 @@ registerConverter = converters.registerConverter
 lookupConverter = converters.lookupConverter
 
 def StringLikeConverter(value, db):
+    if isinstance(value, array.array):
+        try:
+            value = value.tounicode()
+        except ValueError:
+            value = value.tostring()
+
     if db in ('mysql', 'postgres'):
         for orig, repl in sqlStringReplace:
             value = value.replace(orig, repl)
@@ -100,6 +108,7 @@ def StringLikeConverter(value, db):
 
 registerConverter(type(""), StringLikeConverter)
 registerConverter(type(u""), StringLikeConverter)
+registerConverter(array.array, StringLikeConverter)
 
 def IntConverter(value, db):
     return repr(int(value))
