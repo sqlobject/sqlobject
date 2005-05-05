@@ -809,6 +809,11 @@ class ConnectionHub(object):
         self.threadingLocal = threading_local()
 
     def __get__(self, obj, type=None):
+        # I'm a little surprised we have to do this, but apparently
+        # the object's private dictionary of attributes doesn't
+        # override this descriptor.
+        if obj.__dict__.has_key('_connection'):
+            return obj.__dict__['_connection']
         return self.getConnection()
 
     def __set__(self, obj, value):
