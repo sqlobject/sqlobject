@@ -644,7 +644,6 @@ class SOForeignKey(SOKeyCol):
 
     def postgresCreateSQL(self):
         sql = SOKeyCol.postgresCreateSQL(self)
-        print [self, self.soClass]
         other = findClass(self.foreignKey, self.soClass.sqlmeta.registry)
         tName = other.sqlmeta.table
         idName = other.sqlmeta.idName
@@ -837,6 +836,16 @@ class SODateTimeCol(SOCol):
 
 class DateTimeCol(Col):
     baseClass = SODateTimeCol
+    def now():
+        if DATETIME_IMPLEMENTATION == 'datetime':
+            return datetime.datetime.now()
+        elif DATETIME_IMPLEMENTATION == 'mxdatetime':
+            return DateTime.now()
+        else:
+            assert 0, ("No datetime implementation available "
+                       "(DATETIME_IMPLEMENTATION=%r)"
+                       % DATETIME_IMPLEMENTATION)
+    now = staticmethod(now)
 
 class SODateCol(SOCol):
     dateFormat = '%Y-%m-%d'
