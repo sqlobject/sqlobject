@@ -1047,8 +1047,6 @@ class SQLObject(object):
             return
 
         # Pass the connection object along if we were given one.
-        # Passing None for the ID tells __init__ we want to create
-        # a new object.
         if kw.has_key('connection'):
             self._connection = kw['connection']
             self._SO_perConnection = True
