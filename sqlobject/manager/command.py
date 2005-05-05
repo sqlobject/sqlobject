@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import optparse
 import fnmatch
+import re
 import os
 import sys
 try:
@@ -8,10 +9,60 @@ try:
     from paste import CONFIG
 except ImportError:
     pyconfig = None
+    CONFIG = {}
+import time
 
 import sqlobject
+from sqlobject import col
 from sqlobject.util import moduleloader
 from sqlobject.declarative import DeclarativeMeta
+
+class SQLObjectVersionTable(sqlobject.SQLObject):
+    """
+    This table is used to store information about the database and
+    its version (used with record and update commands).
+    """
+    class sqlmeta:
+        table = 'sqlobject_db_version'
+    version = col.StringCol()
+    updated = col.DateTimeCol(default=col.DateTimeCol.now)
+
+def db_differences(soClass, conn):
+    """
+    Returns the differences between a class and the table in a
+    connection.  Returns [] if no differences are found.  This
+    function does the best it can; it can miss many differences.
+    """
+    # @@: Repeats a lot from CommandStatus.command, but it's hard
+    # to actually factor out the display logic.  Or I'm too lazy
+    # to do so.
+    diffs = []
+    if not conn.tableExists(soClass.sqlmeta.table):
+        diffs.append('Does not exist in database')
+    else:
+        try:
+            columns = conn.columnsFromSchema(soClass.sqlmeta.table,
+                                             soClass)
+        except AttributeError:
+            # Database does not support reading columns
+            pass
+        else:
+            existing = {}
+            for col in columns:
+                col = col.withClass(soClass)
+                existing[col.dbName] = col
+            missing = {}
+            for col in soClass.sqlmeta._columns:
+                if existing.has_key(col.dbName):
+                    del existing[col.dbName]
+                else:
+                    missing[col.dbName] = col
+            for col in existing.values():
+                diffs.append('Database has extra column: %s'
+                             % col.dbName)
+            for col in missing.values():
+                diffs.append('Database missing column: %s' % col.dbName)
+    return diffs
 
 class CommandRunner(object):
 
@@ -253,6 +304,15 @@ class Command(object):
             if response and response[0].lower() in ('y', 'n'):
                 return response[0].lower() == 'y'
             print 'Y or N please'
+
+    def shorten_filename(self, fn):
+        """
+        Shortens a filename to make it relative to the current
+        directory (if it can).  For display purposes.
+        """
+        if fn.startswith(os.getcwd() + '/'):
+            fn = fn[len(os.getcwd())+1:]
+        return fn
 
 class CommandSQL(Command):
 
@@ -499,7 +559,225 @@ class CommandExecute(Command):
                 sys.stdout.write("%r\t" % col)
             sys.stdout.write("\n")
         print
-                
+
+class CommandRecord(Command):
+
+    name = 'record'
+    summary = 'Record state of table definitions'
+    parser = standard_parser()
+    parser.add_option('--output-dir',
+                      help="Base directory for recorded definitions",
+                      dest="output_dir",
+                      metavar="DIR",
+                      default=None)
+    parser.add_option('--no-db-record',
+                      help="Don't record version to database",
+                      dest="db_record",
+                      action="store_false",
+                      default=True)
+    parser.add_option('--force-create',
+                      help="Create a new version even if appears to be "
+                      "identical to the last version",
+                      action="store_true",
+                      dest="force_create")
+    parser.add_option('--name',
+                      help="The name to append to the version.  The "
+                      "version should sort after previous versions (so "
+                      "any versions from the same day should come "
+                      "alphabetically before this version).",
+                      dest="version_name",
+                      metavar="NAME")
+    parser.add_option('--force-db-version',
+                      help="Update the database version, and include no "
+                      "database information.  This is for databases that "
+                      "were developed without any interaction with "
+                      "this tool, to create a 'beginning' revision.",
+                      metavar="VERSION_NAME",
+                      dest="force_db_version")
+
+    version_regex = re.compile(r'^\d\d\d\d-\d\d-\d\d')
+
+    def command(self):
+        if self.options.force_db_version:
+            self.command_force_db_version()
+            return
+        
+        v = self.options.verbose
+        sim = self.options.simulate
+        classes = self.classes()
+        if not classes:
+            print "No classes found!"
+            return
+
+        output_dir = self.find_output_dir()
+        version = os.path.basename(output_dir)
+        print "Creating version %s" % version
+        conns = []
+        files = {}
+        for cls in self.classes():
+            dbName = cls._connection.dbName
+            if cls._connection not in conns:
+                conns.append(cls._connection)
+            fn = os.path.join(cls.__name__
+                              + '_' + dbName + '.sql')
+            if sim:
+                continue
+            files[fn] = ''.join([
+                '-- Exported definition from %s\n'
+                % time.strftime('%Y-%m-%dT%H:%M:%S'),
+                '-- Class %s.%s\n'
+                % (cls.__module__, cls.__name__),
+                '-- Database: %s\n'
+                % dbName,
+                cls.createTableSQL().strip(),
+                '\n'])
+        last_version_dir = self.find_last_version()
+        if last_version_dir and not self.options.force_create:
+            if v > 1:
+                print "Checking %s to see if it is current" % last_version_dir
+            files_copy = files.copy()
+            for fn in os.listdir(last_version_dir):
+                if not fn.endswith('.sql'):
+                    continue
+                if not files_copy.has_key(fn):
+                    if v > 1:
+                        print "Missing file %s" % fn
+                    break
+                f = open(os.path.join(last_version_dir, fn), 'r')
+                content = f.read()
+                f.close()
+                if (self.strip_comments(files_copy[fn])
+                    != self.strip_comments(content)):
+                    if v > 1:
+                        print "Content does not match: %s" % fn
+                    break
+                del files_copy[fn]
+            else:
+                # No differences so far
+                if not files_copy:
+                    # Used up all files
+                    print ("Current status matches version %s"
+                           % os.path.basename(last_version_dir))
+                    return
+                if v > 1:
+                    print "Extra files: %s" % ', '.join(files_copy.keys())
+            if v:
+                print ("Current state does not match %s"
+                       % os.path.basename(last_version_dir))
+        if v > 1 and not last_version_dir:
+            print "No last version to check"
+        if not sim:
+            os.mkdir(output_dir)
+        if v:
+            print 'Making directory %s' % self.shorten_filename(output_dir)
+        files = files.items()
+        files.sort()
+        for fn, content in files:
+            if v:
+                print '  Writing %s' % self.shorten_filename(fn)
+            if not sim:
+                f = open(os.path.join(output_dir, fn), 'w')
+                f.write(content)
+                f.close()
+        all_diffs = []
+        for cls in self.classes():
+            for conn in conns:
+                diffs = db_differences(cls, conn)
+                for diff in diffs:
+                    if len(conns) > 1:
+                        diff = '  (%s).%s: %s' % (
+                            conn.uri(), cls.sqlmeta.table, diff)
+                    else:
+                        diff = '  %s: %s' % (cls.sqlmeta.table, diff)
+                    all_diffs.append(diff)
+        if all_diffs:
+            print 'Database does not match schema:'
+            print '\n'.join(all_diffs)
+            if self.options.db_record:
+                print '(Not updating database version)'
+        elif self.options.db_record:
+            for conn in conns:
+                self.update_db(version, conn)
+
+    def update_db(self, version, conn):
+        v = self.options.verbose
+        if not conn.tableExists(SQLObjectVersionTable.sqlmeta.table):
+            if v:
+                print ('Creating table %s'
+                       % SQLObjectVersionTable.sqlmeta.table)
+            sql = SQLObjectVersionTable.createTableSQL(connection=conn)
+            if v > 1:
+                print sql
+            if not self.options.simulate:
+                SQLObjectVersionTable.createTable(connection=conn)
+        if not self.options.simulate:
+            SQLObjectVersionTable.clearTable(connection=conn)
+            SQLObjectVersionTable(
+                version=version,
+                connection=conn)
+
+    def strip_comments(self, sql):
+        lines = [l for l in sql.splitlines()
+                 if not l.strip().startswith('--')]
+        return '\n'.join(lines)        
+
+    def base_dir(self):
+        base = self.options.output_dir
+        if base is None:
+            base = CONFIG.get('sqlobject_history_dir', '.')
+        return base
+
+    def find_output_dir(self):
+        today = time.strftime('%Y-%m-%d', time.localtime())
+        if self.options.version_name:
+            dir = os.path.join(self.base_dir(), today + '-' + 
+                               self.options.version_name)
+            if os.path.exists(dir):
+                print ("Error, directory already exists: %s"
+                       % dir)
+                sys.exit(1)
+            return dir
+        extra = ''
+        while 1:
+            dir = os.path.join(self.base_dir(), today + extra)
+            if not os.path.exists(dir):
+                return dir
+            if not extra:
+                extra = 'a'
+            else:
+                extra = chr(ord(extra)+1)
+    
+    def find_last_version(self):
+        names = []
+        for fn in os.listdir(self.base_dir()):
+            if not self.version_regex.search(fn):
+                continue
+            names.append(fn)
+        if not names:
+            return None
+        names.sort()
+        return os.path.join(self.base_dir(), names[-1])
+
+    def command_force_db_version(self):
+        v = self.options.verbose
+        sim = self.options.simulate
+        version = self.options.force_db_version
+        if not self.version_regex.search(version):
+            print "Versions must be in the format YYYY-MM-DD..."
+            print "You version %s does not fit this" % version
+            return
+        version_dir = os.path.join(self.base_dir(), version)
+        if not os.path.exists(version_dir):
+            if v:
+                print 'Creating %s' % self.shorten_filename(version_dir)
+            if not sim:
+                os.mkdir(version_dir)
+        elif v:
+            print ('Directory %s exists'
+                   % self.shorten_filename(version_dir))
+        if self.options.db_record:
+            self.update_db(version, self.connection())
+
 def update_sys_path(paths, verbose):
     if isinstance(paths, (str, unicode)):
         paths = [paths]
