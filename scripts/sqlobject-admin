@@ -2,7 +2,7 @@
 import sys
 import os
 try:
-    import sqlobject
+    import sqlobject.manager
 except ImportError:
     try:
         here = __file__
@@ -17,6 +17,11 @@ except ImportError:
         print 'I cannot find the sqlobject module'
         print 'If SQLObject is installed, you may need to set $PYTHONPATH'
         sys.exit(3)
+    # Now we have to get rid of possibly stale modules from that import
+    # up there
+    for name, value in sys.modules.items():
+        if name.startswith('sqlobject'):
+            del sys.modules[name]
 
 from sqlobject.manager import command
 command.the_runner.run(sys.argv)
