@@ -141,7 +141,7 @@ class SelectResults(object):
 
     def __iter__(self):
         if self.ops.get('connection'):
-            conn = self.opts.get('connection')
+            conn = self.ops.get('connection')
         else:
             conn = self.sourceClass._connection
         return conn.iterSelect(self)
