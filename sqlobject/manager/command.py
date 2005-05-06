@@ -4,6 +4,7 @@ import fnmatch
 import re
 import os
 import sys
+import textwrap
 try:
     from paste import pyconfig
     from paste import CONFIG
@@ -165,6 +166,8 @@ class Command(object):
     required_args = []
     description = None
 
+    help = ''
+
     def __classinit__(cls, new_args):
         if cls.__bases__ == (object,):
             # This abstract base class
@@ -179,6 +182,10 @@ class Command(object):
 
     def run(self):
         self.parser.usage = "%%prog [options]\n%s" % self.summary
+        if self.help:
+            help = textwrap.fill(
+                self.help, int(os.environ.get('COLUMNS', 80))-4)
+            self.parser.usage += '\n' + help
         self.parser.prog = '%s %s' % (
             os.path.basename(self.invoked_as),
             self.command_name)
@@ -420,6 +427,11 @@ class CommandStatus(Command):
 
     name = 'status'
     summary = 'Show status of classes vs. database'
+    help = ('This command checks the SQLObject definition and checks if '
+            'the tables in the database match.  It can always test for '
+            'missing tables, and on some databases can test for the '
+            'existance of other tables.  Column types are not currently '
+            'checked.')
 
     parser = standard_parser(simulate=False)
 
@@ -512,6 +524,9 @@ class CommandExecute(Command):
 
     name = 'execute'
     summary = 'Execute SQL statements'
+    help = ('Runs SQL statements directly in the database, with no '
+            'intervention.  Useful when used with a configuration file.  '
+            'Each argument is executed as an individual statement.')
 
     parser = standard_parser(find_modules=False)
     parser.add_option('--stdin',
@@ -563,7 +578,15 @@ class CommandExecute(Command):
 class CommandRecord(Command):
 
     name = 'record'
-    summary = 'Record state of table definitions'
+    summary = 'Record historical information about the database status'
+    help = ('Record state of table definitions.  The state of each '
+            'table is written out to a separate file in a directory, '
+            'and that directory forms a "version".  A table is also '
+            'added to you datebase (%s) that reflects the version the '
+            'database is currently at.  Use the upgrade command to '
+            'sync databases with code.'
+            % SQLObjectVersionTable.sqlmeta.table)
+               
     parser = standard_parser()
     parser.add_option('--output-dir',
                       help="Base directory for recorded definitions",
@@ -778,15 +801,135 @@ class CommandRecord(Command):
         if self.options.db_record:
             self.update_db(version, self.connection())
 
+class CommandUpgrade(CommandRecord):
+
+    name = 'upgrade'
+    summary = 'Update the database to a new version (as created by record)'
+    help = ('This command runs scripts (that you write by hand) to '
+            'upgrade a database.  The database\'s current version is in '
+            'the sqlobject_version table (use record --force-db-version '
+            'if a database does not have a sqlobject_version table), '
+            'and upgrade scripts are in the version directory you are '
+            'upgrading FROM, named upgrade_DBNAME_VERSION.sql, like '
+            '"upgrade_mysql_2004-12-01b.sql".')
+
+    parser = standard_parser(find_modules=False)
+    parser.add_option('--upgrade-to',
+                      help="Upgrade to the given version (default: newest version)",
+                      dest="upgrade_to",
+                      metavar="VERSION")
+    parser.add_option('--output-dir',
+                      help="Base directory for recorded definitions",
+                      dest="output_dir",
+                      metavar="DIR",
+                      default=None)
+
+    upgrade_regex = re.compile(r'^upgrade_([a-z]*)_([^.]*)\.sql$', re.I)
+
+    def command(self):
+        v = self.options.verbose
+        sim = self.options.simulate
+        if self.options.upgrade_to:
+            version_to = self.options.upgrade_to
+        else:
+            version_to = os.path.basename(self.find_last_version())
+        current = self.current_version()
+        if v:
+            print 'Current version: %s' % current
+        version_list = self.make_plan(current, version_to)
+        if not version_list:
+            print 'Database up to date'
+            return
+        if v:
+            print 'Plan:'
+            for next_version, upgrader in version_list:
+                print '  Use %s to upgrade to %s' % (
+                    self.shorten_filename(upgrader), next_version)
+        conn = self.connection()
+        for next_version, upgrader in version_list:
+            f = open(upgrader)
+            sql = f.read()
+            f.close()
+            if v:
+                print "Running:"
+                print sql
+                print '-'*60
+            if not sim:
+                conn.query(sql)
+            self.update_db(next_version, conn)
+        print 'Done.'
+                
+
+    def current_version(self):
+        conn = self.connection()
+        if not conn.tableExists(SQLObjectVersionTable.sqlmeta.table):
+            print 'No sqlobject_version table!'
+            sys.exit(1)
+        versions = list(SQLObjectVersionTable.select(connection=conn))
+        if not versions:
+            print 'No rows in sqlobject_version!'
+            sys.exit(1)
+        if len(versions) > 1:
+            print 'Ambiguous sqlobject_version_table'
+            sys.exit(1)
+        return versions[0].version
+
+    def make_plan(self, current, dest):
+        if current == dest:
+            return []
+        dbname = self.connection().dbName
+        next_version, upgrader = self.best_upgrade(current, dest, dbname)
+        if not upgrader:
+            print 'No way to upgrade from %s to %s' % (current, dest)
+            print ('(you need a %s/upgrade_%s_%s.sql script)'
+                   % (current, dbname, dest))
+            sys.exit(1)
+        plan = [(next_version, upgrader)]
+        if next_version == dest:
+            return plan
+        else:
+            return plan + self.make_plan(next_version, dest)
+
+    def best_upgrade(self, current, dest, target_dbname):
+        current_dir = os.path.join(self.base_dir(), current)
+        if self.options.verbose > 1:
+            print ('Looking in %s for upgraders'
+                   % self.shorten_filename(current_dir))
+        upgraders = []
+        for fn in os.listdir(current_dir):
+            match = self.upgrade_regex.search(fn)
+            if not match:
+                if self.verbose > 1:
+                    print 'Not an upgrade script: %s' % fn
+                continue
+            dbname = match.group(1)
+            version = match.group(2)
+            if dbname != target_dbname:
+                if self.verbose > 1:
+                    print 'Not for this database: %s (want %s)' % (
+                        dbname, target_dbname)
+                continue
+            if version > dest:
+                if self.verbose > 1:
+                    print 'Version too new: %s (only want %s)' % (
+                        version, dest)
+            upgraders.append((version, os.path.join(current_dir, fn)))
+        if not upgraders:
+            if self.options.verbose > 1:
+                print 'No upgraders found in %s' % current_dir
+            return None, None
+        upgraders.sort()
+        return upgraders[-1]        
+        
 def update_sys_path(paths, verbose):
     if isinstance(paths, (str, unicode)):
         paths = [paths]
     for path in paths:
         path = os.path.abspath(path)
         if path not in sys.path:
-            if verbose:
+            if verbose > 1:
                 print 'Adding %s to path' % path
-            sys.path.append(path)
+            sys.path.insert(0, path)
 
 if __name__ == '__main__':
     the_runner.run(sys.argv)
