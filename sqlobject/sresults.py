@@ -140,7 +140,10 @@ class SelectResults(object):
                 return list(self.clone(start=start, end=start+1))[0]
 
     def __iter__(self):
-        conn = self.ops.get('connection', self.sourceClass._connection)
+        if self.ops.get('connection'):
+            conn = self.opts.get('connection')
+        else:
+            conn = self.sourceClass._connection
         return conn.iterSelect(self)
 
     def accumulate(self, *expressions):
