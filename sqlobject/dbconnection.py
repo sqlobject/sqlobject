@@ -665,6 +665,8 @@ class Iteration(object):
         if result is None:
             self._cleanup()
             raise StopIteration
+	if result[0] is None:
+	    return None
         if self.select.ops.get('lazyColumns', 0):
             obj = self.select.sourceClass.get(result[0], connection=self.dbconn)
             return obj
