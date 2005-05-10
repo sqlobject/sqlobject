@@ -312,6 +312,23 @@ class DBAPI(DBConnection):
     def queryAll(self, s):
         return self._runWithConnection(self._queryAll, s)
 
+    def _queryAllDescription(self, conn, s):
+        """
+        Like queryAll, but returns (description, rows), where the
+        description is cursor.description (which gives row types)
+        """
+        if self.debug:
+            self.printDebug(conn, s, 'QueryAllDesc')
+        c = conn.cursor()
+        self._executeRetry(conn, c, s)
+        value = c.fetchall()
+        if self.debugOutput:
+            self.printDebug(conn, value, 'QueryAll', 'result')
+        return c.description, value
+
+    def queryAllDescription(self, s):
+        return self._runWithConnection(self._queryAllDescription, s)
+
     def _queryOne(self, conn, s):
         if self.debug:
             self.printDebug(conn, s, 'QueryOne')
