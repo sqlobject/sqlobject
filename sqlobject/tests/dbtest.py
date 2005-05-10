@@ -104,6 +104,8 @@ class InstalledTestDatabase(sqlobject.SQLObject):
         cls.setup()
         reversed = list(soClasses)[:]
         reversed.reverse()
+        # If anything needs to be dropped, they all must be dropped
+        any_drops = False
         for soClass in reversed:
             table = soClass.sqlmeta.table
             if not soClass._connection.tableExists(table):
@@ -120,6 +122,10 @@ class InstalledTestDatabase(sqlobject.SQLObject):
             if sql != newSQL:
                 if sql is not None:
                     instance.destroySelf()
+                any_drops = True
+                break
+        for soClass in reversed:
+            if any_drops:
                 cls.drop(soClass)
             else:
                 cls.clear(soClass)
