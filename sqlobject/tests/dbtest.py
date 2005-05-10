@@ -127,10 +127,11 @@ class InstalledTestDatabase(sqlobject.SQLObject):
                 any_drops = True
                 break
         for soClass in reversed:
-            if any_drops:
-                cls.drop(soClass)
-            else:
-                cls.clear(soClass)
+            if soClass._connection.tableExists(soClass.sqlmeta.table):
+                if any_drops:
+                    cls.drop(soClass)
+                else:
+                    cls.clear(soClass)
         for soClass in soClasses:
             table = soClass.sqlmeta.table
             if not soClass._connection.tableExists(table):
