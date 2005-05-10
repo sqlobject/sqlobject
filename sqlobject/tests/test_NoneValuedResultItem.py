@@ -14,8 +14,8 @@ class TestWork(SQLObject):
     title = StringCol()
 
 def test1():
-    setupClass(TestComposer)
-    setupClass(TestWork)
+    setupClass([TestComposer,
+                TestWork])
 
     c = TestComposer(name='Mahler, Gustav')
     w = TestWork(composer=c, title='Symphony No. 9')

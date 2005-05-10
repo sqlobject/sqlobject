@@ -12,8 +12,7 @@ class RFighter(SQLObject):
     power = IntCol()
 
 def createAllTables():
-    setupClass(RFighter)
-    setupClass(Race)
+    setupClass([Race, RFighter])
 
 def test_1():
     createAllTables()
