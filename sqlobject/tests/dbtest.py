@@ -80,7 +80,10 @@ def getConnection(**kw):
     name = conftest.option.Database
     if conftest.connectionShortcuts.has_key(name):
         name = conftest.connectionShortcuts[name]
-    return sqlobject.connectionForURI(name, **kw)
+    conn = sqlobject.connectionForURI(name, **kw)
+    if conftest.option.show_sql:
+        conn.debug = True
+    return conn
 
 connection = getConnection()
 

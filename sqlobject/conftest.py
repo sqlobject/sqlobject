@@ -29,7 +29,11 @@ option = py.test.Config.addoptions(
            action="store", dest="Database", default='sqlite',
            help="The database to run the tests under (default sqlite).  "
            "Can also use an alias from: %s"
-           % (', '.join(connectionShortcuts.keys()))))
+           % (', '.join(connectionShortcuts.keys()))),
+    Option('-S', '--SQL',
+           action="store_true", dest="show_sql", default=False,
+           help="Show SQL from statements (when capturing stdout the "
+           "SQL is only displayed when a test fails)"))
 
 class SQLObjectClass(py.test.collect.Class):
     def run(self):
