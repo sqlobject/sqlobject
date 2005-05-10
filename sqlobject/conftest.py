@@ -33,7 +33,11 @@ option = py.test.Config.addoptions(
     Option('-S', '--SQL',
            action="store_true", dest="show_sql", default=False,
            help="Show SQL from statements (when capturing stdout the "
-           "SQL is only displayed when a test fails)"))
+           "SQL is only displayed when a test fails)"),
+    Option('-O', '--SQL-output',
+           action="store_true", dest="show_sql_output", default=False,
+           help="Show output from SQL statements (when capturing "
+           "stdout the output is only displayed when a test fails)"))
 
 class SQLObjectClass(py.test.collect.Class):
     def run(self):

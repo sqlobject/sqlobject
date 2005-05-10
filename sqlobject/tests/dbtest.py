@@ -83,6 +83,8 @@ def getConnection(**kw):
     conn = sqlobject.connectionForURI(name, **kw)
     if conftest.option.show_sql:
         conn.debug = True
+    if conftest.option.show_sql_output:
+        conn.debugOutput = True
     return conn
 
 connection = getConnection()
