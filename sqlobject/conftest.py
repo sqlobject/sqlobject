@@ -9,6 +9,7 @@ exitfirst = True
 
 import py
 import os
+import sqlobject
 
 connectionShortcuts = {
     'mysql': 'mysql://test@localhost/test',
@@ -29,3 +30,12 @@ option = py.test.Config.addoptions(
            help="The database to run the tests under (default sqlite).  "
            "Can also use an alias from: %s"
            % (', '.join(connectionShortcuts.keys()))))
+
+class SQLObjectClass(py.test.collect.Class):
+    def run(self):
+        if (isinstance(self.obj, type)
+            and issubclass(self.obj, sqlobject.SQLObject)):
+            return []
+        return super(SQLObjectClass, self).run()
+
+Class = SQLObjectClass
