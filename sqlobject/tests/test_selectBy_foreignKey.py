@@ -1,7 +1,7 @@
 from sqlobject import *
 from sqlobject.tests.dbtest import *
 
-class TestComposer(SQLObject):
+class TestComposerKey(SQLObject):
     name = StringCol()
 
 class TestWork(SQLObject):
@@ -12,10 +12,10 @@ class TestWork(SQLObject):
     title = StringCol()
 
 def test1():
-    setupClass(TestComposer)
-    setupClass(TestWork)
+    setupClass([TestComposerKey,
+                TestWork])
 
-    c = TestComposer(name='Mahler, Gustav')
+    c = TestComposerKey(name='Mahler, Gustav')
     w1 = TestWork(composer=c, title='Symphony No. 9')
     w2 = TestWork(composer=None, title=None)
 
