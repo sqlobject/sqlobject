@@ -5,25 +5,16 @@ The framework for making database tests.
 import sys
 import os
 import re
-import sqlobject
 from py.test import raises
+import py
+import sqlobject
+import sqlobject.conftest as conftest
 
 if sys.platform[:3] == "win":
     def getcwd():
         return os.getcwd().replace(':', '|')
 else:
     getcwd = os.getcwd
-
-connectionShortcuts = {
-    'mysql': 'mysql://test@localhost/test',
-    'dbm': 'dbm:///data',
-    'postgres': 'postgres:///test',
-    'postgresql': 'postgres:///test',
-    'pygresql': 'pygresql://localhost/test',
-    'sqlite': 'sqlite:///%s/data/sqlite.data' % getcwd(),
-    'sybase': 'sybase://test:test123@sybase/test?autoCommit=0',
-    'firebird': 'firebird://sysdba:masterkey@localhost/var/lib/firebird/data/test.gdb',
-    }
 
 """
 supportsMatrix defines what database backends support what features.
@@ -86,17 +77,16 @@ installedDBTracker = sqlobject.connectionForURI(
     'sqlite:///' + installedDBFilename)
 
 def getConnection(**kw):
-    name = os.environ.get('TESTDB')
-    assert name, 'You must set $TESTDB to do database operations'
-    if connectionShortcuts.has_key(name):
-        name = connectionShortcuts[name]
+    name = conftest.option.Database
+    if conftest.connectionShortcuts.has_key(name):
+        name = conftest.connectionShortcuts[name]
     return sqlobject.connectionForURI(name, **kw)
 
 connection = getConnection()
 
 class InstalledTestDatabase(sqlobject.SQLObject):
     """
-    This table is set up in SQLite (always, regardless of $TESTDB) and
+    This table is set up in SQLite (always, regardless of --Database) and
     tracks what tables have been set up in the 'real' database.  This
     way we don't keep recreating the tables over and over when there
     are multiple tests that use a table.
