@@ -23,6 +23,8 @@ def test_case1():
     bob = TestSO1.selectBy(name='bob')[0]
     assert bob.name == 'bob'
     assert bob.passwd == 'god'.encode('rot13')
+    bobs = TestSO1.selectBy(name='bob')[:10]
+    assert len(list(bobs)) == 1
 
 def test_newline():
     setupGetters(TestSO1)
@@ -106,6 +108,19 @@ def test_foreignKey():
     assert tcc.other == tc4a
     tcc2 = TestSO3(name='c', other=tc4a.id)
     assert tcc2.other == tc4a
+
+def test_selectBy():
+    setupClass([TestSO4, TestSO3])
+    tc4 = TestSO4(me='another')
+    tc3 = TestSO3(name='sel', other=tc4)
+    anothertc3 = TestSO3(name='not joined')
+    assert tc3.other == tc4
+    assert list(TestSO3.selectBy(other=tc4)) == [tc3]
+    assert list(TestSO3.selectBy(otherID=tc4.id)) == [tc3]
+    assert TestSO3.selectBy(otherID=tc4.id)[0] == tc3
+    assert list(TestSO3.selectBy(otherID=tc4.id)[:10]) == [tc3]
+    assert list(TestSO3.selectBy(other=tc4)[:10]) == [tc3]
+    assert 0
 
 class TestSO5(SQLObject):
     name = StringCol(length=10, dbName='name_col')
