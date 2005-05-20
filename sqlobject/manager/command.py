@@ -905,7 +905,7 @@ class CommandUpgrade(CommandRecord):
             dbname = match.group(1)
             version = match.group(2)
             if dbname != target_dbname:
-                if self.verbose > 1:
+                if self.options.verbose > 1:
                     print 'Not for this database: %s (want %s)' % (
                         dbname, target_dbname)
                 continue
