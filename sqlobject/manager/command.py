@@ -899,7 +899,7 @@ class CommandUpgrade(CommandRecord):
         for fn in os.listdir(current_dir):
             match = self.upgrade_regex.search(fn)
             if not match:
-                if self.verbose > 1:
+                if self.options.verbose > 1:
                     print 'Not an upgrade script: %s' % fn
                 continue
             dbname = match.group(1)
