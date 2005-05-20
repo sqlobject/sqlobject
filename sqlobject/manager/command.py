@@ -5,6 +5,7 @@ import re
 import os
 import sys
 import textwrap
+import warnings
 try:
     from paste import pyconfig
     from paste import CONFIG
@@ -17,6 +18,14 @@ import sqlobject
 from sqlobject import col
 from sqlobject.util import moduleloader
 from sqlobject.declarative import DeclarativeMeta
+
+# It's not very unsafe to use tempnam like we are doing:
+warnings.filterwarnings(
+    'ignore', 'tempnam is a potential security risk.*',
+    RuntimeWarning, '.*command', 28)
+
+def nowarning_tempnam(*args, **kw):
+    return os.tempnam(*args, **kw)
 
 class SQLObjectVersionTable(sqlobject.SQLObject):
     """
@@ -321,6 +330,28 @@ class Command(object):
             fn = fn[len(os.getcwd())+1:]
         return fn
 
+    def open_editor(self, pretext, breaker=None, extension='.txt'):
+        """
+        Open an editor with the given text.  Return the new text,
+        or None if no edits were made.  If given, everything after
+        `breaker` will be ignored.
+        """
+        fn = nowarning_tempnam() + extension
+        f = open(fn, 'w')
+        f.write(pretext)
+        f.close()
+        print '$EDITOR %s' % fn
+        os.system('$EDITOR %s' % fn)
+        f = open(fn, 'r')
+        content = f.read()
+        f.close()
+        if breaker:
+            content = content.split(breaker)[0]
+            pretext = pretext.split(breaker)[0]
+        if content == pretext or not content.strip():
+            return None
+        return content
+
 class CommandSQL(Command):
 
     name = 'sql'
@@ -617,6 +648,11 @@ class CommandRecord(Command):
                       "this tool, to create a 'beginning' revision.",
                       metavar="VERSION_NAME",
                       dest="force_db_version")
+    parser.add_option('--edit',
+                      help="Open an editor for the upgrader in the last "
+                      "version (using $EDITOR).",
+                      action="store_true",
+                      dest="open_editor")
 
     version_regex = re.compile(r'^\d\d\d\d-\d\d-\d\d')
 
@@ -721,6 +757,24 @@ class CommandRecord(Command):
         elif self.options.db_record:
             for conn in conns:
                 self.update_db(version, conn)
+        if self.options.open_editor:
+            if not last_version_dir:
+                print ("Cannot edit upgrader because there is no "
+                       "previous version")
+            else:
+                breaker = ('-'*20 + ' lines below this will be ignored '
+                           + '-'*20)
+                pre_text = breaker + '\n' + '\n'.join(all_diffs)
+                text = self.open_editor('\n\n' + pre_text, breaker=breaker,
+                                        extension='.sql')
+                if text is not None:
+                    fn = os.path.join(last_version_dir,
+                                      'upgrade_%s_%s.sql' %
+                                      (dbName, version))
+                    f = open(fn, 'w')
+                    f.write(text)
+                    f.close()
+                    print 'Wrote to %s' % fn
 
     def update_db(self, version, conn):
         v = self.options.verbose
@@ -910,7 +964,7 @@ class CommandUpgrade(CommandRecord):
                         dbname, target_dbname)
                 continue
             if version > dest:
-                if self.verbose > 1:
+                if self.options.verbose > 1:
                     print 'Version too new: %s (only want %s)' % (
                         version, dest)
             upgraders.append((version, os.path.join(current_dir, fn)))
