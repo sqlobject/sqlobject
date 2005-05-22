@@ -9,7 +9,7 @@ import warnings
 try:
     from paste import pyconfig
     from paste import CONFIG
-except ImportError:
+except ImportError, e:
     pyconfig = None
     CONFIG = {}
 import time
@@ -131,11 +131,10 @@ def standard_parser(connection=True, simulate=True,
                           help="The database connection URI",
                           metavar='URI',
                           dest='connection_uri')
-    if pyconfig:
-        parser.add_option('-f', '--config-file',
-                          help="The Paste config file that contains the database URI (in the database key)",
-                          metavar="FILE",
-                          dest="config_file")
+    parser.add_option('-f', '--config-file',
+                      help="The Paste config file that contains the database URI (in the database key)",
+                      metavar="FILE",
+                      dest="config_file")
     if find_modules:
         parser.add_option('-m', '--module',
                           help="Module in which to find SQLObject classes",
@@ -287,8 +286,10 @@ class Command(object):
 
     def config(self):
         if getattr(self.options, 'config_file', None):
-            assert pyconfig, (
-                "The --config-file option should not be available without paste.pyconfig installed")
+            if not pyconfig:
+                print "You must have Python Paste installed (and on your $PYTHONPATH)"
+                print "to use the  -f/--config-file option."
+                sys.exit(2)
             config = pyconfig.Config(with_default=True)
             config.load(self.options.config_file)
             CONFIG.push_process_config(config)
