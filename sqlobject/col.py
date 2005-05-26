@@ -122,6 +122,10 @@ class SOCol(object):
         # None: no constraint is generated
         # True: a CASCADE constraint is generated
         # False: a RESTRICT constraint is generated
+        # 'null': a SET NULL trigger is generated
+        if isinstance(cascade, str):
+            assert cascade == 'null', (
+                "The only string value allowed for cascade is 'null' (you gave: %r)" % cascade)
         self.cascade = cascade
 
         if type(constraints) not in (type([]), type(())):

@@ -120,7 +120,6 @@ def test_selectBy():
     assert TestSO3.selectBy(otherID=tc4.id)[0] == tc3
     assert list(TestSO3.selectBy(otherID=tc4.id)[:10]) == [tc3]
     assert list(TestSO3.selectBy(other=tc4)[:10]) == [tc3]
-    assert 0
 
 class TestSO5(SQLObject):
     name = StringCol(length=10, dbName='name_col')
@@ -242,3 +241,27 @@ def testForeignKeyDestroySelfRestrict():
     tc9a.destroySelf()
     assert TestSO8.select().count() == 0
     assert TestSO9.select().count() == 0
+
+class TestSO10(SQLObject):
+    name = StringCol()
+
+class TestSO11(SQLObject):
+    name = StringCol()
+    other = ForeignKey('TestSO10', default=None, cascade='null')
+
+def testForeignKeySetNull():
+    setupClass([TestSO10, TestSO11])
+    obj1 = TestSO10(name='foo')
+    obj2 = TestSO10(name='bar')
+    dep1 = TestSO11(name='xxx', other=obj1)
+    dep2 = TestSO11(name='yyy', other=obj1)
+    dep3 = TestSO11(name='zzz', other=obj2)
+    for name in 'xxx', 'yyy', 'zzz':
+        assert len(list(TestSO11.selectBy(name=name))) == 1
+    obj1.destroySelf()
+    for name in 'xxx', 'yyy', 'zzz':
+        assert len(list(TestSO11.selectBy(name=name))) == 1
+    assert dep1.other is None
+    assert dep2.other is None
+    assert dep3.other is obj2
+    

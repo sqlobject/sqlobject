@@ -1205,19 +1205,22 @@ class SQLObject(object):
                               connection=conn)
     createTable = classmethod(createTable)
 
-    def createTableSQL(cls, createJoinTables=True, connection=None):
+    def createTableSQL(cls, createJoinTables=True, connection=None,
+                       createIndexes=True):
         conn = connection or cls._connection
         sql = conn.createTableSQL(cls)
         if createJoinTables:
             sql += '\n' + cls.createJoinTablesSQL(connection=conn)
+        if createIndexes:
+            sql += '\n' + cls.createIndexesSQL(connection=conn)
         return sql
     createTableSQL = classmethod(createTableSQL)
 
     def createJoinTables(cls, ifNotExists=False, connection=None):
         conn = connection or cls._connection
         for join in cls._getJoinsToCreate():
-            if ifNotExists and \
-               conn.tableExists(join.intermediateTable):
+            if (ifNotExists and
+                conn.tableExists(join.intermediateTable)):
                 continue
             conn._SO_createJoinTable(join)
     createJoinTables = classmethod(createJoinTables)
@@ -1237,6 +1240,16 @@ class SQLObject(object):
                 continue
             conn._SO_createIndex(cls, index)
     createIndexes = classmethod(createIndexes)
+
+    def createIndexesSQL(cls, connection=None):
+        conn = connection or cls._connection
+        sql = []
+        for index in cls.sqlmeta._indexList:
+            if not index:
+                continue
+            sql.append(conn.createIndexSQL(cls, index))
+        return '\n'.join(sql)
+    createIndexesSQL = classmethod(createIndexesSQL)
 
     def _getJoinsToCreate(cls):
         joins = []
@@ -1282,23 +1295,37 @@ class SQLObject(object):
         for k in depends:
             cols = findDependantColumns(klass.__name__, k)
             query = []
-            restrict = False
+            delete = setnull = restrict = False
             for col in cols:
                 if col.cascade == False:
                     # Found a restriction
                     restrict = True
                 query.append("%s = %s" % (col.dbName, self.id))
+                if col.cascade == 'null':
+                    setnull = col.name
+                elif col.cascade:
+                    delete = True
+            assert delete or setnull or restrict, (
+                "Class %s depends on %s accoriding to "
+                "findDependantColumns, but this seems inaccurate"
+                % (k, klass))
             query = ' OR '.join(query)
             results = k.select(query, connection=self._connection)
-            if restrict and results.count():
-                # Restrictions only apply if there are
-                # matching records on the related table
-                raise SQLObjectIntegrityError, (
-                    "Tried to delete %s::%s but "
-                    "table %s has a restriction against it" %
-                    (klass.__name__, self.id, k.__name__))
-            for row in results:
-                row.destroySelf()
+            if restrict:
+                if results.count():
+                    # Restrictions only apply if there are
+                    # matching records on the related table
+                    raise SQLObjectIntegrityError, (
+                        "Tried to delete %s::%s but "
+                        "table %s has a restriction against it" %
+                        (klass.__name__, self.id, k.__name__))
+            else:
+                for row in results:
+                    if delete:
+                        row.destroySelf()
+                    else:
+                        row.set(**{setnull: None})
+                
         self.sqlmeta._obsolete = True
         self._connection._SO_delete(self)
         self._connection.cache.expire(self.id, self.__class__)
