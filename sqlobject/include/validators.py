@@ -994,7 +994,7 @@ class CreditCardValidator(FormValidator):
         except ValueError:
             return {self._ccNumberField: self.message('invalidNumber', "Please enter only the number, no other characters")}
 
-        assert _cardInfo.has_key(ccType), "I can't validate that type of credit card"
+        assert self._cardInfo.has_key(ccType), "I can't validate that type of credit card"
         foundValid = False
         validLength = False
         for prefix, length in self._cardInfo[ccType]:
@@ -1009,7 +1009,7 @@ class CreditCardValidator(FormValidator):
         if not foundValid:
             return {self._ccNumberField: self.message('invalidNumber', "That number is not valid")}
 
-        if not _validateMod10(number):
+        if not self._validateMod10(number):
             return {self._ccNumberField: self.message('invalidNumber', "That number is not valid")}
         return None
 
