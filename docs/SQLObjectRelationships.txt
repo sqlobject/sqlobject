@@ -9,7 +9,7 @@ MultipleJoin: One-to-Many
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
 See `One-to-Many Relationships`_ for an example of one-to-many
-relationships.  
+relationships.
 
 Several keyword arguments are allowed to the `MultipleJoin` constructor:
 
@@ -77,3 +77,8 @@ Then the usage in a class::
         name = StringCol(length=50, alternateID=True)
         roles = RelatedJoin('Person', joinColumn='role', otherColumn='person', 
                             intermediateTable='assigned_roles')
+
+SingleJoin: One-to-One
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Similar to `MultipleJoin`, but returns just one object, not a list.

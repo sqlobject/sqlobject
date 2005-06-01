@@ -4,7 +4,7 @@ import styles
 import classregistry
 from col import popKey
 
-__all__ = ['MultipleJoin', 'SQLMultipleJoin', 'RelatedJoin', 'SQLRelatedJoin']
+__all__ = ['MultipleJoin', 'SQLMultipleJoin', 'RelatedJoin', 'SQLRelatedJoin', 'SingleJoin']
 
 def getID(obj):
     try:
@@ -133,16 +133,16 @@ class SOMultipleJoin(SOJoin):
             conn = None
         return self._applyOrderBy([self.otherClass.get(id, conn) for (id,) in ids if id is not None], self.otherClass)
 
+class MultipleJoin(Join):
+    baseClass = SOMultipleJoin
+
 class SOSQLMultipleJoin(SOMultipleJoin):
 
     def performJoin(self, inst):
-        results=self.otherClass.select(getattr(self.otherClass.q, self.soClass.sqlmeta.style.dbColumnToPythonAttr(self.joinColumn))==inst.id)
+        results = self.otherClass.select(getattr(self.otherClass.q, self.soClass.sqlmeta.style.dbColumnToPythonAttr(self.joinColumn)) == inst.id)
         if self.orderBy is NoDefault:
             self.orderBy = self.otherClass.sqlmeta.defaultOrder
         return results.orderBy(self.orderBy)
-
-class MultipleJoin(Join):
-    baseClass = SOMultipleJoin
 
 class SQLMultipleJoin(Join):
     baseClass = SOSQLMultipleJoin
@@ -202,6 +202,9 @@ class SORelatedJoin(SOMultipleJoin):
             self.otherColumn,
             getID(other))
 
+class RelatedJoin(MultipleJoin):
+    baseClass = SORelatedJoin
+
 class SOSQLRelatedJoin(SORelatedJoin):
     def performJoin(self, inst):
         options={
@@ -225,11 +228,33 @@ class SOSQLRelatedJoin(SORelatedJoin):
         # TODO (michelts), apply order by on the selection
         return results
 
-class RelatedJoin(MultipleJoin):
-    baseClass = SORelatedJoin
-
 class SQLRelatedJoin(RelatedJoin):
     baseClass = SOSQLRelatedJoin
 
 def capitalize(name):
     return name[0].capitalize() + name[1:]
+
+class SOSingleJoin(SOMultipleJoin):
+
+    def __init__(self, makeDefault=False, **kw):
+        SOMultipleJoin.__init__(self, **kw)
+        self.makeDefault = makeDefault
+
+    def performJoin(self, inst):
+        pythonColumn = self.soClass.sqlmeta.style.dbColumnToPythonAttr(self.joinColumn)
+        results = self.otherClass.select(getattr(self.otherClass.q, pythonColumn) == inst.id)
+        if results.count() == 0:
+            if not self.makeDefault:
+                return None
+            else:
+                kw = {pythonColumn[:-2]: inst} # skipping the ID (from foreignkeyID)
+                return self.otherClass(**kw) # instanciating the otherClass with all
+                # values to their defaults, except the foreign key
+                # TODO I don't think this is the best way to know the column as foreignKey
+                # reather than foreignKeyID, but I don't found a sqlmeta.style function
+                # to do the work, if there isn't such function, I must create it.
+        else:
+            return results[0]
+
+class SingleJoin(Join):
+    baseClass = SOSingleJoin
