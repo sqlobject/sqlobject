@@ -910,7 +910,11 @@ class CommandUpgrade(CommandRecord):
                 print sql
                 print '-'*60
             if not sim:
-                conn.query(sql)
+                try:
+                    conn.query(sql)
+                except:
+                    print "Error in script: %s" % upgrader
+                    raise
             self.update_db(next_version, conn)
         print 'Done.'
                 
