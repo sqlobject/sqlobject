@@ -475,6 +475,7 @@ class SQLObject(object):
 
         # We don't setup the properties until we're finished with the
         # batch adding of all the columns...
+        cls._notifyFinishClassCreation()
         cls._SO_finishedClassCreation = True
         makeProperties(cls)
 
@@ -795,6 +796,10 @@ class SQLObject(object):
             unmakeProperties(cls)
 
     delJoin = classmethod(delJoin)
+
+    def _notifyFinishClassCreation(cls):
+        pass
+    _notifyFinishClassCreation = classmethod(_notifyFinishClassCreation)
 
     def _init(self, id, connection=None, selectResults=None):
         assert id is not None

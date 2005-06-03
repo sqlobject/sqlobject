@@ -108,7 +108,8 @@ class InheritableSQLObject(SQLObject):
                 makeProperties(cls)
                 return
 
-        super(InheritableSQLObject, cls).addColumn(columnDef, changeSchema, connection)
+        if columnDef:
+            super(InheritableSQLObject, cls).addColumn(columnDef, changeSchema, connection)
 
         #DSM: Update each child class if needed and existing (only for new
         #DSM: dynamic column as no child classes exists at object creation)
@@ -148,7 +149,8 @@ class InheritableSQLObject(SQLObject):
                 makeProperties(cls)
                 return
 
-        super(InheritableSQLObject, cls).addJoin(joinDef)
+        if joinDef:
+            super(InheritableSQLObject, cls).addJoin(joinDef)
 
         #DSM: Update each child class if needed and existing (only for new
         #DSM: dynamic join as no child classes exists at object creation)
@@ -166,6 +168,17 @@ class InheritableSQLObject(SQLObject):
             delattr(c, meth)
 
     delJoin = classmethod(delJoin)
+
+    def _notifyFinishClassCreation(cls):
+        if not cls._columns:
+            # There are no columns - call addColumn to propagate columns
+            # from parent classes to children
+            cls.addColumn(None)
+        if not cls._joins:
+            # There are no joins - call addJoin to propagate joins
+            # from parent classes to children
+            cls.addJoin(None)
+    _notifyFinishClassCreation = classmethod(_notifyFinishClassCreation)
 
     def _create(self, id, **kw):
 
