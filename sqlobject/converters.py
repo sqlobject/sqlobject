@@ -1,4 +1,5 @@
 import array
+array_type = type(array.array('c', '')) # In Python 2.2 array.array is a function
 
 try:
     import mx.DateTime.ISO
@@ -91,7 +92,7 @@ registerConverter = converters.registerConverter
 lookupConverter = converters.lookupConverter
 
 def StringLikeConverter(value, db):
-    if isinstance(value, array.array):
+    if isinstance(value, array_type):
         try:
             value = value.tounicode()
         except ValueError:
@@ -108,7 +109,7 @@ def StringLikeConverter(value, db):
 
 registerConverter(type(""), StringLikeConverter)
 registerConverter(type(u""), StringLikeConverter)
-registerConverter(array.array, StringLikeConverter)
+registerConverter(array_type, StringLikeConverter)
 
 def IntConverter(value, db):
     return repr(int(value))
