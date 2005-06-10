@@ -209,6 +209,7 @@ class DBAPI(DBConnection):
         self._pool = []
         self._poolLock = threading.Lock()
         DBConnection.__init__(self, **kw)
+        self._binaryType = type(self.module.Binary(''))
 
     def _runWithConnection(self, meth, *args):
         conn = self.getConnection()

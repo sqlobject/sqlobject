@@ -936,12 +936,15 @@ class BinaryValidator(validators.Validator):
             if module.__name__ == "sqlite":
                 value = module.decode(value)
             return value
+        if isinstance(value, state.soObject._connection._binaryType):
+            return self._origValue
         raise validators.InvalidField("expected a string in the BLOBCol '%s', got %s instead" % \
             (self.name, type(value)), value, state)
 
     def fromPython(self, value, state):
         if value is None:
             return None
+        self._origValue = value # store the original value
         return state.soObject._connection.createBinary(value)
 
 class SOBLOBCol(SOStringCol):
