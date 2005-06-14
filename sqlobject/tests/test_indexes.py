@@ -29,12 +29,12 @@ def test_1():
     mod = SOIndex1._connection.module
     try:
         SOIndex1(name='blah', number=0)
-    except (mod.ProgrammingError, mod.IntegrityError):
+    except (mod.ProgrammingError, mod.IntegrityError, mod.OperationalError):
         # expected
         pass
     else:
         assert 0, "Exception expected."
-    
+
 def test_2():
     if not supports('expressionIndex'):
         return

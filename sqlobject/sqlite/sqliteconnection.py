@@ -1,6 +1,7 @@
 from sqlobject.dbconnection import DBAPI
 from sqlobject.col import popKey
 sqlite = None
+using_sqlite2 = False
 
 class SQLiteConnection(DBAPI):
 
@@ -10,19 +11,33 @@ class SQLiteConnection(DBAPI):
 
     def __init__(self, filename, autoCommit=1, **kw):
         global sqlite
+        global using_sqlite2
         if sqlite is None:
-            import sqlite
+            try:
+                from pysqlite2 import dbapi2 as sqlite
+                using_sqlite2 = True
+            except ImportError:
+                import sqlite
+                using_sqlite2 = False
         self.module = sqlite
         self.filename = filename  # full path to sqlite-db-file
         if not autoCommit and not kw.has_key('pool'):
             # Pooling doesn't work with transactions...
             kw['pool'] = 0
         # connection options
-        opts = {'autocommit': autoCommit}
-        if 'encoding' in kw:
-            opts['encoding'] = popKey(kw, 'encoding')
-        if 'mode' in kw:
-            opts['mode'] = int(popKey(kw, 'mode'), 0)
+        opts = {}
+        if using_sqlite2:
+            if autoCommit:
+                opts["isolation_level"] = None
+            if 'encoding' in kw:
+                import warnings
+                warnings.warn(DeprecationWarning("pysqlite2 does not support the encoding option"))
+        else:
+            opts['autocommit'] = autoCommit
+            if 'encoding' in kw:
+                opts['encoding'] = popKey(kw, 'encoding')
+            if 'mode' in kw:
+                opts['mode'] = int(popKey(kw, 'mode'), 0)
         if 'timeout' in kw:
             opts['timeout'] = float(popKey(kw, 'timeout'))
         # use only one connection for sqlite - supports multiple)
@@ -46,7 +61,18 @@ class SQLiteConnection(DBAPI):
         return 'sqlite:///%s' % self.filename
 
     def _setAutoCommit(self, conn, auto):
-        conn.autocommit = auto
+        if using_sqlite2:
+            if auto:
+                conn.isolation_level = None
+            else:
+                conn.isolation_level = ""
+        else:
+            conn.autocommit = auto
+
+    def _setIsolationLevel(self, conn, level):
+        if not using_sqlite2:
+            return
+        conn.isolation_level = level
 
     def makeConnection(self):
         return self._conn

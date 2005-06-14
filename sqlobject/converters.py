@@ -1,5 +1,4 @@
 import array
-array_type = type(array.array('c', '')) # In Python 2.2 array.array is a function
 
 try:
     import mx.DateTime.ISO
@@ -91,12 +90,17 @@ converters = ConverterRegistry()
 registerConverter = converters.registerConverter
 lookupConverter = converters.lookupConverter
 
+array_type = type(array.array('c', '')) # In Python 2.2 array.array and buffer
+buffer_type = type(buffer('')) # are functions, not classes
+
 def StringLikeConverter(value, db):
     if isinstance(value, array_type):
         try:
             value = value.tounicode()
         except ValueError:
             value = value.tostring()
+    elif isinstance(value, buffer_type):
+        value = str(value)
 
     if db in ('mysql', 'postgres'):
         for orig, repl in sqlStringReplace:
@@ -110,6 +114,7 @@ def StringLikeConverter(value, db):
 registerConverter(type(""), StringLikeConverter)
 registerConverter(type(u""), StringLikeConverter)
 registerConverter(array_type, StringLikeConverter)
+registerConverter(buffer_type, StringLikeConverter)
 
 def IntConverter(value, db):
     return repr(int(value))

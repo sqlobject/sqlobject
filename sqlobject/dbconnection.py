@@ -510,7 +510,7 @@ class DBAPI(DBConnection):
         self.query(self.createTableSQL(soClass))
 
     def createTableSQL(self, soClass):
-        return ('CREATE TABLE %s (\n%s\n)' % 
+        return ('CREATE TABLE %s (\n%s\n)' %
                 (soClass.sqlmeta.table, self.createColumns(soClass)))
 
     def createColumns(self, soClass):
@@ -822,7 +822,7 @@ class ConnectionHub(object):
             _connection = hub
 
         hub.threadConnection = connectionFromURI('...')
-        
+
     """
 
     def __init__(self):

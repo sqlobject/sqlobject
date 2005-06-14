@@ -373,6 +373,24 @@ class Col(object):
     def withClass(self, soClass):
         return self.baseClass(soClass=soClass, name=self._name, **self.kw)
 
+class StringValidator(validators.Validator):
+
+    def toPython(self, value, state):
+        if value is None:
+            return None
+        if isinstance(value, unicode):
+           return value.encode("ascii")
+        return value
+
+    def fromPython(self, value, state):
+        if value is None:
+            return None
+        if isinstance(value, str):
+            return value
+        if isinstance(value, unicode):
+            return value.encode("ascii")
+        return value
+
 class SOStringCol(SOCol):
 
     # 3-03 @@: What about BLOB?
@@ -389,6 +407,10 @@ class SOStringCol(SOCol):
             self.varchar = True
 
         SOCol.__init__(self, **kw)
+
+    def createValidators(self):
+        return [StringValidator()] + \
+            super(SOStringCol, self).createValidators()
 
     def autoConstraints(self):
         constraints = [consts.isString]
@@ -851,6 +873,17 @@ class DateTimeCol(Col):
                        % DATETIME_IMPLEMENTATION)
     now = staticmethod(now)
 
+
+if datetime_available:
+    class DateValidator(DateTimeValidator):
+        def toPython(self, value, state):
+            value = super(DateValidator, self).toPython(value, state)
+            if isinstance(value, datetime.datetime):
+                value = datetime.date(value.year, value.month, value.day)
+            return value
+
+        fromPython = toPython
+
 class SODateCol(SOCol):
     dateFormat = '%Y-%m-%d'
 
@@ -863,7 +896,7 @@ class SODateCol(SOCol):
         """Create a validator for the column. Can be overriden in descendants."""
         _validators = super(SODateCol, self).createValidators()
         if default_datetime_implementation == DATETIME_IMPLEMENTATION:
-            validatorClass = DateTimeValidator
+            validatorClass = DateValidator
         elif default_datetime_implementation == MXDATETIME_IMPLEMENTATION:
             validatorClass = MXDateTimeValidator
         if default_datetime_implementation:
@@ -937,7 +970,9 @@ class BinaryValidator(validators.Validator):
                 value = module.decode(value)
             return value
         if isinstance(value, state.soObject._connection._binaryType):
-            return self._origValue
+            if hasattr(self, "_binaryValue") and (value == self._binaryValue):
+                return self._origValue
+            return str(value)
         raise validators.InvalidField("expected a string in the BLOBCol '%s', got %s instead" % \
             (self.name, type(value)), value, state)
 
@@ -945,7 +980,8 @@ class BinaryValidator(validators.Validator):
         if value is None:
             return None
         self._origValue = value # store the original value
-        return state.soObject._connection.createBinary(value)
+        self._binaryValue = state.soObject._connection.createBinary(value)
+        return self._binaryValue
 
 class SOBLOBCol(SOStringCol):
     def createValidators(self):
@@ -983,6 +1019,8 @@ class PickleValidator(BinaryValidator):
     def toPython(self, value, state):
         if value is None:
             return None
+        if isinstance(value, unicode):
+            value = value.encode("ascii")
         if isinstance(value, str):
             return pickle.loads(value)
         raise validators.InvalidField("expected a pickle string in the PickleCol '%s', got %s instead" % \
