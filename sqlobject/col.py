@@ -29,6 +29,7 @@ import sqlbuilder
 import constraints as consts
 from include import validators
 from classregistry import findClass
+from converters import array_type
 
 NoDefault = sqlbuilder.NoDefault
 True, False = 1==1, 0==1
@@ -972,7 +973,9 @@ class BinaryValidator(validators.Validator):
         if isinstance(value, state.soObject._connection._binaryType):
             if hasattr(self, "_binaryValue") and (value == self._binaryValue):
                 return self._origValue
-            return str(value)
+            if isinstance(value, array_type): # MySQL
+                return value.tostring()
+            return str(value) # buffer => string
         raise validators.InvalidField("expected a string in the BLOBCol '%s', got %s instead" % \
             (self.name, type(value)), value, state)
 
