@@ -76,7 +76,7 @@ trans.rollback()
 
 ## Snippet "transactions2"
 class Person(SQLObject):
-    _cacheValue = False
+    _cacheValues = False
     # ...
 ## end snippet
 
