@@ -19,10 +19,6 @@ class FirebirdConnection(DBAPI):
 
         self.limit_re = re.compile('^\s*(select )(.*)', re.IGNORECASE)
 
-        if not autoCommit and not kw.has_key('pool'):
-            # Pooling doesn't work with transactions...
-            kw['pool'] = 0
-
         self.host = host
         self.db = db
         self.user = user

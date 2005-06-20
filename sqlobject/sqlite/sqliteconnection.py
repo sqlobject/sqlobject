@@ -21,9 +21,6 @@ class SQLiteConnection(DBAPI):
                 using_sqlite2 = False
         self.module = sqlite
         self.filename = filename  # full path to sqlite-db-file
-        if not autoCommit and not kw.has_key('pool'):
-            # Pooling doesn't work with transactions...
-            kw['pool'] = 0
         # connection options
         opts = {}
         if using_sqlite2:
