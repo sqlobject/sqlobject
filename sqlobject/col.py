@@ -374,28 +374,9 @@ class Col(object):
     def withClass(self, soClass):
         return self.baseClass(soClass=soClass, name=self._name, **self.kw)
 
-class StringValidator(validators.Validator):
 
-    def toPython(self, value, state):
-        if value is None:
-            return None
-        if isinstance(value, unicode):
-           return value.encode("ascii")
-        return value
-
-    def fromPython(self, value, state):
-        if value is None:
-            return None
-        if isinstance(value, str):
-            return value
-        if isinstance(value, unicode):
-            return value.encode("ascii")
-        return value
-
-class SOStringCol(SOCol):
-
-    # 3-03 @@: What about BLOB?
-
+class SOStringLikeCol(SOCol):
+    """A common ancestor for SOStringCol and SOUnicodeCol"""
     def __init__(self, **kw):
         self.length = popKey(kw, 'length')
         self.varchar = popKey(kw, 'varchar', 'auto')
@@ -408,10 +389,6 @@ class SOStringCol(SOCol):
             self.varchar = True
 
         SOCol.__init__(self, **kw)
-
-    def createValidators(self):
-        return [StringValidator()] + \
-            super(SOStringCol, self).createValidators()
 
     def autoConstraints(self):
         constraints = [consts.isString]
@@ -441,11 +418,11 @@ class SOStringCol(SOCol):
 
     def _postgresType(self):
         self._check_case_sensitive("PostgreSQL")
-        return super(SOStringCol, self)._postgresType()
+        return super(SOStringLikeCol, self)._postgresType()
 
     def _sqliteType(self):
         self._check_case_sensitive("SQLite")
-        return super(SOStringCol, self)._sqliteType()
+        return super(SOStringLikeCol, self)._sqliteType()
 
     def _sybaseType(self):
         self._check_case_sensitive("SYBASE")
@@ -468,6 +445,31 @@ class SOStringCol(SOCol):
         else:
             return self._sqlType()
 
+
+class StringValidator(validators.Validator):
+
+    def toPython(self, value, state):
+        if value is None:
+            return None
+        if isinstance(value, unicode):
+           return value.encode("ascii")
+        return value
+
+    def fromPython(self, value, state):
+        if value is None:
+            return None
+        if isinstance(value, str):
+            return value
+        if isinstance(value, unicode):
+            return value.encode("ascii")
+        return value
+
+class SOStringCol(SOStringLikeCol):
+
+    def createValidators(self):
+        return [StringValidator()] + \
+            super(SOStringCol, self).createValidators()
+
 class StringCol(Col):
     baseClass = SOStringCol
 
@@ -487,10 +489,10 @@ class UnicodeStringValidator(validators.Validator):
             return value
         return value.encode(self.db_encoding)
 
-class SOUnicodeCol(SOStringCol):
+class SOUnicodeCol(SOStringLikeCol):
     def __init__(self, **kw):
         self.dbEncoding = popKey(kw, 'dbEncoding', 'UTF-8')
-        SOStringCol.__init__(self, **kw)
+        super(SOUnicodeCol, self).__init__(**kw)
 
     def createValidators(self):
         return [UnicodeStringValidator(db_encoding=self.dbEncoding)] + \
