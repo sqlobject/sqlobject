@@ -34,8 +34,11 @@ class SelectResults(object):
     def __repr__(self):
         return "<%s at %x>" % (self.__class__.__name__, id(self))
 
+    def _getConnection(self):
+        return self.ops.get('connection') or self.sourceClass._connection
+
     def __str__(self):
-        conn = self.ops.get('connection', self.sourceClass._connection)
+        conn = self._getConnection()
         return conn.queryForSelect(self)
 
     def _mungeOrderBy(self, orderBy):
@@ -140,10 +143,7 @@ class SelectResults(object):
                 return list(self.clone(start=start, end=start+1))[0]
 
     def __iter__(self):
-        if self.ops.get('connection'):
-            conn = self.ops.get('connection')
-        else:
-            conn = self.sourceClass._connection
+        conn = self._getConnection()
         return conn.iterSelect(self)
 
     def accumulate(self, *expressions):
@@ -152,7 +152,7 @@ class SelectResults(object):
             connection.
             Return the accumulate result
         """
-        conn = self.ops.get('connection', self.sourceClass._connection)
+        conn = self._getConnection()
         return conn.accumulateSelect(self, *expressions)
 
     def count(self):
