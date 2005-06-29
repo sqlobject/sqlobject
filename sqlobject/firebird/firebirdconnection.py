@@ -46,6 +46,8 @@ class FirebirdConnection(DBAPI):
     connectionFromURI = classmethod(connectionFromURI)
 
     def _runWithConnection(self, meth, *args):
+        if not self.autoCommit:
+            return DBAPI._runWithConnection(self, meth, args)
         conn = self.getConnection()
         # @@: Horrible auto-commit implementation.  Just horrible!
         try:
@@ -89,16 +91,17 @@ class FirebirdConnection(DBAPI):
         idName = soInstance.sqlmeta.idName
         sequenceName = getattr(soInstance, '_idSequence',
                                'GEN_%s' % table)
+        c = conn.cursor()
         if id is None:
-            row = self.queryOne('SELECT gen_id(%s,1) FROM rdb$database'
+            c.execute('SELECT gen_id(%s,1) FROM rdb$database'
                                 % sequenceName)
-            id = row[0]
+            id = c.fetchone()[0]
         names = [idName] + names
         values = [id] + values
         q = self._insertSQL(table, names, values)
         if self.debug:
             self.printDebug(conn, q, 'QueryIns')
-        self.query(q)
+        c.execute(q)
         if self.debugOutput:
             self.printDebug(conn, id, 'QueryIns', 'result')
         return id
