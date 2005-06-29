@@ -616,19 +616,19 @@ class DBAPI(DBConnection):
 
     def _SO_columnClause(self, soClass, kw):
         ops = {None: "IS"}
-	data = {}
-	if 'id' in kw:
-	    data[soClass.sqlmeta.idName] = kw['id']
-	else:
-	    for key, col in soClass.sqlmeta._columnDict.items():
-	    	if key in kw:
-		    data[col.dbName] = kw[key]
-	    	elif col.foreignName in kw:
-		    obj = kw[col.foreignName]
-		    if obj is None:
-		    	data[col.dbName] = None
-		    else:
-		    	data[col.dbName] = obj.id
+        data = {}
+        if 'id' in kw:
+            data[soClass.sqlmeta.idName] = kw['id']
+        else:
+            for key, col in soClass.sqlmeta._columnDict.items():
+                if key in kw:
+                    data[col.dbName] = kw[key]
+                elif col.foreignName in kw:
+                    obj = kw[col.foreignName]
+                    if obj is None:
+                        data[col.dbName] = None
+                    else:
+                        data[col.dbName] = obj.id
         return ' AND '.join(
             ['%s %s %s' %
              (dbName, ops.get(value, "="), self.sqlrepr(value))
@@ -683,8 +683,8 @@ class Iteration(object):
         if result is None:
             self._cleanup()
             raise StopIteration
-	if result[0] is None:
-	    return None
+        if result[0] is None:
+            return None
         if self.select.ops.get('lazyColumns', 0):
             obj = self.select.sourceClass.get(result[0], connection=self.dbconn)
             return obj
@@ -714,7 +714,7 @@ class Transaction(object):
         self._obsolete = False
 
     def assertActive(self):
-        assert not self._obsolete, "This transaction has already gone through COMMIT/ROLLBACK; create another transaction"
+        assert not self._obsolete, "This transaction has already gone through ROLLBACK; begin another transaction"
 
     def query(self, s):
         self.assertActive()
@@ -795,7 +795,7 @@ class Transaction(object):
     def begin(self):
         # @@: Should we do this, or should begin() be a no-op when we're
         # not already obsolete?
-        assert self._obsolete, "You cannot begin a new transaction session without committing or rolling back the transaction"
+        assert self._obsolete, "You cannot begin a new transaction session without rolling back this one"
         self._obsolete = False
         self._connection = self._dbConnection.getConnection()
 
