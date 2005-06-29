@@ -35,19 +35,31 @@ class PostgresConnection(DBAPI):
         self.db = db
         self.password = passwd
         if dsn is None:
-            dsn = []
-            if db:
-                dsn.append('dbname=%s' % db)
-            if user:
-                dsn.append('user=%s' % user)
-            if passwd:
-                dsn.append('password=%s' % passwd)
-            if host:
-                # @@: right format?
-                dsn.append('host=%s' % host)
-            if port:
-                dsn.append('port=%s' % port)
-            dsn = ' '.join(dsn)
+            if usePygresql:
+                dsn = ''
+                if host:
+                    dsn += host
+                dsn += ':'
+                if db:
+                    dsn += db
+                dsn += ':'
+                if user:
+                    dsn += user
+                dsn += ':'
+                if passwd:
+                    dsn += passwd
+            else:
+                dsn = []
+                if db:
+                    dsn.append('dbname=%s' % db)
+                if user:
+                    dsn.append('user=%s' % user)
+                if passwd:
+                    dsn.append('password=%s' % passwd)
+                if host:
+                    # @@: right format?
+                    dsn.append('host=%s' % host)
+                dsn = ' '.join(dsn)
         self.dsn = dsn
         DBAPI.__init__(self, **kw)
 
