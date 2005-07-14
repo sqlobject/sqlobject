@@ -12,6 +12,9 @@ class TestJoin1(SQLObject):
 class TestJoin2(SQLObject):
     col2 = StringCol()
 
+class TestJoin3(SQLObject):
+    col3 = StringCol()
+
 def setup():
     setupClass(TestJoin1)
     setupClass(TestJoin2)
@@ -46,3 +49,13 @@ def test_3perform_join():
         join=LEFTJOINOn(None, TestJoin2, TestJoin1.q.col1 == TestJoin2.q.col2)
     )
     assert select.count() == 3
+
+def test_4join_3tables_syntax():
+    setup()
+    setupClass(TestJoin3)
+
+    select = TestJoin1.select(
+        join=LEFTJOIN(TestJoin2, TestJoin3)
+    )
+    assert str(select) == \
+        "SELECT test_join1.id, test_join1.col1 FROM test_join1, test_join2 LEFT JOIN test_join3 WHERE 1 = 1"

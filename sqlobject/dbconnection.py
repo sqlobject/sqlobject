@@ -370,7 +370,9 @@ class DBAPI(DBConnection):
             tables = select.tables
         q = "SELECT %s" % ", ".join([str(expression) for expression in expressions])
         q += " FROM %s" % ", ".join(tables)
-        if join: q += self._addJoins(select)
+        if join:
+            if tables: q += ','
+            q += self._addJoins(select)
         q += " WHERE"
         q = self._addWhereClause(select, q, limit=0, order=0)
         val = self.queryOne(q)
@@ -406,7 +408,9 @@ class DBAPI(DBConnection):
                      (cls.sqlmeta.table, cls.sqlmeta.idName,
                       ", ".join(tables))
 
-        if join: q += self._addJoins(select)
+        if join:
+            if tables: q += ','
+            q += self._addJoins(select)
         q += " WHERE"
         return self._addWhereClause(select, q)
 
