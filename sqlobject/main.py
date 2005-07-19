@@ -293,11 +293,11 @@ class SQLObject(object):
     sqlmeta = sqlmeta
 
     #DSM: The _inheritable attribute controls wheter the class can by
-    #DSM: inherited 'logically' with a foreignKey and back reference.
-    _inheritable = False # Does this class is inheritable
+    #DSM: inherited 'logically' with a foreignKey and a back reference.
+    _inheritable = False # Is this class inheritable?
     _parentClass = None # A reference to the parent class
     _parent = None # A reference to the parent instance
-    _childClasses = {} # Reference to child classes
+    _childClasses = {} # References to child classes
     childName = None # Children name (to be able to get a subclass)
 
     # The law of Demeter: the class should not call another classes by name
@@ -407,25 +407,25 @@ class SQLObject(object):
                     _cls._childClasses[cls.__name__] = cls
 
         #DSM: If this class is a child of a parent class, we need to do some
-        #DSM: attribute check and a a foreign key to the parent.
+        #DSM: attribute check and add a foreign key to the parent.
         if cls._parentClass:
             #DSM: First, look for invalid column name:
             #DSM: reserved ones or same as a parent
             parentCols = [column.name for column in cls._columns]
             for column in implicitColumns:
                 cname = column.name
-                if cname in ['childName']:
+                if cname == 'childName':
                     raise AttributeError, \
-                        "The column name '%s' is reserved" % cname
+                        "The column name 'childName' is reserved"
                 if cname in parentCols:
                     raise AttributeError, "The column '%s' is already " \
                         "defined in an inheritable parent" % cname
             #DSM: Remove columns if inherited from an inheritable class
             #DSM: as we don't want them.  All we want is a foreign key
-            #DSM: that will link to our parent
+            #DSM: that points to our parent
             cls._columns = []
         #DSM: If this is inheritable, add some default columns
-        #    to be able to link to children
+        #DSM: to be able to link to children
         if hasattr(cls, '_inheritable') and cls._inheritable and \
             cls.__name__ <> "InheritableSQLObject":
                 cls._columns.append(
