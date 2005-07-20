@@ -205,9 +205,12 @@ class PostgresConnection(DBAPI):
                 continue
             colClass, kw = self.guessClass(t)
             kw['name'] = soClass.sqlmeta.style.dbColumnToPythonAttr(field)
+            kw['dbName'] = field
             kw['notNone'] = notnull
             if defaultstr is not None:
-                kw['default'] = getattr(sqlbuilder.const, defaultstr)
+                kw['default'] = self.defaultFromSchema(colClass, defaultstr)
+            elif not notnull:
+                kw['default'] = None
             if keymap.has_key(field):
                 kw['foreignKey'] = keymap[field]
             results.append(colClass(**kw))
@@ -231,6 +234,18 @@ class PostgresConnection(DBAPI):
             return col.BLOBCol, {}
         else:
             return col.Col, {}
+
+    def defaultFromSchema(self, colClass, defaultstr):
+        """
+        If the default can be converted to a python constant, convert it.
+        Otherwise return is as a sqlbuilder constant.
+        """
+        if colClass == col.BoolCol:
+            if defaultstr == 'false':
+                return False
+            elif defaultstr == 'true':
+                return True
+        return getattr(sqlbuilder.const, defaultstr)
 
     def server_version(self):
         if self._server_version is None:
