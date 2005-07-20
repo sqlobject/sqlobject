@@ -10,7 +10,7 @@ def getID(obj):
     try:
         return obj.id
     except AttributeError:
-        return int(id)
+        return int(obj)
 
 class Join(object):
 
