@@ -892,6 +892,8 @@ class INSubquery(SQLExpression):
     def __init__(self, item, subquery):
         self.item = item
         self.subquery = subquery
+    def components(self):
+        return [self.item]
     def __sqlrepr__(self, db):
         return "%s %s (%s)" % (sqlrepr(self.item, db), self.op, sqlrepr(self.subquery, db))
 
