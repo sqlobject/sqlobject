@@ -140,10 +140,10 @@ class TestAuto:
         if not supports('fromDatabase'):
             return
         class AutoTest(SQLObject):
-            _fromDatabase = True
             _connection = getConnection()
             class sqlmeta(sqlmeta):
                 idName = 'auto_id'
+                fromDatabase = True
         john = AutoTest(firstName='john',
                         lastName='doe',
                         age=10,
