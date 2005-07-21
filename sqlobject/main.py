@@ -150,6 +150,10 @@ class sqlmeta(object):
 
     table = None
     idName = None
+    # This function is used to coerce IDs into the proper format,
+    # so you should replace it with str, or another function, if you
+    # aren't using integer IDs
+    idType = int
     style = None
     lazyUpdate = False
     defaultOrder = None
@@ -284,11 +288,6 @@ class SQLObject(object):
     # Default is false, but we set it to true for the *instance*
     # when necessary: (bad clever? maybe)
     _expired = False
-
-    # This function is used to coerce IDs into the proper format,
-    # so you should replace it with str, or another function, if you
-    # aren't using integer IDs
-    _idType = int
 
     sqlmeta = sqlmeta
 
@@ -506,6 +505,7 @@ class SQLObject(object):
     _defaultOrder = _sqlmeta_attr('defaultOrder', 2)
     _cacheValues = _sqlmeta_attr('cacheValues', 2)
     _registry = _sqlmeta_attr('registry', 2)
+    _idType = _sqlmeta_attr('idType', 2)
 
     def _cleanDeprecatedAttrs(cls, new_attrs):
         for attr in ['_table', '_lazyUpdate', '_style', '_idName',
@@ -525,7 +525,7 @@ class SQLObject(object):
 
         assert id is not None, 'None is not a possible id for %s' % cls.__name__
 
-        id = cls._idType(id)
+        id = cls.sqlmeta.idType(id)
 
         if connection is None:
             cache = cls._connection.cache
@@ -1059,7 +1059,7 @@ class SQLObject(object):
         self._SO_writeLock = threading.Lock()
 
         if kw.has_key('id'):
-            id = self._idType(kw['id'])
+            id = self.sqlmeta.idType(kw['id'])
             del kw['id']
         else:
             id = None
@@ -1356,7 +1356,7 @@ class SQLObject(object):
         if isinstance(value, cls):
             return value.id
         else:
-            return cls._idType(value)
+            return cls.sqlmeta.idType(value)
 
     coerceID = classmethod(coerceID)
 
