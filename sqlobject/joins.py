@@ -127,7 +127,7 @@ class SOMultipleJoin(SOJoin):
             self.otherClass,
             self.joinColumn,
             inst.id)
-        if inst._SO_perConnection:
+        if inst.sqlmeta._perConnection:
             conn = inst._connection
         else:
             conn = None
@@ -180,7 +180,7 @@ class SORelatedJoin(SOMultipleJoin):
             self.otherColumn,
             self.joinColumn,
             inst.id)
-        if inst._SO_perConnection:
+        if inst.sqlmeta._perConnection:
             conn = inst._connection
         else:
             conn = None

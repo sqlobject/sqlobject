@@ -182,6 +182,9 @@ class sqlmeta(object):
     # left.
     _creating = False
     _obsolete = False
+    # Sometimes an intance is attached to a connection, not
+    # globally available.  In that case, self.sqlmeta._perConnection
+    # will be true.  It's false by default:
     _perConnection = False
 
     def __classinit__(cls, new_attrs):
@@ -273,11 +276,6 @@ def deprecated(message, level=1, stacklevel=2):
 class SQLObject(object):
 
     __metaclass__ = declarative.DeclarativeMeta
-
-    # Sometimes an intance is attached to a connection, not
-    # globally available.  In that case, self._SO_perConnection
-    # will be true.  It's false by default:
-    _SO_perConnection = False
 
     _connection = sqlhub
 
@@ -827,7 +825,7 @@ class SQLObject(object):
             # Sometimes we need to know if this instance is
             # global or tied to a particular connection.
             # This flag tells us that:
-            self._SO_perConnection = True
+            self.sqlmeta._perConnection = True
 
         if not selectResults:
             dbNames = [col.dbName for col in self.sqlmeta._columns]
@@ -1045,7 +1043,7 @@ class SQLObject(object):
     def _SO_foreignKey(self, id, joinClass):
         if id is None:
             return None
-        elif self._SO_perConnection:
+        elif self.sqlmeta._perConnection:
             return joinClass.get(id, connection=self._connection)
         else:
             return joinClass.get(id)
@@ -1060,7 +1058,7 @@ class SQLObject(object):
         # Pass the connection object along if we were given one.
         if kw.has_key('connection'):
             self._connection = kw['connection']
-            self._SO_perConnection = True
+            self.sqlmeta._perConnection = True
             del kw['connection']
         self._SO_writeLock = threading.Lock()
 
