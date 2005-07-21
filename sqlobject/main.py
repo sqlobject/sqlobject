@@ -159,6 +159,7 @@ class sqlmeta(object):
     defaultOrder = None
     cacheValues = True
     registry = None
+    fromDatabase = False
 
     __metaclass__ = declarative.DeclarativeMeta
 
@@ -282,8 +283,6 @@ class SQLObject(object):
     _joins = []
 
     _indexes = []
-
-    _fromDatabase = False
 
     # Default is false, but we set it to true for the *instance*
     # when necessary: (bad clever? maybe)
@@ -463,7 +462,7 @@ class SQLObject(object):
 
         for column in cls._columns:
             cls.addColumn(column)
-        if cls._fromDatabase:
+        if cls.sqlmeta.fromDatabase:
             cls.addColumnsFromDatabase()
 
         ########################################
@@ -506,10 +505,12 @@ class SQLObject(object):
     _cacheValues = _sqlmeta_attr('cacheValues', 2)
     _registry = _sqlmeta_attr('registry', 2)
     _idType = _sqlmeta_attr('idType', 2)
+    _fromDatabase = _sqlmeta_attr('fromDatabase', 2)
 
     def _cleanDeprecatedAttrs(cls, new_attrs):
         for attr in ['_table', '_lazyUpdate', '_style', '_idName',
-                     '_defaultOrder', '_cacheValues', '_registry']:
+                     '_defaultOrder', '_cacheValues', '_registry',
+                     '_idType', '_fromDatabase']:
             if new_attrs.has_key(attr):
                 new_name = attr[1:]
                 deprecated("'%s' is deprecated; please set the '%s' "
