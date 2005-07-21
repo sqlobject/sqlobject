@@ -232,4 +232,10 @@ class InheritableSQLObject(SQLObject):
         super(InheritableSQLObject, self).destroySelf()
 
 
+    def _reprItems(self):
+        items = super(InheritableSQLObject, self)._reprItems()
+        if self._parentClass:
+            items.extend(self._parent._reprItems())
+        return items
+
 __all__ = ['InheritableSQLObject']

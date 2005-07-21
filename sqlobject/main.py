@@ -1334,7 +1334,7 @@ class SQLObject(object):
                         row.destroySelf()
                     else:
                         row.set(**{setnull: None})
-                
+
         self.sqlmeta._obsolete = True
         self._connection._SO_delete(self)
         self._connection.cache.expire(self.id, self.__class__)
