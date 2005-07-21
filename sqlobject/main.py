@@ -160,6 +160,9 @@ class sqlmeta(object):
     cacheValues = True
     registry = None
     fromDatabase = False
+    # Default is false, but we set it to true for the *instance*
+    # when necessary: (bad clever? maybe)
+    expired = False
 
     __metaclass__ = declarative.DeclarativeMeta
 
@@ -283,10 +286,6 @@ class SQLObject(object):
     _joins = []
 
     _indexes = []
-
-    # Default is false, but we set it to true for the *instance*
-    # when necessary: (bad clever? maybe)
-    _expired = False
 
     sqlmeta = sqlmeta
 
@@ -506,6 +505,7 @@ class SQLObject(object):
     _registry = _sqlmeta_attr('registry', 2)
     _idType = _sqlmeta_attr('idType', 2)
     _fromDatabase = _sqlmeta_attr('fromDatabase', 2)
+    _expired = _sqlmeta_attr('expired', 2)
 
     def _cleanDeprecatedAttrs(cls, new_attrs):
         for attr in ['_table', '_lazyUpdate', '_style', '_idName',
@@ -513,12 +513,17 @@ class SQLObject(object):
                      '_idType', '_fromDatabase']:
             if new_attrs.has_key(attr):
                 new_name = attr[1:]
-                deprecated("'%s' is deprecated; please set the '%s' "
+                deprecated("%r is deprecated; please set the %r "
                            "attribute in sqlmeta instead" %
                            (attr, new_name), level=2,
                            stacklevel=5)
                 setattr(cls.sqlmeta, new_name, new_attrs[attr])
                 delattr(cls, attr)
+        for attr in ['_expired']:
+            if new_attrs.has_key(attr):
+                deprecated("%r is deprecated and read-only; please do "
+                           "not use it in your classes until it is fully "
+                           "deprecated" % attr, level=3, stacklevel=5)
 
     _cleanDeprecatedAttrs = classmethod(_cleanDeprecatedAttrs)
 
@@ -851,7 +856,7 @@ class SQLObject(object):
                     pass
                 else:
                     return result
-                self._expired = False
+                self.sqlmeta.expired = False
                 dbNames = [col.dbName for col in self.sqlmeta._columns]
                 selectResults = self._connection._SO_selectOne(self, dbNames)
                 if not selectResults:
@@ -872,7 +877,7 @@ class SQLObject(object):
             if not selectResults:
                 raise SQLObjectNotFound, "The object %s by the ID %s has been deleted" % (self.__class__.__name__, self.id)
             self._SO_selectInit(selectResults)
-            self._expired = False
+            self.sqlmeta.expired = False
         finally:
             self._SO_writeLock.release()
 
@@ -891,15 +896,15 @@ class SQLObject(object):
             self._SO_writeLock.release()
 
     def expire(self):
-        if self._expired:
+        if self.sqlmeta.expired:
             return
         self._SO_writeLock.acquire()
         try:
-            if self._expired:
+            if self.sqlmeta.expired:
                 return
             for column in self.sqlmeta._columns:
                 delattr(self, instanceName(column.name))
-            self._expired = True
+            self.sqlmeta.expired = True
             self._connection.cache.expire(self.id, self.__class__)
         finally:
             self._SO_writeLock.release()
