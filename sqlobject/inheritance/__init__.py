@@ -78,12 +78,12 @@ class InheritableSQLObject(SQLObject):
         if hasattr(val, 'childName'):
              childName = val.childName
              if childName is not None:
-                 return val._childClasses[childName].get(id, selectResults=childResults)
+                 return val._childClasses[childName].get(id, connection=connection, selectResults=childResults)
         #DSM: Now, we know we are alone or the last child in a family...
         #DSM: It's time to find our parents
         inst = val
         while inst._parentClass and not inst._parent:
-            inst._parent = inst._parentClass.get(id, childUpdate=True)
+            inst._parent = inst._parentClass.get(id, connection=connection, childUpdate=True)
             inst = inst._parent
         #DSM: We can now return ourself
         return val
@@ -114,7 +114,7 @@ class InheritableSQLObject(SQLObject):
         #DSM: Update each child class if needed and existing (only for new
         #DSM: dynamic column as no child classes exists at object creation)
         for c in cls._childClasses.values():
-            c.addColumn(columnDef, childUpdate=True)
+            c.addColumn(columnDef, connection=connection, childUpdate=True)
 
     addColumn = classmethod(addColumn)
 
