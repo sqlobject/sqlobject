@@ -1,3 +1,4 @@
+from __future__ import generators # for enumerate
 from sqlobject import *
 from sqlobject.tests.dbtest import *
 
