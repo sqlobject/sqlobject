@@ -194,7 +194,7 @@ class InheritableSQLObject(SQLObject):
         if self._parentClass:
             parentClass = self._parentClass
             new_kw = {}
-            parent_kw = {}
+            parent_kw = {'childName': self.__class__.__name__}
             for (name, value) in kw.items():
                     if hasattr(parentClass, name):
                         parent_kw[name] = value
@@ -202,7 +202,6 @@ class InheritableSQLObject(SQLObject):
                         new_kw[name] = value
             kw = new_kw
             self._parent = parentClass(kw=parent_kw)
-            self._parent.childName = self.__class__.__name__
             id = self._parent.id
 
         super(InheritableSQLObject, self)._create(id, **kw)
