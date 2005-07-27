@@ -231,11 +231,12 @@ class InheritableSQLObject(SQLObject):
             self._parent.destroySelf()
         super(InheritableSQLObject, self).destroySelf()
 
-
     def _reprItems(self):
         items = super(InheritableSQLObject, self)._reprItems()
+        # add parent attributes (if any)
         if self._parentClass:
             items.extend(self._parent._reprItems())
-        return items
+        # filter out our special column
+        return [item for item in items if item[0] != 'childName']
 
 __all__ = ['InheritableSQLObject']

@@ -3,33 +3,47 @@ from sqlobject.classregistry import findClass
 from sqlobject.dbconnection import Iteration
 
 class InheritableIteration(Iteration):
-    #phd: default array size for cursor.fetchmany()
+    # Default array size for cursor.fetchmany()
     defaultArraySize = 10000
 
     def __init__(self, dbconn, rawconn, select, keepConnection=False):
+        # unless we do a lazy select, replace sourceClass
+        # with the root of the inheritance tree (children
+        # will be attached by sourceClass.get)
+        lazyColumns = select.ops.get('lazyColumns', False)
+        sourceClass = select.sourceClass
+        if sourceClass._parentClass and not lazyColumns:
+            addClauses = []
+            while sourceClass._parentClass:
+                addClauses.append(sourceClass._parentClass.q.childName
+                    == sourceClass.__name__)
+                sourceClass = sourceClass._parentClass
+            select = select.__class__(sourceClass,
+                sqlbuilder.AND(select.clause, *addClauses),
+                select.clauseTables, **select.ops)
         super(InheritableIteration, self).__init__(dbconn, rawconn, select, keepConnection)
+        self.lazyColumns = lazyColumns
         self.cursor.arraysize = self.defaultArraySize
         self._results = []
-        #phd: find the index of the childName column
+        # Find the index of the childName column
         childNameIdx = None
         columns = select.sourceClass.sqlmeta._columns
-        for i in range(len(columns)): #phd: enumerate() is unavailable python 2.2
+        for i in range(len(columns)): # enumerate() is unavailable python 2.2
             if columns[i].name == "childName":
                 childNameIdx = i
                 break
         self._childNameIdx = childNameIdx
 
     def next(self):
-        lazyColumns = self.select.ops.get('lazyColumns', 0)
         if not self._results:
             self._results = list(self.cursor.fetchmany())
-            if not lazyColumns: self.fetchChildren()
+            if not self.lazyColumns: self.fetchChildren()
         if not self._results:
             self._cleanup()
             raise StopIteration
         result = self._results[0]
         del self._results[0]
-        if lazyColumns:
+        if self.lazyColumns:
             obj = self.select.sourceClass.get(result[0], connection=self.dbconn)
             return obj
         else:
