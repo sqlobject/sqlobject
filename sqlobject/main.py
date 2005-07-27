@@ -1149,15 +1149,9 @@ class SQLObject(object):
         if obj:
            return obj
         if connection:
-            obj = cls.get(result[0], connection=connection)
+            obj = cls.get(result[0], connection=connection, selectResults=result[1:])
         else:
-            obj = cls.get(result[0])
-        if not obj.sqlmeta.cacheValues:
-            obj._SO_writeLock.acquire()
-            try:
-                obj._SO_selectInit(result[1:])
-            finally:
-                obj._SO_writeLock.release()
+            obj = cls.get(result[0], selectResults=result[1:])
         return obj
     _SO_fetchAlternateID = classmethod(_SO_fetchAlternateID)
 
