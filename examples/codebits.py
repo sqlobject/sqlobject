@@ -162,7 +162,7 @@ CREATE TABLE invoice_item (
 
 ## Snippet "composite"
 class InvoiceItem(SQLObject):
-    amount = Currency()
+    amount = CurrencyCol()
     currency = StringChar(length=3)
 
     def _get_price(self):
@@ -218,7 +218,7 @@ class SOCoords(object):
         return self._so.longitude
     def _set_longitude(self, value):
         self._so.longitude = value
-    longitude = property(_get_longitude, set_longitude)
+    longitude = property(_get_longitude, _set_longitude)
 ## end snippet
 
 ## Snippet "image-binary"
