@@ -133,12 +133,13 @@ def findDependantColumns(name, klass):
     return depends
 
 def _collectAttributes(cls, new_attrs, look_for_class, delete=True,
-                       set_name=False):
+                       set_name=False, sort=False):
     """
     Finds all attributes in `new_attrs` that are instances of
     `look_for_class`.  Returns them as a list.  If `delete` is true
     they are also removed from the `cls`.  If `set_name` is true, then
-    the ``.name`` attribute is set for any matching objects.
+    the ``.name`` attribute is set for any matching objects.  If
+    `sort` is true, then they will be sorted by ``obj.creationOrder``.
     """
     result = []
     for attr, value in new_attrs.items():
@@ -148,6 +149,9 @@ def _collectAttributes(cls, new_attrs, look_for_class, delete=True,
                 value.name = attr
             if delete:
                 delattr(cls, attr)
+    if sort:
+        result.sort(
+            lambda a, b: cmp(a.creationOrder, b.creationOrder))
     return result
 
 class CreateNewSQLObject:
@@ -620,7 +624,7 @@ class SQLObject(object):
         cls._SO_setupSqlmeta(new_attrs, is_base)
 
         implicitColumns = _collectAttributes(
-            cls, new_attrs, col.Col, set_name=True)
+            cls, new_attrs, col.Col, set_name=True, sort=True)
         implicitJoins = _collectAttributes(
             cls, new_attrs, joins.Join, set_name=True)
         implicitIndexes = _collectAttributes(

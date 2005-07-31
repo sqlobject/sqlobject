@@ -83,6 +83,8 @@ class TestSO4(SQLObject):
 
 def test_foreignKey():
     setupClass([TestSO4, TestSO3])
+    test3_order = [col.name for col in TestSO3.sqlmeta.columnList]
+    assert test3_order == ['name', 'otherID', 'other2ID']
     tc3 = TestSO3(name='a')
     assert tc3.other is None
     assert tc3.other2 is None

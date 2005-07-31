@@ -30,6 +30,7 @@ import constraints as consts
 from include import validators
 from classregistry import findClass
 from converters import array_type
+from util.backports import count
 
 NoDefault = sqlbuilder.NoDefault
 True, False = 1==1, 0==1
@@ -75,6 +76,8 @@ if mxdatetime_available:
     __all__.append("MXDATETIME_IMPLEMENTATION")
 
 
+creationOrder = count()
+
 class SQLValidator(validators.All):
     def attemptConvert(self, value, state, validate):
         if validate is validators.toPython:
@@ -100,6 +103,7 @@ class SOCol(object):
     def __init__(self,
                  name,
                  soClass,
+                 creationOrder,
                  dbName=None,
                  default=NoDefault,
                  foreignKey=None,
@@ -131,6 +135,7 @@ class SOCol(object):
         assert name, "You must provide a name for all columns"
 
         self.columnDef = columnDef
+        self.creationOrder = creationOrder
 
         self.immutable = immutable
 
@@ -361,6 +366,7 @@ class Col(object):
         self._name = name
         kw['columnDef'] = self
         self.kw = kw
+        self.creationOrder = creationOrder.next()
 
     def _set_name(self, value):
         assert self._name is None or self._name == value, (
@@ -374,7 +380,9 @@ class Col(object):
     name = property(_get_name, _set_name)
 
     def withClass(self, soClass):
-        return self.baseClass(soClass=soClass, name=self._name, **self.kw)
+        return self.baseClass(soClass=soClass, name=self._name,
+                              creationOrder=self.creationOrder,
+                              **self.kw)
 
     def __repr__(self):
         return '<%s %s %s>' % (
