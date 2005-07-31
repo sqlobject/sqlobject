@@ -590,6 +590,37 @@ def deprecated(message, level=1, stacklevel=2):
     if warnings_level is not None and warnings_level <= level:
         warnings.warn(message, DeprecationWarning, stacklevel=stacklevel)
 
+def setDeprecationLevel(warning=1, exception=None):
+    """
+    Set the deprecation level for SQLObject.  Low levels are more
+    actively being deprecated.  Any warning at a level at or below
+    ``warning`` will give a warning.  Any warning at a level at or
+    below ``exception`` will give an exception.  You can use a higher
+    ``exception`` level for tests to help upgrade your code.  ``None``
+    for either value means never warn or raise exceptions.
+
+    The levels currently mean:
+
+      1) Deprecated in current version (0.7).  Will be removed in next
+         version (0.8)
+      
+      2) Planned to deprecate in next version, remove later.
+      
+      3) Planned to deprecate sometime, remove sometime much later ;)
+
+    As the SQLObject versions progress, the deprecation level of
+    specific features will go down, indicating the advancing nature of
+    the feature's doom.  We'll try to keep features at 1 for a major
+    revision.
+
+    As time continues there may be a level 0, which will give a useful
+    error message (better than ``AttributeError``) but where the
+    feature has been fully removed.
+    """
+    warning_level = warning
+    exception_level = exception
+
+
 # SQLObject is the superclass for all SQLObject classes, of
 # course.  All the deeper magic is done in MetaSQLObject, and
 # only lesser magic is done here.  All the actual work is done
@@ -1506,4 +1537,5 @@ def getObject(obj, klass):
 
 __all__ = ['NoDefault', 'SQLObject', 'sqlmeta',
            'getID', 'getObject',
-           'SQLObjectNotFound', 'sqlhub']
+           'SQLObjectNotFound', 'sqlhub',
+           'setDeprecationLevel']
