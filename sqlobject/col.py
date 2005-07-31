@@ -363,7 +363,9 @@ class Col(object):
         self.kw = kw
 
     def _set_name(self, value):
-        assert self._name is None, "You cannot change a name after it has already been set (from %s to %s)" % (self.name, value)
+        assert self._name is None or self._name == value, (
+            "You cannot change a name after it has already been set "
+            "(from %s to %s)" % (self.name, value))
         self._name = value
 
     def _get_name(self):
@@ -373,6 +375,12 @@ class Col(object):
 
     def withClass(self, soClass):
         return self.baseClass(soClass=soClass, name=self._name, **self.kw)
+
+    def __repr__(self):
+        return '<%s %s %s>' % (
+            self.__class__.__name__, hex(abs(id(self)))[2:],
+            self._name or '(unnamed)')
+
 
 
 class SOStringLikeCol(SOCol):

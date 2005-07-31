@@ -4,22 +4,712 @@ SQLObject 0.6.1
 
 .. contents:: Contents:
 
-.. include:: SQLObjectIntro.txt
-.. include:: SQLObjectRequirements.txt
-.. include:: SQLObjectComparison.txt
-.. include:: SQLObjectFuture.txt
+Author, Site, and License
+=========================
+
+SQLObject is by Ian Bicking (ianb@colorstudy.com).  The website is
+sqlobject.org__.
+
+__ http://sqlobject.org
+
+The code is licensed under the `Lesser General Public License`_
+(LGPL).
+
+.. _`Lesser General Public License`: http://www.gnu.org/copyleft/lesser.html
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+Introduction
+============
+
+SQLObject is an *object-relational mapper*.  It allows you to
+translate RDBMS table rows into Python objects, and manipulate those
+objects to transparently manipulate the database.
+
+In using SQLObject, you will create a class definition that will
+describe how the object translates to the database table.  SQLObject
+will produce the code to access the database, and update the database
+with your changes.  The generated interface looks similar to any other
+interface, and callers need not be aware of the database backend.
+
+SQLObject also includes a novel feature to avoid generating,
+textually, your SQL queries.  This also allows non-SQL databases to be
+used with the same query syntax.
+
+Requirements
+============
+
+Currently SQLObject supports MySQL_, PostgreSQL_ (via ``psycopg``),
+SQLite_, Firebird_, Sybase_, and `MAX DB`_ (also known as SAP DB).
+
+.. _PostgreSQL: http://postgresql.org
+.. _SQLite: http://sqlite.org
+.. _Firebird: http://firebird.sourceforge.net
+
+Python 2.2 or higher is required.  SQLObject makes extensive use of
+new-style classes.
+
+Compared To Other Database Wrappers
+===================================
+
+There are several object-relational mappers (ORM) for Python.  I
+honestly can't comment deeply on the quality of those packages, but
+I'll try to place SQLObject in perspective.
+
+SQLObject uses new-style classes extensively.  The resultant objects
+have a new-style feel as a result -- setting attributes has side
+effects (it changes the database), and defining classes has side
+effects (through the use of metaclasses).  Attributes are generally
+exposed, not marked private, knowing that they can be made dynamic
+or write-only later.
+
+SQLObject creates objects that feel similar to normal Python objects
+(with the semantics of new-style classes).  An attribute attached to a
+column doesn't look different than an attribute that's attached to a
+file, or an attribute that is calculated.  It is a specific goal that
+you be able to change the database without changing the interface,
+including changing the scope of the database, making it more or less
+prominent as a storage mechanism.
+
+This is in contrast to some ORMs that provide a dictionary-like
+interface to the database (for example, PyDO_).  The dictionary
+interface distinguishes the row from a normal Python object.  I also
+don't care for the use of strings where an attribute seems more
+natural -- columns are limited in number and predefined, just like
+attributes.  (Note: newer version of PyDO apparently allow attribute
+access as well)
+
+.. _PyDO: http://skunkweb.sourceforge.net/pydo.html
+
+SQLObject is, to my knowledge, unique in using metaclasses to
+facilitate this seemless integration.  Some other ORMs use code
+generation to create an interface, expressing the schema in a CSV or
+XML file (for example, MiddleKit, part of Webware_).  By using
+metaclasses you are able to comfortably define your schema in the
+Python source code.  No code generation, no weird tools, no
+compilation step.
+
+.. _Webware: http://webware.sourceforge.net
+
+SQLObject provides a strong database abstraction, allowing
+cross-database compatibility (so long as you don't sidestep
+SQLObject).
+
+SQLObject has joins, one-to-many, and many-to-many, something which
+many ORMs do not have.  The join system is also intended to be
+extensible.
+
+You can map between database names and Python attribute and class
+names; often these two won't match, or the database style would be
+inappropriate for a Python attribute.  This way your database schema
+does not have to be designed with SQLObject in mind, and the resulting
+classes do not have to inherit the database's naming schemes.
+
+Future
+======
+
+Here are some things I plan:
+
+* More databases supported.  There has been interest and some work in
+  the progress for Oracle, Sybase, and MS-SQL support.
+* Better transaction support -- right now you can use transactions
+  for the database, but the object isn't transaction-aware, so
+  non-database persistence won't be able to be rolled back.  
+* Optimistic locking and other techniques to handle concurrency.
+* Profile of SQLObject performance, so that I can identify bottlenecks.
+* Increase hooks with FormEncode (unreleased) validation and form
+  generation package, so SQLObject classes (read: schemas) can be
+  published for editing more directly and easily.
+* Automatic joins in select queries.
+* More kinds of joins, and more powerful join results (closer to how
+  `select` works).
+
+See also the `Plan for 0.6`__.
+
+.. __: Plan06.html
 
 Using SQLObject: An Introduction
 ================================
 
-Let's start off quickly...
+Let's start off quickly.  We'll generally just import everything from
+the ``sqlobject`` class::
 
-.. include:: SQLObjectDeclaration.txt
-.. include:: SQLObjectUse.txt
-.. include:: SQLObjectLazy.txt
-.. include:: SQLObjectOneToMany.txt
-.. include:: SQLObjectManyToMany.txt
-.. include:: SQLObjectSelect.txt
+    >>> from sqlobject import *
+    >>> import sys, os
+
+Declaring the Class
+-------------------
+
+Lets first set up a connection::
+
+    >>> db_filename = os.path.abspath('data.db')
+    >>> if os.path.exists(db_filename):
+    ...     os.unlink(db_filename)
+    >>> sqlhub.processConnection = connectionForURI(
+    ...     'sqlite:' + db_filename)
+
+We'll develop a simple addressbook-like database.  We could create the
+tables ourselves, and just have SQLObject access those tables, but for
+now we'll let SQLObject do that work.  First, the class:
+
+    >>> class Person(SQLObject):
+    ... 
+    ...     firstName = StringCol()
+    ...     middleInitial = StringCol(length=1, default=None)
+    ...     lastName = StringCol()
+
+Many basic table schemas won't be any more complicated than that.
+`firstName`, `middleInitial`, and `lastName` are all columns in the
+database.  The general schema implied by this class definition is::
+
+    CREATE TABLE person (
+        id INT PRIMARY KEY AUTO_INCREMENT,
+        first_name TEXT,
+        middle_initial CHAR(1),
+        last_name TEXT
+    );
+
+This is for MySQL.  The schema for other databases looks slightly
+different (especially the ``id`` column).  You'll notice the names
+were changed from mixedCase to underscore_separated -- this is done by
+the `style object`_.  There are a variety of ways to handle that names
+that don't fit conventions (see `Irregular Naming`_).
+
+.. _`style object`: `Changing the Naming Style`_
+
+The tables don't yet exist.  We'll let SQLObject create them::
+
+    >>> Person.createTable()
+
+We can change the type of the various columns by using something other
+than `StringCol`, or using different arguments.  More about this in
+`Subclasses of Col`_.
+
+If you don't want to do table creation (you already have tables, or
+you want to create the tables yourself), you can just use the vague
+`Col` class.  SQLObject doesn't do much type checking, allowing the
+database and the adapter to handle most of the type conversion.
+Databases generally do their own type coercion on inputs.
+
+You'll note that the ``id`` column is not given in the class
+definition, it is implied.  For MySQL databases it should be defined
+as ``INT PRIMARY KEY AUTO_INCREMENT``, in Postgres ``SERIAL PRIMARY
+KEY``, and in SQLite as ``INTEGER PRIMARY KEY``.  You can `override
+the name`__, but some immutable primary key must exist (`you can use
+non-integer keys`_ with some extra effort).
+
+__ idName_
+.. _`you can use non-integer keys`: `Non-Integer Keys`_
+
+Using the Class
+---------------
+
+Now that you have a class, how will you use it?  We'll be considering
+the class defined above.
+
+To create a new object (and row), use class instantiation, like::
+
+    >>> Person(firstName="John", lastName="Doe")
+    <Person 1 lastName='Doe' middleInitial=None firstName='John'>
+
+If you had left out ``firstName`` or ``lastName`` you would have
+gotten an error, as no default was given for these columns
+(``middleInitial`` has a default, so it will be set to ``NULL``, the
+SQL equivalent of ``None``).
+
+.. note::
+
+   In SQLObject NULL/None does *not* mean default.  NULL is a funny
+   thing; it mean very different things in different contexts and to
+   different people.  Sometimes it means "default", sometimes "not
+   applicable", sometimes "unknown".  If you want a default, NULL or
+   otherwise, you always have to be explicit in your class
+   definition.
+
+   Also note that the SQLObject default isn't the same as the
+   database's default (SQLObject never uses the database's default).
+
+You can use the class method `.get()` to fetch instances that
+already exist::
+
+    >>> Person.get(1)
+    <Person 1 lastName='Doe' middleInitial=None firstName='John'>
+
+When you create an object, it is immediately inserted into the
+database.  SQLObject generally uses the database as immediate storage,
+unlike some other systems where you explicitly save objects into a
+database.
+
+Here's a longer example of using the class::
+
+    >>> p = Person.get(1)
+    >>> p
+    <Person 1 lastName='Doe' middleInitial=None firstName='John'>
+    >>> p.firstName
+    'John'
+    >>> p.middleInitial = 'Q'
+    >>> p.middleInitial
+    'Q'
+    >>> p2 = Person.get(1)
+    >>> p2
+    <Person 1 lastName='Doe' middleInitial='Q' firstName='John'>
+    >>> p is p2
+    True
+
+Columns are accessed like attributes.  (This uses the ``property``
+feature of Python 2.2, so that retrieving and setting these attributes
+executes code).  Also note that objects are unique -- there is
+generally only one ``Person`` instance of a particular id in memory at
+any one time.  If you ask for a person by a particular ID more than
+once, you'll get back the same instance.  This way you can be sure of
+a certain amount of consistency if you have multiple threads accessing
+the same data (though of course across processes there can be no
+sharing of an instance).  This isn't true if you're using
+transactions_, which are necessarily isolated.
+
+To get an idea of what's happening behind the surface, I'll give the
+same actions with the SQL that is sent, along with some commentary::
+
+    >>> # This will make SQLObject print out the SQL it executes:
+    >>> Person._connection.debug = True
+    >>> p = Person(firstName='Bob', lastName='Hope')
+     1/QueryIns:  INSERT INTO person (last_name, middle_initial, first_name) VALUES ('Hope', NULL, 'Bob')
+     1/COMMIT  :  auto
+     1/QueryOne:  SELECT last_name, middle_initial, first_name FROM person WHERE id = 2
+     1/COMMIT  :  auto
+    >>> p
+    <Person 2 lastName='Hope' middleInitial=None firstName='Bob'>
+    >>> p.middleInitial = 'Q'
+     1/Query   :  UPDATE person SET middle_initial = 'Q' WHERE id = 2
+     1/COMMIT  :  auto
+    >>> p2 = Person.get(1)
+    >>> # Note: no database access, since we're just grabbing the same
+    >>> # instance we already had.
+
+Hopefully you see that the SQL that gets sent is pretty clear and
+predictable.  To view the SQL being sent, add ``?debug=t`` to your
+connection URI, or set the ``debug`` attribute on the connection, and
+all SQL will be printed to the console.  This can be reassuring, and I
+would encourage you to try it.
+
+.. comment:
+
+    >>> Person._connection.debug = False
+
+As a small optimization, instead of assigning each attribute
+individually, you can assign a number of them using the ``set``
+method, like::
+
+    >>> p.set(firstName='Robert', lastName='Hope Jr.')
+
+This will send only one ``UPDATE`` statement.  You can also use `set`
+with non-database properties (there's no benefit, but it helps hide
+the difference between database and non-database attributes).
+
+Lazy Updates
+------------
+
+By default SQLObject sends an ``UPDATE`` to the database for every
+attribute you set, or everytime you call ``.set()``.  If you want to
+avoid this many updates, add ``_lazyUpdate = True`` to your class
+definition.  Then updates will only be written to the database when
+you call ``inst.syncUpdate()`` or ``obj.sync()``: ``.sync()`` also
+refetches the data from the database, which ``.syncUpdate()`` does not
+do.
+
+When enabled instances will have a property ``dirty``, which indicates
+if there are pending updates.  Inserts are still done immediately.
+
+One-to-Many Relationships
+-------------------------
+
+A real address book should have people, but also addresses.  
+
+First, let's define the new address table.  People can have multiple
+addresses, of course::
+
+    >>> class Address(SQLObject):
+    ... 
+    ...     street = StringCol()
+    ...     city = StringCol()
+    ...     state = StringCol(length=2)
+    ...     zip = StringCol(length=9)
+    ...     person = ForeignKey('Person')
+    >>> Address.createTable()
+
+Note the column ``person = ForeignKey("Person")``.  This is a
+reference to a `Person` object.  We refer to other classes by name
+(with a string) to avoid circular dependencies.  In the database
+there will be a ``person_id`` column, type ``INT``, which points to
+the ``person`` column.
+
+We want an attribute that gives the addresses for a person.  In a
+class definition we'd do::
+
+    class Person(SQLObject):
+        ...
+        addresses = MultipleJoin('Address')
+
+But we already have the class.  We can add this to the class
+in-place::
+
+    >>> Person.addJoin(MultipleJoin('Address', 
+    ...                joinMethodName='addresses'))
+
+.. note::
+
+   In almost all cases you can modify SQLObject classes after they've
+   been created.  Having attributes like ``*Col`` objects is
+   equivalent to calling certain class methods (like
+   ``addColumn()``). 
+
+Now we can get the backreference with ``aPerson.addresses``, which
+returns a list.  An example::
+
+    >>> p.addresses
+    []
+    >>> Address(street='123 W Main St', city='Smallsville',
+    ...         state='MN', zip='55407', person=p)
+    <Address 1 ...>
+    >>> p.addresses
+    [<Address 1 ...>]
+
+Many-to-Many Relationships
+--------------------------
+
+For this example we will have user and role objects.  The two have a
+many-to-many relationship, which is represented with the
+`RelatedJoin`.
+
+    >>> class User(SQLObject):
+    ... 
+    ...     class sqlmeta:
+    ...         # user is a reserved word in some databases, so we won't
+    ...         # use that for the table name:
+    ...         table = "user_table"
+    ... 
+    ...     username = StringCol(alternateID=True, length=20)
+    ...     # We'd probably define more attributes, but we'll leave
+    ...     # that excersize to the reader...
+    ... 
+    ...     roles = RelatedJoin('Role')
+
+    >>> class Role(SQLObject):
+    ... 
+    ...     name = StringCol(alternateID=True, length=20)
+    ... 
+    ...     users = RelatedJoin('User')
+
+    >>> User.createTable()
+    >>> Role.createTable()
+
+Note the use of the ``sqlmeta`` class.  This class is used to store
+different kinds of metadata (and override that metadata, like
+``table``).  This is new in SQLObject 0.7.
+
+And usage::
+
+    >>> bob = User(username='bob')
+    >>> tim = User(username='tim')
+    >>> jay = User(username='jay')
+    >>> admin = Role(name='admin')
+    >>> editor = Role(name='editor')
+    >>> bob.addRole(admin)
+    >>> bob.addRole(editor)
+    >>> tim.addRole(editor)
+    >>> bob.roles
+    [<Role 1 name='admin'>, <Role 2 name='editor'>]
+    >>> tim.roles
+    [<Role 2 name='editor'>]
+    >>> jay.roles
+    []
+    >>> admin.users
+    [<User 1 username='bob'>]
+    >>> editor.users
+    [<User 1 username='bob'>, <User 2 username='tim'>]
+
+In the process an intermediate table is created, ``role_user``, which
+references both of the other classes.  This table is never exposed as
+a class, and its rows do not have equivalent Python objects -- this
+hides some of the nuisance of a many-to-many relationship.
+
+You may notice that the columns have the extra keyword argument
+`alternateID`.  If you use ``alternateID=True``, this means that the
+column uniquely identifies rows -- like a username uniquely identifies
+a user.  This identifier is in addition to the primary key (``id``),
+which is always present.
+
+.. note::
+
+   SQLObject has a strong requirement that the primary key be unique
+   and *immutable*.  You cannot change the primary key through
+   SQLObject, and if you change it through another mechanism you can
+   cause inconsistency in any running SQLObject program (and in your
+   data).  For this reason meaningless integer IDs are encouraged --
+   something like a username that could change in the future may
+   uniquely identify a row, but it may be changed in the future.  So
+   long as it is not used to reference the row, it is also *safe* to
+   change it in the future.
+
+A alternateID column creates a class method, like ``byUsername`` for a
+column named ``username`` (or you can use the `alternateMethodName`
+keyword argument to override this).  Its use:
+
+    >>> User.byUsername('bob')
+    <User 1 username='bob'>
+    >>> Role.byName('admin')
+    <Role 1 name='admin'>
+
+Selecting Multiple Objects
+--------------------------
+
+While the full power of all the kinds of joins you can do with a
+relational database are not revealed in SQLObject, a simple ``SELECT``
+is available.
+
+``select`` is a class method, and you call it like (with the SQL
+that's generated)::
+
+    >>> Person._connection.debug = True
+    >>> peeps = Person.select(Person.q.firstName=="John")
+    >>> list(peeps)
+    SELECT person.id FROM person WHERE person.first_name = 'John';
+    [<Person 1 lastName='Doe' middleInitial=None firstName='John'>]
+
+This example returns everyone with the first name John.  An expression
+could be more complicated as well, like::
+
+    >>> peeps = Person.select(
+    ...         AND(Address.q.personID == Person.q.id,
+    ...             Address.q.zip.startswith('504')))
+    >>> list(peeps)
+    SELECT person.id FROM person, address WHERE (address.person_id = person.id AND address.zip LIKE '612%');
+    []
+
+You'll note that classes have an attribute ``q``, which gives access
+to special objects for constructing query clauses.  All attributes
+under ``q`` refer to column names and if you construct logical
+statements with these it'll give you the SQL for that statement.  You
+can also create your SQL more manually::
+
+    >>> peeps = Person.select("""address.id = person.id AND
+    ...                          address.zip LIKE '504%'""",
+    ...                       clauseTables=['address'])
+
+Note that you have to use ``clauseTables`` if you use tables besides
+the one you are selecting from.  If you use the ``q`` attributes
+SQLObject will automatically figure out what extra classes you might
+have used.
+
+You should use `MyClass.sqlrepr` to quote any values you use if you
+create SQL manually (quoting is automatic if you use ``q``).
+
+.. _orderBy:
+
+You can use the keyword arguments `orderBy` to create ``ORDER BY`` in
+the select statements: `orderBy` takes a string, which should be the
+*database* name of the column, or a column in the form
+``Person.q.firstName``.  You can use ``"-colname"`` to specify
+descending order, or call ``MyClass.select().reversed()``.
+
+You can use the special class variable `_defaultOrder` to give a
+default ordering for all selects.  To get an unordered result when
+`_defaultOrder` is used, use ``orderBy=None``.
+
+Select results are generators, which are lazily evaluated.  So the SQL
+is only executed when you iterate over the select results, or if you
+use ``list()`` to force the result to be executed.  When you iterate
+over the select results, rows are fetched one at a time.  This way you
+can iterate over large results without keeping the entire result set
+in memory.  You can also do things like ``.reversed()`` without
+fetching and reversing the entire result -- instead, SQLObject can
+change the SQL that is sent so you get equivalent results.
+
+You can also slice select results.  This modifies the SQL query, so
+``peeps[:10]`` will result in ``LIMIT 10`` being added to the end of
+the SQL query.  If the slice cannot be performed in the SQL (e.g.,
+peeps[:-10]), then the select is executed, and the slice is performed
+on the list of results.  This will generally only happen when you use
+negative indexes.
+
+In certain cases, you may get a select result with an object in it
+more than once, e.g., in some joins.  If you don't want this, you can
+add the keyword argument ``MyClass.select(..., distinct=True)``, which
+results in a ``SELECT DISTINCT`` call.
+
+You can get the length of the result without fetching all the results
+by calling ``count`` on the result object, like
+``MyClass.select().count()``.  A ``COUNT(*)`` query is used -- the
+actual objects are not fetched from the database.  Together with
+slicing, this makes batched queries easy to write:
+
+    start = 20
+    size = 10
+    query = Table.select()
+    results = query[start:start+size]
+    total = query.count()
+    print "Showing page %i of %i" % (start/size + 1, total/size + 1)
+
+.. note:: 
+
+   There are several factors when considering the efficiency of this
+   kind of batching, and it depends very much how the batching is
+   being used.  Consider a web application where you are showing an
+   average of 100 results, 10 at a time, and the results are ordered
+   by the date they were added to the database.  While slicing will
+   keep the database from returning all the results (and so save some
+   communication time), the database will still have to scan through
+   the entire result set to sort the items (so it knows which the
+   first ten are), and depending on your query may need to scan
+   through the entire table (depending on your use of indexes).
+   Indexes are probably the most important way to improve importance
+   in a case like this, and you may find caching to be more effective
+   than slicing.
+
+   In this case, caching would mean retrieving the *complete* results.
+   You can use ``list(MyClass.select(...))`` to do this.  You can save
+   these results for some limited period of time, as the user looks
+   through the results page by page.  This means the first page in a
+   search result will be slightly more expensive, but all later pages
+   will be very cheap.
+
+For more information on the where clause in the queries, see the
+`SQLBuilder documentation`_.
+
+.. _`SQLBuilder documentation`: SQLBuilder.html
+
+Select-By Method
+~~~~~~~~~~~~~~~~
+
+An alternative to ``.select`` is ``.selectBy``.  It works like:
+
+    >>> peeps = Person.selectBy(firstName="John", lastName="Doe")
+
+Each keyword argument is a column, and all the keyword arguments
+are ANDed together.  The return value is a `SelectResult`, so you
+can slice it, count it, order it, etc.
+
+Customizing the Objects
+-----------------------
+
+While we haven't done so in the examples, you can include your own
+methods in the class definition.  Writing your own methods should be
+obvious enough (just do so like in any other class), but there are
+some other details to be aware of.
+
+Initializing the Objects
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+There are two ways SQLObject instances can come into existance: they
+can be fetched from the database, or they can be inserted into the
+database.  In both cases a new Python object is created.  This makes
+the role of `__init__` a little confusing.
+
+In general, you should not touch `__init__`.  Instead use the `_init`
+method, which is called after an object is fetched or inserted.  This
+method has the signature ``_init(self, id, connection=None,
+selectResults=None)``, though you may just want to use ``_init(self,
+*args, **kw)``.  **Note:** don't forget to call
+``SQLObject._init(self, *args, **kw)`` if you override the method!
+
+Adding Magic Attributes (properties)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+You can use all the normal techniques for defining methods in this
+new-style class, including `classmethod`, `staticmethod`, and
+`property`, but you can also use a shortcut.  If you have a method
+that's name starts with ``_set_``, ``_get_``, ``_del_``, or ``_doc_``,
+it will be used to create a property.  So, for instance, say you have
+images stored under the ID of the person in the ``/var/people/images``
+directory:
+
+    class Person(SQLObject):
+        # ...
+
+        def imageFilename(self):
+            return 'images/person-%s.jpg' % self.id
+
+        def _get_image(self):
+            if not os.path.exists(self.imageFilename()):
+                return None
+            f = open(self.imageFilename())
+            v = f.read()
+            f.close()
+            return v
+
+        def _set_image(self, value):
+            # assume we get a string for the image
+            f = open(self.imageFilename(), 'w')
+            f.write(value)
+            f.close()
+
+        def _del_image(self, value):
+            # I usually wouldn't include a method like this, but for
+            # instructional purposes...
+            os.unlink(self.imageFilename())
+
+
+Later, you can use the ``.image`` property just like an attribute, and
+the changes will be reflected in the filesystem by calling these
+methods.  This is a good technique for information that is better to
+keep in files as opposed to the database (such as large, opaque data
+like images).
+
+You can also pass an ``image`` keyword argument to the constructor
+or the `set` method, like ``Person(..., image=imageText)``.
+
+All of the methods (``_get_``, ``_set_``, etc) are optional -- you can
+use any one of them without using the others.  So you could define
+just a ``_get_attr`` method so that ``attr`` was read-only.
+
+Overriding Column Attributes
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+It's a little more complicated if you want to override the behavior of
+an database column attribute.  For instance, imagine there's special
+code you want to run whenever someone's name changes.  In many systems
+you'd do some custom code, then call the superclass's code.  But the
+superclass (``SQLObject``) doesn't know anything about the column in
+your subclass.  It's even worse with properties.
+
+SQLObject creates methods like ``_set_lastName`` for each of your
+columns, but again you can't use this, since there's no superclass to
+reference (and you can't write ``SQLObject._set_lastName(...)``,
+because the SQLObject class doesn't know about your class's columns).
+You want to override that ``_set_lastName`` method yourself.
+
+To deal with this, SQLObject creates two methods for each getter and
+setter, for example: ``_set_lastName`` and ``_SO_set_lastName``.  So
+to intercept all changes to ``lastName``:
+
+    class Person(SQLObject):
+        lastName = StringCol()
+        firstName = StringCol()
+
+        def _set_lastName(self, value):
+            self.notifyLastNameChange(value)
+            self._SO_set_lastName(value)
+
+Or perhaps you want to constrain a phone numbers to be actual
+digits, and of proper length, and make the formatting nice:
+
+.. raw:: html
+   :file: ../examples/snippets/phonenumber_magicoverride.html
+
+.. note::
+
+   You should be a little cautious when modifying data that gets set
+   in an attribute.  Generally someone using your class will expect
+   that the value they set the attribute to will be the same value
+   they get back.  In this example we removed some of the characters
+   before putting it in the database, and reformatted it on the way
+   out.  One advantage of methods (as opposed to attribute access) is
+   that the programmer is more likely to expect this disconnect.
+
+
 .. include:: SQLObjectCustomization.txt
 
 Reference

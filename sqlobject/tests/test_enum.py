@@ -7,9 +7,7 @@ from sqlobject.tests.dbtest import *
 
 class Enum1(SQLObject):
 
-    _columns = [
-        EnumCol('l', enumValues=['a', 'bcd', 'e']),
-        ]
+    l = EnumCol(enumValues=['a', 'bcd', 'e'])
 
 def testBad():
     setupClass(Enum1)

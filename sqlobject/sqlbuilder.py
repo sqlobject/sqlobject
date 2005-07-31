@@ -357,8 +357,8 @@ class SQLObjectTable(Table):
             return self.FieldClass(self.tableName, self.soClass.sqlmeta.idName, attr)
         else:
             return self.FieldClass(self.tableName,
-                                  self.soClass.sqlmeta._columnDict[attr].dbName,
-                                  attr)
+                                   self.soClass.sqlmeta.columns[attr].dbName,
+                                   attr)
 
 class TableSpace:
     TableClass = Table
@@ -766,6 +766,7 @@ class SQLJoinConditional(SQLJoin):
             join = "%s %s ON %s" % (self.op, self.table2, on_condition)
             if self.table1:
                 join = "%s %s" % (self.table1, join)
+            print [self.table1, self.table2, join]
             return join
         elif self.using_columns:
             using_columns = []

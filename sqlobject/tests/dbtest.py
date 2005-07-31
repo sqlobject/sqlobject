@@ -41,7 +41,7 @@ supportsMatrix = {
     }
 
 
-def setupClass(soClasses):
+def setupClass(soClasses, force=False):
     """
     Makes sure the classes have a corresponding and correct table.
     This won't recreate the table if it already exists.  It will check
@@ -53,6 +53,9 @@ def setupClass(soClasses):
     destroyed in the opposite order.  So if class A depends on class
     B, then do setupClass([B, A]) and B won't be destroyed or cleared
     until after A is destroyed or cleared.
+
+    If force is true, then the database will be recreated no matter
+    what.
     """
     global hub
     if not isinstance(soClasses, (list, tuple)):
@@ -68,7 +71,7 @@ def setupClass(soClasses):
         #hub.threadConnection = connection
         #hub.processConnection = connection
         soClass._connection = connection
-    installOrClear(soClasses)
+    installOrClear(soClasses, force=force)
     return soClasses
 
 installedDBFilename = os.path.join(getcwd(), 'dbs_data.tmp')
@@ -102,12 +105,16 @@ class InstalledTestDatabase(sqlobject.SQLObject):
     createSQL = sqlobject.StringCol(notNull=True)
     connectionURI = sqlobject.StringCol(notNull=True)
 
-    def installOrClear(cls, soClasses):
+    def installOrClear(cls, soClasses, force=False):
         cls.setup()
         reversed = list(soClasses)[:]
         reversed.reverse()
         # If anything needs to be dropped, they all must be dropped
-        any_drops = False
+        # But if we're forcing it, then we'll always drop
+        if force:
+            any_drops = True
+        else:
+            any_drops = False
         for soClass in reversed:
             table = soClass.sqlmeta.table
             if not soClass._connection.tableExists(table):

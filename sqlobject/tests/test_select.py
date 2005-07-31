@@ -75,10 +75,8 @@ def test_04_indexed_ended_by_exception():
 
 class Counter2(SQLObject):
 
-    _columns = [
-        IntCol('n1', notNull=True),
-        IntCol('n2', notNull=True),
-        ]
+    n1 = IntCol(notNull=True)
+    n2 = IntCol(notNull=True)
 
 class TestSelect:
 

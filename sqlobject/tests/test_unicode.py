@@ -13,11 +13,8 @@ class Unicode1(SQLObject):
 try:
     enumerate
 except NameError: # Python 2.2
-    def enumerate(list):
-        new_list = []
-        for i in range(len(list)):
-            new_list.append((i, list[0]))
-        return new_list
+    def enumerate(lst):
+        return [(i, lst[i]) for i in range(len(lst))]
 
 def test_create():
     setupClass(Unicode1)

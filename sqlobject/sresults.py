@@ -48,8 +48,8 @@ class SelectResults(object):
         else:
             desc = False
         if isinstance(orderBy, (str, unicode)):
-            if self.sourceClass.sqlmeta._columnDict.has_key(orderBy):
-                val = self.sourceClass.sqlmeta._columnDict[orderBy].dbName
+            if orderBy in self.sourceClass.sqlmeta.columns:
+                val = self.sourceClass.sqlmeta.columns[orderBy].dbName
                 if desc:
                     return '-' + val
                 else:

@@ -7,19 +7,19 @@ from sqlobject.tests.dbtest import *
 
 class PersonJoiner(SQLObject):
 
-    _columns = [StringCol('name', length=40, alternateID=True)]
-    _joins = [RelatedJoin('AddressJoiner')]
+    name = StringCol(length=40, alternateID=True)
+    addressJoiners = RelatedJoin('AddressJoiner')
 
 class AddressJoiner(SQLObject):
 
-    _columns = [StringCol('zip', length=5, alternateID=True)]
-    _joins = [RelatedJoin('PersonJoiner')]
+    zip = StringCol(length=5, alternateID=True)
+    personJoiners = RelatedJoin('PersonJoiner')
 
 class ImplicitJoiningSO(SQLObject):
     foo = RelatedJoin('Bar')
 
 class ExplicitJoiningSO(SQLObject):
-    _joins = [MultipleJoin('Bar', joinMethodName='foo')]
+    foo = MultipleJoin('Bar', joinMethodName='foo')
 
 class TestJoin:
 
@@ -63,17 +63,17 @@ class TestJoin:
 
 class PersonJoiner2(SQLObject):
 
-    _columns = [StringCol('name', length=40, alternateID=True)]
-    _joins = [MultipleJoin('AddressJoiner2')]
+    name = StringCol('name', length=40, alternateID=True)
+    addressJoiner2s = MultipleJoin('AddressJoiner2')
 
 class AddressJoiner2(SQLObject):
 
     class sqlmeta:
         defaultOrder = ['-zip', 'plus4']
 
-    _columns = [StringCol('zip', length=5),
-                StringCol('plus4', length=4, default=None),
-                ForeignKey('PersonJoiner2')]
+    zip = StringCol(length=5)
+    plus4 = StringCol(length=4, default=None)
+    personJoiner2 = ForeignKey('PersonJoiner2')
 
 class TestJoin2:
 

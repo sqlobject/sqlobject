@@ -290,6 +290,7 @@ class DBAPI(DBConnection):
         print '%(n)2i%(threadName)s/%(name)s%(spaces)s%(sep)s %(s)s' % locals()
 
     def _executeRetry(self, conn, cursor, query):
+        print query
         return cursor.execute(query)
 
     def _query(self, conn, s):
@@ -398,7 +399,7 @@ class DBAPI(DBConnection):
                   ", ".join(tables))
         else:
             columns = ", ".join(["%s.%s" % (cls.sqlmeta.table, col.dbName)
-                                 for col in cls.sqlmeta._columns])
+                                 for col in cls.sqlmeta.columnList])
             if columns:
                 q += "%s.%s, %s FROM %s" % \
                      (cls.sqlmeta.table, cls.sqlmeta.idName, columns,
@@ -465,8 +466,8 @@ class DBAPI(DBConnection):
                 else:
                     desc = False
                 assert sqlbuilder.sqlIdentifier(s), "Strings in clauses are expected to be column identifiers.  I got: %r" % s
-                if select.sourceClass.sqlmeta._columnDict.has_key(s):
-                    s = select.sourceClass.sqlmeta._columnDict[s].dbName
+                if s in select.sourceClass.sqlmeta.columns:
+                    s = select.sourceClass.sqlmeta.columns[s].dbName
                 if desc:
                     return sqlbuilder.DESC(sqlbuilder.SQLConstant(s))
                 else:
@@ -520,7 +521,7 @@ class DBAPI(DBConnection):
     def createColumns(self, soClass):
         columnDefs = [self.createIDColumn(soClass)] \
                      + [self.createColumn(soClass, col)
-                        for col in soClass.sqlmeta._columns]
+                        for col in soClass.sqlmeta.columnList]
         return ",\n".join(["    %s" % c for c in columnDefs])
 
     def createColumn(self, soClass, col):
@@ -624,7 +625,7 @@ class DBAPI(DBConnection):
         if 'id' in kw:
             data[soClass.sqlmeta.idName] = kw['id']
         else:
-            for key, col in soClass.sqlmeta._columnDict.items():
+            for key, col in soClass.sqlmeta.columns.items():
                 if key in kw:
                     data[col.dbName] = kw[key]
                 elif col.foreignName in kw:

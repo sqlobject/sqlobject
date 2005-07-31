@@ -7,11 +7,11 @@ from sqlobject.tests.dbtest import *
 
 class Super(SQLObject):
 
-    _columns = [StringCol('name', length=10)]
+    name = StringCol(length=10)
 
 class Sub(Super):
 
-    _columns = Super._columns + [StringCol('name2', length=10)]
+    name2 = StringCol(length=10)
 
 def test_super():
     setupClass(Super)

@@ -37,7 +37,7 @@ class SODatabaseIndex(object):
             columnName = desc['column']
             if not isinstance(columnName, str):
                 columnName = columnName.name
-            colDict = self.soClass.sqlmeta._columnDict
+            colDict = self.soClass.sqlmeta.columns
             if not colDict.has_key(columnName):
                 for possible in colDict.values():
                     if possible.origName == columnName:
@@ -135,5 +135,11 @@ class DatabaseIndex(object):
 
     def withClass(self, soClass):
         return self.baseClass(soClass=soClass, **self.kw)
+
+    def __repr__(self):
+        return '<%s %s %s>' % (
+            self.__class__.__name__,
+            hex(abs(id(self)))[2:],
+            self.kw)
 
 __all__ = ['DatabaseIndex']

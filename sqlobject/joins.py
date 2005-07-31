@@ -16,7 +16,6 @@ class Join(object):
 
     def __init__(self, otherClass=None, **kw):
         kw['otherClass'] = otherClass
-        kw['joinDef'] = self
         self.kw = kw
         if self.kw.has_key('joinMethodName'):
             self._joinMethodName = popKey(self.kw, 'joinMethodName')
@@ -37,6 +36,7 @@ class Join(object):
             self._joinMethodName = self.kw['joinMethodName']
             del self.kw['joinMethodName']
         return self.baseClass(soClass=soClass,
+                              joinDef=self,
                               joinMethodName=self._joinMethodName,
                               **self.kw)
 
@@ -53,6 +53,7 @@ class SOJoin(object):
                  orderBy=NoDefault,
                  joinDef=None):
         self.soClass = soClass
+        self.joinDef = joinDef
         self.otherClassName = otherClass
         classregistry.registry(soClass.sqlmeta.registry).addClassCallback(
             otherClass, self._setOtherClass)

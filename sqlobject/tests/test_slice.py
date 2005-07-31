@@ -7,9 +7,7 @@ from sqlobject.tests.dbtest import *
 
 class Counter(SQLObject):
 
-    _columns = [
-        IntCol('number', notNull=True),
-        ]
+    number = IntCol(notNull=True)
 
 class TestSlice:
 
