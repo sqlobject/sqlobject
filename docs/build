@@ -1,6 +1,0 @@
-#!/bin/sh
-
-cd ../examples && \
-./examplestripper.py && \
-cd ../docs && \
-exec buildhtml.py --report=2 --prune=.svn --prune=europython --silent --no-toc-backlinks
