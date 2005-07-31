@@ -132,6 +132,24 @@ def findDependantColumns(name, klass):
             depends.append(col)
     return depends
 
+def _collectAttributes(cls, new_attrs, look_for_class, delete=True,
+                       set_name=False):
+    """
+    Finds all attributes in `new_attrs` that are instances of
+    `look_for_class`.  Returns them as a list.  If `delete` is true
+    they are also removed from the `cls`.  If `set_name` is true, then
+    the ``.name`` attribute is set for any matching objects.
+    """
+    result = []
+    for attr, value in new_attrs.items():
+        if isinstance(value, look_for_class):
+            result.append(value)
+            if set_name:
+                value.name = attr
+            if delete:
+                delattr(cls, attr)
+    return result
+
 class CreateNewSQLObject:
     """
     Dummy singleton to use in place of an ID, to signal we want
@@ -598,64 +616,18 @@ class SQLObject(object):
         # This is true if we're initializing the SQLObject class,
         # instead of a subclass:
         is_base = cls.__bases__ == (object,)
-        #assert cls.__name__ != 'Reparented1'
 
-        if (not new_attrs.has_key('sqlmeta')
-            and not is_base):
-            # We have to create our own subclass, usually.
-            # type(className, bases_tuple, attr_dict) creates a new
-            # subclass:
-            #cls.sqlmeta = cls.sqlmeta.clone()
-            cls.sqlmeta = type('sqlmeta', (cls.sqlmeta,), {})
-        if not issubclass(cls.sqlmeta, sqlmeta):
-            # We allow no superclass and an object superclass, instead
-            # of inheriting from sqlmeta; but in that case we replace
-            # the class and just move over its attributes:
-            assert cls.sqlmeta.__bases__ in ((), (object,)), (
-                "If you do not inherit your sqlmeta class from "
-                "sqlobject.sqlmeta, it must not inherit from any other "
-                "class (your sqlmeta inherits from: %s)"
-                % cls.sqlmeta.__bases__)
-            for base in cls.__bases__:
-                superclass = getattr(base, 'sqlmeta', None)
-                if superclass:
-                    break
-            else:
-                assert 0, (
-                    "No sqlmeta class could be found in any superclass "
-                    "(while fixing up sqlmeta %r inheritance)"
-                    % cls.sqlmeta)
-            values = dict(cls.sqlmeta.__dict__)
-            for key in values.keys():
-                if key.startswith('__') and key.endswith('__'):
-                    # Magic values shouldn't be passed through:
-                    del values[key]
-            cls.sqlmeta = type('sqlmeta', (superclass,), values)
+        cls._SO_setupSqlmeta(new_attrs, is_base)
 
-        cls.sqlmeta.setClass(cls)
-
-        implicitColumns = []
-        implicitJoins = []
-        implicitIndexes = []
-        for attr, value in new_attrs.items():
-            if isinstance(value, col.Col):
-                value.name = attr
-                implicitColumns.append(value)
-                delattr(cls, attr)
-                continue
-            if isinstance(value, joins.Join):
-                value.joinMethodName = attr
-                implicitJoins.append(value)
-                delattr(cls, attr)
-                continue
-            if isinstance(value, index.DatabaseIndex):
-                value.setName(attr)
-                implicitIndexes.append(value)
-                delattr(cls, attr)
-                continue
+        implicitColumns = _collectAttributes(
+            cls, new_attrs, col.Col, set_name=True)
+        implicitJoins = _collectAttributes(
+            cls, new_attrs, joins.Join, set_name=True)
+        implicitIndexes = _collectAttributes(
+            cls, new_attrs, index.DatabaseIndex, set_name=True)
 
         if not is_base:
-            cls._cleanDeprecatedAttrs(new_attrs)
+            cls._SO_cleanDeprecatedAttrs(new_attrs)
 
         if new_attrs.has_key('_connection'):
             connection = new_attrs['_connection']
@@ -803,7 +775,52 @@ class SQLObject(object):
     addIndex = _sqlmeta_attr('addIndex', 2)
     delIndex = _sqlmeta_attr('delIndex', 2)
 
-    def _cleanDeprecatedAttrs(cls, new_attrs):
+    # @classmethod
+    def _SO_setupSqlmeta(cls, new_attrs, is_base):
+        """
+        This fixes up the sqlmeta attribute.  It handles both the case
+        where no sqlmeta was given (in which we need to create another
+        subclass), or the sqlmeta given doesn't have the proper
+        inheritance.  Lastly it calls sqlmeta.setClass, which handles
+        much of the setup.
+        """
+        if (not new_attrs.has_key('sqlmeta')
+            and not is_base):
+            # We have to create our own subclass, usually.
+            # type(className, bases_tuple, attr_dict) creates a new
+            # subclass:
+            cls.sqlmeta = type('sqlmeta', (cls.sqlmeta,), {})
+        if not issubclass(cls.sqlmeta, sqlmeta):
+            # We allow no superclass and an object superclass, instead
+            # of inheriting from sqlmeta; but in that case we replace
+            # the class and just move over its attributes:
+            assert cls.sqlmeta.__bases__ in ((), (object,)), (
+                "If you do not inherit your sqlmeta class from "
+                "sqlobject.sqlmeta, it must not inherit from any other "
+                "class (your sqlmeta inherits from: %s)"
+                % cls.sqlmeta.__bases__)
+            for base in cls.__bases__:
+                superclass = getattr(base, 'sqlmeta', None)
+                if superclass:
+                    break
+            else:
+                assert 0, (
+                    "No sqlmeta class could be found in any superclass "
+                    "(while fixing up sqlmeta %r inheritance)"
+                    % cls.sqlmeta)
+            values = dict(cls.sqlmeta.__dict__)
+            for key in values.keys():
+                if key.startswith('__') and key.endswith('__'):
+                    # Magic values shouldn't be passed through:
+                    del values[key]
+            cls.sqlmeta = type('sqlmeta', (superclass,), values)
+
+        cls.sqlmeta.setClass(cls)
+
+    _SO_setupSqlmeta = classmethod(_SO_setupSqlmeta)
+
+    # @classmethod
+    def _SO_cleanDeprecatedAttrs(cls, new_attrs):
         for attr in ['_table', '_lazyUpdate', '_style', '_idName',
                      '_defaultOrder', '_cacheValues', '_registry',
                      '_idType', '_fromDatabase']:
@@ -821,7 +838,7 @@ class SQLObject(object):
                            "not use it in your classes until it is fully "
                            "deprecated" % attr, level=3, stacklevel=5)
 
-    _cleanDeprecatedAttrs = classmethod(_cleanDeprecatedAttrs)
+    _SO_cleanDeprecatedAttrs = classmethod(_SO_cleanDeprecatedAttrs)
 
     def get(cls, id, connection=None, selectResults=None):
 
@@ -1445,8 +1462,7 @@ class SQLObjectState(object):
     def __init__(self, soObject):
         self.soObject = soObject
         self.protocol = 'sql'
-
-
+            
 
 ########################################
 ## Utility functions (for external consumption)

@@ -133,6 +133,14 @@ class DatabaseIndex(object):
         assert self.kw.get('name') is None, "You cannot change a name after it has already been set (from %s to %s)" % (self.kw['name'], value)
         self.kw['name'] = value
 
+    def _get_name(self):
+        return kw['name']
+
+    def _set_name(self, value):
+        self.setName(value)
+
+    name = property(_get_name, _set_name)
+
     def withClass(self, soClass):
         return self.baseClass(soClass=soClass, **self.kw)
 
