@@ -821,6 +821,11 @@ class SQLObject(object):
 
     # @classmethod
     def _SO_cleanDeprecatedAttrs(cls, new_attrs):
+        """
+        This removes attributes on SQLObject subclasses that have
+        been deprecated; they are moved to the sqlmeta class, and
+        a deprecation warning is given.
+        """
         for attr in ['_table', '_lazyUpdate', '_style', '_idName',
                      '_defaultOrder', '_cacheValues', '_registry',
                      '_idType', '_fromDatabase']:
