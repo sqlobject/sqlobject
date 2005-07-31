@@ -62,7 +62,7 @@ def db_differences(soClass, conn):
                 col = col.withClass(soClass)
                 existing[col.dbName] = col
             missing = {}
-            for col in soClass.sqlmeta._columns:
+            for col in soClass.sqlmeta.columnList:
                 if existing.has_key(col.dbName):
                     del existing[col.dbName]
                 else:
@@ -502,7 +502,7 @@ class CommandStatus(Command):
                 col = col.withClass(soClass)
                 existing[col.dbName] = col
             missing = {}
-            for col in soClass.sqlmeta._columns:
+            for col in soClass.sqlmeta.columnList:
                 if existing.has_key(col.dbName):
                     del existing[col.dbName]
                 else:
