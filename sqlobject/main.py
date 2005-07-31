@@ -270,7 +270,7 @@ class sqlmeta(object):
         cls.indexDefinitions = cls.indexDefinitions[:]
         cls.joins = []
         cls.joinDefinitions = cls.joinDefinitions[:]
-        
+
     setClass = classmethod(setClass)
 
     ############################################################
@@ -753,7 +753,7 @@ class SQLObject(object):
             currentClass = cls
             while currentClass._parentClass:
                 currentClass = currentClass._parentClass
-                for column in currentClass.columnDefinitions.values():
+                for column in currentClass.sqlmeta.columnDefinitions.values():
                     if type(column) == col.ForeignKey: continue
                     setattr(cls.q, column.name,
                         getattr(currentClass.q, column.name))
@@ -1471,7 +1471,7 @@ class SQLObjectState(object):
     def __init__(self, soObject):
         self.soObject = soObject
         self.protocol = 'sql'
-            
+
 
 ########################################
 ## Utility functions (for external consumption)

@@ -95,12 +95,12 @@ class InheritableSQLObject(SQLObject):
         #DSM: Only do this once if possible at object creation and once for
         #DSM: each new dynamic column to refresh the current class
         if childUpdate or cls._parentClass:
-            for col in cls._parentClass._columns:
+            for col in cls._parentClass.sqlmeta.columnList:
                 cname = col.name
                 if cname == 'childName': continue
                 setattr(cls, getterName(cname), eval(
                     'lambda self: self._parent.%s' % cname))
-                if not col.kw.has_key('immutable') or not col.kw['immutable']:
+                if not col.immutable:
                     setattr(cls, setterName(cname), eval(
                         'lambda self, val: setattr(self._parent, %s, val)'
                         % repr(cname)))
@@ -133,7 +133,7 @@ class InheritableSQLObject(SQLObject):
         #DSM: Only do this once if possible at object creation and once for
         #DSM: each new dynamic join to refresh the current class
         if childUpdate or cls._parentClass:
-            for jdef in cls._parentClass._joins:
+            for jdef in cls._parentClass.sqlmeta.joins:
                 join = jdef.withClass(cls)
                 jname = join.joinMethodName
                 jarn  = join.addRemoveName
@@ -170,11 +170,11 @@ class InheritableSQLObject(SQLObject):
     delJoin = classmethod(delJoin)
 
     def _notifyFinishClassCreation(cls):
-        if not cls._columns:
+        if not cls.sqlmeta.columnList:
             # There are no columns - call addColumn to propagate columns
             # from parent classes to children
             cls.addColumn(None)
-        if not cls._joins:
+        if not cls.sqlmeta.joins:
             # There are no joins - call addJoin to propagate joins
             # from parent classes to children
             cls.addJoin(None)

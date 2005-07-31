@@ -27,7 +27,7 @@ class InheritableIteration(Iteration):
         self._results = []
         # Find the index of the childName column
         childNameIdx = None
-        columns = select.sourceClass.sqlmeta._columns
+        columns = select.sourceClass.sqlmeta.columnList
         for i in range(len(columns)): # enumerate() is unavailable python 2.2
             if columns[i].name == "childName":
                 childNameIdx = i
