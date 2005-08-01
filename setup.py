@@ -1,6 +1,6 @@
-from distutils.core import setup
-import warnings
-warnings.filterwarnings("ignore", "Unknown distribution option")
+from ez_setup import use_setuptools
+use_setuptools()
+from setuptools import setup, find_packages
 
 subpackages = ['firebird', 'include', 'inheritance', 'mysql', 'postgres',
                'sqlite', 'sybase', 'maxdb', 'util', 'manager']
@@ -13,13 +13,16 @@ if sys.version < '2.2.3':
     DistributionMetadata.download_url = None
 
 setup(name="SQLObject",
-      version="0.6.1",
+      version="0.7b1",
       description="Object-Relational Manager, aka database wrapper",
       long_description="""\
 Classes created using SQLObject wrap database rows, presenting a
 friendly-looking Python object instead of a database/SQL interface.
 Emphasizes convenience.  Works with MySQL, Postgres, SQLite, Firebird.
 Requires Python 2.2+.
+
+For development see the `subversion repository
+<http://svn.colorstudy.com/trunk/SQLObject#egg=SQLObject>`_
 """,
       classifiers=["Development Status :: 4 - Beta",
                    "Intended Audience :: Developers",
@@ -35,7 +38,7 @@ Requires Python 2.2+.
       license="LGPL",
       packages=["sqlobject"] + ['sqlobject.%s' % package for package in subpackages],
       scripts=["scripts/sqlobject-admin"],
-      download_url="http://prdownloads.sourceforge.net/sqlobject/SQLObject-0.6.1.tar.gz?download")
+      download_url="http://prdownloads.sourceforge.net/sqlobject/SQLObject-0.7b1.tar.gz?download")
 
 # Send announce to:
 #   sqlobject-discuss@lists.sourceforge.net
