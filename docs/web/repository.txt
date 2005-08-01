@@ -7,7 +7,7 @@ repository at http://svn.colorstudy.com/trunk/SQLObject
 If you are using a command-line Subversion client, you can check
 it out like::
 
-    svn co http://svn.pythonpaste.org/trunk/SQLObject
+    svn co http://svn.colorstudy.com/trunk/SQLObject
 
 If you are on Windows you may want to use `TortoiseSVN
 <http://tortoisesvn.tigris.org/>`_.
