@@ -23,8 +23,12 @@ left join would look like::
 Simple
 ~~~~~~
 
-.. raw:: html
-   :file: ../examples/snippets/leftjoin-simple.html
+::
+
+    for customer in Customer.select():
+        print customer.firstName, customer.lastName
+        for contact in customer.contacts:
+            print '   ', contact.phoneNumber
 
 The effect is the same as the left join -- you get all the customers,
 and you get all their contacts.  The problem, however, is that you
@@ -38,10 +42,15 @@ problem.
 Efficient
 ~~~~~~~~~
 
-Lets say you really don't want to do all those queries.  Okay, fine:
+Lets say you really don't want to do all those queries.  Okay, fine::
 
-.. raw:: html
-   :file: ../examples/snippets/leftjoin-more.html
+    custContacts = {}
+    for contact in Contact.select():
+        custContacts.setdefault(contact.customerID, []).append(contact)
+    for customer in Customer.select():
+        print customer.firstName, customer.lastName
+        for contact in custContacts.get(customer.id, []):
+            print '   ', contact.phoneNumber
 
 This way there will only be at most two queries.  It's a little more
 crude, but this is an optimization, and optimizations often look less
@@ -49,10 +58,17 @@ than pretty.
 
 But, say you don't want to get everyone, just some group of people
 (presumably a large enough group that you still need this
-optimization):
+optimization)::
 
-.. raw:: html
-   :file: ../examples/snippets/leftjoin-more-query.html
+    query = Customer.q.firstName.startswith('J')
+    custContacts = {}
+    for contact in Contact.select(AND(Contact.q.customerID == Customer.q.id,
+                                      query)):
+        custContacts.setdefault(contact.customerID, []).append(contact)
+    for customer in Customer.select(query):
+        print customer.firstName, customer.lastName
+        for contact in custContacts.get(customer.id, []):
+            print '   ', contact.phoneNumber
 
 SQL-wise
 ~~~~~~~~
@@ -75,10 +91,16 @@ structures as Python objects.  So lots of things you can do in Python
 you can't do with SQLObject classes.  However, some form of
 inheritance is possible.
 
-One way of using this is to create local conventions.  Perhaps:
+One way of using this is to create local conventions.  Perhaps::
 
-.. raw:: html
-   :file: ../examples/snippets/site-sqlobject.html
+  class SiteSQLObject(SQLObject):
+      _connection = DBConnection.MySQLConnection(user='test', db='test')
+      _style = MixedCaseStyle()
+
+      # And maybe you want a list of the columns, to autogenerate
+      # forms from:
+      def columns(self):
+          return [col.name for col in self._columns]
 
 Since SQLObject doesn't have a firm introspection mechanism (at least
 not yet) the example shows the beginnings of a bit of ad hoc
@@ -86,16 +108,31 @@ introspection (in this case exposing the ``_columns`` attribute in a
 more pleasing/public interface).
 
 However, this doesn't relate to *database* inheritance at all, since
-we didn't define any columns.  What if we do?
+we didn't define any columns.  What if we do? ::
 
-.. raw:: html
-   :file: ../examples/snippets/inheritance.html
+  class Person(SQLObject):
+      firstName = StringCol()
+      lastName = StringCol()
+
+  class Employee(Person):
+      position = StringCol()
 
 Unfortunately, the resultant schema probably doesn't look like what
-you might have wanted:
+you might have wanted::
 
-.. raw:: html
-   :file: ../examples/snippets/inheritance-schema.html
+  CREATE TABLE person (
+      id INT PRIMARY KEY,
+      first_name TEXT,
+      last_name TEXT
+  );
+
+  CREATE TABLE employee (
+      id INT PRIMARY KEY
+      first_name TEXT,
+      last_name TEXT,
+      position TEXT
+  )
+
 
 All the columns from ``person`` are just repeated in the ``employee``
 table.  What's more, an ID for a Person is distinct from an ID for an
@@ -108,16 +145,38 @@ and then an ``employee`` table with a one-to-one relation between the
 two.  Of course, you can have that, just create the appropriate
 classes/tables -- but it will appear as two distinct classes, and
 you'd have to do something like ``Person(1).employee.position``.  Of
-course, you can always create the necessary shortcuts, like:
+course, you can always create the necessary shortcuts, like::
 
-.. raw:: html
-   :file: ../examples/snippets/inheritance-faked.html
+  class Person(SQLObject):
+      firstName = StringCol()
+      lastName = StringCol()
 
-It's not the most elegant setup, but it's functional and flexible.
-There are no plans for further support for inheritance (especially
-since the composition of multiple classes is usually a better solution
-anyway).
+      def _get_employee(self):
+          value = Employee.selectBy(person=self)
+          if value:
+              return value[0]
+          else:
+              raise AttributeError, '%r is not an employee' % self
+      def _get_isEmployee(self):
+          value = Employee.selectBy(person=self)
+          # turn into a bool:
+          return not not value
+      def _set_isEmployee(self, value):
+          if value:
+              # Make sure we are an employee...
+              if not self.isEmployee:
+                  Empoyee.new(person=self, position=None)
+          else:
+              if self.isEmployee:
+                  self.employee.destroySelf()
+      def _get_position(self):
+          return self.employee.position
+      def _set_position(self, value):
+          self.employee.position = value
 
+  class Employee(SQLObject):
+      person = ForeignKey('Person')
+      position = StringCol()
 
 There is also another kind of inheritance. See Inheritance.html_
 
@@ -128,17 +187,43 @@ Composite/Compound Attributes
 -----------------------------
 
 A composite attribute is an attribute formed from two columns.  For
-example:  
+example::
 
-.. raw:: html
-   :file: ../examples/snippets/composite-schema.html
+  CREATE TABLE invoice_item (
+      id INT PRIMARY KEY,
+      amount NUMERIC(10, 2),
+      currency CHAR(3)
+  );
 
 Now, you'll probably want to deal with one amount/currency value,
 instead of two columns.  SQLObject doesn't directly support this, but
-it's easy (and encouraged) to do it on your own:
+it's easy (and encouraged) to do it on your own::
 
-.. raw:: html
-   :file: ../examples/snippets/composite.html
+  class InvoiceItem(SQLObject):
+      amount = Currency()
+      currency = StringChar(length=3)
+
+      def _get_price(self):
+          return Price(self.amount, self.currency)
+      def _set_price(self, price):
+          self.amount = price.amount
+          self.currency = price.currency
+
+  class Price(object):
+      def __init__(self, amount, currency):
+          self._amount = amount
+          self._currency = currency
+
+      def _get_amount(self):
+          return self._amount
+      amount = property(_get_amount)
+
+      def _get_currency(self):
+          return self._currency
+      currency = property(_get_currency)
+
+      def __repr__(self):
+          return '<Price: %s %s>' % (self.amount, self.currency)
 
 You'll note we go to some trouble to make sure that ``Price`` is an
 immutable object.  This is important, because if ``Price`` wasn't and
@@ -149,10 +234,39 @@ creating properties)  Some people refer to this sort of class as a
 *Value Object*, that can be used similar to how an integer or string
 is used.
 
-You could also use a mutable composite class:
+You could also use a mutable composite class::
 
-.. raw:: html
-   :file: ../examples/snippets/composite-mutable.html
+  class Address(SQLObject):
+      street = StringCol()
+      city = StringCol()
+      state = StringCol(length=2)
+
+      latitude = FloatCol()
+      longitude = FloatCol()
+
+      def _init(self, id):
+          SQLObject._init(self, id)
+          self._coords = SOCoords(self)
+
+      def _get_coords(self):
+          return self._coords
+
+  class SOCoords(object):
+      def __init__(self, so):
+          self._so = so
+
+      def _get_latitude(self):
+          return self._so.latitude
+      def _set_latitude(self, value):
+          self._so.latitude = value
+      latitude = property(_get_latitude, set_latitude)
+
+      def _get_longitude(self):
+          return self._so.longitude
+      def _set_longitude(self, value):
+          self._so.longitude = value
+      longitude = property(_get_longitude, set_longitude)
+
 
 Pretty much a proxy, really, but ``SOCoords`` could contain other
 logic, could interact with non-SQLObject-based latitude/longitude
@@ -209,19 +323,22 @@ with PostgreSQL and MySQL. PickleCol extends BLOBCol and allows to store
 any object in the column; the column, naturally, pickles the object upon
 assignment and unpickles it upon retrieving the data from the DB.
 
-Another possible way to keep binary data in a database is by using encoding.
-Base 64 is a good encoding, reasonably compact but also safe.  As
-an example, imagine you want to store images in the database:
+Another possible way to keep binary data in a database is by using
+encoding.  Base 64 is a good encoding, reasonably compact but also
+safe.  As an example, imagine you want to store images in the
+database::
 
-.. raw:: html
-   :file: ../examples/snippets/image-binary.html
+  class Image(SQLObject):
 
-SQLite does not respect backslash quoting, so for instance ``\n`` is
-not interpreted as a newline.  For the moment there's no resolution,
-and this will mess up your base64-encoded values.  As a workaround:
+      data = StringCol()
+      height = IntCol()
+      width = IntCol()
+  
+      def _set_data(self, value):
+          self._SO_set_data(value.encode('base64'))
 
-.. raw:: html
-   :file: ../examples/snippets/image-binary-sqlite.html
+      def _get_data(self, value):
+          return self._SO_get_data().decode('base64')
 
 
 Reloading Modules
