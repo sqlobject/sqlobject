@@ -1,0 +1,22 @@
+#!/bin/sh
+
+here=`pwd`
+parent=`dirname $here`
+DOCDIR=~/co/SQLObject/docs/
+echo "Adding $parent to \$PYTHONPATH"
+export PYTHONPATH=$parent:$PYTHONPATH
+
+NORMAL="Authors DeveloperGuide FAQ Inheritance News SQLBuilder
+        SQLObject TODO web/index web/links web/repository web/community
+        index"
+
+for NAME in $NORMAL ; do
+    if [ -e "$NAME.html" -a ! "$NAME.html" -ot "$NAME.txt" ] ; then
+	echo "$NAME is up to date."
+	continue
+    fi
+    echo "Building $NAME."
+    rst2html.py --no-toc-backlinks -- "$NAME.txt" > "$NAME.html"
+done
+
+source-highlight -f html interface.py
