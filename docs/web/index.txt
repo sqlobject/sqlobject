@@ -15,7 +15,7 @@ News
     SQLObject has wiki at http://wiki.sqlobject.org
 8-Mar-2004:
     SQLObject `0.5.2`_ is released (significant bugfixes).
-    SQLObject is now in a `Subversion repository`_.
+    SQLObject is now in a `Subversion repository <repository.html>`_.
 12-Nov-2003:
     SQLObject 0.5.1 is released (minor bugfixes)
 1-Nov-2003:
