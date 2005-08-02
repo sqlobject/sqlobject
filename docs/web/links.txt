@@ -45,3 +45,6 @@ Articles and Documentation
   <http://ianbicking.org/docs/sqlobject-presentation/sqlobject-and-database-programming.html>`_;
   slides from a presentation on SQLObject.
 
+* `Connecting databases to Python with SQLObject
+  <http://www-128.ibm.com/developerworks/library/os-pythonsqlo/index.html?ca=drs>`_;
+  an article at DeveloperWorks.
