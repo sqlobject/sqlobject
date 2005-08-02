@@ -290,7 +290,8 @@ class DBAPI(DBConnection):
         print '%(n)2i%(threadName)s/%(name)s%(spaces)s%(sep)s %(s)s' % locals()
 
     def _executeRetry(self, conn, cursor, query):
-        print query
+        if self.debug:
+            self.printDebug(conn, query, 'QueryR')
         return cursor.execute(query)
 
     def _query(self, conn, s):
