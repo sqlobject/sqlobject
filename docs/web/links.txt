@@ -29,6 +29,9 @@ Open Source Projects
   utilizes SQLObject and rdflib for storing transactional content 
   from Zope.
 
+* `Bauble <http://bauble.belizebotanic.org/>`_, a Biodiversity
+  Collection Manager.
+
 Articles and Documentation
 --------------------------
 
