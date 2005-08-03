@@ -22,7 +22,7 @@ Open Source Projects
 * `Teeny Tiny CMS <http://footils.org/cms/show/3>`_.
 
 * `rdflib <http://rdflib.net/>`_ contains a `SQLObject backend
-  <http://svn.rdflib.net/trunk/rdflib/backends/_sqlobject.py>_.
+  <http://svn.rdflib.net/trunk/rdflib/backends/_sqlobject.py>`_.
 
 * Enfold Systems' `EnTransit
   <http://www.enfoldsystems.com/About/Talks/entransit-tutorial.pdf>`_ 
