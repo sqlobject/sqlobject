@@ -201,7 +201,7 @@ class InheritableSQLObject(SQLObject):
                     else:
                         new_kw[name] = value
             kw = new_kw
-            self._parent = parentClass(kw=parent_kw)
+            self._parent = parentClass(kw=parent_kw, connection=self._connection)
             id = self._parent.id
 
         super(InheritableSQLObject, self)._create(id, **kw)
