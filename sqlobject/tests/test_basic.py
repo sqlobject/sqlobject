@@ -4,6 +4,8 @@ from sqlobject.tests.dbtest import *
 class TestSO1(SQLObject):
 
     name = StringCol(length=50, dbName='name_col')
+    name.title = 'Your Name'
+    name.foobar = 1
     passwd = StringCol(length=10)
 
     class sqlmeta:
@@ -49,6 +51,13 @@ def test_getset():
     assert bob.name == 'joe'
     bob.set(name='joebob', passwd='testtest')
     assert bob.name == 'joebob'
+
+def test_extra_vars():
+    setupGetters(TestSO1)
+    col = TestSO1.sqlmeta.columns['name']
+    assert col.title == 'Your Name'
+    assert col.foobar == 1
+    assert getattr(TestSO1.sqlmeta.columns['passwd'], 'title', None) is None
 
 class TestSO2(SQLObject):
     name = StringCol(length=50, dbName='name_col')

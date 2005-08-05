@@ -121,7 +121,8 @@ class SOCol(object):
                  lazy=False,
                  noCache=False,
                  forceDBName=False,
-                 origName=None):
+                 origName=None,
+                 extra_vars=None):
 
         # This isn't strictly true, since we *could* use backquotes or
         # " or something (database-specific) around column names, but
@@ -212,6 +213,10 @@ class SOCol(object):
         # this is in case of ForeignKey, where we rename the column
         # and append an ID
         self.origName = origName or name
+
+        if extra_vars:
+            for name, value in extra_vars.items():
+                setattr(self, name, value)
 
     def _set_validator(self, value):
         self._validator = value
@@ -363,16 +368,16 @@ class Col(object):
     baseClass = SOCol
 
     def __init__(self, name=None, **kw):
-        self._name = name
-        kw['columnDef'] = self
-        self.kw = kw
-        self.creationOrder = creationOrder.next()
+        self.__dict__['_name'] = name
+        self.__dict__['_kw'] = kw
+        self.__dict__['creationOrder'] = creationOrder.next()
+        self.__dict__['_extra_vars'] = {}
 
     def _set_name(self, value):
         assert self._name is None or self._name == value, (
             "You cannot change a name after it has already been set "
             "(from %s to %s)" % (self.name, value))
-        self._name = value
+        self.__dict__['_name'] = value
 
     def _get_name(self):
         return self._name
@@ -382,7 +387,15 @@ class Col(object):
     def withClass(self, soClass):
         return self.baseClass(soClass=soClass, name=self._name,
                               creationOrder=self.creationOrder,
-                              **self.kw)
+                              columnDef=self,
+                              extra_vars=self._extra_vars,
+                              **self._kw)
+
+    def __setattr__(self, var, value):
+        if var == 'name':
+            super(Col, self).__setattr__(var, value)
+            return
+        self._extra_vars[var] = value
 
     def __repr__(self):
         return '<%s %s %s>' % (
@@ -848,7 +861,8 @@ class SODateTimeCol(SOCol):
 
     def __init__(self, **kw):
         datetimeFormat = popKey(kw, 'datetimeFormat')
-        if datetimeFormat: self.datetimeFormat = datetimeFormat
+        if datetimeFormat:
+            self.datetimeFormat = datetimeFormat
         SOCol.__init__(self, **kw)
 
     def createValidators(self):
