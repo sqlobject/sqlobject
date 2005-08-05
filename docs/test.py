@@ -5,7 +5,8 @@ if sys.version_info >= (2, 4):
 else:
     raise ImportError("Python 2.4 doctest required")
 
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.insert(
+    0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 def test():
     for doc in ['SQLObject.txt']:
