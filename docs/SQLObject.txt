@@ -125,12 +125,16 @@ Lets first set up a connection::
     >>> db_filename = os.path.abspath('data.db')
     >>> if os.path.exists(db_filename):
     ...     os.unlink(db_filename)
-    >>> sqlhub.processConnection = connectionForURI(
-    ...     'sqlite:' + db_filename)
+    >>> connection_string = 'sqlite:' + db_filename
+    >>> connection = connectionForURI(connection_string)
+    >>> sqlhub.processConnection = connection
+
+The ``sqlhub.processConnection`` assignment means that all classes
+will, by default, use this connection we've just set up.
 
 We'll develop a simple addressbook-like database.  We could create the
-tables ourselves, and just have SQLObject access those tables, but for
-now we'll let SQLObject do that work.  First, the class:
+tables ourselves, and just have SQLObject access those tables, but
+let's have SQLObject do that work.  First, the class:
 
     >>> class Person(SQLObject):
     ... 
@@ -149,37 +153,32 @@ database.  The general schema implied by this class definition is::
         last_name TEXT
     );
 
-This is for MySQL.  The schema for other databases looks slightly
-different (especially the ``id`` column).  You'll notice the names
-were changed from mixedCase to underscore_separated -- this is done by
-the `style object`_.  There are a variety of ways to handle that names
-that don't fit conventions (see `Irregular Naming`_).
+This is for SQLite or MySQL.  The schema for other databases looks
+slightly different (especially the ``id`` column).  You'll notice the
+names were changed from mixedCase to underscore_separated -- this is
+done by the `style object`_.  There are a variety of ways to handle
+names that don't fit conventions (see `Irregular Naming`_).
 
 .. _`style object`: `Changing the Naming Style`_
 
-The tables don't yet exist.  We'll let SQLObject create them::
+Now we'll create the table in the database::
 
     >>> Person.createTable()
 
 We can change the type of the various columns by using something other
 than `StringCol`, or using different arguments.  More about this in
-`Subclasses of Col`_.
-
-If you don't want to do table creation (you already have tables, or
-you want to create the tables yourself), you can just use the vague
-`Col` class.  SQLObject doesn't do much type checking, allowing the
-database and the adapter to handle most of the type conversion.
-Databases generally do their own type coercion on inputs.
+`Column Types`_.
 
 You'll note that the ``id`` column is not given in the class
 definition, it is implied.  For MySQL databases it should be defined
 as ``INT PRIMARY KEY AUTO_INCREMENT``, in Postgres ``SERIAL PRIMARY
-KEY``, and in SQLite as ``INTEGER PRIMARY KEY``.  You can `override
-the name`__, but some immutable primary key must exist (`you can use
-non-integer keys`_ with some extra effort).
+KEY``, and in SQLite as ``INTEGER PRIMARY KEY``.  You can't use tables
+with SQLObject that don't have a single primary key, and you must
+treat that key as immutable (otherwise you'll confuse SQLObject
+terribly).
 
-__ idName_
-.. _`you can use non-integer keys`: `Non-Integer Keys`_
+You can `override the id name`__ in the database, but it is always
+called ``.id`` from Python.
 
 Using the Class
 ---------------
@@ -190,39 +189,7 @@ the class defined above.
 To create a new object (and row), use class instantiation, like::
 
     >>> Person(firstName="John", lastName="Doe")
-    <Person 1 lastName='Doe' middleInitial=None firstName='John'>
-
-If you had left out ``firstName`` or ``lastName`` you would have
-gotten an error, as no default was given for these columns
-(``middleInitial`` has a default, so it will be set to ``NULL``, the
-SQL equivalent of ``None``).
-
-You can use the class method `.get()` to fetch instances that
-already exist::
-
-    >>> Person.get(1)
-    <Person 1 lastName='Doe' middleInitial=None firstName='John'>
-
-When you create an object, it is immediately inserted into the
-database.  SQLObject generally uses the database as immediate storage,
-unlike some other systems where you explicitly save objects into a
-database.
-
-Here's a longer example of using the class::
-
-    >>> p = Person.get(1)
-    >>> p
-    <Person 1 lastName='Doe' middleInitial=None firstName='John'>
-    >>> p.firstName
-    'John'
-    >>> p.middleInitial = 'Q'
-    >>> p.middleInitial
-    'Q'
-    >>> p2 = Person.get(1)
-    >>> p2
-    <Person 1 lastName='Doe' middleInitial='Q' firstName='John'>
-    >>> p is p2
-    True
+    <Person 1 firstName='John' middleInitial=None lastName='Doe'>
 
 .. note::
 
@@ -235,6 +202,37 @@ Here's a longer example of using the class::
 
    Also note that the SQLObject default isn't the same as the
    database's default (SQLObject never uses the database's default).
+
+If you had left out ``firstName`` or ``lastName`` you would have
+gotten an error, as no default was given for these columns
+(``middleInitial`` has a default, so it will be set to ``NULL``, the
+database equivalent of ``None``).
+
+You can use the class method `.get()` to fetch instances that
+already exist::
+
+    >>> Person.get(1)
+    <Person 1 firstName='John' middleInitial=None lastName='Doe'>
+
+When you create an object, it is immediately inserted into the
+database.  SQLObject uses the database as immediate storage, unlike
+some other systems where you explicitly save objects into a database.
+
+Here's a longer example of using the class::
+
+    >>> p = Person.get(1)
+    >>> p
+    <Person 1 firstName='John' middleInitial=None lastName='Doe'>
+    >>> p.firstName
+    'John'
+    >>> p.middleInitial = 'Q'
+    >>> p.middleInitial
+    'Q'
+    >>> p2 = Person.get(1)
+    >>> p2
+    <Person 1 firstName='John' middleInitial='Q' lastName='Doe'>
+    >>> p is p2
+    True
 
 Columns are accessed like attributes.  (This uses the ``property``
 feature of Python 2.2, so that retrieving and setting these attributes
@@ -255,10 +253,10 @@ same actions with the SQL that is sent, along with some commentary::
     >>> p = Person(firstName='Bob', lastName='Hope')
      1/QueryIns:  INSERT INTO person (last_name, middle_initial, first_name) VALUES ('Hope', NULL, 'Bob')
      1/COMMIT  :  auto
-     1/QueryOne:  SELECT last_name, middle_initial, first_name FROM person WHERE id = 2
+     1/QueryOne:  SELECT first_name, middle_initial, last_name FROM person WHERE id = 2
      1/COMMIT  :  auto
     >>> p
-    <Person 2 lastName='Hope' middleInitial=None firstName='Bob'>
+    <Person 2 firstName='Bob' middleInitial=None lastName='Hope'>
     >>> p.middleInitial = 'Q'
      1/Query   :  UPDATE person SET middle_initial = 'Q' WHERE id = 2
      1/COMMIT  :  auto
@@ -297,13 +295,14 @@ you call ``inst.syncUpdate()`` or ``obj.sync()``: ``.sync()`` also
 refetches the data from the database, which ``.syncUpdate()`` does not
 do.
 
-When enabled instances will have a property ``dirty``, which indicates
-if there are pending updates.  Inserts are still done immediately.
+When enabled instances will have a property ``.sqlmeta.dirty``, which
+indicates if there are pending updates.  Inserts are still done
+immediately; there's no way to do lazy inserts at this time.
 
 One-to-Many Relationships
 -------------------------
 
-A real address book should have people, but also addresses.  
+An address book is nothing without addresses.
 
 First, let's define the new address table.  People can have multiple
 addresses, of course::
@@ -319,9 +318,23 @@ addresses, of course::
 
 Note the column ``person = ForeignKey("Person")``.  This is a
 reference to a `Person` object.  We refer to other classes by name
-(with a string) to avoid circular dependencies.  In the database
-there will be a ``person_id`` column, type ``INT``, which points to
-the ``person`` column.
+(with a string).  In the database there will be a ``person_id``
+column, type ``INT``, which points to the ``person`` column.
+
+.. note:: 
+
+   The reason SQLObject uses strings to refer to other classes is
+   because the other class often does not yet exist.  Classes in
+   Python are *created*, not *declared*; so when a module is imported
+   the commands are executed.  ``class`` is just another command; one
+   that creates a class and assigns it to the name you give.
+
+   If class ``A`` referred to class ``B``, but class ``B`` was defined
+   below ``A`` in the module, then when the ``A`` class was created
+   (including creating all its column attributes) the ``B`` class
+   simply wouldn't exist.  By referring to classes by name, we can
+   wait until all the requird classes exist before creating the links
+   between classes.
 
 We want an attribute that gives the addresses for a person.  In a
 class definition we'd do::
@@ -333,15 +346,15 @@ class definition we'd do::
 But we already have the class.  We can add this to the class
 in-place::
 
-    >>> Person.addJoin(MultipleJoin('Address', 
-    ...                joinMethodName='addresses'))
+    >>> Person.sqlmeta.addJoin(MultipleJoin('Address', 
+    ...                        joinMethodName='addresses'))
 
 .. note::
 
    In almost all cases you can modify SQLObject classes after they've
-   been created.  Having attributes like ``*Col`` objects is
-   equivalent to calling certain class methods (like
-   ``addColumn()``). 
+   been created.  Having attributes that contain ``*Col`` objects in
+   the class definition is equivalent to calling certain class methods
+   (like ``addColumn()``).
 
 Now we can get the backreference with ``aPerson.addresses``, which
 returns a list.  An example::
@@ -453,8 +466,9 @@ that's generated)::
     >>> Person._connection.debug = True
     >>> peeps = Person.select(Person.q.firstName=="John")
     >>> list(peeps)
-    SELECT person.id FROM person WHERE person.first_name = 'John';
-    [<Person 1 lastName='Doe' middleInitial=None firstName='John'>]
+     1/Select  :  SELECT person.id, person.first_name, person.middle_initial, person.last_name FROM person WHERE (person.first_name = 'John')
+     1/COMMIT  :  auto
+    [<Person 1 firstName='John' middleInitial='Q' lastName='Doe'>]
 
 This example returns everyone with the first name John.  An expression
 could be more complicated as well, like::
@@ -463,7 +477,8 @@ could be more complicated as well, like::
     ...         AND(Address.q.personID == Person.q.id,
     ...             Address.q.zip.startswith('504')))
     >>> list(peeps)
-    SELECT person.id FROM person, address WHERE (address.person_id = person.id AND address.zip LIKE '612%');
+     1/Select  :  SELECT person.id, person.first_name, person.middle_initial, person.last_name FROM person, address WHERE ((address.person_id = person.id) AND (address.zip LIKE '504%'))
+     1/COMMIT  :  auto
     []
 
 You'll note that classes have an attribute ``q``, which gives access
@@ -754,8 +769,8 @@ column.
     work it's sometimes easiest just to use `sqlType`.  Only necessary
     if SQLObject is creating your tables.
 
-Subclasses of Col
-~~~~~~~~~~~~~~~~~
+Column Types
+~~~~~~~~~~~~
 
 The `ForeignKey` class should be used instead of `Col` when the column
 is a reference to another table/class.  It is generally used like
