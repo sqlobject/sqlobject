@@ -378,3 +378,15 @@ that the Python attribute doesn't have to match the name of the
 column.  See `Irregular Naming`_ in the documentation.
 
 .. _Irregular Naming: SQLObject.html#irregular-naming
+
+Lazy Updates and Insert
+-----------------------
+
+`Lazy updates <SQLObject.html#lazy-updates>`_ allow you to defer
+sending ``UPDATES`` until you synchronize the object.  However, there
+is no way to do a lazy insert; as soon as you create an instance the
+``INSERT`` is executed.
+
+The reason for this limit is that each object needs a database ID, and
+in many databases you cannot attain an ID until you create a row.
+
