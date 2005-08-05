@@ -7,8 +7,8 @@ SQLObject 0.6.1
 Author, Site, and License
 =========================
 
-SQLObject is by Ian Bicking (ianb@colorstudy.com).  The website is
-sqlobject.org__.
+SQLObject is by Ian Bicking (ianb@colorstudy.com) and `Contributors
+<Authors.html>`_.  The website is sqlobject.org__.
 
 __ http://sqlobject.org
 
@@ -108,29 +108,6 @@ inappropriate for a Python attribute.  This way your database schema
 does not have to be designed with SQLObject in mind, and the resulting
 classes do not have to inherit the database's naming schemes.
 
-Future
-======
-
-Here are some things I plan:
-
-* More databases supported.  There has been interest and some work in
-  the progress for Oracle, Sybase, and MS-SQL support.
-* Better transaction support -- right now you can use transactions
-  for the database, but the object isn't transaction-aware, so
-  non-database persistence won't be able to be rolled back.  
-* Optimistic locking and other techniques to handle concurrency.
-* Profile of SQLObject performance, so that I can identify bottlenecks.
-* Increase hooks with FormEncode (unreleased) validation and form
-  generation package, so SQLObject classes (read: schemas) can be
-  published for editing more directly and easily.
-* Automatic joins in select queries.
-* More kinds of joins, and more powerful join results (closer to how
-  `select` works).
-
-See also the `Plan for 0.6`__.
-
-.. __: Plan06.html
-
 Using SQLObject: An Introduction
 ================================
 
@@ -220,18 +197,6 @@ gotten an error, as no default was given for these columns
 (``middleInitial`` has a default, so it will be set to ``NULL``, the
 SQL equivalent of ``None``).
 
-.. note::
-
-   In SQLObject NULL/None does *not* mean default.  NULL is a funny
-   thing; it mean very different things in different contexts and to
-   different people.  Sometimes it means "default", sometimes "not
-   applicable", sometimes "unknown".  If you want a default, NULL or
-   otherwise, you always have to be explicit in your class
-   definition.
-
-   Also note that the SQLObject default isn't the same as the
-   database's default (SQLObject never uses the database's default).
-
 You can use the class method `.get()` to fetch instances that
 already exist::
 
@@ -258,6 +223,18 @@ Here's a longer example of using the class::
     <Person 1 lastName='Doe' middleInitial='Q' firstName='John'>
     >>> p is p2
     True
+
+.. note::
+
+   In SQLObject NULL/None does *not* mean default.  NULL is a funny
+   thing; it mean very different things in different contexts and to
+   different people.  Sometimes it means "default", sometimes "not
+   applicable", sometimes "unknown".  If you want a default, NULL or
+   otherwise, you always have to be explicit in your class
+   definition.
+
+   Also note that the SQLObject default isn't the same as the
+   database's default (SQLObject never uses the database's default).
 
 Columns are accessed like attributes.  (This uses the ``property``
 feature of Python 2.2, so that retrieving and setting these attributes

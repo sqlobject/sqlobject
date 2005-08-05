@@ -1,10 +1,19 @@
 TODO
 ----
 
-See also some `long-term ideas`__.
-
-.. __: Plan06.html
-
 * ``_fromDatabase`` currently doesn't support IDs that don't fit into
   the normal naming scheme.  It should do so.  You can still use
   ``_idName`` with ``_fromDatabase``.
+* More databases supported.  There has been interest and some work in
+  the progress for Oracle, Sybase, and MS-SQL support.
+* Better transaction support -- right now you can use transactions
+  for the database, but the object isn't transaction-aware, so
+  non-database persistence won't be able to be rolled back.  
+* Optimistic locking and other techniques to handle concurrency.
+* Profile of SQLObject performance, so that I can identify bottlenecks.
+* Increase hooks with FormEncode (unreleased) validation and form
+  generation package, so SQLObject classes (read: schemas) can be
+  published for editing more directly and easily.
+* Automatic joins in select queries.
+* More kinds of joins, and more powerful join results (closer to how
+  `select` works).
