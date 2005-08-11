@@ -7,28 +7,28 @@ from sqlobject.inheritance import InheritableSQLObject
 ########################################
 
 
-class InherPerson(InheritableSQLObject):
+class InheritablePerson(InheritableSQLObject):
     firstName = StringCol()
     lastName = StringCol(alternateID=True)
 
-class Employee(InherPerson):
+class Employee(InheritablePerson):
     _inheritable = False
     position = StringCol()
 
 def setup():
-    setupClass(InherPerson)
+    setupClass(InheritablePerson)
     setupClass(Employee)
 
     Employee(firstName='Project', lastName='Leader', position='Project leader')
-    InherPerson(firstName='Oneof', lastName='Authors')
+    InheritablePerson(firstName='Oneof', lastName='Authors')
 
 
 def test_inheritance():
     setup()
 
-    persons = InherPerson.select() # all
+    persons = InheritablePerson.select() # all
     for person in persons:
-        assert isinstance(person, InherPerson)
+        assert isinstance(person, InheritablePerson)
         if isinstance(person, Employee):
             assert not hasattr(person, "childName")
         else:
@@ -39,10 +39,10 @@ def test_inheritance():
 def test_inheritance_select():
     setup()
 
-    persons = InherPerson.select(InherPerson.q.firstName <> None)
+    persons = InheritablePerson.select(InheritablePerson.q.firstName <> None)
     assert persons.count() == 2
 
-    persons = InherPerson.select(InherPerson.q.firstName == "phd")
+    persons = InheritablePerson.select(InheritablePerson.q.firstName == "phd")
     assert persons.count() == 0
 
     employees = Employee.select(Employee.q.firstName <> None)
@@ -54,7 +54,7 @@ def test_inheritance_select():
     employees = Employee.select(Employee.q.position <> None)
     assert employees.count() == 1
 
-    persons = InherPerson.selectBy(firstName="Project")
+    persons = InheritablePerson.selectBy(firstName="Project")
     assert persons.count() == 1
     assert isinstance(persons[0], Employee)
 
@@ -62,13 +62,13 @@ def test_inheritance_select():
     assert persons.count() == 1
 
     try:
-        person = InherPerson.byLastName("Oneof")
+        person = InheritablePerson.byLastName("Oneof")
     except:
         pass
     else:
         raise RuntimeError, "unknown person %s" % person
 
-    person = InherPerson.byLastName("Leader")
+    person = InheritablePerson.byLastName("Leader")
     assert person.firstName == "Project"
 
     person = Employee.byLastName("Leader")
