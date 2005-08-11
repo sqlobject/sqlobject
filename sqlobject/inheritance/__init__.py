@@ -1,6 +1,7 @@
 from sqlobject import sqlbuilder
 from sqlobject import classregistry
-from sqlobject.main import SQLObject, SelectResults, True, False, makeProperties, getterName, setterName
+from sqlobject.main import sqlmeta, SQLObject, SelectResults, True, False, \
+   makeProperties, getterName, setterName
 import iteration
 
 
@@ -64,7 +65,94 @@ class InheritableSelectResults(SelectResults):
                  **ops)
 
 
+class InheritableSQLMeta(sqlmeta):
+    def addColumn(sqlmeta, columnDef, changeSchema=False, connection=None, childUpdate=False):
+        soClass = sqlmeta.soClass
+        #DSM: Try to add parent properties to the current class
+        #DSM: Only do this once if possible at object creation and once for
+        #DSM: each new dynamic column to refresh the current class
+        if childUpdate or soClass._parentClass:
+            for col in soClass._parentClass.sqlmeta.columnList:
+                cname = col.name
+                if cname == 'childName': continue
+                setattr(soClass, getterName(cname), eval(
+                    'lambda self: self._parent.%s' % cname))
+                if not col.immutable:
+                    setattr(soClass, setterName(cname), eval(
+                        'lambda self, val: setattr(self._parent, %s, val)'
+                        % repr(cname)))
+            if childUpdate:
+                makeProperties(soClass)
+                return
+
+        if columnDef:
+            super(InheritableSQLMeta, sqlmeta).addColumn(columnDef, changeSchema, connection)
+
+        #DSM: Update each child class if needed and existing (only for new
+        #DSM: dynamic column as no child classes exists at object creation)
+        for c in soClass._childClasses.values():
+            c.sqlmeta.addColumn(columnDef, connection=connection, childUpdate=True)
+
+    addColumn = classmethod(addColumn)
+
+    def delColumn(sqlmeta, column, changeSchema=False, connection=None):
+        soClass = sqlmeta.soClass
+        super(InheritableSQLMeta, sqlmeta).delColumn(column, changeSchema, connection)
+
+        #DSM: Update each child class if needed
+        #DSM: and delete properties for this column
+        for c in soClass._childClasses.values():
+            delattr(c, name)
+
+    delColumn = classmethod(delColumn)
+
+    def addJoin(sqlmeta, joinDef, childUpdate=False):
+        soClass = sqlmeta.soClass
+        #DSM: Try to add parent properties to the current class
+        #DSM: Only do this once if possible at object creation and once for
+        #DSM: each new dynamic join to refresh the current class
+        if childUpdate or soClass._parentClass:
+            for jdef in soClass._parentClass.sqlmeta.joins:
+                join = jdef.withClass(soClass)
+                jname = join.joinMethodName
+                jarn  = join.addRemoveName
+                setattr(soClass, getterName(jname),
+                    eval('lambda self: self._parent.%s' % jname))
+                if hasattr(join, 'remove'):
+                    setattr(soClass, 'remove' + jarn,
+                        eval('lambda self,o: self._parent.remove%s(o)' % jarn))
+                if hasattr(join, 'add'):
+                    setattr(soClass, 'add' + jarn,
+                        eval('lambda self,o: self._parent.add%s(o)' % jarn))
+            if childUpdate:
+                makeProperties(soClass)
+                return
+
+        if joinDef:
+            super(InheritableSQLMeta, sqlmeta).addJoin(joinDef)
+
+        #DSM: Update each child class if needed and existing (only for new
+        #DSM: dynamic join as no child classes exists at object creation)
+        for c in soClass._childClasses.values():
+            c.sqlmeta.addJoin(joinDef, childUpdate=True)
+
+    addJoin = classmethod(addJoin)
+
+    def delJoin(sqlmeta, joinDef):
+        soClass = sqlmeta.soClass
+        super(InheritableSQLMeta, sqlmeta).delJoin(joinDef)
+
+        #DSM: Update each child class if needed
+        #DSM: and delete properties for this join
+        for c in soClass._childClasses.values():
+            delattr(c, meth)
+
+    delJoin = classmethod(delJoin)
+
+
 class InheritableSQLObject(SQLObject):
+
+    sqlmeta = InheritableSQLMeta
     _inheritable = True
     SelectResultsClass = InheritableSelectResults
 
@@ -90,94 +178,15 @@ class InheritableSQLObject(SQLObject):
 
     get = classmethod(get)
 
-    def addColumn(cls, columnDef, changeSchema=False, connection=None, childUpdate=False):
-        #DSM: Try to add parent properties to the current class
-        #DSM: Only do this once if possible at object creation and once for
-        #DSM: each new dynamic column to refresh the current class
-        if childUpdate or cls._parentClass:
-            for col in cls._parentClass.sqlmeta.columnList:
-                cname = col.name
-                if cname == 'childName': continue
-                setattr(cls, getterName(cname), eval(
-                    'lambda self: self._parent.%s' % cname))
-                if not col.immutable:
-                    setattr(cls, setterName(cname), eval(
-                        'lambda self, val: setattr(self._parent, %s, val)'
-                        % repr(cname)))
-            if childUpdate:
-                makeProperties(cls)
-                return
-
-        if columnDef:
-            super(InheritableSQLObject, cls).addColumn(columnDef, changeSchema, connection)
-
-        #DSM: Update each child class if needed and existing (only for new
-        #DSM: dynamic column as no child classes exists at object creation)
-        for c in cls._childClasses.values():
-            c.addColumn(columnDef, connection=connection, childUpdate=True)
-
-    addColumn = classmethod(addColumn)
-
-    def delColumn(cls, column, changeSchema=False, connection=None):
-        super(InheritableSQLObject, cls).delColumn(column, changeSchema, connection)
-
-        #DSM: Update each child class if needed
-        #DSM: and delete properties for this column
-        for c in cls._childClasses.values():
-            delattr(c, name)
-
-    delColumn = classmethod(delColumn)
-
-    def addJoin(cls, joinDef, childUpdate=False):
-        #DSM: Try to add parent properties to the current class
-        #DSM: Only do this once if possible at object creation and once for
-        #DSM: each new dynamic join to refresh the current class
-        if childUpdate or cls._parentClass:
-            for jdef in cls._parentClass.sqlmeta.joins:
-                join = jdef.withClass(cls)
-                jname = join.joinMethodName
-                jarn  = join.addRemoveName
-                setattr(cls, getterName(jname),
-                    eval('lambda self: self._parent.%s' % jname))
-                if hasattr(join, 'remove'):
-                    setattr(cls, 'remove' + jarn,
-                        eval('lambda self,o: self._parent.remove%s(o)' % jarn))
-                if hasattr(join, 'add'):
-                    setattr(cls, 'add' + jarn,
-                        eval('lambda self,o: self._parent.add%s(o)' % jarn))
-            if childUpdate:
-                makeProperties(cls)
-                return
-
-        if joinDef:
-            super(InheritableSQLObject, cls).addJoin(joinDef)
-
-        #DSM: Update each child class if needed and existing (only for new
-        #DSM: dynamic join as no child classes exists at object creation)
-        for c in cls._childClasses.values():
-            c.addJoin(joinDef, childUpdate=True)
-
-    addJoin = classmethod(addJoin)
-
-    def delJoin(cls, joinDef):
-        super(InheritableSQLObject, cls).delJoin(joinDef)
-
-        #DSM: Update each child class if needed
-        #DSM: and delete properties for this join
-        for c in cls._childClasses.values():
-            delattr(c, meth)
-
-    delJoin = classmethod(delJoin)
-
     def _notifyFinishClassCreation(cls):
         if not cls.sqlmeta.columnList:
             # There are no columns - call addColumn to propagate columns
             # from parent classes to children
-            cls.addColumn(None)
+            cls.sqlmeta.addColumn(None)
         if not cls.sqlmeta.joins:
             # There are no joins - call addJoin to propagate joins
             # from parent classes to children
-            cls.addJoin(None)
+            cls.sqlmeta.addJoin(None)
     _notifyFinishClassCreation = classmethod(_notifyFinishClassCreation)
 
     def _create(self, id, **kw):
@@ -194,14 +203,16 @@ class InheritableSQLObject(SQLObject):
         if self._parentClass:
             parentClass = self._parentClass
             new_kw = {}
-            parent_kw = {'childName': self.__class__.__name__}
+            parent_kw = {}
             for (name, value) in kw.items():
-                    if hasattr(parentClass, name):
-                        parent_kw[name] = value
-                    else:
-                        new_kw[name] = value
+                if hasattr(parentClass, name):
+                    parent_kw[name] = value
+                else:
+                    new_kw[name] = value
             kw = new_kw
             self._parent = parentClass(kw=parent_kw, connection=self._connection)
+            self._parent.childName = self.__class__.__name__
+
             id = self._parent.id
 
         super(InheritableSQLObject, self)._create(id, **kw)
