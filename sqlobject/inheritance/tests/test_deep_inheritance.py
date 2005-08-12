@@ -29,5 +29,11 @@ def test_deep_inheritance():
         position='Project leader', manager=manager)
     person = DIPerson(firstName='Oneof', lastName='Authors', manager=manager)
 
+    managers = list(DIManager.select())
+    assert len(managers) == 1
+
+    employees = list(DIEmployee.select())
+    assert len(employees) == 2
+
     persons = list(DIPerson.select())
     assert len(persons) == 3

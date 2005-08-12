@@ -7,22 +7,8 @@ class InheritableIteration(Iteration):
     defaultArraySize = 10000
 
     def __init__(self, dbconn, rawconn, select, keepConnection=False):
-        # unless we do a lazy select, replace sourceClass
-        # with the root of the inheritance tree (children
-        # will be attached by sourceClass.get)
-        lazyColumns = select.ops.get('lazyColumns', False)
-        sourceClass = select.sourceClass
-        if sourceClass._parentClass and not lazyColumns:
-            addClauses = []
-            while sourceClass._parentClass:
-                addClauses.append(sourceClass._parentClass.q.childName
-                    == sourceClass.__name__)
-                sourceClass = sourceClass._parentClass
-            select = select.__class__(sourceClass,
-                sqlbuilder.AND(select.clause, *addClauses),
-                select.clauseTables, **select.ops)
         super(InheritableIteration, self).__init__(dbconn, rawconn, select, keepConnection)
-        self.lazyColumns = lazyColumns
+        self.lazyColumns = select.ops.get('lazyColumns', False)
         self.cursor.arraysize = self.defaultArraySize
         self._results = []
         # Find the index of the childName column
