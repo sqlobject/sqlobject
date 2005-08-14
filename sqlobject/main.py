@@ -1473,7 +1473,7 @@ class SQLObject(object):
             r = repr(value)
             if len(r) > 20:
                 value = r[:17] + "..." + r[-1]
-            items.append((col.name, getattr(self, col.name)))
+            items.append((col.name, value))
         return items
 
     def setConnection(cls, value):
