@@ -238,9 +238,9 @@ def capitalize(name):
 
 class SOSingleJoin(SOMultipleJoin):
 
-    def __init__(self, makeDefault=False, **kw):
+    def __init__(self, **kw):
+        self.makeDefault = popKey(kw, 'makeDefault', False)
         SOMultipleJoin.__init__(self, **kw)
-        self.makeDefault = makeDefault
 
     def performJoin(self, inst):
         pythonColumn = self.soClass.sqlmeta.style.dbColumnToPythonAttr(self.joinColumn)
