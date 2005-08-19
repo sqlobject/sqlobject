@@ -497,6 +497,10 @@ class CommandStatus(Command):
                     columnsFromSchema_warning = True
                 good += 1
                 continue
+            except AssertionError, e:
+                print 'Cannot read db table %s: %s' % (
+                    soClass.sqlmeta.table, e)
+                continue
             existing = {}
             for col in columns:
                 col = col.withClass(soClass)
