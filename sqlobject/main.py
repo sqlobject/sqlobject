@@ -750,10 +750,10 @@ class SQLObject(object):
         # _columns where the attribute has been set to None in this
         # class.  If so, then we need to remove that column from
         # _columns.
-        for key in cls.sqlmeta.columnDefinitions:
+        for key in cls.sqlmeta.columnDefinitions.keys():
             if (key in new_attrs
                 and new_attrs[key] is None):
-                del cls.sqlmeta.columnsDefinitions[key]
+                del cls.sqlmeta.columnDefinitions[key]
 
         for column in cls.sqlmeta.columnDefinitions.values():
             cls.sqlmeta.addColumn(column)
