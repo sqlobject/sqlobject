@@ -13,7 +13,7 @@ if sys.version < '2.2.3':
     DistributionMetadata.download_url = None
 
 setup(name="SQLObject",
-      version="0.7b1",
+      version="0.7",
       description="Object-Relational Manager, aka database wrapper",
       long_description="""\
 Classes created using SQLObject wrap database rows, presenting a
@@ -38,7 +38,14 @@ For development see the `subversion repository
       license="LGPL",
       packages=["sqlobject"] + ['sqlobject.%s' % package for package in subpackages],
       scripts=["scripts/sqlobject-admin"],
-      download_url="http://prdownloads.sourceforge.net/sqlobject/SQLObject-0.7b1.tar.gz?download")
+      install_requires=["FormEncode>=0.2"],
+      extras_require={
+        'postgresql': ['psycopg'],
+        'mysql': ['MySQLdb'],
+        'sqlite': ['pysqlite'],
+        # Others?
+        },
+      )
 
 # Send announce to:
 #   sqlobject-discuss@lists.sourceforge.net
