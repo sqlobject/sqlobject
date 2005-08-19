@@ -102,6 +102,7 @@ class PostgresConnection(DBAPI):
         q = self._insertSQL(table, names, values)
         if self.debug:
             self.printDebug(conn, q, 'QueryIns')
+        print [q]
         c.execute(q)
         if self.debugOutput:
             self.printDebug(conn, id, 'QueryIns', 'result')

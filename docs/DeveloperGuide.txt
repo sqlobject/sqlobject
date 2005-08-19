@@ -14,6 +14,25 @@ file layout and repository cooperation.
 
   -- Ian Bicking
 
+Development Installation
+========================
+
+First install `FormEncode <http://formencode.org>`_::
+
+    $ svn co http://svn.colorstudy.com/FormEncode/trunk FormEncode
+    $ cd FormEncode
+    $ sudo python setup.py develop
+
+Then do the same for SQLObject::
+
+    $ svn co http://svn.colorstudy.com/trunk/SQLObject SQLObject
+    $ cd SQLObject
+    $ sudo python setup.py develop
+
+Voila!  The packages are globally installed, but the files from the
+checkout were not copied into ``site-packages``.  See `setuptools
+<http://peak.telecommunity.com/DevCenter/setuptools>`_ for more.
+
 Style Guide
 ===========
 

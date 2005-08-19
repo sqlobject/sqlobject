@@ -1,5 +1,6 @@
 from sqlobject import *
 from sqlobject.tests.dbtest import *
+from formencode import Invalid
 
 ########################################
 ## Enum test
@@ -13,8 +14,8 @@ def testBad():
     setupClass(Enum1)
     for l in ['a', 'bcd', 'a', 'e']:
         Enum1(l=l)
-    if supports('restrictedEnum'):
-        raises(
-            (Enum1._connection.module.IntegrityError,
-             Enum1._connection.module.ProgrammingError),
-            Enum1, l='b')
+    raises(
+        (Enum1._connection.module.IntegrityError,
+         Enum1._connection.module.ProgrammingError,
+         Invalid),
+        Enum1, l='b')

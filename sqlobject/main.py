@@ -40,6 +40,7 @@ import index
 import classregistry
 import declarative
 from sresults import SelectResults
+from formencode import schema, compound
 
 import sys
 if sys.version_info[:3] < (2, 2, 0):
@@ -338,9 +339,9 @@ class sqlmeta(object):
         # making the table read-only
         if not column.immutable:
             # We start by just using the _SO_setValue method
-            setter = eval('lambda self, val: self._SO_setValue(%s, val, self.%s, self.%s)' % (repr(name), '_SO_fromPython_%s' % name, '_SO_toPython_%s' % name))
-            setattr(soClass, '_SO_fromPython_%s' % name, column.fromPython)
-            setattr(soClass, '_SO_toPython_%s' % name, column.toPython)
+            setter = eval('lambda self, val: self._SO_setValue(%s, val, self.%s, self.%s)' % (repr(name), '_SO_from_python_%s' % name, '_SO_to_python_%s' % name))
+            setattr(soClass, '_SO_from_python_%s' % name, column.from_python)
+            setattr(soClass, '_SO_to_python_%s' % name, column.to_python)
             setattr(soClass, rawSetterName(name), setter)
             # Then do the aliasing
             if not hasattr(soClass, setterName(name)) or (name == 'childName'):
@@ -556,7 +557,7 @@ class sqlmeta(object):
         index = indexDef.withClass(cls.soClass)
         cls.indexes.append(index)
     addIndex = classmethod(addIndex)
-
+    
 sqlhub = dbconnection.ConnectionHub()
 
 class _sqlmeta_attr(object):
@@ -809,6 +810,7 @@ class SQLObject(object):
     delJoin = _sqlmeta_attr('delJoin', 2)
     addIndex = _sqlmeta_attr('addIndex', 2)
     delIndex = _sqlmeta_attr('delIndex', 2)
+    getSchema = _sqlmeta_attr('getSchema', 2)
 
     # @classmethod
     def _SO_setupSqlmeta(cls, new_attrs, is_base):
@@ -1012,7 +1014,7 @@ class SQLObject(object):
         finally:
             self._SO_writeLock.release()
 
-    def _SO_setValue(self, name, value, fromPython, toPython):
+    def _SO_setValue(self, name, value, from_python, to_python):
         # This is the place where we actually update the
         # database.
 
@@ -1020,12 +1022,12 @@ class SQLObject(object):
         # in the database, and we can't insert it until all
         # the parts are set.  So we just keep them in a
         # dictionary until later:
-        if fromPython:
-            dbValue = fromPython(value, self._SO_validatorState)
+        if from_python:
+            dbValue = from_python(value, self._SO_validatorState)
         else:
             dbValue = value
-        if toPython:
-            value = toPython(dbValue, self._SO_validatorState)
+        if to_python:
+            value = to_python(dbValue, self._SO_validatorState)
         if self.sqlmeta._creating or self.sqlmeta.lazyUpdate:
             self.dirty = True
             self._SO_createValues[name] = dbValue
@@ -1056,14 +1058,14 @@ class SQLObject(object):
         # _creating is special, see _SO_setValue
         if self.sqlmeta._creating or self.sqlmeta.lazyUpdate:
             for name, value in kw.items():
-                fromPython = getattr(self, '_SO_fromPython_%s' % name, None)
-                if fromPython:
-                    kw[name] = dbValue = fromPython(value, self._SO_validatorState)
+                from_python = getattr(self, '_SO_from_python_%s' % name, None)
+                if from_python:
+                    kw[name] = dbValue = from_python(value, self._SO_validatorState)
                 else:
                     dbValue = value
-                toPython = getattr(self, '_SO_toPython_%s' % name, None)
-                if toPython:
-                    value = toPython(dbValue, self._SO_validatorState)
+                to_python = getattr(self, '_SO_to_python_%s' % name, None)
+                if to_python:
+                    value = to_python(dbValue, self._SO_validatorState)
                 setattr(self, instanceName(name), value)
             for name, value in extra.items():
                 try:
@@ -1093,14 +1095,14 @@ class SQLObject(object):
             # else into a single UPDATE, if necessary.
             toUpdate = {}
             for name, value in kw.items():
-                fromPython = getattr(self, '_SO_fromPython_%s' % name, None)
-                if fromPython:
-                    dbValue = fromPython(value, self._SO_validatorState)
+                from_python = getattr(self, '_SO_from_python_%s' % name, None)
+                if from_python:
+                    dbValue = from_python(value, self._SO_validatorState)
                 else:
                     dbValue = value
-                toPython = getattr(self, '_SO_toPython_%s' % name, None)
-                if toPython:
-                    value = toPython(dbValue, self._SO_validatorState)
+                to_python = getattr(self, '_SO_to_python_%s' % name, None)
+                if to_python:
+                    value = to_python(dbValue, self._SO_validatorState)
                 if self.sqlmeta.cacheValues:
                     setattr(self, instanceName(name), value)
                 toUpdate[name] = dbValue
@@ -1124,8 +1126,8 @@ class SQLObject(object):
 
     def _SO_selectInit(self, row):
         for col, colValue in zip(self.sqlmeta.columnList, row):
-            if col.toPython:
-                colValue = col.toPython(colValue, self._SO_validatorState)
+            if col.to_python:
+                colValue = col.to_python(colValue, self._SO_validatorState)
             setattr(self, instanceName(col.name), colValue)
 
     def _SO_getValue(self, name):
@@ -1141,8 +1143,8 @@ class SQLObject(object):
         assert results != None, "%s with id %s is not in the database" \
                % (self.__class__.__name__, self.id)
         value = results[0]
-        if column.toPython:
-            value = column.toPython(value, self._SO_validatorState)
+        if column.to_python:
+            value = column.to_python(value, self._SO_validatorState)
         return value
 
     def _SO_foreignKey(self, id, joinClass):
