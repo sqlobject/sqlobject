@@ -8,9 +8,8 @@ Author, Site, and License
 =========================
 
 SQLObject is by Ian Bicking (ianb@colorstudy.com) and `Contributors
-<Authors.html>`_.  The website is sqlobject.org__.
-
-__ http://sqlobject.org
+<Authors.html>`_.  The website is `sqlobject.org
+<http://sqlobject.org>`_.
 
 The code is licensed under the `Lesser General Public License`_
 (LGPL).
@@ -177,8 +176,8 @@ with SQLObject that don't have a single primary key, and you must
 treat that key as immutable (otherwise you'll confuse SQLObject
 terribly).
 
-You can `override the id name`__ in the database, but it is always
-called ``.id`` from Python.
+You can `override the id name <#idName>`_ in the database, but it is
+always called ``.id`` from Python.
 
 Using the Class
 ---------------
