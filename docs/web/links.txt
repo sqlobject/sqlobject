@@ -32,6 +32,9 @@ Open Source Projects
 * `Bauble <http://bauble.belizebotanic.org/>`_, a Biodiversity
   Collection Manager.
 
+* `Anemon <http://anemon.org/wikini/wakka.php?wiki=FirstPage>`_ DHCP
+  server.
+
 Articles and Documentation
 --------------------------
 
