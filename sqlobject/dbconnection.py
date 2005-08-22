@@ -625,16 +625,15 @@ class DBAPI(DBConnection):
         data = {}
         if 'id' in kw:
             data[soClass.sqlmeta.idName] = kw['id']
-        else:
-            for key, col in soClass.sqlmeta.columns.items():
-                if key in kw:
-                    data[col.dbName] = kw[key]
-                elif col.foreignName in kw:
-                    obj = kw[col.foreignName]
-                    if obj is None:
-                        data[col.dbName] = None
-                    else:
-                        data[col.dbName] = obj.id
+        for key, col in soClass.sqlmeta.columns.items():
+            if key in kw:
+                data[col.dbName] = kw[key]
+            elif col.foreignName in kw:
+                obj = kw[col.foreignName]
+                if obj is None:
+                    data[col.dbName] = None
+                else:
+                    data[col.dbName] = obj.id
         return ' AND '.join(
             ['%s %s %s' %
              (dbName, ops.get(value, "="), self.sqlrepr(value))
