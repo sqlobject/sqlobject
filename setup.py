@@ -2,7 +2,7 @@ from ez_setup import use_setuptools
 use_setuptools()
 from setuptools import setup, find_packages
 
-subpackages = ['firebird', 'include', 'inheritance', 'mysql', 'postgres',
+subpackages = ['firebird', 'inheritance', 'mysql', 'postgres',
                'sqlite', 'sybase', 'maxdb', 'util', 'manager']
 
 import sys
