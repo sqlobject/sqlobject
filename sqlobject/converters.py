@@ -43,6 +43,11 @@ else:
 
 from types import InstanceType, ClassType, TypeType
 
+try:
+    from decimal import Decimal
+except ImportError:
+    Decimal = None
+
 ########################################
 ## Quoting
 ########################################
@@ -191,6 +196,12 @@ if datetime:
 
     registerConverter(datetime.date, DateConverter)
 
+if Decimal:
+    def DecimalConverter(value, db):
+        return value.to_eng_string()
+
+    registerConverter(Decimal, DecimalConverter)
+
 def sqlrepr(obj, db=None):
     try:
         reprFunc = obj.__sqlrepr__
@@ -202,4 +213,3 @@ def sqlrepr(obj, db=None):
         return converter(obj, db)
     else:
         return reprFunc(db)
-
