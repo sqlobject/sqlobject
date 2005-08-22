@@ -221,7 +221,10 @@ class PostgresConnection(DBAPI):
         if t.count('int'):
             return col.IntCol, {}
         elif t.count('varying'):
-            return col.StringCol, {'length': int(t[t.index('(')+1:-1])}
+            if '(' in t:
+                return col.StringCol, {'length': int(t[t.index('(')+1:-1])}
+            else: # varchar without length in Postgres means any length
+                return col.StringCol, {}
         elif t.startswith('character('):
             return col.StringCol, {'length': int(t[t.index('(')+1:-1]),
                                    'varchar': False}
