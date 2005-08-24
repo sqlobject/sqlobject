@@ -23,6 +23,6 @@ if Decimal:
         setupClass(DecimalTable)
         d = DecimalTable(col1=Decimal("21.12"))
         if isinstance(d.col1, Decimal):
-            assert d.col1 == 21.12
-        else:
             assert d.col1 == Decimal("21.12")
+        else:
+            assert d.col1 == 21.12
