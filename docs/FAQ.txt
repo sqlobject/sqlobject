@@ -73,13 +73,15 @@ optimization)::
 SQL-wise
 ~~~~~~~~
 
-Use LEFTJOIN() from sqlobject.sqlbuilder.
+Use LEFTJOIN() from SQLBuilder_.
 
 
 How can I join a table with itself?
 -----------------------------------
 
-Use Alias from sqlobject.sqlbuilder.
+Use Alias from SQLBuilder_.
+
+.. _SQLBuilder: SQLBuilder.html
 
 
 How Does Inheritance Work?

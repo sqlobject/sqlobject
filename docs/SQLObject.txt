@@ -24,9 +24,11 @@ GNU General Public License for more details.
 Introduction
 ============
 
-SQLObject is an *object-relational mapper*.  It allows you to
-translate RDBMS table rows into Python objects, and manipulate those
-objects to transparently manipulate the database.
+SQLObject is an *object-relational mapper* for Python_ programming
+language.  It allows you to translate RDBMS table rows into Python objects,
+and manipulate those objects to transparently manipulate the database.
+
+.. _Python: http://python.org
 
 In using SQLObject, you will create a class definition that will
 describe how the object translates to the database table.  SQLObject
@@ -41,12 +43,21 @@ used with the same query syntax.
 Requirements
 ============
 
-Currently SQLObject supports MySQL_, PostgreSQL_ (via ``psycopg``),
-SQLite_, Firebird_, Sybase_, and `MAX DB`_ (also known as SAP DB).
+Currently SQLObject supports MySQL_ via MySQLdb_ aka MySQL-python,
+PostgreSQL_ via psycopg_, SQLite_ via PySQLite_, Firebird_ via kinterbasdb_,
+Sybase via Sybase_, and `MAX DB`_ (also known as SAP DB) via sapdb_.
 
+.. _MySQL: http://mysql.com
+.. _MySQLdb: http://sourceforge.net/projects/mysql-python/
 .. _PostgreSQL: http://postgresql.org
+.. _psycopg: http://initd.org/projects/psycopg1
 .. _SQLite: http://sqlite.org
+.. _PySQLite: http://initd.org/projects/pysqlite
 .. _Firebird: http://firebird.sourceforge.net
+.. _kinterbasdb: http://kinterbasdb.sourceforge.net/
+.. _Sybase: http://www.object-craft.com.au/projects/sybase/
+.. _`MAX DB`: http://www.mysql.com/products/maxdb/
+.. _sapdb: http://www.sapdb.org/sapdbPython.html
 
 Python 2.2 or higher is required.  SQLObject makes extensive use of
 new-style classes.
@@ -84,7 +95,7 @@ access as well)
 .. _PyDO: http://skunkweb.sourceforge.net/pydo.html
 
 SQLObject is, to my knowledge, unique in using metaclasses to
-facilitate this seemless integration.  Some other ORMs use code
+facilitate this seamless integration.  Some other ORMs use code
 generation to create an interface, expressing the schema in a CSV or
 XML file (for example, MiddleKit, part of Webware_).  By using
 metaclasses you are able to comfortably define your schema in the
@@ -136,7 +147,7 @@ tables ourselves, and just have SQLObject access those tables, but
 let's have SQLObject do that work.  First, the class:
 
     >>> class Person(SQLObject):
-    ... 
+    ...
     ...     firstName = StringCol()
     ...     middleInitial = StringCol(length=1, default=None)
     ...     lastName = StringCol()
@@ -287,7 +298,7 @@ Lazy Updates
 ------------
 
 By default SQLObject sends an ``UPDATE`` to the database for every
-attribute you set, or everytime you call ``.set()``.  If you want to
+attribute you set, or every time you call ``.set()``.  If you want to
 avoid this many updates, add ``_lazyUpdate = True`` to your class
 definition.  Then updates will only be written to the database when
 you call ``inst.syncUpdate()`` or ``obj.sync()``: ``.sync()`` also
@@ -307,7 +318,7 @@ First, let's define the new address table.  People can have multiple
 addresses, of course::
 
     >>> class Address(SQLObject):
-    ... 
+    ...
     ...     street = StringCol()
     ...     city = StringCol()
     ...     state = StringCol(length=2)
@@ -320,7 +331,7 @@ reference to a `Person` object.  We refer to other classes by name
 (with a string).  In the database there will be a ``person_id``
 column, type ``INT``, which points to the ``person`` column.
 
-.. note:: 
+.. note::
 
    The reason SQLObject uses strings to refer to other classes is
    because the other class often does not yet exist.  Classes in
@@ -332,7 +343,7 @@ column, type ``INT``, which points to the ``person`` column.
    below ``A`` in the module, then when the ``A`` class was created
    (including creating all its column attributes) the ``B`` class
    simply wouldn't exist.  By referring to classes by name, we can
-   wait until all the requird classes exist before creating the links
+   wait until all the required classes exist before creating the links
    between classes.
 
 We want an attribute that gives the addresses for a person.  In a
@@ -345,7 +356,7 @@ class definition we'd do::
 But we already have the class.  We can add this to the class
 in-place::
 
-    >>> Person.sqlmeta.addJoin(MultipleJoin('Address', 
+    >>> Person.sqlmeta.addJoin(MultipleJoin('Address',
     ...                        joinMethodName='addresses'))
 
 .. note::
@@ -374,22 +385,22 @@ many-to-many relationship, which is represented with the
 `RelatedJoin`.
 
     >>> class User(SQLObject):
-    ... 
+    ...
     ...     class sqlmeta:
     ...         # user is a reserved word in some databases, so we won't
     ...         # use that for the table name:
     ...         table = "user_table"
-    ... 
+    ...
     ...     username = StringCol(alternateID=True, length=20)
     ...     # We'd probably define more attributes, but we'll leave
-    ...     # that excersize to the reader...
-    ... 
+    ...     # that exercise to the reader...
+    ...
     ...     roles = RelatedJoin('Role')
 
     >>> class Role(SQLObject):
-    ... 
+    ...
     ...     name = StringCol(alternateID=True, length=20)
-    ... 
+    ...
     ...     users = RelatedJoin('User')
 
     >>> User.createTable()
@@ -544,7 +555,7 @@ slicing, this makes batched queries easy to write:
     total = query.count()
     print "Showing page %i of %i" % (start/size + 1, total/size + 1)
 
-.. note:: 
+.. note::
 
    There are several factors when considering the efficiency of this
    kind of batching, and it depends very much how the batching is
@@ -570,8 +581,6 @@ slicing, this makes batched queries easy to write:
 For more information on the where clause in the queries, see the
 `SQLBuilder documentation`_.
 
-.. _`SQLBuilder documentation`: SQLBuilder.html
-
 Select-By Method
 ~~~~~~~~~~~~~~~~
 
@@ -594,7 +603,7 @@ some other details to be aware of.
 Initializing the Objects
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-There are two ways SQLObject instances can come into existance: they
+There are two ways SQLObject instances can come into existence: they
 can be fetched from the database, or they can be inserted into the
 database.  In both cases a new Python object is created.  This makes
 the role of `__init__` a little confusing.
@@ -736,7 +745,7 @@ column.
 
 `dbName`:
     This is the name of the column in the database.  If you don't
-    give a name, your Pythonic name will be converted from 
+    give a name, your Pythonic name will be converted from
     mixed-case to underscore-separated.
 `default`:
     The default value for this column.  Used when creating a new row.
@@ -754,7 +763,7 @@ column.
     ``byUsername`` which will return that object.  Use
     `alternateMethodName` if you don't like the ``by*`` name
     (e.g. ``alternateMethodName="username"``).
-    
+
     The column should be declared ``UNIQUE`` in your table schema.
 `unique`:
     If true, when SQLObject creates a table it will declare this
@@ -782,16 +791,23 @@ integer ID for the related role.
 There are some other subclasses of `Col`.  These are used to indicate
 different types of columns, when SQLObject creates your tables.
 
+`BLOBCol`:
+    A column for binary data. Presently works only with MySQL, PostgreSQL
+    and SQLite backends.
+
 `BoolCol`:
     Will create a ``BOOLEAN`` column in Postgres, or ``INT`` in other
-    databses.  It will also convert values to ``"t"/"f"`` or ``0/1``
+    databases.  It will also convert values to ``"t"/"f"`` or ``0/1``
     according to the database backend.
 
 `CurrencyCol`:
     Equivalent to ``DecimalCol(size=10, precision=2)``.
 
+`DateCol`:
+    A date (usually returned as an datetime or mxDateTime object).
+
 `DateTimeCol`:
-    A date and time (usually returned as an mxDateTime object).
+    A date and time (usually returned as an datetime or mxDateTime object).
 
 `DecimalCol`:
     Base-10, precise number.  Uses the keyword arguments `size` for
@@ -814,6 +830,11 @@ different types of columns, when SQLObject creates your tables.
 `IntCol`:
     Integers.
 
+`PickleCol`:
+    An extension of BLOBCol; this column can store/retrieve any Python object;
+    it actually (un)pickle the object from/to string and store/retrieve the
+    string.
+
 `StringCol`:
     A string (character) column.  Extra keywords:
 
@@ -825,7 +846,7 @@ different types of columns, when SQLObject creates your tables.
         ``CHAR`` and ``VARCHAR``, default True, i.e., use
         ``VARCHAR``.
 
-`UnicodeCol`: 
+`UnicodeCol`:
     A subclass of `StringCol`.  Also accepts a dbEncoding keyword
     argument, which defaults to ``"UTF-8"``.  Values coming in and
     out from the database will be encoded and decoded.  **Note**:
@@ -857,7 +878,7 @@ attributes you can set in your class.
 
 `_cacheValues`:
     If set to ``False`` then values for attributes from the database
-    won't be cached.  So everytime you access an attribute in the
+    won't be cached.  So every time you access an attribute in the
     object the database will be queried for a value.  If you want to
     handle concurrent access to the database from multiple processes
     then this is probably the way to do so.  You should also use
@@ -904,7 +925,7 @@ Several keyword arguments are allowed to the `MultipleJoin` constructor:
 `joinMethodName`:
     When adding joins dynamically (using the class method `addJoin`_),
     you can give the name of the accessor for the join.  It can also be
-    created automatically, and is normally implied (i.e., ``addresses = 
+    created automatically, and is normally implied (i.e., ``addresses =
     MultipleJoin(...)`` implies ``joinMethodName="addresses"``).
 
 RelatedJoin: Many-to-Many
@@ -921,7 +942,7 @@ __ `Multiple Join Keywords`_
 `intermediateTable`:
     The name of the intermediate table which references both classes.
 `addRemoveName`:
-    In the `user/role example`__, the methods `addRole(role)` and 
+    In the `user/role example`__, the methods `addRole(role)` and
     `removeRole(role)` are created.  The ``Role`` portion of these
     method names can be changed by giving a string value here.
 
@@ -949,11 +970,11 @@ Then the usage in a class::
 
     class Person(SQLObject):
         username = StringCol(length=100, alternateID=True)
-        roles = RelatedJoin('Role', joinColumn='person', otherColumn='role', 
+        roles = RelatedJoin('Role', joinColumn='person', otherColumn='role',
                             intermediateTable='assigned_roles')
     class Role(SQLObject):
         name = StringCol(length=50, alternateID=True)
-        roles = RelatedJoin('Person', joinColumn='role', otherColumn='person', 
+        roles = RelatedJoin('Person', joinColumn='role', otherColumn='person',
                             intermediateTable='assigned_roles')
 
 SingleJoin: One-to-One
@@ -990,43 +1011,9 @@ off, like:
 Automatic Schema Generation
 ---------------------------
 
-All the connections support creating and droping tables based on the
+All the connections support creating and dropping tables based on the
 class definition.  First you have to prepare your class definition,
 which means including type information in your columns.
-
-Columns Types
-~~~~~~~~~~~~~
-
-A column type is indicated by using a subclass of `Col`:
-
-`StringCol`:
-    StringCol represents ``CHAR``, ``VARCHAR``, and ``TEXT``.  The
-    `length` keyword argument indicates the ``CHAR`` or ``VARCHAR``
-    length -- if not given, then ``TEXT`` is assumed.  If you use
-    ``varchar=False`` then ``CHAR`` will be used, otherwise 
-    ``VARCHAR`` is the default.
-`IntCol`:
-    The ``INT`` type.
-`FloatCol`:
-    The ``FLOAT`` type.
-`DecimalCol`:
-    The ``DECIMAL`` SQL type, i.e., base 10 number.  The keyword 
-    arguments `size` and `precision` indicate the scope.  So
-    ``DecimalCol(size=5, precision=2)`` is a number like ###.##,
-    i.e., 5 digits, two of them past the decimal point.
-`CurrencyCol`:
-    Like ``DecimalCol(size=10, precision=2)``.
-`EnumCol`:
-    A MySQL ``ENUM``, i.e., one of a finite number of strings.
-    For other databases this will be a ``VARCHAR``.
-`DateTimeCol`:
-    A moment in time.  ``TIMESTAMP`` in Postgres, and ``DATETIME``
-    in MySQL.  Note the names of these columns match the *Python*
-    type names, not the SQL names.
-`ForeignKey`:
-    This is a reference to another table.  You typically need to
-    only give the name of the foreign class that is referenced.
-    `ForeignKey` implies an ``INT`` column.
 
 Indexes
 ~~~~~~~
@@ -1068,10 +1055,10 @@ Creating and Dropping Tables
 
 To create a table call `createTable`.  It takes two arguments:
 
-`ifNotExists`: 
+`ifNotExists`:
     If the table already exists, then don't try to create it.  Default
     False.
-`createJoinTables`: 
+`createJoinTables`:
     If you used `Many-to-Many relationships`_, then the intermediate tables
     will be created (but only for one of the two involved classes).
     Default True.
@@ -1098,7 +1085,7 @@ attribute).  Do this like::
         _fromDatabase = True
 
 You can still specify columns (in `_columns`), and only missing
-columns will be added.  
+columns will be added.
 
 *This is not supported in SQLite*
 
@@ -1122,7 +1109,7 @@ which you used in `addColumn`), or you can use the column name (like
 
 .. _addJoin:
 
-You can also add Joins__, like 
+You can also add Joins__, like
 ``MyClass.addJoin(MultipleJoin("MyOtherClass"))``, and remove joins with
 `delJoin`.  `delJoin` does not take strings, you have to get the join
 object out of the `_joins` attribute.
@@ -1153,12 +1140,10 @@ Postgres:
 SQLite:
     ``INTEGER PRIMARY KEY``
 
-SQLObject does not support non-integer keys (that may change).  It
-does not support sequences in Postgres (that will change -- ``SERIAL``
-uses an implicit sequence).  It does not support primary keys made up
-of multiple columns (that probably won't change).  It does not
-generally support tables with primary keys with business meaning --
-i.e., primary keys are assumed to be immutable (that won't change).
+SQLObject does not support primary keys made up of multiple columns (that
+probably won't change).  It does not generally support tables with primary
+keys with business meaning -- i.e., primary keys are assumed to be
+immutable (that won't change).
 
 At the moment foreign key column names must end in ``"ID"``
 (case-insensitive).  This restriction will probably be removed in the
@@ -1235,7 +1220,7 @@ DBConnection: Database Connections
 ==================================
 
 The `DBConnection` module currently has four external classes,
-`MySQLConnection`, `PostgresConnection`, `SQLiteConnection`, 
+`MySQLConnection`, `PostgresConnection`, `SQLiteConnection`,
 `SybaseConnection`, and `MaxdbConnection`.
 
 You can pass the keyword argument `debug` to any connector.  If set to
@@ -1245,7 +1230,7 @@ console.
 MySQL
 -----
 
-`MySQLConnection` takes the keyword arguments `host`, `db`, `user`,
+`MySQLConnection` takes the keyword arguments `host`, `port`, `db`, `user`,
 and `passwd`, just like `MySQLdb.connect` does.
 
 MySQLConnection supports all the features, though MySQL only supports
@@ -1267,7 +1252,7 @@ SQLite
 ------
 
 `SQLiteConnection` takes the a single string, which is the path to the
-database file.  
+database file.
 
 SQLite puts all data into one file, with a journal file that is opened
 in the same directory during operation (the file is deleted when the
@@ -1381,17 +1366,17 @@ LEFT JOIN and other JOINs
 First look in the FAQ_, question "How can I do a LEFT JOIN?"
 
 Still here? Well. To perform a JOIN use one of the JOIN helpers from
-sqlobject.sqlbuilder. Pass an instance of the helper to .select()
+SQLBuilder_. Pass an instance of the helper to .select()
 method.  For example::
 
     from sqlobject.sqlbuilder import LEFTJOINOn
     MyTable.select(
-        join=LEFTJOINOn(Table1, Table2, 
+        join=LEFTJOINOn(Table1, Table2,
                         Table1.q.name == Table2.q.value))
 
 will generate the query::
 
-    SELECT * FROM my_table, table1 
+    SELECT * FROM my_table, table1
     LEFT JOIN table2 ON table1.name = table2.value;
 
 .. _FAQ: FAQ.html#how-can-i-do-a-left-join
@@ -1400,12 +1385,12 @@ If you want to join with the primary table - leave the first table
 None::
 
     MyTable.select(
-        join=LEFTJOINOn(None, Table1, 
+        join=LEFTJOINOn(None, Table1,
                         MyTable.q.name == Table1.q.value))
 
 will generate the query::
 
-    SELECT * FROM my_table 
+    SELECT * FROM my_table
     LEFT JOIN table2 ON my_table.name = table1.value;
 
 The join argument for .select() can be a JOIN() or a list/tuples of
@@ -1415,7 +1400,7 @@ JOIN()s.
 How can I join a table with itself?
 -----------------------------------
 
-Use Alias from sqlobject.sqlbuilder. Example::
+Use Alias from SQLBuilder_. Example::
 
     from sqlobject.sqlbuilder import Alias
     alias = Alias(MyTable, "my_table_alias")
@@ -1423,7 +1408,7 @@ Use Alias from sqlobject.sqlbuilder. Example::
 
 will generate the query::
 
-    SELECT * FROM my_table, my_table AS my_table_alias 
+    SELECT * FROM my_table, my_table AS my_table_alias
     WHERE my_table.name = my_table_alias.value;
 
 Can I use LEFTJOIN() with aliases?
@@ -1450,7 +1435,7 @@ Subqueries (subselects)
 You can run queries with subqueries (subselects) on those DBMS that can do
 subqueries (MySQL supports subqueries from version 4.1).
 
-Use corresponding classess and functions from sqlbuilder::
+Use corresponding classes and functions from SQLBuilder_::
 
     from sqlobject.sqlbuilder import EXISTS, Select
     select = Test1.select(EXISTS(Select(Test2.q.col2, where=(Outer(Test1).q.col1 == Test2.q.col2))))
@@ -1460,13 +1445,13 @@ generates the query::
    SELECT test1.id, test1.col1 FROM test1 WHERE
    EXISTS (SELECT test2.col2 FROM test2 WHERE (test1.col1 = test2.col2))
 
-Note the usage of Outer - this is the helper to allow refering to a table
+Note the usage of Outer - this is the helper to allow referring to a table
 in the outer query.
 
 Select() is used instead of .select() because you need to control what
 columns and in what order the inner query returns.
 
-Avalable queries are IN(), NOTIN(), EXISTS(), NOTEXISTS(), SOME(), ANY()
+Available queries are IN(), NOTIN(), EXISTS(), NOTEXISTS(), SOME(), ANY()
 and ALL(). The last 3 are used with comparison operators, like this:
 "somevalue = ANY(Select(...))".
 
@@ -1476,4 +1461,5 @@ SQLBuilder
 For more information on SQLBuilder, read the `SQLBuilder
 Documentation`_.
 
+.. _SQLBuilder: SQLBuilder.html
 .. _`SQLBuilder Documentation`: SQLBuilder.html
