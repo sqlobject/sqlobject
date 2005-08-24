@@ -6,7 +6,7 @@ try:
     now = datetime.now
 except ImportError:
     from mx.DateTime import now
-    
+
 ########################################
 ## Dynamic column tests
 ########################################

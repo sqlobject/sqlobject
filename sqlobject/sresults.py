@@ -157,7 +157,7 @@ class SelectResults(object):
 
     def count(self):
         """ Counting elements of current select results """
-        assert not (self.ops.get('distinct') and (self.ops.get('start') 
+        assert not (self.ops.get('distinct') and (self.ops.get('start')
                                                   or self.ops.get('end'))), \
                "distinct-counting of sliced objects is not supported"
         if self.ops.get('distinct'):

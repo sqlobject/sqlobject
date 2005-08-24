@@ -8,7 +8,7 @@ TODO
   the progress for Oracle, Sybase, and MS-SQL support.
 * Better transaction support -- right now you can use transactions
   for the database, but the object isn't transaction-aware, so
-  non-database persistence won't be able to be rolled back.  
+  non-database persistence won't be able to be rolled back.
 * Optimistic locking and other techniques to handle concurrency.
 * Profile of SQLObject performance, so that I can identify bottlenecks.
 * Increase hooks with FormEncode (unreleased) validation and form

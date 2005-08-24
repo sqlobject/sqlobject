@@ -52,7 +52,6 @@ class SybaseConnection(DBAPI):
                               database=self.db, auto_commit=self.autoCommit,
                               locking=self.locking)
 
-        
     HAS_IDENTITY = """
        SELECT col.name, col.status, obj.name
        FROM syscolumns col
@@ -60,7 +59,6 @@ class SybaseConnection(DBAPI):
        ON obj.id = col.id
        WHERE obj.name = '%s'
              AND (col.status & 0x80) = 0x80
-             
     """
     def _hasIdentity(self, conn, table):
         query = self.HAS_IDENTITY % table
@@ -68,7 +66,7 @@ class SybaseConnection(DBAPI):
         c.execute(query)
         r = c.fetchone()
         return r is not None
-        
+
     def _queryInsertID(self, conn, soInstance, id, names, values):
         table = soInstance.sqlmeta.table
         idName = soInstance.sqlmeta.idName

@@ -11,7 +11,6 @@ class TestCreateDrop(SQLObject):
     short = StringCol(length=10)
     blobcol = BLOBCol()
 
-    
 def test_create_drop():
     conn = getConnection()
     TestCreateDrop.setConnection(conn)
@@ -25,5 +24,3 @@ def test_create_drop():
     assert not conn.tableExists(TestCreateDrop.sqlmeta.table)
     TestCreateDrop.dropTable(ifExists=True)
     assert not conn.tableExists(TestCreateDrop.sqlmeta.table)
-    
-    

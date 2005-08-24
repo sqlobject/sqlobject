@@ -21,7 +21,7 @@ Use like::
     ...    pass
     >>> registry.addClass(MyClass)
     Class finally exists: MyClass
-    
+
 """
 
 class ClassRegistry(object):
@@ -33,7 +33,7 @@ class ClassRegistry(object):
     with classes by name, and after each class is created we
     try to fix up any references by replacing the names with
     actual classes.
-    
+
     Here we keep a dictionaries of class names to classes -- note
     that the classes might be spread among different modules, so
     since we pile them together names need to be globally unique,

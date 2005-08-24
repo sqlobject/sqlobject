@@ -66,7 +66,7 @@ class ISQLObject(Interface):
         Join tables (mapping tables for many-to-many joins) are
         created if this class comes alphabetically before the other
         join class, and if ``createJoinTables`` is true.
-        
+
         If ``createIndexes`` is true, indexes are also created.
         """
 
@@ -254,7 +254,7 @@ class Isqlmeta(Interface):
         Adds the index to the class.
         """
 
-        
+
 class ICol(Interface):
 
     def __init__(name=None, **kw):
@@ -307,7 +307,7 @@ class ISOCol(Interface):
     """
 
     constraints = """
-    A list of ... @@? 
+    A list of ... @@?
     """
 
     notNone = """

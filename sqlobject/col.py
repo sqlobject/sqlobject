@@ -800,7 +800,7 @@ class SOEnumCol(SOCol):
         raise "Enum type is not supported"
 
 class EnumValidator(validators.Validator):
-        
+
     def to_python(self, value, state):
         if value in self.enumValues:
             return value

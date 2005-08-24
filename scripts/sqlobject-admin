@@ -33,4 +33,3 @@ except ImportError:
 
 from sqlobject.manager import command
 command.the_runner.run(sys.argv)
-        

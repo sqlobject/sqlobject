@@ -88,12 +88,12 @@ class BoundAttribute(declarative.Declarative):
 
     def set_object(cls, added_class, attr_name, obj):
         setattr(added_class, attr_name, obj)
-        
+
     set_object = classmethod(set_object)
 
     def make_object(cls, added_class, attr_name, *args, **attrs):
         raise NotImplementedError
-    
+
     make_object = classmethod(make_object)
 
 class BoundFactory(BoundAttribute):

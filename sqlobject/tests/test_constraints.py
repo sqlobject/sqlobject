@@ -9,7 +9,7 @@ def test_constraints():
     # @@: Should this really be an error?
     raises(BadValue, isString, obj, col, u'test!')
     #isString(obj, col, u'test!')
-    
+
     raises(BadValue, notNull, obj, col, None)
     raises(BadValue, isInt, obj, col, 1.1)
     isInt(obj, col, 1)
@@ -31,4 +31,3 @@ def test_constraints():
     maxlen(obj, col, '12')
     maxlen(obj, col, (1,))
     raises(BadValue, maxlen, obj, col, 1)
-    

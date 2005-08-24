@@ -86,7 +86,7 @@ Interface Changes
   rows (like class instantiation used to do).
 
 * We're now using a Subversion repository instead of CVS.  It is
-  located at http://svn.colorstudy.com/trunk/SQLObject 
+  located at http://svn.colorstudy.com/trunk/SQLObject
 
 * If you pass ``forceDBName=True`` to the ``*Col`` constructors, then
   your column name doesn't have to be restricted to a-z, 0-9, and _.
@@ -297,25 +297,25 @@ Features
 * MySQL uses ``localhost`` as the default host, and the empty string
   as the default password.
 
-* Added functions for use with queries: `ISNULL`, `ISNOTNULL`.  ``==`` 
-  and ``!=`` can be used with None, and is translated into `ISNULL`, 
+* Added functions for use with queries: `ISNULL`, `ISNOTNULL`.  ``==``
+  and ``!=`` can be used with None, and is translated into `ISNULL`,
   `ISNOTNULL`.
 
-* Classes can be part of a specific registry.  Since classes are 
+* Classes can be part of a specific registry.  Since classes are
   referred to by name in several places, the names have to be unique.
   This can be problematic, so you can add a class variable `_registry`,
-  the value of which should be a string.  Classes references are 
+  the value of which should be a string.  Classes references are
   assumed to be inside that registry, and class names need only be
   unique among classes in that registry.
 
-* ``SomeClass.select()`` selects all, instead of using 
+* ``SomeClass.select()`` selects all, instead of using
   ``SomeClass.select('all')``.  You can also use None instead of
   ``'all'``.
 
 * Trying to fetch non-existent objects raises `SQLObjectNotFound`,
   which is a subclass of the builtin exception `LookupError`.
   This may not be raised if `_cacheValues` is False and you use
-  the ID to fetch an object (but alternateID fetches will raise 
+  the ID to fetch an object (but alternateID fetches will raise
   the exception in either case).
 
 * Can order by descending order, with the `reversed` option to
@@ -328,7 +328,7 @@ Col and Join
 ~~~~~~~~~~~~
 
 * `Join` constructors have an argument `orderBy`, which is the name
-  of a Python attribute to sort results by.  If not given, the 
+  of a Python attribute to sort results by.  If not given, the
   appropriate class's `_defaultOrder` will be used.  None implies
   no sorting (and ``orderBy=None`` will override `_defaultOrder`).
 
@@ -369,7 +369,7 @@ Bugs
 * SomeClass.q.colName now does proper translation to database names,
   using dbName, etc., instead of being entirely algorithm-driven.
 
-* Raise `TypeError` if you pass an unknown argument to the `new` 
+* Raise `TypeError` if you pass an unknown argument to the `new`
   method.
 
 * You can override the _get_* or _set_* version of a property without
@@ -377,7 +377,7 @@ Bugs
 
 * Python 2.3 compatible.
 
-* Trying to use ``Col('id')`` or ``id = Col()`` will raise an 
+* Trying to use ``Col('id')`` or ``id = Col()`` will raise an
   exception, instead of just acting funky.
 
 * ``ForeignKey`` columns return None if the associated column is

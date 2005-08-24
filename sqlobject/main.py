@@ -557,7 +557,7 @@ class sqlmeta(object):
         index = indexDef.withClass(cls.soClass)
         cls.indexes.append(index)
     addIndex = classmethod(addIndex)
-    
+
 sqlhub = dbconnection.ConnectionHub()
 
 class _sqlmeta_attr(object):
@@ -604,9 +604,9 @@ def setDeprecationLevel(warning=1, exception=None):
 
       1) Deprecated in current version (0.7).  Will be removed in next
          version (0.8)
-      
+
       2) Planned to deprecate in next version, remove later.
-      
+
       3) Planned to deprecate sometime, remove sometime much later ;)
 
     As the SQLObject versions progress, the deprecation level of

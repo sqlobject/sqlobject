@@ -95,7 +95,7 @@ class SODatabaseIndex(object):
 
         return 'ALTER TABLE %s ADD %s %s (%s)' % \
                (soClass.sqlmeta.table, uniqueOrIndex,
-                self.name, 
+                self.name,
                 ', '.join(spec))
 
 
@@ -122,9 +122,9 @@ class DatabaseIndex(object):
     The class also take the keyword argument `unique`; if true then
     a UNIQUE index is created.
     """
-    
+
     baseClass = SODatabaseIndex
-    
+
     def __init__(self, *columns, **kw):
         kw['columns'] = columns
         self.kw = kw

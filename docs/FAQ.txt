@@ -15,7 +15,7 @@ For these examples, imagine you have a bunch of customers, with
 contacts.  Not all customers have a contact, some have several.  The
 left join would look like::
 
-    SELECT customer.id, customer.first_name, customer.last_name, 
+    SELECT customer.id, customer.first_name, customer.last_name,
            contact.id, contact.address
     FROM customer
     LEFT JOIN contact ON contact.customer_id = customer.id
@@ -335,7 +335,7 @@ database::
       data = StringCol()
       height = IntCol()
       width = IntCol()
-  
+
       def _set_data(self, value):
           self._SO_set_data(value.encode('base64'))
 

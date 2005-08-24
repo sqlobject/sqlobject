@@ -1,4 +1,4 @@
-'''Test that selectResults handle NULL values 
+'''Test that selectResults handle NULL values
 from, for example, outer joins.'''
 from sqlobject import *
 from sqlobject.tests.dbtest import *
@@ -23,6 +23,6 @@ def test1():
     # but don't add any works for Bruckner
 
     # do a left join, a common use case that often involves NULL results
-    s = TestWork.select(join=sqlbuilder.LEFTJOINOn(TestComposer, TestWork, 
-	                TestComposer.q.id==TestWork.q.composerID))
+    s = TestWork.select(join=sqlbuilder.LEFTJOINOn(TestComposer, TestWork,
+                        TestComposer.q.id==TestWork.q.composerID))
     assert tuple(s)==(w, None)

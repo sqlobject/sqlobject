@@ -19,7 +19,7 @@ except NameError: # Python 2.2
 def test_create():
     setupClass(Unicode1)
     data = [u'\u00f0', u'test', 'ascii test']
-    
+
     items = []
     for i, n in enumerate(data):
         items.append(Unicode1(count=i, col1=n, col2=n))

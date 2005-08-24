@@ -26,4 +26,3 @@ def testDestroySelf():
     value = NoCache(name='test')
     value.destroySelf()
     NoCache._connection.cache = old
-    

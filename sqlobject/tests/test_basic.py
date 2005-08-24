@@ -146,7 +146,7 @@ class TestSO7(SQLObject):
 
 def test_foreignKeyDestroySelfCascade():
     setupClass([TestSO7, TestSO6, TestSO5])
-    
+
     tc5 = TestSO5(name='a')
     tc6a = TestSO6(name='1')
     tc5.other = tc6a
@@ -275,4 +275,3 @@ def testForeignKeySetNull():
     assert dep1.other is None
     assert dep2.other is None
     assert dep3.other is obj2
-    

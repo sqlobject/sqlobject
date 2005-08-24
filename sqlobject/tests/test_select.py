@@ -54,7 +54,6 @@ def test_03_ranged_indexed():
         test = all[i]
         count += 1
     assert count == len(names)
-        
 
 def test_04_indexed_ended_by_exception():
     all = IterTest.select()

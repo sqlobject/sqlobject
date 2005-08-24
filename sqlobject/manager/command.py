@@ -181,7 +181,7 @@ class Command(object):
             # This abstract base class
             return
         register(cls)
-    
+
     def __init__(self, invoked_as, command_name, args, runner):
         self.invoked_as = invoked_as
         self.command_name = command_name
@@ -419,7 +419,7 @@ class CommandCreate(Command):
         if v >= 1:
             print '%i tables created (%i already exist)' % (
                 created, existing)
-        
+
 
 class CommandDrop(Command):
 
@@ -526,7 +526,7 @@ class CommandStatus(Command):
         if self.options.verbose:
             print '%i in sync; %i out of sync; %i not in database' % (
                 good, bad, missing_tables)
-            
+
 
 class CommandHelp(Command):
 
@@ -622,7 +622,7 @@ class CommandRecord(Command):
             'database is currently at.  Use the upgrade command to '
             'sync databases with code.'
             % SQLObjectVersionTable.sqlmeta.table)
-               
+
     parser = standard_parser()
     parser.add_option('--output-dir',
                       help="Base directory for recorded definitions",
@@ -665,7 +665,7 @@ class CommandRecord(Command):
         if self.options.force_db_version:
             self.command_force_db_version()
             return
-        
+
         v = self.options.verbose
         sim = self.options.simulate
         classes = self.classes()
@@ -801,7 +801,7 @@ class CommandRecord(Command):
     def strip_comments(self, sql):
         lines = [l for l in sql.splitlines()
                  if not l.strip().startswith('--')]
-        return '\n'.join(lines)        
+        return '\n'.join(lines)
 
     def base_dir(self):
         base = self.options.output_dir
@@ -812,7 +812,7 @@ class CommandRecord(Command):
     def find_output_dir(self):
         today = time.strftime('%Y-%m-%d', time.localtime())
         if self.options.version_name:
-            dir = os.path.join(self.base_dir(), today + '-' + 
+            dir = os.path.join(self.base_dir(), today + '-' +
                                self.options.version_name)
             if os.path.exists(dir):
                 print ("Error, directory already exists: %s"
@@ -828,7 +828,7 @@ class CommandRecord(Command):
                 extra = 'a'
             else:
                 extra = chr(ord(extra)+1)
-    
+
     def find_last_version(self):
         names = []
         for fn in os.listdir(self.base_dir()):
@@ -921,7 +921,6 @@ class CommandUpgrade(CommandRecord):
                     raise
             self.update_db(next_version, conn)
         print 'Done.'
-                
 
     def current_version(self):
         conn = self.connection()
@@ -982,8 +981,8 @@ class CommandUpgrade(CommandRecord):
                 print 'No upgraders found in %s' % current_dir
             return None, None
         upgraders.sort()
-        return upgraders[-1]        
-        
+        return upgraders[-1]
+
 def update_sys_path(paths, verbose):
     if isinstance(paths, (str, unicode)):
         paths = [paths]

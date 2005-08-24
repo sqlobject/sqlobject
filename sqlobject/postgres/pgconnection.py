@@ -179,7 +179,7 @@ class PostgresConnection(DBAPI):
         keyData = self.queryAll(keyQuery % self.sqlrepr(tableName))
         keyRE = re.compile(r"\((.+)\) REFERENCES (.+)\(")
         keymap = {}
-        
+
         for (condef,) in keyData:
             match = keyRE.search(condef)
             if match:

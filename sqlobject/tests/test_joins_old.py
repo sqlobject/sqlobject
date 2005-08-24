@@ -1,6 +1,6 @@
 from sqlobject import *
 from sqlobject.tests.dbtest import *
-    
+
 deprecated_module()
 
 ########################################

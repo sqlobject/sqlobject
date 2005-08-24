@@ -54,4 +54,3 @@ def test_1():
     assert A1.v.attrs == {'arg1': 'nothing', 'arg2': ['something']}
     assert A1.inline is v3
     assert A1.inline.attrs == {'arg3': 'again', 'arg4': 'so there'}
-    
