@@ -1,5 +1,6 @@
 from sqlobject.dbconnection import DBAPI
 from sqlobject.col import popKey
+
 sqlite = None
 using_sqlite2 = False
 
@@ -29,6 +30,10 @@ class SQLiteConnection(DBAPI):
             if 'encoding' in kw:
                 import warnings
                 warnings.warn(DeprecationWarning("pysqlite2 does not support the encoding option"))
+            opts["detect_types"] = sqlite.PARSE_DECLTYPES
+            for col_type in "text", "char", "varchar":
+                sqlite.register_converter(col_type, stop_pysqlite2_converting_strings_to_unicode)
+                sqlite.register_converter(col_type.upper(), stop_pysqlite2_converting_strings_to_unicode)
         else:
             opts['autocommit'] = autoCommit
             if 'encoding' in kw:
@@ -124,3 +129,6 @@ class SQLiteConnection(DBAPI):
 
     def createIndexSQL(self, soClass, index):
         return index.sqliteCreateIndexSQL(soClass)
+
+def stop_pysqlite2_converting_strings_to_unicode(s):
+    return s
