@@ -35,6 +35,13 @@ Open Source Projects
 * `Anemon <http://anemon.org/wikini/wakka.php?wiki=FirstPage>`_ DHCP
   server.
 
+* `Planet Plus <http://planetplus.python-hosting.com/>`_; a `CherryPy
+  <http://cherrypy.org>`_ public feed aggregator.
+
+* `Guten <http://guten.sourceforge.net/>`_; an application for
+  browsing, reading, and managing books from `Project Gutenberg
+  <http://www.gutenberg.org/>`_.
+
 Articles and Documentation
 --------------------------
 
@@ -54,3 +61,8 @@ Articles and Documentation
 * `Connecting databases to Python with SQLObject
   <http://www-128.ibm.com/developerworks/library/os-pythonsqlo/index.html?ca=drs>`_;
   an article at DeveloperWorks.
+
+* `Handling Form data with Formencode + SQLObject
+  <http://www.groovie.org/articles/2005/08/24/handling-form-data-with-formencode-sqlobject>`_;
+  a post by Ben Bangert about using SQLObject with `FormEncode
+  <http://formencode.org>`_.
