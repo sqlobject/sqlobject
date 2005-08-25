@@ -1076,19 +1076,16 @@ class PickleValidator(BinaryValidator):
     """
 
     def to_python(self, value, state):
-        print str(value)
         if value is None:
             return None
         if isinstance(value, unicode):
             value = value.encode("ascii")
         if isinstance(value, str):
-            print repr(value)
             return pickle.loads(value)
         raise validators.Invalid("expected a pickle string in the PickleCol '%s', got %s instead" % \
             (self.name, type(value)), value, state)
 
     def from_python(self, value, state):
-        print "IN/OUT", [value, pickle.dumps(value)]
         if value is None:
             return None
         return pickle.dumps(value)
