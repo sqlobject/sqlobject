@@ -75,6 +75,7 @@ class InheritableSQLMeta(sqlmeta):
             for col in soClass._parentClass.sqlmeta.columnList:
                 cname = col.name
                 if cname == 'childName': continue
+                if cname.endswith("ID"): cname = cname[:-2]
                 setattr(soClass, getterName(cname), eval(
                     'lambda self: self._parent.%s' % cname))
                 if not col.immutable:
