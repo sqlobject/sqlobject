@@ -824,15 +824,14 @@ different types of columns, when SQLObject creates your tables.
     Floats.
 
 `ForeignKey`:
-    A key to another table/class.  Use like ``user =
-    ForeignKey('User')``.
+    A key to another table/class.  Use like ``user = ForeignKey('User')``.
 
 `IntCol`:
     Integers.
 
 `PickleCol`:
     An extension of BLOBCol; this column can store/retrieve any Python object;
-    it actually (un)pickle the object from/to string and store/retrieve the
+    it actually (un)pickles the object from/to string and stores/retrieves the
     string.
 
 `StringCol`:
@@ -999,7 +998,9 @@ Transactions can be used like::
 
 The ``trans`` object here is essentially a wrapper around a single
 database connection, and `commit` and `rollback` just pass that
-message to the `psycopg` connection.
+message to the low-level connection.
+
+If you want to begin a new transaction after a .rollback() call .begin().
 
 If you want to use transactions you should also turn `_cacheValues`
 off, like:
@@ -1393,9 +1394,16 @@ will generate the query::
     SELECT * FROM my_table
     LEFT JOIN table2 ON my_table.name = table1.value;
 
-The join argument for .select() can be a JOIN() or a list/tuples of
-JOIN()s.
+The join argument for .select() can be a JOIN() or a sequence (list/tuple)
+of JOIN()s.
 
+Available joins are JOIN, INNERJOIN, CROSSJOIN, STRAIGHTJOIN,
+LEFTJOIN, LEFTOUTERJOIN, NATURALJOIN, NATURALLEFTJOIN, NATURALLEFTOUTERJOIN,
+RIGHTJOIN, RIGHTOUTERJOIN, NATURALRIGHTJOIN, NATURALRIGHTOUTERJOIN,
+FULLJOIN, FULLOUTERJOIN, NATURALFULLJOIN, NATURALFULLOUTERJOIN,
+INNERJOINOn, LEFTJOINOn, LEFTOUTERJOINOn, RIGHTJOINOn, RIGHTOUTERJOINOn,
+FULLJOINOn, FULLOUTERJOINOn, INNERJOINUsing, LEFTJOINUsing, LEFTOUTERJOINUsing,
+RIGHTJOINUsing, RIGHTOUTERJOINUsing, FULLJOINUsing, FULLOUTERJOINUsing.
 
 How can I join a table with itself?
 -----------------------------------
@@ -1411,7 +1419,7 @@ will generate the query::
     SELECT * FROM my_table, my_table AS my_table_alias
     WHERE my_table.name = my_table_alias.value;
 
-Can I use LEFTJOIN() with aliases?
+Can I use a JOIN() with aliases?
 ----------------------------------
 
 Sure! That's a situation the JOINs and aliases were primary developed
@@ -1445,11 +1453,11 @@ generates the query::
    SELECT test1.id, test1.col1 FROM test1 WHERE
    EXISTS (SELECT test2.col2 FROM test2 WHERE (test1.col1 = test2.col2))
 
-Note the usage of Outer - this is the helper to allow referring to a table
-in the outer query.
+Note the usage of Outer - it is a helper to allow referring to a table in
+the outer query.
 
 Select() is used instead of .select() because you need to control what
-columns and in what order the inner query returns.
+columns the inner query returns.
 
 Available queries are IN(), NOTIN(), EXISTS(), NOTEXISTS(), SOME(), ANY()
 and ALL(). The last 3 are used with comparison operators, like this:

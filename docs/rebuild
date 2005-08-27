@@ -2,7 +2,6 @@
 
 here=`pwd`
 parent=`dirname $here`
-DOCDIR=~/co/SQLObject/docs/
 echo "Adding $parent to \$PYTHONPATH"
 export PYTHONPATH=$parent:$PYTHONPATH
 
@@ -12,8 +11,8 @@ NORMAL="Authors DeveloperGuide FAQ Inheritance News SQLBuilder
 
 for NAME in $NORMAL ; do
     if [ -e "$NAME.html" -a ! "$NAME.html" -ot "$NAME.txt" ] ; then
-	echo "$NAME is up to date."
-	continue
+        echo "$NAME is up to date."
+        continue
     fi
     echo "Building $NAME."
     rst2html.py --no-toc-backlinks -- "$NAME.txt" > "$NAME.html"
