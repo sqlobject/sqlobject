@@ -17,6 +17,15 @@ Features
 
 .. _Inheritance.html: Inheritance.html
 
+Other Changes
+-------------
+
+* When iterating over select results, a list is now immediately
+  created with the full list of instances being selected.  Before
+  instances were created on demand, as select results were 
+  pulled out row-by-row.  The previous lazy behavior is available with
+  the method ``lazyIter``, used like ``for obj in
+  MyClass.select().lazyIter(): ...``.
 
 SQLObject 0.6.1
 ===============

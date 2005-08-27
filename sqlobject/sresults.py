@@ -143,6 +143,16 @@ class SelectResults(object):
                 return list(self.clone(start=start, end=start+1))[0]
 
     def __iter__(self):
+        # @@: This could be optimized, using a simpler algorithm
+        # since we don't have to worry about garbage collection,
+        # etc., like we do with .lazyIter()
+        return iter(list(self.lazyIter()))
+
+    def lazyIter(self):
+        """
+        Returns an iterator that will lazily pull rows out of the
+        database and return SQLObject instances
+        """
         conn = self._getConnection()
         return conn.iterSelect(self)
 
