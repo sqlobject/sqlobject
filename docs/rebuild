@@ -8,7 +8,7 @@ export PYTHONPATH=$parent:$PYTHONPATH
 
 NORMAL="Authors DeveloperGuide FAQ Inheritance News SQLBuilder
         SQLObject TODO web/index web/links web/repository web/community
-        index"
+        index sqlobject-admin"
 
 for NAME in $NORMAL ; do
     if [ -e "$NAME.html" -a ! "$NAME.html" -ot "$NAME.txt" ] ; then
