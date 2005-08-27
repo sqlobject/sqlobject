@@ -2,12 +2,12 @@ SQLObject Repository
 ====================
 
 SQLObject is kept in a `Subversion <http://subversion.tigris.org/>`_
-repository at http://svn.colorstudy.com/trunk/SQLObject
+repository at http://svn.colorstudy.com/SQLObject/trunk
 
 If you are using a command-line Subversion client, you can check
 it out like::
 
-    svn co http://svn.colorstudy.com/trunk/SQLObject
+    svn co http://svn.colorstudy.com/SQLObject/trunk SQLObject
 
 If you are on Windows you may want to use `TortoiseSVN
 <http://tortoisesvn.tigris.org/>`_.
