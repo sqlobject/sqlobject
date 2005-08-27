@@ -1,6 +1,11 @@
-from ez_setup import use_setuptools
-use_setuptools()
-from setuptools import setup, find_packages
+# ez_setup doesn't work with Python 2.2, so we use distutils
+# in that case:
+try:
+    from ez_setup import use_setuptools
+    use_setuptools()
+    from setuptools import setup
+except ImportError:
+    from distutils.core import setup
 
 subpackages = ['firebird', 'inheritance', 'mysql', 'postgres',
                'sqlite', 'sybase', 'maxdb', 'util', 'manager']
@@ -13,7 +18,7 @@ if sys.version < '2.2.3':
     DistributionMetadata.download_url = None
 
 setup(name="SQLObject",
-      version="0.7",
+      version="0.7b1",
       description="Object-Relational Manager, aka database wrapper",
       long_description="""\
 Classes created using SQLObject wrap database rows, presenting a
