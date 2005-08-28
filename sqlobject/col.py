@@ -778,7 +778,7 @@ class SOEnumCol(SOCol):
         return "ENUM(%s)" % ', '.join([sqlbuilder.sqlrepr(v, 'mysql') for v in self.enumValues])
 
     def _postgresType(self):
-        length = max(map(len, self.enumValues))
+        length = max(map(self._getlength, self.enumValues))
         enumValues = ', '.join([sqlbuilder.sqlrepr(v, 'postgres') for v in self.enumValues])
         checkConstraint = "CHECK (%s in (%s))" % (self.dbName, enumValues)
         return "VARCHAR(%i) %s" % (length, checkConstraint)
@@ -790,7 +790,7 @@ class SOEnumCol(SOCol):
         return self._postgresType()
 
     def _firebirdType(self):
-        length = max(map(len, self.enumValues))
+        length = max(map(self._getlength, self.enumValues))
         enumValues = ', '.join([sqlbuilder.sqlrepr(v, 'firebird') for v in self.enumValues])
         checkConstraint = "CHECK (%s in (%s))" % (self.dbName, enumValues)
         #NB. Return a tuple, not a string here
@@ -798,6 +798,15 @@ class SOEnumCol(SOCol):
 
     def _maxdbType(self):
         raise "Enum type is not supported"
+
+    def _getlength(self, obj):
+        """
+        None counts as 0; everything else uses len()
+        """
+        if obj is None:
+            return 0
+        else:
+            return len(obj)
 
 class EnumValidator(validators.Validator):
 

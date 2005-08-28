@@ -19,3 +19,13 @@ def testBad():
          Enum1._connection.module.ProgrammingError,
          Invalid),
         Enum1, l='b')
+
+class EnumWithNone(SQLObject):
+
+    l = EnumCol(enumValues=['a', 'bcd', 'e', None])
+
+def testNone():
+    setupClass(EnumWithNone)
+    for l in [None, 'a', 'bcd', 'a', 'e', None]:
+        EnumWithNone(l=l)
+    
