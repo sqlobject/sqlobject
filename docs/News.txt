@@ -10,12 +10,68 @@ News
 SQLObject 0.7.0
 ===============
 
-Features
---------
+Features & Interface
+--------------------
 
 * Inheritance. See Inheritance.html_
 
 .. _Inheritance.html: Inheritance.html
+
+* Date/time validators, converters, tests.
+
+* Both `mxDateTime
+  <http://www.egenix.com/files/python/mxDateTime.html>`_ and `datetime
+  <http://python.org/doc/current/lib/module-datetime.html>`_ supported
+  for ``DateTimeCol``.
+
+* Added ``BLOBCol``, for binary data.
+
+* Added ``PickleCol``, to transparently pickle and unpickle data from
+  column.
+
+* New `documented reflection interface
+  <http://sqlobject.org/docs/interface.py.html>`_, using the new
+  ``.sqlmeta`` class/instance.  Most special attributes that started
+  with ``_`` were moved into ``sqlmeta`` (with leading underscore
+  removed).
+
+* New aggregate functions for select results, like
+  ``cls.select().max(columnName)``: ``.max()``, ``.min()``,
+  ``.avg()``.
+
+* ``ConnectionHub`` aka ``sqlhub`` (@@: Needs documentation)
+
+* Command-line client `sqlobject-admin
+  <http://sqlobject.org/docs/sqlobject-admin.html>`_.
+
+* ``StringCol`` has ``char_binary`` attribute, for explicit case
+  handling in MySQL.
+
+* Various joins now supported (LEFT, RIGHT, STRAIGHT, INNER, OUTER,
+  CROSS): see `documentation
+  <http://sqlobject.org/docs/SQLObject.html#left-join-and-other-joins>`_.
+  Aliases for joining a table with itself.
+
+* Subqueries/subselects (`see docs
+  <http://sqlobject.org/docs/SQLObject.html#subqueries-subselects>`_).
+
+* Select results support ``.filter(extra_query)``
+
+* ``SQLMultipleJoin`` and ``SQLRelatedJoin``, like ``MultipleJoin``
+  and ``RelatedJoin``, except return select results (@@: Document).
+
+* `SingleJoin
+  <http://sqlobject.org/docs/SQLObject.html#singlejoin-one-to-one>`_.
+
+* Columns retain their order from the class definition to table
+  creation.
+
+* SQLObject now depends on the `FormEncode <http://formencode.org>`_
+  library, and internal conversion/validation is done through
+  FormEncode (was previously using old fork of FormEncode).
+
+* Column instances can have attributes set on them (generally for
+  annotating columns with extra data).
 
 Other Changes
 -------------
@@ -26,6 +82,72 @@ Other Changes
   pulled out row-by-row.  The previous lazy behavior is available with
   the method ``lazyIter``, used like ``for obj in
   MyClass.select().lazyIter(): ...``.
+
+* Test framework now uses `py.test
+  <http://codespeak.net/py/current/doc/test.html>`_.
+
+* SQLObject now uses a simpler metaclass
+  (``sqlobject.declarative.DeclarativeMeta``).
+
+* autoCommit and queryIns ?? (@@: expand)
+
+* Deprecation (@@: document)
+
+* Use `setuptools
+  <http://peak.telecommunity.com/DevCenter/setuptools>`_ for packaging
+  and installation.
+
+Small Features
+--------------
+
+* ``IntValidator`` for testing ``IntCol`` inputs.
+
+* Base style (``sqlobject.styles.Style``) is now a usable no-op style.
+
+* SQLite in-memory databases allowed with ``sqlite:/:memory:``
+
+* Keyword parameters allowed to ``connectionForURI`` (like
+  ``debug=True``).
+
+* More parameters passed to MySQL connections (unix_socket,
+  named_pipe, init_command, read_default_file, read_default_group,
+  connect_time, compress, named_pipe, use_unicode, client_flag,
+  local_infile).
+
+* ``DateTimeCol.now`` is a function for producing the current date,
+  using whatever date/time module you are using (good for use as a
+  default).
+
+* Inherited classes fetched more efficiently (fewer queries).
+
+* Decimal converter to create `decimal objects
+  <http://python.org/doc/current/lib/module-decimal.html>`_.
+
+* Repository rearranged (now in
+  ``http://svn.colorstudy.com/SQLObject/trunk``).
+
+Bug Fixes
+---------
+
+* Tables with no columns can work.  Why would you have a table without
+  a column?  We do not know, we try only to serve.
+
+* Sybase ``_fromDatabase`` fixed.
+
+* Various fixes to support most recent ``MySQLdb`` adapter, and
+  ``pysqlite`` adapters.
+
+* URI parsing improved, including Windows paths (for use with SQLite).
+
+* ``selectBy(column=None)`` creates ``IS NULL`` query.
+
+* ``selectBy(foreignKey=value)`` now supported (not just selecting by
+  foreign key ID).
+
+* ``cascade='null'`` wasn't working properly (was cascading all
+  deletes, not nullifying!).
+
+* Lots of other bug fixes.
 
 SQLObject 0.6.1
 ===============
