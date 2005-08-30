@@ -113,8 +113,7 @@ class InheritableSQLMeta(sqlmeta):
         #DSM: Only do this once if possible at object creation and once for
         #DSM: each new dynamic join to refresh the current class
         if childUpdate or soClass._parentClass:
-            for jdef in soClass._parentClass.sqlmeta.joins:
-                join = jdef.withClass(soClass)
+            for join in soClass._parentClass.sqlmeta.joins:
                 jname = join.joinMethodName
                 jarn  = join.addRemoveName
                 setattr(soClass, getterName(jname),
