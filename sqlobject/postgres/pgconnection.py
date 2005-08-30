@@ -34,6 +34,21 @@ class PostgresConnection(DBAPI):
         self.port = port
         self.db = db
         self.password = passwd
+        self.dsn_dict = dsn_dict = {}
+        if host:
+            dsn_dict["host"] = host
+        if port:
+            if usePygresql:
+                dsn_dict["host"] = "%s:%d" % (host, port)
+            else:
+                dsn_dict["port"] = str(port)
+        if db:
+            dsn_dict["database"] = db
+        if user:
+            dsn_dict["user"] = user
+        if passwd:
+            dsn_dict["password"] = password
+        self.use_dsn = dsn is not None
         if dsn is None:
             if usePygresql:
                 dsn = ''
@@ -57,8 +72,9 @@ class PostgresConnection(DBAPI):
                 if passwd:
                     dsn.append('password=%s' % passwd)
                 if host:
-                    # @@: right format?
                     dsn.append('host=%s' % host)
+                if port:
+                    dsn.append('port=%d' % port)
                 dsn = ' '.join(dsn)
         self.dsn = dsn
         DBAPI.__init__(self, **kw)
@@ -79,7 +95,10 @@ class PostgresConnection(DBAPI):
 
     def makeConnection(self):
         try:
-            conn = self.module.connect(self.dsn)
+            if self.use_dsn:
+                conn = self.module.connect(self.dsn)
+            else:
+                conn = self.module.connect(**self.dsn_dict)
         except self.module.OperationalError, e:
             raise self.module.OperationalError("%s; used connection string %r" % (e, self.dsn))
         if self.autoCommit:
