@@ -268,7 +268,7 @@ class DBAPI(DBConnection):
                 # @@: We can get duplicate releasing of connections with
                 # the __del__ in Iteration (unfortunately, not sure why
                 # it happens)
-                self._pool.append(conn)
+                self._pool.insert(0, conn)
         else:
             conn.close()
 
