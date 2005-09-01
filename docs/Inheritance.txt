@@ -21,7 +21,7 @@ reconstructed at run-time using the hierarchy of Python classes.
 
 The following code::
 
-    frim sqlobject.inheritance import InheritableSQLObject
+    from sqlobject.inheritance import InheritableSQLObject
     class Person(InheritableSQLObject):
         firstName = StringCol()
         lastName = StringCol()
@@ -54,11 +54,11 @@ the parent class.  So, there is no need to keep track of parent ID and
 child ID as they are the same.
 
 The column childName will contain the name of the child class (for
-exemple 'Employee').  This will permit to a class to always return its
+example 'Employee').  This will permit to a class to always return its
 child class if available (a person that is also an employee will always
 return an instance of the employee class).
 
-For exemple, the following code::
+For example, the following code::
 
     p = Person(firstName='John', lastName='Doe')
     e = Employee(firstName='Jane', lastName='Doe', position='Chief')
@@ -122,7 +122,7 @@ Some limitation or notice about this version:
 * Only simple inheritance will work.  It is not possible to inherit
   from multiple SQLObject classes.
 * It is possible to inherit from an inherited class and this will
-  work well.  In the above exemple, you can have a Chief class that
+  work well.  In the above example, you can have a Chief class that
   inherits from Employee and all parents attributes will be
   available through the Chief class.
 * You may not redefine columns in an inherited class (this
@@ -130,6 +130,10 @@ Some limitation or notice about this version:
 * If you don't want 'childName' columns in your last class (one that
   will never be inherited), you must set '_inheritable' to False in this
   class.
+* The inheritance implementation is incompatible with lazy updates. Do not
+  set lazyUpdate to True. If you need this - you have to patch SQLObject
+  and override many methods - _SO_setValue(), sync(), syncUpdate() at
+  least. Patches will be gladly accepted.
 * I made it because I needed to be able to have automatic
   inheritance with linked table.
 * This version works for me, it may not works for you.  I tried to do
