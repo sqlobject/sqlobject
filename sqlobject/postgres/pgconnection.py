@@ -16,6 +16,7 @@ class PostgresConnection(DBAPI):
                  user=None, passwd=None, usePygresql=False,
                  **kw):
         global psycopg, pgdb
+        self.usePygresql = usePygresql
         if usePygresql:
             if pgdb is None:
                 import pgdb
@@ -277,6 +278,34 @@ class PostgresConnection(DBAPI):
             self._server_version = server_version.split()[1]
         return self._server_version
     server_version = property(server_version)
+
+    def createEmptyDatabase(self):
+        # We have to connect to *some* database, so we'll connect to
+        # template1, which is a common open database.
+        # @@: This doesn't use self.use_dsn or self.dsn_dict
+        if self.usePygresql:
+            dsn = '%s:template1:%s:%s' % (
+                self.host or '', self.user or '', self.password or '')
+        else:
+            dsn = 'dbname=template1'
+            if self.user:
+                dsn += ' user=%s' % self.user
+            if self.password:
+                dsn += ' passwd=%s' % self.passwd
+            if self.host:
+                dsn += ' host=%s' % self.host
+        conn = self.module.connect(dsn)
+        cur = conn.cursor()
+        # We must close the transaction with a commit so that
+        # the CREATE DATABASE can work (which can't be in a transaction):
+        cur.execute('COMMIT')
+        # And we can't use template1 since we're connected to template1,
+        # so we use template0.  @@: What's the difference between
+        # these two templates?
+        cur.execute('CREATE DATABASE %s TEMPLATE=template0' % self.db)
+        cur.close()
+        conn.close()
+
 
 
 # Converter for psycopg Binary type.

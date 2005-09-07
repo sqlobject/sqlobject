@@ -667,6 +667,12 @@ class DBAPI(DBConnection):
         finally:
             self._poolLock.release()
 
+    def createEmptyDatabase(self):
+        """
+        Create an empty database.
+        """
+        raise NotImplementedError
+
 class Iteration(object):
 
     def __init__(self, dbconn, rawconn, select, keepConnection=False):
