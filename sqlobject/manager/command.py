@@ -181,7 +181,7 @@ class Command(object):
             # This abstract base class
             return
         register(cls)
-
+    
     def __init__(self, invoked_as, command_name, args, runner):
         self.invoked_as = invoked_as
         self.command_name = command_name
@@ -222,6 +222,12 @@ class Command(object):
 
     def classes(self, require_connection=True):
         all = []
+        conf = self.config()
+        if conf and conf.get('database_module'):
+            if isinstance(conf['database_module'], (list, tuple)):
+                self.options.modules.extend(conf['database_module'])
+            else:
+                self.options.modules.append(conf['database_module'])
         for module_name in self.options.modules:
             all.extend(self.classes_from_module(
                 moduleloader.load_module(module_name)))
@@ -285,17 +291,51 @@ class Command(object):
             return None
 
     def config(self):
-        if getattr(self.options, 'config_file', None):
-            if not pyconfig:
-                print "You must have Python Paste installed (and on your $PYTHONPATH)"
-                print "to use the  -f/--config-file option."
-                sys.exit(2)
+        if not getattr(self.options, 'config_file', None):
+            return None
+        if pyconfig and self.options.config_fn.endswith('.conf'):
             config = pyconfig.Config(with_default=True)
             config.load(self.options.config_file)
             CONFIG.push_process_config(config)
             return config
         else:
-            return None
+            return self.ini_config(self.options.config_file)
+
+    def ini_config(self, conf_fn):
+        conf_section = 'main'
+        if '#' in conf_fn:
+            conf_fn, conf_section = conf_fn.split('#', 1)
+
+        from ConfigParser import RawConfigParser
+        p = RawConfigParser()
+        # Case-sensitive:
+        p.optionxform = str
+        if not os.path.exists(conf_fn):
+            # Stupid RawConfigParser doesn't give an error for
+            # non-existant files:
+            raise OSError(
+                "Config file %s does not exist" % self.options.config_file)
+        p.read([conf_fn])
+
+        possible_sections = []
+        for section in p.sections():
+            name = section.strip().lower()
+            if conf_section == name or conf_section == name.split(':')[-1]:
+                possible_sections.append(section)
+
+        if not possible_sections:
+            raise OSError(
+                "Config file %s does not have a section [%s] or [*:%s]"
+                % (conf_fn, conf_section, conf_section))
+        if len(possible_sections) > 1:
+            raise OSError(
+                "Config file %s has multiple sections matching %s: %s"
+                % (conf_fn, conf_section, ', '.join(possible_sections)))
+
+        config = {}
+        for op in p.options(possible_sections[0]):
+            config[op] = p.get(possible_sections[0], op)
+        return config
 
     def classes_from_package(self, package_name):
         raise NotImplementedError
@@ -390,12 +430,21 @@ class CommandCreate(Command):
     summary = 'Create tables'
 
     parser = standard_parser(interactive=True)
+    parser.add_option('--create-db',
+                      action='store_true',
+                      dest='create_db',
+                      help="Create the database")
 
     def command(self):
         v = self.options.verbose
         created = 0
         existing = 0
+        dbs_created = []
         for soClass in self.classes():
+            if (self.options.create_db
+                and soClass._connection not in dbs_created):
+                soClass._connection.createEmptyDatabase()
+                dbs_created.append(soClass._connection)
             exists = soClass._connection.tableExists(soClass.sqlmeta.table)
             if v >= 1:
                 if exists:
@@ -419,7 +468,7 @@ class CommandCreate(Command):
         if v >= 1:
             print '%i tables created (%i already exist)' % (
                 created, existing)
-
+        
 
 class CommandDrop(Command):
 
@@ -526,7 +575,7 @@ class CommandStatus(Command):
         if self.options.verbose:
             print '%i in sync; %i out of sync; %i not in database' % (
                 good, bad, missing_tables)
-
+            
 
 class CommandHelp(Command):
 
@@ -622,7 +671,7 @@ class CommandRecord(Command):
             'database is currently at.  Use the upgrade command to '
             'sync databases with code.'
             % SQLObjectVersionTable.sqlmeta.table)
-
+               
     parser = standard_parser()
     parser.add_option('--output-dir',
                       help="Base directory for recorded definitions",
@@ -665,7 +714,7 @@ class CommandRecord(Command):
         if self.options.force_db_version:
             self.command_force_db_version()
             return
-
+        
         v = self.options.verbose
         sim = self.options.simulate
         classes = self.classes()
@@ -801,7 +850,7 @@ class CommandRecord(Command):
     def strip_comments(self, sql):
         lines = [l for l in sql.splitlines()
                  if not l.strip().startswith('--')]
-        return '\n'.join(lines)
+        return '\n'.join(lines)        
 
     def base_dir(self):
         base = self.options.output_dir
@@ -812,7 +861,7 @@ class CommandRecord(Command):
     def find_output_dir(self):
         today = time.strftime('%Y-%m-%d', time.localtime())
         if self.options.version_name:
-            dir = os.path.join(self.base_dir(), today + '-' +
+            dir = os.path.join(self.base_dir(), today + '-' + 
                                self.options.version_name)
             if os.path.exists(dir):
                 print ("Error, directory already exists: %s"
@@ -828,7 +877,7 @@ class CommandRecord(Command):
                 extra = 'a'
             else:
                 extra = chr(ord(extra)+1)
-
+    
     def find_last_version(self):
         names = []
         for fn in os.listdir(self.base_dir()):
@@ -921,6 +970,7 @@ class CommandUpgrade(CommandRecord):
                     raise
             self.update_db(next_version, conn)
         print 'Done.'
+                
 
     def current_version(self):
         conn = self.connection()
@@ -981,8 +1031,8 @@ class CommandUpgrade(CommandRecord):
                 print 'No upgraders found in %s' % current_dir
             return None, None
         upgraders.sort()
-        return upgraders[-1]
-
+        return upgraders[-1]        
+        
 def update_sys_path(paths, verbose):
     if isinstance(paths, (str, unicode)):
         paths = [paths]
