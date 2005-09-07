@@ -72,7 +72,7 @@ import operator
 import threading
 from converters import sqlrepr, registerConverter, TRUE, FALSE
 
-safeSQLRE = re.compile(r'^[a-zA-Z][a-zA-Z0-9_\.]*$')
+safeSQLRE = re.compile(r'^[a-zA-Z_][a-zA-Z0-9_\.]*$')
 def sqlIdentifier(obj):
     return type(obj) is type("") and not not safeSQLRE.search(obj.strip())
 
