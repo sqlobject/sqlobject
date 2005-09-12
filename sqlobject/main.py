@@ -618,7 +618,7 @@ def setDeprecationLevel(warning=1, exception=None):
     error message (better than ``AttributeError``) but where the
     feature has been fully removed.
     """
-    global warnings_leve, exception_level
+    global warnings_level, exception_level
     warnings_level = warning
     exception_level = exception
 
