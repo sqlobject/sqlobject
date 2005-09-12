@@ -48,7 +48,7 @@ class PostgresConnection(DBAPI):
         if user:
             dsn_dict["user"] = user
         if passwd:
-            dsn_dict["password"] = password
+            dsn_dict["password"] = passwd
         self.use_dsn = dsn is not None
         if dsn is None:
             if usePygresql:
