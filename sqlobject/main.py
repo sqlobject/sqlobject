@@ -1188,15 +1188,9 @@ class SQLObject(object):
         # passed:
         for column in self.sqlmeta.columnList:
 
-            # If a foreign key is given, we get the ID of the object
-            # and put that in instead
-            if kw.has_key(column.foreignName):
-                kw[column.name] = getID(kw[column.foreignName])
-                del kw[column.foreignName]
-
             # Then we check if the column wasn't passed in, and
             # if not we try to get the default.
-            if not kw.has_key(column.name):
+            if not kw.has_key(column.name) and not kw.has_key(column.foreignName):
                 default = column.default
 
                 # If we don't get it, it's an error:

@@ -61,6 +61,7 @@ class TestJoin:
         assert hasattr(ExplicitJoiningSO, 'foo')
         assert not hasattr(ExplicitJoiningSO, 'bars')
 
+
 class PersonJoiner2(SQLObject):
 
     name = StringCol('name', length=40, alternateID=True)
@@ -105,3 +106,44 @@ class TestJoin2:
         assert ([i.zip for i in p1.addressJoiner2s]
                 == ['33333', '22222', '11111'])
 
+
+_personJoiner3_getters = []
+_personJoiner3_setters = []
+
+class PersonJoiner3(SQLObject):
+
+    name = StringCol('name', length=40, alternateID=True)
+    addressJoiner3s = MultipleJoin('AddressJoiner3')
+
+class AddressJoiner3(SQLObject):
+
+    zip = StringCol(length=5)
+    personJoiner3 = ForeignKey('PersonJoiner3')
+
+    def _get_personJoiner3(self):
+        value = self._SO_get_personJoiner3()
+        _personJoiner3_getters.append((self, value))
+        return value
+
+    def _set_personJoiner3(self, value):
+        self._SO_set_personJoiner3(value)
+        _personJoiner3_setters.append((self, value))
+
+class TestJoin3:
+
+    def setup_method(self, meth):
+        setupClass([PersonJoiner3, AddressJoiner3])
+        p1 = PersonJoiner3(name='bob')
+        p2 = PersonJoiner3(name='sally')
+        for z in ['11111', '22222', '33333']:
+            a = AddressJoiner3(zip=z, personJoiner3=p1)
+        AddressJoiner3(zip='00000', personJoiner3=p2)
+
+    def test_accessors(self):
+        assert len(_personJoiner3_getters) == 0
+        assert len(_personJoiner3_setters) == 4
+        bob = PersonJoiner3.byName('bob')
+        for addressJoiner3 in bob.addressJoiner3s:
+            addressJoiner3.personJoiner3
+        assert len(_personJoiner3_getters) == 3
+        assert len(_personJoiner3_setters) == 4
