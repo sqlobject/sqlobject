@@ -220,7 +220,8 @@ class Command(object):
             update_sys_path(conf['sys_path'], self.options.verbose)
         self.command()
 
-    def classes(self, require_connection=True):
+    def classes(self, require_connection=True,
+                require_some=False):
         all = []
         conf = self.config()
         if conf and conf.get('database_module'):
@@ -260,6 +261,19 @@ class Command(object):
                     'You must indicate --connection=URI'
                     % '\n  * '.join([soClass.__name__
                                      for soClass in missing]))
+        if require_some and not all:
+            print 'No classes found!'
+            if self.options.modules:
+                print 'Looked in modules: %s' % ', '.join(self.options.modules)
+            else:
+                print 'No modules specified'
+            if self.options.packages:
+                print 'Looked in packages: %s' % ', '.join(self.options.packages)
+            else:
+                print 'No packages specified'
+            if self.options.class_matchers:
+                print 'Matching class pattern: %s' % self.options.class_matches
+            sys.exit(1)
         return all
 
     def classes_from_module(self, module):
@@ -440,7 +454,7 @@ class CommandCreate(Command):
         created = 0
         existing = 0
         dbs_created = []
-        for soClass in self.classes():
+        for soClass in self.classes(require_some=True):
             if (self.options.create_db
                 and soClass._connection not in dbs_created):
                 soClass._connection.createEmptyDatabase()
