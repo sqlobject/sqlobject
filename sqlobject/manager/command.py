@@ -48,7 +48,8 @@ def db_differences(soClass, conn):
     # to do so.
     diffs = []
     if not conn.tableExists(soClass.sqlmeta.table):
-        diffs.append('Does not exist in database')
+        if soClass.sqlmeta.columns:
+            diffs.append('Does not exist in database')
     else:
         try:
             columns = conn.columnsFromSchema(soClass.sqlmeta.table,
@@ -352,7 +353,34 @@ class Command(object):
         return config
 
     def classes_from_package(self, package_name):
-        raise NotImplementedError
+        all = []
+        package = __import__(package_name)
+        package_dir = os.path.dirname(package.__file__)
+
+        def find_classes_in_file(arg, dir_name, filenames):
+            if dir_name.startswith('.svn'):
+                return
+            filenames = filter(lambda fname: fname.endswith('.py') and fname != '__init__.py',
+                               filenames)
+            for fname in filenames:
+                module_name = os.path.join(dir_name, fname)
+                module_name = module_name[module_name.find(package_name):]
+                module_name = module_name.replace(os.path.sep,'.')[:-3]
+                try:
+                    module = moduleloader.load_module(module_name)
+                except ImportError, err:
+                    if self.options.verbose:
+                        print 'Could not import module "%s". Error was : "%s"' % (module_name, err)
+                    continue
+                except Exception, exc:
+                    if self.options.verbose:
+                        print 'Unknown exception while processing module "%s" : "%s"' % (module_name, exc)
+                    continue
+                classes = self.classes_from_module(module)
+                all.extend(classes)
+                    
+        os.path.walk(package_dir, find_classes_in_file, None)
+        return all
 
     def command(self):
         raise NotImplementedError
@@ -589,7 +617,6 @@ class CommandStatus(Command):
         if self.options.verbose:
             print '%i in sync; %i out of sync; %i not in database' % (
                 good, bad, missing_tables)
-            
 
 class CommandHelp(Command):
 
