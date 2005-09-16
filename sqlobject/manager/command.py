@@ -155,18 +155,18 @@ def standard_parser(connection=True, simulate=True,
                           metavar="NAME",
                           dest="class_matchers",
                           default=[])
-        parser.add_option('--egg',
-                          help="Select modules from the given Egg, using sqlobject.txt",
-                          action="append",
-                          metavar="EGG_SPEC",
-                          dest="eggs",
-                          default=[])
     if interactive:
         parser.add_option('-i', '--interactive',
                           help="Ask before doing anything (use twice to be more careful)",
                           action="count",
                           dest="interactive",
                           default=0)
+    parser.add_option('--egg',
+                      help="Select modules from the given Egg, using sqlobject.txt",
+                      action="append",
+                      metavar="EGG_SPEC",
+                      dest="eggs",
+                      default=[])
     return parser
 
 class Command(object):
@@ -228,6 +228,8 @@ class Command(object):
         if conf and conf.get('database'):
             conn = sqlobject.connectionForURI(conf['database'])
             sqlobject.sqlhub.processConnection = conn
+        for egg_spec in getattr(self.options, 'eggs', []):
+            self.load_options_from_egg(egg_spec)
         self.command()
 
     def classes(self, require_connection=True,
@@ -393,31 +395,46 @@ class Command(object):
         return all
 
     def classes_from_egg(self, egg_spec):
+        modules = []
+        dist, conf = self.config_from_egg(egg_spec, warn_no_sqlobject=True)
+        for mod in conf.get('db_module', '').split(','):
+            mod = mod.strip()
+            if not mod:
+                continue
+            if self.options.verbose:
+                print 'Looking in module %s' % mod
+            modules.extend(self.classes_from_module(
+                moduleloader.load_module(mod)))
+        return modules
+
+    def load_options_from_egg(self, egg_spec):
+        dist, conf = self.config_from_egg(egg_spec)
+        if (hasattr(self.options, 'output_dir')
+            and not self.options.output_dir
+            and conf.get('history_dir')):
+            dir = conf['history_dir']
+            dir = dir.replace('$base', dist.location)
+            self.options.output_dir = dir
+        
+    def config_from_egg(self, egg_spec, warn_no_sqlobject=True):
         import pkg_resources
         pkg_resources.require(egg_spec)
         dist = pkg_resources.working_set.find(pkg_resources.Requirement(egg_spec))
         if not dist.has_metadata('sqlobject.txt'):
-            print 'No sqlobject.txt in %s' % egg_spec
-            return []
-        modules = []
-        db_module_lines = []
+            if warn_no_sqlobject:
+                print 'No sqlobject.txt in %s egg info' % egg_spec
+            return {}
+        result = {}
         for line in dist.get_metadata_lines('sqlobject.txt'):
             line = line.strip()
             if not line or line.startswith('#'):
                 continue
             name, value = line.split('=', 1)
-            if name.strip().lower() == 'db_module':
-                db_module_lines.append(value)
-                mods = [v.strip() for v in value.split()
-                        if v.strip()]
-                for mod in mods:
-                    if self.options.verbose:
-                        print 'Looking in module %s' % mod
-                    modules.extend(self.classes_from_module(
-                        moduleloader.load_module(mod)))
-        if not db_module_lines:
-            print 'No db_module setting in sqlobject.txt'
-        return modules
+            name = name.strip().lower()
+            if name in result:
+                print 'Warning: %s appears more than one in sqlobject.txt' % name
+            result[name.strip().lower()] = value.strip()
+        return dist, result
 
     def command(self):
         raise NotImplementedError
@@ -937,6 +954,10 @@ class CommandRecord(Command):
         base = self.options.output_dir
         if base is None:
             base = CONFIG.get('sqlobject_history_dir', '.')
+        if not os.path.exists(base):
+            print 'Creating history directory %s' % self.shorten_filename(base)
+            if not self.options.simulate:
+                os.makedirs(base)
         return base
 
     def find_output_dir(self):
