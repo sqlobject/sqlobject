@@ -68,10 +68,11 @@ database and classes.
 
 ``--egg=EGG_SPEC``:
 
-    This is an `Egg <>`_ description that should be loaded.  So if you
-    give ``--egg=ProjectName`` it'll load that egg, and look in
-    ``ProjectName.egg-info/sqlobject.txt`` for some settings (like
-    ``db_module`` and ``history_dir``).
+    This is an `Egg
+    <http://peak.telecommunity.com/DevCenter/PythonEggs>`_ description
+    that should be loaded.  So if you give ``--egg=ProjectName`` it'll
+    load that egg, and look in ``ProjectName.egg-info/sqlobject.txt``
+    for some settings (like ``db_module`` and ``history_dir``).
 
 When finding SQLObject classes, we look in the modules for classes
 that belong to the module -- so if you import a class from another
