@@ -155,6 +155,12 @@ def standard_parser(connection=True, simulate=True,
                           metavar="NAME",
                           dest="class_matchers",
                           default=[])
+        parser.add_option('--egg',
+                          help="Select modules from the given Egg, using sqlobject.txt",
+                          action="append",
+                          metavar="EGG_SPEC",
+                          dest="eggs",
+                          default=[])
     if interactive:
         parser.add_option('-i', '--interactive',
                           help="Ask before doing anything (use twice to be more careful)",
@@ -219,22 +225,22 @@ class Command(object):
         conf = self.config()
         if conf and conf.get('sys_path'):
             update_sys_path(conf['sys_path'], self.options.verbose)
+        if conf and conf.get('database'):
+            conn = sqlobject.connectionForURI(conf['database'])
+            sqlobject.sqlhub.processConnection = conn
         self.command()
 
     def classes(self, require_connection=True,
                 require_some=False):
         all = []
         conf = self.config()
-        if conf and conf.get('database_module'):
-            if isinstance(conf['database_module'], (list, tuple)):
-                self.options.modules.extend(conf['database_module'])
-            else:
-                self.options.modules.append(conf['database_module'])
         for module_name in self.options.modules:
             all.extend(self.classes_from_module(
                 moduleloader.load_module(module_name)))
         for package_name in self.options.packages:
             all.extend(self.classes_from_package(package_name))
+        for egg_spec in self.options.eggs:
+            all.extend(self.classes_from_egg(egg_spec))
         if self.options.class_matchers:
             filtered = []
             for soClass in all:
@@ -274,6 +280,10 @@ class Command(object):
                 print 'No packages specified'
             if self.options.class_matchers:
                 print 'Matching class pattern: %s' % self.options.class_matches
+            if self.options.eggs:
+                print 'Looked in eggs: %s' % ', '.join(self.options.eggs)
+            else:
+                print 'No eggs specified'
             sys.exit(1)
         return all
 
@@ -354,7 +364,7 @@ class Command(object):
 
     def classes_from_package(self, package_name):
         all = []
-        package = __import__(package_name)
+        package = moduleloader.load_module(package_name)
         package_dir = os.path.dirname(package.__file__)
 
         def find_classes_in_file(arg, dir_name, filenames):
@@ -381,6 +391,33 @@ class Command(object):
                     
         os.path.walk(package_dir, find_classes_in_file, None)
         return all
+
+    def classes_from_egg(self, egg_spec):
+        import pkg_resources
+        pkg_resources.require(egg_spec)
+        dist = pkg_resources.working_set.find(pkg_resources.Requirement(egg_spec))
+        if not dist.has_metadata('sqlobject.txt'):
+            print 'No sqlobject.txt in %s' % egg_spec
+            return []
+        modules = []
+        db_module_lines = []
+        for line in dist.get_metadata_lines('sqlobject.txt'):
+            line = line.strip()
+            if not line or line.startswith('#'):
+                continue
+            name, value = line.split('=', 1)
+            if name.strip().lower() == 'db_module':
+                db_module_lines.append(value)
+                mods = [v.strip() for v in value.split()
+                        if v.strip()]
+                for mod in mods:
+                    if self.options.verbose:
+                        print 'Looking in module %s' % mod
+                    modules.extend(self.classes_from_module(
+                        moduleloader.load_module(mod)))
+        if not db_module_lines:
+            print 'No db_module setting in sqlobject.txt'
+        return modules
 
     def command(self):
         raise NotImplementedError
@@ -485,7 +522,10 @@ class CommandCreate(Command):
         for soClass in self.classes(require_some=True):
             if (self.options.create_db
                 and soClass._connection not in dbs_created):
-                soClass._connection.createEmptyDatabase()
+                if not self.options.simulate:
+                    soClass._connection.createEmptyDatabase()
+                else:
+                    print '(simulating; cannot create database)'
                 dbs_created.append(soClass._connection)
             exists = soClass._connection.tableExists(soClass.sqlmeta.table)
             if v >= 1:
@@ -569,7 +609,7 @@ class CommandStatus(Command):
         bad = 0
         missing_tables = 0
         columnsFromSchema_warning = False
-        for soClass in self.classes():
+        for soClass in self.classes(require_some=True):
             conn = soClass._connection
             self.printed = False
             if self.options.verbose:
