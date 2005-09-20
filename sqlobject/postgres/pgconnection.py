@@ -13,7 +13,7 @@ class PostgresConnection(DBAPI):
     schemes = [dbName, 'postgresql', 'psycopg']
 
     def __init__(self, dsn=None, host=None, port=None, db=None,
-                 user=None, passwd=None, usePygresql=False,
+                 user=None, passwd=None, usePygresql=False, unicodeCols=False,
                  **kw):
         global psycopg, pgdb
         self.usePygresql = usePygresql
@@ -78,6 +78,7 @@ class PostgresConnection(DBAPI):
                     dsn.append('port=%d' % port)
                 dsn = ' '.join(dsn)
         self.dsn = dsn
+        self.unicodeCols = unicodeCols
         DBAPI.__init__(self, **kw)
 
         # Server version cache
@@ -220,10 +221,15 @@ class PostgresConnection(DBAPI):
 
         colData = self.queryAll(colQuery % self.sqlrepr(tableName))
         results = []
+        if self.unicodeCols:
+            client_encoding = self.queryOne("SHOW client_encoding")[0]
         for field, t, notnull, defaultstr in colData:
             if field == primaryKey:
                 continue
             colClass, kw = self.guessClass(t)
+            if self.unicodeCols and colClass == col.StringCol:
+                colClass = col.UnicodeCol
+                kw['dbEncoding'] = client_encoding
             kw['name'] = soClass.sqlmeta.style.dbColumnToPythonAttr(field)
             kw['dbName'] = field
             kw['notNone'] = notnull
