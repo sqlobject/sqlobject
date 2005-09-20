@@ -291,7 +291,7 @@ class PostgresConnection(DBAPI):
             if self.user:
                 dsn += ' user=%s' % self.user
             if self.password:
-                dsn += ' passwd=%s' % self.passwd
+                dsn += ' password=%s' % self.password
             if self.host:
                 dsn += ' host=%s' % self.host
         conn = self.module.connect(dsn)
