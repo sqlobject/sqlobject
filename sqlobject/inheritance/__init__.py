@@ -163,7 +163,7 @@ class InheritableSQLObject(SQLObject):
         #DSM: If we are updating a child, we should never return a child...
         if childUpdate: return val
         #DSM: If this class has a child, return the child
-        if hasattr(val, 'childName'):
+        if 'childName' in cls.sqlmeta.columns:
              childName = val.childName
              if childName is not None:
                  return val._childClasses[childName].get(id, connection=connection, selectResults=childResults)
