@@ -3,6 +3,170 @@
 Inheritance
 -----------
 
+Why
+~~~
+
+Imagine you have a list or persons, and every person plays a certain role.
+Some persons are students, some are professors, some are employees. Every
+role has different attributes. Students are known by their department and
+year. Professors has department (some attributes are common for all or some
+roles), timetable and other attributes.
+
+How do one implements this in SQL? Well, the obvious approach is to create
+a table Person with a column that describes or name the role, and a table
+for an every role. Then one must write a code that interprets and
+dereferences the role column.
+
+Well, the inheritance machinery described below does exactly this! Only it
+does it automagically and mostly transparent to the user.
+
+First, you create a table Person. Nothing magical here::
+
+    class Person(SQLObject):
+        name = StringCol()
+        age = FloatCol()
+
+Now you need a hierarchy of roles::
+
+    class Role(InheritableSQLObject):
+        department = StringCol()
+
+The magic starts here! You inherit the class from the special root class
+``InheritableSQLObject`` and provide a set of attributes common for all
+roles. Other roles must be inherited from Role::
+
+    class Student(Role):
+        year = IntCol()
+
+    class Professor(Role):
+        timetable = StringCol()
+
+Now you want a column in Person that can be interpreted as the role. Easy::
+
+    class Person(SQLObject):
+        name = StringCol()
+        age = FloatCol()
+        role = ForeignKey("Role")
+
+That's all, really! When asked for its role, Person returns the value of
+its .role attribute dereferenced and interpreted. Instead of returning an
+instance of class Role it returns an instance of the corresponding subclass
+- a Student or a Professor.
+
+This is a brief explanation based on a task people meet most often, but of
+course it can be used far beyond the person/role task. I also omitted all
+details in the explanation. Now look at the real working program::
+
+    from sqlobject import *
+    from sqlobject.inheritance import InheritableSQLObject
+
+    __connection__ = "sqlite:/:memory:"
+
+    class Role(InheritableSQLObject):
+       department = StringCol()
+
+    class Student(Role):
+       year = IntCol()
+
+    class Professor(Role):
+       timetable = StringCol(default=None)
+
+    class Person(SQLObject):
+       name = StringCol()
+       age = FloatCol()
+       role = ForeignKey("Role", default=None)
+
+    Role.createTable()
+    Student.createTable()
+    Professor.createTable()
+    Person.createTable()
+
+    first_year = Student(department="CS", year=1)
+    lecturer = Professor(department="Mathematics")
+
+    student = Person(name="A student", age=21, role=first_year)
+    professor = Person(name="A professor", age=42, role=lecturer)
+
+    print student.role
+    print professor.role
+
+It prints::
+
+    <Student 1 year=1 department='CS'>
+    <Professor 2 timetable=None department='Mathematics'>
+
+You can get the list of all available roles::
+
+    print list(Role.select())
+
+It prints::
+
+    [<Student 1 year=1 department='CS'>, <Professor 2 timetable=None department='Mathematics'>]
+
+Look, you have got a list of Role's subclasses!
+
+If you add a MultipleJoin column to Role you can list all persons for a
+given role::
+
+    class Role(InheritableSQLObject):
+        department = StringCol()
+        persons = MultipleJoin("Person")
+
+    for role in Role.select():
+        print role.persons
+
+It prints::
+
+    [<Person 1 name='A student' age=21.0 roleID=1>]
+    [<Person 2 name='A professor' age=42.0 roleID=2>]
+
+If you you want your persons to have many roles - use RelatedJoin::
+
+    class Role(InheritableSQLObject):
+        department = StringCol()
+        persons = RelatedJoin("Person")
+
+    class Student(Role):
+        year = IntCol()
+
+    class Professor(Role):
+        timetable = StringCol(default=None)
+
+    class Person(SQLObject):
+        name = StringCol()
+        age = FloatCol()
+        roles = RelatedJoin("Role")
+
+    Role.createTable()
+    Student.createTable()
+    Professor.createTable()
+    Person.createTable()
+
+    first_year = Student(department="CS", year=1)
+    lecturer = Professor(department="Mathematics")
+
+    student = Person(name="A student", age=21)
+    student.addRole(first_year)
+    professor = Person(name="A professor", age=42)
+    professor.addRole(lecturer)
+
+    print student.roles
+    print professor.roles
+
+    for role in Role.select():
+        print role.persons
+
+It prints::
+
+   [<Student 1 year=1 department='CS'>]
+   [<Professor 2 timetable=None department='Mathematics'>]
+   [<Person 1 name='A student' age=21.0>]
+   [<Person 2 name='A professor' age=42.0>]
+
+
+Who, What and How
+~~~~~~~~~~~~~~~~~
+
 Daniel Savard has implemented inheritance for SQLObject. According to
 ObjectMatter_ this is a kind of vertical inheritance. The only difference
 is that objects reference their leafs, not parents. Links to parents are
@@ -17,7 +181,6 @@ reconstructed at run-time using the hierarchy of Python classes.
   be returned when an instance of a class is created.
 * This version now seems to works correctly with addColumn, delColumn,
   addJoin and delJoin.
-
 
 The following code::
 
@@ -43,7 +206,6 @@ will generate the following tables::
         id INT PRIMARY KEY,
         position TEXT
     )
-
 
 A new class attribute ``_inheritable`` is added.  When this new
 attribute is set to 1, the class is marked 'inheritable' and a new
@@ -87,7 +249,6 @@ Will create the following data in the database::
     1
         Chief
 
-
 You will still be able to ask for the attribute normally:
 e.firstName will return Jane and setting it will write the new value in
 the person table.
@@ -117,7 +278,9 @@ parent id.  This will look like the following request::
     FROM person, employee WHERE person.first_name = 'Jane'
     AND employee.position = 'Chief' AND person.id = employee.id
 
-Some limitation or notice about this version:
+
+Limitations and notes
+~~~~~~~~~~~~~~~~~~~~~
 
 * Only simple inheritance will work.  It is not possible to inherit
   from multiple SQLObject classes.
