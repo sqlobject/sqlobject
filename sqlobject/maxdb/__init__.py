@@ -9,6 +9,6 @@ def isSupported():
         import sapdb
     except ImportError:
         return False
-    return False
+    return True
 
 registerConnection(['maxdb','sapdb'],builder, isSupported)

@@ -9,7 +9,7 @@ def isSupported():
         import psycopg
     except ImportError:
         return False
-    return False
+    return True
 
 registerConnection(['postgres', 'postgresql', 'psycopg'],
                    builder, isSupported)

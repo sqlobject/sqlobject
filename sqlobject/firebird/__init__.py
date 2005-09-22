@@ -9,5 +9,6 @@ def isSupported():
         import kinterbasdb
     except ImportError:
         return False
+    return True
 
 registerConnection(['firebird', 'interbase'], builder, isSupported)
