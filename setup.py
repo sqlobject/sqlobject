@@ -43,7 +43,7 @@ For development see the `subversion repository
       license="LGPL",
       packages=["sqlobject"] + ['sqlobject.%s' % package for package in subpackages],
       scripts=["scripts/sqlobject-admin"],
-      install_requires=["FormEncode>=0.2"],
+      install_requires=["FormEncode>=0.2.2"],
       extras_require={
         'postgresql': ['psycopg'],
         'mysql': ['MySQLdb'],
