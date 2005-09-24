@@ -6,15 +6,15 @@ Inheritance
 Why
 ~~~
 
-Imagine you have a list or persons, and every person plays a certain role.
+Imagine you have a list of persons, and every person plays a certain role.
 Some persons are students, some are professors, some are employees. Every
 role has different attributes. Students are known by their department and
-year. Professors has department (some attributes are common for all or some
+year. Professors have a department (some attributes are common for all or some
 roles), timetable and other attributes.
 
-How do one implements this in SQL? Well, the obvious approach is to create
-a table Person with a column that describes or name the role, and a table
-for an every role. Then one must write a code that interprets and
+How does one implement this in SQLObject? Well, the obvious approach is to
+create a table Person with a column that describes or name the role, and a
+table for an every role. Then one must write code that interprets and
 dereferences the role column.
 
 Well, the inheritance machinery described below does exactly this! Only it
@@ -103,9 +103,9 @@ It prints::
 
     [<Student 1 year=1 department='CS'>, <Professor 2 timetable=None department='Mathematics'>]
 
-Look, you have got a list of Role's subclasses!
+Look - you have gotten a list of Role's subclasses!
 
-If you add a MultipleJoin column to Role you can list all persons for a
+If you add a MultipleJoin column to Role, you can list all persons for a
 given role::
 
     class Role(InheritableSQLObject):
@@ -120,7 +120,7 @@ It prints::
     [<Person 1 name='A student' age=21.0 roleID=1>]
     [<Person 2 name='A professor' age=42.0 roleID=2>]
 
-If you you want your persons to have many roles - use RelatedJoin::
+If you you want your persons to have many roles, use RelatedJoin::
 
     class Role(InheritableSQLObject):
         department = StringCol()
@@ -169,17 +169,17 @@ Who, What and How
 
 Daniel Savard has implemented inheritance for SQLObject. According to
 ObjectMatter_ this is a kind of vertical inheritance. The only difference
-is that objects reference their leafs, not parents. Links to parents are
+is that objects reference their leaves, not parents. Links to parents are
 reconstructed at run-time using the hierarchy of Python classes.
 
 .. _ObjectMatter: http://www.objectmatter.com/vbsf/docs/maptool/ormapping.html
 
 * As suggested by Ian Bicking, each child class now has the same
-  ID than the parent class.  No more need for childID column and
-  parent foreignKey (with a small speed boost).
-* No more need to call getSubClass as the 'latest' child will always
+  ID as the parent class.  No more need for childID column and
+  parent foreignKey (and a small speed boost).
+* No more need to call getSubClass, as the 'latest' child will always
   be returned when an instance of a class is created.
-* This version now seems to works correctly with addColumn, delColumn,
+* This version now seems to work correctly with addColumn, delColumn,
   addJoin and delJoin.
 
 The following code::
@@ -213,10 +213,10 @@ columns will automatically be added: childName (TEXT).
 
 Each class that inherits from a parent class will get the same ID as
 the parent class.  So, there is no need to keep track of parent ID and
-child ID as they are the same.
+child ID, as they are the same.
 
 The column childName will contain the name of the child class (for
-example 'Employee').  This will permit to a class to always return its
+example 'Employee').  This will permit a class to always return its
 child class if available (a person that is also an employee will always
 return an instance of the employee class).
 
@@ -256,16 +256,16 @@ the person table.
 If you use p2, as p2 is a person object, you will get an employee
 object.
 person(0) will return a Person instance and will have the following
-attributes: firstName and lastName
-person(1) or employee(1) will each return the same Employee instance and
-will have the following attributes: firstName, lastName and position
+attributes: firstName and lastName.
+person(1) or employee(1) will both return the same Employee instance and
+will have the following attributes: firstName, lastName and position.
 
-Also, deleting a person or an employee that are linked will destroy
+Also, deleting a person or an employee that is linked will destroy
 both entries as one would expect.
 
-The SQLObject q magic also work.  Using this select are valid::
+The SQLObject q magic also works.  Using these selects is valid::
 
-    Employee.select(AND(Employee.q.firstName == 'Jane' Employee.q.position == 'Chief')) will return Jane Doe
+    Employee.select(AND(Employee.q.firstName == 'Jane', Employee.q.position == 'Chief')) will return Jane Doe
     Employee.select(AND(Person.q.firstName == 'Jane', Employee.q.position == 'Chief')) will return Jane Doe
     Employee.select(Employee.q.lastName == 'Doe') will only return Jane Doe (as Joe isn't an employee)
     Person.select(Person.q.lastName == 'Doe') will return both entries.
@@ -294,15 +294,15 @@ Limitations and notes
   will never be inherited), you must set '_inheritable' to False in this
   class.
 * The inheritance implementation is incompatible with lazy updates. Do not
-  set lazyUpdate to True. If you need this - you have to patch SQLObject
+  set lazyUpdate to True. If you need this, you have to patch SQLObject
   and override many methods - _SO_setValue(), sync(), syncUpdate() at
   least. Patches will be gladly accepted.
 * I made it because I needed to be able to have automatic
-  inheritance with linked table.
-* This version works for me, it may not works for you.  I tried to do
+  inheritance with linked tables.
+* This version works for me; it may not work for you.  I tried to do
   my best but it is possible that I broke some things... So, there
   is no warranty that this version will work.
-* Thanks to Ian Bicking for SQLObject, this is a wonderful python
+* Thanks to Ian Bicking for SQLObject; this is a wonderful python
   module.
 * If you have suggestion, bugs, or patch to this patch, you can
-  contact SQLObject team: <sqlobject-discuss at lists.sourceforge.net>
+  contact the SQLObject team: <sqlobject-discuss at lists.sourceforge.net>
