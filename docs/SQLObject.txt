@@ -729,6 +729,14 @@ digits, and of proper length, and make the formatting nice::
    out.  One advantage of methods (as opposed to attribute access) is
    that the programmer is more likely to expect this disconnect.
 
+   Also note while these conversions will take place when getting and
+   setting the column, in queries the conversions will not take place.
+   So if you convert the value from a "Pythonic" representation to a
+   "SQLish" representation, your queries (when using ``.select()`` and
+   ``.selectBy()``) will have to be in terms of the SQL/Database
+   representation (as those commands generate SQL that is run on the
+   database).
+
 Reference
 =========
 
