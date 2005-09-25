@@ -333,8 +333,8 @@ class Command(object):
         if '#' in conf_fn:
             conf_fn, conf_section = conf_fn.split('#', 1)
 
-        from ConfigParser import RawConfigParser
-        p = RawConfigParser()
+        from ConfigParser import ConfigParser
+        p = ConfigParser()
         # Case-sensitive:
         p.optionxform = str
         if not os.path.exists(conf_fn):
@@ -343,11 +343,15 @@ class Command(object):
             raise OSError(
                 "Config file %s does not exist" % self.options.config_file)
         p.read([conf_fn])
+        p._defaults.setdefault(
+            'here', os.path.dirname(os.path.abspath(conf_fn)))
 
         possible_sections = []
         for section in p.sections():
             name = section.strip().lower()
-            if conf_section == name or conf_section == name.split(':')[-1]:
+            if (conf_section == name or
+                (conf_section == name.split(':')[-1]
+                 and name.split(':')[0] in ('app', 'application'))):
                 possible_sections.append(section)
 
         if not possible_sections:
