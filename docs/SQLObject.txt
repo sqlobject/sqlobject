@@ -130,6 +130,34 @@ the ``sqlobject`` class::
 Declaring the Class
 -------------------
 
+The connection URI must follow the standard URI syntax::
+
+    scheme://[user[:password]@]host[:port]/database[?parameters]
+
+Scheme is one of ``sqlite``, ``mysql``, ``postgres``, ``firebird``,
+``interbase``, ``maxdb``, ``sapdb``, ``sybase``.
+
+Examples::
+
+    mysql://user:passwd@host/database
+    mysql://host/database?debug=1
+    postgres://user@host/database?debug=&cache=
+    postgres://host:5432/database
+    sqlite:///full/path/to/database
+    sqlite:/C|/full/path/to/database
+    sqlite:/:memory:
+
+Note that there is a special syntax to specify full path on w32 systems
+(useable for sqlite and firebird); also sqlite can manipulate special
+in-memory databases.
+
+Parameters are: ``debug`` (default: False), ``debugOutput`` (default: False),
+``cache`` (default: True), ``autoCommit`` (default: True),
+``debugThreading`` (default: False).
+
+If you want to pass True value in a connection URI - pass any non-empty
+string; an empty string for False.
+
 Lets first set up a connection::
 
     >>> db_filename = os.path.abspath('data.db')
@@ -138,6 +166,7 @@ Lets first set up a connection::
     >>> connection_string = 'sqlite:' + db_filename
     >>> connection = connectionForURI(connection_string)
     >>> sqlhub.processConnection = connection
+
 
 The ``sqlhub.processConnection`` assignment means that all classes
 will, by default, use this connection we've just set up.
