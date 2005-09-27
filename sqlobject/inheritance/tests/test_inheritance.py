@@ -9,7 +9,7 @@ from sqlobject.inheritance import InheritableSQLObject
 
 class InheritablePerson(InheritableSQLObject):
     firstName = StringCol()
-    lastName = StringCol(alternateID=True)
+    lastName = StringCol(alternateID=True, length=255)
 
 class Employee(InheritablePerson):
     _inheritable = False

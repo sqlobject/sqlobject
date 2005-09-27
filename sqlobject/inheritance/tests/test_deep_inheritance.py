@@ -9,7 +9,7 @@ from sqlobject.inheritance import InheritableSQLObject
 
 class DIPerson(InheritableSQLObject):
     firstName = StringCol()
-    lastName = StringCol(alternateID=True)
+    lastName = StringCol(alternateID=True, length=255)
     manager = ForeignKey("DIManager", default=None)
 
 class DIEmployee(DIPerson):
