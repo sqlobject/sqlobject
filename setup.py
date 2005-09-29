@@ -18,25 +18,32 @@ if sys.version < '2.2.3':
     DistributionMetadata.download_url = None
 
 setup(name="SQLObject",
-      version="0.7b1",
+      version="0.7rc1",
       description="Object-Relational Manager, aka database wrapper",
       long_description="""\
-Classes created using SQLObject wrap database rows, presenting a
-friendly-looking Python object instead of a database/SQL interface.
-Emphasizes convenience.  Works with MySQL, Postgres, SQLite, Firebird.
-Requires Python 2.2+.
+SQLObject is a popular *Object Relational Manager* for providing an
+object interface to your database, with tables as classes, rows as
+instances, and columns as attributes.
+
+SQLObject includes a Python-object-based query language that makes SQL
+more abstract, and provides substantial database independence for
+applications.
+
+Supports MySQL, PostgreSQL, SQLite, Firebird, Sybase, and MaxDB
+(SAPDB).
 
 For development see the `subversion repository
-<http://svn.colorstudy.com/trunk/SQLObject#egg=SQLObject>`_
+<http://svn.colorstudy.com/trunk/SQLObject#egg=SQLObject-0.8dev>`_
 """,
-      classifiers=["Development Status :: 4 - Beta",
-                   "Intended Audience :: Developers",
-                   "License :: OSI Approved :: GNU Library or Lesser General Public License (LGPL)",
-                   "Programming Language :: Python",
-                   "Topic :: Database",
-                   "Topic :: Database :: Front-Ends",
-                   "Topic :: Software Development :: Libraries :: Python Modules",
-                   ],
+      classifiers=[
+        "Development Status :: 5 - Production/Stable",
+        "Intended Audience :: Developers",
+        "License :: OSI Approved :: GNU Library or Lesser General Public License (LGPL)",
+        "Programming Language :: Python",
+        "Topic :: Database",
+        "Topic :: Database :: Front-Ends",
+        "Topic :: Software Development :: Libraries :: Python Modules",
+        ],
       author="Ian Bicking",
       author_email="ianb@colorstudy.com",
       url="http://sqlobject.org",
