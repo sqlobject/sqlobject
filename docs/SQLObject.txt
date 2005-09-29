@@ -437,7 +437,8 @@ many-to-many relationship, which is represented with the
 
 Note the use of the ``sqlmeta`` class.  This class is used to store
 different kinds of metadata (and override that metadata, like
-``table``).  This is new in SQLObject 0.7.
+``table``).  This is new in SQLObject 0.7.  See the section `Class sqlmeta`_
+for more information on how it works and what attributes have special meanings.
 
 And usage::
 
@@ -620,6 +621,185 @@ An alternative to ``.select`` is ``.selectBy``.  It works like:
 Each keyword argument is a column, and all the keyword arguments
 are ANDed together.  The return value is a `SelectResult`, so you
 can slice it, count it, order it, etc.
+
+
+Class sqlmeta
+-------------
+
+This new class is available starting with SQLObject 0.7 and allows
+specifying metadata in a clearer way, without polluting the class
+namespace with more attributes.
+
+There are some special attributes that can be used inside this class
+that will change the behaviour of the class that contains it.  Those
+values are:
+
+`table`:
+   The name of the table in the database.  This is derived from
+   ``style`` and the class name if no explicit name is given.  If you 
+   don't give a name and haven't defined an alternative ``style``, then 
+   the standard `MixedCase` to `mixed_case` translation is performed.
+
+`idName`:
+   The name of the primary key column in the database.  This is
+   derived from ``style`` if no explicit name is given.  The default name
+   is ``id``.
+
+`idType`:
+   A function that coerces/normalizes IDs when setting IDs.  This
+   is ``int`` by default (all IDs are normalized to integers).
+
+`style`:
+   A style object -- this object allows you to use other algorithms 
+   for translating between Python attribute and class names, and the
+   database's column and table names.  See `Changing the Naming
+   Style`_ for more.  It is an instance of the `IStyle` interface.  
+
+`lazyUpdate`:
+   A boolean (default false).  If true, then setting attributes on
+   instances (or using ``inst.set(.)`` will not send ``UPDATE``
+   queries immediately (you must call ``inst.syncUpdates()`` or
+   ``inst.sync()`` first).
+
+`defaultOrder`:
+   When selecting objects and not giving an explicit order, this
+   attribute indicates the default ordering.  It is like this value
+   is passed to ``.select()`` and related methods; see those method's
+   documentation for details.
+
+`cacheValues`:
+   A boolean (default true).  If true, then the values in the row are
+   cached as long as the instance is kept (and ``inst.expire()`` is
+   not called).
+
+   If set to `False` then values for attributes from the database
+   won't be cached.  So every time you access an attribute in the
+   object the database will be queried for a value, i.e., a ``SELECT``
+   will be issued.  If you want to handle concurrent access to the 
+   database from multiple processes then this is probably the way to 
+   do so.  You should also use it with transactions_ (it is not 
+   implied).
+
+`registry`:
+   Because SQLObject uses strings to relate classes, and these
+   strings do not respect module names, name clashes will occur if
+   you put different systems together.  This string value serves
+   as a namespace for classes.
+
+`fromDatabase`:
+   A boolean (default false).  If true, then on class creation the
+   database will be queried for the table's columns, and any missing
+   columns (possible all columns) will be added automatically.
+
+`columns`:
+   A dictionary of ``{columnName: anSOColInstance}``.  You can get
+   information on the columns via this read-only attribute.
+
+`columnList`:
+   A list of the values in ``columns``.  Sometimes a stable, ordered
+   version of the columns is necessary; this is used for that.
+
+`columnDefinitions`:
+   A dictionary like ``columns``, but contains the original column
+   definitions (which are not class-specific, and have no logic).
+
+`joins`:
+   A list of all the Join objects for this class.
+
+`indexes`:
+   A list of all the indexes for this class.
+
+
+There is also one instance attribute:
+
+`expired`:
+   A boolean.  If true, then the next time this object's column
+   attributes are accessed a query will be run.
+
+
+While in previous versions of SQLObject those attributes were defined 
+directly at the class that will map your database data to Python and
+all of them were prefixed with an underscore, now it is suggested that
+you change your code to this new style.  The old way will be removed 
+when SQLObject 0.8 is out and you'll receive lots of warning messages
+saying that if you're not using the ``sqlmeta`` class you're doing things
+in a deprecated way.
+
+Using sqlmeta
+~~~~~~~~~~~~~
+
+To use sqlmeta you should write code like this example::
+
+    class MyClass(SQLObject):
+
+        class sqlmeta:
+            lazyUpdate = True
+            cacheValues = False
+
+        columnA = StringCol()
+        columnB = IntCol()
+
+        def _set_attr1(self, value):
+            # do something with value
+
+        def _get_attr1(self):
+            # do something to retrieve value
+
+
+The above definition is creating a table ``my_class`` (the name may be
+different if you changet the ``style`` used) with two columns called
+columnA and columnB.  There's also a third field that can be accessed
+using ``MyClass.attr1``.  The sqlmeta class is changing the behaviour
+of ``MyClass`` so that it will perform lazy updates (you'll have to call
+the ``.sync()`` method to write the updates to the database) and it is
+also telling that ``MyClass`` won't have any cache, so that every time
+you ask for some information it will be retrieved from the database.
+
+
+SQLObject Class
+---------------
+
+Besides sqlmeta and columns specifications, there are a number of other 
+special attributes you can set in your class.  Those are listed below but,
+except for the ``_connection`` attribute, all other are superseded by the
+implementation shown before with sqlmeta.  If you use them with SQLObject
+0.7 you'll get warnings about their deprecation and you'll probably have 
+to convert your code in future releases, when these are dropped.
+
+`_connection`:
+    The connection object to use, from `DBConnection`.  You can also
+    set the variable `__connection__` in the enclosing module and it
+    will be picked up (be sure to define `__connection__` before your
+    class).  You can also pass a connection object in at instance
+    creation time, as described in transactions_.
+
+    If you have defined `sqlhub.processConnection` then this attribute can
+    be ommited from your class and the sqlhub will be used instead.  If
+    you have several classes using the same connection that might be an
+    advantage, besides saving a lot of typing.
+
+`_table`:
+    This is old style and works the same way as the `table` attribute
+    from sqlmeta class.
+
+`_joins`:
+    This is old style and works the same way as the `joins` attribute
+    from sqlmeta class.
+
+`_cacheValues`:
+    This is old style and works the same way as the `cacheValues` 
+    attribute from sqlmeta class.
+
+.. _idName:
+
+`_idName`:
+    This is old style and works the same way as the `idName` attribute
+    from sqlmeta class.
+
+`_style`:
+    This is old style and works the same way as the `style` attribute
+    from sqlmeta class.
+
 
 Customizing the Objects
 -----------------------
@@ -890,46 +1070,6 @@ different types of columns, when SQLObject creates your tables.
     you do a query matching a UnicodeCol column you must apply the
     encoding yourself.
 
-
-SQLObject Class: Specifying Your Class
---------------------------------------
-
-In addition to the columns, there are a number of other special
-attributes you can set in your class.
-
-`_connection`:
-    The connection object to use, from `DBConnection`.  You can also
-    set the variable `__connection__` in the enclosing module and it
-    will be picked up (be sure to define `__connection__` before you
-    class).  You can also pass a connection object in at instance
-    creation time, as described in transactions_.
-
-`_table`:
-    The database name of the table for this class.  If you don't give
-    a name, then the standard ``MixedCase`` to ``mixed_case``
-    translation is performed.
-
-`_joins`:
-    A list of `Join` objects.  This is covered below.
-
-`_cacheValues`:
-    If set to ``False`` then values for attributes from the database
-    won't be cached.  So every time you access an attribute in the
-    object the database will be queried for a value.  If you want to
-    handle concurrent access to the database from multiple processes
-    then this is probably the way to do so.  You should also use
-    it with transactions_ (it is not implied).
-
-.. _idName:
-
-`_idName`:
-    The name of the primary key column (default ``id``).
-
-`_style`:
-    A style object -- this object allows you to use other algorithms
-    for translating between Python attribute and class names, and the
-    database's column and table names.  See `Changing the Naming
-    Style`_ for more.
 
 .. Relationships_:
 
