@@ -1,19 +1,14 @@
-===============
-SQLObject 0.6.1
-===============
-
-:Author: Ian Bicking
-:Contact: ianb@colorstudy.com
-:Web site: http://colorstudy.com/software/SQLObject
+SQLObject 0.7
+=============
 
 Thanks for looking at SQLObject.  SQLObject is an object-relational
 mapper, i.e., a library that will wrap your database tables in Python
 classes, and your rows in Python instances.
 
-It absolutely requires Python 2.2 or higher.  It currently supports
-MySQL through the `MySQLdb` package, PostgreSQL through the
-`psycopg` package, SQLite, Firebird, MaxDB (SAP DB) and Sybase.
+It currently supports MySQL through the `MySQLdb` package, PostgreSQL
+through the `psycopg` package, SQLite, Firebird, MaxDB (SAP DB) and
+Sybase.  It should support Python versions back to 2.2.
 
 For more information please see the documentation in
-``docs/SQLObject.html``
+docs/SQLObject.txt, or online at http://sqlobject.org/
 
