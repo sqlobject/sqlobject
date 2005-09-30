@@ -2,97 +2,61 @@
 SQLObject
 +++++++++
 
-News
-====
+SQLObject is a popular *Object Relational Manager* for providing an
+object interface to your database, with tables as classes, rows as
+instances, and columns as attributes.
 
-26-Jan-2005:
-    SQLObject 0.6.1_ is released (bugfixes).
-22-Sep-2004:
-    SQLObject 0.6_ is released (major updates).
-21-Sep-2004:
-    SQLObject 0.5.3_ is released (bugfixes).
-14-Apr-2004:
-    SQLObject has wiki at http://wiki.sqlobject.org
-8-Mar-2004:
-    SQLObject `0.5.2`_ is released (significant bugfixes).
-    SQLObject is now in a `Subversion repository <repository.html>`_.
-12-Nov-2003:
-    SQLObject 0.5.1 is released (minor bugfixes)
-1-Nov-2003:
-    SQLObject 0.5 is released.
+SQLObject includes a Python-object-based query language that makes SQL
+more abstract, and provides substantial database independence for
+applications.
 
-.. _0.5.2: docs/News.html#sqlobject-0-5-2
-.. _0.5.3: docs/News.html#sqlobject-0-5-3
-.. _0.6: docs/News.html#sqlobject-0-6
-.. _0.6.1: docs/News.html#sqlobject-0-6-1
+Documentation
+=============
 
-Introduction
-============
-
-SQLObject is an *object-relational mapper*.  It allows you to
-translate RDBMS table rows into Python objects, and manipulate those
-objects to transparently manipulate the database.
-
-In using SQLObject, you will create a class definition that will
-describe how the object connects to the database (in addition to any
-other methods you may wish to add to the class).  SQLObject will
-produce the code to access the database, and update the database with
-your changes.  The interface to the database is meant to be
-indistinguishable from other interfaces you may add to the object.
-
-SQLObject also includes a novel feature to generate WHERE clauses
-using Python syntax and objects (intead of generating SQL using string
-substitution, as is traditional).
+* `Main SQLObject documentation <SQLObject.html>`_
+* `News and updates <News.html>`_
+* `sqlbuiler documentation <SQLBuilder.html>`_
+* `Frequently Asked Questions <FAQ.html>`_
+* `Inheritance <Inheritance.html>`_
+* `Mailing list, bugs, etc. <community.html>`_
+* `Download <download.html>`_
+* `Related projects and articles <links.html>`_
 
 Example
 =======
 
-I love examples.  Examples give a feel for the aesthetic of the API,
+Examples are good.  Examples give a feel for the aesthetic of the API,
 which matters to me a great deal.  This is just a snippet that creates
 a simple class that wraps a table::
 
-    from SQLObject import *
-
-    __connection__ = MySQLConnection(
-        host='localhost', db='sqlobject_test',
-        user='sqlobject_test', passwd='sqltest')
-
-    class Person(SQLObject):
-
-        firstName = StringCol(length=100)
-        middleInitial = StringCol(length=1, default=None)
-        lastName = StringCol(length=100)
-
-Here's the (MySQL) ``CREATE`` statement for that class::
-
-    CREATE TABLE person (
-        id INT PRIMARY KEY AUTO_INCREMENT,
-        first_name VARCHAR(100) NOT NULL,
-	middle_initial CHAR(1),
-	last_name VARCHAR(100) NOT NULL
-    );
+  >>> from sqlobject import *
+  >>>
+  >>> sqlhub.processConnection = connectionForURI('sqlite:/:memory:')
+  >>>
+  >>> class Person(SQLObject):
+  ...     fname = StringCol()
+  ...     mi = StringCol(length=1, default=None)
+  ...     lname = StringCol()
+  ...
+  >>> Person.createTable()
 
 SQLObject supports most database schemas that you already have, and
-can also issue the ``CREATE`` statement for you.  Postgres and SQLite
-are also supported (with Sybase and Firebird in the working), and
-SQLObject provides an abstraction layer that helps make your
-application much more portable between these databases.
+can also issue the ``CREATE`` statement for you (seen in
+``Person.createTable()``).
 
 Here's how you'd use the object::
 
-    >>> p = Person.new(firstName="John", lastName="Doe")
-    >>> p
-    <Person 1 firstName='John' middleInitial=None lastName='Doe'>
-    >>> p.firstName
-    'John'
-    >>> p.middleInitial = 'Q'
-    >>> p.middleInitial
-    'Q'
-    >>> p2 = Person(1)
-    >>> p2
-    <Person 1 firstName='John' middleInitial='Q' lastName='Doe'>
-    >>> p is p2
-    True
+  >>> p = Person(fname="John", lname="Doe")
+  >>> p
+  <Person 1 fname='John' mi=None lname='Doe'>
+  >>> p.fname
+  'John'
+  >>> p.mi = 'Q'
+  >>> p2 = Person.get(1)
+  >>> p2
+  <Person 1 fname='John' mi='Q' lname='Doe'>
+  >>> p is p2
+  True
 
 .. image:: http://sourceforge.net/sflogo.php?group_id=74338&type=4
    :height: 37

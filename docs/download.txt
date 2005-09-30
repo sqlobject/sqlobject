@@ -1,0 +1,35 @@
+Download SQLObject
+++++++++++++++++++
+
+The latest releases are always available on the `Python Cheese Shop
+<http://cheeseshop.python.org/pypi/SQLObject>`_.
+
+* `SQLObject 0.7rc1
+  <http://cheeseshop.python.org/packages/source/S/SQLObject/SQLObject-0.7rc1.tar.gz>`_
+  (source package in ``tar.gz`` format)
+
+* `0.7rc1 Python 2.4 egg
+  <http://cheeseshop.python.org/packages/2.4/S/SQLObject/SQLObject-0.7rc1-py2.4.egg>`_
+  (`easy_install-friendly
+  <http://peak.telecommunity.com/DevCenter/EasyInstall>`__ egg
+  package)
+
+* `0.7rc1 Python 2.3 egg
+  <http://cheeseshop.python.org/packages/2.3/S/SQLObject/SQLObject-0.7rc1-py2.3.egg>`_
+  (`easy_install-friendly
+  <http://peak.telecommunity.com/DevCenter/EasyInstall>`__ egg
+  package)
+
+Repository
+----------
+
+The SQLObject `Subversion <http://subversion.tigris.org/>`_ repository is located at http://svn.colorstudy.com/SQLObject/trunk
+
+If you are using a command-line Subversion client, you can check
+it out like::
+
+    svn co http://svn.colorstudy.com/SQLObject/trunk SQLObject
+
+If you are on Windows you may want to use `TortoiseSVN
+<http://tortoisesvn.tigris.org/>`_.
+
