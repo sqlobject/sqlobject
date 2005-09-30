@@ -33,7 +33,7 @@ Supports MySQL, PostgreSQL, SQLite, Firebird, Sybase, and MaxDB
 (SAPDB).
 
 For development see the `subversion repository
-<http://svn.colorstudy.com/trunk/SQLObject#egg=SQLObject-0.8dev>`_
+<http://svn.colorstudy.com/SQLObject/trunk#egg=SQLObject-0.8dev>`_
 """,
       classifiers=[
         "Development Status :: 5 - Production/Stable",
