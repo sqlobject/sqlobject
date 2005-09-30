@@ -90,7 +90,13 @@ def getConnection(**kw):
         conn.debugOutput = True
     return conn
 
-connection = getConnection()
+try:
+    connection = getConnection()
+except Exception, e:
+    # At least this module should be importable...
+    print >> sys.stderr, (
+        "Could not open database: %s" % e)
+    
 
 class InstalledTestDatabase(sqlobject.SQLObject):
     """
