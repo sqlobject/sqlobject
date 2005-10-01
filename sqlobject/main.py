@@ -1,10 +1,14 @@
 """
-SQLObject.py
-    Ian Bicking <ianb@colorstudy.com> 17 Oct 2002
+SQLObject
+---------
+
+:author: Ian Bicking <ianb@colorstudy.com>
+
 SQLObject is a object-relational mapper.  See SQLObject.html or
 SQLObject.txt for more.
 
 Modified by
+
     Daniel Savard, Xsoli Inc <sqlobject xsoli.com> 7 Feb 2004
     - Added support for simple table inheritance.
 

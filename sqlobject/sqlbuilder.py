@@ -1,8 +1,10 @@
 """
 sqlobject.sqlbuilder
-  17 Oct 2002, Ian Bicking <ianb@colorstudy.com>
-Builds SQL expressions from normal Python expressions.  Python
-2.1 or higher IS REQUIRED.
+--------------------
+
+:author: Ian Bicking <ianb@colorstudy.com>
+
+Builds SQL expressions from normal Python expressions.
 
 Disclaimer
 ----------
