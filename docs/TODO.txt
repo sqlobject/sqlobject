@@ -17,3 +17,9 @@ TODO
 * Automatic joins in select queries.
 * More kinds of joins, and more powerful join results (closer to how
   `select` works).
+* Refactor ``DBConnection`` to use parameterized queries instead of
+  generating query strings.
+* Deprecate support for Python 2.2. Start using logging instead of print
+  for debugging output.
+* Event system. This will effect columns; patterns like ``onUpdate`` methods
+  and whatnot.
