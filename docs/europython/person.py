@@ -1,5 +1,5 @@
 from SQLObject import *
-conn = PostgresConnection(db = 'merchant_test', user = 'merchant_test', passwd = 'mtest')
+conn = PostgresConnection(db = 'merchant_test', user = 'merchant_test', password = 'mtest')
 
 class Role(SQLObject):
     _connection = conn

@@ -8,7 +8,7 @@ class SybaseConnection(DBAPI):
     dbName = 'sybase'
     schemes = [dbName]
 
-    def __init__(self, db, user, passwd='', host='localhost',
+    def __init__(self, db, user, password='', host='localhost',
                  locking=1, **kw):
         db = db.strip('/')
         global Sybase
@@ -23,7 +23,7 @@ class SybaseConnection(DBAPI):
         self.host = host
         self.db = db
         self.user = user
-        self.passwd = passwd
+        self.password = password
         autoCommit = kw.get('autoCommit')
         if autoCommit:
            autoCommmit = int(autoCommit)
@@ -34,7 +34,7 @@ class SybaseConnection(DBAPI):
 
     def connectionFromURI(cls, uri):
         user, password, host, port, path, args = cls._parseURI(uri)
-        return cls(user=user, passwd=password, host=host or 'localhost',
+        return cls(user=user, password=password, host=host or 'localhost',
                    db=path, **args)
     connectionFromURI = classmethod(connectionFromURI)
 
@@ -48,7 +48,7 @@ class SybaseConnection(DBAPI):
         return c.fetchone()[0]
 
     def makeConnection(self):
-        return Sybase.connect(self.host, self.user, self.passwd,
+        return Sybase.connect(self.host, self.user, self.password,
                               database=self.db, auto_commit=self.autoCommit,
                               locking=self.locking)
 

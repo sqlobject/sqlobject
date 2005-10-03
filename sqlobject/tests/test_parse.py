@@ -8,9 +8,9 @@ from sqlobject.dbconnection import DBConnection
 def test_parse():
     _parseURI = DBConnection._parseURI
 
-    user, password, host, port, path, args = _parseURI("mysql://user:passwd@host/database")
+    user, password, host, port, path, args = _parseURI("mysql://user:password@host/database")
     assert user == "user"
-    assert password == "passwd"
+    assert password == "password"
     assert host == "host"
     assert port is None
     assert path == "/database"

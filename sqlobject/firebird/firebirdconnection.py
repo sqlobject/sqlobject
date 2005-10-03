@@ -10,7 +10,7 @@ class FirebirdConnection(DBAPI):
     schemes = [dbName]
 
     def __init__(self, host, db, user='sysdba',
-                 passwd='masterkey', autoCommit=1,
+                 password='masterkey', autoCommit=1,
                  dialect=None, role=None, charset=None, **kw):
         global kinterbasdb
         if kinterbasdb is None:
@@ -22,7 +22,7 @@ class FirebirdConnection(DBAPI):
         self.host = host
         self.db = db
         self.user = user
-        self.passwd = passwd
+        self.password = password
         if dialect:
             self.dialect = int(dialect)
         else:
@@ -42,7 +42,7 @@ class FirebirdConnection(DBAPI):
             # strip the leading slash off of db name/alias
             path = path[1:]
         path = path.replace('/', os.sep)
-        return cls(host, db=path, user=auth, passwd=password, **args)
+        return cls(host, db=path, user=auth, password=password, **args)
     connectionFromURI = classmethod(connectionFromURI)
 
     def _runWithConnection(self, meth, *args):
@@ -77,7 +77,7 @@ class FirebirdConnection(DBAPI):
             host=self.host,
             database=self.db,
             user=self.user,
-            password=self.passwd,
+            password=self.password,
             role=self.role,
             charset=self.charset,
             **extra

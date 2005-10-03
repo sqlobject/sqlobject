@@ -13,7 +13,7 @@ class PostgresConnection(DBAPI):
     schemes = [dbName, 'postgresql', 'psycopg']
 
     def __init__(self, dsn=None, host=None, port=None, db=None,
-                 user=None, passwd=None, usePygresql=False, unicodeCols=False,
+                 user=None, password=None, usePygresql=False, unicodeCols=False,
                  **kw):
         global psycopg, pgdb
         self.usePygresql = usePygresql
@@ -34,7 +34,7 @@ class PostgresConnection(DBAPI):
         self.host = host
         self.port = port
         self.db = db
-        self.password = passwd
+        self.password = password
         self.dsn_dict = dsn_dict = {}
         if host:
             dsn_dict["host"] = host
@@ -47,8 +47,8 @@ class PostgresConnection(DBAPI):
             dsn_dict["database"] = db
         if user:
             dsn_dict["user"] = user
-        if passwd:
-            dsn_dict["password"] = passwd
+        if password:
+            dsn_dict["password"] = password
         self.use_dsn = dsn is not None
         if dsn is None:
             if usePygresql:
@@ -62,16 +62,16 @@ class PostgresConnection(DBAPI):
                 if user:
                     dsn += user
                 dsn += ':'
-                if passwd:
-                    dsn += passwd
+                if password:
+                    dsn += password
             else:
                 dsn = []
                 if db:
                     dsn.append('dbname=%s' % db)
                 if user:
                     dsn.append('user=%s' % user)
-                if passwd:
-                    dsn.append('password=%s' % passwd)
+                if password:
+                    dsn.append('password=%s' % password)
                 if host:
                     dsn.append('host=%s' % host)
                 if port:
@@ -87,7 +87,7 @@ class PostgresConnection(DBAPI):
     def connectionFromURI(cls, uri):
         user, password, host, port, path, args = cls._parseURI(uri)
         path = path.strip('/')
-        return cls(host=host, port=port, db=path, user=user, passwd=password, **args)
+        return cls(host=host, port=port, db=path, user=user, password=password, **args)
     connectionFromURI = classmethod(connectionFromURI)
 
     def _setAutoCommit(self, conn, auto):

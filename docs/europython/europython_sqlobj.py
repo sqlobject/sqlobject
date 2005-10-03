@@ -43,7 +43,7 @@ class Person(SQLObject):
 		  PRE("""\
 from SQLObject import *
 
-conn = PostgresConnection(db = 'testdb', user = 'testuser', passwd = 'testpass')
+conn = PostgresConnection(db = 'testdb', user = 'testuser', password = 'testpass')
 
 class Person(SQLObject):
     _connection = conn
@@ -103,7 +103,7 @@ class Person(SQLObject):
 		  Bullet("Let's give a Person some PhoneNumbers:",
 				 PRE("""\
 from SQLObject import *
-conn = PostgresConnection(db = 'testdb', user = 'testuser', passwd = 'testpass')
+conn = PostgresConnection(db = 'testdb', user = 'testuser', password = 'testpass')
 
 class Person(SQLObject):
     _connection = conn

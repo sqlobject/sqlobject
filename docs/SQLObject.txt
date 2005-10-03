@@ -139,7 +139,7 @@ Scheme is one of ``sqlite``, ``mysql``, ``postgres``, ``firebird``,
 
 Examples::
 
-    mysql://user:passwd@host/database
+    mysql://user:password@host/database
     mysql://host/database?debug=1
     postgres://user@host/database?debug=&cache=
     postgres://host:5432/database
@@ -1409,7 +1409,7 @@ MySQL
 -----
 
 `MySQLConnection` takes the keyword arguments `host`, `port`, `db`, `user`,
-and `passwd`, just like `MySQLdb.connect` does.
+and `password`, just like `MySQLdb.connect` does.
 
 MySQLConnection supports all the features, though MySQL only supports
 transactions_ when using the InnoDB backend, and SQLObject currently
@@ -1447,7 +1447,7 @@ Firebird
 --------
 
 `FirebirdConnection` takes the arguments `host`, `db`, `user` (default
-``"sysdba"``), `passwd` (default ``"masterkey"``).
+``"sysdba"``), `password` (default ``"masterkey"``).
 
 Firebird supports all the features.  Support is still young, so there
 may be some issues, especially with concurrent access, and especially
@@ -1469,7 +1469,7 @@ SybaseConnection
 ----------------
 
 `SybaseConnection` takes the arguments `host`, `db`, `user`, and
-`passwd`.  It also takes the extra boolean argument `locking` (default
+`password`.  It also takes the extra boolean argument `locking` (default
 True), which is passed through when performing a connection.  You may
 use a False value for `locking` if you are not using multiple threads,
 for a slight performance boost.

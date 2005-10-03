@@ -80,7 +80,7 @@ class MaxdbConnection(DBAPI):
     def connectionFromURI(cls, uri):
         auth, password, host, port, path, args = cls._parseURI(uri)
         path = path.replace('/', os.path.sep)
-        return cls(host, db=path, user=auth, passwd=password, **args)
+        return cls(host, db=path, user=auth, password=password, **args)
     connectionFromURI = classmethod(connectionFromURI)
 
     def _getConfigParams(self,sqlmode,auto):

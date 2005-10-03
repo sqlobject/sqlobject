@@ -8,7 +8,7 @@ class MySQLConnection(DBAPI):
     dbName = 'mysql'
     schemes = [dbName]
 
-    def __init__(self, db, user, passwd='', host='localhost', port=None, **kw):
+    def __init__(self, db, user, password='', host='localhost', port=None, **kw):
         global MySQLdb
         if MySQLdb is None:
             import MySQLdb
@@ -17,7 +17,7 @@ class MySQLConnection(DBAPI):
         self.port = port
         self.db = db
         self.user = user
-        self.password = passwd
+        self.password = password
         self.kw = {}
         for key in ("unix_socket", "named_pipe", "init_command",
                 "read_default_file", "read_default_group"):
@@ -31,7 +31,7 @@ class MySQLConnection(DBAPI):
 
     def connectionFromURI(cls, uri):
         user, password, host, port, path, args = cls._parseURI(uri)
-        return cls(db=path.strip('/'), user=user or '', passwd=password or '',
+        return cls(db=path.strip('/'), user=user or '', password=password or '',
                    host=host or 'localhost', port=port or 0, **args)
     connectionFromURI = classmethod(connectionFromURI)
 
