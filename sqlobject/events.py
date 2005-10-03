@@ -21,6 +21,11 @@ class ClassCreateEvent(Event):
     ``(new_class)``.
     """
 
+# @@: Should there be a class reload event?  This would allow modules
+# to be reloaded, possibly.  Or it could even be folded into
+# ClassCreateEvent, since anything that listens to that needs to pay
+# attention to reloads (or else it is probably buggy).
+
 class InstanceCreateEvent(Event):
     """
     Called before an instance is created, with the class as the
@@ -105,4 +110,3 @@ class DropTableEvent(Event):
     functions are called with ``(cls, connection)`` after the table
     has been dropped.
     """
-
