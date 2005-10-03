@@ -49,6 +49,9 @@ class InstanceDestroyEvent(Event):
     Note: this is not called when an instance is destroyed through
     garbage collection (@@: Should this be called RowDestroyEvent or
     RowDeleteEvent?)
+
+    @@: Should this allow ``instance`` to be a primary key, so that a
+    row can be deleted without first fetching it?
     """
     
 class InstanceUpdateEvent(Event):
