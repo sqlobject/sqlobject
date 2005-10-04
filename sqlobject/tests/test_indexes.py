@@ -29,7 +29,7 @@ def test_1():
     mod = SOIndex1._connection.module
     try:
         SOIndex1(name='blah', number=0)
-    except (mod.ProgrammingError, mod.IntegrityError, mod.OperationalError):
+    except (mod.ProgrammingError, mod.IntegrityError, mod.OperationalError, mod.DatabaseError):
         # expected
         pass
     else:

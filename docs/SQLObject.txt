@@ -45,7 +45,8 @@ Requirements
 
 Currently SQLObject supports MySQL_ via MySQLdb_ aka MySQL-python,
 PostgreSQL_ via psycopg_, SQLite_ via PySQLite_, Firebird_ via kinterbasdb_,
-Sybase via Sybase_, and `MAX DB`_ (also known as SAP DB) via sapdb_.
+Sybase via Sybase_, and `MAX DB`_ (also known as SAP DB) via sapdb_,
+`MSSQL Server`_ via pymssql_ (+ FreeTDS_) or ADODBAPI_ (Win32).
 
 .. _MySQL: http://mysql.com
 .. _MySQLdb: http://sourceforge.net/projects/mysql-python/
@@ -58,6 +59,10 @@ Sybase via Sybase_, and `MAX DB`_ (also known as SAP DB) via sapdb_.
 .. _Sybase: http://www.object-craft.com.au/projects/sybase/
 .. _`MAX DB`: http://www.mysql.com/products/maxdb/
 .. _sapdb: http://www.sapdb.org/sapdbPython.html
+.. _`MSSQL Server`: http://www.microsoft.com/sql/
+.. _pymssql: http://pymssql.sourceforge.net/
+.. _FreeTDS: http://www.freetds.org/
+.. _ADODBAPI: http://adodbapi.sourceforge.net/
 
 Python 2.2 or higher is required.  SQLObject makes extensive use of
 new-style classes.
@@ -135,7 +140,7 @@ The connection URI must follow the standard URI syntax::
     scheme://[user[:password]@]host[:port]/database[?parameters]
 
 Scheme is one of ``sqlite``, ``mysql``, ``postgres``, ``firebird``,
-``interbase``, ``maxdb``, ``sapdb``, ``sybase``.
+``interbase``, ``maxdb``, ``sapdb``, ``sybase``, ``mssql``.
 
 Examples::
 
@@ -1397,9 +1402,9 @@ argument into constructor (like ``Person(id='555-55-5555', ...)``).
 DBConnection: Database Connections
 ==================================
 
-The `DBConnection` module currently has four external classes,
+The `DBConnection` module currently has six external classes,
 `MySQLConnection`, `PostgresConnection`, `SQLiteConnection`,
-`SybaseConnection`, and `MaxdbConnection`.
+`SybaseConnection`, `MaxdbConnection`, `MSSQLConnection`.
 
 You can pass the keyword argument `debug` to any connector.  If set to
 true, then any SQL sent to the database will also be printed to the
@@ -1490,6 +1495,23 @@ when creating the connection to the database.
 It uses the sapdb_ module.
 
 .. _sapdb: http://www.sapdb.org/sapdbPython.html
+
+MS SQL Server
+-------------
+
+The `MSSQLConnection` objects wants to use new style connection strings
+in the format of
+
+mssql://user:pass@host:port/db
+
+This will then be mapped to either the correct driver format.  If running
+SQL Server on a "named" port, make sure to specify the port number in the
+URI.
+
+The two drivers currently supported are:
+
+.. _pymssql: http://pymssql.sourceforge.net/
+.. _adodbapi: http://adodbapi.sourceforge.net/
 
 Exported Symbols
 ================

@@ -17,6 +17,8 @@ class TestSlice:
             Counter(number=i)
 
     def counterEqual(self, counters, value):
+        if not supports('limitSelect'):
+            return
         assert [c.number for c in counters] == value
 
     def test_1(self):

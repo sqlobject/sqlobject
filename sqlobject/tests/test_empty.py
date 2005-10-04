@@ -6,6 +6,8 @@ class EmptyClass(SQLObject):
     pass
 
 def test_empty():
+    if not supports('emptyTable'):
+        return
     setupClass(EmptyClass)
     e1 = EmptyClass()
     e2 = EmptyClass()

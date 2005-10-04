@@ -9,7 +9,7 @@ class SOStringID(SQLObject):
 
     class sqlmeta(sqlmeta):
         table = 'so_string_id'
-    _idType = str
+        idType = str
     val = StringCol(alternateID=True)
 
     mysqlCreate = """
@@ -40,6 +40,13 @@ class SOStringID(SQLObject):
     )
     """
 
+    mssqlCreate = """
+    CREATE TABLE so_string_id (
+      id VARCHAR(50) PRIMARY KEY,
+      val varchar(4000)
+    )
+    """
+
     sqliteCreate = postgresCreate
 
     mysqlDrop = """
@@ -52,7 +59,7 @@ class SOStringID(SQLObject):
 
     sqliteDrop = postgresDrop
     firebirdDrop = postgresDrop
-
+    mssqlDrop = postgresDrop
 
 def test_stringID():
     setupClass(SOStringID)

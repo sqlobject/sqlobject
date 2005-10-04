@@ -110,7 +110,7 @@ def StringLikeConverter(value, db):
     if db in ('mysql', 'postgres'):
         for orig, repl in sqlStringReplace:
             value = value.replace(orig, repl)
-    elif db in ('sqlite', 'firebird', 'sybase', 'maxdb'):
+    elif db in ('sqlite', 'firebird', 'sybase', 'maxdb', 'mssql'):
         value = value.replace("'", "''")
     else:
         assert 0, "Database %s unknown" % db

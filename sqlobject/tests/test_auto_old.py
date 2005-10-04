@@ -112,6 +112,19 @@ class TestAuto:
     )
     """
 
+    mssqlCreate = """
+    CREATE TABLE old_auto_test (
+      auto_id int IDENTITY(1,1) primary key,
+      first_name VARCHAR(100),
+      last_name VARCHAR(200) NOT NULL,
+      age INT DEFAULT 0,
+      created VARCHAR(40) NOT NULL,
+      happy char(1) DEFAULT 'Y' NOT NULL,
+      long_field TEXT,
+      wannahavefun BIT default(0) NOT NULL
+    )
+    """
+
     mysqlDrop = """
     DROP TABLE IF EXISTS old_auto_test
     """
@@ -124,6 +137,9 @@ class TestAuto:
     DROP TABLE old_auto_test
     """
 
+    mssqlDrop = """
+    DROP TABLE old_auto_test
+    """
     def setup_method(self, meth):
         conn = getConnection()
         dbName = conn.dbName

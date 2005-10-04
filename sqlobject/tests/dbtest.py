@@ -34,10 +34,14 @@ and you can use it like::
 supportsMatrix = {
     '+restrictedEnum': 'postgres',
     '-transactions': 'mysql',
-    '-dropTableCascade': 'sybase',
+    '-dropTableCascade': 'sybase mssql',
     '-dynamicColumn': 'sqlite sybase',
     '-fromDatabase': 'sqlite sybase firebird',
-    '-expressionIndex': 'mysql sqlite firebird',
+    '-expressionIndex': 'mysql sqlite firebird mssql',
+    '-blobData': 'mssql',
+    '-decimalColumn': 'mssql',
+    '-emptyTable': 'mssql',
+    '-limitSelect' : 'mssql'
     }
 
 

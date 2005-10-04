@@ -106,7 +106,21 @@ class TestAuto:
       age INT DEFAULT 0,
       created VARCHAR(40) NOT NULL,
       happy char(1) DEFAULT 'Y' NOT NULL,
-      long_field TEXT
+      long_field TEXT,
+      wannahavefun BIT default(0) NOT NULL
+    )
+    """
+
+    mssqlCreate = """
+    CREATE TABLE auto_test (
+      auto_id int identity(1,1),
+      first_name VARCHAR(100),
+      last_name VARCHAR(200) NOT NULL,
+      age INT DEFAULT 0,
+      created VARCHAR(40) NOT NULL,
+      happy char(1) DEFAULT 'Y' NOT NULL,
+      long_field TEXT,
+      wannahavefun BIT default(0) NOT NULL
     )
     """
 
@@ -121,6 +135,8 @@ class TestAuto:
     sybaseDrop = """
     DROP TABLE auto_test
     """
+
+    mssqlDrop = sybaseDrop
 
     def setup_method(self, meth):
         conn = getConnection()

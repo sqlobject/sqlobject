@@ -34,6 +34,13 @@ class OldSOStringID(SQLObject):
     )
     """
 
+    mssqlCreate = """
+    CREATE TABLE so_string_id (
+      id VARCHAR(50) primary key,
+      val VARCHAR(50) NULL
+    )
+    """
+
     firebirdCreate = """
     CREATE TABLE so_string_id (
       id VARCHAR(50) NOT NULL PRIMARY KEY,
@@ -53,6 +60,7 @@ class OldSOStringID(SQLObject):
 
     sqliteDrop = postgresDrop
     firebirdDrop = postgresDrop
+    mssqlDrop = postgresDrop
 
 
 def test_stringID():
