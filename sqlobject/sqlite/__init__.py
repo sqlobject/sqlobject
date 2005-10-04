@@ -6,9 +6,12 @@ def builder():
 
 def isSupported():
     try:
-        import sqlite
+        from pysqlite2 import dbapi2 as sqlite
     except ImportError:
-        return False
+        try:
+            import sqlite
+        except ImportError:
+            return False
     return True
 
 registerConnection(['sqlite'], builder, isSupported)
