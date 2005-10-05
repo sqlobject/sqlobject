@@ -8,7 +8,8 @@ except ImportError:
     from distutils.core import setup
 
 subpackages = ['firebird', 'inheritance', 'mysql', 'postgres',
-               'sqlite', 'sybase', 'maxdb', 'util', 'manager']
+               'sqlite', 'sybase', 'maxdb', 'util', 'manager',
+               'mssql']
 
 import sys
 # patch distutils if it can't cope with the "classifiers" keyword
