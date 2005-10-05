@@ -7,6 +7,20 @@ News
 
 .. _start:
 
+SQLObject 0.8.0
+===============
+
+Features & Interface
+--------------------
+
+* Added support for MSSQL_.
+
+.. _MSSQL: SQLObject.html#ms-sql-server
+
+* It is now possible to create tables that reference each other.
+  Constraints (in the DBMSes that support constraints) are added after the
+  tables have been created.
+
 SQLObject 0.7.0
 ===============
 
