@@ -513,17 +513,34 @@ class DBAPI(DBConnection):
         assert 0, 'Implement in subclasses'
 
     def createTable(self, soClass):
-        self.query(self.createTableSQL(soClass))
+        createSql, constraints = self.createTableSQL(soClass)
+        self.query(createSql)
+
+        return constraints
+
+    def createReferenceConstraints(self, soClass):
+        refConstraints = [self.createReferenceConstraint(soClass, column) \
+                          for column in soClass.sqlmeta.columnList \
+                          if isinstance(column, col.SOForeignKey)]
+        refConstraintDefs = [constraint \
+                             for constraint in refConstraints \
+                             if constraint]
+        return refConstraintDefs
 
     def createTableSQL(self, soClass):
-        return ('CREATE TABLE %s (\n%s\n)' %
+        constraints = self.createReferenceConstraints(soClass)
+        createSql = ('CREATE TABLE %s (\n%s\n)' %
                 (soClass.sqlmeta.table, self.createColumns(soClass)))
+        return createSql, constraints
 
     def createColumns(self, soClass):
         columnDefs = [self.createIDColumn(soClass)] \
                      + [self.createColumn(soClass, col)
                         for col in soClass.sqlmeta.columnList]
         return ",\n".join(["    %s" % c for c in columnDefs])
+
+    def createReferenceConstraint(self, soClass, col):
+        assert 0, "Implement in subclasses"
 
     def createColumn(self, soClass, col):
         assert 0, "Implement in subclasses"

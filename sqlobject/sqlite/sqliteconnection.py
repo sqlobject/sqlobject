@@ -116,6 +116,9 @@ class SQLiteConnection(DBAPI):
     def createColumn(self, soClass, col):
         return col.sqliteCreateSQL()
 
+    def createReferenceConstraint(self, soClass, col):
+        return None
+
     def createIDColumn(self, soClass):
         return '%s INTEGER PRIMARY KEY' % soClass.sqlmeta.idName
 

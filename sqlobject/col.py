@@ -730,6 +730,10 @@ class SOForeignKey(SOKeyCol):
 
     def postgresCreateSQL(self):
         sql = SOKeyCol.postgresCreateSQL(self)
+        return sql
+
+    def postgresCreateReferenceConstraint(self):
+        sTName = self.soClass.sqlmeta.table
         other = findClass(self.foreignKey, self.soClass.sqlmeta.registry)
         tName = other.sqlmeta.table
         idName = other.sqlmeta.idName
@@ -742,16 +746,16 @@ class SOForeignKey(SOKeyCol):
                 action = 'ON DELETE RESTRICT'
         else:
             action = ''
-        constraint = ('CONSTRAINT %(colName)s_exists '
+        constraint = ('ALTER TABLE %(sTName)s ADD CONSTRAINT %(colName)s_exists '
                       'FOREIGN KEY (%(colName)s) '
                       'REFERENCES %(tName)s (%(idName)s) '
                       '%(action)s' %
                       {'tName': tName,
                        'colName': self.dbName,
                        'idName': idName,
-                       'action': action})
-        sql = ', '.join([sql, constraint])
-        return sql
+                       'action': action,
+                       'sTName': sTName})
+        return constraint
 
     def sybaseCreateSQL(self):
         sql = SOKeyCol.sybaseCreateSQL(self)

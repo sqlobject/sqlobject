@@ -137,7 +137,7 @@ class InstalledTestDatabase(sqlobject.SQLObject):
                 sql = instance.createSQL
             else:
                 sql = None
-            newSQL = soClass.createTableSQL()
+            newSQL, constraints = soClass.createTableSQL()
             if sql != newSQL:
                 if sql is not None:
                     instance.destroySelf()
@@ -164,7 +164,7 @@ class InstalledTestDatabase(sqlobject.SQLObject):
         if sql:
             soClass._connection.query(sql)
         else:
-            sql = soClass.createTableSQL()
+            sql, constraints = soClass.createTableSQL()
             soClass.createTable()
         cls(tableName=soClass.sqlmeta.table,
             createSQL=sql,

@@ -1305,24 +1305,25 @@ class SQLObject(object):
         conn = connection or cls._connection
         if ifNotExists and conn.tableExists(cls.sqlmeta.table):
             return
-        conn.createTable(cls)
+        constraints = conn.createTable(cls)
         if createJoinTables:
             cls.createJoinTables(ifNotExists=ifNotExists,
                                  connection=conn)
         if createIndexes:
             cls.createIndexes(ifNotExists=ifNotExists,
                               connection=conn)
+        return constraints
     createTable = classmethod(createTable)
 
     def createTableSQL(cls, createJoinTables=True, connection=None,
                        createIndexes=True):
         conn = connection or cls._connection
-        sql = conn.createTableSQL(cls)
+        sql, constraints = conn.createTableSQL(cls)
         if createJoinTables:
             sql += '\n' + cls.createJoinTablesSQL(connection=conn)
         if createIndexes:
             sql += '\n' + cls.createIndexesSQL(connection=conn)
-        return sql
+        return sql, constraints
     createTableSQL = classmethod(createTableSQL)
 
     def createJoinTables(cls, ifNotExists=False, connection=None):

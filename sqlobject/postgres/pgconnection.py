@@ -138,6 +138,9 @@ class PostgresConnection(DBAPI):
     def createColumn(self, soClass, col):
         return col.postgresCreateSQL()
 
+    def createReferenceConstraint(self, soClass, col):
+        return col.postgresCreateReferenceConstraint()
+
     def createIndexSQL(self, soClass, index):
         return index.postgresCreateIndexSQL(soClass)
 

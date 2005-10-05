@@ -502,11 +502,20 @@ class CommandSQL(Command):
 
     def command(self):
         classes = self.classes()
+        allConstraints = []
         for cls in classes:
             if self.options.verbose >= 1:
                 print '-- %s from %s' % (
                     cls.__name__, cls.__module__)
-            print cls.createTableSQL().strip() + ';\n'
+            createSql, constraints = cls.createTableSQL()
+            print createSql.strip() + ';\n'
+            allConstraints.append(constraints)
+        for constraints in allConstraints:
+            if constraints:
+                for constraint in constraints:
+                    if constraint:
+                        print constraint.strip() + ';\n'
+        
 
 class CommandList(Command):
 
@@ -540,6 +549,7 @@ class CommandCreate(Command):
         created = 0
         existing = 0
         dbs_created = []
+        constraints = {}
         for soClass in self.classes(require_some=True):
             if (self.options.create_db
                 and soClass._connection not in dbs_created):
@@ -548,6 +558,8 @@ class CommandCreate(Command):
                 else:
                     print '(simulating; cannot create database)'
                 dbs_created.append(soClass._connection)
+            if soClass._connection not in constraints.keys():
+                constraints[soClass._connection] = []
             exists = soClass._connection.tableExists(soClass.sqlmeta.table)
             if v >= 1:
                 if exists:
@@ -562,12 +574,22 @@ class CommandCreate(Command):
                 if self.options.interactive:
                     if self.ask('Create %s' % soClass.__name__):
                         created += 1
-                        soClass.createTable()
+                        tableConstraints = soClass.createTable()
+                        if tableConstraints:
+                            constraints[soClass._connection].append(tableConstraints)
+                          
                     else:
                         print 'Cancelled'
                 else:
                     created += 1
-                    soClass.createTable()
+                    tableConstraints = soClass.createTable()
+                    if tableConstraints:
+                        constraints[soClass._connection].append(tableConstraints)
+        for connection in constraints.keys():
+            for constraintList in constraints[connection]:
+                for constraint in constraintList:
+                    if constraint:
+                        connection.query(constraint)
         if v >= 1:
             print '%i tables created (%i already exist)' % (
                 created, existing)
