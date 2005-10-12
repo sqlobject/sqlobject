@@ -149,7 +149,7 @@ available via subversion at http://codespeak.net/svn/py/dist.  Read
 its `getting started`_ document for more.
 
 .. __: http://codespeak.net/py/current/doc/test.html
-.. _getting started: http://codespeak.net/py/current/doc/getting_started.html
+.. _getting started: http://codespeak.net/py/current/doc/getting-started.html
 
 To actually run the test, you have to give it a database to connect
 to.  You do this with the ``TESTDB`` environmental variable (right now
