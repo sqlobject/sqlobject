@@ -91,7 +91,13 @@ class SelectResults(object):
                               self.clauseTables, **self.ops)
 
     def filter(self, filter_clause):
-        return self.newClause(sqlbuilder.AND(self.clause, filter_clause))
+        if filter_clause is None:
+            # None doesn't filter anything, it's just a no-op:
+            return self
+        clause = self.clause
+        if isinstance(clause, (str, unicode)):
+            clause = sqlbuilder.SQLConstant('(%s)' % self.clause)
+        return self.newClause(sqlbuilder.AND(clause, filter_clause))
 
     def __getitem__(self, value):
         if type(value) is type(slice(1)):
