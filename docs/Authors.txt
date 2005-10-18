@@ -18,4 +18,5 @@ Contributions have been made by:
 * Yaroslav Samchuk <yarcat at ank-sia.com>
 * Runar Petursson <grunar at gmail.com>
 * J Paulo Fernandes Farias <jpaulofarias at gmail.com>
+* Shahms King <shahms at shahms.com>
 * Oleg Broytmann <phd@phd.pp.ru>

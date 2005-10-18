@@ -1025,11 +1025,14 @@ different types of columns, when SQLObject creates your tables.
 `CurrencyCol`:
     Equivalent to ``DecimalCol(size=10, precision=2)``.
 
+`DateTimeCol`:
+    A date and time (usually returned as an datetime or mxDateTime object).
+
 `DateCol`:
     A date (usually returned as an datetime or mxDateTime object).
 
-`DateTimeCol`:
-    A date and time (usually returned as an datetime or mxDateTime object).
+`TimeCol`:
+    A time (usually returned as an datetime or mxDateTime object).
 
 `DecimalCol`:
     Base-10, precise number.  Uses the keyword arguments `size` for
@@ -1535,6 +1538,8 @@ From `sqlobject.col`:
 * `ForeignKey`
 * `EnumCol`
 * `DateTimeCol`
+* `DateCol`
+* `TimeCol`
 * `DecimalCol`
 * `CurrencyCol`
 

@@ -21,6 +21,8 @@ Features & Interface
   Constraints (in the DBMSes that support constraints) are added after the
   tables have been created.
 
+* Added ``TimeCol``.
+
 SQLObject 0.7.0
 ===============
 
