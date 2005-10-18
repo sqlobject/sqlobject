@@ -43,10 +43,15 @@ if mxdatetime_available:
     col.default_datetime_implementation = MXDATETIME_IMPLEMENTATION
     from mx.DateTime import now, Time
 
+    dateFormat = None # use default
+    if getConnection().dbName == "sqlite":
+        from sqlobject.sqlite.sqliteconnection import using_sqlite2
+        if using_sqlite2: # PySQLite2 returns full date/time for a date
+            dateFormat = "%Y-%m-%d %H:%M:%S"
+
     class DateTime2(SQLObject):
         col1 = DateTimeCol()
-        col2 = DateCol(dateFormat="%Y-%m-%d %H:%M:%S")
-        # mxDateTime does not have a separate date type
+        col2 = DateCol(dateFormat=dateFormat)
         col3 = TimeCol()
 
     def test_mxDateTime():
