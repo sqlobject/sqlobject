@@ -60,6 +60,7 @@ MXDATETIME_IMPLEMENTATION = "mxDateTime"
 
 if mxdatetime_available:
     DateTimeType = type(DateTime.now())
+    TimeType = type(DateTime.Time())
 
 if datetime_available:
     default_datetime_implementation = DATETIME_IMPLEMENTATION
@@ -333,7 +334,7 @@ class SOCol(object):
 
     def mssqlCreateSQL(self):
         return ' '.join([self.dbName, self._mssqlType()] + self._extraSQL())
-        
+
     def firebirdCreateSQL(self):
         # Ian Sparks pointed out that fb is picky about the order
         # of the NOT NULL clause in a create statement.  So, we handle
@@ -701,7 +702,7 @@ class SOKeyCol(SOCol):
 
     def _sybaseType(self):
         return 'NUMERIC(18,0) NULL'
-    
+
     def _mssqlType(self):
         return 'INT NULL'
 
@@ -870,27 +871,33 @@ if datetime_available:
         def to_python(self, value, state):
             if value is None:
                 return None
-            if isinstance(value, (datetime.date, datetime.datetime, sqlbuilder.SQLExpression)):
+            if isinstance(value, (datetime.datetime, datetime.date, datetime.time, sqlbuilder.SQLExpression)):
                 return value
-            if mxdatetime_available and isinstance(value, DateTimeType):
-                # convert mxDateTime instance to datetime
-                if (self.format.find("%H") >= 0) or (self.format.find("%T")) >= 0:
-                    return datetime.datetime(value.year, value.month, value.day,
-                        value.hour, value.minute, int(value.second))
-                else:
-                    return datetime.date(value.year, value.month, value.day)
+            if mxdatetime_available:
+                if isinstance(value, DateTimeType):
+                    # convert mxDateTime instance to datetime
+                    if (self.format.find("%H") >= 0) or (self.format.find("%T")) >= 0:
+                        return datetime.datetime(value.year, value.month, value.day,
+                            value.hour, value.minute, int(value.second))
+                    else:
+                        return datetime.date(value.year, value.month, value.day)
+                elif isinstance(value, TimeType):
+                    # convert mxTime instance to time
+                    if self.format.find("%d") >= 0:
+                        return datetime.timedelta(seconds=value.seconds)
+                    else:
+                        return datetime.time(value.hour, value.minute, int(value.second))
             try:
                 stime = time.strptime(value, self.format)
             except:
                 raise validators.Invalid("expected an date/time string of the '%s' format in the DateTimeCol '%s', got %s %r instead" % \
                     (self.format, self.name, type(value), value), value, state)
-            secs = time.mktime(stime)
-            return datetime.datetime.fromtimestamp(secs)
+            return datetime.datetime(*stime[:7])
 
         def from_python(self, value, state):
             if value is None:
                 return None
-            if isinstance(value, (datetime.date, datetime.datetime, sqlbuilder.SQLExpression)):
+            if isinstance(value, (datetime.datetime, datetime.date, datetime.time, sqlbuilder.SQLExpression)):
                 return value
             if hasattr(value, "strftime"):
                 return value.strftime(self.format)
@@ -902,7 +909,7 @@ if mxdatetime_available:
         def to_python(self, value, state):
             if value is None:
                 return None
-            if isinstance(value, (DateTimeType, sqlbuilder.SQLExpression)):
+            if isinstance(value, (DateTimeType, TimeType, sqlbuilder.SQLExpression)):
                 return value
             if datetime_available: # convert datetime instance to mxDateTime
                 if isinstance(value, datetime.datetime):
@@ -910,6 +917,8 @@ if mxdatetime_available:
                         value.hour, value.minute, value.second)
                 elif isinstance(value, datetime.date):
                     return DateTime.Date(value.year, value.month, value.day)
+                elif isinstance(value, datetime.time):
+                    return DateTime.Time(value.hour, value.minute, value.second)
             try:
                 stime = time.strptime(value, self.format)
             except:
@@ -920,7 +929,7 @@ if mxdatetime_available:
         def from_python(self, value, state):
             if value is None:
                 return None
-            if isinstance(value, (DateTimeType, sqlbuilder.SQLExpression)):
+            if isinstance(value, (DateTimeType, TimeType, sqlbuilder.SQLExpression)):
                 return value
             if hasattr(value, "strftime"):
                 return value.strftime(self.format)
@@ -984,9 +993,11 @@ class DateTimeCol(Col):
 if datetime_available:
     class DateValidator(DateTimeValidator):
         def to_python(self, value, state):
+            if isinstance(value, datetime.date):
+                return value
             value = super(DateValidator, self).to_python(value, state)
             if isinstance(value, datetime.datetime):
-                value = datetime.date(value.year, value.month, value.day)
+                value = value.date()
             return value
 
         from_python = to_python
@@ -1018,7 +1029,7 @@ class SODateCol(SOCol):
 
     def _sybaseType(self):
         return self._postgresType()
-    
+
     def _mssqlType(self):
         """
         SQL Server doesn't have  a DATE data type, to emulate we use a vc(10)
@@ -1036,6 +1047,57 @@ class SODateCol(SOCol):
 
 class DateCol(Col):
     baseClass = SODateCol
+
+
+if datetime_available:
+    class TimeValidator(DateTimeValidator):
+        def to_python(self, value, state):
+            if isinstance(value, datetime.time):
+                return value
+            value = super(TimeValidator, self).to_python(value, state)
+            if isinstance(value, datetime.datetime):
+                value = value.time()
+            return value
+
+class SOTimeCol(SOCol):
+    timeFormat = '%H:%M:%S'
+
+    def __init__(self, **kw):
+        timeFormat = popKey(kw, 'timeFormat')
+        if timeFormat:
+            self.timeFormat = timeFormat
+        SOCol.__init__(self, **kw)
+
+    def createValidators(self):
+        _validators = super(SOTimeCol, self).createValidators()
+        if default_datetime_implementation == DATETIME_IMPLEMENTATION:
+            validatorClass = TimeValidator
+        elif default_datetime_implementation == MXDATETIME_IMPLEMENTATION:
+            validatorClass = MXDateTimeValidator
+        if default_datetime_implementation:
+            _validators.insert(0, validatorClass(name=self.name, format=self.timeFormat))
+        return _validators
+
+    def _mysqlType(self):
+        return 'TIME'
+
+    def _postgresType(self):
+        return 'TIME'
+
+    def _sybaseType(self):
+        return 'TIME'
+
+    def _sqliteType(self):
+        return 'TIME'
+
+    def _firebirdType(self):
+        return 'TIME'
+
+    def _maxdbType(self):
+        return 'TIME'
+
+class TimeCol(Col):
+    baseClass = SOTimeCol
 
 
 class SODecimalCol(SOCol):

@@ -3,15 +3,17 @@ import array
 try:
     import mx.DateTime.ISO
     origISOStr = mx.DateTime.ISO.strGMT
-    from mx.DateTime import DateTimeType
+    from mx.DateTime import DateTimeType, DateTimeDeltaType
 except ImportError:
     try:
         import DateTime.ISO
         origISOStr = DateTime.ISO.strGMT
-        from DateTime import DateTimeType
+        from DateTime import DateTimeType, DateTimeDeltaType
     except ImportError:
         origISOStr = None
         DateTimeType = None
+        DateTimeDeltaType = None
+
 import time
 try:
     import datetime
@@ -162,6 +164,11 @@ if DateTimeType:
         return "'%s'" % isoStr(value)
 
     registerConverter(DateTimeType, DateTimeConverter)
+
+    def TimeConverter(value, db):
+        return "'%s'" % value.strftime("%T")
+
+    registerConverter(DateTimeDeltaType, TimeConverter)
 
 def NoneConverter(value, db):
     return "NULL"

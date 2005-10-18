@@ -8,18 +8,18 @@ from sqlobject import col
 
 if datetime_available:
     col.default_datetime_implementation = DATETIME_IMPLEMENTATION
-    from datetime import date, datetime
-    now = datetime.now
+    from datetime import datetime, date, time
 
     class DateTime1(SQLObject):
         col1 = DateTimeCol()
         col2 = DateCol()
+        col3 = TimeCol()
 
     def test_dateTime():
         setupClass(DateTime1)
-        _now = now()
+        _now = datetime.now()
         _today = date.today()
-        dt1 = DateTime1(col1=_now, col2=_today)
+        dt1 = DateTime1(col1=_now, col2=_today, col3=_now.time())
 
         assert isinstance(dt1.col1, datetime)
         assert dt1.col1.year == _now.year
@@ -34,19 +34,25 @@ if datetime_available:
         assert dt1.col2.month == _today.month
         assert dt1.col2.day == _today.day
 
+        assert isinstance(dt1.col3, time)
+        assert dt1.col3.hour == _now.hour
+        assert dt1.col3.minute == _now.minute
+        assert dt1.col3.second == int(_now.second)
+
 if mxdatetime_available:
     col.default_datetime_implementation = MXDATETIME_IMPLEMENTATION
-    from mx.DateTime import now
+    from mx.DateTime import now, Time
 
     class DateTime2(SQLObject):
         col1 = DateTimeCol()
         col2 = DateCol(dateFormat="%Y-%m-%d %H:%M:%S")
         # mxDateTime does not have a separate date type
+        col3 = TimeCol()
 
     def test_mxDateTime():
         setupClass(DateTime2)
         _now = now()
-        dt2 = DateTime2(col1=_now, col2=_now)
+        dt2 = DateTime2(col1=_now, col2=_now, col3=Time(_now.hour, _now.minute, int(_now.second)))
 
         assert isinstance(dt2.col1, col.DateTimeType)
         assert dt2.col1.year == _now.year
@@ -63,3 +69,8 @@ if mxdatetime_available:
         assert dt2.col1.hour == _now.hour
         assert dt2.col1.minute == _now.minute
         assert dt2.col1.second == int(_now.second)
+
+        assert isinstance(dt2.col3, (col.DateTimeType, col.TimeType))
+        assert dt2.col3.hour == _now.hour
+        assert dt2.col3.minute == _now.minute
+        assert dt2.col3.second == int(_now.second)
