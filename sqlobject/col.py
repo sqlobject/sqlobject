@@ -566,15 +566,15 @@ class IntValidator(validators.Validator):
             except OverflowError: # for Python 2.2
                 return long(value)
         except:
-            raise validators.Invalid("expected an int in the IntCol '%s', got %s instead" % \
-                (self.name, type(value)), value, state)
+            raise validators.Invalid("expected an int in the IntCol '%s', got %s %r instead" % \
+                (self.name, type(value), value), value, state)
 
     def from_python(self, value, state):
         if value is None:
             return None
         if not isinstance(value, (int, long, sqlbuilder.SQLExpression)):
-            raise validators.Invalid("expected an int in the IntCol '%s', got %s instead" % \
-                (self.name, type(value)), value, state)
+            raise validators.Invalid("expected an int in the IntCol '%s', got %s %r instead" % \
+                (self.name, type(value), value), value, state)
         return value
 
 class SOIntCol(SOCol):
@@ -654,15 +654,15 @@ class FloatValidator(validators.Validator):
         try:
             return float(value)
         except:
-            raise validators.Invalid("expected a float in the FloatCol '%s', got %s instead" % \
-                (self.name, type(value)), value, state)
+            raise validators.Invalid("expected a float in the FloatCol '%s', got %s %r instead" % \
+                (self.name, type(value), value), value, state)
 
     def from_python(self, value, state):
         if value is None:
             return None
         if not isinstance(value, (int, long, float, sqlbuilder.SQLExpression)):
-            raise validators.Invalid("expected a float in the FloatCol '%s', got %s instead" % \
-                (self.name, type(value)), value, state)
+            raise validators.Invalid("expected a float in the FloatCol '%s', got %s %r instead" % \
+                (self.name, type(value), value), value, state)
         return value
 
 class SOFloatCol(SOCol):
@@ -882,8 +882,8 @@ if datetime_available:
             try:
                 stime = time.strptime(value, self.format)
             except:
-                raise validators.Invalid("expected an date/time string of the '%s' format in the DateTimeCol '%s', got %s instead" % \
-                    (self.format, self.name, type(value)), value, state)
+                raise validators.Invalid("expected an date/time string of the '%s' format in the DateTimeCol '%s', got %s %r instead" % \
+                    (self.format, self.name, type(value), value), value, state)
             secs = time.mktime(stime)
             return datetime.datetime.fromtimestamp(secs)
 
@@ -894,8 +894,8 @@ if datetime_available:
                 return value
             if hasattr(value, "strftime"):
                 return value.strftime(self.format)
-            raise validators.Invalid("expected a datetime in the DateTimeCol '%s', got %s instead" % \
-                (self.name, type(value)), value, state)
+            raise validators.Invalid("expected a datetime in the DateTimeCol '%s', got %s %r instead" % \
+                (self.name, type(value), value), value, state)
 
 if mxdatetime_available:
     class MXDateTimeValidator(validators.DateValidator):
@@ -913,8 +913,8 @@ if mxdatetime_available:
             try:
                 stime = time.strptime(value, self.format)
             except:
-                raise validators.Invalid("expected an date/time string of the '%s' format in the DateTimeCol '%s', got %s instead" % \
-                    (self.format, self.name, type(value)), value, state)
+                raise validators.Invalid("expected an date/time string of the '%s' format in the DateTimeCol '%s', got %s %r instead" % \
+                    (self.format, self.name, type(value), value), value, state)
             return DateTime.mktime(stime)
 
         def from_python(self, value, state):
@@ -924,8 +924,8 @@ if mxdatetime_available:
                 return value
             if hasattr(value, "strftime"):
                 return value.strftime(self.format)
-            raise validators.Invalid("expected a mxDateTime in the DateTimeCol '%s', got %s instead" % \
-                (self.name, type(value)), value, state)
+            raise validators.Invalid("expected a mxDateTime in the DateTimeCol '%s', got %s %r instead" % \
+                (self.name, type(value), value), value, state)
 
 class SODateTimeCol(SOCol):
     datetimeFormat = '%Y-%m-%d %H:%M:%S'
@@ -1091,8 +1091,8 @@ class BinaryValidator(validators.Validator):
             if isinstance(value, array_type): # MySQL
                 return value.tostring()
             return str(value) # buffer => string
-        raise validators.Invalid("expected a string in the BLOBCol '%s', got %s instead" % \
-            (self.name, type(value)), value, state)
+        raise validators.Invalid("expected a string in the BLOBCol '%s', got %s %r instead" % \
+            (self.name, type(value), value), value, state)
 
     def from_python(self, value, state):
         if value is None:
@@ -1144,8 +1144,8 @@ class PickleValidator(BinaryValidator):
             value = value.encode("ascii")
         if isinstance(value, str):
             return pickle.loads(value)
-        raise validators.Invalid("expected a pickle string in the PickleCol '%s', got %s instead" % \
-            (self.name, type(value)), value, state)
+        raise validators.Invalid("expected a pickle string in the PickleCol '%s', got %s %r instead" % \
+            (self.name, type(value), value), value, state)
 
     def from_python(self, value, state):
         if value is None:
