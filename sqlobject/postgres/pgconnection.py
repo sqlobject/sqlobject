@@ -248,7 +248,7 @@ class PostgresConnection(DBAPI):
     def guessClass(self, t):
         if t.count('int'):
             return col.IntCol, {}
-        elif t.count('varying'):
+        elif t.count('varying') or t.count('varchar'):
             if '(' in t:
                 return col.StringCol, {'length': int(t[t.index('(')+1:-1])}
             else: # varchar without length in Postgres means any length
@@ -256,10 +256,16 @@ class PostgresConnection(DBAPI):
         elif t.startswith('character('):
             return col.StringCol, {'length': int(t[t.index('(')+1:-1]),
                                    'varchar': False}
+        elif t.count('float') or t.count('real') or t.count('double'):
+            return col.FloatCol, {}
         elif t == 'text':
             return col.StringCol, {}
+        elif t.startswith('timestamp'):
+            return col.DateTimeCol, {}
         elif t.startswith('datetime'):
             return col.DateTimeCol, {}
+        elif t.startswith('date'):
+            return col.DateCol, {}
         elif t.startswith('bool'):
             return col.BoolCol, {}
         elif t.startswith('bytea'):
