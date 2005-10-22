@@ -25,7 +25,7 @@ First install `FormEncode <http://formencode.org>`_::
 
 Then do the same for SQLObject::
 
-    $ svn co http://svn.colorstudy.com/trunk/SQLObject SQLObject
+    $ svn co http://svn.colorstudy.com/SQLObject/trunk SQLObject
     $ cd SQLObject
     $ sudo python setup.py develop
 
