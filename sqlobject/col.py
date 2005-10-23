@@ -758,6 +758,31 @@ class SOForeignKey(SOKeyCol):
                        'sTName': sTName})
         return constraint
 
+    def mysqlCreateSQL(self):
+        sql = SOKeyCol.mysqlCreateSQL(self)
+        other = findClass(self.foreignKey, self.soClass.sqlmeta.registry)
+        tName = other.sqlmeta.table
+        idName = other.sqlmeta.idName
+        if self.cascade is not None:
+            if self.cascade == 'null':
+                action = 'ON DELETE SET NULL'
+            elif self.cascade:
+                action = 'ON DELETE CASCADE'
+            else:
+                action = 'ON DELETE RESTRICT'
+        else:
+            action = ''
+        constraint = ('CONSTRAINT %(colName)s_exists '
+                      'FOREIGN KEY (%(colName)s) '
+                      'REFERENCES %(tName)s (%(idName)s) '
+                      '%(action)s' %
+                      {'tName': tName,
+                       'colName': self.dbName,
+                       'idName': idName,
+                       'action': action})
+        sql = ', '.join([sql, constraint])
+        return sql
+
     def sybaseCreateSQL(self):
         sql = SOKeyCol.sybaseCreateSQL(self)
         other = findClass(self.foreignKey)
