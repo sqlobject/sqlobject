@@ -129,7 +129,8 @@ class MSSQLConnection(DBAPI):
         return col.mssqlCreateSQL()
 
     def createIDColumn(self, soClass):
-        return '%s INT IDENTITY UNIQUE' % soClass.sqlmeta.idName
+        key_type = {int: "INT", str: "TEXT"}[soClass.sqlmeta.idType]
+        return '%s %s IDENTITY UNIQUE' % (soClass.sqlmeta.idName, key_type)
 
     def createIndexSQL(self, soClass, index):
         return index.mssqlCreateIndexSQL(soClass)

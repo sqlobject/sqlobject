@@ -102,7 +102,8 @@ class SybaseConnection(DBAPI):
         return col.sybaseCreateSQL()
 
     def createIDColumn(self, soClass):
-        return '%s NUMERIC(18,0) IDENTITY UNIQUE' % soClass.sqlmeta.idName
+        key_type = {int: "NUMERIC(18,0)", str: "TEXT"}[soClass.sqlmeta.idType]
+        return '%s %s IDENTITY UNIQUE' % (soClass.sqlmeta.idName, key_type)
 
     def createIndexSQL(self, soClass, index):
         return index.sybaseCreateIndexSQL(soClass)

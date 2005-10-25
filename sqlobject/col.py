@@ -687,30 +687,21 @@ class FloatCol(Col):
 
 
 class SOKeyCol(SOCol):
+    key_type = {int: "INT", str: "TEXT"}
 
     # 3-03 @@: this should have a simplified constructor
     # Should provide foreign key information for other DBs.
 
-    def _mysqlType(self):
-        return 'INT'
-
-    def _sqliteType(self):
-        return 'INT'
-
-    def _postgresType(self):
-        return 'INT'
+    def _sqlType(self):
+        return self.key_type[self.soClass.sqlmeta.idType]
 
     def _sybaseType(self):
-        return 'NUMERIC(18,0) NULL'
+        key_type = {int: "NUMERIC(18,0) NULL", str: "TEXT"}
+        return key_type[self.soClass.sqlmeta.idType]
 
     def _mssqlType(self):
-        return 'INT NULL'
-
-    def _firebirdType(self):
-        return 'INT'
-
-    def _maxdbType(self):
-        return 'INT'
+        key_type = {int: "INT NULL", str: "TEXT"}
+        return key_type[self.soClass.sqlmeta.idType]
 
 class KeyCol(Col):
 

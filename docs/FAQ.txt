@@ -279,13 +279,12 @@ latitude/longitude columns.
 Non-Integer IDs
 ---------------
 
-Yes, you can use non-integer IDs, but only in CVS_ now.
+Yes, you can use non-integer IDs.
 
-.. _CVS: http://sqlobject.org/#anonymous-cvs
-
-If you use non-integer IDs, you will not be able to use automatic
-``CREATE TABLE`` generation (i.e., ``createTable``).  You also will
-have to give your own ID values when creating an object, like::
+If you use non-integer IDs, you will not be able to use automatic ``CREATE
+TABLE`` generation (i.e., ``createTable``); SQLObject can create tables
+with int or str IDs.  You also will have to give your own ID values when
+creating an object, like::
 
     color = Something(id="blue", r=0, b=100, g=0)
 
@@ -308,7 +307,7 @@ Instead of ``str()`` you may use ``int()`` or whatever else you want.
 This will be resolved in a future version when ID column types can be
 declared like other columns.
 
-Additionally you can set _idType = str in you SQLObject class.
+Additionally you can set idType=str in you SQLObject class.
 
 
 Binary Values

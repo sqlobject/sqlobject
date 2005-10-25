@@ -99,6 +99,8 @@ class MySQLConnection(DBAPI):
         return index.mysqlCreateIndexSQL(soClass)
 
     def createIDColumn(self, soClass):
+        if soClass.sqlmeta.idType == str:
+            return '%s TEXT PRIMARY KEY' % soClass.sqlmeta.idName
         return '%s INT PRIMARY KEY AUTO_INCREMENT' % soClass.sqlmeta.idName
 
     def joinSQLType(self, join):

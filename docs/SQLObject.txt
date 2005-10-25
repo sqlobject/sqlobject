@@ -1396,11 +1396,12 @@ column name.
 Non-Integer Keys
 ----------------
 
-While not strictly a legacy database issue, this fits into the
-category of "irregularities".  If you use non-integer keys, all
-primary key management is up to you.  You must create the table
-yourself, and when you create instances you must pass a ``id`` keyword
-argument into constructor (like ``Person(id='555-55-5555', ...)``).
+While not strictly a legacy database issue, this fits into the category of
+"irregularities".  If you use non-integer keys, all primary key management
+is up to you.  You must create the table yourself (SQLObject can create
+tables with int or str IDs), and when you create instances you must pass a
+``id`` keyword argument into constructor
+(like ``Person(id='555-55-5555', ...)``).
 
 DBConnection: Database Connections
 ==================================

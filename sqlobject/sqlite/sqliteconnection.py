@@ -120,7 +120,8 @@ class SQLiteConnection(DBAPI):
         return None
 
     def createIDColumn(self, soClass):
-        return '%s INTEGER PRIMARY KEY' % soClass.sqlmeta.idName
+        key_type = {int: "INTEGER", str: "TEXT"}[soClass.sqlmeta.idType]
+        return '%s %s PRIMARY KEY' % (soClass.sqlmeta.idName, key_type)
 
     def joinSQLType(self, join):
         return 'INT NOT NULL'

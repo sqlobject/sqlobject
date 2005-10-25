@@ -172,7 +172,8 @@ class MaxdbConnection(DBAPI):
         return col.maxdbCreateSQL()
 
     def createIDColumn(self, soClass):
-        return '%s INT PRIMARY KEY' % soClass.sqlmeta.idName
+        key_type = {int: "INT", str: "TEXT"}[soClass.sqlmeta.idType]
+        return '%s %s PRIMARY KEY' % (soClass.sqlmeta.idName, key_type)
 
     def createIndexSQL(self, soClass, index):
         return index.maxdbCreateIndexSQL(soClass)

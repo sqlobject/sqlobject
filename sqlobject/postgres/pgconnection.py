@@ -145,7 +145,8 @@ class PostgresConnection(DBAPI):
         return index.postgresCreateIndexSQL(soClass)
 
     def createIDColumn(self, soClass):
-        return '%s SERIAL PRIMARY KEY' % soClass.sqlmeta.idName
+        key_type = {int: "SERIAL", str: "TEXT"}[soClass.sqlmeta.idType]
+        return '%s %s PRIMARY KEY' % (soClass.sqlmeta.idName, key_type)
 
     def dropTable(self, tableName, cascade=False):
         if self.server_version[:3] <= "7.2":

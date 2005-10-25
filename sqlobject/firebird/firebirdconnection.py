@@ -131,7 +131,8 @@ class FirebirdConnection(DBAPI):
         return col.firebirdCreateSQL()
 
     def createIDColumn(self, soClass):
-        return '%s INT NOT NULL PRIMARY KEY' % soClass.sqlmeta.idName
+        key_type = {int: "INT", str: "TEXT"}[soClass.sqlmeta.idType]
+        return '%s %s NOT NULL PRIMARY KEY' % (soClass.sqlmeta.idName, key_type)
 
     def createIndexSQL(self, soClass, index):
         return index.firebirdCreateIndexSQL(soClass)
