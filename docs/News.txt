@@ -23,6 +23,12 @@ Features & Interface
 
 * Added ``TimeCol``.
 
+* ``RelatedJoin`` and ``SQLRelatedJoin`` objects have a
+  ``createRelatedTable`` keyword argument (default ``True``).  If
+  ``False``, then the related table won't be automatically created;
+  instead you must manually create it (e.g., with explicit SQLObject
+  classes for the joins).
+
 SQLObject 0.7.0
 ===============
 

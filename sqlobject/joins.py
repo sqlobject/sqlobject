@@ -154,9 +154,12 @@ class SORelatedJoin(SOMultipleJoin):
 
     def __init__(self,
                  otherColumn=None,
-                 intermediateTable=None, **kw):
+                 intermediateTable=None,
+                 createRelatedTable=True,
+                 **kw):
         self.intermediateTable = intermediateTable
         self.otherColumn = otherColumn
+        self.createRelatedTable = createRelatedTable
         SOMultipleJoin.__init__(self, **kw)
         classregistry.registry(
             self.soClass.sqlmeta.registry).addClassCallback(

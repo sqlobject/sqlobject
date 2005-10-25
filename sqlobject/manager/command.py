@@ -859,6 +859,12 @@ class CommandRecord(Command):
                               + '_' + dbName + '.sql')
             if sim:
                 continue
+            create, constraints = cls.createTableSQL()
+            if constraints:
+                constraints = '\n-- Constraints:\n%s\n' % (
+                    '\n'.join(constraints))
+            else:
+                constraints = ''
             files[fn] = ''.join([
                 '-- Exported definition from %s\n'
                 % time.strftime('%Y-%m-%dT%H:%M:%S'),
@@ -866,8 +872,9 @@ class CommandRecord(Command):
                 % (cls.__module__, cls.__name__),
                 '-- Database: %s\n'
                 % dbName,
-                cls.createTableSQL().strip(),
-                '\n'])
+                create.strip(),
+                '\n',
+                constraints])
         last_version_dir = self.find_last_version()
         if last_version_dir and not self.options.force_create:
             if v > 1:
