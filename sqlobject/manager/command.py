@@ -427,7 +427,7 @@ class Command(object):
         if not dist.has_metadata('sqlobject.txt'):
             if warn_no_sqlobject:
                 print 'No sqlobject.txt in %s egg info' % egg_spec
-            return {}
+            return None, {}
         result = {}
         for line in dist.get_metadata_lines('sqlobject.txt'):
             line = line.strip()
@@ -436,7 +436,7 @@ class Command(object):
             name, value = line.split('=', 1)
             name = name.strip().lower()
             if name in result:
-                print 'Warning: %s appears more than one in sqlobject.txt' % name
+                print 'Warning: %s appears more than once in sqlobject.txt' % name
             result[name.strip().lower()] = value.strip()
         return dist, result
 
