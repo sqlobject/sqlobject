@@ -254,6 +254,18 @@ class Isqlmeta(Interface):
         Adds the index to the class.
         """
 
+    def asDict():
+        """
+        Returns the SQLObject instance as a dictionary (column names
+        as keys, column values as values).
+
+        Use like::
+
+            ASQLObjectClass(a=1, b=2).asDict()
+
+        Which should return ``{'a': 1, 'b': 2}``.
+        """
+
 
 class ICol(Interface):
 

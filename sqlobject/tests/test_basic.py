@@ -275,3 +275,9 @@ def testForeignKeySetNull():
     assert dep1.other is None
     assert dep2.other is None
     assert dep3.other is obj2
+
+def testAsDict():
+    setupGetters(TestSO1)
+    bob = TestSO1.selectBy(name='bob')[0]
+    assert bob.sqlmeta.asDict() == {'passwd': 'tbq', 'name': 'bob'}
+    

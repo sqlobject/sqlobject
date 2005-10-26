@@ -562,6 +562,16 @@ class sqlmeta(object):
         cls.indexes.append(index)
     addIndex = classmethod(addIndex)
 
+    ########################################
+    ## Utility methods
+    ########################################
+
+    def asDict(self):
+        result = {}
+        for key in self.columns:
+            result[key] = getattr(self.instance, key)
+        return result
+
 sqlhub = dbconnection.ConnectionHub()
 
 class _sqlmeta_attr(object):
