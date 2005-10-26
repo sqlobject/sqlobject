@@ -264,6 +264,9 @@ class Isqlmeta(Interface):
             ASQLObjectClass(a=1, b=2).asDict()
 
         Which should return ``{'a': 1, 'b': 2}``.
+
+        Note: this is a *copy* of the object's columns; changing the
+        dictionary will not effect the object it was created from.
         """
 
 
