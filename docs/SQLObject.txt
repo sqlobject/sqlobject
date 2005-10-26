@@ -1668,6 +1668,15 @@ Available queries are IN(), NOTIN(), EXISTS(), NOTEXISTS(), SOME(), ANY()
 and ALL(). The last 3 are used with comparison operators, like this:
 "somevalue = ANY(Select(...))".
 
+Utilities
+---------
+
+Some useful utility functions are included with SQLObject.  For more
+information see their module docstrings.
+
+* `sqlobject.util.csvexport
+  <http://sqlobject.org/module-sqlobject.util.csvexport.html>`_
+
 SQLBuilder
 ----------
 
