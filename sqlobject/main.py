@@ -7,14 +7,16 @@ SQLObject
 SQLObject is a object-relational mapper.  See SQLObject.html or
 SQLObject.txt for more.
 
-Modified by
+Modified by:
 
-    Daniel Savard, Xsoli Inc <sqlobject xsoli.com> 7 Feb 2004
-    - Added support for simple table inheritance.
+* Daniel Savard, Xsoli Inc <sqlobject xsoli.com> 7 Feb 2004
+  Added support for simple table inheritance.
 
-    Oleg Broytmann, SIA "ANK" <phd@phd.pp.ru> 3 Feb 2005
-    - Split inheritance support into a number of separate modules and classes -
-      InheritableSQLObject at al.
+* Oleg Broytmann, SIA "ANK" <phd@phd.pp.ru> 3 Feb 2005
+  Split inheritance support into a number of separate modules and classes -
+  InheritableSQLObject at al.
+
+* And others...
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU Lesser General Public License as

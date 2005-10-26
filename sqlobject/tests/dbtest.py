@@ -211,14 +211,16 @@ class Dummy(object):
         
 def d(**kw):
     """
-    Because dict(**kw) doesn't work in Python 2.2, this is a
+    Because ``dict(**kw)`` doesn't work in Python 2.2, this is a
     replacement.
     """
     return kw
 
 def inserts(cls, data, schema=None):
     """
-    Creates a bunch of rows.  You can use it like::
+    Creates a bunch of rows.
+
+    You can use it like::
 
         inserts(Person, [{'fname': 'blah', 'lname': 'doe'}, ...])
 

@@ -1,16 +1,17 @@
 """
-Contributed by Edigram SAS,Paris  France
-Tel:01 44 77 94 00
+Contributed by Edigram SAS, Paris France Tel:01 44 77 94 00
 Ahmed MOHAMED ALI <ahmedmoali@yahoo.com> 27 April 2004
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
 
-connection creation sample 
-__connection__ = DBConnection.maxdbConnection(
-    host=hostname, database=dbname,
-    user=user_name, password=user_password,autoCommit=1,debug=1)
+This program is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+General Public License for more details.
+
+connection creation sample::
+
+    __connection__ = DBConnection.maxdbConnection(
+        host=hostname, database=dbname,
+        user=user_name, password=user_password,autoCommit=1,debug=1)
 """
 from sqlobject.dbconnection import DBAPI
 from sqlobject import col
