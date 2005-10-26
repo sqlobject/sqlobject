@@ -17,7 +17,7 @@ connectionShortcuts = {
     'postgres': 'postgres:///test',
     'postgresql': 'postgres:///test',
     'pygresql': 'pygresql://localhost/test',
-    'sqlite': 'sqlite:///%s/data/sqlite.data' % os.getcwd(),
+    'sqlite': 'sqlite:/:memory:',
     'sybase': 'sybase://test:test123@sybase/test?autoCommit=0',
     'firebird': 'firebird://sysdba:masterkey@localhost/var/lib/firebird/data/test.gdb',
     'mssql': 'mssql://sa:@127.0.0.1/test'
