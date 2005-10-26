@@ -3,7 +3,7 @@ SQLBuilder
 ``````````
 
 A number of variables from SQLBuilder are included with ``from
-SQLObject import *`` -- see the `relevant SQLObject documentation`_
+sqlobject import *`` -- see the `relevant SQLObject documentation`_
 for more.  Its functionality is also available through the special
 ``q`` attribute of `SQLObject` classes.
 
@@ -20,7 +20,7 @@ With SQLObject, you get a Magic Object by access the ``q`` attribute
 of a table class -- this gives you an object that represents the
 field.  Maybe explanations aren't as good.  Here's some examples::
 
-    >>> from SQLBuilder import *
+    >>> from sqlobject.sqlbuilder import *
     >>> person = table.person
     # person is now equivalent to the Person.q object from the SQLObject
     # documentation
@@ -43,7 +43,7 @@ the same precedence as multiplication.  So::
 
     # This isn't what you want:
     >> person.first_name == 'John' & person.last_name == 'Doe'
-    (person.first_name = ('John' AND person.last_name)) = 'Doe'
+    (person.first_name = ('John' AND person.last_name)) = 'Doe')
     # This is:
     >> (person.first_name == 'John') & (person.last_name == 'Doe')
     ((person.first_name = 'John') AND (person.last_name == 'Doe'))
