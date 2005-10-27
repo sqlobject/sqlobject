@@ -94,6 +94,18 @@ The ``create`` Command
 This finds the tables and creates them.  Any tables that exist are
 simply skipped.
 
+It also collects data from sqlmeta.createSQL and runs the queries 
+after table creation. createSQL can be a string with a single SQL 
+command, a list of SQL commands, or a dictionary with keys that are 
+dbNames and values that are either single SQL command string or a list 
+of SQL commands. An example follows:
+
+::
+    class MyTable(SQLObject):
+        class sqlmeta:
+            createSQL = {'postgres': ["ALTER TABLE my_table ADD CHECK(my_field != '');"]}
+        myField = StringCol()
+
 The ``sql`` Command
 -------------------
 
