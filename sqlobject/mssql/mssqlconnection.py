@@ -67,7 +67,7 @@ class MSSQLConnection(DBAPI):
        ON obj.id = col.id
        WHERE obj.name = '%s'
        and col.autoval is not null
-             
+
     """
     def _hasIdentity(self, conn, table):
         query = self.HAS_IDENTITY % table
@@ -95,7 +95,7 @@ class MSSQLConnection(DBAPI):
                     del values[i]
             except ValueError:
                 pass
-            
+
         if has_identity:
             if id is not None:
                 c.execute('SET IDENTITY_INSERT %s ON' % table)
@@ -156,11 +156,11 @@ class MSSQLConnection(DBAPI):
                     column.dbName))
 
     SHOW_COLUMNS = """
-        select 
-                name, 
-                length, 
-                (       select name 
-                        from systypes 
+        select
+                name,
+                length,
+                (       select name
+                        from systypes
                         where cast(xusertype as int)= cast(sc.xtype as int)
                 ) datatype,
                 isnullable,
@@ -170,13 +170,13 @@ class MSSQLConnection(DBAPI):
         from syscolumns sc
         LEFT OUTER JOIN syscomments m on sc.cdefault = m.id
                 AND m.colid = 1
-        where 
-                sc.id in (select id 
-                        from sysobjects 
+        where
+                sc.id in (select id
+                        from sysobjects
                 where name = '%s')
         order by
                 colorder"""
-    
+
     def columnsFromSchema(self, tableName, soClass):
         colData = self.queryAll(self.SHOW_COLUMNS
                                 % tableName)
@@ -189,7 +189,7 @@ class MSSQLConnection(DBAPI):
             kw['name'] = soClass.sqlmeta.style.dbColumnToPythonAttr(field)
             kw['notNone'] = not nullAllowed
             if (defaultText):
-                # Strip ( and ) 
+                # Strip ( and )
                 defaultText = defaultText[1:-1]
                 if defaultText[0] == "'":
                     defaultText = defaultText[1:-1]
