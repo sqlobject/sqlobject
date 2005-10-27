@@ -550,6 +550,7 @@ class CommandCreate(Command):
         existing = 0
         dbs_created = []
         constraints = {}
+        createSQLs = {}
         for soClass in self.classes(require_some=True):
             if (self.options.create_db
                 and soClass._connection not in dbs_created):
@@ -560,6 +561,8 @@ class CommandCreate(Command):
                 dbs_created.append(soClass._connection)
             if soClass._connection not in constraints.keys():
                 constraints[soClass._connection] = []
+            if soClass._connection not in createSQLs.keys():
+                createSQLs[soClass._connection] = []
             exists = soClass._connection.tableExists(soClass.sqlmeta.table)
             if v >= 1:
                 if exists:
@@ -577,7 +580,16 @@ class CommandCreate(Command):
                         tableConstraints = soClass.createTable()
                         if tableConstraints:
                             constraints[soClass._connection].append(tableConstraints)
-                          
+                        tableCreateSQLs = getattr(soClass.sqlmeta, 'createSQL', None)
+                        if tableCreateSQLs:
+                            assert isinstance(tableCreateSQLs,(str,list,dict)), (
+                                '%s.sqlmeta.createSQL must be a str, list or dict.' % 
+                                (soClass.__name__))
+                            if isinstance(tableCreateSQLs, dict):
+                                tableCreateSQLs = tableCreateSQLs.get(soClass._connection.dbName, [])
+                            if isinstance(tableCreateSQLs, str):
+                                tableCreateSQLs = [tableCreateSQLs]
+                            createSQLs[soClass._connection].append(tableCreateSQLs)
                     else:
                         print 'Cancelled'
                 else:
@@ -585,11 +597,26 @@ class CommandCreate(Command):
                     tableConstraints = soClass.createTable()
                     if tableConstraints:
                         constraints[soClass._connection].append(tableConstraints)
+                    tableCreateSQLs = getattr(soClass.sqlmeta, 'createSQL', None)
+                    if tableCreateSQLs:
+                        assert isinstance(tableCreateSQLs,(str,list,dict)), (
+                            '%s.sqlmeta.createSQL must be a str, list or dict.' % 
+                            (soClass.__name__))
+                        if isinstance(tableCreateSQLs, dict):
+                            tableCreateSQLs = tableCreateSQLs.get(soClass._connection.dbName, [])
+                        if isinstance(tableCreateSQLs, str):
+                            tableCreateSQLs = [tableCreateSQLs]
+                        createSQLs[soClass._connection].append(tableCreateSQLs)
         for connection in constraints.keys():
             for constraintList in constraints[connection]:
                 for constraint in constraintList:
                     if constraint:
                         connection.query(constraint)
+        for connection in createSQLs.keys():
+            for createSQLsList in createSQLs[connection]:
+                for createSQL in createSQLsList:
+                    if createSQL:
+                        connection.query(createSQL)
         if v >= 1:
             print '%i tables created (%i already exist)' % (
                 created, existing)
