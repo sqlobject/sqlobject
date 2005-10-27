@@ -29,6 +29,13 @@ Features & Interface
   instead you must manually create it (e.g., with explicit SQLObject
   classes for the joins).
 
+* Added ``createSQL`` as an option for sqlmeta. Here you can add related SQL
+  you want executed by sqlobject-admin create after table creation. createSQL
+  expects a string, list, or dictionary. If using a dictionary the key should
+  be a dbName value (ex. 'postgres') and the value should be a string or list.
+  Examples in sqlobject/tests/test_sqlobject_admin.py or at
+  <http://sqlobject.org/sqlobject-admin.html#the-create-command>
+
 SQLObject 0.7.0
 ===============
 
