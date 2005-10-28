@@ -16,14 +16,25 @@ class MSSQLConnection(DBAPI):
         if not sqlmodule:
             try:
                 import adodbapi as sqlmodule
-                self.dbconnection = sqlmodule.Connection
-                self.make_conn_str = lambda keys: \
-                ["Provider=SQLOLEDB;Data Source=%s;User Id=%s;Password=%s;Initial Catalog=%s" % (
-                        keys.host, keys.user, keys.password, keys.db)]
-            except:
+                self.dbconnection = sqlmodule.connect
+                # ADO uses unicode only (AFAIK)
+                self.usingUnicodeStrings = True
+                # MSDE does not allow SQL server login 
+                if "sspi" in kw and kw["sspi"]:
+                    self.make_conn_str = lambda keys: \
+                    ["Provider=SQLOLEDB;Data Source=%s;Initial Catalog=%s;Integrated Security=SSPI;Persist Security Info=False" % (
+                        keys.host, keys.db)]
+                    del kw["sspi"]
+                else:
+                    self.make_conn_str = lambda keys: \
+                    ["Provider=SQLOLEDB;Data Source=%s;User Id=%s;Password=%s;Initial Catalog=%s" % (
+                            keys.host, keys.user, keys.password, keys.db)]
+            except ImportError: # raise the exceptions other than ImportError for adodbapi absence
                 import pymssql as sqlmodule
                 self.dbconnection = sqlmodule.connect
                 sqlmodule.Binary = lambda st: str(st)
+                # don't know whether pymssql uses unicode
+                self.usingUnicodeStrings = False
                 self.make_conn_str = lambda keys:  \
                        ["", keys.user, keys.password, keys.host, keys.db]
         self.autoCommit=autoCommit
@@ -155,6 +166,8 @@ class MSSQLConnection(DBAPI):
                    (tableName,
                     column.dbName))
 
+    # precision and scale is gotten from column table so that we can create 
+    # decimal columns if needed
     SHOW_COLUMNS = """
         select
                 name,
@@ -163,6 +176,8 @@ class MSSQLConnection(DBAPI):
                         from systypes
                         where cast(xusertype as int)= cast(sc.xtype as int)
                 ) datatype,
+                prec,
+                scale,
                 isnullable,
                 cdefault,
                 m.text default_text,
@@ -181,11 +196,12 @@ class MSSQLConnection(DBAPI):
         colData = self.queryAll(self.SHOW_COLUMNS
                                 % tableName)
         results = []
-        for field, size, t, nullAllowed, default, defaultText, is_identity in colData:
+        for field, size, t, precision, scale, nullAllowed, default, defaultText, is_identity in colData:
             # Seems strange to skip the pk column?  What if it's not 'id'?
             if field == 'id':
                 continue
-            colClass, kw = self.guessClass(t, size)
+            # precision is needed for decimal columns
+            colClass, kw = self.guessClass(t, size, precision, scale)
             kw['name'] = soClass.sqlmeta.style.dbColumnToPythonAttr(field)
             kw['notNone'] = not nullAllowed
             if (defaultText):
@@ -213,21 +229,30 @@ class MSSQLConnection(DBAPI):
         if auto == 0:
             option = "OFF"
         c = conn.cursor()
-        c.execute("SET AUTOCOMMIT "+option)
+        c.execute("SET AUTOCOMMIT " + option)
         conn.setconnectoption(SQL.AUTOCOMMIT, option)
 
-    def guessClass(self, t, size):
+    # precision and scale is needed for decimal columns
+    def guessClass(self, t, size, precision, scale):
         """
             Here we take raw values coming out of syscolumns and map to SQLObject class types.
         """
         if t.startswith('int'):
             return col.IntCol, {}
         elif t.startswith('varchar'):
+            if self.usingUnicodeStrings:
+                return col.UnicodeCol, {'length': size}
             return col.StringCol, {'length': size}
         elif t.startswith('char'):
+            if self.usingUnicodeStrings:
+                return col.UnicodeCol, {'length': size,
+                                       'varchar': False}
             return col.StringCol, {'length': size,
                                    'varchar': False}
         elif t.startswith('datetime'):
             return col.DateTimeCol, {}
+        elif t.startswith('decimal'):
+            return col.DecimalCol, {'size': precision, # be careful for awkward naming
+                                   'precision': scale}
         else:
             return col.Col, {}

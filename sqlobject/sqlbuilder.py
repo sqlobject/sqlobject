@@ -72,11 +72,14 @@ True, False = (1==1), (0==1)
 import re, fnmatch
 import operator
 import threading
+import types
+
 from converters import sqlrepr, registerConverter, TRUE, FALSE
 
 safeSQLRE = re.compile(r'^[a-zA-Z_][a-zA-Z0-9_\.]*$')
 def sqlIdentifier(obj):
-    return type(obj) is type("") and not not safeSQLRE.search(obj.strip())
+    # some db drivers return unicode column names 
+    return isinstance(obj, types.StringTypes) and bool(safeSQLRE.search(obj.strip()))
 
 
 def execute(expr, executor):
