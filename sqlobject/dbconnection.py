@@ -548,7 +548,7 @@ class DBAPI(DBConnection):
             assert isinstance(tableCreateSQLs,list), (
                 'Unable to create a list from %s.sqlmeta.createSQL' % 
                 (soClass.__name__))
-            return tableCreateSQLs
+        return tableCreateSQLs or []
 
     def createTableSQL(self, soClass):
         constraints = self.createReferenceConstraints(soClass)
