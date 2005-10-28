@@ -1,7 +1,8 @@
-from sqlobject.dbconnection import DBAPI
-kinterbasdb = None
 import re
 import os
+from sqlobject.dbconnection import DBAPI
+from sqlobject import col
+kinterbasdb = None
 
 class FirebirdConnection(DBAPI):
 
