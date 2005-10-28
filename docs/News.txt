@@ -21,8 +21,6 @@ Features & Interface
   Constraints (in the DBMSes that support constraints) are added after the
   tables have been created.
 
-* Added ``TimeCol``.
-
 * ``RelatedJoin`` and ``SQLRelatedJoin`` objects have a
   ``createRelatedTable`` keyword argument (default ``True``).  If
   ``False``, then the related table won't be automatically created;
@@ -35,6 +33,15 @@ Features & Interface
   be a dbName value (ex. 'postgres') and the value should be a string or list.
   Examples in sqlobject/tests/test_sqlobject_admin.py or at
   <http://sqlobject.org/sqlobject-admin.html#the-create-command>
+
+SQLObject 0.7.1
+===============
+
+* Added ``TimeCol``.
+
+* Added support for psycopg2_
+
+.. _psycopg2: http://initd.org/projects/psycopg2
 
 SQLObject 0.7.0
 ===============
