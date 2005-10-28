@@ -533,11 +533,29 @@ class DBAPI(DBConnection):
                              if constraint]
         return refConstraintDefs
 
+    def createSQL(self, soClass):
+        tableCreateSQLs = getattr(soClass.sqlmeta, 'createSQL', None)
+        if tableCreateSQLs:
+            assert isinstance(tableCreateSQLs,(str,list,dict,tuple)), (
+                '%s.sqlmeta.createSQL must be a str, list, dict or tuple.' %
+                (soClass.__name__))
+            if isinstance(tableCreateSQLs, dict):
+                tableCreateSQLs = tableCreateSQLs.get(soClass._connection.dbName, [])
+            if isinstance(tableCreateSQLs, str):
+                tableCreateSQLs = [tableCreateSQLs]
+            if isinstance(tableCreateSQLs, tuple):
+                tableCreateSQLs = list(tableCreateSQLs)
+            assert isinstance(tableCreateSQLs,list), (
+                'Unable to create a list from %s.sqlmeta.createSQL' % 
+                (soClass.__name__))
+            return tableCreateSQLs
+
     def createTableSQL(self, soClass):
         constraints = self.createReferenceConstraints(soClass)
+        extraSQL = self.createSQL(soClass)
         createSql = ('CREATE TABLE %s (\n%s\n)' %
                 (soClass.sqlmeta.table, self.createColumns(soClass)))
-        return createSql, constraints
+        return createSql, constraints + extraSQL
 
     def createColumns(self, soClass):
         columnDefs = [self.createIDColumn(soClass)] \
