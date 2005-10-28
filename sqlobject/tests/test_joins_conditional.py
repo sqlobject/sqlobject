@@ -59,3 +59,13 @@ def test_4join_3tables_syntax():
     )
     assert str(select) == \
         "SELECT test_join1.id, test_join1.col1 FROM test_join1, test_join2 LEFT JOIN test_join3 WHERE 1 = 1"
+
+def test_5join_3tables_syntax2():
+    setup()
+    setupClass(TestJoin3)
+
+    select = TestJoin1.select(
+        join=(LEFTJOIN(None, TestJoin2), LEFTJOIN(None, TestJoin3))
+    )
+    assert str(select) == \
+        "SELECT test_join1.id, test_join1.col1 FROM test_join1  LEFT JOIN test_join2  LEFT JOIN test_join3 WHERE 1 = 1"

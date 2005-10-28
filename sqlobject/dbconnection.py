@@ -373,8 +373,7 @@ class DBAPI(DBConnection):
         q = "SELECT %s" % ", ".join([str(expression) for expression in expressions])
         q += " FROM %s" % ", ".join(tables)
         if join:
-            if tables: q += ','
-            q += self._addJoins(select)
+            q += self._addJoins(select, tables)
         q += " WHERE"
         q = self._addWhereClause(select, q, limit=0, order=0)
         val = self.queryOne(q)
@@ -411,8 +410,7 @@ class DBAPI(DBConnection):
                       ", ".join(tables))
 
         if join:
-            if tables: q += ','
-            q += self._addJoins(select)
+            q += self._addJoins(select, tables)
         q += " WHERE"
         return self._addWhereClause(select, q)
 
@@ -433,16 +431,24 @@ class DBAPI(DBConnection):
                     if j.table2 in tables: tables.remove(j.table2)
             return tables
 
-    def _addJoins(self, select):
+    def _addJoins(self, select, tables):
         ops = select.ops
         join = ops.get('join')
         if type(join) is str:
-            pass
+            join_str = ' ' + join
         elif isinstance(join, sqlbuilder.SQLJoin):
-            join_str = self.sqlrepr(join)
+            if tables and join.table1:
+                join_str = ", "
+            else:
+                join_str = ' '
+            join_str += self.sqlrepr(join)
         else:
-            join_str = ", ".join([self.sqlrepr(j) for j in join])
-        return ' ' + join_str
+            if tables and join[0].table1:
+                join_str = ", "
+            else:
+                join_str = ' '
+            join_str += " ".join([self.sqlrepr(j) for j in join])
+        return join_str
 
     def _addWhereClause(self, select, startSelect, limit=1, order=1):
 
