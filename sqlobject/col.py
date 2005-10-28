@@ -30,7 +30,7 @@ import constraints as consts
 from formencode import compound
 from formencode import validators
 from classregistry import findClass
-from converters import array_type
+from converters import array_type, buffer_type
 from util.backports import count
 
 NoDefault = sqlbuilder.NoDefault
@@ -1162,7 +1162,7 @@ class BinaryValidator(validators.Validator):
             if module.__name__ == "sqlite":
                 value = module.decode(value)
             return value
-        if isinstance(value, state.soObject._connection._binaryType):
+        if isinstance(value, (buffer_type, state.soObject._connection._binaryType)):
             cachedValue = self._cachedValue
             if cachedValue and cachedValue[1] == value:
                 return cachedValue[0]

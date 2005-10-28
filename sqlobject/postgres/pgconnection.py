@@ -23,7 +23,10 @@ class PostgresConnection(DBAPI):
             self.module = pgdb
         else:
             if psycopg is None:
-                import psycopg
+                try:
+                    import psycopg2 as psycopg
+                except ImportError:
+                    import psycopg
             self.module = psycopg
 
             # Register a converter for psycopg Binary type.

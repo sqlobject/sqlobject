@@ -6,9 +6,12 @@ def builder():
 
 def isSupported():
     try:
-        import psycopg
+        import psycopg2
     except ImportError:
-        return False
+        try:
+            import psycopg
+        except ImportError:
+            return False
     return True
 
 registerConnection(['postgres', 'postgresql', 'psycopg'],
