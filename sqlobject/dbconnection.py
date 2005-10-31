@@ -902,6 +902,34 @@ class ConnectionHub(object):
                     "No connection has been defined for this thread "
                     "or process")
 
+    def doInTransaction(self, func, *args, **kw):
+        """
+        This routine can be used to run a function in a transaction,
+        rolling the transaction back if any exception is raised from
+        that function, and committing otherwise.  Use like::
+
+            sqlhub.doInTransaction(process_request, os.environ)
+
+        This will run ``process_request(os.environ)``.  The return
+        value will be preserved.
+        """
+        # @@: In Python 2.5, something usable with with: should also
+        # be added.
+        old_conn = self.getConnection()
+        conn = old_conn.transaction()
+        self.threadConnection = conn
+        try:
+            try:
+                value = func(*args, **kw)
+            except:
+                conn.rollback()
+                raise
+            else:
+                conn.commit()
+                return value
+        finally:
+            self.threadConnection = old_conn
+
     def _set_threadConnection(self, value):
         self.threadingLocal.connection = value
 
