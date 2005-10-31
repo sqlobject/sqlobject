@@ -10,6 +10,8 @@ exitfirst = True
 import py
 import os
 import sqlobject
+import pkg_resources
+pkg_resources.require('SQLObject')
 
 connectionShortcuts = {
     'mysql': 'mysql://test@localhost/test',
