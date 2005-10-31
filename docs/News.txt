@@ -27,12 +27,21 @@ Features & Interface
   instead you must manually create it (e.g., with explicit SQLObject
   classes for the joins).
 
-* Added ``createSQL`` as an option for sqlmeta. Here you can add related SQL
-  you want executed by sqlobject-admin create after table creation. createSQL
-  expects a string, list, or dictionary. If using a dictionary the key should
-  be a dbName value (ex. 'postgres') and the value should be a string or list.
-  Examples in sqlobject/tests/test_sqlobject_admin.py or at
+* Added ``createSQL`` as an option for sqlmeta. Here you can add
+  related SQL you want executed by sqlobject-admin create after table
+  creation. createSQL expects a string, list, or dictionary. If using
+  a dictionary the key should be a dbName value (ex. 'postgres') and
+  the value should be a string or list.  Examples in
+  sqlobject/tests/test_sqlobject_admin.py or at
   <http://sqlobject.org/sqlobject-admin.html#the-create-command>
+
+* Added method ``sqlhub.doInTransaction(callable, *args, **kwargs)``,
+  to be used like::
+
+      sqlhub.doInTransaction(process_request, os.environ)
+
+  This will run ``process_request(os.environ)``.  The return
+  value will be preserved.
 
 SQLObject 0.7.1
 ===============
