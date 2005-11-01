@@ -422,8 +422,7 @@ class Command(object):
         
     def config_from_egg(self, egg_spec, warn_no_sqlobject=True):
         import pkg_resources
-        pkg_resources.require(egg_spec)
-        dist = pkg_resources.working_set.find(pkg_resources.Requirement(egg_spec))
+        dist = pkg_resources.get_distribution(egg_spec)
         if not dist.has_metadata('sqlobject.txt'):
             if warn_no_sqlobject:
                 print 'No sqlobject.txt in %s egg info' % egg_spec
