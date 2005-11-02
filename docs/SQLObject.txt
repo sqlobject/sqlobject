@@ -974,7 +974,7 @@ column.
     If you give a callable object or function, the function will be
     called, and the return value will be used.  So you can give
     ``DateTime.now`` to make the default value be the current time.
-    Or you can use ``SQLBuilder.func.NOW()`` to have the database use
+    Or you can use ``sqlbuilder.func.NOW()`` to have the database use
     the ``NOW()`` function internally.  If you don't give a default
     there will be an exception if this column isn't specified in the
     call to `new`.
