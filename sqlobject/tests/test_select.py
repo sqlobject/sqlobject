@@ -1,6 +1,8 @@
 from __future__ import generators # for enumerate
 from sqlobject import *
+from sqlobject.main import SQLObjectIntegrityError
 from sqlobject.tests.dbtest import *
+from py.test import raises
 
 try:
     enumerate
@@ -71,6 +73,18 @@ def test_04_indexed_ended_by_exception():
         pass
     assert count == len(names)
 
+def test_select_getOne():
+    setupClass(IterTest)
+    a = IterTest(name='a')
+    b = IterTest(name='b')
+    assert IterTest.selectBy(name='a').getOne() == a
+    assert IterTest.select(IterTest.q.name=='b').getOne() == b
+    assert IterTest.selectBy(name='c').getOne(None) is None
+    raises(SQLObjectNotFound, 'IterTest.selectBy(name="c").getOne()')
+    b2 = IterTest(name='b')
+    raises(SQLObjectIntegrityError, 'IterTest.selectBy(name="b").getOne()')
+    raises(SQLObjectIntegrityError, 'IterTest.selectBy(name="b").getOne(None)')
+    
 
 
 

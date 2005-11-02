@@ -1,5 +1,6 @@
 import sqlbuilder
 import dbconnection
+import main
 
 StringType = type('')
 
@@ -226,5 +227,30 @@ class SelectResults(object):
 
     def max(self, attribute):
         return self.accumulateOne("MAX", attribute)
+
+    def getOne(self, default=sqlbuilder.NoDefault):
+        """
+        If a query is expected to only return a single value,
+        using ``.getOne()`` will return just that value.
+
+        If not results are found, ``SQLObjectNotFound`` will be
+        raised, unless you pass in a default value (like
+        ``.getOne(None)``).
+
+        If more than one result is returned,
+        ``SQLObjectIntegrityError`` will be raised.
+        """
+        results = list(self)
+        if not results:
+            if default is sqlbuilder.NoDefault:
+                raise main.SQLObjectNotFound(
+                    "No results matched the query for %s"
+                    % self.sourceClass.__name__)
+            return default
+        if len(results) > 1:
+            raise main.SQLObjectIntegrityError(
+                "More than one result returned from query: %s"
+                % results)
+        return results[0]
 
 __all__ = ['SelectResults']

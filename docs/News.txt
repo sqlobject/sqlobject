@@ -43,6 +43,13 @@ Features & Interface
   This will run ``process_request(os.environ)``.  The return
   value will be preserved.
 
+* Added method ``.getOne([default])`` to ``SelectResults`` (these are
+  the objects returned by ``.select()`` and ``.selectBy()``).  This
+  returns a single object, when the query is expected to return only
+  one object.  The single argument is the value to return when zero
+  results are found (more than one result is always an error).  If no
+  default is given, it is an error if no such object exists.
+
 SQLObject 0.7.1
 ===============
 
