@@ -19,7 +19,7 @@ Documentation
 
 * `News and updates <News.html>`_
 * `Main SQLObject documentation <SQLObject.html>`_
-* `sqlbuiler documentation <SQLBuilder.html>`_
+* `sqlbuilder documentation <SQLBuilder.html>`_
 * `sqlobject-admin documentation <sqlobject-admin.html>`_
 * `Frequently Asked Questions <FAQ.html>`_
 * `Inheritance <Inheritance.html>`_

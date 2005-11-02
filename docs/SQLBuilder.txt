@@ -34,7 +34,7 @@ field.  Maybe explanations aren't as good.  Here's some examples::
     >>> person.first_name != name
     person.first_name <> 'John'
     >>> AND(person.first_name == 'John', person.last_name == 'Doe')
-    (person.first_name = 'John AND person.last_name = 'Doe')
+    (person.first_name = 'John' AND person.last_name = 'Doe')
 
 Most of the operators work properly: <, >, <=, >=, !=, ==, +, -, /,
 \*, \*\*, %.  However, ``and``, ``or``, and ``not`` **do not work**.
