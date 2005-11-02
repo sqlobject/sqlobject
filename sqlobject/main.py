@@ -436,7 +436,8 @@ class sqlmeta(object):
 
     addColumnsFromDatabase = classmethod(addColumnsFromDatabase)
 
-    def delColumn(sqlmeta, column, changeSchema=False, connection=None):
+    def delColumn(cls, column, changeSchema=False, connection=None):
+        sqlmeta = cls
         soClass = sqlmeta.soClass
         if isinstance(column, str):
             column = sqlmeta.columns[column]
