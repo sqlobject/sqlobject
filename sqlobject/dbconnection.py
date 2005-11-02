@@ -617,11 +617,19 @@ class DBAPI(DBConnection):
                  self.sqlrepr(so.id)))
 
     def _SO_selectOneAlt(self, cls, columnNames, column, value):
-        return self.queryOne("SELECT %s FROM %s WHERE %s = %s" %
+        if isinstance(column, str):
+            column = (column,)
+            value = (value,)
+        if len(column) != len(value):
+            raise ValueError, "'column' and 'value' tuples must be of the same size"
+        columns = []
+        for i in xrange(len(column)):
+            columns.append("%s = %s" % (column[i], self.sqlrepr(value[i])))
+        condition = ' AND '.join(columns)
+        return self.queryOne("SELECT %s FROM %s WHERE %s" %
                              (", ".join(columnNames),
                               cls.sqlmeta.table,
-                              column,
-                              self.sqlrepr(value)))
+                              condition))
 
     def _SO_delete(self, so):
         self.query("DELETE FROM %s WHERE %s = %s" %

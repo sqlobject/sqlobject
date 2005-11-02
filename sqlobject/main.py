@@ -579,6 +579,7 @@ class sqlmeta(object):
         cls.indexDefinitions.append(indexDef)
         index = indexDef.withClass(cls.soClass)
         cls.indexes.append(index)
+        setattr(cls.soClass, index.name, index)
     addIndex = classmethod(addIndex)
 
     ########################################
@@ -1291,10 +1292,17 @@ class SQLObject(object):
             value), None
     _findAlternateID = classmethod(_findAlternateID)
 
-    def _SO_fetchAlternateID(cls, name, dbName, value, connection=None):
+    def _SO_fetchAlternateID(cls, name, dbName, value, connection=None, idxName=None):
         result, obj = cls._findAlternateID(name, dbName, value, connection)
         if not result:
-            raise SQLObjectNotFound, "The %s by alternateID %s=%s does not exist" % (cls.__name__, name, repr(value))
+            if idxName is None:
+                raise SQLObjectNotFound, "The %s by alternateID %s = %s does not exist" % (cls.__name__, name, repr(value))
+            else:
+                names = []
+                for i in xrange(len(name)):
+                    names.append("%s = %s" % (name[i], repr(value[i])))
+                names = ', '.join(names)
+                raise SQLObjectNotFound, "The %s by unique index %s(%s) does not exist" % (cls.__name__, idxName, names)
         if obj:
            return obj
         if connection:

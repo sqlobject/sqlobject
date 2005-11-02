@@ -14,6 +14,29 @@ class SODatabaseIndex(object):
         self.descriptions = self.convertColumns(columns)
         self.unique = unique
 
+    def get(self, *args, **kw):
+        if not self.unique:
+            raise AttributeError, (
+                "'%s' object has no attribute 'get' (index is not unique)" % self.name)
+        connection = col.popKey(kw, 'connection', None)
+        if args and kw:
+            raise TypeError, "You cannot mix named and unnamed arguments"
+        columns = [d['column'] for d in self.descriptions
+            if d.has_key('column')]
+        if kw:
+            args = []
+            for i in xrange(len(columns)):
+                args.append(kw[columns[i].name])
+                del kw[columns[i].name]
+        if kw or len(args) != len(columns):
+            raise TypeError, ("get() takes exactly %d argument and an optional "
+                "named argument 'connection' (%d given)" % (
+                len(columns), len(args)+len(kw)))
+        cols = [c.name for c in columns]
+        dbcols = [c.dbName for c in columns]
+        return self.soClass._SO_fetchAlternateID(cols, dbcols, args,
+            connection=connection, idxName=self.name)
+
     def convertColumns(self, columns):
         """
         Converts all the columns to dictionary descriptors;
