@@ -33,6 +33,7 @@ or an instance method depending on where it is called.
 """
 
 from __future__ import generators
+import events
 
 __all__ = ('classinstancemethod', 'DeclarativeMeta', 'Declarative')
 
@@ -88,10 +89,16 @@ class _methodwrapper(object):
 class DeclarativeMeta(type):
 
     def __new__(meta, class_name, bases, new_attrs):
+        post_funcs = []
+        events.send(events.ClassCreateSignal,
+                    bases[0], class_name, bases, new_attrs,
+                    post_funcs)
         cls = type.__new__(meta, class_name, bases, new_attrs)
         if new_attrs.has_key('__classinit__'):
             cls.__classinit__ = staticmethod(cls.__classinit__.im_func)
         cls.__classinit__(cls, new_attrs)
+        for func in post_funcs:
+            func(cls)
         return cls
 
 class Declarative(object):
@@ -189,4 +196,9 @@ class Declarative(object):
     _repr_vars = staticmethod(_repr_vars)
 
     __repr__ = classinstancemethod(__repr__)
+
+def setup_attributes(cls, new_attrs):
+    for name, value in new_attrs.items():
+        if hasattr(value, '__addtoclass__'):
+            value.__addtoclass__(cls, name)
 

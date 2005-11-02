@@ -3,8 +3,10 @@ NoDefault = sqlbuilder.NoDefault
 import styles
 import classregistry
 from col import popKey
+import events
 
-__all__ = ['MultipleJoin', 'SQLMultipleJoin', 'RelatedJoin', 'SQLRelatedJoin', 'SingleJoin']
+__all__ = ['MultipleJoin', 'SQLMultipleJoin', 'RelatedJoin', 'SQLRelatedJoin',
+           'SingleJoin', 'ManyToMany', 'OneToMany']
 
 def getID(obj):
     try:
@@ -263,3 +265,209 @@ class SOSingleJoin(SOMultipleJoin):
 
 class SingleJoin(Join):
     baseClass = SOSingleJoin
+
+
+
+
+class ManyToMany(object):
+
+    def __init__(self, otherClassName,
+                 intermediateTable=None,
+                 joinColumn=None,
+                 otherColumn=None,
+                 createJoinTable=True):
+        self.otherClassName = otherClassName
+        self.intermediateTable = intermediateTable
+        self.joinColumn = joinColumn
+        self.otherColumn = otherColumn
+        self.createJoinTable = createJoinTable
+
+    def __addtoclass__(self, soClass, name):
+        setattr(soClass, name,
+                SOManyToMany(soClass, name=name,
+                             otherClassName=self.otherClassName,
+                             intermediateTable=self.intermediateTable,
+                             joinColumn=self.joinColumn,
+                             otherColumn=self.otherColumn,
+                             createJoinTable=self.createJoinTable))
+
+class SOManyToMany(object):
+
+    def __init__(self, soClass, name, otherClassName,
+                 intermediateTable, joinColumn, otherColumn,
+                 createJoinTable):
+        self.name = name
+        self.intermediateTable = intermediateTable
+        self.joinColumn = joinColumn
+        self.otherColumn = otherColumn
+        self.createJoinTable = createJoinTable
+        self.soClass = self.otherClass = None
+        classregistry.registry(
+            soClass.sqlmeta.registry).addClassCallback(
+            otherClassName, self._setOtherClass)
+        classregistry.registry(
+            soClass.sqlmeta.registry).addClassCallback(
+            soClass.__name__, self._setThisClass)
+
+    def _setThisClass(self, soClass):
+        self.soClass = soClass
+        if self.soClass and self.otherClass:
+            self._finishSet()
+
+    def _setOtherClass(self, otherClass):
+        self.otherClass = otherClass
+        if self.soClass and self.otherClass:
+            self._finishSet()
+
+    def _finishSet(self):
+        if self.intermediateTable is None:
+            names = [self.soClass.sqlmeta.table,
+                     self.otherClass.sqlmeta.table]
+            names.sort()
+            self.intermediateTable = '%s_%s' % (names[0], names[1])
+        if not self.otherColumn:
+            self.otherColumn = self.soClass.sqlmeta.style.tableReference(
+                self.otherClass.sqlmeta.table)
+        if not self.joinColumn:
+            self.joinColumn = styles.getStyle(
+                self.soClass).tableReference(self.soClass.sqlmeta.table)
+        events.listen(self.event_CreateTableSignal,
+                      self.soClass, events.CreateTableSignal)
+        events.listen(self.event_CreateTableSignal,
+                      self.otherClass, events.CreateTableSignal)
+
+    def __get__(self, obj, type):
+        if obj is None:
+            return self
+        query = (
+            (self.otherClass.q.id ==
+             sqlbuilder.Field(self.intermediateTable, self.otherColumn))
+            & (sqlbuilder.Field(self.intermediateTable, self.joinColumn)
+               == obj.id))
+        select = self.otherClass.select(query)
+        return _ManyToManySelectWrapper(obj, self, select)
+    
+    def __sqlrepr__(self, dbname):
+        return self.query.__sqlrepr__(self, dbname)
+
+    def event_CreateTableSignal(self, soClass, connection, extra_sql,
+                                post_funcs):
+        if self.createJoinTable:
+            post_funcs.append(self.event_CreateTableSignalPost)
+
+    def event_CreateTableSignalPost(self, soClass, connection):
+        if connection.tableExists(self.intermediateTable):
+            return
+        connection._SO_createJoinTable(self)
+    
+class _ManyToManySelectWrapper(object):
+
+    def __init__(self, forObject, join, select):
+        self.forObject = forObject
+        self.join = join
+        self.select = select
+    
+    def __getattr__(self, attr):
+        # @@: This passes through private variable access too... should it?
+        # Also magic methods, like __str__
+        return getattr(self, select, attr)
+
+    def __repr__(self):
+        return '<%s for: %s>' % (self.__class__.__name__, repr(self.select))
+
+    def __str__(self):
+        return str(self.select)
+
+    def __iter__(self):
+        return iter(self.select)
+
+    def __getitem__(self, key):
+        return self.select[key]
+
+    def add(self, obj):
+        print "Add", obj, "to", self.forObject
+        obj._connection._SO_intermediateInsert(
+            self.join.intermediateTable,
+            self.join.joinColumn,
+            getID(self.forObject),
+            self.join.otherColumn,
+            getID(obj))
+
+    def remove(self, obj):
+        obj._connection._SO_intermediateDelete(
+            self.join.intermediateTable,
+            self.join.joinColumn,
+            getID(self.forObject),
+            self.join.otherColumn,
+            getID(obj))
+
+    def create(self, **kw):
+        obj = self.join.otherClass(**kw)
+        self.add(obj)
+        return obj
+    
+class OneToMany(object):
+
+    def __init__(self, otherClassName, joinColumn=None):
+        self.otherClassName = otherClassName
+        self.joinColumn = joinColumn
+
+    def __addtoclass__(self, soClass, name):
+        setattr(soClass, name,
+                SOOneToMany(soClass, name=name,
+                            otherClassName=self.otherClassName,
+                            joinColumn=self.joinColumn))
+                
+class SOOneToMany(object):
+
+    def __init__(self, soClass, name, otherClassName, joinColumn):
+        self.soClass = soClass
+        self.name = name
+        self.joinColumn = joinColumn
+        classregistry.registry(
+            soClass.sqlmeta.registry).addClassCallback(
+            otherClassName, self._setOtherClass)
+
+    def _setOtherClass(self, otherClass):
+        self.otherClass = otherClass
+        if not self.joinColumn:
+            self.joinColumn = styles.getStyle(
+                self.soClass).tableReference(self.soClass.sqlmeta.table)
+
+    def __get__(self, obj, type):
+        if obj is None:
+            return self
+        query = (
+            sqlbuilder.Field(self.otherClass.sqlmeta.table, self.joinColumn)
+            == obj.id)
+        select = self.otherClass.select(query)
+        return _OneToManySelectWrapper(obj, self, select)
+
+class _OneToManySelectWrapper(object):
+
+    def __init__(self, forObject, join, select):
+        self.forObject = forObject
+        self.join = join
+        self.select = select
+    
+    def __getattr__(self, attr):
+        # @@: This passes through private variable access too... should it?
+        # Also magic methods, like __str__
+        return getattr(self, select, attr)
+
+    def __repr__(self):
+        return '<%s for: %s>' % (self.__class__.__name__, repr(self.select))
+
+    def __str__(self):
+        return str(self.select)
+
+    def __iter__(self):
+        return iter(self.select)
+
+    def __getitem__(self, key):
+        return self.select[key]
+
+    def create(self, **kw):
+        kw[self.join.joinColumn] = self.forObject.id
+        return self.join.otherClass(**kw)
+    

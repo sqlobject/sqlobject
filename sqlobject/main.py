@@ -45,6 +45,7 @@ import joins
 import index
 import classregistry
 import declarative
+import events
 from sresults import SelectResults
 from formencode import schema, compound
 
@@ -236,9 +237,15 @@ class sqlmeta(object):
         for attr in cls._unshared_attributes:
             if not new_attrs.has_key(attr):
                 setattr(cls, attr, None)
+        declarative.setup_attributes(cls, new_attrs)
 
     def __init__(self, instance):
         self.instance = instance
+
+    def send(cls, signal, *args, **kw):
+        events.send(signal, cls.soClass, *args, **kw)
+
+    send = classmethod(send)
 
     def setClass(cls, soClass):
         cls.soClass = soClass
@@ -289,6 +296,9 @@ class sqlmeta(object):
     ########################################
 
     def addColumn(cls, columnDef, changeSchema=False, connection=None):
+        post_funcs = []
+        cls.send(events.AddColumnSignal, cls.soClass, connection,
+                 columnDef.name, columnDef, changeSchema, post_funcs)
         sqlmeta = cls
         soClass = cls.soClass
         del cls
@@ -396,9 +406,6 @@ class sqlmeta(object):
                     setattr(soClass, setterName(name)[:-2], setter)
                     sqlmeta._plainForeignSetters[name[:-2]] = 1
 
-            # We'll need to put in a real reference at
-            # some point.  See needSet at the top of the
-            # file for more on this.
             classregistry.registry(sqlmeta.registry).addClassCallback(
                 column.foreignKey,
                 lambda foreign, me, attr: setattr(me, attr, foreign),
@@ -414,6 +421,9 @@ class sqlmeta(object):
 
         if soClass._SO_finishedClassCreation:
             makeProperties(soClass)
+
+        for func in post_funcs:
+            func(soClass, column)
 
     addColumn = classmethod(addColumn)
 
@@ -438,6 +448,9 @@ class sqlmeta(object):
             else:
                 raise IndexError(
                     "Column with definition %r not found" % column)
+        post_funcs = []
+        cls.send(events.DeleteColumnSignal, connection, column.name, column,
+                 post_funcs)
         name = column.name
         del sqlmeta.columns[name]
         del sqlmeta.columnDefinitions[name]
@@ -464,6 +477,9 @@ class sqlmeta(object):
 
         if soClass._SO_finishedClassCreation:
             unmakeProperties(soClass)
+
+        for func in post_funcs:
+            func(soClass, column)
 
     delColumn = classmethod(delColumn)
 
@@ -665,6 +681,8 @@ class SQLObject(object):
     SelectResultsClass = SelectResults
 
     def __classinit__(cls, new_attrs):
+
+        declarative.setup_attributes(cls, new_attrs)
 
         # This is true if we're initializing the SQLObject class,
         # instead of a subclass:
@@ -1039,6 +1057,11 @@ class SQLObject(object):
         # in the database, and we can't insert it until all
         # the parts are set.  So we just keep them in a
         # dictionary until later:
+        d = {name: value}
+        self.sqlmeta.send(events.RowUpdateSignal, self, d)
+        if len(d) != 1 or name not in d:
+            return self.set(**d)
+        value = d[name]
         if from_python:
             dbValue = from_python(value, self._SO_validatorState)
         else:
@@ -1059,6 +1082,7 @@ class SQLObject(object):
             setattr(self, instanceName(name), value)
 
     def set(self, **kw):
+        self.sqlmeta.send(events.RowUpdateSignal, self, kw)
         # set() is used to update multiple values at once,
         # potentially with one SQL statement if possible.
 
@@ -1179,11 +1203,15 @@ class SQLObject(object):
         if kw.has_key('_SO_fetch_no_create'):
             return
 
+        post_funcs = []
+        self.sqlmeta.send(events.RowCreateSignal, kw, post_funcs)
+
         # Pass the connection object along if we were given one.
         if kw.has_key('connection'):
             self._connection = kw['connection']
             self.sqlmeta._perConnection = True
             del kw['connection']
+
         self._SO_writeLock = threading.Lock()
 
         if kw.has_key('id'):
@@ -1193,6 +1221,8 @@ class SQLObject(object):
             id = None
 
         self._create(id, **kw)
+        for func in post_funcs:
+            func(self)
 
     def _create(self, id, **kw):
 
@@ -1306,9 +1336,17 @@ class SQLObject(object):
         conn = connection or cls._connection
         if ifExists and not conn.tableExists(cls.sqlmeta.table):
             return
+        extra_sql = []
+        post_funcs = []
+        cls.sqlmeta.send(events.DropTableSignal, cls, connection,
+                         extra_sql, post_funcs)
         conn.dropTable(cls.sqlmeta.table, cascade)
         if dropJoinTables:
             cls.dropJoinTables(ifExists=ifExists, connection=conn)
+        for sql in extra_sql:
+            connection.query(sql)
+        for func in post_funcs:
+            func(cls, conn)
     dropTable = classmethod(dropTable)
 
     def createTable(cls, ifNotExists=False, createJoinTables=True,
@@ -1317,14 +1355,21 @@ class SQLObject(object):
         conn = connection or cls._connection
         if ifNotExists and conn.tableExists(cls.sqlmeta.table):
             return
+        extra_sql = []
+        post_funcs = []
+        cls.sqlmeta.send(events.CreateTableSignal, cls, connection,
+                         extra_sql, post_funcs)
         constraints = conn.createTable(cls)
+        extra_sql.extend(constraints)
         if createJoinTables:
             cls.createJoinTables(ifNotExists=ifNotExists,
                                  connection=conn)
         if createIndexes:
             cls.createIndexes(ifNotExists=ifNotExists,
                               connection=conn)
-        return constraints
+        for func in post_funcs:
+            func(cls, conn)
+        return extra_sql
     createTable = classmethod(createTable)
 
     def createTableSQL(cls, createJoinTables=True, connection=None,
@@ -1419,6 +1464,7 @@ class SQLObject(object):
     clearTable = classmethod(clearTable)
 
     def destroySelf(self):
+        self.sqlmeta.send(events.RowDestroySignal, self)
         # Kills this object.  Kills it dead!
         depends = []
         klass = self.__class__
