@@ -1,15 +1,24 @@
-from dispatch import dispatcher
+from sqlobject.include.pydispatch import dispatcher
 from weakref import ref
 
 
 subclassClones = {}
 
 def listen(receiver, soClass, signal, alsoSubclasses=True):
+    """
+    Listen for the given ``signal`` on the SQLObject subclass
+    ``soClass``, calling ``receiver()`` when ``send(soClass, signal,
+    ...)`` is called.
+
+    If ``alsoSubclasses`` is true, receiver will also be called when
+    an event is fired on any subclass.
+    """
     dispatcher.connect(receiver, signal=signal, sender=soClass)
     weakSOClass = ref(soClass)
     weakReceiver = ref(receiver)
     subclassClones.setdefault(weakSOClass, []).append((weakReceiver, signal))
 
+# We export this function:
 send = dispatcher.send
 
 class Signal(object):
