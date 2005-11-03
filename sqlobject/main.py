@@ -297,6 +297,7 @@ class sqlmeta(object):
 
     def addColumn(cls, columnDef, changeSchema=False, connection=None):
         post_funcs = []
+        print "Send on", cls.soClass, columnDef.name
         cls.send(events.AddColumnSignal, cls.soClass, connection,
                  columnDef.name, columnDef, changeSchema, post_funcs)
         sqlmeta = cls
@@ -1060,7 +1061,8 @@ class SQLObject(object):
         # the parts are set.  So we just keep them in a
         # dictionary until later:
         d = {name: value}
-        self.sqlmeta.send(events.RowUpdateSignal, self, d)
+        if not self.sqlmeta._creating:
+            self.sqlmeta.send(events.RowUpdateSignal, self, d)
         if len(d) != 1 or name not in d:
             return self.set(**d)
         value = d[name]
@@ -1084,7 +1086,8 @@ class SQLObject(object):
             setattr(self, instanceName(name), value)
 
     def set(self, **kw):
-        self.sqlmeta.send(events.RowUpdateSignal, self, kw)
+        if not self.sqlmeta._creating:
+            self.sqlmeta.send(events.RowUpdateSignal, self, kw)
         # set() is used to update multiple values at once,
         # potentially with one SQL statement if possible.
 
