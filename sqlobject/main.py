@@ -297,7 +297,6 @@ class sqlmeta(object):
 
     def addColumn(cls, columnDef, changeSchema=False, connection=None):
         post_funcs = []
-        print "Send on", cls.soClass, columnDef.name
         cls.send(events.AddColumnSignal, cls.soClass, connection,
                  columnDef.name, columnDef, changeSchema, post_funcs)
         sqlmeta = cls
