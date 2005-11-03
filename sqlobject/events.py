@@ -14,9 +14,8 @@ def listen(receiver, soClass, signal, alsoSubclasses=True):
     an event is fired on any subclass.
     """
     dispatcher.connect(receiver, signal=signal, sender=soClass)
-    weakSOClass = ref(soClass)
     weakReceiver = ref(receiver)
-    subclassClones.setdefault(weakSOClass, []).append((weakReceiver, signal))
+    subclassClones.setdefault(soClass, []).append((weakReceiver, signal))
 
 # We export this function:
 send = dispatcher.send
@@ -53,7 +52,7 @@ def _makeSubclassConnectionsPost(new_class):
             receiver = weakReceiver()
             if not receiver:
                 continue
-            dispatcher.connect(receiver, signal=signal, sender=new_class)
+            listen(receiver, new_class, signal)
 
 dispatcher.connect(_makeSubclassConnections, signal=ClassCreateSignal)
 
