@@ -45,7 +45,12 @@ option = py.test.Config.addoptions(
     Option('-O', '--SQL-output',
            action="store_true", dest="show_sql_output", default=False,
            help="Show output from SQL statements (when capturing "
-           "stdout the output is only displayed when a test fails)"))
+           "stdout the output is only displayed when a test fails)"),
+    Option('-E', '--events',
+           action="store_true", dest="debug_events", default=False,
+           help="Debug events (print information about events as they are "
+           "sent)"),
+    )
 
 class SQLObjectClass(py.test.collect.Class):
     def run(self):
@@ -55,3 +60,8 @@ class SQLObjectClass(py.test.collect.Class):
         return super(SQLObjectClass, self).run()
 
 Class = SQLObjectClass
+
+def setup_tests():
+    if option.debug_events:
+        from sqlobject import events
+        events.debug_events()

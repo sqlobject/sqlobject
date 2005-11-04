@@ -1,3 +1,5 @@
+import sys
+import types
 from sqlobject.include.pydispatch import dispatcher
 from weakref import ref
 
@@ -30,21 +32,25 @@ class Signal(object):
 
 class ClassCreateSignal(Signal):
     """
-    Signal raised before class creation.  The sender is the superclass
+    Signal raised after class creation.  The sender is the superclass
     (in case of multiple superclasses, the first superclass).  The
-    arguments are ``(new_class_name, bases, new_attrs, post_funcs)``.
-    ``new_attrs`` is a dictionary and may be modified (but
-    ``new_class_name`` and ``bases`` are immutable).  ``post_funcs``
-    is an initially-empty list that can have callbacks appended to it.
+    arguments are ``(new_class_name, bases, new_attrs, post_funcs,
+    early_funcs)``.  ``new_attrs`` is a dictionary and may be modified
+    (but ``new_class_name`` and ``bases`` are immutable).
+    ``post_funcs`` is an initially-empty list that can have callbacks
+    appended to it.
 
     Note: at the time this event is called, the new class has not yet
     been created.  The functions in ``post_funcs`` will be called
     after the class is created, with the single arguments of
-    ``(new_class)``.
+    ``(new_class)``.  Also, ``early_funcs`` will be called at the
+    soonest possible time after class creation (``post_funcs`` is
+    called after the class's ``__classinit__``).
     """
 
-def _makeSubclassConnections(new_class_name, bases, new_attrs, post_funcs):
-    post_funcs.append(_makeSubclassConnectionsPost)
+def _makeSubclassConnections(new_class_name, bases, new_attrs,
+                             post_funcs, early_funcs):
+    early_funcs.insert(0, _makeSubclassConnectionsPost)
 
 def _makeSubclassConnectionsPost(new_class):
     for cls in new_class.__bases__:
@@ -149,6 +155,123 @@ class DropTableSignal(Signal):
     ``post_funcs`` functions are called with ``(cls, connection)``
     after the table has been dropped.
     """
+
+############################################################
+## Event Debugging
+############################################################
+
+def summarize_events_by_sender(sender=None, output=None, indent=0):
+    """
+    Prints out a summary of the senders and listeners in the system,
+    for debugging purposes.
+    """
+    if output is None:
+        output = sys.stdout
+    if sender is None:
+        send_list = [
+            (deref(dispatcher.senders.get(sid)), listeners)
+            for sid, listeners in dispatcher.connections.items()
+            if deref(dispatcher.senders.get(sid))]
+        for sender, listeners in sorted_items(send_list):
+            real_sender = deref(sender)
+            if not real_sender:
+                continue
+            header = 'Sender: %r' % real_sender
+            print >> output, (' '*indent) + header
+            print >> output, (' '*indent) + '='*len(header)
+            summarize_events_by_sender(real_sender, output=output, indent=indent+2)
+    else:
+        for signal, receivers in sorted_items(dispatcher.connections.get(id(sender), [])):
+            receivers = [deref(r) for r in receivers if deref(r)]
+            header = 'Signal: %s (%i receivers)' % (sort_name(signal),
+                                                    len(receivers))
+            print >> output, (' '*indent) + header
+            print >> output, (' '*indent) + '-'*len(header)
+            for receiver in sorted(receivers, key=sort_name):
+                print >> output, (' '*indent) + '  ' + nice_repr(receiver)
+
+def deref(value):
+    if isinstance(value, dispatcher.WEAKREF_TYPES):
+        return value()
+    else:
+        return value
+
+def sorted_items(a_dict):
+    if isinstance(a_dict, dict):
+        a_dict = a_dict.items()
+    return sorted(a_dict, key=lambda t: sort_name(t[0]))
+
+def sort_name(value):
+    if isinstance(value, type):
+        return value.__name__
+    elif isinstance(value, types.FunctionType):
+        return value.func_name
+    else:
+        return str(value)
+
+_real_dispatcher_send = dispatcher.send
+_real_dispatcher_sendExact = dispatcher.sendExact
+_real_dispatcher_disconnect = dispatcher.disconnect
+_real_dispatcher_connect = dispatcher.connect
+_debug_enabled = False
+def debug_events():
+    global _debug_enabled, send
+    if _debug_enabled:
+        return
+    _debug_enabled = True
+    dispatcher.send = send = _debug_send
+    dispatcher.sendExact = _debug_sendExact
+    dispatcher.disconnect = _debug_disconnect
+    dispatcher.connect = _debug_connect
+
+def _debug_send(signal=dispatcher.Any, sender=dispatcher.Anonymous,
+                *arguments, **named):
+    print "send %s from %s: %s" % (
+        nice_repr(signal), nice_repr(sender), fmt_args(*arguments, **named))
+    return _real_dispatcher_send(signal, sender, *arguments, **named)
+
+def _debug_sendExact(signal=dispatcher.Any, sender=dispatcher.Anonymous,
+                     *arguments, **named):
+    print "sendExact %s from %s: %s" % (
+        nice_repr(signal), nice_repr(sender), fmt_args(*arguments, **name))
+    return _real_dispatcher_sendExact(signal, sender, *arguments, **named)
+
+def _debug_connect(receiver, signal=dispatcher.Any, sender=dispatcher.Any,
+                   weak=True):
+    print "connect %s to %s signal %s" % (
+        nice_repr(receiver), nice_repr(signal), nice_repr(sender))
+    return _real_dispatcher_connect(receiver, signal, sender, weak)
+
+def _debug_disconnect(receiver, signal=dispatcher.Any, sender=dispatcher.Any,
+                      weak=True):
+    print "disconnecting %s from %s signal %s" % (
+        nice_repr(receiver), nice_repr(signal), nice_repr(sender))
+    return disconnect(receiver, signal, sender, weak)
+
+def fmt_args(*arguments, **name):
+    args = [repr(a) for a in arguments]
+    args.extend([
+        '%s=%r' % (n, v) for n, v in sorted(name.items())])
+    return ', '.join(args)
+
+def nice_repr(v):
+    """
+    Like repr(), but nicer for debugging here.
+    """
+    if isinstance(v, (types.ClassType, type)):
+        return v.__module__ + '.' + v.__name__
+    elif isinstance(v, types.FunctionType):
+        if '__name__' in v.func_globals:
+            if getattr(sys.modules[v.func_globals['__name__']],
+                       v.func_name, None) is v:
+                return '%s.%s' % (v.func_globals['__name__'], v.func_name)
+        return repr(v)
+    elif isinstance(v, types.MethodType):
+        return '%s.%s of %s' % (
+            nice_repr(v.im_class), v.im_func.func_name,
+            nice_repr(v.im_self))
+    else:
+        return repr(v)
 
 __all__ = ['listen', 'send']
 for name, value in globals().items():

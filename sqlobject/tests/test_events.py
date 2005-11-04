@@ -27,7 +27,7 @@ def test_create():
     class EventTesterSub2(EventTesterSub1):
         pass
     assert len(watcher.log) == 2
-    assert len(watcher.log[0]) == 4
+    assert len(watcher.log[0]) == 5
     assert watcher.log[0][0] == 'EventTesterSub1'
     assert watcher.log[0][1] == (EventTester,)
     assert isinstance(watcher.log[0][2], dict)
@@ -60,13 +60,15 @@ def test_row_update():
         (f, {'name': 'bar2'}),
         (f, {'name': 'bar3'})]
     
-def disbaled_test_add_column():
+def test_add_column():
     setupClass(EventTester)
-    watcher = make_listen(events.RowUpdateSignal)
+    watcher = make_listen(events.AddColumnSignal)
+    events.summarize_events_by_sender()
     class NewEventTester(EventTester):
         name2 = StringCol()
-    assert watcher.log == [
-        (NewEventTester, NewEventTester._connection,
-         'name2', NewEventTester.sqlmeta.columns['name2'],
-         True, [])]
-    
+    expect = (
+        NewEventTester, None,
+        'name2', NewEventTester.sqlmeta.columnDefinitions['name2'],
+        False, [])
+    print zip(watcher.log[1], expect)
+    assert watcher.log[1] == expect

@@ -90,10 +90,13 @@ class DeclarativeMeta(type):
 
     def __new__(meta, class_name, bases, new_attrs):
         post_funcs = []
+        early_funcs = []
         events.send(events.ClassCreateSignal,
                     bases[0], class_name, bases, new_attrs,
-                    post_funcs)
+                    post_funcs, early_funcs)
         cls = type.__new__(meta, class_name, bases, new_attrs)
+        for func in early_funcs:
+            func(cls)
         if new_attrs.has_key('__classinit__'):
             cls.__classinit__ = staticmethod(cls.__classinit__.im_func)
         cls.__classinit__(cls, new_attrs)
