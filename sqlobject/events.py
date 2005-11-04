@@ -6,7 +6,7 @@ from weakref import ref
 
 subclassClones = {}
 
-def listen(receiver, soClass, signal, alsoSubclasses=True):
+def listen(receiver, soClass, signal, alsoSubclasses=True, weak=True):
     """
     Listen for the given ``signal`` on the SQLObject subclass
     ``soClass``, calling ``receiver()`` when ``send(soClass, signal,
@@ -15,7 +15,7 @@ def listen(receiver, soClass, signal, alsoSubclasses=True):
     If ``alsoSubclasses`` is true, receiver will also be called when
     an event is fired on any subclass.
     """
-    dispatcher.connect(receiver, signal=signal, sender=soClass)
+    dispatcher.connect(receiver, signal=signal, sender=soClass, weak=weak)
     weakReceiver = ref(receiver)
     subclassClones.setdefault(soClass, []).append((weakReceiver, signal))
 
@@ -276,4 +276,4 @@ def nice_repr(v):
 __all__ = ['listen', 'send']
 for name, value in globals().items():
     if isinstance(value, type) and issubclass(value, Signal):
-        __all__.append('value')
+        __all__.append(name)
