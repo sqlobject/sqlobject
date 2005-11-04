@@ -914,7 +914,9 @@ class ConnectionHub(object):
         """
         This routine can be used to run a function in a transaction,
         rolling the transaction back if any exception is raised from
-        that function, and committing otherwise.  Use like::
+        that function, and committing otherwise.
+
+        Use like::
 
             sqlhub.doInTransaction(process_request, os.environ)
 
