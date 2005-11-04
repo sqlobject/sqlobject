@@ -1,46 +1,46 @@
 from sqlobject import *
 from sqlobject.tests.dbtest import *
 
-class Person(SQLObject):
+class PersonIndexGet(SQLObject):
     firstName = StringCol()
     lastName = StringCol()
     age = IntCol(alternateID=True)
     nameIndex = DatabaseIndex(firstName, lastName, unique=True)
 
 def test_1():
-    setupClass(Person)
+    setupClass(PersonIndexGet)
 
-    Person(firstName='Eric', lastName='Idle', age=62)
-    Person(firstName='Terry', lastName='Gilliam', age=65)
-    Person(firstName='John', lastName='Cleese', age=66)
+    PersonIndexGet(firstName='Eric', lastName='Idle', age=62)
+    PersonIndexGet(firstName='Terry', lastName='Gilliam', age=65)
+    PersonIndexGet(firstName='John', lastName='Cleese', age=66)
 
-    Person.get(1)
-    Person.nameIndex.get('Terry', 'Gilliam')
-    Person.nameIndex.get(firstName='John', lastName='Cleese')
+    PersonIndexGet.get(1)
+    PersonIndexGet.nameIndex.get('Terry', 'Gilliam')
+    PersonIndexGet.nameIndex.get(firstName='John', lastName='Cleese')
 
     try:
-        print Person.nameIndex.get(firstName='Graham', lastName='Chapman')
+        print PersonIndexGet.nameIndex.get(firstName='Graham', lastName='Chapman')
     except Exception, e:
         pass
     else:
         raise AssertError
 
     try:
-        print Person.nameIndex.get('Terry', lastName='Gilliam')
+        print PersonIndexGet.nameIndex.get('Terry', lastName='Gilliam')
     except Exception, e:
         pass
     else:
         raise AssertError
 
     try:
-        print Person.nameIndex.get('Terry', 'Gilliam', 65)
+        print PersonIndexGet.nameIndex.get('Terry', 'Gilliam', 65)
     except Exception, e:
         pass
     else:
         raise AssertError
 
     try:
-        print Person.nameIndex.get('Terry')
+        print PersonIndexGet.nameIndex.get('Terry')
     except Exception, e:
         pass
     else:
