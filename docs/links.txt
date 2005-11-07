@@ -20,6 +20,10 @@ Open Source Projects
 * `Pylons <http://pylons.groovie.org/>`_ Web Framework: `Myghty
   <http://www.myghty.org/>`_ based, with SQLObject integration.
 
+* `Catwalk <http://checkandshare.com/catwalk/>`_ is a web-based
+  SQLObject browser and object editor (included in TurboGears)
+  (`related blog items <http://www.checkandshare.com/blog/?cat=8>`_).
+
 * `Nabu <http://furius.ca/nabu/>`_, a publishing system.
 
 * `Ultra Gleeper <http://www.crummy.com/software/UltraGleeper/>`_, a
@@ -31,9 +35,11 @@ Open Source Projects
   <http://svn.rdflib.net/trunk/rdflib/backends/_sqlobject.py>`_.
 
 * Enfold Systems' `EnTransit
-  <http://www.enfoldsystems.com/About/Talks/entransit-tutorial.pdf>`_ 
-  utilizes SQLObject and rdflib for storing transactional content 
-  from Zope.
+  <http://www.enfoldsystems.com/About/Talks/entransit-tutorial.pdf>`_
+  utilizes SQLObject and rdflib for storing transactional content from
+  Zope.  Also by Enfold is `Sample Inventory Program
+  <http://www.enfoldsystems.com/Products/Open/SIP>`_, an Open Source
+  Laboratory Inventory Management Systems.
 
 * `Bauble <http://bauble.belizebotanic.org/>`_, a Biodiversity
   Collection Manager.
@@ -74,4 +80,10 @@ Articles and Documentation
   <http://formencode.org>`_.
 
 * `Translation of SQLObject documentation to Japanese
-  <http://www.python.jp/~ymasuda/sqlobject/SQLObject.html>`_
+  <http://www.python.jp/~ymasuda/sqlobject/SQLObject.html>`_.
+
+* `How to Use Database Agnostic SQL in SQLObject
+  <http://groovie.org/articles/2005/11/01/how-to-use-database-agnostic-sql-in-sqlobject>`_.
+
+* `Using SQLObject with memcached
+  <http://www.zachary.com/s/blog/2005/09/18/sqlobject_and_memcached,_part_1>`_.
