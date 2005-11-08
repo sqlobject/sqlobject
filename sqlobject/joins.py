@@ -370,7 +370,7 @@ class _ManyToManySelectWrapper(object):
     def __getattr__(self, attr):
         # @@: This passes through private variable access too... should it?
         # Also magic methods, like __str__
-        return getattr(self, select, attr)
+        return getattr(self.select, attr)
 
     def __repr__(self):
         return '<%s for: %s>' % (self.__class__.__name__, repr(self.select))
