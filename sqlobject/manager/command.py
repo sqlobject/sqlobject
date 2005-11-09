@@ -6,13 +6,11 @@ import os
 import sys
 import textwrap
 import warnings
-try:
-    from paste import pyconfig
-    from paste import CONFIG
-except ImportError, e:
-    pyconfig = None
-    CONFIG = {}
 import time
+try:
+    from paste.deploy import appconfig
+except ImportError:
+    appconfig = None
 
 import sqlobject
 from sqlobject import col
@@ -320,13 +318,15 @@ class Command(object):
     def config(self):
         if not getattr(self.options, 'config_file', None):
             return None
-        if pyconfig and self.options.config_fn.endswith('.conf'):
-            config = pyconfig.Config(with_default=True)
-            config.load(self.options.config_file)
-            CONFIG.push_process_config(config)
-            return config
+        config_file = self.options.config_file
+        if appconfig:
+            if (not config_file.startswith('egg:')
+                and not config_file.startswith('config:')):
+                config_file = 'config:' + config_file
+            return appconfig(config_file,
+                             relative_to=os.getcwd())
         else:
-            return self.ini_config(self.options.config_file)
+            return self.ini_config(config_file)
 
     def ini_config(self, conf_fn):
         conf_section = 'main'
