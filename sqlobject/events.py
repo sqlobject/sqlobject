@@ -103,10 +103,6 @@ class RowUpdateSignal(Signal):
     The arguments are ``(instance, kwargs)``.  ``kwargs`` can be
     modified.  This is run *before* the instance is updated; if you
     want to look at the current values, simply look at ``instance``.
-
-    @@: Should this also catch single-column updates?  Should this
-    only be run before updates go to the server?  Should this be
-    called RowUpdateSignal?
     """
 
 class AddColumnSignal(Signal):
