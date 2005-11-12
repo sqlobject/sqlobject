@@ -587,10 +587,27 @@ class sqlmeta(object):
     ########################################
 
     def asDict(self):
+        """
+        Return the object as a dictionary of columns to values.
+        """
         result = {}
         for key in self.columns:
             result[key] = getattr(self.instance, key)
+        result['id'] = self.instance.id
         return result
+
+    def expireAll(sqlmeta, connection=None):
+        """
+        Expire all instances of this class.
+        """
+        soClass = sqlmeta.soClass
+        connection = connection or soClass._connection
+        cache_set = connection.cache
+        cache_set.weakrefAll(soClass)
+        for item in cache_set.getAll(soClass):
+            item.expire()
+
+    expireAll = classmethod(expireAll)
 
 sqlhub = dbconnection.ConnectionHub()
 

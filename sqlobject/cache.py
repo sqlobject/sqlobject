@@ -243,6 +243,19 @@ class CacheFactory(object):
                 all.append(id)
         return all
 
+    def getAll(self):
+        """
+        Return all the objects in the cache.
+        """
+        if self.doCache:
+            all = self.cache.values()
+        else:
+            all = []
+        for value in self.expiredCache.values():
+            if value():
+                all.append(value())
+        return all
+
 class CacheSet(object):
 
     """
@@ -305,3 +318,31 @@ class CacheSet(object):
 
     def allSubCaches(self):
         return self.caches.values()
+
+    def weakrefAll(self, cls=None):
+        """
+        Move all objects in the cls (or if not given, then in all
+        classes) to the weakref dictionary, where they can be
+        collected.
+        """
+        if cls is None:
+            for cache in self.caches.values():
+                cache.expireAll()
+        elif self.caches.has_key(cls.__name__):
+            self.caches[cls.__name__].expireAll()
+
+    def getAll(self, cls=None):
+        """
+        Returns all instances in the cache for the given class or all
+        classes.
+        """
+        if cls is None:
+            results = []
+            for cache in self.caches.values():
+                results.extend(cache.getAll())
+            return results
+        elif cls.__name__ in self.caches:
+            return self.caches[cls.__name__].getAll()
+        else:
+            return []
+        

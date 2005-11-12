@@ -138,6 +138,15 @@ class DBConnection:
             % (self, name, soClass))
         setattr(self, name, ConnWrapper(soClass, self))
 
+    def expireAll(self):
+        """
+        Expire all instances of objects for this connection.
+        """
+        cache_set = self.cache
+        cache_set.weakrefAll()
+        for item in cache_set.getAll():
+            item.expire()
+
 class ConnWrapper(object):
 
     """
