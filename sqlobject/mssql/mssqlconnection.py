@@ -24,11 +24,12 @@ class MSSQLConnection(DBAPI):
                     self.make_conn_str = lambda keys: \
                     ["Provider=SQLOLEDB;Data Source=%s;Initial Catalog=%s;Integrated Security=SSPI;Persist Security Info=False" % (
                         keys.host, keys.db)]
-                    del kw["sspi"]
                 else:
                     self.make_conn_str = lambda keys: \
                     ["Provider=SQLOLEDB;Data Source=%s;User Id=%s;Password=%s;Initial Catalog=%s" % (
                             keys.host, keys.user, keys.password, keys.db)]
+                if "sspi" in kw:
+                    del kw["sspi"]
             except ImportError: # raise the exceptions other than ImportError for adodbapi absence
                 import pymssql as sqlmodule
                 self.dbconnection = sqlmodule.connect
@@ -68,6 +69,8 @@ class MSSQLConnection(DBAPI):
         con = self.dbconnection( *self.make_conn_str(self) )
         cur = con.cursor()
         cur.execute('SET ANSI_NULLS ON')
+        cur.execute("SELECT CAST('12345.21' AS DECIMAL(10, 2))")
+        self.decimalSeparator = cur.fetchone()[0][-3]
         cur.close()
         return con
 

@@ -1116,6 +1116,47 @@ class TimeCol(Col):
     baseClass = SOTimeCol
 
 
+try:
+    from decimal import Decimal
+except ImportError:
+    Decimal = float
+
+class DecimalValidator(validators.Validator):
+    def to_python(self, value, state):
+        if value is None:
+            return None
+        if isinstance(value, (int, long, Decimal, sqlbuilder.SQLExpression)):
+            return value
+        if isinstance(value, float):
+            value = str(value)
+        connection = state.soObject._connection
+        if hasattr(connection, "decimalSeparator"):
+            value = value.replace(connection.decimalSeparator, ".")
+        try:
+            return Decimal(value)
+        except:
+            raise validators.Invalid("expected a Decimal in the DecimalCol '%s', got %s %r instead" % \
+                (self.name, type(value), value), value, state)
+
+    def from_python(self, value, state):
+        if value is None:
+            return None
+        if isinstance(value, float):
+            value = str(value)
+        if isinstance(value, (str, unicode)):
+            connection = state.soObject._connection
+            if hasattr(connection, "decimalSeparator"):
+                value = value.replace(connection.decimalSeparator, ".")
+            try:
+                return Decimal(value)
+            except:
+                raise validators.Invalid("can not parse Decimal value '%s' in the DecimalCol '%s'" %
+                    (value, self.name), value, state)
+        if not isinstance(value, (int, long, Decimal, sqlbuilder.SQLExpression)):
+            raise validators.Invalid("expected a decimal in the DecimalCol '%s', got %s %r instead" % \
+                (self.name, type(value), value), value, state)
+        return value
+
 class SODecimalCol(SOCol):
 
     def __init__(self, **kw):
@@ -1129,6 +1170,10 @@ class SODecimalCol(SOCol):
 
     def _sqlType(self):
         return 'DECIMAL(%i, %i)' % (self.size, self.precision)
+
+    def createValidators(self):
+        return [DecimalValidator()] + \
+            super(SODecimalCol, self).createValidators()
 
 class DecimalCol(Col):
     baseClass = SODecimalCol
