@@ -3,6 +3,24 @@ from sqlobject.tests.dbtest import *
 from sqlobject import events
 import sys
 
+try:
+    sorted
+except NameError:
+    # For Python 2.3 and under:
+    def sorted(lst, cmp=None, key=None, reverse=False):
+        if key:
+            lst = [(key(i), i) for i in lst]
+        lst = lst[:]
+        if cmp:
+            lst.sort(cmp)
+        else:
+            lst.sort()
+        if key:
+            lst = [i for k, i in lst]
+        if reverse:
+            lst.reverse()
+        return lst
+
 class EventTester(SQLObject):
     name = StringCol()
 
