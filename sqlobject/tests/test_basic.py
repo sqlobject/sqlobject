@@ -279,5 +279,6 @@ def testForeignKeySetNull():
 def testAsDict():
     setupGetters(TestSO1)
     bob = TestSO1.selectBy(name='bob')[0]
-    assert bob.sqlmeta.asDict() == {'passwd': 'tbq', 'name': 'bob'}
+    assert bob.sqlmeta.asDict() == {
+        'passwd': 'tbq', 'name': 'bob', 'id': bob.id}
     
