@@ -27,6 +27,7 @@ __all__ = ['BoundAttribute', 'BoundFactory', 'bind_attributes',
            'bind_attributes_local']
 
 import declarative
+import events
 
 class BoundAttribute(declarative.Declarative):
 
@@ -41,6 +42,8 @@ class BoundAttribute(declarative.Declarative):
     name, **attrs)`` and maybe ``set_object(added_class, name,
     **attrs)`` (the default implementation of ``set_object``
     just resets the attribute to whatever ``make_object`` returned).
+
+    Also see ``BoundFactory``.
     """
 
     _private_variables = (
@@ -51,9 +54,11 @@ class BoundAttribute(declarative.Declarative):
         '_add_attrs',
         'set_object',
         'make_object',
+        'clone_in_subclass',
         )
 
     _all_attrs = ()
+    clone_for_subclass = True
 
     def __classinit__(cls, new_attrs):
         declarative.Declarative.__classinit__(cls, new_attrs)
@@ -61,7 +66,7 @@ class BoundAttribute(declarative.Declarative):
 
     def __instanceinit__(self, new_attrs):
         declarative.Declarative.__instanceinit__(self, new_attrs)
-        self._all_attrs = self._add_attrs(self, new_attrs)
+        self.__dict__['_all_attrs'] = self._add_attrs(self, new_attrs)
 
     def _add_attrs(this_object, new_attrs):
         private = this_object._private_variables
@@ -82,6 +87,18 @@ class BoundAttribute(declarative.Declarative):
         attrs['added_class'] = added_class
         attrs['attr_name'] = attr_name
         obj = me.make_object(**attrs)
+
+        if self.clone_for_subclass:
+            def on_rebind(new_class_name, bases, new_attrs,
+                          post_funcs, early_funcs):
+                def rebind(new_class):
+                    me.set_object(
+                        new_class, attr_name,
+                        me.make_object(**attrs))
+                post_funcs.append(rebind)
+            events.listen(receiver=on_rebind, soClass=added_class,
+                          signal=events.ClassCreateSignal, weak=False)
+
         me.set_object(added_class, attr_name, obj)
 
     __addtoclass__ = declarative.classinstancemethod(__addtoclass__)
@@ -96,29 +113,24 @@ class BoundAttribute(declarative.Declarative):
 
     make_object = classmethod(make_object)
 
+    def __setattr__(self, name, value):
+        self.__dict__['_all_attrs'] = self._add_attrs(self, {name: value})
+        self.__dict__[name] = value
+
 class BoundFactory(BoundAttribute):
 
+    """
+    This will bind the attribute to whatever is given by
+    ``factory_class``.  This factory should be a callable with the
+    signature ``factory_class(added_class, attr_name, *args, **kw)``.
+
+    The factory will be reinvoked (and the attribute rebound) for
+    every subclassing.
+    """
+
     factory_class = None
+    _private_variables = (
+        BoundAttribute._private_variables + ('factory_class',))
 
     def make_object(cls, added_class, attr_name, *args, **kw):
         return cls.factory_class(added_class, attr_name, *args, **kw)
-
-def bind_attributes(cls, new_attrs):
-    for name, value in new_attrs.items():
-        if hasattr(value, '__addtoclass__'):
-            value.__addtoclass__(cls, name)
-
-def bind_attributes_local(cls, new_attrs):
-    new_bound_attributes = {}
-    for name, value in getattr(cls, '__bound_attributes__', {}).items():
-        if new_attrs.has_key(name):
-            # The attribute is being REbound, so don't try to bind it
-            # again.
-            continue
-        value.__addtoclass__(cls, name)
-        new_bound_attributes[name] = value
-    for name, value in new_attrs.items():
-        if hasattr(value, '__addtoclass__'):
-            value.__addtoclass__(cls, name)
-            new_bound_attributes[name] = value
-    cls.__bound_attributes__ = new_bound_attributes

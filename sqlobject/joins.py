@@ -268,43 +268,24 @@ class SingleJoin(Join):
 
 
 
-
-class ManyToMany(object):
-
-    def __init__(self, otherClassName,
-                 intermediateTable=None,
-                 joinColumn=None,
-                 otherColumn=None,
-                 createJoinTable=True):
-        self.otherClassName = otherClassName
-        self.intermediateTable = intermediateTable
-        self.joinColumn = joinColumn
-        self.otherColumn = otherColumn
-        self.createJoinTable = createJoinTable
-
-    def __addtoclass__(self, soClass, name):
-        setattr(soClass, name,
-                SOManyToMany(soClass, name=name,
-                             otherClassName=self.otherClassName,
-                             intermediateTable=self.intermediateTable,
-                             joinColumn=self.joinColumn,
-                             otherColumn=self.otherColumn,
-                             createJoinTable=self.createJoinTable))
+import boundattributes
 
 class SOManyToMany(object):
 
-    def __init__(self, soClass, name, otherClassName,
+    def __init__(self, soClass, name, join,
                  intermediateTable, joinColumn, otherColumn,
-                 createJoinTable):
+                 createJoinTable, **attrs):
         self.name = name
         self.intermediateTable = intermediateTable
         self.joinColumn = joinColumn
         self.otherColumn = otherColumn
         self.createJoinTable = createJoinTable
         self.soClass = self.otherClass = None
+        for name, value in attrs.items():
+            setattr(self, name, value)
         classregistry.registry(
             soClass.sqlmeta.registry).addClassCallback(
-            otherClassName, self._setOtherClass)
+            join, self._setOtherClass)
         classregistry.registry(
             soClass.sqlmeta.registry).addClassCallback(
             soClass.__name__, self._setThisClass)
@@ -345,10 +326,7 @@ class SOManyToMany(object):
             & (sqlbuilder.Field(self.intermediateTable, self.joinColumn)
                == obj.id))
         select = self.otherClass.select(query)
-        return _ManyToManySelectWrapper(obj, self, select)
-    
-    def __sqlrepr__(self, dbname):
-        return self.query.__sqlrepr__(self, dbname)
+        return _ManyToManySelectWrapper(obj, self, select)        
 
     def event_CreateTableSignal(self, soClass, connection, extra_sql,
                                 post_funcs):
@@ -359,6 +337,19 @@ class SOManyToMany(object):
         if connection.tableExists(self.intermediateTable):
             return
         connection._SO_createJoinTable(self)
+
+class ManyToMany(boundattributes.BoundFactory):
+    factory_class = SOManyToMany
+    __restrict_attributes__ = (
+        'join', 'intermediateTable',
+        'joinColumn', 'otherColumn', 'createJoinTable')
+    __unpackargs__ = ('join',)
+
+    # Default values:
+    intermediateTable = None
+    joinColumn = None
+    otherColumn = None
+    createJoinTable = True
     
 class _ManyToManySelectWrapper(object):
 
@@ -370,7 +361,7 @@ class _ManyToManySelectWrapper(object):
     def __getattr__(self, attr):
         # @@: This passes through private variable access too... should it?
         # Also magic methods, like __str__
-        return getattr(self.select, attr)
+        return getattr(self, select, attr)
 
     def __repr__(self):
         return '<%s for: %s>' % (self.__class__.__name__, repr(self.select))
@@ -385,7 +376,6 @@ class _ManyToManySelectWrapper(object):
         return self.select[key]
 
     def add(self, obj):
-        print "Add", obj, "to", self.forObject
         obj._connection._SO_intermediateInsert(
             self.join.intermediateTable,
             self.join.joinColumn,
@@ -405,28 +395,18 @@ class _ManyToManySelectWrapper(object):
         obj = self.join.otherClass(**kw)
         self.add(obj)
         return obj
-    
-class OneToMany(object):
-
-    def __init__(self, otherClassName, joinColumn=None):
-        self.otherClassName = otherClassName
-        self.joinColumn = joinColumn
-
-    def __addtoclass__(self, soClass, name):
-        setattr(soClass, name,
-                SOOneToMany(soClass, name=name,
-                            otherClassName=self.otherClassName,
-                            joinColumn=self.joinColumn))
                 
 class SOOneToMany(object):
 
-    def __init__(self, soClass, name, otherClassName, joinColumn):
+    def __init__(self, soClass, name, join, joinColumn, **attrs):
         self.soClass = soClass
         self.name = name
         self.joinColumn = joinColumn
+        for name, value in attrs.items():
+            setattr(self, name, value)
         classregistry.registry(
             soClass.sqlmeta.registry).addClassCallback(
-            otherClassName, self._setOtherClass)
+            join, self._setOtherClass)
 
     def _setOtherClass(self, otherClass):
         self.otherClass = otherClass
@@ -443,6 +423,15 @@ class SOOneToMany(object):
         select = self.otherClass.select(query)
         return _OneToManySelectWrapper(obj, self, select)
 
+class OneToMany(boundattributes.BoundFactory):
+    factory_class = SOOneToMany
+    __restrict_attributes__ = (
+        'join', 'joinColumn')
+    __unpackargs__ = ('join',)
+
+    # Default values:
+    joinColumn = None
+
 class _OneToManySelectWrapper(object):
 
     def __init__(self, forObject, join, select):
@@ -453,7 +442,7 @@ class _OneToManySelectWrapper(object):
     def __getattr__(self, attr):
         # @@: This passes through private variable access too... should it?
         # Also magic methods, like __str__
-        return getattr(self, select, attr)
+        return getattr(self.select, attr)
 
     def __repr__(self):
         return '<%s for: %s>' % (self.__class__.__name__, repr(self.select))

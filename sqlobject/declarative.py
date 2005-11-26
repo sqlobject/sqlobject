@@ -112,6 +112,8 @@ class Declarative(object):
 
     __metaclass__ = DeclarativeMeta
 
+    __restrict_attributes__ = None
+
     def __classinit__(cls, new_attrs):
         cls.declarative_count = counter.next()
         for name in cls.__mutableattributes__:
@@ -119,6 +121,12 @@ class Declarative(object):
                 setattr(cls, copy.copy(getattr(cls, name)))
 
     def __instanceinit__(self, new_attrs):
+        if self.__restrict_attributes__ is not None:
+            for name in new_attrs:
+                if name not in self.__restrict_attributes__:
+                    raise TypeError(
+                        '%s() got an unexpected keyword argument %r'
+                        % (self.__class__.__name__, name))
         for name, value in new_attrs.items():
             setattr(self, name, value)
         if not new_attrs.has_key('declarative_count'):
