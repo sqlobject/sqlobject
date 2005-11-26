@@ -316,6 +316,11 @@ class SOManyToMany(object):
                       self.soClass, events.CreateTableSignal)
         events.listen(self.event_CreateTableSignal,
                       self.otherClass, events.CreateTableSignal)
+        self.clause = (
+            (self.otherClass.q.id ==
+             sqlbuilder.Field(self.intermediateTable, self.otherColumn))
+            & (sqlbuilder.Field(self.intermediateTable, self.joinColumn)
+               == self.soClass.q.id))
 
     def __get__(self, obj, type):
         if obj is None:
@@ -407,6 +412,9 @@ class SOOneToMany(object):
         classregistry.registry(
             soClass.sqlmeta.registry).addClassCallback(
             join, self._setOtherClass)
+        self.clause = (
+            sqlbuilder.Field(self.otherClass.sqlmeta.table, self.joinColumn)
+            == self.soClass.q.id)
 
     def _setOtherClass(self, otherClass):
         self.otherClass = otherClass
