@@ -701,8 +701,6 @@ class SQLObject(object):
 
     def __classinit__(cls, new_attrs):
 
-        declarative.setup_attributes(cls, new_attrs)
-
         # This is true if we're initializing the SQLObject class,
         # instead of a subclass:
         is_base = cls.__bases__ == (object,)
@@ -799,6 +797,10 @@ class SQLObject(object):
 
         if connection and not hasattr(cls, '_connection'):
             cls.setConnection(connection)
+
+        # Now the class is in an essentially OK-state, so we can
+        # set up any magic attributes:
+        declarative.setup_attributes(cls, new_attrs)
 
         # We have to check if there are columns in the inherited
         # _columns where the attribute has been set to None in this
