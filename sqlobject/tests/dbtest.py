@@ -161,14 +161,18 @@ class InstalledTestDatabase(sqlobject.SQLObject):
         """
         sql = getattr(soClass, soClass._connection.dbName + 'Create',
                       None)
+        all_extra = []
         if sql:
             soClass._connection.query(sql)
         else:
-            sql, constraints = soClass.createTableSQL()
+            sql, extra_sql = soClass.createTableSQL()
             soClass.createTable()
+            all_extra.extend(extra_sql)
         cls(tableName=soClass.sqlmeta.table,
             createSQL=sql,
             connectionURI=soClass._connection.uri())
+        for extra_sql in all_extra:
+            soClass._connection.query(extra_sql)
     install = classmethod(install)
 
     def drop(cls, soClass):
