@@ -412,15 +412,15 @@ class SOOneToMany(object):
         classregistry.registry(
             soClass.sqlmeta.registry).addClassCallback(
             join, self._setOtherClass)
-        self.clause = (
-            sqlbuilder.Field(self.otherClass.sqlmeta.table, self.joinColumn)
-            == self.soClass.q.id)
 
     def _setOtherClass(self, otherClass):
         self.otherClass = otherClass
         if not self.joinColumn:
             self.joinColumn = styles.getStyle(
                 self.soClass).tableReference(self.soClass.sqlmeta.table)
+        self.clause = (
+            sqlbuilder.Field(self.otherClass.sqlmeta.table, self.joinColumn)
+            == self.soClass.q.id)
 
     def __get__(self, obj, type):
         if obj is None:
