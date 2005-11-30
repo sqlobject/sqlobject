@@ -3,6 +3,7 @@ from sqlobject.col import popKey
 
 sqlite = None
 using_sqlite2 = False
+sqlite2_Binary = None
 
 class SQLiteConnection(DBAPI):
 
@@ -34,6 +35,19 @@ class SQLiteConnection(DBAPI):
             for col_type in "text", "char", "varchar":
                 sqlite.register_converter(col_type, stop_pysqlite2_converting_strings_to_unicode)
                 sqlite.register_converter(col_type.upper(), stop_pysqlite2_converting_strings_to_unicode)
+            try:
+                from sqlite import encode, decode
+            except ImportError:
+                import base64
+                sqlite.encode = base64.encodestring
+                sqlite.decode = base64.decodestring
+            else:
+                sqlite.encode = encode
+                sqlite.decode = decode
+            global sqlite2_Binary
+            if sqlite2_Binary is None:
+                sqlite2_Binary = sqlite.Binary
+                sqlite.Binary = lambda s: sqlite2_Binary(sqlite.encode(s))
         else:
             opts['autocommit'] = autoCommit
             if 'encoding' in kw:
