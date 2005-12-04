@@ -306,7 +306,7 @@ class CacheSet(object):
 
     def tryGet(self, id, cls):
         try:
-            self.caches[cls.__name__].tryGet(id)
+            return self.caches[cls.__name__].tryGet(id)
         except KeyError:
             return None
 
