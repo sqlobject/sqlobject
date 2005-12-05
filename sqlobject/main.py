@@ -1131,6 +1131,9 @@ class SQLObject(object):
                 if to_python:
                     value = to_python(dbValue, self._SO_validatorState)
                 setattr(self, instanceName(name), value)
+
+            self._SO_createValues.update(kw)
+
             for name, value in extra.items():
                 try:
                     getattr(self.__class__, name)
@@ -1142,7 +1145,6 @@ class SQLObject(object):
                 except AttributeError, e:
                     raise AttributeError, '%s (with attribute %r)' % (e, name)
 
-            self._SO_createValues.update(kw)
             self.dirty = True
             return
 
