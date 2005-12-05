@@ -16,7 +16,7 @@ def assert_export(result, *args, **kw):
         print s
         assert result.strip() == s.strip()
 
-class Simple(SQLObject):
+class SimpleCSV(SQLObject):
 
     name = StringCol()
     address = StringCol()
@@ -24,8 +24,8 @@ class Simple(SQLObject):
     hidden = StringCol()
     hidden.noCSV = True
 
-class Complex(SQLObject):
-    
+class ComplexCSV(SQLObject):
+
     fname = StringCol()
     lname = StringCol()
     age = IntCol()
@@ -36,55 +36,55 @@ class Complex(SQLObject):
         return self.fname + ' ' + self.lname
     def _get_initials(self):
         return self.fname[0] + self.lname[0]
-    
+
 def test_simple():
-    setupClass(Simple)
-    Simple(name='Bob', address='432W', hidden='boo')
-    Simple(name='Joe', address='123W', hidden='arg')
+    setupClass(SimpleCSV)
+    SimpleCSV(name='Bob', address='432W', hidden='boo')
+    SimpleCSV(name='Joe', address='123W', hidden='arg')
     assert_export("""\
 name,Street Address
 Bob,432W
 Joe,123W
-""", Simple, orderBy='name')
+""", SimpleCSV, orderBy='name')
     assert_export("""\
 name,Street Address
 Joe,123W
 Bob,432W
-""", Simple, orderBy='address')
+""", SimpleCSV, orderBy='address')
     assert_export("""\
 name,Street Address
 Joe,123W
-""", Simple.selectBy(name='Joe'))
-    
+""", SimpleCSV.selectBy(name='Joe'))
+
 def test_complex():
-    setupClass(Complex)
-    Complex(fname='John', lname='Doe', age=40)
-    Complex(fname='Bob', lname='Dylan', age=60)
-    Complex(fname='Harriet', lname='Tubman', age=160)
+    setupClass(ComplexCSV)
+    ComplexCSV(fname='John', lname='Doe', age=40)
+    ComplexCSV(fname='Bob', lname='Dylan', age=60)
+    ComplexCSV(fname='Harriet', lname='Tubman', age=160)
     assert_export("""\
 Full Name,fname,lname,age,initials
 John Doe,John,Doe,40,JD
 Bob Dylan,Bob,Dylan,60,BD
 Harriet Tubman,Harriet,Tubman,160,HT
-""", Complex, orderBy='lname')
+""", ComplexCSV, orderBy='lname')
     assert_export("""\
 Full Name,fname,lname,age,initials
 Bob Dylan,Bob,Dylan,60,BD
 John Doe,John,Doe,40,JD
-""", Complex.select(Complex.q.lname.startswith('D'), orderBy='fname'))
+""", ComplexCSV.select(ComplexCSV.q.lname.startswith('D'), orderBy='fname'))
 
 def test_zip():
     # Just exercise tests, doesn't actually test results
-    setupClass(Simple)
-    Simple(name='Bob', address='432W', hidden='boo')
-    Simple(name='Joe', address='123W', hidden='arg')
-    
-    setupClass(Complex)
-    Complex(fname='John', lname='Doe', age=40)
-    Complex(fname='Bob', lname='Dylan', age=60)
-    Complex(fname='Harriet', lname='Tubman', age=160)
-    s = export_csv_zip([Simple, Complex])
+    setupClass(SimpleCSV)
+    SimpleCSV(name='Bob', address='432W', hidden='boo')
+    SimpleCSV(name='Joe', address='123W', hidden='arg')
+
+    setupClass(ComplexCSV)
+    ComplexCSV(fname='John', lname='Doe', age=40)
+    ComplexCSV(fname='Bob', lname='Dylan', age=60)
+    ComplexCSV(fname='Harriet', lname='Tubman', age=160)
+    s = export_csv_zip([SimpleCSV, ComplexCSV])
     assert isinstance(s, str) and s
-    s = export_csv_zip([Simple.selectBy(name='Bob'),
-                        (Complex, list(Complex.selectBy(fname='John')))])
-    
+    s = export_csv_zip([SimpleCSV.selectBy(name='Bob'),
+                        (ComplexCSV, list(ComplexCSV.selectBy(fname='John')))])
+
