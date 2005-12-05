@@ -248,8 +248,15 @@ class SOSingleJoin(SOMultipleJoin):
         SOMultipleJoin.__init__(self, **kw)
 
     def performJoin(self, inst):
+        if inst.sqlmeta._perConnection:
+            conn = inst._connection
+        else:
+            conn = None
         pythonColumn = self.soClass.sqlmeta.style.dbColumnToPythonAttr(self.joinColumn)
-        results = self.otherClass.select(getattr(self.otherClass.q, pythonColumn) == inst.id)
+        results = self.otherClass.select(
+            getattr(self.otherClass.q, pythonColumn) == inst.id,
+            connection=conn
+        )
         if results.count() == 0:
             if not self.makeDefault:
                 return None
