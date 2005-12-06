@@ -224,15 +224,18 @@ class SOSQLRelatedJoin(SORelatedJoin):
             'otherCol' : self.otherColumn,
             'idValue' : inst.id,
         }
-        results = self.otherClass.select('''\
+        clause = '''\
 %(otherTable)s.%(otherID)s = %(interTable)s.%(otherCol)s and
 %(interTable)s.%(joinCol)s = %(table)s.%(ID)s and
-%(table)s.%(ID)s = %(idValue)s''' % options, clauseTables=(
-            options['table'],
-            options['otherTable'],
-            options['interTable'],
-        ))
-        # TODO (michelts), apply order by on the selection
+%(table)s.%(ID)s = %(idValue)s''' % options
+        results = self.otherClass.select(sqlbuilder.SQLConstant(clause),
+            clauseTables=(
+                options['table'],
+                options['otherTable'],
+                options['interTable'],
+            )
+        )
+        # TODO (michelts): apply orderBy on the selection
         return results
 
 class SQLRelatedJoin(RelatedJoin):
