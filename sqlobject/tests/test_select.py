@@ -84,8 +84,12 @@ def test_select_getOne():
     b2 = IterTest(name='b')
     raises(SQLObjectIntegrityError, 'IterTest.selectBy(name="b").getOne()')
     raises(SQLObjectIntegrityError, 'IterTest.selectBy(name="b").getOne(None)')
-    
 
+def test_selectBy():
+    setupClass(IterTest)
+    a = IterTest(name='a')
+    b = IterTest(name='b')
+    assert IterTest.selectBy().count() == 2
 
 
 class Counter2(SQLObject):

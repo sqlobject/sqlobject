@@ -692,6 +692,8 @@ class DBAPI(DBConnection):
                     data[col.dbName] = None
                 else:
                     data[col.dbName] = obj.id
+        if not data:
+            return None
         return ' AND '.join(
             ['%s %s %s' %
              (dbName, ops.get(value, "="), self.sqlrepr(value))
