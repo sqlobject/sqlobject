@@ -1067,6 +1067,7 @@ class SQLObject(object):
                 delattr(self, instanceName(column.name))
             self.sqlmeta.expired = True
             self._connection.cache.expire(self.id, self.__class__)
+            self._SO_createValues = {}
         finally:
             self._SO_writeLock.release()
 
