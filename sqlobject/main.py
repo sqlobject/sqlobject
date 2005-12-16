@@ -960,6 +960,13 @@ class SQLObject(object):
                 cache.put(id, cls, val)
             finally:
                 cache.finishPut(cls)
+        elif selectResults and not val.dirty:
+            val._SO_writeLock.acquire()
+            try:
+                val._SO_selectInit(selectResults)
+                val.sqlmeta.expired = False
+            finally:
+                val._SO_writeLock.release()
         return val
 
     get = classmethod(get)
