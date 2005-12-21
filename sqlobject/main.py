@@ -213,7 +213,7 @@ class sqlmeta(object):
     __metaclass__ = declarative.DeclarativeMeta
 
     # These attributes shouldn't be shared with superclasses:
-    _unshared_attributes = ['table', 'idName', 'columns']
+    _unshared_attributes = ['table', 'idName', 'columns', 'childName']
 
     # These are internal bookkeeping attributes; the class-level
     # definition is a default for the instances, instances will
@@ -232,6 +232,11 @@ class sqlmeta(object):
     # globally available.  In that case, self.sqlmeta._perConnection
     # will be true.  It's false by default:
     _perConnection = False
+
+    # Inheritance definitions:
+    parentClass = None # A reference to the parent class
+    childClasses = {} # References to child classes, keyed by childName
+    childName = None # Class name for inheritance child object creation
 
     def __classinit__(cls, new_attrs):
         for attr in cls._unshared_attributes:
@@ -691,10 +696,11 @@ class SQLObject(object):
     #DSM: The _inheritable attribute controls wheter the class can by
     #DSM: inherited 'logically' with a foreignKey and a back reference.
     _inheritable = False # Is this class inheritable?
-    _parentClass = None # A reference to the parent class
     _parent = None # A reference to the parent instance
-    _childClasses = {} # References to child classes
     childName = None # Children name (to be able to get a subclass)
+    # moved to sqlmeta in 0.8:
+    _parentClass = _sqlmeta_attr('parentClass', 2)
+    _childClasses = _sqlmeta_attr('childClasses', 2)
 
     # The law of Demeter: the class should not call another classes by name
     SelectResultsClass = SelectResults
@@ -747,44 +753,6 @@ class SQLObject(object):
             for j in new_attrs['_joins']:
                 implicitJoins.append(j)
 
-
-        #DSM: Need to know very soon if the class is a child of an
-        #DSM: inheritable class. If so, we keep a link to our parent class.
-        cls._childClasses = {}
-        for superclass in cls.__bases__:
-            if hasattr(superclass, '_inheritable') and superclass._inheritable and \
-                superclass.__name__ <> "InheritableSQLObject":
-                    cls._parentClass = superclass
-                    cls._parent = None
-                    superclass._childClasses[cls.__name__] = cls
-
-        #DSM: If this class is a child of a parent class, we need to do some
-        #DSM: attribute check and add a foreign key to the parent.
-        if cls._parentClass:
-            #DSM: First, look for invalid column name:
-            #DSM: reserved ones or same as a parent
-            parentCols = cls.sqlmeta.columns.keys()
-            for column in implicitColumns:
-                cname = column.name
-                if cname == 'childName':
-                    raise AttributeError, \
-                        "The column name 'childName' is reserved"
-                if cname in parentCols:
-                    raise AttributeError, "The column '%s' is already " \
-                        "defined in an inheritable parent" % cname
-            #DSM: Remove columns if inherited from an inheritable class
-            #DSM: as we don't want them.  All we want is a foreign key
-            #DSM: that points to our parent
-            cls.sqlmeta.columns = {}
-            cls.sqlmeta.columnList = []
-            cls.sqlmeta.columnDefinitions = {}
-        #DSM: If this is inheritable, add some default columns
-        #DSM: to be able to link to children
-        if hasattr(cls, '_inheritable') and cls._inheritable and \
-            cls.__name__ <> "InheritableSQLObject":
-            cls.sqlmeta.columnDefinitions['childName'] = col.StringCol(
-                name='childName', default=None)
-
         ######################################################
         # Set some attributes to their defaults, if necessary.
         # First we get the connection:
@@ -836,15 +804,6 @@ class SQLObject(object):
         # more.
         if not is_base:
             cls.q = sqlbuilder.SQLObjectTable(cls)
-
-            #DSM: If we are a child, get the q magic from the parent
-            currentClass = cls
-            while currentClass._parentClass:
-                currentClass = currentClass._parentClass
-                for column in currentClass.sqlmeta.columnDefinitions.values():
-                    if type(column) == col.ForeignKey: continue
-                    setattr(cls.q, column.name,
-                        getattr(currentClass.q, column.name))
 
         classregistry.registry(cls.sqlmeta.registry).addClass(cls)
 
