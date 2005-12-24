@@ -1513,6 +1513,9 @@ class SQLObject(object):
     delete = classmethod(delete)
 
     def __repr__(self):
+        if not hasattr(self, 'id'):
+            # Object initialization not finished.  No attributes can be read.
+            return '<%s (not initialized)>' % self.__class__.__name__
         return '<%s %r %s>' \
                % (self.__class__.__name__,
                   self.id,

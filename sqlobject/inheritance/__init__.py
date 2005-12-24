@@ -16,8 +16,7 @@ except NameError: # Python 2.2
 class InheritableSelectResults(SelectResults):
     IterationClass = iteration.InheritableIteration
 
-    def __init__(self, sourceClass, clause, clauseTables=None,
-                 **ops):
+    def __init__(self, sourceClass, clause, clauseTables=None, **ops):
         if clause is None or isinstance(clause, str) and clause == 'all':
             clause = sqlbuilder.SQLTrueClause
         tablesDict = sqlbuilder.tablesUsedDict(clause)
@@ -165,6 +164,8 @@ class InheritableSQLObject(SQLObject):
         currentClass = cls.sqlmeta.parentClass
         while currentClass:
             for column in currentClass.sqlmeta.columnDefinitions.values():
+                if column.name == 'childName':
+                    continue
                 if type(column) == col.ForeignKey:
                     continue
                 setattr(cls.q, column.name,
@@ -216,10 +217,20 @@ class InheritableSQLObject(SQLObject):
         if childUpdate: return val
         #DSM: If this class has a child, return the child
         if 'childName' in cls.sqlmeta.columns:
-             childName = val.childName
-             if childName is not None:
-                 return cls.sqlmeta.childClasses[childName].get(id,
-                     connection=connection, selectResults=childResults)
+            childName = val.childName
+            if childName is not None:
+                childClass = cls.sqlmeta.childClasses[childName]
+                # If the class has no columns (which sometimes makes sense
+                # and may be true for non-inheritable (leaf) classes only),
+                # shunt the query to avoid almost meaningless SQL
+                # like "SELECT NULL FROM child WHERE id=1".
+                # This is based on assumption that child object exists
+                # if parent object exists.  (If it doesn't your database
+                # is broken and that is a job for database maintenance.)
+                if not (childResults or childClass.sqlmeta.columns):
+                    childResults = (None,)
+                return childClass.get(id, connection=connection,
+                    selectResults=childResults)
         #DSM: Now, we know we are alone or the last child in a family...
         #DSM: It's time to find our parents
         inst = val
@@ -277,12 +288,12 @@ class InheritableSQLObject(SQLObject):
             new_kw = {}
             parent_kw = {}
             for (name, value) in kw.items():
-                if hasattr(parentClass, name):
+                if (name != 'childName') and hasattr(parentClass, name):
                     parent_kw[name] = value
                 else:
                     new_kw[name] = value
             kw = new_kw
-            parent_kw["childName"] = self.sqlmeta.childName
+            parent_kw['childName'] = self.sqlmeta.childName
             self._parent = parentClass(kw=parent_kw,
                 connection=self._connection)
 
@@ -297,6 +308,69 @@ class InheritableSQLObject(SQLObject):
         obj = result[0]
         return [obj.id], obj
     _findAlternateID = classmethod(_findAlternateID)
+
+    def select(cls, clause=None, *args, **kwargs):
+        parentClass = cls.sqlmeta.parentClass
+        childUpdate = kwargs.pop('childUpdate', None)
+        # childUpdate may have one of three values:
+        #   True:
+        #       select was issued by parent class to create child objects.
+        #       Execute select without modifications.
+        #   None (default):
+        #       select is run by application.  If this class is inheritance
+        #       child, delegate query to the parent class to utilize
+        #       InheritableIteration optimizations.  Selected records
+        #       are restricted to this (child) class by adding childName
+        #       filter to the where clause.
+        #   False:
+        #       select is delegated from inheritance child which is parent
+        #       of another class.  Delegate the query to parent if possible,
+        #       but don't add childName restriction: selected records
+        #       will be filtered by join to the table filtered by childName.
+        if (not childUpdate) and parentClass:
+            if childUpdate is None:
+                # this is the first parent in deep hierarchy
+                addClause = parentClass.q.childName == cls.sqlmeta.childName
+                # if the clause was one of TRUE varians, replace it
+                if (clause is None) or (clause is sqlbuilder.SQLTrueClause) \
+                or (isinstance(clause, basestring) and (clause == 'all')):
+                    clause = addClause
+                else:
+                    # patch WHERE condition:
+                    # change ID field of this class to ID of parent class
+                    # XXX the clause is patched in place; it would be better
+                    #     to build a new one if we have to replace field
+                    clsID = cls.q.id
+                    parentID = parentClass.q.id
+                    def _get_patched(clause):
+                        if isinstance(clause, sqlbuilder.SQLOp):
+                            _patch_id_clause(clause)
+                            return None
+                        elif not isinstance(clause, sqlbuilder.Field):
+                            return None
+                        elif (clause.tableName == clsID.tableName) \
+                        and (clause.fieldName == clsID.fieldName):
+                            return parentID
+                        else:
+                            return None
+                    def _patch_id_clause(clause):
+                        if not isinstance(clause, sqlbuilder.SQLOp):
+                            return
+                        expr = _get_patched(clause.expr1)
+                        if expr:
+                            clause.expr1 = expr
+                        expr = _get_patched(clause.expr2)
+                        if expr:
+                            clause.expr2 = expr
+                    _patch_id_clause(clause)
+                    # add childName filter
+                    clause = sqlbuilder.AND(clause, addClause)
+            return parentClass.select(clause, childUpdate=False,
+                *args, **kwargs)
+        else:
+            return super(InheritableSQLObject, cls).select(
+                clause, *args, **kwargs)
+    select = classmethod(select)
 
     def selectBy(cls, connection=None, **kw):
         clause = []

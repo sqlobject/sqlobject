@@ -67,10 +67,25 @@ class InheritableIteration(Iteration):
         registry = self.select.sourceClass.sqlmeta.registry
         for childName, ids in childIdsNames.items():
             klass = findClass(childName, registry)
-            select = klass.select(sqlbuilder.IN(sqlbuilder.SQLConstant("id"), ids))
+            if len(ids) == 1:
+                select = klass.select(klass.q.id == ids[0],
+                    childUpdate=True)
+            else:
+                select = klass.select(sqlbuilder.IN(klass.q.id, ids),
+                    childUpdate=True)
             query = dbconn.queryForSelect(select)
             if dbconn.debug:
                 dbconn.printDebug(rawconn, query, 'Select children of the class %s' % childName)
             self.dbconn._executeRetry(rawconn, cursor, query)
             for result in cursor.fetchall():
-                self._childrenResults[result[0]] = result[1:]
+                # Inheritance child classes may have no own columns
+                # (that makes sense when child class has a join
+                # that does not apply to parent class objects).
+                # In such cases result[1:] gives an empty tuple
+                # which is interpreted as "no results fetched" in .get().
+                # So .get() issues another query which is absolutely
+                # meaningless (like "SELECT NULL FROM child WHERE id=1").
+                # In order to avoid this, we replace empty results
+                # with non-empty tuple.  Extra values in selectResults
+                # are Ok - they will be ignored by ._SO_selectInit().
+                self._childrenResults[result[0]] = result[1:] or (None,)
