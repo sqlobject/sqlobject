@@ -32,11 +32,11 @@ def test_cyclic_reference():
     TestCyclicReferenceB.dropTable(ifExists=True, cascade=True)
     assert not conn.tableExists(TestCyclicReferenceB.sqlmeta.table)
 
-    constraints = TestCyclicReferenceA.createTable(ifNotExists=True)
-    print constraints
+    constraints = TestCyclicReferenceA.createTable(ifNotExists=True,
+                                                   applyConstraints=False)
     assert conn.tableExists(TestCyclicReferenceA.sqlmeta.table)
-    constraints += TestCyclicReferenceB.createTable(ifNotExists=True)
-    print constraints
+    constraints += TestCyclicReferenceB.createTable(ifNotExists=True,
+                                                   applyConstraints=False)
     assert conn.tableExists(TestCyclicReferenceB.sqlmeta.table)
 
     for constraint in constraints:

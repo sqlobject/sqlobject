@@ -166,7 +166,7 @@ class InstalledTestDatabase(sqlobject.SQLObject):
             soClass._connection.query(sql)
         else:
             sql, extra_sql = soClass.createTableSQL()
-            soClass.createTable()
+            soClass.createTable(applyConstraints=False)
             all_extra.extend(extra_sql)
         cls(tableName=soClass.sqlmeta.table,
             createSQL=sql,

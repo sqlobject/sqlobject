@@ -1349,7 +1349,7 @@ class SQLObject(object):
     dropTable = classmethod(dropTable)
 
     def createTable(cls, ifNotExists=False, createJoinTables=True,
-                    createIndexes=True,
+                    createIndexes=True, applyConstraints=True,
                     connection=None):
         conn = connection or cls._connection
         if ifNotExists and conn.tableExists(cls.sqlmeta.table):
@@ -1359,7 +1359,11 @@ class SQLObject(object):
         cls.sqlmeta.send(events.CreateTableSignal, cls, connection,
                          extra_sql, post_funcs)
         constraints = conn.createTable(cls)
-        extra_sql.extend(constraints)
+        if applyConstraints:
+            for constraint in constraints:
+                conn.query(constraint)
+        else:
+            extra_sql.extend(constraints)
         if createJoinTables:
             cls.createJoinTables(ifNotExists=ifNotExists,
                                  connection=conn)
@@ -1371,8 +1375,8 @@ class SQLObject(object):
         return extra_sql
     createTable = classmethod(createTable)
 
-    def createTableSQL(cls, createJoinTables=True, connection=None,
-                       createIndexes=True):
+    def createTableSQL(cls, createJoinTables=True, createIndexes=True,
+                       connection=None):
         conn = connection or cls._connection
         sql, constraints = conn.createTableSQL(cls)
         if createJoinTables:
