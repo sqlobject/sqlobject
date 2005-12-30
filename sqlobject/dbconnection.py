@@ -778,11 +778,11 @@ class Iteration(object):
 class Transaction(object):
 
     def __init__(self, dbConnection):
+        self._obsolete = False
         self._dbConnection = dbConnection
         self._connection = dbConnection.getConnection()
         self._dbConnection._setAutoCommit(self._connection, 0)
         self.cache = CacheSet(cache=dbConnection.doCache)
-        self._obsolete = False
 
     def assertActive(self):
         assert not self._obsolete, "This transaction has already gone through ROLLBACK; begin another transaction"
