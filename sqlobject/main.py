@@ -546,6 +546,10 @@ class sqlmeta(object):
     def delJoin(sqlmeta, joinDef):
         soClass = sqlmeta.soClass
         for join in sqlmeta.joins:
+            # previously deleted joins will be None, so it must
+            # be skipped or it'll error out on the next line.
+            if join is None:
+                continue
             if joinDef is join.joinDef:
                 break
         else:
