@@ -19,17 +19,26 @@ class MSSQLConnection(DBAPI):
                 self.dbconnection = sqlmodule.connect
                 # ADO uses unicode only (AFAIK)
                 self.usingUnicodeStrings = True
-                # MSDE does not allow SQL server login 
-                if "sspi" in kw and kw["sspi"]:
-                    self.make_conn_str = lambda keys: \
-                    ["Provider=SQLOLEDB;Data Source=%s;Initial Catalog=%s;Integrated Security=SSPI;Persist Security Info=False" % (
-                        keys.host, keys.db)]
+
+                # Need to use SQLNCLI provider for SQL Server Express Edition
+                if kw.get("ncli"):
+                    conn_str = "Provider=SQLNCLI;"
                 else:
-                    self.make_conn_str = lambda keys: \
-                    ["Provider=SQLOLEDB;Data Source=%s;User Id=%s;Password=%s;Initial Catalog=%s" % (
-                            keys.host, keys.user, keys.password, keys.db)]
-                if "sspi" in kw:
-                    del kw["sspi"]
+                    conn_str = "Provider=SQLOLEDB;"
+
+                conn_str += "Data Source=%s;Initial Catalog=%s;"
+
+                # MSDE does not allow SQL server login 
+                if kw.get("sspi"):
+                    conn_str += "Integrated Security=SSPI;Persist Security Info=False"
+                    self.make_conn_str = lambda keys: [conn_str % (keys.host, keys.db)]
+                else:
+                    conn_str += "User Id=%s;Password=%s"
+                    self.make_conn_str = lambda keys: [conn_str % (keys.host, keys.db, keys.user, keys.password)]
+
+                col.popKey(kw, "sspi")
+                col.popKey(kw, "ncli")
+
             except ImportError: # raise the exceptions other than ImportError for adodbapi absence
                 import pymssql as sqlmodule
                 self.dbconnection = sqlmodule.connect
