@@ -79,7 +79,7 @@ class MSSQLConnection(DBAPI):
         cur = con.cursor()
         cur.execute('SET ANSI_NULLS ON')
         cur.execute("SELECT CAST('12345.21' AS DECIMAL(10, 2))")
-        self.decimalSeparator = cur.fetchone()[0][-3]
+        self.decimalSeparator = str(cur.fetchone()[0])[-3]
         cur.close()
         return con
 
