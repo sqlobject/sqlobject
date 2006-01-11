@@ -189,19 +189,21 @@ if hasattr(time, 'struct_time'):
 
 if datetime:
     def DateTimeConverter(value, db):
-        return value.strftime("'%Y-%m-%d %H:%M:%S'")
+        return "'%4d-%02d-%02d %02d:%02d:%02d'" % (
+            value.year, value.month, value.day,
+            value.hour, value.minute, value.second)
 
     registerConverter(datetime.datetime, DateTimeConverter)
 
-    def TimeConverter(value, db):
-        return value.strftime("'%H:%M:%S'")
-
-    registerConverter(datetime.time, TimeConverter)
-
     def DateConverter(value, db):
-        return value.strftime("'%Y-%m-%d'")
+        return "'%4d-%02d-%02d'" % (value.year, value.month, value.day)
 
     registerConverter(datetime.date, DateConverter)
+
+    def TimeConverter(value, db):
+        return "'%02d:%02d:%02d'" % (value.hour, value.minute, value.second)
+
+    registerConverter(datetime.time, TimeConverter)
 
 if Decimal:
     def DecimalConverter(value, db):
