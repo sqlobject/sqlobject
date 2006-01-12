@@ -46,7 +46,7 @@ class MySQLConnection(DBAPI):
             )
 
         if hasattr(conn, 'autocommit'):
-            conn.autocommit(self.autoCommit)
+            conn.autocommit(bool(self.autoCommit))
 
         return conn
 

@@ -47,7 +47,7 @@ class MSSQLConnection(DBAPI):
                 self.usingUnicodeStrings = False
                 self.make_conn_str = lambda keys:  \
                        ["", keys.user, keys.password, keys.host, keys.db]
-        self.autoCommit=autoCommit
+        self.autoCommit=int(autoCommit)
         self.host = host
         self.db = db
         self.user = user

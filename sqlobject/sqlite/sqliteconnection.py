@@ -49,7 +49,7 @@ class SQLiteConnection(DBAPI):
                 sqlite2_Binary = sqlite.Binary
                 sqlite.Binary = lambda s: sqlite2_Binary(sqlite.encode(s))
         else:
-            opts['autocommit'] = autoCommit
+            opts['autocommit'] = bool(autoCommit)
             if 'encoding' in kw:
                 opts['encoding'] = popKey(kw, 'encoding')
             if 'mode' in kw:
