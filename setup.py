@@ -117,4 +117,3 @@ For a more complete list, please see the news: http://sqlobject.org/docs/News.ht
 -- 
 Ian Bicking  /  ianb@colorstudy.com  / http://blog.ianbicking.org
 """
-  
