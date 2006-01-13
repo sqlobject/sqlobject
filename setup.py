@@ -4,8 +4,10 @@ try:
     from ez_setup import use_setuptools
     use_setuptools()
     from setuptools import setup
+    is_setuptools = True
 except ImportError:
     from distutils.core import setup
+    is_setuptools = False
 
 subpackages = ['firebird', 'include', 'include.pydispatch', 'inheritance',
                'manager', 'maxdb', 'mysql', 'mssql', 'postgres', 'sqlite',
@@ -17,6 +19,13 @@ if sys.version < '2.2.3':
     from distutils.dist import DistributionMetadata
     DistributionMetadata.classifiers = None
     DistributionMetadata.download_url = None
+
+kw = {}
+if is_setuptools:
+    kw['entry_points'] = """
+    [paste.filter_app_factory]
+    main = sqlobject.wsgi_middleware:make_middleware
+    """
 
 setup(name="SQLObject",
       version="0.8",
@@ -58,6 +67,7 @@ For development see the `subversion repository
         'sqlite': ['pysqlite'],
         # Others?
         },
+      **kw
       )
 
 # Send announce to:

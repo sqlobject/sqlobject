@@ -84,15 +84,19 @@ installedDBTracker = sqlobject.connectionForURI(
     'sqlite:///' + installedDBFilename)
 
 def getConnection(**kw):
-    name = conftest.option.Database
-    if conftest.connectionShortcuts.has_key(name):
-        name = conftest.connectionShortcuts[name]
+    name = getConnectionURI()
     conn = sqlobject.connectionForURI(name, **kw)
     if conftest.option.show_sql:
         conn.debug = True
     if conftest.option.show_sql_output:
         conn.debugOutput = True
     return conn
+
+def getConnectionURI():
+    name = conftest.option.Database
+    if conftest.connectionShortcuts.has_key(name):
+        name = conftest.connectionShortcuts[name]
+    return name
 
 try:
     connection = getConnection()
@@ -291,6 +295,6 @@ def teardown_module(mod=None):
     sqlobject.main.warnings_level = None
     sqlobject.main.exception_level = 0
 
-__all__ = ['getConnection', 'setupClass', 'Dummy', 'raises',
+__all__ = ['getConnection', 'getConnectionURI', 'setupClass', 'Dummy', 'raises',
            'd', 'inserts', 'supports', 'deprecated_module',
            'setup_module', 'teardown_module']
