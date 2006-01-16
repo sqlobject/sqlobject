@@ -99,11 +99,22 @@ def sorter(orderBy):
     # @@: but we don't handle more complex expressions for orderings
     if orderBy.startswith('-'):
         orderBy = orderBy[1:]
-        def cmper(a, b, attr=orderBy):
-            return cmp(getattr(b, attr), getattr(a, attr))
+        reverse = True
     else:
-        def cmper(a, b, attr=orderBy):
-            return cmp(getattr(a, attr), getattr(b, attr))
+        reverse = False
+
+    def cmper(a, b, attr=orderBy, rev=reverse):
+        a = getattr(a, attr)
+        b = getattr(b, attr)
+        if rev:
+            a, b = b, a
+        if a is None:
+            if b is None:
+                return 0
+            return -1
+        if b is None:
+            return 1
+        return cmp(a, b)
     return cmper
 
 # This is a one-to-many
