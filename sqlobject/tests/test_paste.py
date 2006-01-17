@@ -3,7 +3,7 @@ from sqlobject import sqlhub, SQLObject, StringCol
 try:
     from sqlobject.wsgi_middleware import make_middleware
 except ImportError:
-    disable = True
+    disabled = True
 
 class NameOnly(SQLObject):
     name = StringCol()
