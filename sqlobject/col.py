@@ -1153,8 +1153,8 @@ class DecimalValidator(validators.Validator):
             try:
                 return Decimal(value)
             except:
-                raise validators.Invalid("can not parse Decimal value '%s' in the DecimalCol '%s'" %
-                    (value, self.name), value, state)
+                raise validators.Invalid("can not parse Decimal value '%s' in the DecimalCol from '%s'" %
+                    (value, getattr(state, 'soObject', '(unknown)')), value, state)
         if not isinstance(value, (int, long, Decimal, sqlbuilder.SQLExpression)):
             raise validators.Invalid("expected a decimal in the DecimalCol '%s', got %s %r instead" % \
                 (self.name, type(value), value), value, state)
