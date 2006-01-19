@@ -1,5 +1,6 @@
 from sqlobject.dbconnection import DBAPI
 from sqlobject.col import popKey
+import thread
 
 sqlite = None
 using_sqlite2 = False
@@ -23,6 +24,12 @@ class SQLiteConnection(DBAPI):
                 using_sqlite2 = False
         self.module = sqlite
         self.filename = filename  # full path to sqlite-db-file
+        self._memory = filename == ':memory:'
+        if self._memory:
+            if not using_sqlite2:
+                raise ValueError(
+                    "You must use sqlite2 to use in-memory databases")
+            #kw.setdefault('check_same_thread', False)
         # connection options
         opts = {}
         if using_sqlite2:
@@ -58,8 +65,13 @@ class SQLiteConnection(DBAPI):
             opts['timeout'] = float(popKey(kw, 'timeout'))
         # use only one connection for sqlite - supports multiple)
         # cursors per connection
-        self._conn = sqlite.connect(self.filename, **opts)
+        self._connOptions = opts
         DBAPI.__init__(self, **kw)
+        self._threadPool = {}
+        self._threadOrigination = {}
+        if self._memory:
+            self._memoryConn = sqlite.connect(
+                self.filename, **self._connOptions)
 
     def connectionFromURI(cls, uri):
         user, password, host, port, path, args = cls._parseURI(uri)
@@ -69,12 +81,52 @@ class SQLiteConnection(DBAPI):
         assert user is None and password is None, (
             "You may not provide usernames or passwords for SQLite "
             "databases")
-        if path == "/:memory:": path = ":memory:"
+        if path == "/:memory:":
+            path = ":memory:"
         return cls(filename=path, **args)
     connectionFromURI = classmethod(connectionFromURI)
 
     def uri(self):
         return 'sqlite:///%s' % self.filename
+
+    def getConnection(self):
+        # SQLite can't share connections between threads, and so can't
+        # pool connections.  Since we are isolating threads here, we
+        # don't have to worry about locking as much.
+        if self._memory:
+            return self.makeConnection()
+        threadid = thread.get_ident()
+        if (self._pool is not None
+            and self._threadPool.has_key(threadid)):
+            conn = self._threadPool[threadid]
+            del self._threadPool[threadid]
+            if conn in self._pool:
+                self._pool.remove(conn)
+        else:
+            conn = self.makeConnection()
+            if self._pool is not None:
+                self._threadOrigination[id(conn)] = threadid
+            self._connectionNumbers[id(conn)] = self._connectionCount
+            self._connectionCount += 1
+        if self.debug:
+            s = 'ACQUIRE'
+            if self._pool is not None:
+                s += ' pool=[%s]' % ', '.join([str(self._connectionNumbers[id(v)]) for v in self._pool])
+            self.printDebug(conn, s, 'Pool')
+        return conn
+
+    def releaseConnection(self, conn, explicit=False):
+        if self._memory:
+            return
+        threadid = self._threadOrigination.get(id(conn))
+        DBAPI.releaseConnection(self, conn, explicit=explicit)
+        if (self._pool is not None and threadid
+            and not self._threadPool.has_key(threadid)):
+            self._threadPool[threadid] = conn
+        else:
+            if self._pool and conn in self._pool:
+                self._pool.remove(conn)
+            conn.close()
 
     def _setAutoCommit(self, conn, auto):
         if using_sqlite2:
@@ -91,7 +143,9 @@ class SQLiteConnection(DBAPI):
         conn.isolation_level = level
 
     def makeConnection(self):
-        return self._conn
+        if self._memory:
+            return self._memoryConn
+        return sqlite.connect(self.filename, **self._connOptions)
 
     def _queryInsertID(self, conn, soInstance, id, names, values):
         table = soInstance.sqlmeta.table
