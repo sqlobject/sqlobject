@@ -202,5 +202,13 @@ class SQLiteConnection(DBAPI):
     def createIndexSQL(self, soClass, index):
         return index.sqliteCreateIndexSQL(soClass)
 
+    def addColumn(self, tableName, column):
+        self.query('ALTER TABLE %s ADD COLUMN %s' %
+                   (tableName,
+                    column.sqliteCreateSQL()))
+
+    def delColumn(self, tableName, column):
+        pass # Oops! There is no DROP COLUMN in SQLite
+
 def stop_pysqlite2_converting_strings_to_unicode(s):
     return s

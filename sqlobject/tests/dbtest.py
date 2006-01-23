@@ -35,7 +35,6 @@ supportsMatrix = {
     '+restrictedEnum': 'postgres',
     '-transactions': 'mysql',
     '-dropTableCascade': 'sybase mssql',
-    '-dynamicColumn': 'sqlite sybase',
     '-fromDatabase': 'sqlite sybase firebird',
     '-expressionIndex': 'mysql sqlite firebird mssql',
     '-blobData': 'mssql',

@@ -39,8 +39,6 @@ class TestPeople:
                 list(Person.select('all', orderBy=Person.sqlmeta.defaultOrder)))
 
     def test_dynamicColumn(self):
-        if not supports('dynamicColumn'):
-            return
         nickname = StringCol('nickname', length=10)
         Person.sqlmeta.addColumn(nickname, changeSchema=True)
         n = Person(name='robert', nickname='bob')
@@ -49,8 +47,6 @@ class TestPeople:
         Person.sqlmeta.delColumn(nickname, changeSchema=True)
 
     def test_dynamicJoin(self):
-        if not supports('dynamicColumn'):
-            return
         col = KeyCol('personID', foreignKey='Person')
         Phone.sqlmeta.addColumn(col, changeSchema=True)
         join = MultipleJoin('Phone')
