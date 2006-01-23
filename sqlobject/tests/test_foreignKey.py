@@ -8,12 +8,14 @@ class TestWorkKey(SQLObject):
     class sqlmeta:
         idName = "work_id"
 
-    composer = ForeignKey('TestComposerKey')
+    composer = ForeignKey('TestComposerKey', cascade=True)
+    title = StringCol()
+
+class TestWorkKey2(SQLObject):
     title = StringCol()
 
 def test1():
-    setupClass([TestComposerKey,
-                TestWorkKey])
+    setupClass([TestComposerKey, TestWorkKey])
 
     c = TestComposerKey(name='Mahler, Gustav')
     w1 = TestWorkKey(composer=c, title='Symphony No. 9')
@@ -31,3 +33,7 @@ def test1():
     # is None handled correctly?
     s = TestWorkKey.selectBy(composer=None, title=None)
     assert s[0]==w2
+
+def test2():
+    setupClass([TestComposerKey, TestWorkKey2])
+    TestWorkKey2.sqlmeta.addColumn(ForeignKey('TestComposerKey'), changeSchema=True)
