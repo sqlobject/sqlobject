@@ -8,7 +8,7 @@ class PersonIndexGet(SQLObject):
     nameIndex = DatabaseIndex(firstName, lastName, unique=True)
 
 def test_1():
-    setupClass(PersonIndexGet)
+    setupClass(PersonIndexGet, force=True)
 
     PersonIndexGet(firstName='Eric', lastName='Idle', age=62)
     PersonIndexGet(firstName='Terry', lastName='Gilliam', age=65)

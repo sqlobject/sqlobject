@@ -1199,6 +1199,8 @@ class SQLObject(object):
         if kw.has_key('_SO_fetch_no_create'):
             return
 
+        self.sqlmeta = self.__class__.sqlmeta(self)
+
         post_funcs = []
         self.sqlmeta.send(events.RowCreateSignal, kw, post_funcs)
 

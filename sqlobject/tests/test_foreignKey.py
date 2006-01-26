@@ -35,5 +35,5 @@ def test1():
     assert s[0]==w2
 
 def test2():
-    setupClass([TestComposerKey, TestWorkKey2])
+    setupClass([TestComposerKey, TestWorkKey2], force=True)
     TestWorkKey2.sqlmeta.addColumn(ForeignKey('TestComposerKey'), changeSchema=True)

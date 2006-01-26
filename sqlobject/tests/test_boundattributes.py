@@ -1,10 +1,13 @@
 from sqlobject import declarative
 from sqlobject import boundattributes
 
+disabled = True
+
 class TestMe(object):
 
-    __metaclass__ = declarative.DeclarativeMeta
-    __classinit__ = boundattributes.bind_attributes_local
+    #__metaclass__ = declarative.DeclarativeMeta
+    #__classinit__ = boundattributes.bind_attributes_local
+    pass
 
 class AttrReplace(boundattributes.BoundAttribute):
 
