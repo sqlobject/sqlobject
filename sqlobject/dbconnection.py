@@ -814,13 +814,15 @@ class Transaction(object):
         return iter(list(select.IterationClass(self, self._connection,
                                    select, keepConnection=True)))
 
-    def commit(self):
+    def commit(self, close=False):
         if self._obsolete:
             # @@: is it okay to get extraneous commits?
             return
         if self._dbConnection.debug:
             self._dbConnection.printDebug(self._connection, '', 'COMMIT')
         self._connection.commit()
+        if close:
+            self._makeObsolete()
 
     def rollback(self):
         if self._obsolete:

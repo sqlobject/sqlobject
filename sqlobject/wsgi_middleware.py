@@ -82,7 +82,7 @@ class SQLObjectMiddleware(object):
                 if any_errors:
                     conn[0].rollback()
                 else:
-                    conn[0].commit()
+                    conn[0].commit(close=True)
             self.hub.threadConnection = None
         def in_transaction():
             return use_transaction[0]
