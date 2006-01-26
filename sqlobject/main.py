@@ -944,10 +944,6 @@ class SQLObject(object):
         # created, unlike __init__ which would be called
         # anytime the object was returned from cache.
         self.id = id
-        # We shadow the sqlmeta class with an instance of sqlmeta
-        # that points to us (our sqlmeta buddy object; where the
-        # sqlmeta class is our class's buddy class)
-        self.sqlmeta = self.__class__.sqlmeta(self)
         self._SO_writeLock = threading.Lock()
 
         # If no connection was given, we'll inherit the class
@@ -1193,13 +1189,15 @@ class SQLObject(object):
             return joinClass.get(id)
 
     def __init__(self, **kw):
+        # We shadow the sqlmeta class with an instance of sqlmeta
+        # that points to us (our sqlmeta buddy object; where the
+        # sqlmeta class is our class's buddy class)
+        self.sqlmeta = self.__class__.sqlmeta(self)
         # The get() classmethod/constructor uses a magic keyword
         # argument when it wants an empty object, fetched from the
         # database.  So we have nothing more to do in that case:
         if kw.has_key('_SO_fetch_no_create'):
             return
-
-        self.sqlmeta = self.__class__.sqlmeta(self)
 
         post_funcs = []
         self.sqlmeta.send(events.RowCreateSignal, kw, post_funcs)
