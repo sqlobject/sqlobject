@@ -33,6 +33,7 @@ or an instance method depending on where it is called.
 """
 
 from __future__ import generators
+import threading
 import events
 
 __all__ = ('classinstancemethod', 'DeclarativeMeta', 'Declarative')
@@ -85,6 +86,19 @@ class _methodwrapper(object):
             return ('<bound method %s.%s of %r>'
                     % (self.type.__name__, self.func.func_name, self.obj))
 
+def threadSafeMethod(lock):
+    def decorator(fn):
+        def _wrapper(self, *args, **kwargs):
+            lock.acquire()
+            return_value = fn(self, *args, **kwargs)
+            lock.release()
+            return return_value
+        try:
+            _wrapper.func_name = fn.func_name
+        except TypeError:
+            pass
+        return _wrapper
+    return decorator
 
 class DeclarativeMeta(type):
 
@@ -100,6 +114,9 @@ class DeclarativeMeta(type):
         if new_attrs.has_key('__classinit__'):
             cls.__classinit__ = staticmethod(cls.__classinit__.im_func)
         cls.__classinit__(cls, new_attrs)
+        if new_attrs.has_key('__init__'):
+            lock = threading.RLock()
+            cls.__init__ = threadSafeMethod(lock)(cls.__init__)
         for func in post_funcs:
             func(cls)
         return cls
