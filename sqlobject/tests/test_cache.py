@@ -45,4 +45,9 @@ def test_cache():
     CacheTest._connection.expireAll()
     s = CacheTest.get(s_id)
     assert id(s) != obj_id and id(s) != obj_id2
-    
+
+def test_cache_cull():
+    setupClass(CacheTest)
+    s = CacheTest(name='test_cache_create')
+    list = [CacheTest(name='test_cache_create %d' % count) for count in range(s._connection.cache.caches['CacheTest'].cullFrequency)]
+    assert len(s._connection.cache.caches['CacheTest'].cache) < s._connection.cache.caches['CacheTest'].cullFrequency

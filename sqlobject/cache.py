@@ -43,7 +43,7 @@ class CacheFactory(object):
         """
 
         self.cullFrequency = cullFrequency
-        self.cullCount = cullFrequency
+        self.cullCount = 0
         self.cullOffset = 0
         self.cullFraction = cullFraction
         self.doCache = cache
@@ -97,6 +97,8 @@ class CacheFactory(object):
                 # method has a lock, so it's threadsafe.
                 self.cullCount = 0
                 self.cull()
+            else:
+                self.cullCount = self.cullCount + 1
 
             try:
                 return self.cache[id]
@@ -166,6 +168,15 @@ class CacheFactory(object):
         of this situation.
         """
         if self.doCache:
+            if self.cullCount > self.cullFrequency:
+                # Two threads could hit the cull in a row, but
+                # that's not so bad.  At least by setting cullCount
+                # back to zero right away we avoid this.  The cull
+                # method has a lock, so it's threadsafe.
+                self.cullCount = 0
+                self.cull()
+            else:
+                self.cullCount = self.cullCount + 1
             self.cache[id] = obj
         else:
             self.expiredCache[id] = ref(obj)
