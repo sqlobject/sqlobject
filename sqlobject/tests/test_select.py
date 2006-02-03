@@ -91,6 +91,13 @@ def test_selectBy():
     b = IterTest(name='b')
     assert IterTest.selectBy().count() == 2
 
+def test_selectBy_kwargs():
+    setupClass(IterTest)
+    try:
+        b = IterTest(nonexistant='b')
+    except TypeError:
+        return
+    assert False, "IterTest(nonexistant='b') should raise TypeError"
 
 class Counter2(SQLObject):
 

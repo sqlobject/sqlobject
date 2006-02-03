@@ -16,6 +16,7 @@ import inspect
 import sqlbuilder
 from cache import CacheSet
 import col
+popKey = col.popKey
 from joins import sorter
 from converters import sqlrepr
 import classregistry
@@ -682,16 +683,20 @@ class DBAPI(DBConnection):
         ops = {None: "IS"}
         data = {}
         if 'id' in kw:
-            data[soClass.sqlmeta.idName] = kw['id']
+            data[soClass.sqlmeta.idName] = popKey(kw, 'id')
         for key, col in soClass.sqlmeta.columns.items():
             if key in kw:
-                data[col.dbName] = kw[key]
+                data[col.dbName] = popKey(kw, key)
             elif col.foreignName in kw:
-                obj = kw[col.foreignName]
+                obj = popKey(kw, col.foreignName)
                 if obj is None:
                     data[col.dbName] = None
                 else:
                     data[col.dbName] = obj.id
+        if kw:
+            # pick the first key from kw to use to raise the error,
+            raise TypeError, "got an unexpected keyword argument(s): %r" % kw.keys()
+
         if not data:
             return None
         return ' AND '.join(
