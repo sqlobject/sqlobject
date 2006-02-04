@@ -169,6 +169,9 @@ class MaxdbConnection(DBAPI):
         self.query("CREATE SEQUENCE %s"
                    % self.createSequenceName(soClass.sqlmeta.table))
  
+    def createReferenceConstraint(self, soClass, col):
+        return col.maxdbCreateReferenceConstraint()
+
     def createColumn(self, soClass, col):
         return col.maxdbCreateSQL()
 

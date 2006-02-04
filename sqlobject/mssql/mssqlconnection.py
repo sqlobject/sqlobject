@@ -148,6 +148,9 @@ class MSSQLConnection(DBAPI):
         else:
             return query
 
+    def createReferenceConstraint(self, soClass, col):
+        return col.mssqlCreateReferenceConstraint()
+
     def createColumn(self, soClass, col):
         return col.mssqlCreateSQL()
 

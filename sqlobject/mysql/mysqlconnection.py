@@ -92,6 +92,9 @@ class MySQLConnection(DBAPI):
             return "%s LIMIT %i, -1" % (query, start)
         return "%s LIMIT %i, %i" % (query, start, end-start)
 
+    def createReferenceConstraint(self, soClass, col):
+        return col.mysqlCreateReferenceConstraint()
+
     def createColumn(self, soClass, col):
         return col.mysqlCreateSQL()
 

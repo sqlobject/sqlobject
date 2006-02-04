@@ -777,6 +777,9 @@ class SOForeignKey(SOKeyCol):
         sql = ', '.join([sql, constraint])
         return sql
 
+    def mysqlCreateReferenceConstraint(self):
+        return None
+
     def sybaseCreateSQL(self):
         sql = SOKeyCol.sybaseCreateSQL(self)
         other = findClass(self.foreignKey)
@@ -787,6 +790,10 @@ class SOForeignKey(SOKeyCol):
                       'idName':idName})
         sql = ' '.join([sql, reference])
         return sql
+
+    def sybaseCreateReferenceConstraint(self):
+        # @@: Code from above should be moved here
+        return None
 
     def mssqlCreateSQL(self):
         sql = SOKeyCol.mssqlCreateSQL(self)
@@ -799,6 +806,10 @@ class SOForeignKey(SOKeyCol):
         sql = ' '.join([sql, reference])
         return sql
 
+    def mssqlCreateReferenceConstraint(self):
+        # @@: Code from above should be moved here
+        return None
+
     def maxdbCreateSQL(self):
         other = findClass(self.foreignKey)
         fidName = self.dbName
@@ -809,6 +820,10 @@ class SOForeignKey(SOKeyCol):
         sql=sql + ',' + '\n'
         sql=sql + 'FOREIGN KEY (%s) REFERENCES %s(%s)'%(fidName,tName,idName)
         return sql
+
+    def maxdbCreateReferenceConstraint(self):
+        # @@: Code from above should be moved here
+        return None
 
 class ForeignKey(KeyCol):
 
