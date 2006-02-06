@@ -318,10 +318,7 @@ class PostgresConnection(DBAPI):
         # We must close the transaction with a commit so that
         # the CREATE DATABASE can work (which can't be in a transaction):
         cur.execute('COMMIT')
-        # And we can't use template1 since we're connected to template1,
-        # so we use template0.  @@: What's the difference between
-        # these two templates?
-        cur.execute('CREATE DATABASE %s TEMPLATE=template0' % self.db)
+        cur.execute('CREATE DATABASE %s' % self.db)
         cur.close()
         conn.close()
 
