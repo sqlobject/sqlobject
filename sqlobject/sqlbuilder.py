@@ -360,6 +360,8 @@ class SQLObjectTable(Table):
             raise AttributeError
         if attr == 'id':
             return self.FieldClass(self.tableName, self.soClass.sqlmeta.idName, attr)
+        elif attr not in self.soClass.sqlmeta.columns:
+            raise AttributeError("%s instance has no attribute '%s'" % (self.soClass.__name__, attr))
         else:
             return self.FieldClass(self.tableName,
                                    self.soClass.sqlmeta.columns[attr].dbName,

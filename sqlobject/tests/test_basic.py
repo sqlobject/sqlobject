@@ -281,4 +281,12 @@ def testAsDict():
     bob = TestSO1.selectBy(name='bob')[0]
     assert bob.sqlmeta.asDict() == {
         'passwd': 'tbq', 'name': 'bob', 'id': bob.id}
-    
+
+def test_nonexisting_attr():
+    setupClass(Student)
+    try:
+        Student.select(Student.q.nonexisting)
+    except AttributeError:
+        pass
+    else:
+        assert 0, "Expected an AttributeError"
