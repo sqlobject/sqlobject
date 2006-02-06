@@ -866,6 +866,8 @@ class Transaction(object):
 
     def _makeObsolete(self):
         self._obsolete = True
+        if self._dbConnection.autoCommit:
+            self._dbConnection._setAutoCommit(self._connection, 1)
         self._dbConnection.releaseConnection(self._connection,
                                              explicit=True)
         self._connection = None
@@ -876,6 +878,7 @@ class Transaction(object):
         assert self._obsolete, "You cannot begin a new transaction session without rolling back this one"
         self._obsolete = False
         self._connection = self._dbConnection.getConnection()
+        self._dbConnection._setAutoCommit(self._connection, 0)
 
     def __del__(self):
         if self._obsolete:
