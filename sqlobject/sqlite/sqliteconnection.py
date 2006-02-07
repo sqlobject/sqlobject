@@ -29,7 +29,6 @@ class SQLiteConnection(DBAPI):
             if not using_sqlite2:
                 raise ValueError(
                     "You must use sqlite2 to use in-memory databases")
-            #kw.setdefault('check_same_thread', False)
         # connection options
         opts = {}
         if using_sqlite2:
@@ -63,6 +62,8 @@ class SQLiteConnection(DBAPI):
                 opts['mode'] = int(popKey(kw, 'mode'), 0)
         if 'timeout' in kw:
             opts['timeout'] = float(popKey(kw, 'timeout'))
+        if 'check_same_thread' in kw:
+            opts["check_same_thread"] = bool(popKey(kw, 'check_same_thread'))
         # use only one connection for sqlite - supports multiple)
         # cursors per connection
         self._connOptions = opts
