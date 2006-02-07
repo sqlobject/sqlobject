@@ -316,8 +316,11 @@ class CacheSet(object):
             self.caches[cls.__name__].clear()
 
     def tryGet(self, id, cls):
+        return self.tryGetByName(id, cls.__name__)
+
+    def tryGetByName(self, id, clsname):
         try:
-            return self.caches[cls.__name__].tryGet(id)
+            return self.caches[clsname].tryGet(id)
         except KeyError:
             return None
 
@@ -329,6 +332,9 @@ class CacheSet(object):
 
     def allSubCaches(self):
         return self.caches.values()
+
+    def allSubCachesByClassNames(self):
+        return self.caches
 
     def weakrefAll(self, cls=None):
         """

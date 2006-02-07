@@ -788,6 +788,7 @@ class Transaction(object):
         self._connection = dbConnection.getConnection()
         self._dbConnection._setAutoCommit(self._connection, 0)
         self.cache = CacheSet(cache=dbConnection.doCache)
+        self._deletedCache = {}
 
     def assertActive(self):
         assert not self._obsolete, "This transaction has already gone through ROLLBACK; begin another transaction"
@@ -819,6 +820,13 @@ class Transaction(object):
         return iter(list(select.IterationClass(self, self._connection,
                                    select, keepConnection=True)))
 
+    def _SO_delete(self, inst):
+        cls = inst.__class__.__name__
+        if not self._deletedCache.has_key(cls):
+            self._deletedCache[cls] = []
+        self._deletedCache[cls].append(inst.id)
+        return self._dbConnection._SO_delete(inst)
+
     def commit(self, close=False):
         if self._obsolete:
             # @@: is it okay to get extraneous commits?
@@ -828,6 +836,13 @@ class Transaction(object):
         self._connection.commit()
         if close:
             self._makeObsolete()
+        subCaches = [(sub[0], sub[1].allIDs()) for sub in self.cache.allSubCachesByClassNames().items()]
+        subCaches.extend([(x[0], x[1]) for x in self._deletedCache.items()])
+        for cls, ids in subCaches:
+            for id in ids:
+                inst = self._dbConnection.cache.tryGetByName(id, cls)
+                if inst is not None:
+                    inst.expire()
 
     def rollback(self):
         if self._obsolete:
@@ -871,6 +886,7 @@ class Transaction(object):
         self._dbConnection.releaseConnection(self._connection,
                                              explicit=True)
         self._connection = None
+        self._deletedCache = {}
 
     def begin(self):
         # @@: Should we do this, or should begin() be a no-op when we're

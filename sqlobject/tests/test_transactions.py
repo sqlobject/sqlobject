@@ -36,3 +36,18 @@ def test_transaction():
     finally:
         TestSOTrans._connection.autoCommit = True
 
+def test_transaction_commit_sync():
+    if not supports('transactions'):
+        return
+    setupClass(TestSOTrans)
+    trans = TestSOTrans._connection.transaction()
+    try:
+        TestSOTrans(name='bob')
+        bOut = TestSOTrans.byName('bob')
+        bIn = TestSOTrans.byName('bob', connection=trans)
+        bIn.name = 'robert'
+        assert bOut.name == 'bob'
+        trans.commit()
+        assert bOut.name == 'robert'
+    finally:
+        TestSOTrans._connection.autoCommit = True
