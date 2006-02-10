@@ -24,6 +24,9 @@ def test1():
     # Select by usual way
     s = TestWorkKey.selectBy(composerID=c.id, title='Symphony No. 9')
     assert s[0]==w1
+    # selectBy object.id
+    s = TestWorkKey.selectBy(composer=c.id, title='Symphony No. 9')
+    assert s[0]==w1
     # selectBy object
     s = TestWorkKey.selectBy(composer=c, title='Symphony No. 9')
     assert s[0]==w1
