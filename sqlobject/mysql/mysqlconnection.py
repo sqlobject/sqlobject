@@ -98,6 +98,9 @@ class MySQLConnection(DBAPI):
     def createColumn(self, soClass, col):
         return col.mysqlCreateSQL()
 
+    def createReferenceConstraint(self, soClass, col):
+        return col.mysqlCreateReferenceConstraint()
+
     def createIndexSQL(self, soClass, index):
         return index.mysqlCreateIndexSQL(soClass)
 

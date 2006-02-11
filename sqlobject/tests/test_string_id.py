@@ -5,7 +5,7 @@ class TestStringID(SQLObject):
     class sqlmeta(sqlmeta):
         idType = str
         idName = 'test_id_here'
-    name = StringCol()
+    name = StringCol(length=100)
 
 def test_string_id():
     conn = getConnection()

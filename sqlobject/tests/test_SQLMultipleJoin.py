@@ -40,4 +40,4 @@ def test_1():
     assert saiyajin.fightersAsSResult.max('power') == 10
     assert trunks in hibrid.fightersAsSResult
     assert picollo not in hibrid.fightersAsSResult
-    assert hibrid.fightersAsSResult.sum('power') == 23
+    assert str(hibrid.fightersAsSResult.sum('power')) == '23'

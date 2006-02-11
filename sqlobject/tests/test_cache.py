@@ -24,7 +24,7 @@ def test_purge1():
 
 
 class CacheTest(SQLObject):
-    name = StringCol(alternateID=True)
+    name = StringCol(alternateID=True, length=100)
 
 def test_cache():
     setupClass(CacheTest)
