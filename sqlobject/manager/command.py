@@ -1073,7 +1073,11 @@ class CommandUpgrade(CommandRecord):
         if self.options.upgrade_to:
             version_to = self.options.upgrade_to
         else:
-            version_to = os.path.basename(self.find_last_version())
+            fname = self.find_last_version()
+            if fname is None:
+                print "No version exists, use 'record' command to create one"
+                return
+            version_to = os.path.basename(fname)
         current = self.current_version()
         if v:
             print 'Current version: %s' % current
