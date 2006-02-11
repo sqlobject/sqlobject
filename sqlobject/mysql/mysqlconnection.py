@@ -110,6 +110,9 @@ class MySQLConnection(DBAPI):
     def createIndexSQL(self, soClass, index):
         return index.mysqlCreateIndexSQL(soClass)
 
+    def createReferenceConstraint(self, soClass, col):
+        return col.mysqlCreateReferenceConstraint()
+
     def createIDColumn(self, soClass):
         if soClass.sqlmeta.idType == str:
             return '%s TEXT PRIMARY KEY' % soClass.sqlmeta.idName
