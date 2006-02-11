@@ -18,6 +18,10 @@ class MySQLConnection(DBAPI):
         self.db = db
         self.user = user
         self.password = password
+        if kw.has_key('client_encoding'):
+            self.client_encoding = col.popKey(kw, 'client_encoding')
+        else:
+            self.client_encoding = None
         self.kw = {}
         for key in ("unix_socket", "named_pipe", "init_command",
                 "read_default_file", "read_default_group"):
@@ -47,6 +51,8 @@ class MySQLConnection(DBAPI):
 
         if hasattr(conn, 'autocommit'):
             conn.autocommit(bool(self.autoCommit))
+        if self.client_encoding:
+            conn.query('SET NAMES ' + self.client_encoding)
 
         return conn
 
