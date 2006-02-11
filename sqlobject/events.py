@@ -79,7 +79,18 @@ class RowCreateSignal(Signal):
     Note: this is not called when an instance is created from an
     existing database row.
     """
+class RowCreatedSignal(Signal):
+    """
+    Called after an instance is created, with the class as the
+    sender.  Called with the arguments ``(kwargs, post_funcs)``.
+    There may be a ``connection`` argument.  ``kwargs``may be usefully
+    modified.  ``post_funcs`` is a list of callbacks, intended to have
+    functions appended to it, and are called with the arguments
+    ``(new_instance)``.
 
+    Note: this is not called when an instance is created from an
+    existing database row.
+    """
 # @@: An event for getting a row?  But for each row, when doing a
 # select?  For .sync, .syncUpdate, .expire?
 

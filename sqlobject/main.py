@@ -1273,6 +1273,10 @@ class SQLObject(object):
         cache = self._connection.cache
         cache.created(id, self.__class__, self)
         self._init(id)
+        post_funcs = []
+        kw = dict([('class',self.__class__),('id',id)])
+        self.sqlmeta.send(events.RowCreatedSignal, kw, post_funcs)
+
 
     def _SO_getID(self, obj):
         return getID(obj)
