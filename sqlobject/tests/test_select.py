@@ -132,3 +132,39 @@ class TestSelect:
 
     def test_2(self):
         self.accumulateEqual(len,Counter2.select('all'), 100)
+
+def test_sqlbuilder_LIKE():
+    setupClass(IterTest)
+    IterTest(name='sqlobject')
+    IterTest(name='sqlbuilder')
+    assert IterTest.select(LIKE(IterTest.q.name, "sql%")).count() == 2
+    assert IterTest.select(LIKE(IterTest.q.name, "sqlb%")).count() == 1
+    assert IterTest.select(LIKE(IterTest.q.name, "sqlb%")).count() == 1
+    assert IterTest.select(LIKE(IterTest.q.name, "sqlx%")).count() == 0
+
+def test_sqlbuilder_RLIKE():
+    setupClass(IterTest)
+
+    if IterTest._connection.dbName == "sqlite":
+        from sqlobject.sqlite.sqliteconnection import using_sqlite2
+        if not using_sqlite2:
+            return
+
+        # Implement regexp() function for SQLite; only works with PySQLite2
+        import re
+        def regexp(regexp, test):
+            return bool(re.search(regexp, test))
+
+        _get_connection = IterTest._connection.getConnection
+        def new_get_connection(*args, **kw):
+            _connection = _get_connection(*args, **kw)
+            _connection.create_function("regexp", 2, regexp)
+            return _connection
+        IterTest._connection.getConnection = new_get_connection
+
+    IterTest(name='sqlobject')
+    IterTest(name='sqlbuilder')
+    assert IterTest.select(RLIKE(IterTest.q.name, "^sql.*$")).count() == 2
+    assert IterTest.select(RLIKE(IterTest.q.name, "^sqlb.*$")).count() == 1
+    assert IterTest.select(RLIKE(IterTest.q.name, "^sqlb.*$")).count() == 1
+    assert IterTest.select(RLIKE(IterTest.q.name, "^sqlx.*$")).count() == 0

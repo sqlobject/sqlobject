@@ -240,17 +240,6 @@ class SQLOp(SQLExpression):
         elif self.op == "OR":
             return execute(self.expr1, executor) \
                    or execute(self.expr2, executor)
-        elif self.op == "LIKE":
-            if not hasattr(self, '_regex'):
-                # @@: Crude, not entirely accurate
-                dest = self.expr2
-                dest = dest.replace("%%", "\001")
-                dest = dest.replace("*", "\002")
-                dest = dest.replace("%", "*")
-                dest = dest.replace("\001", "%")
-                dest = dest.replace("\002", "[*]")
-                self._regex = re.compile(fnmatch.translate(dest), re.I)
-            return self._regex.search(execute(self.expr1, executor))
         else:
             return operatorMap[self.op.upper()](execute(self.expr1, executor),
                                                 execute(self.expr2, executor))
@@ -625,9 +614,6 @@ def NOTIN(item, list):
     else:
         return NOT(_IN(item, list))
 
-def LIKE(expr, string):
-    return SQLOp("LIKE", expr, string)
-
 def STARTSWITH(expr, string):
     return SQLOp("LIKE", expr, _LikeQuoted(string) + '%')
 
@@ -891,6 +877,49 @@ class OuterTable(Table):
 class Outer:
     def __init__(self, table):
         self.q = OuterTable(table)
+
+
+class LIKE(SQLExpression):
+    op = "LIKE"
+
+    def __init__(self, expr, string):
+        self.expr = expr
+        self.string = string
+    def __sqlrepr__(self, db):
+        return "(%s %s %s)" % (sqlrepr(self.expr, db), self.op, sqlrepr(self.string, db))
+    def components(self):
+        return [self.expr, self.string]
+    def execute(self, executor):
+        if not hasattr(self, '_regex'):
+            # @@: Crude, not entirely accurate
+            dest = self.string
+            dest = dest.replace("%%", "\001")
+            dest = dest.replace("*", "\002")
+            dest = dest.replace("%", "*")
+            dest = dest.replace("\001", "%")
+            dest = dest.replace("\002", "[*]")
+            self._regex = re.compile(fnmatch.translate(dest), re.I)
+        return self._regex.search(execute(self.expr, executor))
+
+class RLIKE(LIKE):
+    op = "RLIKE"
+
+    def _get_op(self, db):
+        if db in ('mysql', 'maxdb', 'firebird'):
+            return "RLIKE"
+        elif db == 'sqlite':
+            return "REGEXP"
+        elif db == 'postgres':
+            return "~"
+        else:
+            return "LIKE"
+    def __sqlrepr__(self, db):
+        return "(%s %s %s)" % (
+            sqlrepr(self.expr, db), self._get_op(db), sqlrepr(self.string, db)
+        )
+    def execute(self, executor):
+        self.op = self._get_op(self.db)
+        return LIKE.execute(self, executor)
 
 
 class INSubquery(SQLExpression):
