@@ -176,14 +176,18 @@ class SOCol(object):
         self._default = default
         self.customSQLType = sqlType
 
+        # deal with foreign keys
         self.foreignKey = foreignKey
         if self.foreignKey:
-            #assert self.name.upper().endswith('ID'), "All foreign key columns must end with 'ID' (%s)" % repr(self.name)
-            if not self.name.upper().endswith('ID'):
-                self.foreignName = self.name
-                self.name = self.name + "ID"
+            if origName is not None:
+                idname = soClass.sqlmeta.style.instanceAttrToIDAttr(origName)
             else:
-                self.foreignName = self.name[:-2]
+                idname = soClass.sqlmeta.style.instanceAttrToIDAttr(name)
+            if self.name != idname:
+                self.foreignName = self.name
+                self.name = idname
+            else:
+                self.foreignName = soClass.sqlmeta.style.instanceIDAttrToAttr(self.name)
         else:
             self.foreignName = None
 
@@ -261,8 +265,7 @@ class SOCol(object):
     default = property(_get_default, None, None)
 
     def _get_joinName(self):
-        assert self.name[-2:] == 'ID'
-        return self.name[:-2]
+        return self.soClass.sqlmeta.style.instanceIDAttrToAttr(self.name)
     joinName = property(_get_joinName, None, None)
 
     def __repr__(self):
@@ -719,8 +722,7 @@ class SOForeignKey(SOKeyCol):
             kw['name'] = style.instanceAttrToIDAttr(style.pythonClassToAttr(foreignKey))
         else:
             kw['origName'] = kw['name']
-            if not kw['name'].upper().endswith('ID'):
-                kw['name'] = style.instanceAttrToIDAttr(kw['name'])
+            kw['name'] = style.instanceAttrToIDAttr(kw['name'])
         super(SOForeignKey, self).__init__(**kw)
 
     def postgresCreateSQL(self):

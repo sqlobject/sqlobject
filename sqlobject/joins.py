@@ -275,12 +275,8 @@ class SOSingleJoin(SOMultipleJoin):
             if not self.makeDefault:
                 return None
             else:
-                kw = {pythonColumn[:-2]: inst} # skipping the ID (from foreignkeyID)
+                kw = {self.soClass.sqlmeta.style.instanceIDAttrToAttr(pythonColumn): inst}
                 return self.otherClass(**kw) # instanciating the otherClass with all
-                # values to their defaults, except the foreign key
-                # TODO I don't think this is the best way to know the column as foreignKey
-                # reather than foreignKeyID, but I don't found a sqlmeta.style function
-                # to do the work, if there isn't such function, I must create it.
         else:
             return results[0]
 

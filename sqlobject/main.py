@@ -379,10 +379,10 @@ class sqlmeta(object):
         # SQLObject instance.
         if column.foreignKey:
 
-            # We go through the standard _SO_get_columnName
-            # deal, except chopping off the "ID" ending since
+            # We go through the standard _SO_get_columnName deal
             # we're giving the object, not the ID of the
             # object this time:
+            origName = column.origName
             if sqlmeta.cacheValues:
                 # self._SO_class_className is a reference
                 # to the class in question.
@@ -390,26 +390,21 @@ class sqlmeta(object):
             else:
                 # Same non-caching version as above.
                 getter = eval('lambda self: self._SO_foreignKey(self._SO_getValue(%s), self._SO_class_%s)' % (repr(name), column.foreignKey))
-            if column.origName.upper().endswith('ID'):
-                origName = column.origName[:-2]
-            else:
-                origName = column.origName
             setattr(soClass, rawGetterName(origName), getter)
 
             # And we set the _get_columnName version
-            # (sans ID ending)
-            if not hasattr(soClass, getterName(name)[:-2]):
-                setattr(soClass, getterName(name)[:-2], getter)
-                sqlmeta._plainForeignGetters[name[:-2]] = 1
+            if not hasattr(soClass, getterName(origName)):
+                setattr(soClass, getterName(origName), getter)
+                sqlmeta._plainForeignGetters[origName] = 1
 
             if not column.immutable:
                 # The setter just gets the ID of the object,
                 # and then sets the real column.
                 setter = eval('lambda self, val: setattr(self, %s, self._SO_getID(val))' % (repr(name)))
-                setattr(soClass, rawSetterName(name)[:-2], setter)
-                if not hasattr(soClass, setterName(name)[:-2]):
-                    setattr(soClass, setterName(name)[:-2], setter)
-                    sqlmeta._plainForeignSetters[name[:-2]] = 1
+                setattr(soClass, rawSetterName(origName), setter)
+                if not hasattr(soClass, setterName(origName)):
+                    setattr(soClass, setterName(origName), setter)
+                    sqlmeta._plainForeignSetters[origName] = 1
 
             classregistry.registry(sqlmeta.registry).addClassCallback(
                 column.foreignKey,
@@ -468,12 +463,12 @@ class sqlmeta(object):
         if sqlmeta._plainSetters.has_key(name):
             delattr(soClass, setterName(name))
         if column.foreignKey:
-            delattr(soClass, rawGetterName(name)[:-2])
-            if sqlmeta._plainForeignGetters.has_key(name[:-2]):
-                delattr(soClass, getterName(name)[:-2])
-            delattr(soClass, rawSetterName(name)[:-2])
-            if sqlmeta._plainForeignSetters.has_key(name[:-2]):
-                delattr(soClass, setterName(name)[:-2])
+            delattr(soClass, rawGetterName(soClass.sqlmeta.style.instanceIDAttrToAttr(name)))
+            if sqlmeta._plainForeignGetters.has_key(name):
+                delattr(soClass, getterName(name))
+            delattr(soClass, rawSetterName(soClass.sqlmeta.style.instanceIDAttrToAttr(name)))
+            if sqlmeta._plainForeignSetters.has_key(name):
+                delattr(soClass, setterName(name))
         if column.alternateMethodName:
             delattr(soClass, column.alternateMethodName)
 

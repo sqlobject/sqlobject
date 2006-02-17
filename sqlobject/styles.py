@@ -54,9 +54,10 @@ class Style(object):
         return lowerword(className)
 
     def instanceAttrToIDAttr(self, attr):
-        # @@: Right now, because of how names are created for foreign
-        # keys, you can't really change this style.
         return attr + "ID"
+
+    def instanceIDAttrToAttr(self, attr):
+        return attr[:-2]
 
     def tableReference(self, table):
         return table + "_id"

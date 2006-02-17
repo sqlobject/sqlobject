@@ -47,7 +47,7 @@ class TestPeople:
         Person.sqlmeta.delColumn(nickname, changeSchema=True)
 
     def test_dynamicJoin(self):
-        col = KeyCol('personID', foreignKey='Person')
+        col = KeyCol('person', foreignKey='Person')
         Phone.sqlmeta.addColumn(col, changeSchema=True)
         join = MultipleJoin('Phone')
         Person.sqlmeta.addJoin(join)

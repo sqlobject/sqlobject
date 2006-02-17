@@ -49,7 +49,7 @@ class TestPeople:
         OldPerson.delColumn(nickname, changeSchema=True)
 
     def test_dynamicJoin(self):
-        col = KeyCol('oldPersonID', foreignKey='OldPerson')
+        col = KeyCol('oldPerson', foreignKey='OldPerson')
         OldPhone.addColumn(col, changeSchema=True)
         join = MultipleJoin('OldPhone')
         OldPerson.addJoin(join)
