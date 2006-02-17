@@ -1,5 +1,6 @@
 from sqlobject import *
 from sqlobject.tests.dbtest import *
+from sqlobject.tests.dbtest import InstalledTestDatabase
 
 class TestComposerKey(SQLObject):
     name = StringCol()
@@ -38,5 +39,7 @@ def test1():
     assert s[0]==w2
 
 def test2():
+    TestWorkKey ._connection = getConnection()
+    InstalledTestDatabase.drop(TestWorkKey)
     setupClass([TestComposerKey, TestWorkKey2], force=True)
     TestWorkKey2.sqlmeta.addColumn(ForeignKey('TestComposerKey'), changeSchema=True)
