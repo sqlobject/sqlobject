@@ -538,6 +538,8 @@ class UnicodeStringValidator(validators.Validator):
             return None
         if isinstance(value, unicode):
             return value
+        if isinstance(value, array_type): # MySQL
+            return unicode(value.tostring(), self.db_encoding)
         return unicode(value, self.db_encoding)
 
     def from_python(self, value, state):
