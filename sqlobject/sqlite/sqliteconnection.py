@@ -95,7 +95,10 @@ class SQLiteConnection(DBAPI):
         # pool connections.  Since we are isolating threads here, we
         # don't have to worry about locking as much.
         if self._memory:
-            return self.makeConnection()
+            conn = self.makeConnection()
+            self._connectionNumbers[id(conn)] = self._connectionCount
+            self._connectionCount += 1
+            return conn
         threadid = thread.get_ident()
         if (self._pool is not None
             and self._threadPool.has_key(threadid)):
