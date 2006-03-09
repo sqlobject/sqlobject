@@ -8,14 +8,6 @@ from sqlobject.dbconnection import DBConnection
 def test_parse():
     _parseURI = DBConnection._parseURI
 
-    user, password, host, port, path, args = _parseURI("mysql://user:password@host/database")
-    assert user == "user"
-    assert password == "password"
-    assert host == "host"
-    assert port is None
-    assert path == "/database"
-    assert args == {}
-
     user, password, host, port, path, args = _parseURI("mysql://host/database")
     assert user is None
     assert password is None
@@ -23,6 +15,14 @@ def test_parse():
     assert port is None
     assert path == "/database"
     assert args == {}
+
+    user, password, host, port, path, args = _parseURI("mysql://user:pass%20word@host/database?unix_socket=/var/mysql/socket")
+    assert user == "user"
+    assert password == "pass%20word"
+    assert host == "host"
+    assert port is None
+    assert path == "/database"
+    assert args == {"unix_socket": "/var/mysql/socket"}
 
     user, password, host, port, path, args = _parseURI("postgres://user@host/database")
     assert user == "user"
@@ -38,6 +38,14 @@ def test_parse():
     assert host == "host"
     assert port == 5432
     assert path == "/database"
+    assert args == {}
+
+    user, password, host, port, path, args = _parseURI("postgres:///full/path/to/socket/database")
+    assert user == None
+    assert password is None
+    assert host == None
+    assert port is None
+    assert path == "/full/path/to/socket/database"
     assert args == {}
 
     user, password, host, port, path, args = _parseURI("sqlite:///full/path/to/database")

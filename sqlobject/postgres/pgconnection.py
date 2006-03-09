@@ -90,6 +90,10 @@ class PostgresConnection(DBAPI):
     def connectionFromURI(cls, uri):
         user, password, host, port, path, args = cls._parseURI(uri)
         path = path.strip('/')
+        if (host is None) and path.count('/'): # Non-default unix socket
+            path_parts = path.split('/')
+            host = '/' + '/'.join(path_parts[:-1])
+            path = path_parts[-1]
         return cls(host=host, port=port, db=path, user=user, password=password, **args)
     connectionFromURI = classmethod(connectionFromURI)
 
