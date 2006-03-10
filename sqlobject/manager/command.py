@@ -938,6 +938,8 @@ class CommandRecord(Command):
                 print '\n'.join(all_diffs)
                 for conn in conns:
                     self.update_db(version, conn)
+        else:
+            all_diffs = []
         if self.options.open_editor:
             if not last_version_dir:
                 print ("Cannot edit upgrader because there is no "
