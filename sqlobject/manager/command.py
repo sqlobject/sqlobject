@@ -921,25 +921,23 @@ class CommandRecord(Command):
                 f = open(os.path.join(output_dir, fn), 'w')
                 f.write(content)
                 f.close()
-        all_diffs = []
-        for cls in self.classes():
-            for conn in conns:
-                diffs = db_differences(cls, conn)
-                for diff in diffs:
-                    if len(conns) > 1:
-                        diff = '  (%s).%s: %s' % (
-                            conn.uri(), cls.sqlmeta.table, diff)
-                    else:
-                        diff = '  %s: %s' % (cls.sqlmeta.table, diff)
-                    all_diffs.append(diff)
-        if all_diffs:
-            print 'Database does not match schema:'
-            print '\n'.join(all_diffs)
-            if self.options.db_record:
-                print '(Not updating database version)'
-        elif self.options.db_record:
-            for conn in conns:
-                self.update_db(version, conn)
+        if self.options.db_record:
+            all_diffs = []
+            for cls in self.classes():
+                for conn in conns:
+                    diffs = db_differences(cls, conn)
+                    for diff in diffs:
+                        if len(conns) > 1:
+                            diff = '  (%s).%s: %s' % (
+                                conn.uri(), cls.sqlmeta.table, diff)
+                        else:
+                            diff = '  %s: %s' % (cls.sqlmeta.table, diff)
+                        all_diffs.append(diff)
+            if all_diffs:
+                print 'Database does not match schema:'
+                print '\n'.join(all_diffs)
+                for conn in conns:
+                    self.update_db(version, conn)
         if self.options.open_editor:
             if not last_version_dir:
                 print ("Cannot edit upgrader because there is no "
