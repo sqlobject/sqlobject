@@ -567,7 +567,8 @@ class CommandCreate(Command):
                 else:
                     print 'Creating %s' % soClass.__name__
             if v >= 2:
-                print soClass.createTableSQL()
+                sql, extra = soClass.createTableSQL()
+                print sql
             if (not self.options.simulate
                 and not exists):
                 if self.options.interactive:
@@ -584,6 +585,8 @@ class CommandCreate(Command):
                     if tableConstraints:
                         constraints[soClass._connection].append(tableConstraints)
         for connection in constraints.keys():
+            if v >= 2:
+                print 'Creating constraints'
             for constraintList in constraints[connection]:
                 for constraint in constraintList:
                     if constraint:
