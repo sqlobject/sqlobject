@@ -116,10 +116,16 @@ class MySQLConnection(DBAPI):
         return 'INT NOT NULL'
 
     def tableExists(self, tableName):
-        for (table,) in self.queryAll('SHOW TABLES'):
-            if table.lower() == tableName.lower():
-                return True
-        return False
+        try:
+            # Use DESCRIBE instead of SHOW TABLES because SHOW TABLES
+            # assumes there is a default database selected
+            # which is not always True (for an embedded application, e.g.)
+            self.query('DESCRIBE %s' % (tableName))
+            return True
+        except MySQLdb.ProgrammingError, e:
+            if e.args[0] == 1146: # ER_NO_SUCH_TABLE
+                return False
+            raise
 
     def addColumn(self, tableName, column):
         self.query('ALTER TABLE %s ADD COLUMN %s' %
