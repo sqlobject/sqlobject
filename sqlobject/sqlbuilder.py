@@ -486,20 +486,18 @@ class Insert(SQLExpression):
             allowNonDict = False
         if template is not NoDefault:
             insert += " (%s)" % ", ".join(template)
-        first = True
         insert += " VALUES "
+        listToJoin = []
+        listToJoin_app = listToJoin.append
         for value in self.valueList:
-            if first:
-                first = False
-            else:
-                insert += ", "
             if type(value) is type({}):
                 if template is NoDefault:
                     raise TypeError, "You can't mix non-dictionaries with dictionaries in an INSERT if you don't provide a template (%s)" % repr(value)
                 value = dictToList(template, value)
             elif not allowNonDict:
                 raise TypeError, "You can't mix non-dictionaries with dictionaries in an INSERT if you don't provide a template (%s)" % repr(value)
-            insert += "(%s)" % ", ".join([sqlrepr(v, db) for v in value])
+            listToJoin_app("(%s)" % ", ".join([sqlrepr(v, db) for v in value]))
+        insert = "%s%s" % (insert, ", ".join(listToJoin))
         return insert
 
 registerConverter(Insert, SQLExprConverter)
