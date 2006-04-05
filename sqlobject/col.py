@@ -727,6 +727,31 @@ class SOForeignKey(SOKeyCol):
             kw['name'] = style.instanceAttrToIDAttr(kw['name'])
         super(SOForeignKey, self).__init__(**kw)
 
+    def sqliteCreateSQL(self):
+        sql = SOKeyCol.sqliteCreateSQL(self)
+        other = findClass(self.foreignKey)
+        tName = other.sqlmeta.table
+        idName = other.sqlmeta.idName
+        if self.cascade is not None:
+            if self.cascade == 'null':
+                action = 'ON DELETE SET NULL'
+            elif self.cascade:
+                action = 'ON DELETE CASCADE'
+            else:
+                action = 'ON DELETE RESTRICT'
+        else:
+            action = ''
+        constraint = ('CONSTRAINT %(colName)s_exists '
+                      #'FOREIGN KEY(%(colName)s) '
+                      'REFERENCES %(tName)s(%(idName)s) '
+                      '%(action)s' %
+                      {'tName': tName,
+                       'colName': self.dbName,
+                       'idName': idName,
+                       'action': action})
+        sql = ' '.join([sql, constraint])
+        return sql
+
     def postgresCreateSQL(self):
         sql = SOKeyCol.postgresCreateSQL(self)
         return sql
