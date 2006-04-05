@@ -154,7 +154,11 @@ class MultipleJoin(Join):
 class SOSQLMultipleJoin(SOMultipleJoin):
 
     def performJoin(self, inst):
-        results = self.otherClass.select(getattr(self.otherClass.q, self.soClass.sqlmeta.style.dbColumnToPythonAttr(self.joinColumn)) == inst.id)
+        if inst.sqlmeta._perConnection:
+            conn = inst._connection
+        else:
+            conn = None
+        results = self.otherClass.select(getattr(self.otherClass.q, self.soClass.sqlmeta.style.dbColumnToPythonAttr(self.joinColumn)) == inst.id, connection=conn)
         if self.orderBy is NoDefault:
             self.orderBy = self.otherClass.sqlmeta.defaultOrder
         return results.orderBy(self.orderBy)
@@ -239,12 +243,17 @@ class SOSQLRelatedJoin(SORelatedJoin):
 %(otherTable)s.%(otherID)s = %(interTable)s.%(otherCol)s and
 %(interTable)s.%(joinCol)s = %(table)s.%(ID)s and
 %(table)s.%(ID)s = %(idValue)s''' % options
+        if inst.sqlmeta._perConnection:
+            conn = inst._connection
+        else:
+            conn = None
         results = self.otherClass.select(sqlbuilder.SQLConstant(clause),
             clauseTables=(
                 options['table'],
                 options['otherTable'],
                 options['interTable'],
-            )
+            ),
+            connection=conn
         )
         # TODO (michelts): apply orderBy on the selection
         return results
