@@ -826,7 +826,8 @@ class Transaction(object):
         if not self._deletedCache.has_key(cls):
             self._deletedCache[cls] = []
         self._deletedCache[cls].append(inst.id)
-        return self._dbConnection._SO_delete(inst)
+        meth = new.instancemethod(self._dbConnection._SO_delete.im_func, self, self.__class__)
+        return meth(inst)
 
     def commit(self, close=False):
         if self._obsolete:

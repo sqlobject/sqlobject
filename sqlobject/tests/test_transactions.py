@@ -51,3 +51,17 @@ def test_transaction_commit_sync():
         assert bOut.name == 'robert'
     finally:
         TestSOTrans._connection.autoCommit = True
+
+def test_transaction_delete():
+    if not supports('transactions'):
+        return
+    setupClass(TestSOTrans)
+    trans = TestSOTrans._connection.transaction()
+    try:
+        TestSOTrans(name='bob')
+        bIn = TestSOTrans.byName('bob', connection=trans)
+        bIn.destroySelf()
+        bOut = TestSOTrans.select(TestSOTrans.q.name=='bob')
+        assert bOut.count() == 1
+    finally:
+        TestSOTrans._connection.autoCommit = True
