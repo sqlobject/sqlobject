@@ -1483,7 +1483,7 @@ class SQLObject(object):
                 if col.cascade == False:
                     # Found a restriction
                     restrict = True
-                query.append("%s = %s" % (col.dbName, self.id))
+                query.append("%s = (%s)" % (col.dbName, self.id))
                 if col.cascade == 'null':
                     setnull = col.name
                 elif col.cascade:

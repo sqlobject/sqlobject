@@ -604,9 +604,9 @@ class DBAPI(DBConnection):
     # in the SQLObject class.
 
     def _SO_update(self, so, values):
-        self.query("UPDATE %s SET %s WHERE %s = %s" %
+        self.query("UPDATE %s SET %s WHERE %s = (%s)" %
                    (so.sqlmeta.table,
-                    ", ".join(["%s = %s" % (dbName, self.sqlrepr(value))
+                    ", ".join(["%s = (%s)" % (dbName, self.sqlrepr(value))
                                for dbName, value in values]),
                     so.sqlmeta.idName,
                     self.sqlrepr(so.id)))
@@ -615,14 +615,14 @@ class DBAPI(DBConnection):
         columns = ", ".join(columnNames)
         if columns:
             return self.queryOne(
-                "SELECT %s FROM %s WHERE %s = %s" %
+                "SELECT %s FROM %s WHERE %s = (%s)" %
                 (columns,
                  so.sqlmeta.table,
                  so.sqlmeta.idName,
                  self.sqlrepr(so.id)))
         else:
             return self.queryOne(
-                "SELECT NULL FROM %s WHERE %s = %s" %
+                "SELECT NULL FROM %s WHERE %s = (%s)" %
                 (so.sqlmeta.table,
                  so.sqlmeta.idName,
                  self.sqlrepr(so.id)))
@@ -635,7 +635,7 @@ class DBAPI(DBConnection):
             raise ValueError, "'column' and 'value' tuples must be of the same size"
         columns = []
         for i in xrange(len(column)):
-            columns.append("%s = %s" % (column[i], self.sqlrepr(value[i])))
+            columns.append("(%s) = (%s)" % (column[i], self.sqlrepr(value[i])))
         condition = ' AND '.join(columns)
         return self.queryOne("SELECT %s FROM %s WHERE %s" %
                              (", ".join(columnNames),
@@ -643,20 +643,20 @@ class DBAPI(DBConnection):
                               condition))
 
     def _SO_delete(self, so):
-        self.query("DELETE FROM %s WHERE %s = %s" %
+        self.query("DELETE FROM %s WHERE %s = (%s)" %
                    (so.sqlmeta.table,
                     so.sqlmeta.idName,
                     self.sqlrepr(so.id)))
 
     def _SO_selectJoin(self, soClass, column, value):
-        return self.queryAll("SELECT %s FROM %s WHERE %s = %s" %
+        return self.queryAll("SELECT %s FROM %s WHERE %s = (%s)" %
                              (soClass.sqlmeta.idName,
                               soClass.sqlmeta.table,
                               column,
                               self.sqlrepr(value)))
 
     def _SO_intermediateJoin(self, table, getColumn, joinColumn, value):
-        return self.queryAll("SELECT %s FROM %s WHERE %s = %s" %
+        return self.queryAll("SELECT %s FROM %s WHERE %s = (%s)" %
                              (getColumn,
                               table,
                               joinColumn,
@@ -664,7 +664,7 @@ class DBAPI(DBConnection):
 
     def _SO_intermediateDelete(self, table, firstColumn, firstValue,
                                secondColumn, secondValue):
-        self.query("DELETE FROM %s WHERE %s = %s AND %s = %s" %
+        self.query("DELETE FROM %s WHERE %s = (%s) AND %s = (%s)" %
                    (table,
                     firstColumn,
                     self.sqlrepr(firstValue),

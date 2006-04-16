@@ -35,7 +35,7 @@ def test_2select_syntax():
             on_condition=(TestJoin1.q.col1 == TestJoin2.q.col2))
     )
     assert str(select) == \
-        "SELECT test_join1.id, test_join1.col1 FROM  test_join1 LEFT JOIN test_join2 ON (test_join1.col1 = test_join2.col2) WHERE 1 = 1"
+        "SELECT test_join1.id, test_join1.col1 FROM  test_join1 LEFT JOIN test_join2 ON ((test_join1.col1) = (test_join2.col2)) WHERE 1 = 1"
 
 def test_3perform_join():
     setup()

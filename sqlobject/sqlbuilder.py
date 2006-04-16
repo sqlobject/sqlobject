@@ -230,7 +230,13 @@ class SQLOp(SQLExpression):
         self.expr1 = expr1
         self.expr2 = expr2
     def __sqlrepr__(self, db):
-        return "(%s %s %s)" % (sqlrepr(self.expr1, db), self.op, sqlrepr(self.expr2, db))
+        s1 = sqlrepr(self.expr1, db)
+        s2 = sqlrepr(self.expr2, db)
+        if s1[0] != '(' and s1 != 'NULL':
+            s1 = '(' + s1 + ')'
+        if s2[0] != '(' and s2 != 'NULL':
+            s2 = '(' + s2 + ')'
+        return "(%s %s %s)" % (s1, self.op, s2)
     def components(self):
         return [self.expr1, self.expr2]
     def execute(self, executor):
@@ -884,7 +890,7 @@ class LIKE(SQLExpression):
         self.expr = expr
         self.string = string
     def __sqlrepr__(self, db):
-        return "(%s %s %s)" % (sqlrepr(self.expr, db), self.op, sqlrepr(self.string, db))
+        return "(%s %s (%s))" % (sqlrepr(self.expr, db), self.op, sqlrepr(self.string, db))
     def components(self):
         return [self.expr, self.string]
     def execute(self, executor):
@@ -912,7 +918,7 @@ class RLIKE(LIKE):
         else:
             return "LIKE"
     def __sqlrepr__(self, db):
-        return "(%s %s %s)" % (
+        return "(%s %s (%s))" % (
             sqlrepr(self.expr, db), self._get_op(db), sqlrepr(self.string, db)
         )
     def execute(self, executor):

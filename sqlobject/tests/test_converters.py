@@ -163,7 +163,7 @@ def test_trueclause():
 
 def test_op():
     instance = SQLOp('and', 'this', 'that')
-    assert sqlrepr(instance, 'mysql') == "('this' AND 'that')"
+    assert sqlrepr(instance, 'mysql') == "(('this') AND ('that'))"
 
 def test_call():
     instance = SQLCall('test', ('test',))
