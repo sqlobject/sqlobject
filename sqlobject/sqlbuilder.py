@@ -447,7 +447,7 @@ class Select(SQLExpression):
         select = "SELECT %s" % ", ".join([sqlrepr(v, db) for v in self.items])
 
         tables = {}
-        things = self.items[:]
+        things = list(self.items)
         if self.whereClause is not NoDefault:
             things.append(self.whereClause)
         for thing in things:
