@@ -1,3 +1,4 @@
+from py.test import raises
 from sqlobject import *
 from sqlobject.tests.dbtest import *
 from sqlobject.inheritance import InheritableSQLObject
@@ -5,7 +6,6 @@ from sqlobject.inheritance import InheritableSQLObject
 ########################################
 ## Deep Inheritance
 ########################################
-
 
 class DIPerson(InheritableSQLObject):
     firstName = StringCol()
@@ -17,6 +17,24 @@ class DIEmployee(DIPerson):
 
 class DIManager(DIEmployee):
     subdudes = MultipleJoin("DIPerson", joinColumn="manager_id")
+
+def test_creation_fail():
+    """
+    Try to creae an Manager without specifying a position.
+    this should fail without leaving any partial records in
+    the database.
+    """
+
+    setupClass(DIManager)
+    setupClass(DIEmployee)
+    setupClass(DIPerson)
+
+    kwargs ={'firstName':'John', 'lastname':'Doe'}
+    raises(TypeError, DIManager, **kwargs)
+    #what we really need to check for is partial records in the database.
+    #the following is not really adaquate.
+    persons = DIEmployee.select(DIPerson.q.firstName == 'John')
+    assert persons.count() == 0
 
 def test_deep_inheritance():
 

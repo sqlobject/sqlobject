@@ -1,3 +1,4 @@
+from py.test import raises
 from sqlobject import *
 from sqlobject.tests.dbtest import *
 from sqlobject.inheritance import InheritableSQLObject
@@ -5,7 +6,6 @@ from sqlobject.inheritance import InheritableSQLObject
 ########################################
 ## Inheritance
 ########################################
-
 
 class InheritablePerson(InheritableSQLObject):
     firstName = StringCol()
@@ -22,6 +22,12 @@ def setup():
     Employee(firstName='Project', lastName='Leader', position='Project leader')
     InheritablePerson(firstName='Oneof', lastName='Authors')
 
+def test_creation_fail():
+    setup()
+    kwargs ={'firstName':'John', 'lastname':'Doe'}
+    raises(TypeError, Employee, **kwargs)
+    persons = InheritablePerson.select(InheritablePerson.q.firstName == 'John')
+    assert persons.count() == 0
 
 def test_inheritance():
     setup()
@@ -34,7 +40,6 @@ def test_inheritance():
         else:
             assert hasattr(person, "childName")
             assert not person.childName
-
 
 def test_inheritance_select():
     setup()
