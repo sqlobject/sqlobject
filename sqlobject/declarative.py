@@ -90,9 +90,10 @@ def threadSafeMethod(lock):
     def decorator(fn):
         def _wrapper(self, *args, **kwargs):
             lock.acquire()
-            return_value = fn(self, *args, **kwargs)
-            lock.release()
-            return return_value
+            try:
+                return fn(self, *args, **kwargs)
+            finally:
+                lock.release()
         try:
             _wrapper.func_name = fn.func_name
         except TypeError:
