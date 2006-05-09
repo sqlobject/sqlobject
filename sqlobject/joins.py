@@ -227,36 +227,52 @@ class SORelatedJoin(SOMultipleJoin):
 class RelatedJoin(MultipleJoin):
     baseClass = SORelatedJoin
 
+# helper classes to SQLRelatedJoin
+class OtherTableToJoin(sqlbuilder.SQLExpression):
+    def __init__(self, otherTable, otherIdName, interTable, joinColumn):
+        self.otherTable = otherTable
+        self.otherIdName = otherIdName
+        self.interTable = interTable
+        self.joinColumn = joinColumn
+
+    def __sqlrepr__(self, db):
+        return '%s.%s = %s.%s' % (self.otherTable, self.otherIdName, self.interTable, self.joinColumn)
+
+class JoinToTable(sqlbuilder.SQLExpression):
+    def __init__(self, table, idName, interTable, joinColumn):
+        self.table = table
+        self.idName = idName
+        self.interTable = interTable
+        self.joinColumn = joinColumn
+    
+    def __sqlrepr__(self, db):
+        return '%s.%s = %s.%s' % (self.interTable, self.joinColumn, self.table, self.idName)
+
+class TableToId(sqlbuilder.SQLExpression):
+    def __init__(self, table, idName, idValue):
+        self.table = table
+        self.idName = idName
+        self.idValue = idValue
+
+    def __sqlrepr__(self, db):
+        return '%s.%s = %s' % (self.table, self.idName, self.idValue)
+
 class SOSQLRelatedJoin(SORelatedJoin):
     def performJoin(self, inst):
-        options={
-            'otherTable' : self.otherClass.sqlmeta.table,
-            'otherID' : self.otherClass.sqlmeta.idName,
-            'interTable' : self.intermediateTable,
-            'table' : self.soClass.sqlmeta.table,
-            'ID' : self.soClass.sqlmeta.idName,
-            'joinCol' : self.joinColumn,
-            'otherCol' : self.otherColumn,
-            'idValue' : inst.id,
-        }
-        clause = '''\
-%(otherTable)s.%(otherID)s = %(interTable)s.%(otherCol)s and
-%(interTable)s.%(joinCol)s = %(table)s.%(ID)s and
-%(table)s.%(ID)s = %(idValue)s''' % options
-        if inst.sqlmeta._perConnection:
-            conn = inst._connection
-        else:
-            conn = None
-        results = self.otherClass.select(sqlbuilder.SQLConstant(clause),
-            clauseTables=(
-                options['table'],
-                options['otherTable'],
-                options['interTable'],
+        results = self.otherClass.select(sqlbuilder.AND(
+            OtherTableToJoin(
+                self.otherClass.sqlmeta.table, self.otherClass.sqlmeta.idName, 
+                self.intermediateTable, self.otherColumn
             ),
-            connection=conn
-        )
-        # TODO (michelts): apply orderBy on the selection
-        return results
+            JoinToTable(
+                self.soClass.sqlmeta.table, self.soClass.sqlmeta.idName,
+                self.intermediateTable, self.joinColumn
+            ),
+            TableToId(self.soClass.sqlmeta.table, self.soClass.sqlmeta.idName, inst.id),
+        ), clauseTables=(self.soClass.sqlmeta.table, self.otherClass.sqlmeta.table, self.intermediateTable))
+        if self.orderBy is NoDefault:
+            self.orderBy = self.otherClass.sqlmeta.defaultOrder
+        return results.orderBy(self.orderBy)
 
 class SQLRelatedJoin(RelatedJoin):
     baseClass = SOSQLRelatedJoin
@@ -392,7 +408,7 @@ class _ManyToManySelectWrapper(object):
     def __getattr__(self, attr):
         # @@: This passes through private variable access too... should it?
         # Also magic methods, like __str__
-        return getattr(self, select, attr)
+        return getattr(self.select, attr)
 
     def __repr__(self):
         return '<%s for: %s>' % (self.__class__.__name__, repr(self.select))
