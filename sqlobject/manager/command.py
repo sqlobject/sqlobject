@@ -553,7 +553,13 @@ class CommandCreate(Command):
             if (self.options.create_db
                 and soClass._connection not in dbs_created):
                 if not self.options.simulate:
-                    soClass._connection.createEmptyDatabase()
+                    try:
+                        soClass._connection.createEmptyDatabase()
+                    except soClass._connection.module.ProgrammingError, e:
+                        if str(e).find('already exists') != -1:
+                            print 'Database already exists'
+                        else:
+                            raise
                 else:
                     print '(simulating; cannot create database)'
                 dbs_created.append(soClass._connection)
