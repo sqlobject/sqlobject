@@ -1383,9 +1383,13 @@ class SQLObject(object):
         conn = connection or cls._connection
         sql, constraints = conn.createTableSQL(cls)
         if createJoinTables:
-            sql += '\n' + cls.createJoinTablesSQL(connection=conn)
+            join_sql = cls.createJoinTablesSQL(connection=conn)
+            if join_sql:
+                sql = ';\n' + join_sql
         if createIndexes:
-            sql += '\n' + cls.createIndexesSQL(connection=conn)
+            index_sql = cls.createIndexesSQL(connection=conn)
+            if index_sql:
+                sql += ';\n' + index_sql
         return sql, constraints
     createTableSQL = classmethod(createTableSQL)
 
