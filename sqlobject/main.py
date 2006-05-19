@@ -823,8 +823,6 @@ class SQLObject(object):
     addJoin = _sqlmeta_attr('addJoin', 2)
     delJoin = _sqlmeta_attr('delJoin', 2)
     addIndex = _sqlmeta_attr('addIndex', 2)
-    delIndex = _sqlmeta_attr('delIndex', 2)
-    getSchema = _sqlmeta_attr('getSchema', 2)
 
     # @classmethod
     def _SO_setupSqlmeta(cls, new_attrs, is_base):
