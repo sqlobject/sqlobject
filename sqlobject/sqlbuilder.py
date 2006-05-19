@@ -770,7 +770,7 @@ class SQLJoinConditional(SQLJoin):
                 if hasattr(col, "__sqlrepr__"):
                     col = sqlrepr(col, db)
                 using_columns.append(col)
-            using_columns = ", ".join()
+            using_columns = ", ".join(using_columns)
             join = "%s %s USING (%s)" % (self.op, self.table2, using_columns)
             if self.table1:
                 join = "%s %s" % (self.table1, join)
