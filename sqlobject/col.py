@@ -47,7 +47,7 @@ try:
     from mx import DateTime
 except ImportError:
     try:
-        import DateTime # old version of mxDateTime
+        import DateTime # old version of mxDateTime, or Zope's Version if we're running with Zope
     except ImportError:
         mxdatetime_available = False
     else:
@@ -60,7 +60,10 @@ MXDATETIME_IMPLEMENTATION = "mxDateTime"
 
 if mxdatetime_available:
     DateTimeType = type(DateTime.now())
-    TimeType = type(DateTime.Time())
+    if hasattr(DateTime, "Time"):
+        TimeType = type(DateTime.Time())
+    else: # Zope
+        TimeType = type(DateTime.DateTime.Time(DateTime.DateTime()))
 
 if datetime_available:
     default_datetime_implementation = DATETIME_IMPLEMENTATION
