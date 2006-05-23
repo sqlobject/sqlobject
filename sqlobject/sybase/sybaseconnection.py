@@ -98,6 +98,9 @@ class SybaseConnection(DBAPI):
         # XXX Sybase doesn't support LIMIT
         return query
 
+    def createReferenceConstraint(self, soClass, col):
+        return None
+
     def createColumn(self, soClass, col):
         return col.sybaseCreateSQL()
 
