@@ -26,7 +26,7 @@ class maxdbException(Exception):
 
     def __str__(self):
         return repr(self.value)
-    
+
 class LowerBoundOfSliceIsNotSupported(maxdbException):
     def __init__(self, value):
         maxdbException.__init__(self, '')
@@ -52,14 +52,14 @@ class PrimaryKeyNotFounded(maxdbException):
             self,
             "No primary key was defined on table %r" % value)
 
-SAPDBMAX_ID_LENGTH=32  
+SAPDBMAX_ID_LENGTH=32
 
 class MaxdbConnection(DBAPI):
-    
+
     supportTransactions = True
     dbName = 'maxdb'
     schemes = [dbName]
-   
+
     def __init__ (self, user, password, database,
                   host='', autoCommit=1, sqlmode='internal',
                   isolation=None, timeout=None, **kw):
@@ -102,7 +102,7 @@ class MaxdbConnection(DBAPI):
         conn.__init__(self.user, self.password, self.database,
                       self.host,
                       **self._getConfigParams(self.sqlmode,auto))
- 
+
     def createSequenceName(self,table):
         """
         sequence name are builded with the concatenation of the table
@@ -151,16 +151,16 @@ class MaxdbConnection(DBAPI):
         limit = ' ROWNO   <= %d ' % (end)
         return self.sqlAddLimit(query,limit)
 
-    
+
     def createTable(self, soClass):
         #we create the table in a transaction because the addition of the
-        #table and the sequence must be atomic 
+        #table and the sequence must be atomic
 
-        #i tried to use the transaction class but i get a recursion limit error    
+        #i tried to use the transaction class but i get a recursion limit error
         #t=self.transaction()
         # t.query('CREATE TABLE %s (\n%s\n)' % \
         #            (soClass.sqlmeta.table, self.createColumns(soClass)))
-        # 
+        #
         # t.query("CREATE SEQUENCE %s" % self.createSequenceName(soClass.sqlmeta.table))
         # t.commit()
         #so use transaction when the problem will be solved
@@ -168,7 +168,7 @@ class MaxdbConnection(DBAPI):
                    (soClass.sqlmeta.table, self.createColumns(soClass)))
         self.query("CREATE SEQUENCE %s"
                    % self.createSequenceName(soClass.sqlmeta.table))
- 
+
     def createReferenceConstraint(self, soClass, col):
         return col.maxdbCreateReferenceConstraint()
 
@@ -184,7 +184,7 @@ class MaxdbConnection(DBAPI):
 
     def dropTable(self, tableName,cascade=False):
         #we drop the table in a transaction because the removal of the
-        #table and the sequence must be atomic 
+        #table and the sequence must be atomic
         #i tried to use the transaction class but i get a recursion limit error
         # try:
         #     t=self.transaction()
@@ -224,7 +224,7 @@ class MaxdbConnection(DBAPI):
     GET_PK_AND_FK = """
     SELECT constraint_cols.column_name, constraints.constraint_type,
            refname,reftablename
-    FROM user_cons_columns constraint_cols 
+    FROM user_cons_columns constraint_cols
     INNER JOIN user_constraints constraints
     ON constraint_cols.constraint_name = constraints.constraint_name
     LEFT OUTER JOIN show_foreign_key fk
@@ -244,7 +244,7 @@ class MaxdbConnection(DBAPI):
             pkmap[col_name]=False
             if cons_type == 'R':
                 keymap[col_name]=reftable.lower()
-                
+
             elif cons_type == 'P':
                 pkmap[col_name]=True
 
@@ -255,14 +255,14 @@ class MaxdbConnection(DBAPI):
              data_scale) in colData:
             # id is defined as primary key --> ok
             # We let sqlobject raise error if the 'id' is used for another column
-            field_name = field.lower() 
+            field_name = field.lower()
             if field_name == 'id' and  pkmap[field_name]:
                 continue
-            
+
             colClass, kw = self.guessClass(data_type,data_len,data_scale)
             kw['name'] = field_name
 
-            if nullAllowed == 'Y' : 
+            if nullAllowed == 'Y' :
                 nullAllowed=False
             else:
                 nullAllowed=True
@@ -275,9 +275,9 @@ class MaxdbConnection(DBAPI):
                 kw['foreignKey'] = keymap[field_name]
 
             results.append(colClass(**kw))
-            
+
         return results
-    
+
     _numericTypes=['INTEGER', 'INT','SMALLINT']
     _dateTypes=['DATE','TIME','TIMESTAMP']
 
