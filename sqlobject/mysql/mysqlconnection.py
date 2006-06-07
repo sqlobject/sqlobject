@@ -147,7 +147,10 @@ class MySQLConnection(DBAPI):
             colClass, kw = self.guessClass(t)
             kw['name'] = soClass.sqlmeta.style.dbColumnToPythonAttr(field)
             kw['notNone'] = not nullAllowed
-            kw['default'] = default
+            if default and t.startswith('int'):
+                kw['default'] = int(default)
+            else:
+                kw['default'] = default
             # @@ skip key...
             # @@ skip extra...
             results.append(colClass(**kw))
