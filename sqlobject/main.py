@@ -432,6 +432,8 @@ class sqlmeta(object):
         conn = connection or soClass._connection
         for columnDef in conn.columnsFromSchema(sqlmeta.table, soClass):
             if columnDef.name not in sqlmeta.columnDefinitions:
+                if isinstance(columnDef.name, unicode):
+                    columnDef.name = columnDef.name.encode('ascii')
                 sqlmeta.addColumn(columnDef)
 
     addColumnsFromDatabase = classmethod(addColumnsFromDatabase)
@@ -1233,6 +1235,7 @@ class SQLObject(object):
                     raise TypeError, "%s() did not get expected keyword argument %s" % (self.__class__.__name__, column.name)
                 # Otherwise we put it in as though they did pass
                 # that keyword:
+
                 kw[column.name] = default
 
         self.set(**kw)
