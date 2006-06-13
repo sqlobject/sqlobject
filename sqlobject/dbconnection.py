@@ -56,14 +56,15 @@ class DBConnection:
         auth = getattr(self, 'user', None) or ''
         if auth:
             if self.password:
-                auth = auth + '@' + self.password
-            auth = auth + ':'
+                auth = auth + ':' + self.password
+            auth = auth + '@'
         else:
             assert not getattr(self, 'password', None), (
                 'URIs cannot express passwords without usernames')
         uri = '%s://%s' % (self.dbName, auth)
         if self.host:
-            uri += self.host + '/'
+            uri += self.host
+        uri += '/'
         db = self.db
         if db.startswith('/'):
             db = path[1:]
