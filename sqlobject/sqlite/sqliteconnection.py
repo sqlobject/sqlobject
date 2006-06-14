@@ -61,7 +61,10 @@ class SQLiteConnection(DBAPI):
             if 'mode' in kw:
                 opts['mode'] = int(popKey(kw, 'mode'), 0)
         if 'timeout' in kw:
-            opts['timeout'] = float(popKey(kw, 'timeout'))
+            if using_sqlite2:
+                opts['timeout'] = float(popKey(kw, 'timeout'))
+            else:
+                opts['timeout'] = int(float(popKey(kw, 'timeout')) * 1000)
         if 'check_same_thread' in kw:
             opts["check_same_thread"] = bool(popKey(kw, 'check_same_thread'))
         # use only one connection for sqlite - supports multiple)
