@@ -958,7 +958,7 @@ if datetime_available:
             except:
                 raise validators.Invalid("expected an date/time string of the '%s' format in the DateTimeCol '%s', got %s %r instead" % \
                     (self.format, self.name, type(value), value), value, state)
-            return datetime.datetime(*stime[:7])
+            return datetime.datetime(*stime[:6])
 
         def from_python(self, value, state):
             if value is None:
