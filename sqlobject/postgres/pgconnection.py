@@ -238,7 +238,7 @@ class PostgresConnection(DBAPI):
             if field == primaryKey:
                 continue
             colClass, kw = self.guessClass(t)
-            if self.unicodeCols and colClass == col.StringCol:
+            if self.unicodeCols and colClass is col.StringCol:
                 colClass = col.UnicodeCol
                 kw['dbEncoding'] = client_encoding
             kw['name'] = soClass.sqlmeta.style.dbColumnToPythonAttr(field)
@@ -325,7 +325,6 @@ class PostgresConnection(DBAPI):
         cur.execute('CREATE DATABASE %s' % self.db)
         cur.close()
         conn.close()
-
 
 
 # Converter for psycopg Binary type.

@@ -145,6 +145,9 @@ class MySQLConnection(DBAPI):
             if field == 'id':
                 continue
             colClass, kw = self.guessClass(t)
+            if self.kw['use_unicode'] and colClass is col.StringCol:
+                colClass = col.UnicodeCol
+                if self.client_encoding: kw['dbEncoding'] = self.client_encoding
             kw['name'] = soClass.sqlmeta.style.dbColumnToPythonAttr(field)
             kw['notNone'] = not nullAllowed
             if default and t.startswith('int'):
@@ -180,18 +183,18 @@ class MySQLConnection(DBAPI):
         elif t.startswith('tinyblob'):
             return col.BLOBCol, {"length": 2**8-1}
         elif t.startswith('tinytext'):
-            return col.BLOBCol, {"length": 2**8-1, "varchar": True}
+            return col.StringCol, {"length": 2**8-1, "varchar": True}
         elif t.startswith('blob'):
             return col.BLOBCol, {"length": 2**16-1}
         elif t.startswith('text'):
-            return col.BLOBCol, {"length": 2**16-1, "varchar": True}
+            return col.StringCol, {"length": 2**16-1, "varchar": True}
         elif t.startswith('mediumblob'):
             return col.BLOBCol, {"length": 2**24-1}
         elif t.startswith('mediumtext'):
-            return col.BLOBCol, {"length": 2**24-1, "varchar": True}
+            return col.StringCol, {"length": 2**24-1, "varchar": True}
         elif t.startswith('longblob'):
             return col.BLOBCol, {"length": 2**32}
         elif t.startswith('longtext'):
-            return col.BLOBCol, {"length": 2**32, "varchar": True}
+            return col.StringCol, {"length": 2**32, "varchar": True}
         else:
             return col.Col, {}
