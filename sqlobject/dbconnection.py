@@ -839,8 +839,6 @@ class Transaction(object):
         if self._dbConnection.debug:
             self._dbConnection.printDebug(self._connection, '', 'COMMIT')
         self._connection.commit()
-        if close:
-            self._makeObsolete()
         subCaches = [(sub[0], sub[1].allIDs()) for sub in self.cache.allSubCachesByClassNames().items()]
         subCaches.extend([(x[0], x[1]) for x in self._deletedCache.items()])
         for cls, ids in subCaches:
@@ -848,6 +846,8 @@ class Transaction(object):
                 inst = self._dbConnection.cache.tryGetByName(id, cls)
                 if inst is not None:
                     inst.expire()
+        if close:
+            self._makeObsolete()
 
     def rollback(self):
         if self._obsolete:
