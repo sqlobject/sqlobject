@@ -1386,7 +1386,7 @@ class SQLObject(object):
         if createJoinTables:
             join_sql = cls.createJoinTablesSQL(connection=conn)
             if join_sql:
-                sql = ';\n' + join_sql
+                sql += ';\n' + join_sql
         if createIndexes:
             index_sql = cls.createIndexesSQL(connection=conn)
             if index_sql:
