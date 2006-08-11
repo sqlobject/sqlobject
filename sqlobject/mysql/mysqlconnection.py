@@ -23,14 +23,24 @@ class MySQLConnection(DBAPI):
         else:
             self.client_encoding = None
         self.kw = {}
+        if MySQLdb.version_info[0] > 1 or (MySQLdb.version_info[0] == 1 and \
+               (MySQLdb.version_info[1] > 2 or \
+               (MySQLdb.version_info[1] == 2 and MySQLdb.version_info[2] >= 1))):
+            self.need_unicode = True
+        else:
+            self.need_unicode = False
         for key in ("unix_socket", "init_command",
-                "read_default_file", "read_default_group"):
+                "read_default_file", "read_default_group", "charset"):
             if key in kw:
                 self.kw[key] = col.popKey(kw, key)
         for key in ("connect_time", "compress", "named_pipe", "use_unicode",
                 "client_flag", "local_infile"):
             if key in kw:
                 self.kw[key] = int(col.popKey(kw, key))
+        if "sqlobject_encoding" in kw:
+            self.encoding = col.popKey(kw, "sqlobject_encoding")
+        else:
+            self.encoding = 'ascii'
         DBAPI.__init__(self, **kw)
 
     def connectionFromURI(cls, uri):
@@ -63,7 +73,13 @@ class MySQLConnection(DBAPI):
     def _executeRetry(self, conn, cursor, query):
         while 1:
             try:
-                return cursor.execute(query)
+                if self.need_unicode:
+                    # For MysqlDB 1.2.1 and later, we go
+                    # encoding->unicode->charset (in the mysql db)
+                    myquery = unicode(query, self.encoding)
+                    return cursor.execute(myquery)
+                else:
+                    return cursor.execute(query)
             except MySQLdb.OperationalError, e:
                 if e.args[0] == 2013: # SERVER_LOST error
                     if self.debug:
