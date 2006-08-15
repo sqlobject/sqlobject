@@ -455,11 +455,13 @@ class DBAPI(DBConnection):
                 join_str = ' '
             join_str += self.sqlrepr(join)
         else:
-            if tables and join[0].table1:
-                join_str = ", "
-            else:
-                join_str = ' '
-            join_str += " ".join([self.sqlrepr(j) for j in join])
+            join_str = ""
+            for j in join:
+                if tables and j.table1:
+                    sep = ", "
+                else:
+                    sep = ' '
+                join_str += sep + self.sqlrepr(j)
         return join_str
 
     def _addWhereClause(self, select, startSelect, limit=1, order=1):
