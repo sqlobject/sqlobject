@@ -180,6 +180,7 @@ class sqlmeta(object):
 
     table = None
     idName = None
+    idSequence = None
     # This function is used to coerce IDs into the proper format,
     # so you should replace it with str, or another function, if you
     # aren't using integer IDs
@@ -879,7 +880,7 @@ class SQLObject(object):
         """
         for attr in ['_table', '_lazyUpdate', '_style', '_idName',
                      '_defaultOrder', '_cacheValues', '_registry',
-                     '_idType', '_fromDatabase']:
+                     '_idType', '_fromDatabase', '_idSequence']:
             if new_attrs.has_key(attr):
                 new_name = attr[1:]
                 deprecated("%r is deprecated; please set the %r "

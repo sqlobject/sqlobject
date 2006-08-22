@@ -119,8 +119,8 @@ class PostgresConnection(DBAPI):
     def _queryInsertID(self, conn, soInstance, id, names, values):
         table = soInstance.sqlmeta.table
         idName = soInstance.sqlmeta.idName
-        sequenceName = getattr(soInstance, '_idSequence',
-                               '%s_%s_seq' % (table, idName))
+        sequenceName = soInstance.sqlmeta.idSequence or \
+                               '%s_%s_seq' % (table, idName)
         c = conn.cursor()
         if id is None:
             c.execute("SELECT NEXTVAL('%s')" % sequenceName)

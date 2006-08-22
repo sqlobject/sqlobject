@@ -90,8 +90,8 @@ class FirebirdConnection(DBAPI):
         for each table this method to work."""
         table = soInstance.sqlmeta.table
         idName = soInstance.sqlmeta.idName
-        sequenceName = getattr(soInstance, '_idSequence',
-                               'GEN_%s' % table)
+        sequenceName = soInstance.sqlmeta.idSequence or \
+                               'GEN_%s' % table
         c = conn.cursor()
         if id is None:
             c.execute('SELECT gen_id(%s,1) FROM rdb$database'
