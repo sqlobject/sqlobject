@@ -33,7 +33,7 @@ class MySQLConnection(DBAPI):
                 "read_default_file", "read_default_group", "charset"):
             if key in kw:
                 self.kw[key] = col.popKey(kw, key)
-        for key in ("connect_time", "compress", "named_pipe", "use_unicode",
+        for key in ("connect_timeout", "compress", "named_pipe", "use_unicode",
                 "client_flag", "local_infile"):
             if key in kw:
                 self.kw[key] = int(col.popKey(kw, key))
