@@ -1415,7 +1415,7 @@ class SQLObject(object):
                 # This join has requested not to be created
                 continue
             sql.append(conn._SO_createJoinTableSQL(join))
-        return '\n'.join(sql)
+        return ';\n'.join(sql)
     createJoinTablesSQL = classmethod(createJoinTablesSQL)
 
     def createIndexes(cls, ifNotExists=False, connection=None):
@@ -1433,7 +1433,7 @@ class SQLObject(object):
             if not index:
                 continue
             sql.append(conn.createIndexSQL(cls, index))
-        return '\n'.join(sql)
+        return ';\n'.join(sql)
     createIndexesSQL = classmethod(createIndexesSQL)
 
     def _getJoinsToCreate(cls):
