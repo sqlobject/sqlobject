@@ -156,7 +156,7 @@ class DatabaseIndex(object):
         self.kw['name'] = value
 
     def _get_name(self):
-        return kw['name']
+        return self.kw['name']
 
     def _set_name(self, value):
         self.setName(value)
