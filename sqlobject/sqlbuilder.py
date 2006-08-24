@@ -382,6 +382,8 @@ class ConstantSpace:
 ########################################
 
 class AliasField(Field):
+    as_string = '' # set it to "AS" if your database requires it
+
     def __init__(self, tableName, fieldName, alias):
         Field.__init__(self, tableName, fieldName)
         self.alias = alias
@@ -390,7 +392,7 @@ class AliasField(Field):
         return self.alias + "." + self.fieldName
 
     def tablesUsedImmediate(self):
-        return ["%s AS %s" % (self.tableName, self.alias)]
+        return ["%s %s %s" % (self.tableName, self.as_string, self.alias)]
 
 class AliasTable(Table):
     FieldClass = AliasField
