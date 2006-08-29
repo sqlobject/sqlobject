@@ -48,6 +48,14 @@ def test_parse():
     assert path == "/full/path/to/socket/database"
     assert args == {}
 
+    user, password, host, port, path, args = _parseURI("postgres://user:at@inpwd@host/database")
+    assert user == "user"
+    assert password == "at@inpwd"
+    assert host == "host"
+    assert port is None
+    assert path == "/database"
+    assert args == {}
+
     user, password, host, port, path, args = _parseURI("sqlite:///full/path/to/database")
     assert user is None
     assert password is None

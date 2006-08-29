@@ -95,7 +95,7 @@ class DBConnection:
             else:
                 host, rest = rest.split('/', 1)
         if host and host.find('@') != -1:
-            user, host = host.split('@', 1)
+            user, host = host.rsplit('@', 1)
             if user.find(':') != -1:
                 user, password = user.split(':', 1)
             else:
