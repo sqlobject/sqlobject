@@ -95,7 +95,8 @@ class DBConnection:
             else:
                 host, rest = rest.split('/', 1)
         if host and host.find('@') != -1:
-            user, host = host.rsplit('@', 1)
+            user = host[:host.rfind('@')] # Python 2.3 doesn't have .rsplit()
+            host = host[host.rfind('@')+1:] # !!!
             if user.find(':') != -1:
                 user, password = user.split(':', 1)
             else:
