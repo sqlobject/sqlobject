@@ -1328,6 +1328,11 @@ class SQLObject(object):
     select = classmethod(select)
 
     def selectBy(cls, connection=None, **kw):
+        for key, column in cls.sqlmeta.columns.items():
+            if (key in kw) and isinstance(column, col.SOUnicodeCol):
+                value = kw[key]
+                if isinstance(value, unicode):
+                    kw[key] = value.encode(column.dbEncoding)
         conn = connection or cls._connection
         return cls.SelectResultsClass(cls,
                              conn._SO_columnClause(cls, kw),

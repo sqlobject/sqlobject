@@ -326,6 +326,23 @@ class SQLObjectField(Field):
 
 registerConverter(SQLObjectField, SQLExprConverter)
 
+
+class UnicodeField(SQLObjectField):
+    def __init__(self, tableName, fieldName, original, column):
+        SQLObjectField.__init__(self, tableName, fieldName, original)
+        self.column = column
+    def __eq__(self, other):
+        if isinstance(other, unicode):
+            other = other.encode(self.column.dbEncoding)
+        return SQLOp('=', self, other)
+    def __ne__(self, other):
+        if isinstance(other, unicode):
+            other = other.encode(self.column.dbEncoding)
+        return SQLOp('<>', self, other)
+
+registerConverter(UnicodeField, SQLExprConverter)
+
+
 class Table(SQLExpression):
     FieldClass = Field
 
@@ -342,6 +359,7 @@ class Table(SQLExpression):
 
 class SQLObjectTable(Table):
     FieldClass = SQLObjectField
+    UnicodeFieldClass = UnicodeField
 
     def __init__(self, soClass):
         self.soClass = soClass
@@ -358,9 +376,12 @@ class SQLObjectTable(Table):
         elif attr not in self.soClass.sqlmeta.columns:
             raise AttributeError("%s instance has no attribute '%s'" % (self.soClass.__name__, attr))
         else:
-            return self.FieldClass(self.tableName,
-                                   self.soClass.sqlmeta.columns[attr].dbName,
-                                   attr)
+            column = self.soClass.sqlmeta.columns[attr]
+            if hasattr(column, "dbEncoding"):
+                return self.UnicodeFieldClass(self.tableName, column.dbName,
+                    attr, column)
+            else:
+                return self.FieldClass(self.tableName, column.dbName, attr)
 
 class TableSpace:
     TableClass = Table
