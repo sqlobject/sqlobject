@@ -7,7 +7,7 @@ from sqlobject.tests.dbtest import *
 
 class TestUnicode(SQLObject):
     count = IntCol(alternateID=True)
-    col1 = UnicodeCol()
+    col1 = UnicodeCol(alternateID=True)
     col2 = UnicodeCol(dbEncoding='latin-1')
 
 try:
@@ -44,7 +44,7 @@ def test_create():
 
 def test_select():
     setup()
-    for value in data:
+    for i, value in enumerate(data):
         rows = list(TestUnicode.select(TestUnicode.q.col1 == value))
         assert len(rows) == 1
         rows = list(TestUnicode.select(TestUnicode.q.col2 == value))
@@ -60,6 +60,8 @@ def test_select():
         assert len(rows) == 1
         rows = list(TestUnicode.selectBy(col1=value, col2=value))
         assert len(rows) == 1
+        row = TestUnicode.byCol1(value)
+        assert row.count == i
     rows = list(TestUnicode.select(OR(
         TestUnicode.q.col1 == u'\u00f0',
         TestUnicode.q.col2 == u'test'
