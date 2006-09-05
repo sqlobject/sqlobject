@@ -1498,7 +1498,7 @@ class SQLObject(object):
                 if col.cascade == False:
                     # Found a restriction
                     restrict = True
-                query.append("%s = (%s)" % (col.dbName, self.id))
+                query.append(getattr(k.q, col.name) == self.id)
                 if col.cascade == 'null':
                     setnull = col.name
                 elif col.cascade:
@@ -1507,7 +1507,7 @@ class SQLObject(object):
                 "Class %s depends on %s accoriding to "
                 "findDependantColumns, but this seems inaccurate"
                 % (k, klass))
-            query = ' OR '.join(query)
+            query = sqlbuilder.OR(*query)
             results = k.select(query, connection=self._connection)
             if restrict:
                 if results.count():
