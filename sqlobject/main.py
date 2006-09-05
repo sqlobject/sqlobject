@@ -1279,10 +1279,11 @@ class SQLObject(object):
         return getID(obj)
 
     def _findAlternateID(cls, name, dbName, value, connection=None):
-        for key, column in cls.sqlmeta.columns.items():
-            if (key == name) and isinstance(column, col.SOUnicodeCol):
-                if isinstance(value, unicode):
+        if isinstance(value, unicode):
+            for key, column in cls.sqlmeta.columns.items():
+                if (key == name) and isinstance(column, col.SOUnicodeCol):
                     value = value.encode(column.dbEncoding)
+                    break
         return (connection or cls._connection)._SO_selectOneAlt(
             cls,
             [cls.sqlmeta.idName] +
