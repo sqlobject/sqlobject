@@ -1280,10 +1280,9 @@ class SQLObject(object):
 
     def _findAlternateID(cls, name, dbName, value, connection=None):
         if isinstance(value, unicode):
-            for key, column in cls.sqlmeta.columns.items():
-                if (key == name) and isinstance(column, col.SOUnicodeCol):
-                    value = value.encode(column.dbEncoding)
-                    break
+            column = cls.sqlmeta.columns[name]
+            if isinstance(column, col.SOUnicodeCol):
+                value = value.encode(column.dbEncoding)
         return (connection or cls._connection)._SO_selectOneAlt(
             cls,
             [cls.sqlmeta.idName] +
