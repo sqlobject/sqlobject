@@ -85,7 +85,7 @@ What is SQLObject
 
 SQLObject is an object-relational mapper.  Your database tables are described as classes, and rows are instances of those classes.  SQLObject is meant to be easy to use and quick to get started with.
 
-SQLObject supports a number of backends: MySQL, PostgreSQL, SQLite, and Firebird.  It also has newly added support for Sybase and MaxDB (also known as SAPDB).
+SQLObject supports a number of backends: MySQL, PostgreSQL, SQLite, and Firebird.  It also has newly added support for Sybase, MSSQL and MaxDB (also known as SAPDB).
 
 
 Where is SQLObject
