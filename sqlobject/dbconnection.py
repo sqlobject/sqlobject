@@ -505,6 +505,9 @@ class DBAPI(DBConnection):
 
         q = startSelect + ' ' + q
 
+        if ops.get('forUpdate'):
+            q += " FOR UPDATE";
+
         if limit and (start or end):
             # @@: Raising an error might be an annoyance, but some warning is
             # in order.
