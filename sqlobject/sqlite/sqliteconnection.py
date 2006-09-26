@@ -17,11 +17,15 @@ class SQLiteConnection(DBAPI):
         global using_sqlite2
         if sqlite is None:
             try:
-                from pysqlite2 import dbapi2 as sqlite
+                import sqlite3 as sqlite
                 using_sqlite2 = True
             except ImportError:
-                import sqlite
-                using_sqlite2 = False
+                try:
+                    from pysqlite2 import dbapi2 as sqlite
+                    using_sqlite2 = True
+                except ImportError:
+                    import sqlite
+                    using_sqlite2 = False
         self.module = sqlite
         self.filename = filename  # full path to sqlite-db-file
         self._memory = filename == ':memory:'

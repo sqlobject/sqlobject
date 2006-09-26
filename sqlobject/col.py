@@ -1253,9 +1253,9 @@ class BinaryValidator(validators.Validator):
         if value is None:
             return None
         if isinstance(value, str):
-            module = state.soObject._connection.module
-            if module.__name__ in ("sqlite", "pysqlite2.dbapi2"):
-                value = module.decode(value)
+            connection = state.soObject._connection
+            if connection.dbName == "sqlite":
+                value = connection.module.decode(value)
             return value
         if isinstance(value, (buffer_type, state.soObject._connection._binaryType)):
             cachedValue = self._cachedValue
