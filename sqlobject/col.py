@@ -513,7 +513,9 @@ class StringValidator(validators.Validator):
         if value is None:
             return None
         if isinstance(value, unicode):
-           return value.encode("ascii")
+            connection = state.soObject._connection
+            dbEncoding = getattr(connection, "dbEncoding", None) or "ascii"
+            return value.encode(dbEncoding)
         return value
 
     def from_python(self, value, state):
@@ -1314,7 +1316,9 @@ class PickleValidator(BinaryValidator):
         if value is None:
             return None
         if isinstance(value, unicode):
-            value = value.encode("ascii")
+            connection = state.soObject._connection
+            dbEncoding = getattr(connection, "dbEncoding", None) or "ascii"
+            value = value.encode(dbEncoding)
         if isinstance(value, str):
             return pickle.loads(value)
         raise validators.Invalid("expected a pickle string in the PickleCol '%s', got %s %r instead" % \

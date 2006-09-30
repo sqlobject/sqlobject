@@ -18,10 +18,6 @@ class MySQLConnection(DBAPI):
         self.db = db
         self.user = user
         self.password = password
-        if kw.has_key('client_encoding'):
-            self.client_encoding = col.popKey(kw, 'client_encoding')
-        else:
-            self.client_encoding = None
         self.kw = {}
         if MySQLdb.version_info[0] > 1 or (MySQLdb.version_info[0] == 1 and \
                (MySQLdb.version_info[1] > 2 or \
@@ -30,13 +26,17 @@ class MySQLConnection(DBAPI):
         else:
             self.need_unicode = False
         for key in ("unix_socket", "init_command",
-                "read_default_file", "read_default_group", "charset"):
+                "read_default_file", "read_default_group"):
             if key in kw:
                 self.kw[key] = col.popKey(kw, key)
         for key in ("connect_timeout", "compress", "named_pipe", "use_unicode",
                 "client_flag", "local_infile"):
             if key in kw:
                 self.kw[key] = int(col.popKey(kw, key))
+        if "charset" in kw:
+            self.dbEncoding = self.kw["charset"] = col.popKey(kw, "charset")
+        else:
+            self.dbEncoding = None
         if "sqlobject_encoding" in kw:
             self.encoding = col.popKey(kw, "sqlobject_encoding")
         else:
@@ -61,8 +61,8 @@ class MySQLConnection(DBAPI):
 
         if hasattr(conn, 'autocommit'):
             conn.autocommit(bool(self.autoCommit))
-        if self.client_encoding:
-            conn.query('SET NAMES ' + self.client_encoding)
+        if self.dbEncoding:
+            conn.query('SET NAMES ' + self.dbEncoding)
 
         return conn
 
@@ -163,7 +163,7 @@ class MySQLConnection(DBAPI):
             colClass, kw = self.guessClass(t)
             if self.kw['use_unicode'] and colClass is col.StringCol:
                 colClass = col.UnicodeCol
-                if self.client_encoding: kw['dbEncoding'] = self.client_encoding
+                if self.dbEncoding: kw['dbEncoding'] = self.dbEncoding
             kw['name'] = soClass.sqlmeta.style.dbColumnToPythonAttr(field)
             kw['notNone'] = not nullAllowed
             if default and t.startswith('int'):
