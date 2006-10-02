@@ -61,8 +61,6 @@ class MySQLConnection(DBAPI):
 
         if hasattr(conn, 'autocommit'):
             conn.autocommit(bool(self.autoCommit))
-        if self.dbEncoding:
-            conn.query('SET NAMES ' + self.dbEncoding)
 
         return conn
 
