@@ -35,6 +35,7 @@ USA.
 """
 
 import threading
+import weakref
 import sqlbuilder
 import dbconnection
 import col
@@ -246,7 +247,7 @@ class sqlmeta(object):
         declarative.setup_attributes(cls, new_attrs)
 
     def __init__(self, instance):
-        self.instance = instance
+        self.instance = weakref.proxy(instance)
 
     def send(cls, signal, *args, **kw):
         events.send(signal, cls.soClass, *args, **kw)
@@ -1590,7 +1591,7 @@ def instanceName(name):
 class SQLObjectState(object):
 
     def __init__(self, soObject):
-        self.soObject = soObject
+        self.soObject = weakref.proxy(soObject)
         self.protocol = 'sql'
 
 
