@@ -33,6 +33,7 @@ and you can use it like::
 """
 supportsMatrix = {
     '+restrictedEnum': 'postgres',
+    '+exceptions': 'mysql sqlite',
     '-transactions': 'mysql',
     '-dropTableCascade': 'sybase mssql',
     '-fromDatabase': 'sqlite sybase firebird',

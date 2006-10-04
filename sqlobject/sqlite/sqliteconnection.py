@@ -1,10 +1,19 @@
 from sqlobject.dbconnection import DBAPI
 from sqlobject.col import popKey
+from sqlobject.dberrors import *
 import thread
 
 sqlite = None
 using_sqlite2 = False
 sqlite2_Binary = None
+
+class ErrorMessage(str):
+    def __new__(cls, e):
+        obj = str.__new__(cls, e[0])
+        obj.code = None
+        obj.module = e.__module__
+        obj.exception = e.__class__.__name__
+        return obj
 
 class SQLiteConnection(DBAPI):
 
@@ -158,6 +167,36 @@ class SQLiteConnection(DBAPI):
             return self._memoryConn
         return sqlite.connect(self.filename, **self._connOptions)
 
+    def _executeRetry(self, conn, cursor, query):
+        if self.debug:
+            self.printDebug(conn, query, 'QueryR')
+        try:
+            return cursor.execute(query)
+        except self.module.OperationalError, e:
+            raise OperationalError(ErrorMessage(e))
+        except self.module.IntegrityError, e:
+            msg = ErrorMessage(e)
+            if msg.startswith('column') and msg.endswith('not unique'):
+                raise DuplicateEntryError(msg)
+            else:
+                raise IntegrityError(msg)
+        except self.module.InternalError, e:
+            raise InternalError(ErrorMessage(e))
+        except self.module.ProgrammingError, e:
+            raise ProgrammingError(ErrorMessage(e))
+        except self.module.DataError, e:
+            raise DataError(ErrorMessage(e))
+        except self.module.NotSupportedError, e:
+            raise NotSupportedError(ErrorMessage(e))
+        except self.module.DatabaseError, e:
+            raise DatabaseError(ErrorMessage(e))
+        except self.module.InterfaceError, e:
+            raise InterfaceError(ErrorMessage(e))
+        except self.module.Warning, e:
+            raise Warning(ErrorMessage(e))
+        except self.module.Error, e:
+            raise Error(ErrorMessage(e))
+
     def _queryInsertID(self, conn, soInstance, id, names, values):
         table = soInstance.sqlmeta.table
         idName = soInstance.sqlmeta.idName
@@ -168,7 +207,7 @@ class SQLiteConnection(DBAPI):
         q = self._insertSQL(table, names, values)
         if self.debug:
             self.printDebug(conn, q, 'QueryIns')
-        c.execute(q)
+        self._executeRetry(conn, c, q)
         # lastrowid is a DB-API extension from "PEP 0249":
         if id is None:
             id = int(c.lastrowid)

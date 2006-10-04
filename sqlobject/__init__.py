@@ -5,6 +5,7 @@ from styles import *
 from joins import *
 from index import *
 from dbconnection import connectionForURI
+import dberrors
 
 ## Each of these imports allows the driver to install itself
 ## Then we set up some backward compatibility

@@ -1,4 +1,5 @@
 from sqlobject import *
+from sqlobject.dberrors import *
 from sqlobject.tests.dbtest import *
 
 ########################################
@@ -29,7 +30,10 @@ def test_1():
     mod = SOIndex1._connection.module
     try:
         SOIndex1(name='blah', number=0)
-    except (mod.ProgrammingError, mod.IntegrityError, mod.OperationalError, mod.DatabaseError):
+    except (
+            mod.ProgrammingError, mod.IntegrityError, mod.OperationalError, mod.DatabaseError,
+            ProgrammingError, IntegrityError, OperationalError, DatabaseError
+    ):
         # expected
         pass
     else:
