@@ -58,14 +58,14 @@ def export_csv(soClass, select=None, writer=None, connection=None,
         writer = csv.writer(return_fileobj)
     elif not hasattr(writer, 'writerow'):
         writer = csv.writer(writer)
-        
+
     if isinstance(soClass, sqlobject.SQLObject.SelectResultsClass):
-        assert not select, (
+        assert select is None, (
             "You cannot pass in a select argument (%r) and a SelectResult argument (%r) for soClass"
             % (select, soClass))
         select = soClass
         soClass = select.sourceClass
-    elif not select:
+    elif select is None:
         select = soClass.select()
         if getattr(soClass, 'csvOrderBy', None):
             select = select.orderBy(soClass.csvOrderBy)

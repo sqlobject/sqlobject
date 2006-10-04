@@ -35,6 +35,10 @@ class SelectResults(object):
     def __repr__(self):
         return "<%s at %x>" % (self.__class__.__name__, id(self))
 
+    def __nonzero__(self):
+         raise NotImplementedError(
+             "To test if a SelectResult will produce any items, use list(result) or result.count()")
+
     def _getConnection(self):
         return self.ops.get('connection') or self.sourceClass._connection
 

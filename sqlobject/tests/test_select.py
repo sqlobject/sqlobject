@@ -168,3 +168,8 @@ def test_sqlbuilder_RLIKE():
     assert IterTest.select(RLIKE(IterTest.q.name, "^sqlb.*$")).count() == 1
     assert IterTest.select(RLIKE(IterTest.q.name, "^sqlb.*$")).count() == 1
     assert IterTest.select(RLIKE(IterTest.q.name, "^sqlx.*$")).count() == 0
+
+def test_bool_SelectResults():
+    setupClass(IterTest)
+
+    raises(NotImplementedError, bool, IterTest.select())
