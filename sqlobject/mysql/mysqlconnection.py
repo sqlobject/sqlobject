@@ -168,7 +168,7 @@ class MySQLConnection(DBAPI):
             self.query('DESCRIBE %s' % (tableName))
             return True
         except ProgrammingError, e:
-            if e.code == 1146: # ER_NO_SUCH_TABLE
+            if e[0].code == 1146: # ER_NO_SUCH_TABLE
                 return False
             raise
 
