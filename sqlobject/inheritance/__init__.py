@@ -1,6 +1,6 @@
 from sqlobject import sqlbuilder
 from sqlobject import classregistry
-from sqlobject import col
+from sqlobject.col import StringCol, ForeignKey
 from sqlobject.main import sqlmeta, SQLObject, SelectResults, True, False, \
    makeProperties, getterName, setterName
 import iteration
@@ -92,8 +92,13 @@ class InheritableSQLMeta(sqlmeta):
 
         #DSM: Update each child class if needed and existing (only for new
         #DSM: dynamic column as no child classes exists at object creation)
+        if columnDef and hasattr(soClass, "q"):
+            q = getattr(soClass.q, columnDef.name, None)
+        else:
+            q = None
         for c in sqlmeta.childClasses.values():
             c.sqlmeta.addColumn(columnDef, connection=connection, childUpdate=True)
+            if q: setattr(c.q, columnDef.name, q)
 
     addColumn = classmethod(addColumn)
 
@@ -101,10 +106,15 @@ class InheritableSQLMeta(sqlmeta):
         soClass = sqlmeta.soClass
         super(InheritableSQLMeta, sqlmeta).delColumn(column, changeSchema, connection)
 
+        if isinstance(column, str):
+            name = column
+        else:
+            name = column.name
+
         #DSM: Update each child class if needed
         #DSM: and delete properties for this column
         for c in sqlmeta.childClasses.values():
-            delattr(c, name)
+            delattr(c.q, name)
 
     delColumn = classmethod(delColumn)
 
@@ -166,7 +176,7 @@ class InheritableSQLObject(SQLObject):
             for column in currentClass.sqlmeta.columnDefinitions.values():
                 if column.name == 'childName':
                     continue
-                if type(column) == col.ForeignKey:
+                if type(column) == ForeignKey:
                     continue
                 setattr(cls.q, column.name,
                     getattr(currentClass.q, column.name))
@@ -259,7 +269,7 @@ class InheritableSQLObject(SQLObject):
                         % column.name)
         # if this class is inheritable, add column for children distinction
         if cls._inheritable and (cls.__name__ != 'InheritableSQLObject'):
-            sqlmeta.addColumn(col.StringCol(name='childName',
+            sqlmeta.addColumn(StringCol(name='childName',
                 # limit string length to get VARCHAR and not CLOB
                 length=255, default=None))
         if not sqlmeta.columnList:
