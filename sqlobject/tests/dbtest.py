@@ -104,7 +104,7 @@ except Exception, e:
     # At least this module should be importable...
     print >> sys.stderr, (
         "Could not open database: %s" % e)
-    
+
 
 class InstalledTestDatabase(sqlobject.SQLObject):
     """
@@ -216,7 +216,7 @@ class Dummy(object):
     def __init__(self, **kw):
         for name, value in kw.items():
             setattr(self, name, value)
-        
+
 def d(**kw):
     """
     Because ``dict(**kw)`` doesn't work in Python 2.2, this is a
@@ -274,10 +274,22 @@ def supports(feature):
 # To avoid name clashes:
 _inserts = inserts
 
+def setSQLiteConnectionFactory(TableClass, factory):
+    from sqlobject.sqlite.sqliteconnection import SQLiteConnection
+    conn = TableClass._connection
+    TableClass._connection = SQLiteConnection(
+        filename=conn.filename,
+        name=conn.name, debug=conn.debug, debugOutput=conn.debugOutput,
+        cache=conn.cache, style=conn.style, autoCommit=conn.autoCommit,
+        debugThreading=conn.debugThreading, registry=conn.registry,
+        factory=factory
+    )
+    installOrClear([TableClass])
+
 def deprecated_module():
     sqlobject.main.warnings_level = None
     sqlobject.main.exception_level = None
-    
+
 def setup_module(mod):
     # modules with '_old' test backward compatible methods, so they
     # don't get warnings or errors.

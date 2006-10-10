@@ -2,7 +2,7 @@ from __future__ import generators # for enumerate
 from sqlobject import *
 from sqlobject.main import SQLObjectIntegrityError
 from sqlobject.tests.dbtest import *
-from sqlobject.tests.dbtest import installOrClear
+from sqlobject.tests.dbtest import setSQLiteConnectionFactory
 from py.test import raises
 
 try:
@@ -163,15 +163,7 @@ def test_select_RLIKE():
                     self.create_function("regexp", 2, regexp)
             return MyConnection
 
-        conn = IterTest._connection
-        IterTest._connection = sqliteconnection.SQLiteConnection(
-            filename=conn.filename,
-            name=conn.name, debug=conn.debug, debugOutput=conn.debugOutput,
-            cache=conn.cache, style=conn.style, autoCommit=conn.autoCommit,
-            debugThreading=conn.debugThreading, registry=conn.registry,
-            factory=SQLiteConnectionFactory
-        )
-        installOrClear([IterTest])
+        setSQLiteConnectionFactory(IterTest, SQLiteConnectionFactory)
 
     IterTest(name='sqlobject')
     IterTest(name='sqlbuilder')

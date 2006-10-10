@@ -1,6 +1,6 @@
 from sqlobject import *
 from sqlobject.tests.dbtest import *
-from sqlobject.tests.dbtest import installOrClear
+from sqlobject.tests.dbtest import setSQLiteConnectionFactory
 
 class SQLiteFactoryTest(SQLObject):
     name = StringCol()
@@ -20,14 +20,8 @@ def test_sqlite_factory():
             factory[0] = MyConnection
             return MyConnection
 
-        conn = SQLiteFactoryTest._connection
-        SQLiteFactoryTest._connection = sqliteconnection.SQLiteConnection(
-            filename=conn.filename,
-            name=conn.name, debug=conn.debug, debugOutput=conn.debugOutput,
-            cache=conn.cache, style=conn.style, autoCommit=conn.autoCommit,
-            debugThreading=conn.debugThreading, registry=conn.registry,
-            factory=SQLiteConnectionFactory
-        )
+        setSQLiteConnectionFactory(SQLiteFactoryTest, SQLiteConnectionFactory)
+
         conn = SQLiteFactoryTest._connection.makeConnection()
         assert factory[0]
         assert isinstance(conn, factory[0])
@@ -48,14 +42,8 @@ def test_sqlite_factory_str():
             return MyConnection
         sqliteconnection.SQLiteConnectionFactory = SQLiteConnectionFactory
 
-        conn = SQLiteFactoryTest._connection
-        SQLiteFactoryTest._connection = sqliteconnection.SQLiteConnection(
-            filename=conn.filename,
-            name=conn.name, debug=conn.debug, debugOutput=conn.debugOutput,
-            cache=conn.cache, style=conn.style, autoCommit=conn.autoCommit,
-            debugThreading=conn.debugThreading, registry=conn.registry,
-            factory="SQLiteConnectionFactory"
-        )
+        setSQLiteConnectionFactory(SQLiteFactoryTest, "SQLiteConnectionFactory")
+
         conn = SQLiteFactoryTest._connection.makeConnection()
         assert factory[0]
         assert isinstance(conn, factory[0])
@@ -89,15 +77,7 @@ def test_sqlite_aggregate():
 
             return MyConnection
 
-        conn = SQLiteFactoryTest._connection
-        SQLiteFactoryTest._connection = sqliteconnection.SQLiteConnection(
-            filename=conn.filename,
-            name=conn.name, debug=conn.debug, debugOutput=conn.debugOutput,
-            cache=conn.cache, style=conn.style, autoCommit=conn.autoCommit,
-            debugThreading=conn.debugThreading, registry=conn.registry,
-            factory=SQLiteConnectionFactory
-        )
-        installOrClear([SQLiteFactoryTest])
+        setSQLiteConnectionFactory(SQLiteFactoryTest, SQLiteConnectionFactory)
 
         SQLiteFactoryTest(name='sqlobject')
         SQLiteFactoryTest(name='sqlbuilder')
