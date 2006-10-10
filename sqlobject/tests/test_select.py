@@ -2,6 +2,7 @@ from __future__ import generators # for enumerate
 from sqlobject import *
 from sqlobject.main import SQLObjectIntegrityError
 from sqlobject.tests.dbtest import *
+from sqlobject.tests.dbtest import installOrClear
 from py.test import raises
 
 try:
@@ -133,7 +134,7 @@ class TestSelect:
     def test_2(self):
         self.accumulateEqual(len,Counter2.select('all'), 100)
 
-def test_sqlbuilder_LIKE():
+def test_select_LIKE():
     setupClass(IterTest)
     IterTest(name='sqlobject')
     IterTest(name='sqlbuilder')
@@ -142,12 +143,12 @@ def test_sqlbuilder_LIKE():
     assert IterTest.select(LIKE(IterTest.q.name, "sqlb%")).count() == 1
     assert IterTest.select(LIKE(IterTest.q.name, "sqlx%")).count() == 0
 
-def test_sqlbuilder_RLIKE():
+def test_select_RLIKE():
     setupClass(IterTest)
 
     if IterTest._connection.dbName == "sqlite":
-        from sqlobject.sqlite.sqliteconnection import using_sqlite2
-        if not using_sqlite2:
+        from sqlobject.sqlite import sqliteconnection
+        if not sqliteconnection.using_sqlite2:
             return
 
         # Implement regexp() function for SQLite; only works with PySQLite2
@@ -155,12 +156,22 @@ def test_sqlbuilder_RLIKE():
         def regexp(regexp, test):
             return bool(re.search(regexp, test))
 
-        _get_connection = IterTest._connection.getConnection
-        def new_get_connection(*args, **kw):
-            _connection = _get_connection(*args, **kw)
-            _connection.create_function("regexp", 2, regexp)
-            return _connection
-        IterTest._connection.getConnection = new_get_connection
+        def SQLiteConnectionFactory(sqlite):
+            class MyConnection(sqlite.Connection):
+                def __init__(self, *args, **kwargs):
+                    super(MyConnection, self).__init__(*args, **kwargs)
+                    self.create_function("regexp", 2, regexp)
+            return MyConnection
+
+        conn = IterTest._connection
+        IterTest._connection = sqliteconnection.SQLiteConnection(
+            filename=conn.filename,
+            name=conn.name, debug=conn.debug, debugOutput=conn.debugOutput,
+            cache=conn.cache, style=conn.style, autoCommit=conn.autoCommit,
+            debugThreading=conn.debugThreading, registry=conn.registry,
+            factory=SQLiteConnectionFactory
+        )
+        installOrClear([IterTest])
 
     IterTest(name='sqlobject')
     IterTest(name='sqlbuilder')

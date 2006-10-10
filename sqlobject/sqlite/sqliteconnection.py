@@ -67,6 +67,11 @@ class SQLiteConnection(DBAPI):
             if sqlite2_Binary is None:
                 sqlite2_Binary = sqlite.Binary
                 sqlite.Binary = lambda s: sqlite2_Binary(sqlite.encode(s))
+            if 'factory' in kw:
+                factory = popKey(kw, 'factory')
+                if isinstance(factory, str):
+                    factory = globals()[factory]
+                opts['factory'] = factory(sqlite)
         else:
             opts['autocommit'] = bool(autoCommit)
             if 'encoding' in kw:
