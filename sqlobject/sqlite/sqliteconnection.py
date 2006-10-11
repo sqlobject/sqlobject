@@ -51,9 +51,9 @@ class SQLiteConnection(DBAPI):
                 import warnings
                 warnings.warn(DeprecationWarning("pysqlite2 does not support the encoding option"))
             opts["detect_types"] = sqlite.PARSE_DECLTYPES
-            for col_type in "text", "char", "varchar":
-                sqlite.register_converter(col_type, stop_pysqlite2_converting_strings_to_unicode)
-                sqlite.register_converter(col_type.upper(), stop_pysqlite2_converting_strings_to_unicode)
+            for col_type in "text", "char", "varchar", "date", "time", "datetime", "timestamp":
+                sqlite.register_converter(col_type, stop_pysqlite2_converting_strings)
+                sqlite.register_converter(col_type.upper(), stop_pysqlite2_converting_strings)
             try:
                 from sqlite import encode, decode
             except ImportError:
@@ -265,5 +265,5 @@ class SQLiteConnection(DBAPI):
     def delColumn(self, tableName, column):
         pass # Oops! There is no DROP COLUMN in SQLite
 
-def stop_pysqlite2_converting_strings_to_unicode(s):
+def stop_pysqlite2_converting_strings(s):
     return s
