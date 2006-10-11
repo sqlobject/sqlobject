@@ -46,7 +46,8 @@ if mxdatetime_available:
     dateFormat = None # use default
     if getConnection().dbName == "sqlite":
         from sqlobject.sqlite.sqliteconnection import using_sqlite2
-        if using_sqlite2: # PySQLite2 returns full date/time for a date
+        if using_sqlite2:
+            # mxDateTime sends and PySQLite2 returns full date/time for dates
             dateFormat = "%Y-%m-%d %H:%M:%S"
 
     class DateTime2(SQLObject):
@@ -71,9 +72,14 @@ if mxdatetime_available:
         assert dt2.col2.year == _now.year
         assert dt2.col2.month == _now.month
         assert dt2.col2.day == _now.day
-        assert dt2.col1.hour == _now.hour
-        assert dt2.col1.minute == _now.minute
-        assert dt2.col1.second == int(_now.second)
+        if getConnection().dbName == "sqlite":
+            assert dt2.col2.hour == _now.hour
+            assert dt2.col2.minute == _now.minute
+            assert dt2.col2.second == int(_now.second)
+        else:
+            assert dt2.col2.hour == 0
+            assert dt2.col2.minute == 0
+            assert dt2.col2.second == 0
 
         assert isinstance(dt2.col3, (col.DateTimeType, col.TimeType))
         assert dt2.col3.hour == _now.hour
