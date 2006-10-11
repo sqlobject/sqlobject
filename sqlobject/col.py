@@ -882,7 +882,12 @@ class SOEnumCol(SOCol):
             super(SOEnumCol, self).createValidators()
 
     def _mysqlType(self):
-        return "ENUM(%s)" % ', '.join([sqlbuilder.sqlrepr(v, 'mysql') for v in self.enumValues])
+        # We need to map None in the enum expression to an appropriate
+        # condition on NULL
+        if None in self.enumValues:
+            return "ENUM(%s)" % ', '.join([sqlbuilder.sqlrepr(v, 'mysql') for v in self.enumValues if v is not None])
+        else:
+            return "ENUM(%s) NOT NULL" % ', '.join([sqlbuilder.sqlrepr(v, 'mysql') for v in self.enumValues])
 
     def _postgresType(self):
         length = max(map(self._getlength, self.enumValues))
