@@ -1,6 +1,8 @@
 from sqlobject import *
 from sqlobject.tests.dbtest import *
 from sqlobject import classregistry
+from py.test import raises
+
 try:
     from datetime import datetime
     now = datetime.now
@@ -61,6 +63,17 @@ class TestPeople:
         assert l == ['555-394-2930', '555-555-5555']
         Phone.sqlmeta.delColumn(col, changeSchema=True)
         Person.sqlmeta.delJoin(join)
+
+    def _test_collidingName(self):
+        class CollidingName(SQLObject):
+            expire = StringCol()
+
+    def test_collidingName(self):
+        raises(AssertionError, Person.sqlmeta.addColumn, StringCol(name="name"))
+        raises(AssertionError, Person.sqlmeta.addColumn, StringCol(name="_init"))
+        raises(AssertionError, Person.sqlmeta.addColumn, StringCol(name="expire"))
+        raises(AssertionError, Person.sqlmeta.addColumn, StringCol(name="set"))
+        raises(AssertionError, self._test_collidingName)
 
 ########################################
 ## Auto class generation

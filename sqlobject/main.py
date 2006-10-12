@@ -318,8 +318,11 @@ class sqlmeta(object):
             "The class %s.%s already has a column %r (%r), you cannot "
             "add the column %r"
             % (soClass.__module__, soClass.__name__, name,
-               sqlmeta.columnDefinitions[name],
-               columnDef))
+               sqlmeta.columnDefinitions[name], columnDef))
+        assert name not in dir(soClass), (
+            "The class %s.%s already has a variable or method %r, you cannot "
+            "add the column %r"
+            % (soClass.__module__, soClass.__name__, name, name))
         sqlmeta.columnDefinitions[name] = columnDef
         sqlmeta.columns[name] = column
         # A stable-ordered version of the list...
