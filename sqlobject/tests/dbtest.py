@@ -36,7 +36,7 @@ supportsMatrix = {
     '+exceptions': 'mysql sqlite',
     '-transactions': 'mysql',
     '-dropTableCascade': 'sybase mssql',
-    '-fromDatabase': 'sqlite sybase firebird',
+    '-fromDatabase': 'sqlite',
     '-expressionIndex': 'mysql sqlite firebird mssql',
     '-blobData': 'mssql',
     '-decimalColumn': 'mssql',

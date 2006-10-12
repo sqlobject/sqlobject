@@ -174,3 +174,7 @@ class TestAuto:
         assert jane.longField == 'x'*1000
         del classregistry.registry(
             AutoTest.sqlmeta.registry).classes['AutoTest']
+
+        columns = AutoTest.sqlmeta.columns
+        assert columns["lastName"].dbName == "last_name"
+        assert columns["wannahavefun"].dbName == "wannahavefun"

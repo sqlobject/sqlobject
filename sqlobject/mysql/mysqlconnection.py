@@ -194,6 +194,7 @@ class MySQLConnection(DBAPI):
                 colClass = col.UnicodeCol
                 if self.dbEncoding: kw['dbEncoding'] = self.dbEncoding
             kw['name'] = soClass.sqlmeta.style.dbColumnToPythonAttr(field)
+            kw['dbName'] = field
             kw['notNone'] = not nullAllowed
             if default and t.startswith('int'):
                 kw['default'] = int(default)

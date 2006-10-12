@@ -218,6 +218,7 @@ class MSSQLConnection(DBAPI):
             # precision is needed for decimal columns
             colClass, kw = self.guessClass(t, size, precision, scale)
             kw['name'] = soClass.sqlmeta.style.dbColumnToPythonAttr(field)
+            kw['dbName'] = field
             kw['notNone'] = not nullAllowed
             if (defaultText):
                 # Strip ( and )

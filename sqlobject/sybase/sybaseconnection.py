@@ -144,6 +144,7 @@ class SybaseConnection(DBAPI):
                 continue
             colClass, kw = self.guessClass(t)
             kw['name'] = soClass.sqlmeta.style.dbColumnToPythonAttr(field)
+            kw['dbName'] = field
             kw['notNone'] = not nullAllowed
             kw['default'] = default
             # @@ skip key...

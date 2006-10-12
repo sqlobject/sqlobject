@@ -261,6 +261,7 @@ class MaxdbConnection(DBAPI):
 
             colClass, kw = self.guessClass(data_type,data_len,data_scale)
             kw['name'] = field_name
+            kw['dbName'] = field
 
             if nullAllowed == 'Y' :
                 nullAllowed=False
