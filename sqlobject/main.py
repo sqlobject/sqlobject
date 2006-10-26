@@ -319,10 +319,17 @@ class sqlmeta(object):
             "add the column %r"
             % (soClass.__module__, soClass.__name__, name,
                sqlmeta.columnDefinitions[name], columnDef))
-        assert name not in dir(soClass), (
-            "The class %s.%s already has a variable or method %r, you cannot "
-            "add the column %r"
-            % (soClass.__module__, soClass.__name__, name, name))
+        # Collect columns from the parent classes to test
+        # if the column is not in a parent class
+        parent_columns = []
+        for base in soClass.__bases__:
+            if hasattr(base, "sqlmeta"):
+                parent_columns.extend(base.sqlmeta.columns.keys())
+        if name in dir(soClass):
+            assert name in parent_columns, (
+                "The class %s.%s already has a variable or method %r, you cannot "
+                "add the column %r"
+                % (soClass.__module__, soClass.__name__, name, name))
         sqlmeta.columnDefinitions[name] = columnDef
         sqlmeta.columns[name] = column
         # A stable-ordered version of the list...
