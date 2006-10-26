@@ -45,7 +45,7 @@ class PostgresConnection(DBAPI):
             if usePygresql:
                 dsn_dict["host"] = "%s:%d" % (host, port)
             else:
-                dsn_dict["port"] = str(port)
+                dsn_dict["port"] = port
         if db:
             dsn_dict["database"] = db
         if user:
