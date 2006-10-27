@@ -38,6 +38,9 @@ def test1():
     s = TestWorkKey.selectBy(composer=None, title=None)
     assert s[0]==w2
 
+    s = TestWorkKey.selectBy()
+    assert s.count() == 2
+
 def test2():
     TestWorkKey._connection = getConnection()
     InstalledTestDatabase.drop(TestWorkKey)

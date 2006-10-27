@@ -11,12 +11,17 @@ class PersonWithNotes(InheritableSQLObject):
     lastName = StringCol()
     note = ForeignKey("Note", default=None)
 
+class Paper(SQLObject):
+    content = StringCol()
+
 class EmployeeWithNotes(PersonWithNotes):
     _inheritable = False
+    paper = ForeignKey("Paper", default=None)
 
 def setup():
     setupClass(Note)
     setupClass(PersonWithNotes)
+    setupClass(Paper)
     setupClass(EmployeeWithNotes)
 
     note = Note(text="person")
@@ -24,6 +29,9 @@ def setup():
     note = Note(text="employee")
     EmployeeWithNotes(firstName='Project', lastName='Leader', note=note)
 
+    paper = Paper(content="secret")
+    EmployeeWithNotes(firstName='Senior', lastName='Clerk', paper=paper)
+    PersonWithNotes(firstName='Some', lastName='Person')
 
 def test_inheritance():
     setup()
@@ -35,3 +43,35 @@ def test_inheritance():
     employee = EmployeeWithNotes.get(2)
     assert isinstance(employee, EmployeeWithNotes)
     assert employee.note.text == "employee"
+    save_employee = employee
+
+    persons = PersonWithNotes.select(PersonWithNotes.q.noteID <> None)
+    assert persons.count() == 2
+
+    persons = PersonWithNotes.selectBy(noteID=person.note.id)
+    assert persons.count() == 1
+
+    employee = EmployeeWithNotes.select(PersonWithNotes.q.noteID <> None)
+    assert employee.count() == 1
+
+    persons = PersonWithNotes.selectBy(noteID=person.note.id)
+    assert persons.count() == 1
+
+    persons = PersonWithNotes.selectBy(note=person.note)
+    assert persons.count() == 1
+
+    persons = PersonWithNotes.selectBy(note=None)
+    assert persons.count() == 2
+
+    employee = EmployeeWithNotes.selectBy(paperID=None)
+    assert employee.count() == 1
+
+    employee = EmployeeWithNotes.selectBy(paper=None)
+    assert employee.count() == 1
+
+    employee = EmployeeWithNotes.selectBy(note=save_employee.note,
+                                         paper=save_employee.paper)
+    assert employee.count() == 1
+
+    employee = EmployeeWithNotes.selectBy()
+    assert employee.count() == 2

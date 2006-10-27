@@ -392,9 +392,34 @@ class InheritableSQLObject(SQLObject):
 
     def selectBy(cls, connection=None, **kw):
         clause = []
+        foreignColumns = {}
+        currentClass = cls
+        while currentClass:
+            foreignColumns.update(dict([(column.foreignName, name)
+                for (name, column) in currentClass.sqlmeta.columns.items()
+                    if column.foreignKey
+            ]))
+            currentClass = currentClass.sqlmeta.parentClass
         for name, value in kw.items():
-            clause.append(getattr(cls.q, name) == value)
-        clause = reduce(sqlbuilder.AND, clause)
+            if name in foreignColumns:
+                name = foreignColumns[name] # translate "key" to "keyID"
+                if isinstance(value, SQLObject):
+                    value = value.id
+            currentClass = cls
+            while currentClass:
+                try:
+                    clause.append(getattr(currentClass.q, name) == value)
+                    break
+                except AttributeError, err:
+                    pass
+                currentClass = currentClass.sqlmeta.parentClass
+            else:
+                raise AttributeError("'%s' instance has no attribute '%s'"
+                    % (cls.__name__, name))
+        if clause:
+            clause = reduce(sqlbuilder.AND, clause)
+        else:
+            clause = None # select all
         conn = connection or cls._connection
         return cls.SelectResultsClass(cls, clause, connection=conn)
 
