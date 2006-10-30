@@ -18,11 +18,8 @@ class EmployeeWithNotes(PersonWithNotes):
     _inheritable = False
     paper = ForeignKey("Paper", default=None)
 
-def setup():
-    setupClass(Note)
-    setupClass(PersonWithNotes)
-    setupClass(Paper)
-    setupClass(EmployeeWithNotes)
+def test_foreignKey():
+    setupClass([Note, PersonWithNotes, Paper, EmployeeWithNotes])
 
     note = Note(text="person")
     PersonWithNotes(firstName='Oneof', lastName='Authors', note=note)
@@ -33,8 +30,6 @@ def setup():
     EmployeeWithNotes(firstName='Senior', lastName='Clerk', paper=paper)
     PersonWithNotes(firstName='Some', lastName='Person')
 
-def test_inheritance():
-    setup()
 
     person = PersonWithNotes.get(1)
     assert isinstance(person, PersonWithNotes) and not isinstance(person, EmployeeWithNotes)
@@ -75,3 +70,16 @@ def test_inheritance():
 
     employee = EmployeeWithNotes.selectBy()
     assert employee.count() == 2
+
+
+class TestInheritableBase(InheritableSQLObject):
+    pass
+
+class TestInheritableForeignKey(TestInheritableBase):
+    base = ForeignKey("TestInheritableBase")
+
+def test_foreignKey2():
+    setupClass([TestInheritableBase, TestInheritableForeignKey])
+
+    test = TestInheritableBase()
+    object = TestInheritableForeignKey(base=test)
