@@ -1127,6 +1127,12 @@ if datetime_available:
         def to_python(self, value, state):
             if isinstance(value, datetime.time):
                 return value
+            if isinstance(value, datetime.timedelta):
+                if value.days:
+                    raise validators.Invalid(
+                        "the value for the TimeCol '%s' must has days=0, it has days=%d" %
+                            (self.name, value.days), value, state)
+                return datetime.time(*time.gmtime(value.seconds)[3:6])
             value = super(TimeValidator, self).to_python(value, state)
             if isinstance(value, datetime.datetime):
                 value = value.time()
