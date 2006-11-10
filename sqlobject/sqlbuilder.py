@@ -456,7 +456,7 @@ class Alias:
 
 class Select(SQLExpression):
     def __init__(self, items, where=NoDefault, groupBy=NoDefault,
-                 having=NoDefault, orderBy=NoDefault, limit=NoDefault):
+                 having=NoDefault, orderBy=NoDefault, limit=NoDefault, join=NoDefault):
         if type(items) is not type([]) and type(items) is not type(()):
             items = [items]
         self.items = items
@@ -465,10 +465,17 @@ class Select(SQLExpression):
         self.having = having
         self.orderBy = orderBy
         self.limit = limit
+        self.join  = join
 
     def __sqlrepr__(self, db):
         select = "SELECT %s" % ", ".join([sqlrepr(v, db) for v in self.items])
 
+        join = []
+        if self.join is not NoDefault:
+            if isinstance(self.join, SQLJoin):
+                join.append(self.join)
+            else:
+                join.extend(self.join)
         tables = {}
         things = list(self.items)
         if self.whereClause is not NoDefault:
@@ -476,9 +483,20 @@ class Select(SQLExpression):
         for thing in things:
             if isinstance(thing, SQLExpression):
                 tables.update(tablesUsedDict(thing))
+        for j in join:
+            if j.table1 in tables: del tables[j.table1]
+            if j.table2 in tables: del tables[j.table2]
         tables = tables.keys()
         if tables:
             select += " FROM %s" % ", ".join(tables)
+        elif join:
+            select += " FROM "
+        for j in join:
+            if tables and j.table1:
+                sep = ", "
+            else:
+                sep = " "
+            select += sep + sqlrepr(j, db)
 
         if self.whereClause is not NoDefault:
             select += " WHERE %s" % sqlrepr(self.whereClause, db)
