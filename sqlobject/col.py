@@ -59,10 +59,11 @@ DATETIME_IMPLEMENTATION = "datetime"
 MXDATETIME_IMPLEMENTATION = "mxDateTime"
 
 if mxdatetime_available:
-    DateTimeType = type(DateTime.now())
     if hasattr(DateTime, "Time"):
+        DateTimeType = type(DateTime.now())
         TimeType = type(DateTime.Time())
     else: # Zope
+        DateTimeType = type(DateTime.DateTime())
         TimeType = type(DateTime.DateTime.Time(DateTime.DateTime()))
 
 if datetime_available:
