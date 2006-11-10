@@ -132,6 +132,11 @@ def findDependencies(name, registry=None):
     for klass in classregistry.registry(registry).allClasses():
         if findDependantColumns(name, klass):
             depends.append(klass)
+        else:
+            for join in klass.sqlmeta.joins:
+                if isinstance(join, joins.SORelatedJoin) and join.otherClassName == name:
+                    depends.append(klass)
+                    break
     return depends
 
 def findDependantColumns(name, klass):
@@ -1498,11 +1503,30 @@ class SQLObject(object):
     def destroySelf(self):
         self.sqlmeta.send(events.RowDestroySignal, self)
         # Kills this object.  Kills it dead!
-        depends = []
+
         klass = self.__class__
+
+        # Free related joins on the base class
+        for join in klass.sqlmeta.joins:
+            if isinstance(join, joins.SORelatedJoin):
+                q = "DELETE FROM %s WHERE %s=%d" % (join.intermediateTable, join.joinColumn, self.id)
+                self._connection.query(q)
+
+        depends = []
         depends = self._SO_depends()
         for k in depends:
+            # Free related joins
+            for join in k.sqlmeta.joins:
+                if isinstance(join, joins.SORelatedJoin) and join.otherClassName == klass.__name__:
+                     q = "DELETE FROM %s WHERE %s=%d" % (join.intermediateTable, join.otherColumn, self.id)
+                     self._connection.query(q)
+
             cols = findDependantColumns(klass.__name__, k)
+
+            # Don't confuse the rest of the process
+            if len(cols) == 0:
+                continue
+
             query = []
             delete = setnull = restrict = False
             for col in cols:

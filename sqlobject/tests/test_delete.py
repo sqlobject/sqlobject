@@ -26,3 +26,22 @@ def testDestroySelf():
     value = NoCache(name='test')
     value.destroySelf()
     NoCache._connection.cache = old
+
+########################################
+## Delete from related joins
+########################################
+
+class Service(SQLObject):
+    groups = RelatedJoin("ServiceGroup")
+
+class ServiceGroup(SQLObject):
+    services = RelatedJoin("Service")
+
+def testDeleteRelatedJoins():
+    setupClass([Service, ServiceGroup])
+    service = Service()
+    service_group = ServiceGroup()
+    service.addServiceGroup(service_group)
+    service.destroySelf()
+    service_group = ServiceGroup.get(1)
+    assert len(service_group.services) == 0
