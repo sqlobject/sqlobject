@@ -16,37 +16,42 @@ class MSSQLConnection(DBAPI):
         if not sqlmodule:
             try:
                 import adodbapi as sqlmodule
-                self.dbconnection = sqlmodule.connect
-                # ADO uses unicode only (AFAIK)
-                self.usingUnicodeStrings = True
-
-                # Need to use SQLNCLI provider for SQL Server Express Edition
-                if kw.get("ncli"):
-                    conn_str = "Provider=SQLNCLI;"
-                else:
-                    conn_str = "Provider=SQLOLEDB;"
-
-                conn_str += "Data Source=%s;Initial Catalog=%s;"
-
-                # MSDE does not allow SQL server login 
-                if kw.get("sspi"):
-                    conn_str += "Integrated Security=SSPI;Persist Security Info=False"
-                    self.make_conn_str = lambda keys: [conn_str % (keys.host, keys.db)]
-                else:
-                    conn_str += "User Id=%s;Password=%s"
-                    self.make_conn_str = lambda keys: [conn_str % (keys.host, keys.db, keys.user, keys.password)]
-
-                col.popKey(kw, "sspi")
-                col.popKey(kw, "ncli")
-
-            except ImportError: # raise the exceptions other than ImportError for adodbapi absence
+            except ImportError:
                 import pymssql as sqlmodule
-                self.dbconnection = sqlmodule.connect
-                sqlmodule.Binary = lambda st: str(st)
-                # don't know whether pymssql uses unicode
-                self.usingUnicodeStrings = False
-                self.make_conn_str = lambda keys:  \
-                       ["", keys.user, keys.password, keys.host, keys.db]
+
+        if sqlmodule.__name__ == 'adodbapi':
+            import adodbapi as sqlmodule
+            self.dbconnection = sqlmodule.connect
+            # ADO uses unicode only (AFAIK)
+            self.usingUnicodeStrings = True
+
+            # Need to use SQLNCLI provider for SQL Server Express Edition
+            if kw.get("ncli"):
+                conn_str = "Provider=SQLNCLI;"
+            else:
+                conn_str = "Provider=SQLOLEDB;"
+
+            conn_str += "Data Source=%s;Initial Catalog=%s;"
+
+            # MSDE does not allow SQL server login 
+            if kw.get("sspi"):
+                conn_str += "Integrated Security=SSPI;Persist Security Info=False"
+                self.make_conn_str = lambda keys: [conn_str % (keys.host, keys.db)]
+            else:
+                conn_str += "User Id=%s;Password=%s"
+                self.make_conn_str = lambda keys: [conn_str % (keys.host, keys.db, keys.user, keys.password)]
+
+            col.popKey(kw, "sspi")
+            col.popKey(kw, "ncli")
+
+        else: # pymssql
+            self.dbconnection = sqlmodule.connect
+            sqlmodule.Binary = lambda st: str(st)
+            # don't know whether pymssql uses unicode
+            self.usingUnicodeStrings = False
+            self.make_conn_str = lambda keys:  \
+                   ["", keys.user, keys.password, keys.host, keys.db]
+
         self.autoCommit=int(autoCommit)
         self.host = host
         self.db = db
