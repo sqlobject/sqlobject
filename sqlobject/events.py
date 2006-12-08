@@ -110,10 +110,11 @@ class RowDestroySignal(Signal):
     
 class RowUpdateSignal(Signal):
     """
-    Called when an instance is updated through a call to ``.set()``.
-    The arguments are ``(instance, kwargs)``.  ``kwargs`` can be
-    modified.  This is run *before* the instance is updated; if you
-    want to look at the current values, simply look at ``instance``.
+    Called when an instance is updated through a call to ``.set()``
+    (or a column attribute assignment).  The arguments are
+    ``(instance, kwargs)``.  ``kwargs`` can be modified.  This is run
+    *before* the instance is updated; if you want to look at the
+    current values, simply look at ``instance``.
     """
 
 class AddColumnSignal(Signal):
