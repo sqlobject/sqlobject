@@ -665,6 +665,9 @@ def deprecated(message, level=1, stacklevel=2):
     if warnings_level is not None and warnings_level <= level:
         warnings.warn(message, DeprecationWarning, stacklevel=stacklevel)
 
+if sys.version_info[:3] < (2, 3, 0):
+    deprecated("Support for Python 2.2 has been declared obsolete and will be removed in the next release of SQLObject")
+
 def setDeprecationLevel(warning=1, exception=None):
     """
     Set the deprecation level for SQLObject.  Low levels are more
