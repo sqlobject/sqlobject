@@ -220,7 +220,7 @@ class sqlmeta(object):
     __metaclass__ = declarative.DeclarativeMeta
 
     # These attributes shouldn't be shared with superclasses:
-    _unshared_attributes = ['table', 'idName', 'columns', 'childName']
+    _unshared_attributes = ['table', 'columns', 'childName']
 
     # These are internal bookkeeping attributes; the class-level
     # definition is a default for the instances, instances will

@@ -290,3 +290,15 @@ def test_nonexisting_attr():
         pass
     else:
         assert 0, "Expected an AttributeError"
+
+class myid_sqlmeta(sqlmeta):
+    idName = "my_id"
+
+class TestSO12(SQLObject):
+    class sqlmeta(myid_sqlmeta):
+        pass
+    name = StringCol()
+
+def test_sqlmeta_inherited_idName():
+    setupClass(TestSO12)
+    assert TestSO12.sqlmeta.idName == "my_id"
