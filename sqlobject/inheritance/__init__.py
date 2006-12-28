@@ -164,6 +164,21 @@ class InheritableSQLMeta(sqlmeta):
 
     delJoin = classmethod(delJoin)
 
+    def getAllColumns(sqlmeta):
+        columns = sqlmeta.columns.copy()
+        sm = sqlmeta
+        while sm.parentClass:
+            columns.update(sm.parentClass.sqlmeta.columns)
+            sm = sm.parentClass.sqlmeta
+        return columns
+
+    def asDict(sqlmeta):
+        result = {}
+        for key in sqlmeta.getAllColumns():
+            result[key] = getattr(sqlmeta.instance, key)
+        result['id'] = sqlmeta.instance.id
+        return result
+
 
 class InheritableSQLObject(SQLObject):
 
