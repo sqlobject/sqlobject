@@ -177,10 +177,8 @@ class MySQLConnection(DBAPI):
                    (tableName,
                     column.mysqlCreateSQL()))
 
-    def delColumn(self, tableName, column):
-        self.query('ALTER TABLE %s DROP COLUMN %s' %
-                   (tableName,
-                    column.dbName))
+    def delColumn(self, sqlmeta, column):
+        self.query('ALTER TABLE %s DROP COLUMN %s' % (sqlmeta.table, column.dbName))
 
     def columnsFromSchema(self, tableName, soClass):
         colData = self.queryAll("SHOW COLUMNS FROM %s"

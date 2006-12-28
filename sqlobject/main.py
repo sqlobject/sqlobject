@@ -493,7 +493,7 @@ class sqlmeta(object):
 
         if changeSchema:
             conn = connection or soClass._connection
-            conn.delColumn(sqlmeta.table, column)
+            conn.delColumn(sqlmeta, column)
 
         if soClass._SO_finishedClassCreation:
             unmakeProperties(soClass)

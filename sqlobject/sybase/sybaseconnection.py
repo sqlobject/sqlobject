@@ -128,10 +128,8 @@ class SybaseConnection(DBAPI):
                    (tableName,
                     column.sybaseCreateSQL()))
 
-    def delColumn(self, tableName, column):
-        self.query('ALTER TABLE %s DROP COLUMN %s' %
-                   (tableName,
-                    column.dbName))
+    def delColumn(self, sqlmeta, column):
+        self.query('ALTER TABLE %s DROP COLUMN %s' % (sqlmeta.table, column.dbName))
 
     SHOW_COLUMNS=('SELECT COLUMN_NAME, DATA_TYPE, IS_NULLABLE, COLUMN_DEFAULT FROM INFORMATION_SCHEMA.COLUMNS '
                   'WHERE TABLE_NAME = \'%s\'')

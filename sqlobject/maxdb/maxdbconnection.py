@@ -211,10 +211,8 @@ class MaxdbConnection(DBAPI):
                    (tableName,
                     column.maxdbCreateSQL()))
 
-    def delColumn(self, tableName, column):
-        self.query('ALTER TABLE %s DROP COLUMN %s' %
-                   (tableName,
-                    column.dbName))
+    def delColumn(self, sqlmeta, column):
+        self.query('ALTER TABLE %s DROP COLUMN %s' % (sqlmeta.table, column.dbName))
 
     GET_COLUMNS = """
     SELECT COLUMN_NAME, NULLABLE, DATA_DEFAULT, DATA_TYPE,

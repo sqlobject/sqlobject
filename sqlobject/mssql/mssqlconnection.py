@@ -181,10 +181,8 @@ class MSSQLConnection(DBAPI):
                    (tableName,
                     column.mssqlCreateSQL()))
 
-    def delColumn(self, tableName, column):
-        self.query('ALTER TABLE %s DROP COLUMN %s' %
-                   (tableName,
-                    column.dbName))
+    def delColumn(self, sqlmeta, column):
+        self.query('ALTER TABLE %s DROP COLUMN %s' % (tableName.table, column.dbName))
 
     # precision and scale is gotten from column table so that we can create 
     # decimal columns if needed

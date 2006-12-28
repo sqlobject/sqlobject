@@ -161,10 +161,8 @@ class FirebirdConnection(DBAPI):
         self.query("DROP TABLE %s" % tableName)
         self.query("DROP GENERATOR GEN_%s" % tableName)
 
-    def delColumn(self, tableName, column):
-        self.query('ALTER TABLE %s DROP %s' %
-                   (tableName,
-                    column.dbName))
+    def delColumn(self, sqlmeta, column):
+        self.query('ALTER TABLE %s DROP %s' % (sqlmeta.table, column.dbName))
 
     def columnsFromSchema(self, tableName, soClass):
         """

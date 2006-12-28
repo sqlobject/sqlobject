@@ -268,10 +268,8 @@ class SQLiteConnection(DBAPI):
                     column.sqliteCreateSQL()))
         self.query('VACUUM %s' % tableName)
 
-    def delColumn(self, tableName, column):
-        # @@ Need an sqlmeta to call recreateTableWithoutColumn
-        #~ self.recreateTableWithoutColumn(, column)
-        pass # Oops! There is no DROP COLUMN in SQLite
+    def delColumn(self, sqlmeta, column):
+        self.recreateTableWithoutColumn(sqlmeta, column)
 
     def recreateTableWithoutColumn(self, sqlmeta, column):
         new_name = sqlmeta.table + '_ORIGINAL'
