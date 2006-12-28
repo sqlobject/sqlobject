@@ -88,7 +88,7 @@ class MySQLConnection(DBAPI):
                 else:
                     return cursor.execute(query)
             except MySQLdb.OperationalError, e:
-                if e.args[0] in (2006, 20013): # SERVER_GONE or SERVER_LOST error
+                if e.args[0] == 2013: # SERVER_LOST error
                     if self.debug:
                         self.printDebug(conn, str(e), 'ERROR')
                 else:
