@@ -96,6 +96,19 @@ class TestAuto:
     )
     """
 
+    sqliteCreate = """
+    CREATE TABLE old_auto_test (
+      auto_id INTEGER PRIMARY KEY AUTOINCREMENT ,
+      first_name VARCHAR(100),
+      last_name VARCHAR(200) NOT NULL,
+      age INT DEFAULT NULL,
+      created DATETIME NOT NULL,
+      happy char(1) DEFAULT 'Y' NOT NULL,
+      long_field TEXT,
+      wannahavefun INT DEFAULT 0 NOT NULL
+    )
+    """
+
     sybaseCreate = """
     CREATE TABLE old_auto_test (
       auto_id integer,
@@ -129,13 +142,8 @@ class TestAuto:
     DROP TABLE old_auto_test
     """
 
-    sybaseDrop = """
-    DROP TABLE old_auto_test
-    """
+    sqliteDrop = sybaseDrop = mssqlDrop = postgresDrop
 
-    mssqlDrop = """
-    DROP TABLE old_auto_test
-    """
     def setup_method(self, meth):
         conn = getConnection()
         dbName = conn.dbName
@@ -151,8 +159,6 @@ class TestAuto:
             conn.query(dropper)
 
     def test_classCreate(self):
-        if not supports('fromDatabase'):
-            return
         class OldAutoTest(SQLObject):
             _connection = getConnection()
             class sqlmeta(sqlmeta):

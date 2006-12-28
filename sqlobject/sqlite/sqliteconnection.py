@@ -1,5 +1,6 @@
 from sqlobject.dbconnection import DBAPI
 from sqlobject.col import popKey
+from sqlobject import col, sqlbuilder
 from sqlobject.dberrors import *
 import thread
 
@@ -88,6 +89,7 @@ class SQLiteConnection(DBAPI):
         # use only one connection for sqlite - supports multiple)
         # cursors per connection
         self._connOptions = opts
+        self.use_table_info = popKey(kw, "use_table_info", False)
         DBAPI.__init__(self, **kw)
         self._threadPool = {}
         self._threadOrigination = {}
@@ -243,8 +245,11 @@ class SQLiteConnection(DBAPI):
         return None
 
     def createIDColumn(self, soClass):
-        key_type = {int: "INTEGER", str: "TEXT"}[soClass.sqlmeta.idType]
-        return '%s %s PRIMARY KEY' % (soClass.sqlmeta.idName, key_type)
+        return self._createIDColumn(soClass.sqlmeta)
+
+    def _createIDColumn(self, sqlmeta):
+        key_type = {int: "INTEGER", str: "TEXT"}[sqlmeta.idType]
+        return '%s %s PRIMARY KEY' % (sqlmeta.idName, key_type)
 
     def joinSQLType(self, join):
         return 'INT NOT NULL'
@@ -261,9 +266,100 @@ class SQLiteConnection(DBAPI):
         self.query('ALTER TABLE %s ADD COLUMN %s' %
                    (tableName,
                     column.sqliteCreateSQL()))
+        self.query('VACUUM %s' % tableName)
 
     def delColumn(self, tableName, column):
+        # @@ Need an sqlmeta to call recreateTableWithoutColumn
+        #~ self.recreateTableWithoutColumn(, column)
         pass # Oops! There is no DROP COLUMN in SQLite
+
+    def recreateTableWithoutColumn(self, sqlmeta, column):
+        new_name = sqlmeta.table + '_ORIGINAL'
+        self.query('ALTER TABLE %s RENAME TO %s' % (sqlmeta.table, new_name))
+        cols = [self._createIDColumn(sqlmeta)] \
+                     + [self.createColumn(None, col)
+                        for col in sqlmeta.columnList if col.name != column.name]
+        cols = ",\n".join(["    %s" % c for c in cols])
+        self.query('CREATE TABLE %s (\n%s\n)' % (sqlmeta.table, cols))
+        all_columns = ', '.join(['id'] + [col.dbName for col in sqlmeta.columnList])
+        self.query('INSERT INTO %s (%s) SELECT %s FROM %s' % (
+            sqlmeta.table, all_columns, all_columns, new_name))
+        self.query('DROP TABLE %s' % new_name)
+
+    def columnsFromSchema(self, tableName, soClass):
+        if self.use_table_info:
+            return self._columnsFromSchemaTableInfo(tableName, soClass)
+        else:
+            return self._columnsFromSchemaParse(tableName, soClass)
+
+    def _columnsFromSchemaTableInfo(self, tableName, soClass):
+        colData = self.queryAll("PRAGMA table_info(%s)" % tableName)
+        results = []
+        for index, field, t, nullAllowed, default, key in colData:
+            if field == 'id':
+                continue
+            colClass, kw = self.guessClass(t)
+            kw['name'] = soClass.sqlmeta.style.dbColumnToPythonAttr(field)
+            kw['dbName'] = field
+            kw['notNone'] = not nullAllowed
+            kw['default'] = default
+            # @@ skip key...
+            # @@ skip extra...
+            results.append(colClass(**kw))
+        return results
+
+    def _columnsFromSchemaParse(self, tableName, soClass):
+        colData = self.queryOne("SELECT sql FROM sqlite_master WHERE type='table' AND name='%s'"
+                                % tableName)
+        if not colData:
+            raise ValueError('The table %s ws not found in the database. Load failed.' % tableName)
+        colData = colData[0].split('(', 1)[1].strip()[:-2]
+        while colData.find('(') > -1:
+            st = colData.find('(')
+            en = colData.find(')')
+            colData = colData[:st] + colData[en+1:]
+        results = []
+        for colDesc in colData.split(','):
+            parts = colDesc.strip().split(' ', 2)
+            field = parts[0].strip()
+            # skip comments
+            if field.startswith('--'):
+                continue
+            # get rid of enclosing quotes
+            if field[0] == field[-1] == '"':
+                field = field[1:-1]
+            if field == getattr(soClass.sqlmeta, 'idName', 'id'):
+                continue
+            colClass, kw = self.guessClass(parts[1].strip())
+            if len(parts) == 2:
+                index_info = ''
+            else:
+                index_info = parts[2].strip().upper()
+            kw['name'] = soClass.sqlmeta.style.dbColumnToPythonAttr(field)
+            import re
+            nullble = re.search(r'(\b\S*)\sNULL', index_info)
+            default = re.search(r"DEFAULT\s((?:\d[\dA-FX.]*)|(?:'[^']*')|(?:#[^#]*#))", index_info)
+            kw['notNone'] = nullble and nullble.group(1) == 'NOT'
+            kw['default'] = default and default.group(1)
+            # @@ skip key...
+            # @@ skip extra...
+            results.append(colClass(**kw))
+        return results
+
+    def guessClass(self, t):
+        t = t.upper()
+        if t.find('INT') > 0:
+            return col.IntCol, {}
+        elif t.find('TEXT') > 0 or t.find('CHAR') > 0 or t.find('CLOB') > 0:
+            return col.StringCol, {'length': 2**32-1}
+        elif t.find('BLOB') > 0:
+            return col.BLOBCol, {"length": 2**32-1}
+        elif t.find('REAL') > 0 or t.find('FLOAT') > 0:
+            return col.FloatCol, {}
+        elif t.find('DECIMAL') > 0:
+            return col.DecimalCol, {}
+        else:
+            return col.Col, {}
 
 def stop_pysqlite2_converting_strings(s):
     return s
