@@ -11,7 +11,7 @@ except ImportError:
 
 subpackages = ['firebird', 'include', 'include.pydispatch', 'inheritance',
                'manager', 'maxdb', 'mysql', 'mssql', 'postgres', 'sqlite',
-               'sybase', 'util']
+               'sybase', 'util', 'versioning']
 
 import sys
 # patch distutils if it can't cope with the "classifiers" keyword
