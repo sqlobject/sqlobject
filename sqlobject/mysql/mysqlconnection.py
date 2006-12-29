@@ -78,7 +78,19 @@ class MySQLConnection(DBAPI):
             conn.autocommit(auto)
 
     def _executeRetry(self, conn, cursor, query):
-        while 1:
+        # When a server connection is lost and a query is attempted, most of
+        # the time the query will raise a SERVER_LOST exception, then at the
+        # second attempt to execute it, the mysql lib will reconnect and
+        # succeed. However is a few cases, the first attempt raises the
+        # SERVER_GONE exception, the second attempt the SERVER_LOST exception
+        # and only the third succeeds. Thus the 3 in the loop count.
+        # If it doesn't reconnect even after 3 attempts, while the database is
+        # up and running, it is because a 5.0.x (or newer) server is used
+        # which no longer permits autoreconnects by default. In their case a
+        # reconnect flag must be set when making the connection to indicate
+        # that autoreconnecting is desired and the python-mysqldb module
+        # doesn't set this flag.
+        for c in range(0, 3):
             try:
                 if self.need_unicode:
                     # For MysqlDB 1.2.1 and later, we go
@@ -88,7 +100,9 @@ class MySQLConnection(DBAPI):
                 else:
                     return cursor.execute(query)
             except MySQLdb.OperationalError, e:
-                if e.args[0] == 2013: # SERVER_LOST error
+                if e.args[0] in (2006, 2013): # SERVER_GONE or SERVER_LOST error
+                    if c == 2:
+                        raise OperationalError(ErrorMessage(e))
                     if self.debug:
                         self.printDebug(conn, str(e), 'ERROR')
                 else:
