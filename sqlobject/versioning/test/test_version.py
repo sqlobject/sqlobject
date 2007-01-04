@@ -8,33 +8,30 @@ from datetime import datetime
 
 
 def setup():
-    setupClass(MyClass)
-    setupClass(Base)
-    setupClass(Child)
-    setupClass(Government)
-    setupClass(Monarchy)
-    setupClass(VChild)
-    setupClass(HasForeign)
-
+    for cls in [MyClass, Base, Child, Government, Monarchy, VChild, HasForeign]:
+        setupClass(cls)
+        if hasattr(cls, 'versions'):
+            for version in cls.versions.versionClass.select():
+                version.destroySelf()
+    
 class MyClass(SQLObject):
-     name = StringCol()
-     versions = Versioning()
+    name = StringCol()
+    versions = Versioning()
 
 class Base(InheritableSQLObject):
-     name = StringCol()
-     value = IntCol(default=0)
-     versions = Versioning()
+    name = StringCol()
+    value = IntCol(default=0)
+    versions = Versioning()
 
 class Child(Base):
-     toy = StringCol()
-
+    toy = StringCol()
 
 class Government(InheritableSQLObject):
-     name = StringCol()
+    name = StringCol()
 
 class Monarchy(Government):
-     monarch = StringCol()
-     versions = Versioning()
+    monarch = StringCol()
+    versions = Versioning()
 
 class VChild(Base):
     weapon = StringCol()
