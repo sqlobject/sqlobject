@@ -62,11 +62,12 @@ class Versioning(object):
 
         getColumns (attrs, self.soClass)
 
-        self.versionClass = type(self.soClass.__name__+'Versions',
-                                 (Version,),
-                                 attrs)
+        if not self.versionClass:
+            self.versionClass = type(self.soClass.__name__+'Versions',
+                                     (Version,),
+                                     attrs)
 
-        self.versionClass.createTable(connection=conn)
+        self.versionClass.createTable(ifNotExists=True, connection=conn)
 
     def createTable(self, soClass, connection, extra_sql, post_funcs):
         assert soClass is self.soClass
