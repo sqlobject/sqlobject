@@ -11,7 +11,9 @@ class Version(SQLObject):
 
 def getColumns(columns, cls):
     for column, defi in cls.sqlmeta.columnDefinitions.items():
-        columns[column] = defi.__class__()
+        if column.endswith("ID") and isinstance(defi, ForeignKey):
+            column = column[:-2]
+        columns[column] = defi.__class__(**defi._kw)
         
     #ascend heirarchy
     if cls.sqlmeta.parentClass:

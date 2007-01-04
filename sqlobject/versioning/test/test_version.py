@@ -14,6 +14,7 @@ def setup():
     setupClass(Government)
     setupClass(Monarchy)
     setupClass(VChild)
+    setupClass(HasForeign)
 
 class MyClass(SQLObject):
      name = StringCol()
@@ -37,6 +38,10 @@ class Monarchy(Government):
 
 class VChild(Base):
     weapon = StringCol()
+    versions = Versioning()
+
+class HasForeign(SQLObject):
+    foreign = ForeignKey("Base")
     versions = Versioning()
 
 def test_versioning():
@@ -114,4 +119,10 @@ def test_get_changed():
     assert base.versions[0].getChangedFields() == ['Name']
     assert sorted(base.versions[1].getChangedFields()) == ['Name', 'Value']
 
-    
+def test_foreign_keys():
+    setup()
+    base1 = Base(name='first', value=1)
+    base2 = Base(name='first', value=1)
+    has_foreign = HasForeign(foreign = base1)
+    has_foreign.foreign = base2
+    assert has_foreign.versions[0].foreign == base1
