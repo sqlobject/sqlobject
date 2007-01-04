@@ -21,6 +21,7 @@ class MyClass(SQLObject):
 
 class Base(InheritableSQLObject):
      name = StringCol()
+     value = IntCol(default=0)
      versions = Versioning()
 
 class Child(Base):
@@ -95,3 +96,22 @@ def test_restore():
     monarchy.versions[0].restore()
     assert monarchy.name == "USA"
     assert monarchy.monarch == "Emperor Norton I"
+
+def test_next():
+    setup()
+    base = Base(name='first', value=1)
+    base.set(name='second')
+    base.set(name='third', value=2)
+    version = base.versions[0]
+    assert version.nextVersion() == base.versions[1]
+    assert version.nextVersion().nextVersion() == base
+
+def test_get_changed():
+    setup()
+    base = Base(name='first', value=1)
+    base.set(name='second')
+    base.set(name='third', value=2)
+    assert base.versions[0].getChangedFields() == ['Name']
+    assert sorted(base.versions[1].getChangedFields()) == ['Name', 'Value']
+
+    
