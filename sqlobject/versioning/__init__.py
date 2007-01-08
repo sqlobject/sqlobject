@@ -27,6 +27,12 @@ class Version(SQLObject):
 
         return fields        
 
+    @classmethod
+    def select(cls, clause=None, *args, **kw):
+        if not getattr(cls, '_connection', None):
+            cls._connection = cls.masterClass._connection        
+        return super(Version, cls).select(clause, *args, **kw)
+
 def getColumns(columns, cls):
     for column, defi in cls.sqlmeta.columnDefinitions.items():
         if column.endswith("ID") and isinstance(defi, ForeignKey):
@@ -45,27 +51,25 @@ class Versioning(object):
     def __addtoclass__(self, soClass, name):
         self.name = name
         self.soClass = soClass
-        self.versionClass = None
+
+        attrs = {'dateArchived': DateTimeCol(default=datetime.now), 
+                 'master': ForeignKey(self.soClass.__name__),
+                 'masterClass' : self.soClass,
+                 }
+        
+        getColumns (attrs, self.soClass)
+        
+        self.versionClass = type(self.soClass.__name__+'Versions',
+                                 (Version,),
+                                 attrs)
+
         events.listen(self.createTable,
                       soClass, events.CreateTableSignal)
         events.listen(self.rowUpdate, soClass,
                       events.RowUpdateSignal)
 
     def createVersionTable(self, cls, conn):
-        attrs = {'dateArchived': DateTimeCol(default=datetime.now), 
-                 'master': ForeignKey(self.soClass.__name__),
-                 'masterClass' : self.soClass,
-                 '_connection' : conn,
-                 }
-
-        getColumns (attrs, self.soClass)
-
-        if not self.versionClass:
-            self.versionClass = type(self.soClass.__name__+'Versions',
-                                     (Version,),
-                                     attrs)
-
-        self.versionClass.createTable(ifNotExists=True, connection=conn)
+         self.versionClass.createTable(ifNotExists=True, connection=conn)
 
     def createTable(self, soClass, connection, extra_sql, post_funcs):
         assert soClass is self.soClass

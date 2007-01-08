@@ -787,10 +787,6 @@ class SQLObject(object):
         if connection and not hasattr(cls, '_connection'):
             cls.setConnection(connection)
 
-        # Now the class is in an essentially OK-state, so we can
-        # set up any magic attributes:
-        declarative.setup_attributes(cls, new_attrs)
-
         # We have to check if there are columns in the inherited
         # _columns where the attribute has been set to None in this
         # class.  If so, then we need to remove that column from
@@ -805,6 +801,10 @@ class SQLObject(object):
 
         for column in implicitColumns:
             cls.sqlmeta.addColumn(column)
+
+        # Now the class is in an essentially OK-state, so we can
+        # set up any magic attributes:
+        declarative.setup_attributes(cls, new_attrs)
 
         if cls.sqlmeta.fromDatabase:
             cls.sqlmeta.addColumnsFromDatabase()

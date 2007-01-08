@@ -11,6 +11,7 @@ def setup():
     for cls in [MyClass, Base, Child, Government, Monarchy, VChild, HasForeign]:
         setupClass(cls)
         if hasattr(cls, 'versions'):
+            setupClass(cls.versions.versionClass)
             for version in cls.versions.versionClass.select():
                 version.destroySelf()
     
