@@ -9,6 +9,24 @@ class Version(SQLObject):
         del values['dateArchived']
         self.masterClass.get(self.masterID).set(**values)
 
+    def nextVersion(self):
+        version = self.select(AND(self.q.masterID == self.masterID, self.q.id > self.id), limit=1, orderBy=self.q.id)
+        if version.count():
+            return version[0]
+        else:
+            return self.master
+
+    def getChangedFields(self):
+        next = self.nextVersion()
+        columns = self.__class__.sqlmeta.columns
+        fields = []
+        for column in columns:
+            if column not in ["dateArchived", "id", "masterID"]:
+                if getattr(self, column) != getattr(next, column):
+                    fields.append(column.title())
+
+        return fields        
+
 def getColumns(columns, cls):
     for column, defi in cls.sqlmeta.columnDefinitions.items():
         if column.endswith("ID") and isinstance(defi, ForeignKey):
@@ -19,24 +37,6 @@ def getColumns(columns, cls):
     if cls.sqlmeta.parentClass:
         getColumns(columns, cls.sqlmeta.parentClass)
 
-#these two are methods for a versionable object
-def _nextVersion(self):
-    version = self.select(AND(self.q.masterID == self.masterID, self.q.id > self.id), limit=1, orderBy=self.q.id)
-    if version.count():
-        return version[0]
-    else:
-        return self.master
-
-def _getChangedFields(self):
-    next = self.nextVersion()
-    columns = self.__class__.sqlmeta.columns
-    fields = []
-    for column in columns:
-        if column not in ["dateArchived", "id", "masterID"]:
-            if getattr(self, column) != getattr(next, column):
-                fields.append(column.title())
-
-    return fields        
 
 class Versioning(object):
     def __init__(self):
@@ -55,8 +55,6 @@ class Versioning(object):
         attrs = {'dateArchived': DateTimeCol(default=datetime.now), 
                  'master': ForeignKey(self.soClass.__name__),
                  'masterClass' : self.soClass,
-                 'nextVersion' : _nextVersion,
-                 'getChangedFields' : _getChangedFields,
                  '_connection' : conn,
                  }
 
