@@ -1,6 +1,10 @@
 from py.test import raises
 from sqlobject import *
-from sqlobject.events import sorted
+try:
+    sorted
+except NameError:
+    # For Python 2.2 and 2.3:
+    from sqlobject.events import sorted
 from sqlobject.inheritance import InheritableSQLObject
 from sqlobject.versioning import Versioning
 from sqlobject.tests.dbtest import *
@@ -8,14 +12,6 @@ from sqlobject.tests.dbtest import *
 from datetime import datetime
 
 
-def setup():
-    for cls in [MyClass, Base, Child, Government, Monarchy, VChild, HasForeign]:
-        setupClass(cls)
-        if hasattr(cls, 'versions'):
-            setupClass(cls.versions.versionClass)
-            for version in cls.versions.versionClass.select():
-                version.destroySelf()
-    
 class MyClass(SQLObject):
     name = StringCol()
     versions = Versioning()
@@ -42,6 +38,17 @@ class VChild(Base):
 class HasForeign(SQLObject):
     foreign = ForeignKey("Base")
     versions = Versioning()
+
+def setup():
+    for cls in [MyClass, Base, Child, Government, Monarchy, VChild, HasForeign]:
+        if hasattr(cls, 'versions') and hasattr(cls, "_connection") and \
+                cls._connection.tableExists(cls.sqlmeta.table):
+            setupClass(cls.versions.versionClass)
+        setupClass(cls)
+        if hasattr(cls, 'versions'):
+            setupClass(cls.versions.versionClass)
+            for version in cls.versions.versionClass.select():
+                version.destroySelf()
 
 def test_versioning():
 
