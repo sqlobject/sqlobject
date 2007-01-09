@@ -25,20 +25,20 @@ class Version(SQLObject):
                 if getattr(self, column) != getattr(next, column):
                     fields.append(column.title())
 
-        return fields        
+        return fields
 
-    @classmethod
     def select(cls, clause=None, *args, **kw):
         if not getattr(cls, '_connection', None):
-            cls._connection = cls.masterClass._connection        
+            cls._connection = cls.masterClass._connection
         return super(Version, cls).select(clause, *args, **kw)
+    select = classmethod(select)
 
 def getColumns(columns, cls):
     for column, defi in cls.sqlmeta.columnDefinitions.items():
         if column.endswith("ID") and isinstance(defi, ForeignKey):
             column = column[:-2]
         columns[column] = defi.__class__(**defi._kw)
-        
+
     #ascend heirarchy
     if cls.sqlmeta.parentClass:
         getColumns(columns, cls.sqlmeta.parentClass)
@@ -52,13 +52,13 @@ class Versioning(object):
         self.name = name
         self.soClass = soClass
 
-        attrs = {'dateArchived': DateTimeCol(default=datetime.now), 
+        attrs = {'dateArchived': DateTimeCol(default=datetime.now),
                  'master': ForeignKey(self.soClass.__name__),
                  'masterClass' : self.soClass,
                  }
-        
+
         getColumns (attrs, self.soClass)
-        
+
         self.versionClass = type(self.soClass.__name__+'Versions',
                                  (Version,),
                                  attrs)

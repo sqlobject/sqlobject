@@ -1,8 +1,9 @@
 from py.test import raises
 from sqlobject import *
-from sqlobject.tests.dbtest import *
+from sqlobject.events import sorted
 from sqlobject.inheritance import InheritableSQLObject
 from sqlobject.versioning import Versioning
+from sqlobject.tests.dbtest import *
 
 from datetime import datetime
 
