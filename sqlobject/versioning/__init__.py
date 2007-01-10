@@ -45,7 +45,11 @@ def getColumns(columns, cls):
 
 
 class Versioning(object):
-    def __init__(self):
+    def __init__(self, extraCols = None):
+        if extraCols:
+            self.extraCols = extraCols
+        else:
+            self.extraCols = {}
         pass
 
     def __addtoclass__(self, soClass, name):
@@ -58,6 +62,8 @@ class Versioning(object):
                  }
 
         getColumns (attrs, self.soClass)
+
+        attrs.update(self.extraCols)
 
         self.versionClass = type(self.soClass.__name__+'Versions',
                                  (Version,),

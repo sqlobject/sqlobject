@@ -39,8 +39,17 @@ class HasForeign(SQLObject):
     foreign = ForeignKey("Base")
     versions = Versioning()
 
+<<<<<<< .mine
+def _set_extra():
+    return "read all about it"
+
+class Extra(SQLObject):
+    name = StringCol()
+    versions = Versioning(extraCols={'extra' : StringCol(default=_set_extra())})
+
+
 def setup():
-    for cls in [MyClass, Base, Child, Government, Monarchy, VChild, HasForeign]:
+    for cls in [MyClass, Base, Child, Government, Monarchy, VChild, HasForeign, Extra]:
         if hasattr(cls, 'versions') and hasattr(cls, "_connection") and \
                 cls._connection.tableExists(cls.sqlmeta.table):
             setupClass(cls.versions.versionClass)
@@ -132,3 +141,9 @@ def test_foreign_keys():
     has_foreign = HasForeign(foreign = base1)
     has_foreign.foreign = base2
     assert has_foreign.versions[0].foreign == base1
+
+def test_extra():
+    setup()
+    extra = Extra(name='title')
+    extra.name = 'new'
+    assert extra.versions[0].extra == 'read all about it'    
