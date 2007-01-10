@@ -39,7 +39,6 @@ class HasForeign(SQLObject):
     foreign = ForeignKey("Base")
     versions = Versioning()
 
-<<<<<<< .mine
 def _set_extra():
     return "read all about it"
 
