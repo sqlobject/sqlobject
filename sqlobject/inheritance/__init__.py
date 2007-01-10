@@ -1,6 +1,6 @@
 from sqlobject import sqlbuilder
 from sqlobject import classregistry
-from sqlobject.col import StringCol, ForeignKey
+from sqlobject.col import StringCol, ForeignKey, BoolCol
 from sqlobject.main import sqlmeta, SQLObject, SelectResults, True, False, \
    makeProperties, getterName, setterName
 import iteration
@@ -63,6 +63,12 @@ class InheritableSelectResults(SelectResults):
                     parentClause.append(currentClass.q.id == parentClass.q.id)
                     currentClass = parentClass
                     tablesDict[currentClass.sqlmeta.table] = 1
+
+            for (currentClass, minParentClass) in tableRegistry.items():
+                if InheritableSQLObject in minParentClass.__bases__: 
+                    parentClause.append(minParentClass.q.doneConstructing == True)
+                    break
+
             clause = reduce(sqlbuilder.AND, parentClause, clause)
 
         super(InheritableSelectResults, self).__init__(sourceClass,
@@ -192,7 +198,7 @@ class InheritableSQLObject(SQLObject):
         currentClass = cls.sqlmeta.parentClass
         while currentClass:
             for column in currentClass.sqlmeta.columnDefinitions.values():
-                if column.name == 'childName':
+                if column.name == 'doneConstructing' or column.name == 'childName':
                     continue
                 if type(column) == ForeignKey:
                     continue
@@ -290,6 +296,12 @@ class InheritableSQLObject(SQLObject):
             sqlmeta.addColumn(StringCol(name='childName',
                 # limit string length to get VARCHAR and not CLOB
                 length=255, default=None))
+
+            #only on top-level classes
+            if InheritableSQLObject in cls.__bases__: 
+                #add the doneConstructing column to make half-constructed tasks invisible
+                sqlmeta.addColumn(BoolCol(name='doneConstructing', default=False))
+
         if not sqlmeta.columnList:
             # There are no columns - call addColumn to propagate columns
             # from parent classes to children
@@ -300,7 +312,7 @@ class InheritableSQLObject(SQLObject):
             sqlmeta.addJoin(None)
     _notifyFinishClassCreation = classmethod(_notifyFinishClassCreation)
 
-    def _create(self, id, **kw):
+    def _create(self, id, last_derived=False, **kw):
 
         #DSM: If we were called by a children class,
         #DSM: we must retreive the properties dictionary.
@@ -331,7 +343,7 @@ class InheritableSQLObject(SQLObject):
                     raise TypeError, "%s() did not get expected keyword argument %s" % (self.__class__.__name__, col.name)
 
             parent_kw['childName'] = self.sqlmeta.childName
-            self._parent = parentClass(kw=parent_kw,
+            self._parent = parentClass(last_derived=False, kw=parent_kw,
                 connection=self._connection)
 
             id = self._parent.id

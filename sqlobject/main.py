@@ -1203,7 +1203,7 @@ class SQLObject(object):
         else:
             return joinClass.get(id)
 
-    def __init__(self, **kw):
+    def __init__(self, last_derived = True, **kw):
         # We shadow the sqlmeta class with an instance of sqlmeta
         # that points to us (our sqlmeta buddy object; where the
         # sqlmeta class is our class's buddy class)
@@ -1231,12 +1231,15 @@ class SQLObject(object):
         else:
             id = None
 
-        self._create(id, **kw)
+        self._create(id, last_derived=False, **kw)
+
+        if last_derived and hasattr(self, 'doneConstructing'):
+            self.doneConstructing = True
+
         for func in post_funcs:
             func(self)
 
-    def _create(self, id, **kw):
-
+    def _create(self, id, last_derived=False,**kw):
         self.sqlmeta._creating = True
         self._SO_createValues = {}
         self._SO_validatorState = SQLObjectState(self)
