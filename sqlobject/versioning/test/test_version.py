@@ -146,3 +146,4 @@ def test_extra():
     extra = Extra(name='title')
     extra.name = 'new'
     assert extra.versions[0].extra == 'read all about it'    
+    assert sorted(extra.versions[0].getChangedFields()) == ['Name']

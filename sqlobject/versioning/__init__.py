@@ -18,7 +18,7 @@ class Version(SQLObject):
 
     def getChangedFields(self):
         next = self.nextVersion()
-        columns = self.__class__.sqlmeta.columns
+        columns = self.masterClass.sqlmeta.columns
         fields = []
         for column in columns:
             if column not in ["dateArchived", "id", "masterID"]:
