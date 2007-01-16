@@ -39,8 +39,8 @@ class FirebirdConnection(DBAPI):
             password = 'masterkey'
         if not auth:
             auth='sysdba'
-        if os.name == 'nt' and path[0] == '/':
-            # strip the leading slash off of db name/alias
+        # check for alias using
+        if (path[0] == '/') and path[-3:].lower() not in ('fdb', 'gdb'):
             path = path[1:]
         path = path.replace('/', os.sep)
         return cls(host, db=path, user=auth, password=password, **args)
