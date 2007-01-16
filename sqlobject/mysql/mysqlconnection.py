@@ -35,7 +35,7 @@ class MySQLConnection(DBAPI):
         else:
             self.need_unicode = False
         for key in ("unix_socket", "init_command",
-                "read_default_file", "read_default_group"):
+                "read_default_file", "read_default_group", "conv"):
             if key in kw:
                 self.kw[key] = col.popKey(kw, key)
         for key in ("connect_timeout", "compress", "named_pipe", "use_unicode",
