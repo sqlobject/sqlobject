@@ -17,7 +17,7 @@ class MySQLConnection(DBAPI):
     dbName = 'mysql'
     schemes = [dbName]
 
-    def __init__(self, db, user, password='', host='localhost', port=None, **kw):
+    def __init__(self, db, user, password='', host='localhost', port=0, **kw):
         global MySQLdb
         if MySQLdb is None:
             import MySQLdb
