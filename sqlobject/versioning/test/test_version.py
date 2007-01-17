@@ -48,7 +48,12 @@ class Extra(SQLObject):
 
 
 def setup():
-    for cls in [MyClass, Base, Child, Government, Monarchy, VChild, HasForeign, Extra]:
+    classes = [MyClass, Base, Child, Government, Monarchy, VChild, Extra]
+    if hasattr(HasForeign, "_connection"):
+        classes.insert(0, HasForeign)
+    else:
+        classes.append(HasForeign)
+    for cls in classes:
         if hasattr(cls, 'versions') and hasattr(cls, "_connection") and \
                 cls._connection.tableExists(cls.sqlmeta.table):
             setupClass(cls.versions.versionClass)
