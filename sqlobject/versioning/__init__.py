@@ -33,6 +33,12 @@ class Version(SQLObject):
         return super(Version, cls).select(clause, *args, **kw)
     select = classmethod(select)
 
+    def __getattr__(self, attr):
+        if self.__dict__.has_key(attr):
+            return self.__dict__[attr]
+        else:
+            return getattr(self.master, attr)
+
 def getColumns(columns, cls):
     for column, defi in cls.sqlmeta.columnDefinitions.items():
         if column.endswith("ID") and isinstance(defi, ForeignKey):
@@ -68,6 +74,9 @@ class Versioning(object):
         self.versionClass = type(self.soClass.__name__+'Versions',
                                  (Version,),
                                  attrs)
+
+        if  '_connection' in self.soClass.__dict__:
+            self.versionClass._connection = self.soClass.__dict__['_connection']
 
         events.listen(self.createTable,
                       soClass, events.CreateTableSignal)
