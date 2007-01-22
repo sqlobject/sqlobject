@@ -121,6 +121,13 @@ def test_restore():
     assert monarchy.name == "USA"
     assert monarchy.monarch == "Emperor Norton I"
 
+    extra = Extra(name='fleem')
+    extra.set(name='morx')
+    assert extra.name == "morx"
+    extra.versions[0].restore()
+    assert extra.name == "fleem"
+
+
 def test_next():
     setup()
     base = Base(name='first', value=1)

@@ -7,6 +7,8 @@ class Version(SQLObject):
         del values['id']
         del values['masterID']
         del values['dateArchived']
+        for col in self.extraCols:
+            del values[col]
         self.masterClass.get(self.masterID).set(**values)
 
     def nextVersion(self):
@@ -65,6 +67,7 @@ class Versioning(object):
         attrs = {'dateArchived': DateTimeCol(default=datetime.now),
                  'master': ForeignKey(self.soClass.__name__),
                  'masterClass' : self.soClass,
+                 'extraCols' : self.extraCols
                  }
 
         getColumns (attrs, self.soClass)
