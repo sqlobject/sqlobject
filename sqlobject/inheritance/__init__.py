@@ -19,7 +19,6 @@ def tablesUsedDict(obj):
     elif isinstance(obj, (tuple, list)):
         d = {}
         for component in obj:
-            print component
             d.update(tablesUsedDict(component))
         return d
     else:
@@ -29,12 +28,16 @@ def tablesUsedDict(obj):
 class InheritableSelectResults(SelectResults):
     IterationClass = iteration.InheritableIteration
 
-    def __init__(self, sourceClass, clause, clauseTables=None, **ops):
+    def __init__(self, sourceClass, clause, clauseTables=None,
+            inheritedTables=None, **ops):
         if clause is None or isinstance(clause, str) and clause == 'all':
             clause = sqlbuilder.SQLTrueClause
         tablesDict = tablesUsedDict(clause)
         tablesDict[sourceClass.sqlmeta.table] = 1
         orderBy = ops.get('orderBy')
+        if inheritedTables:
+            for tableName in inheritedTables:
+                tablesDict[tableName] = 1
         if orderBy and not isinstance(orderBy, basestring):
             tablesDict.update(tablesUsedDict(orderBy))
         #DSM: if this class has a parent, we need to link it
@@ -81,6 +84,16 @@ class InheritableSelectResults(SelectResults):
         super(InheritableSelectResults, self).__init__(sourceClass,
             clause, clauseTables, **ops)
 
+    def accumulateMany(self, *attributes, **kw):
+        if kw.get("skipInherited"):
+            return super(InheritableSelectResults, self).accumulateMany(*attributes)
+        tables = []
+        for func_name, attribute in attributes:
+           if not isinstance(attribute, basestring):
+                tables.append(attribute.tableName)
+        clone = self.__class__(self.sourceClass, self.clause,
+                          self.clauseTables, inheritedTables=tables, **self.ops)
+        return clone.accumulateMany(skipInherited=True, *attributes)
 
 class InheritableSQLMeta(sqlmeta):
     def addColumn(sqlmeta, columnDef, changeSchema=False, connection=None, childUpdate=False):
