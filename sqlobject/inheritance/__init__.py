@@ -13,17 +13,30 @@ except NameError: # Python 2.2
     basestring = (types.StringType, types.UnicodeType)
 
 
+def tablesUsedDict(obj):
+    if hasattr(obj, "tablesUsedDict"):
+        return obj.tablesUsedDict()
+    elif isinstance(obj, (tuple, list)):
+        d = {}
+        for component in obj:
+            print component
+            d.update(tablesUsedDict(component))
+        return d
+    else:
+        return {}
+
+
 class InheritableSelectResults(SelectResults):
     IterationClass = iteration.InheritableIteration
 
     def __init__(self, sourceClass, clause, clauseTables=None, **ops):
         if clause is None or isinstance(clause, str) and clause == 'all':
             clause = sqlbuilder.SQLTrueClause
-        tablesDict = sqlbuilder.tablesUsedDict(clause)
+        tablesDict = tablesUsedDict(clause)
         tablesDict[sourceClass.sqlmeta.table] = 1
         orderBy = ops.get('orderBy')
         if orderBy and not isinstance(orderBy, basestring):
-            tablesDict.update(sqlbuilder.tablesUsedDict(orderBy))
+            tablesDict.update(tablesUsedDict(orderBy))
         #DSM: if this class has a parent, we need to link it
         #DSM: and be sure the parent is in the table list.
         #DSM: The following code is before clauseTables
