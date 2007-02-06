@@ -176,3 +176,20 @@ def test_constant():
 def test_prefix():
     instance = SQLPrefix('test', 'test')
     assert sqlrepr(instance, 'mysql') == "test 'test'"
+
+def test_dict():
+    assert sqlrepr({"key": "value"}, "sqlite") == "('key')"
+
+def test_sets():
+    try:
+        set
+    except NameError:
+        pass
+    else:
+        assert sqlrepr(set([1])) == "(1)"
+    try:
+        from sets import Set
+    except ImportError:
+        pass
+    else:
+        assert sqlrepr(Set([1])) == "(1)"

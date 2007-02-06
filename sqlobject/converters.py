@@ -180,6 +180,21 @@ def SequenceConverter(value, db):
 
 registerConverter(type(()), SequenceConverter)
 registerConverter(type([]), SequenceConverter)
+registerConverter(type({}), SequenceConverter)
+try:
+    set, frozenset
+except NameError:
+    pass
+else:
+    registerConverter(set, SequenceConverter)
+    registerConverter(frozenset, SequenceConverter)
+try:
+    from sets import Set, ImmutableSet
+except ImportError:
+    pass
+else:
+    registerConverter(Set, SequenceConverter)
+    registerConverter(ImmutableSet, SequenceConverter)
 
 if hasattr(time, 'struct_time'):
     def StructTimeConverter(value, db):
