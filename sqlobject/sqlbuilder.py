@@ -626,6 +626,8 @@ class DESC(SQLExpression):
         return '%s DESC' % sqlrepr(self.expr, db)
 
 def AND(*ops):
+    if not ops:
+        return None
     op1 = ops[0]
     ops = ops[1:]
     if ops:
@@ -634,6 +636,8 @@ def AND(*ops):
         return op1
 
 def OR(*ops):
+    if not ops:
+        return None
     op1 = ops[0]
     ops = ops[1:]
     if ops:
