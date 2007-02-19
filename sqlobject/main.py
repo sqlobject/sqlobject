@@ -655,9 +655,9 @@ class _sqlmeta_attr(object):
 warnings_level = 1
 exception_level = None
 # Current levels:
-#  1) Actively deprecated in version after 0.6.1 (0.7?); removed after
-#  2) Deprecated after 1 (0.8?)
-#  3) Deprecated after 2 (0.9?)
+#  1) Actively deprecated in version after 0.9; removed after
+#  2) Deprecated after 1 (0.9?)
+#  3) Deprecated after 2 (0.10?)
 
 def deprecated(message, level=1, stacklevel=2):
     if exception_level is not None and exception_level <= level:
@@ -679,8 +679,8 @@ def setDeprecationLevel(warning=1, exception=None):
 
     The levels currently mean:
 
-      1) Deprecated in current version (0.7).  Will be removed in next
-         version (0.8)
+      1) Deprecated in current version (0.9).  Will be removed in next
+         version (0.10)
 
       2) Planned to deprecate in next version, remove later.
 
@@ -720,8 +720,8 @@ class SQLObject(object):
     _parent = None # A reference to the parent instance
     childName = None # Children name (to be able to get a subclass)
     # moved to sqlmeta in 0.8:
-    _parentClass = _sqlmeta_attr('parentClass', 2)
-    _childClasses = _sqlmeta_attr('childClasses', 2)
+    _parentClass = _sqlmeta_attr('parentClass', 1)
+    _childClasses = _sqlmeta_attr('childClasses', 1)
 
     # The law of Demeter: the class should not call another classes by name
     SelectResultsClass = SelectResults
@@ -755,24 +755,6 @@ class SQLObject(object):
             connection = None
 
         cls._SO_finishedClassCreation = False
-
-        if '_columns' in new_attrs and not is_base:
-            deprecated(
-                'The _columns attribute you gave (%r) is deprecated; '
-                'columns should be added as class attributes'
-                % new_attrs['_columns'], level=1)
-            for column in new_attrs['_columns']:
-                if isinstance(column, str):
-                    column = col.Col(column)
-                implicitColumns.append(column)
-
-        if '_joins' in new_attrs and not is_base:
-            deprecated(
-                'The _joins attribute you gave (%r) is deprecated; '
-                'joins should be added as class attributes'
-                % new_attrs['_joins'], level=1)
-            for j in new_attrs['_joins']:
-                implicitJoins.append(j)
 
         ######################################################
         # Set some attributes to their defaults, if necessary.
@@ -828,23 +810,21 @@ class SQLObject(object):
 
         classregistry.registry(cls.sqlmeta.registry).addClass(cls)
 
-    _style = _sqlmeta_attr('style', 2)
-    _table = _sqlmeta_attr('table', 2)
-    _idName = _sqlmeta_attr('idName', 2)
-    _lazyUpdate = _sqlmeta_attr('lazyUpdate', 2)
-    _defaultOrder = _sqlmeta_attr('defaultOrder', 2)
-    _cacheValues = _sqlmeta_attr('cacheValues', 2)
-    _registry = _sqlmeta_attr('registry', 2)
-    _idType = _sqlmeta_attr('idType', 2)
-    _fromDatabase = _sqlmeta_attr('fromDatabase', 2)
+    _style = _sqlmeta_attr('style', 1)
+    _table = _sqlmeta_attr('table', 1)
+    _idName = _sqlmeta_attr('idName', 1)
+    _lazyUpdate = _sqlmeta_attr('lazyUpdate', 1)
+    _defaultOrder = _sqlmeta_attr('defaultOrder', 1)
+    _cacheValues = _sqlmeta_attr('cacheValues', 1)
+    _registry = _sqlmeta_attr('registry', 1)
+    _idType = _sqlmeta_attr('idType', 1)
+    _fromDatabase = _sqlmeta_attr('fromDatabase', 1)
     _expired = _sqlmeta_attr('expired', 2)
-    _columns = _sqlmeta_attr('columnList', 1)
-    _columnDict = _sqlmeta_attr('columns', 1)
-    addColumn = _sqlmeta_attr('addColumn', 2)
-    delColumn = _sqlmeta_attr('delColumn', 2)
-    addJoin = _sqlmeta_attr('addJoin', 2)
-    delJoin = _sqlmeta_attr('delJoin', 2)
-    addIndex = _sqlmeta_attr('addIndex', 2)
+    addColumn = _sqlmeta_attr('addColumn', 1)
+    delColumn = _sqlmeta_attr('delColumn', 1)
+    addJoin = _sqlmeta_attr('addJoin', 1)
+    delJoin = _sqlmeta_attr('delJoin', 1)
+    addIndex = _sqlmeta_attr('addIndex', 1)
 
     # @classmethod
     def _SO_setupSqlmeta(cls, new_attrs, is_base):
@@ -904,7 +884,7 @@ class SQLObject(object):
                 new_name = attr[1:]
                 deprecated("%r is deprecated; please set the %r "
                            "attribute in sqlmeta instead" %
-                           (attr, new_name), level=2,
+                           (attr, new_name), level=1,
                            stacklevel=5)
                 setattr(cls.sqlmeta, new_name, new_attrs[attr])
                 delattr(cls, attr)
@@ -912,7 +892,7 @@ class SQLObject(object):
             if new_attrs.has_key(attr):
                 deprecated("%r is deprecated and read-only; please do "
                            "not use it in your classes until it is fully "
-                           "deprecated" % attr, level=3, stacklevel=5)
+                           "deprecated" % attr, level=2, stacklevel=5)
 
     _SO_cleanDeprecatedAttrs = classmethod(_SO_cleanDeprecatedAttrs)
 
