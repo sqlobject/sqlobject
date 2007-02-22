@@ -10,6 +10,12 @@ import py
 import sqlobject
 import sqlobject.conftest as conftest
 
+try:
+    import logging
+    loggingModuleAvailable = True
+except ImportError:
+    loggingModuleAvailable = False
+
 if sys.platform[:3] == "win":
     def getcwd():
         return os.getcwd().replace(':', '|')
@@ -306,6 +312,17 @@ def teardown_module(mod=None):
     sqlobject.main.warnings_level = None
     sqlobject.main.exception_level = 0
 
+def setupLogging():
+    if not loggingModuleAvailable:
+        return
+    fmt = '[%(asctime)s] %(name)s %(levelname)s: %(message)s'
+    formatter = logging.Formatter(fmt)
+    hdlr = logging.StreamHandler(sys.stderr)
+    hdlr.setFormatter(formatter)
+    hdlr.setLevel(logging.NOTSET)
+    logger = logging.getLogger()
+    logger.addHandler(hdlr)
+
 __all__ = ['getConnection', 'getConnectionURI', 'setupClass', 'Dummy', 'raises',
            'd', 'inserts', 'supports', 'deprecated_module',
-           'setup_module', 'teardown_module']
+           'setup_module', 'teardown_module', 'setupLogging']

@@ -4,6 +4,7 @@ True, False = 1==1, 0==1
 
 import threading
 from util.threadinglocal import local as threading_local
+import sys
 import re
 import warnings
 import atexit
@@ -31,15 +32,39 @@ def _closeConnection(ref):
     if conn is not None:
         conn.close()
 
+class ConsoleWriter:
+    def __init__(self, loglevel):
+        self.loglevel = loglevel
+        self.logfile = getattr(sys, loglevel or "stdout")
+    def write(self, text):
+        self.logfile.write(text + '\n')
+
+class LogWriter:
+    def __init__(self, logger, loglevel):
+        self.logger = logger
+        self.loglevel = loglevel
+        self.logmethod = getattr(logger, loglevel)
+    def write(self, text):
+        self.logmethod(text)
+
+def makeDebugWriter(loggerName, loglevel):
+    if not loggerName:
+        return ConsoleWriter(loglevel)
+    import logging
+    logger = logging.getLogger(loggerName)
+    return LogWriter(logger, loglevel)
+
 class DBConnection:
 
     def __init__(self, name=None, debug=False, debugOutput=False,
                  cache=True, style=None, autoCommit=True,
-                 debugThreading=False, registry=None):
+                 debugThreading=False, registry=None,
+                 logger=None, loglevel=None):
         self.name = name
         self.debug = debug
         self.debugOutput = debugOutput
         self.debugThreading = debugThreading
+        self.debugWriter = makeDebugWriter(logger, loglevel)
         self.cache = CacheSet(cache=cache)
         self.doCache = cache
         self.style = style
@@ -300,7 +325,8 @@ class DBAPI(DBConnection):
             threadName = (':' + threadName + ' '*(8-len(threadName)))
         else:
             threadName = ''
-        print '%(n)2i%(threadName)s/%(name)s%(spaces)s%(sep)s %(s)s' % locals()
+        msg = '%(n)2i%(threadName)s/%(name)s%(spaces)s%(sep)s %(s)s' % locals()
+        self.debugWriter.write(msg)
 
     def _executeRetry(self, conn, cursor, query):
         if self.debug:
@@ -564,7 +590,7 @@ class DBAPI(DBConnection):
             if isinstance(tableCreateSQLs, tuple):
                 tableCreateSQLs = list(tableCreateSQLs)
             assert isinstance(tableCreateSQLs,list), (
-                'Unable to create a list from %s.sqlmeta.createSQL' % 
+                'Unable to create a list from %s.sqlmeta.createSQL' %
                 (soClass.__name__))
         return tableCreateSQLs or []
 
