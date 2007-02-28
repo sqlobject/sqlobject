@@ -16,6 +16,7 @@ import sqlobject
 from sqlobject import col
 from sqlobject.util import moduleloader
 from sqlobject.declarative import DeclarativeMeta
+from sqlobject.classregistry import findClass
 
 # It's not very unsafe to use tempnam like we are doing:
 warnings.filterwarnings(
@@ -181,6 +182,81 @@ class Command(object):
 
     help = ''
 
+    def orderClassesByDependencyLevel(self, classes):
+        """
+        Return classes ordered by their depth in the class dependency
+        tree (this is *not* the inheritance tree), from the
+        top level (independant) classes to the deepest level.
+        The dependency tree is defined by the foreign key relations.
+        """
+        # @@: written as a self-contained function for now, to prevent
+        # having to modify any core SQLObject component and namespace
+        # contamination.
+        # yemartin - 2006-08-08
+        
+        class SQLObjectCircularReferenceError(Exception): pass
+
+        def findReverseDependencies(cls):
+            """
+            Return a list of classes that cls depends on. Note that
+            "depends on" here mean "has a foreign key pointing to".
+            """
+            depended = []
+            for col in cls.sqlmeta.columnList:
+                if col.foreignKey:
+                    other = findClass(col.foreignKey,
+                                      col.soClass.sqlmeta.registry)
+                    if other not in depended:
+                        depended.append(other)
+            return depended
+        
+        # Cache to save already calculated dependency levels.
+        dependency_levels = {}
+        def calculateDependencyLevel(cls, dependency_stack=[]):
+            """
+            Recursively calculate the dependency level of cls, while
+            using the dependency_stack to detect any circular reference.
+            """
+            # Return value from the cache if already calculated
+            if dependency_levels.has_key(cls):
+                return dependency_levels[cls]
+            # Check for circular references
+            if cls in dependency_stack:
+                dependency_stack.append(cls)
+                raise SQLObjectCircularReferenceError, (
+                        "Found a circular reference: %s " %
+                        (' --> '.join([x.__name__
+                                       for x in dependency_stack])))
+            dependency_stack.append(cls)
+            # Recursively inspect dependent classes.
+            depended = findReverseDependencies(cls)
+            if depended:
+                level = max([calculateDependencyLevel(x, dependency_stack)
+                             for x in depended]) + 1
+            else:
+                level = 0
+            dependency_levels[cls] = level
+            return level
+        
+        # Now simply calculate and sort by dependency levels:
+        try:
+            sorter = []
+            for cls in classes:
+                level = calculateDependencyLevel(cls)
+                sorter.append((level, cls))
+            sorter.sort()
+            ordered_classes = [cls for level, cls in sorter]
+        except SQLObjectCircularReferenceError, msg:
+            # Failsafe: return the classes as-is if a circular reference
+            # prevented the dependency levels to be calculated.
+            print ("Warning: a circular reference was detected in the "
+                    "model. Unable to sort the classes by dependency: they "
+                    "will be treated in alphabetic order. This may or may "
+                    "not work depending on your database backend. "
+                    "The error was:\n%s" % msg)
+            return classes
+        return ordered_classes
+
     def __classinit__(cls, new_args):
         if cls.__bases__ == (object,):
             # This abstract base class
@@ -285,7 +361,7 @@ class Command(object):
             else:
                 print 'No eggs specified'
             sys.exit(1)
-        return all
+        return self.orderClassesByDependencyLevel(all)
 
     def classes_from_module(self, module):
         all = []
@@ -613,7 +689,7 @@ class CommandDrop(Command):
         v = self.options.verbose
         dropped = 0
         not_existing = 0
-        for soClass in self.classes():
+        for soClass in self.classes().__reversed__():
             exists = soClass._connection.tableExists(soClass.sqlmeta.table)
             if v >= 1:
                 if exists:
