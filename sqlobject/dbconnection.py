@@ -603,10 +603,13 @@ class DBAPI(DBConnection):
                 self.getDBOptions(soClass)))
         return createSql, constraints + extraSQL
 
-    def getDBOptions(self, soClass):
-        if soClass.sqlmeta.engineSQL is not None and \
-                len(soClass.sqlmeta.engineSQL) > 0:
-            return "ENGINE = %s" % soClass.sqlmeta.engineSQL
+    def getDBOptions(self, SO_or_join):
+        if hasattr(SO_or_join, "sqlmeta"):
+            engineSQL = SO_or_join.sqlmeta.engineSQL
+        else:
+            engineSQL = getattr(SO_or_join, "engineSQL", None)
+        if engineSQL:
+            return "ENGINE = %s" % engineSQL
         else:
             return ""
 
