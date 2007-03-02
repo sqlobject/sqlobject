@@ -958,6 +958,43 @@ class EnumCol(Col):
     baseClass = SOEnumCol
 
 
+class SetValidator(validators.Validator):
+    """
+    Translates Python tuples into SQL comma-delimited SET strings.
+    """
+
+    def to_python(self, value, state):
+        if not isinstance(value, str):
+            raise validators.Invalid("expected a value string, got % instead" % \
+                                      (value), value, state)
+        return tuple(value.split(","))
+
+    def from_python(self, value, state):
+        if not isinstance(value, tuple):
+            value = (value,)
+        return ",".join([v for v in value])
+
+class SOSetCol(SOCol):
+    def __init__(self, **kw):
+        self.setValues = popKey(kw, 'setValues', None)
+        assert self.setValues is not None, \
+                'You must provide a setValues keyword argument'
+        super(SOSetCol, self).__init__(**kw)
+
+    def autoConstraints(self):
+        return [consts.isString, consts.InList(self.setValues)]
+
+    def createValidators(self):
+        return [SetValidator(name = self.name, setValues = self.setValues)] + \
+            super(SOSetCol, self).createValidators()
+
+    def _mysqlType(self):
+        return "SET(%s)" % ', '.join([sqlbuilder.sqlrepr(v, 'mysql') for v in self.enumValues])
+
+class SetCol(Col):
+    baseClass = SOSetCol
+
+
 if datetime_available:
     class DateTimeValidator(validators.DateValidator):
         def to_python(self, value, state):
@@ -1386,6 +1423,7 @@ class SOPickleCol(SOBLOBCol):
 
 class PickleCol(BLOBCol):
     baseClass = SOPickleCol
+
 
 def popKey(kw, name, default=None):
     if not kw.has_key(name):
