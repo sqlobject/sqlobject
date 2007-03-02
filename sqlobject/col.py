@@ -630,6 +630,35 @@ class SOIntCol(SOCol):
 class IntCol(Col):
     baseClass = SOIntCol
 
+class SOTinyIntCol(SOIntCol):
+    def _sqlTyps(self):
+        return self.addSQLAttrs("TINYINT")
+
+class TinyIntCol(Col):
+    baseClass = SOTinyIntCol
+
+class SOSmallIntCol(SOIntCol):
+    def _sqlTyps(self):
+        return self.addSQLAttrs("SMALLINT")
+
+class SmallIntCol(Col):
+    baseClass = SOSmallIntCol
+
+class SOMediumIntCol(SOIntCol):
+    def _sqlTyps(self):
+        return self.addSQLAttrs("MEDIUMINT")
+
+class MediumIntCol(Col):
+    baseClass = SOMediumIntCol
+
+class SOBigIntCol(SOIntCol):
+    def _sqlTyps(self):
+        return self.addSQLAttrs("BIGINT")
+
+class BigIntCol(Col):
+    baseClass = SOBigIntCol
+
+
 class BoolValidator(validators.Validator):
 
     def to_python(self, value, state):
