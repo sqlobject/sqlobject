@@ -546,12 +546,13 @@ class DBAPI(DBConnection):
         self.query(self._SO_createJoinTableSQL(join))
 
     def _SO_createJoinTableSQL(self, join):
-        return ('CREATE TABLE %s (\n%s %s,\n%s %s\n)' %
+        return ('CREATE TABLE %s (\n%s %s,\n%s %s\n) %s' %
                 (join.intermediateTable,
                  join.joinColumn,
                  self.joinSQLType(join),
                  join.otherColumn,
-                 self.joinSQLType(join)))
+                 self.joinSQLType(join),
+                 self.getDBOptions(join)))
 
     def _SO_dropJoinTable(self, join):
         self.query("DROP TABLE %s" % join.intermediateTable)
@@ -597,9 +598,17 @@ class DBAPI(DBConnection):
     def createTableSQL(self, soClass):
         constraints = self.createReferenceConstraints(soClass)
         extraSQL = self.createSQL(soClass)
-        createSql = ('CREATE TABLE %s (\n%s\n)' %
-                (soClass.sqlmeta.table, self.createColumns(soClass)))
+        createSql = ('CREATE TABLE %s (\n%s\n) %s' %
+                (soClass.sqlmeta.table, self.createColumns(soClass),
+                self.getDBOptions(soClass)))
         return createSql, constraints + extraSQL
+
+    def getDBOptions(self, soClass):
+        if soClass.sqlmeta.engineSQL is not None and \
+                len(soClass.sqlmeta.engineSQL) > 0:
+            return "ENGINE = %s" % soClass.sqlmeta.engineSQL
+        else:
+            return ""
 
     def createColumns(self, soClass):
         columnDefs = [self.createIDColumn(soClass)] \
