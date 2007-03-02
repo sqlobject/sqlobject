@@ -236,6 +236,10 @@ class MySQLConnection(DBAPI):
                                        'varchar': False}
         elif t.startswith('datetime'):
             return col.DateTimeCol, {}
+        elif t.startswith('date'):
+            return col.DateCol, {}
+        elif t.startswith('timestamp'):
+            return col.TimestampCol, {}
         elif t.startswith('bool'):
             return col.BoolCol, {}
         elif t.startswith('tinyblob'):

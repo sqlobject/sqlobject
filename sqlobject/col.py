@@ -1063,7 +1063,6 @@ class DateTimeCol(Col):
                        % DATETIME_IMPLEMENTATION)
     now = staticmethod(now)
 
-
 if datetime_available:
     class DateValidator(DateTimeValidator):
         def to_python(self, value, state):
@@ -1178,6 +1177,21 @@ class SOTimeCol(SOCol):
 
 class TimeCol(Col):
     baseClass = SOTimeCol
+
+
+class SOTimestampCol(SODateTimeCol):
+    """
+    Necessary to support MySQL's use of TIMESTAMP versus DATETIME types
+    """
+
+    def __init__(self, **kw):
+        SOCol.__init__(self, **kw)
+
+    def _mysqlType(self):
+        return 'TIMESTAMP'
+
+class TimestampCol(Col):
+    baseClass = SOTimestampCol
 
 
 try:
