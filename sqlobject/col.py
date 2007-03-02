@@ -594,6 +594,11 @@ class IntValidator(validators.Validator):
 
 class SOIntCol(SOCol):
     # 3-03 @@: support precision, maybe max and min directly
+    def __init__(self, **kw):
+        self.length = popKey(kw, 'length')
+        self.unsigned = bool(popKey(kw, 'unsigned'))
+        self.zerofill = bool(popKey(kw, 'unsigned'))
+        SOCol.__init__(self, **kw)
 
     def autoConstraints(self):
         return [consts.isInt]
@@ -602,8 +607,21 @@ class SOIntCol(SOCol):
         return [IntValidator(name=self.name)] + \
             super(SOIntCol, self).createValidators()
 
+    def addSQLAttrs(self, str):
+        _ret = str
+        if str is None or len(str) < 1:
+            return None
+
+        if self.length >= 1:
+            _ret = "%s(%d)" % (_ret, self.length)
+        if self.unsigned:
+            _ret = _ret + " UNSIGNED"
+        if self.zerofill:
+            _ret = _reg + " ZEROFILL"
+        return _ret
+
     def _sqlType(self):
-        return 'INT'
+        return self.addSQLAttrs("INT")
 
 class IntCol(Col):
     baseClass = SOIntCol
