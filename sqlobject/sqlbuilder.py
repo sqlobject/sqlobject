@@ -332,10 +332,14 @@ class UnicodeField(SQLObjectField):
         SQLObjectField.__init__(self, tableName, fieldName, original)
         self.column = column
     def __eq__(self, other):
+        if other is None:
+            return ISNULL(self)
         if isinstance(other, unicode):
             other = other.encode(self.column.dbEncoding)
         return SQLOp('=', self, other)
     def __ne__(self, other):
+        if other is None:
+            return ISNOTNULL(self)
         if isinstance(other, unicode):
             other = other.encode(self.column.dbEncoding)
         return SQLOp('<>', self, other)
