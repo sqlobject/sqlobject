@@ -1231,7 +1231,8 @@ class SQLObject(object):
                 default = column.default
 
                 # If we don't get it, it's an error:
-                if default is NoDefault:
+                # If we specified an SQL DEFAULT, then we should use that
+                if default is NoDefault and column.defaultSQL is not None:
                     raise TypeError, "%s() did not get expected keyword argument %s" % (self.__class__.__name__, column.name)
                 # Otherwise we put it in as though they did pass
                 # that keyword:

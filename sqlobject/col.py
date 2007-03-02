@@ -112,6 +112,7 @@ class SOCol(object):
                  creationOrder,
                  dbName=None,
                  default=NoDefault,
+                 defaultSQL=None,
                  foreignKey=None,
                  alternateID=False,
                  alternateMethodName=None,
@@ -178,6 +179,7 @@ class SOCol(object):
         self.name = name
         self.soClass = soClass
         self._default = default
+        self.defaultSQL = defaultSQL
         self.customSQLType = sqlType
 
         # deal with foreign keys
@@ -293,6 +295,8 @@ class SOCol(object):
             result.append('NOT NULL')
         if self.unique or self.alternateID:
             result.append('UNIQUE')
+        if self.defaultSQL is not None:
+            result.append("DEFAULT %s" % self.defaultSQL)
         return result
 
     def _sqlType(self):
