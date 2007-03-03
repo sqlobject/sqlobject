@@ -127,6 +127,7 @@ class FirebirdConnection(DBAPI):
         self.query('CREATE TABLE %s (\n%s\n)' % \
                    (soClass.sqlmeta.table, self.createColumns(soClass)))
         self.query("CREATE GENERATOR GEN_%s" % soClass.sqlmeta.table)
+        return []
 
     def createReferenceConstraint(self, soClass, col):
         return None
