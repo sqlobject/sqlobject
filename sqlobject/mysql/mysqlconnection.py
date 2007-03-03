@@ -169,7 +169,7 @@ class MySQLConnection(DBAPI):
     def createIDColumn(self, soClass):
         if soClass.sqlmeta.idType == str:
             return '%s TEXT PRIMARY KEY' % soClass.sqlmeta.idName
-        return '%s INT UNSIGNED PRIMARY KEY AUTO_INCREMENT' % soClass.sqlmeta.idName
+        return '%s INT PRIMARY KEY AUTO_INCREMENT' % soClass.sqlmeta.idName
 
     def joinSQLType(self, join):
         return 'INT NOT NULL'
