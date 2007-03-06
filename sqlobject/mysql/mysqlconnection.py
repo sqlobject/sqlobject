@@ -20,7 +20,7 @@ class MySQLConnection(DBAPI):
     def __init__(self, db, user, password='', host='localhost', port=0, **kw):
         global MySQLdb
         if MySQLdb is None:
-            import MySQLdb
+            import MySQLdb, MySQLdb.constants.CR, MySQLdb.constants.ER
         self.module = MySQLdb
         self.host = host
         self.port = port
@@ -62,10 +62,14 @@ class MySQLConnection(DBAPI):
         try:
             conn = self.module.connect(host=self.host, port=self.port,
                 db=self.db, user=self.user, passwd=self.password, **self.kw)
+            if MySQLdb.version_info[0] > 1 or (MySQLdb.version_info[0] == 1 and
+                                               (MySQLdb.version_info[1] > 2 or (MySQLdb.version_info[1] == 2 and
+                                                                                MySQLdb.version_info[2] >= 2))):
+                conn.ping(True) # Attempt to reconnect. This setting is persistent.
         except self.module.OperationalError, e:
             raise OperationalError(
                 "%s; used connection string: host=%s, port=%s, db=%s, user=%s, pwd=%s" % (
-                e, self.host, self.port, self.db, self.user, self.password)                
+                e, self.host, self.port, self.db, self.user, self.password)
             )
 
         if hasattr(conn, 'autocommit'):
@@ -85,12 +89,12 @@ class MySQLConnection(DBAPI):
         # SERVER_GONE exception, the second attempt the SERVER_LOST exception
         # and only the third succeeds. Thus the 3 in the loop count.
         # If it doesn't reconnect even after 3 attempts, while the database is
-        # up and running, it is because a 5.0.x (or newer) server is used
-        # which no longer permits autoreconnects by default. In their case a
+        # up and running, it is because a 5.0.3 (or newer) server is used
+        # which no longer permits autoreconnects by default. In that case a
         # reconnect flag must be set when making the connection to indicate
-        # that autoreconnecting is desired and the python-mysqldb module
-        # doesn't set this flag.
-        for c in range(0, 3):
+        # that autoreconnecting is desired. In MySQLdb 1.2.2 or newer this is
+        # done by calling ping(True) on the connection.
+        for count in range(3):
             try:
                 if self.need_unicode:
                     # For MysqlDB 1.2.1 and later, we go
@@ -100,8 +104,8 @@ class MySQLConnection(DBAPI):
                 else:
                     return cursor.execute(query)
             except MySQLdb.OperationalError, e:
-                if e.args[0] in (2006, 2013): # SERVER_GONE or SERVER_LOST error
-                    if c == 2:
+                if e.args[0] in (MySQLdb.constants.CR.SERVER_GONE_ERROR, MySQLdb.constants.CR.SERVER_LOST):
+                    if count == 2:
                         raise OperationalError(ErrorMessage(e))
                     if self.debug:
                         self.printDebug(conn, str(e), 'ERROR')
@@ -109,7 +113,7 @@ class MySQLConnection(DBAPI):
                     raise OperationalError(ErrorMessage(e))
             except MySQLdb.IntegrityError, e:
                 msg = ErrorMessage(e)
-                if e.args[0] == 1062:
+                if e.args[0] == MySQLdb.constants.ER.DUP_ENTRY:
                     raise DuplicateEntryError(msg)
                 else:
                     raise IntegrityError(msg)
