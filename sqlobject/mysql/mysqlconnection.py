@@ -28,9 +28,7 @@ class MySQLConnection(DBAPI):
         self.user = user
         self.password = password
         self.kw = {}
-        if MySQLdb.version_info[0] > 1 or (MySQLdb.version_info[0] == 1 and \
-               (MySQLdb.version_info[1] > 2 or \
-               (MySQLdb.version_info[1] == 2 and MySQLdb.version_info[2] >= 1))):
+        if MySQLdb.version_info[:3] >= (1, 2, 1):
             self.need_unicode = True
         else:
             self.need_unicode = False
@@ -62,9 +60,7 @@ class MySQLConnection(DBAPI):
         try:
             conn = self.module.connect(host=self.host, port=self.port,
                 db=self.db, user=self.user, passwd=self.password, **self.kw)
-            if MySQLdb.version_info[0] > 1 or (MySQLdb.version_info[0] == 1 and
-                                               (MySQLdb.version_info[1] > 2 or (MySQLdb.version_info[1] == 2 and
-                                                                                MySQLdb.version_info[2] >= 2))):
+            if MySQLdb.version_info[:3] >= (1, 2, 2):
                 conn.ping(True) # Attempt to reconnect. This setting is persistent.
         except self.module.OperationalError, e:
             raise OperationalError(
