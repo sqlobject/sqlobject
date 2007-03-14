@@ -23,19 +23,18 @@ class SODatabaseIndex(object):
             raise TypeError, "You cannot mix named and unnamed arguments"
         columns = [d['column'] for d in self.descriptions
             if d.has_key('column')]
-        if kw:
-            args = []
-            for i in xrange(len(columns)):
-                args.append(kw[columns[i].name])
-                del kw[columns[i].name]
-        if kw or len(args) != len(columns):
+        if kw and len(kw) != len(columns) or args and len(args) != len(columns):
             raise TypeError, ("get() takes exactly %d argument and an optional "
                 "named argument 'connection' (%d given)" % (
                 len(columns), len(args)+len(kw)))
-        cols = [c.name for c in columns]
-        dbcols = [c.dbName for c in columns]
-        return self.soClass._SO_fetchAlternateID(cols, dbcols, args,
-            connection=connection, idxName=self.name)
+        if args:
+            kw = {}
+            for i in range(len(args)):
+                if columns[i].foreignName is not None:
+                    kw[columns[i].foreignName] = args[i]
+                else:
+                    kw[columns[i].name] = args[i]
+	return self.soClass.selectBy(connection=connection, **kw).getOne()
 
     def convertColumns(self, columns):
         """
