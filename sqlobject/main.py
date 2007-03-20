@@ -1346,10 +1346,16 @@ class SQLObject(object):
 
     selectBy = classmethod(selectBy)
 
+    def tableExists(cls, connection=None):
+        conn = connection or cls._connection
+        return conn.tableExists(cls.sqlmeta.table)
+
+    tableExists = classmethod(tableExists)
+
     def dropTable(cls, ifExists=False, dropJoinTables=True, cascade=False,
                   connection=None):
         conn = connection or cls._connection
-        if ifExists and not conn.tableExists(cls.sqlmeta.table):
+        if ifExists and not cls.tableExists(connection=conn):
             return
         extra_sql = []
         post_funcs = []
@@ -1368,7 +1374,7 @@ class SQLObject(object):
                     createIndexes=True, applyConstraints=True,
                     connection=None):
         conn = connection or cls._connection
-        if ifNotExists and conn.tableExists(cls.sqlmeta.table):
+        if ifNotExists and cls.tableExists(connection=conn):
             return
         extra_sql = []
         post_funcs = []
