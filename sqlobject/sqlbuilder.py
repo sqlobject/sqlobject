@@ -602,10 +602,12 @@ class Delete(SQLExpression):
             raise TypeError, "You must give a where clause or pass in None to indicate no where clause"
         self.whereClause = where
     def __sqlrepr__(self, db):
-        if self.whereClause is None:
+        whereClause = self.whereClause
+        if whereClause is None:
             return "DELETE FROM %s" % self.table
-        return "DELETE FROM %s WHERE %s" \
-               % (self.table, sqlrepr(self.whereClause, db))
+        if isinstance(whereClause, SQLExpression):
+            whereClause = sqlrepr(whereClause, db)
+        return "DELETE FROM %s WHERE %s" % (self.table, whereClause)
 
 registerConverter(Delete, SQLExprConverter)
 
