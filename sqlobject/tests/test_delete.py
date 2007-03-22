@@ -13,6 +13,20 @@ def testSelect():
     assert list(TestSO1.select('all')) == []
 
 ########################################
+## Delete many rows at once
+########################################
+
+def testDeleteMany():
+    setupGetters(TestSO1)
+    TestSO1.deleteMany(OR(TestSO1.q.name=="bob", TestSO1.q.name=="fred"))
+    assert len(list(TestSO1.select('all'))) == 2
+
+def testDeleteBy():
+    setupGetters(TestSO1)
+    TestSO1.deleteBy(name="dave")
+    assert len(list(TestSO1.select())) == 3
+
+########################################
 ## Delete without caching
 ########################################
 

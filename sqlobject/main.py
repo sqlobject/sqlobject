@@ -1562,6 +1562,19 @@ class SQLObject(object):
 
     delete = classmethod(delete)
 
+    def deleteMany(cls, where=NoDefault, connection=None):
+        conn = connection or cls._connection
+        conn.query(conn.sqlrepr(sqlbuilder.Delete(cls.sqlmeta.table, where)))
+
+    deleteMany = classmethod(deleteMany)
+
+    def deleteBy(cls, connection=None, **kw):
+        conn = connection or cls._connection
+        conn.query(conn.sqlrepr(sqlbuilder.Delete(cls.sqlmeta.table,
+            conn._SO_columnClause(cls, kw))))
+
+    deleteBy = classmethod(deleteBy)
+
     def __repr__(self):
         if not hasattr(self, 'id'):
             # Object initialization not finished.  No attributes can be read.
@@ -1599,6 +1612,7 @@ class SQLObject(object):
             value = dbconnection.connectionForURI(value)
         cls._connection = value
     setConnection = classmethod(setConnection)
+
 
 def capitalize(name):
     return name[0].capitalize() + name[1:]
