@@ -187,7 +187,7 @@ class SQLExpression:
     def tablesUsedDict(self):
         tables = {}
         for table in self.tablesUsedImmediate():
-            tables[table] = 1
+            tables[str(table)] = 1
         for component in self.components():
             tables.update(tablesUsedDict(component))
         return tables

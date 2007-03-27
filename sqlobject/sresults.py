@@ -14,10 +14,10 @@ class SelectResults(object):
             clause = sqlbuilder.SQLTrueClause
         self.clause = clause
         tablesDict = sqlbuilder.tablesUsedDict(self.clause)
-        tablesDict[sourceClass.sqlmeta.table] = 1
+        tablesDict[str(sourceClass.sqlmeta.table)] = 1
         if clauseTables:
             for table in clauseTables:
-                tablesDict[table] = 1
+                tablesDict[str(table)] = 1
         self.clauseTables = clauseTables
         self.tables = tablesDict.keys()
         self.ops = ops
