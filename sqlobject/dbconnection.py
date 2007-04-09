@@ -1011,9 +1011,17 @@ class ConnectionHub(object):
         """
         # @@: In Python 2.5, something usable with with: should also
         # be added.
-        old_conn = self.getConnection()
+        try:
+            old_conn = self.threadingLocal.connection
+            old_conn_is_threading = True
+        except AttributeError:
+            old_conn = self.processConnection
+            old_conn_is_threading = False
         conn = old_conn.transaction()
-        self.threadConnection = conn
+        if old_conn_is_threading:
+            self.threadConnection = conn
+        else:
+            self.processConnection = conn
         try:
             try:
                 value = func(*args, **kw)
@@ -1024,7 +1032,10 @@ class ConnectionHub(object):
                 conn.commit(close=True)
                 return value
         finally:
-            self.threadConnection = old_conn
+            if old_conn_is_threading:
+                self.threadConnection = old_conn
+            else:
+                self.processConnection = old_conn
 
     def _set_threadConnection(self, value):
         self.threadingLocal.connection = value
