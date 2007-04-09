@@ -23,11 +23,9 @@ def test_creation_fail():
     Try to creae an Manager without specifying a position.
     this should fail without leaving any partial records in
     the database.
-    """
 
-    setupClass(DIManager)
-    setupClass(DIEmployee)
-    setupClass(DIPerson)
+    """
+    setupClass([DIManager, DIEmployee, DIPerson])
 
     kwargs ={'firstName':'John', 'lastname':'Doe'}
     raises(TypeError, DIManager, **kwargs)
@@ -37,12 +35,7 @@ def test_creation_fail():
     assert persons.count() == 0
 
 def test_deep_inheritance():
-
-    cache = getConnection().cache
-
-    setupClass(DIManager)
-    setupClass(DIEmployee)
-    setupClass(DIPerson)
+    setupClass([DIManager, DIEmployee, DIPerson])
 
     manager = DIManager(firstName='Project', lastName='Manager',
         position='Project Manager')
@@ -51,6 +44,8 @@ def test_deep_inheritance():
         position='Project leader', manager=manager).id
     person_id = DIPerson(firstName='Oneof', lastName='Authors',
         manager=manager).id
+
+    cache = getConnection().cache
     cache.clear()
 
     managers = list(DIManager.select())
