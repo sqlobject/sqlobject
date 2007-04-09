@@ -30,8 +30,8 @@ connectionShortcuts = {
     'mssql': 'mssql://sa:@127.0.0.1/test'
     }
 
-Option = py.test.Config.Option
-option = py.test.Config.addoptions(
+Option = py.test.config.Option
+option = py.test.config.addoptions(
     "SQLObject options",
     Option('-D', '--Database',
            action="store", dest="Database", default='sqlite',
