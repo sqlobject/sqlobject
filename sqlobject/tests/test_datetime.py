@@ -18,8 +18,7 @@ if datetime_available:
     def test_dateTime():
         setupClass(DateTime1)
         _now = datetime.now()
-        _today = date.today()
-        dt1 = DateTime1(col1=_now, col2=_today, col3=_now.time())
+        dt1 = DateTime1(col1=_now, col2=_now, col3=_now.time())
 
         assert isinstance(dt1.col1, datetime)
         assert dt1.col1.year == _now.year
@@ -30,9 +29,10 @@ if datetime_available:
         assert dt1.col1.second == int(_now.second)
 
         assert isinstance(dt1.col2, date)
-        assert dt1.col2.year == _today.year
-        assert dt1.col2.month == _today.month
-        assert dt1.col2.day == _today.day
+        assert not isinstance(dt1.col2, datetime)
+        assert dt1.col2.year == _now.year
+        assert dt1.col2.month == _now.month
+        assert dt1.col2.day == _now.day
 
         assert isinstance(dt1.col3, time)
         assert dt1.col3.hour == _now.hour
