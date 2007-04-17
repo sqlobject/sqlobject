@@ -21,16 +21,21 @@ class SelectResults(object):
         self.clauseTables = clauseTables
         self.tables = tablesDict.keys()
         self.ops = ops
-        if self.ops.get('orderBy', sqlbuilder.NoDefault) is sqlbuilder.NoDefault:
-            self.ops['orderBy'] = sourceClass.sqlmeta.defaultOrder
-        orderBy = self.ops['orderBy']
+        if ops.get('orderBy', sqlbuilder.NoDefault) is sqlbuilder.NoDefault:
+            ops['orderBy'] = sourceClass.sqlmeta.defaultOrder
+        orderBy = ops['orderBy']
         if isinstance(orderBy, list) or isinstance(orderBy, tuple):
             orderBy = map(self._mungeOrderBy, orderBy)
         else:
             orderBy = self._mungeOrderBy(orderBy)
-        self.ops['dbOrderBy'] = orderBy
+        ops['dbOrderBy'] = orderBy
         if ops.has_key('connection') and ops['connection'] is None:
             del ops['connection']
+        if ops.get('limit', None):
+            assert not ops.get('start', None) and not ops.get('end', None), \
+               "'limit' cannot be used with 'start' or 'end'"
+            ops["start"] = 0
+            ops["end"] = ops["limit"]
 
     def __repr__(self):
         return "<%s at %x>" % (self.__class__.__name__, id(self))
@@ -145,13 +150,13 @@ class SelectResults(object):
                 if self.ops.get('end', None) is not None \
                    and self.ops['end'] < end:
                     end = self.ops['end']
-            return self.clone(start=start, end=end)
+            return self.clone(limit=None, start=start, end=end)
         else:
             if value < 0:
                 return list(iter(self))[value]
             else:
                 start = self.ops.get('start', 0) + value
-                return list(self.clone(start=start, end=start+1))[0]
+                return list(self.clone(limit=None, start=start, end=start+1))[0]
 
     def __iter__(self):
         # @@: This could be optimized, using a simpler algorithm
@@ -178,6 +183,7 @@ class SelectResults(object):
 
     def count(self):
         """ Counting elements of current select results """
+        assert not self.ops.get('limit'), "'limit' is meaningless with 'distinct'"
         assert not (self.ops.get('distinct') and (self.ops.get('start')
                                                   or self.ops.get('end'))), \
                "distinct-counting of sliced objects is not supported"

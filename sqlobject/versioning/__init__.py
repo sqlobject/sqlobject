@@ -12,7 +12,7 @@ class Version(SQLObject):
         self.masterClass.get(self.masterID).set(**values)
 
     def nextVersion(self):
-        version = self.select(AND(self.q.masterID == self.masterID, self.q.id > self.id), limit=1, orderBy=self.q.id)
+        version = self.select(AND(self.q.masterID == self.masterID, self.q.id > self.id), orderBy=self.q.id)
         if version.count():
             return version[0]
         else:

@@ -1,9 +1,8 @@
 from __future__ import generators # for enumerate
 from sqlobject import *
 from sqlobject.main import SQLObjectIntegrityError
-from sqlobject.tests.dbtest import *
-from sqlobject.tests.dbtest import setSQLiteConnectionFactory
-from py.test import raises
+from dbtest import *
+from dbtest import setSQLiteConnectionFactory
 
 try:
     enumerate
@@ -85,6 +84,12 @@ def test_select_getOne():
     b2 = IterTest(name='b')
     raises(SQLObjectIntegrityError, 'IterTest.selectBy(name="b").getOne()')
     raises(SQLObjectIntegrityError, 'IterTest.selectBy(name="b").getOne(None)')
+
+def test_05_select_limit():
+    setupIter()
+    assert len(list(IterTest.select(limit=2))) == 2
+    raises(AssertionError, IterTest.select(limit=2).distinct)
+    raises(AssertionError, IterTest.select(limit=2).clone, start=1)
 
 def test_selectBy():
     setupClass(IterTest)
