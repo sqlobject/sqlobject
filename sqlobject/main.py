@@ -200,8 +200,6 @@ class sqlmeta(object):
     # Default is false, but we set it to true for the *instance*
     # when necessary: (bad clever? maybe)
     expired = False
-    # Engine SQL; currently used for MySQL engine ("MyISAM", "InnoDB", etc.)
-    engineSQL = None
 
     # This is a mapping from column names to SOCol (or subclass)
     # instances:
@@ -1462,7 +1460,6 @@ class SQLObject(object):
                 continue
             if join.soClass.__name__ > join.otherClass.__name__:
                 continue
-            join.engineSQL = cls.sqlmeta.engineSQL
             joins.append(join)
         return joins
     _getJoinsToCreate = classmethod(_getJoinsToCreate)

@@ -548,13 +548,12 @@ class DBAPI(DBConnection):
         self.query(self._SO_createJoinTableSQL(join))
 
     def _SO_createJoinTableSQL(self, join):
-        return ('CREATE TABLE %s (\n%s %s,\n%s %s\n) %s' %
+        return ('CREATE TABLE %s (\n%s %s,\n%s %s\n)' %
                 (join.intermediateTable,
                  join.joinColumn,
                  self.joinSQLType(join),
                  join.otherColumn,
-                 self.joinSQLType(join),
-                 self.getDBOptions(join)))
+                 self.joinSQLType(join)))
 
     def _SO_dropJoinTable(self, join):
         self.query("DROP TABLE %s" % join.intermediateTable)
@@ -600,20 +599,9 @@ class DBAPI(DBConnection):
     def createTableSQL(self, soClass):
         constraints = self.createReferenceConstraints(soClass)
         extraSQL = self.createSQL(soClass)
-        createSql = ('CREATE TABLE %s (\n%s\n) %s' %
-                (soClass.sqlmeta.table, self.createColumns(soClass),
-                self.getDBOptions(soClass)))
+        createSql = ('CREATE TABLE %s (\n%s\n)' %
+                (soClass.sqlmeta.table, self.createColumns(soClass)))
         return createSql, constraints + extraSQL
-
-    def getDBOptions(self, SO_or_join):
-        if hasattr(SO_or_join, "sqlmeta"):
-            engineSQL = SO_or_join.sqlmeta.engineSQL
-        else:
-            engineSQL = getattr(SO_or_join, "engineSQL", None)
-        if engineSQL:
-            return "ENGINE = %s" % engineSQL
-        else:
-            return ""
 
     def createColumns(self, soClass):
         columnDefs = [self.createIDColumn(soClass)] \
