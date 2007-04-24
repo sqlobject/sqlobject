@@ -669,14 +669,14 @@ def NOTIN(item, list):
     else:
         return NOT(_IN(item, list))
 
-def STARTSWITH(expr, string):
-    return SQLOp("LIKE", expr, _LikeQuoted(string) + '%')
+def STARTSWITH(expr, pattern):
+    return SQLOp("LIKE", expr, _LikeQuoted(pattern) + '%')
 
-def ENDSWITH(expr, string):
-    return SQLOp("LIKE", expr, '%' + _LikeQuoted(string))
+def ENDSWITH(expr, pattern):
+    return SQLOp("LIKE", expr, '%' + _LikeQuoted(pattern))
 
-def CONTAINSSTRING(expr, string):
-    return SQLOp("LIKE", expr, '%' + _LikeQuoted(string) + '%')
+def CONTAINSSTRING(expr, pattern):
+    return SQLOp("LIKE", expr, '%' + _LikeQuoted(pattern) + '%')
 
 def ISNULL(expr):
     return SQLOp("IS", expr, None)
@@ -685,6 +685,8 @@ def ISNOTNULL(expr):
     return SQLOp("IS NOT", expr, None)
 
 class _LikeQuoted:
+    # It assumes prefix and postfix are strings; usually just a percent sign.
+
     # @@: I'm not sure what the quoting rules really are for all the
     # databases
 
@@ -702,12 +704,29 @@ class _LikeQuoted:
         return self
 
     def __sqlrepr__(self, db):
-        s = sqlrepr(self.expr, db)[1:-1] # remove quotes
-        if db in ('postgres', 'mysql'):
-            s = s.replace('%', '\\%')
-        else:
-            s = s.replace('%', '%%')
-        return "'%s%s%s'" % (self.prefix, s, self.postfix)
+        s = self.expr
+        if isinstance(s, SQLExpression):
+            values = []
+            if self.prefix:
+                values.append("'%s'" % self.prefix)
+            s = _quote_percent(sqlrepr(s, db), db)
+            values.append(s)
+            if self.postfix:
+                values.append("'%s'" % self.postfix)
+            if db == "mysql":
+                return "CONCAT(%s)" % ", ".join(values)
+            else:
+                return " || ".join(values)
+        else: # assuming s is a string
+            s = _quote_percent(s, db)
+            return "'%s%s%s'" % (self.prefix, s, self.postfix)
+
+def _quote_percent(s, db):
+    if db in ('postgres', 'mysql'):
+        s = s.replace('%', '\\%')
+    else:
+        s = s.replace('%', '%%')
+    return s
 
 ########################################
 ## SQL JOINs
