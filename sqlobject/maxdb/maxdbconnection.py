@@ -136,7 +136,7 @@ class MaxdbConnection(DBAPI):
             self.printDebug(conn, id, 'QueryIns', 'result')
         return id
 
-    def sqlAddLimit(self,query,limit):
+    def sqlAddLimit(cls,query,limit):
         sql = query
         sql = sql.replace("SELECT","SELECT ROWNO, ")
         if sql.find('WHERE') != -1:
@@ -144,12 +144,14 @@ class MaxdbConnection(DBAPI):
         else:
             sql = sql + 'WHERE ' + limit
         return sql
+    sqlAddLimit = classmethod(sqlAddLimit)
 
-    def _queryAddLimitOffset(self, query, start, end):
+    def _queryAddLimitOffset(cls, query, start, end):
         if start:
             raise LowerBoundOfSliceIsNotSupported
         limit = ' ROWNO   <= %d ' % (end)
-        return self.sqlAddLimit(query,limit)
+        return cls.sqlAddLimit(query,limit)
+    _queryAddLimitOffset = classmethod(_queryAddLimitOffset)
 
 
     def createTable(self, soClass):

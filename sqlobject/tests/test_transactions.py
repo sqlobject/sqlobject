@@ -70,6 +70,7 @@ def test_transaction_delete(close=False):
         raises(SQLObjectNotFound, "TestSOTrans.get(bOutID)")
         raises(SQLObjectNotFound, "bOutInst.name")
     finally:
+        trans.rollback()
         TestSOTrans._connection.autoCommit = True
 
 def test_transaction_delete_with_close():

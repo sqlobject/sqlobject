@@ -68,7 +68,7 @@ def test_6syntax_join():
      j = LEFTOUTERJOINOn(TestIn2, TestIn1, TestIn1.q.col1==TestIn2.q.col2)
      select = TestIn1.select(TestIn1.q.col1 == Select(TestIn2.q.col2, where=(TestIn2.q.col2 == "test"), join=j))
      assert str(select) == \
-        "SELECT test_in1.id, test_in1.col1 FROM test_in1 WHERE ((test_in1.col1) = (SELECT test_in2.col2 FROM  test_in2 LEFT OUTER JOIN test_in1 ON ((test_in1.col1) = (test_in2.col2)) WHERE ((test_in2.col2) = ('test'))))"
+        "SELECT test_in1.id, test_in1.col1 FROM test_in1 WHERE ((test_in1.col1) = (SELECT test_in2.col2 FROM test_in2 LEFT OUTER JOIN test_in1 ON ((test_in1.col1) = (test_in2.col2)) WHERE ((test_in2.col2) = ('test'))))"
 
 def test_6perform_join():
      insert()

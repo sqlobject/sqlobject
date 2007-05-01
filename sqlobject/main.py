@@ -1283,12 +1283,17 @@ class SQLObject(object):
             column = cls.sqlmeta.columns[name]
             if isinstance(column, col.SOUnicodeCol):
                 value = value.encode(column.dbEncoding)
+        if isinstance(name, str):
+            name = (name,)
+            value = (value,)
+        if len(name) != len(value):
+            raise ValueError, "'column' and 'value' tuples must be of the same size"
+        condition = sqlbuilder.AND(*[getattr(cls.q, n)==v for n,v in zip(name, value)])
         return (connection or cls._connection)._SO_selectOneAlt(
             cls,
             [cls.sqlmeta.idName] +
             [column.dbName for column in cls.sqlmeta.columnList],
-            dbName,
-            value), None
+            condition), None
     _findAlternateID = classmethod(_findAlternateID)
 
     def _SO_fetchAlternateID(cls, name, dbName, value, connection=None, idxName=None):

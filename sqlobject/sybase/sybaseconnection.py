@@ -94,11 +94,12 @@ class SybaseConnection(DBAPI):
             self.printDebug(conn, id, 'QueryIns', 'result')
         return id
 
-    def _queryAddLimitOffset(self, query, start, end):
+    def _queryAddLimitOffset(cls, query, start, end):
         # XXX Sybase doesn't support OFFSET
         if end:
             return "SET ROWCOUNT %i %s SET ROWCOUNT 0" % (end, query)
         return query
+    _queryAddLimitOffset = classmethod(_queryAddLimitOffset)
 
     def createReferenceConstraint(self, soClass, col):
         return None

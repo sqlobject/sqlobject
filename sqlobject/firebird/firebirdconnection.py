@@ -107,7 +107,7 @@ class FirebirdConnection(DBAPI):
             self.printDebug(conn, id, 'QueryIns', 'result')
         return id
 
-    def _queryAddLimitOffset(self, query, start, end):
+    def _queryAddLimitOffset(cls, query, start, end):
         """Firebird slaps the limit and offset (actually 'first' and
         'skip', respectively) statement right after the select."""
         if not start:
@@ -117,11 +117,12 @@ class FirebirdConnection(DBAPI):
         else:
             limit_str = "SELECT FIRST %i SKIP %i" % (end-start, start)
 
-        match = self.limit_re.match(query)
+        match = cls.limit_re.match(query)
         if match and len(match.groups()) == 2:
             return ' '.join([limit_str, match.group(2)])
         else:
             return query
+    _queryAddLimitOffset = classmethod(_queryAddLimitOffset)
 
     def createTable(self, soClass):
         self.query('CREATE TABLE %s (\n%s\n)' % \

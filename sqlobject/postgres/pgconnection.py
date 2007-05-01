@@ -138,12 +138,13 @@ class PostgresConnection(DBAPI):
             self.printDebug(conn, id, 'QueryIns', 'result')
         return id
 
-    def _queryAddLimitOffset(self, query, start, end):
+    def _queryAddLimitOffset(cls, query, start, end):
         if not start:
             return "%s LIMIT %i" % (query, end)
         if not end:
             return "%s OFFSET %i" % (query, start)
         return "%s LIMIT %i OFFSET %i" % (query, end-start, start)
+    _queryAddLimitOffset = classmethod(_queryAddLimitOffset)
 
     def createColumn(self, soClass, col):
         return col.postgresCreateSQL()

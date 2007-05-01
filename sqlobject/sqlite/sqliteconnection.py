@@ -231,12 +231,13 @@ class SQLiteConnection(DBAPI):
         else:
             return DBAPI._insertSQL(self, table, names, values)
 
-    def _queryAddLimitOffset(self, query, start, end):
+    def _queryAddLimitOffset(cls, query, start, end):
         if not start:
             return "%s LIMIT %i" % (query, end)
         if not end:
             return "%s LIMIT 0 OFFSET %i" % (query, start)
         return "%s LIMIT %i OFFSET %i" % (query, end-start, start)
+    _queryAddLimitOffset = classmethod(_queryAddLimitOffset)
 
     def createColumn(self, soClass, col):
         return col.sqliteCreateSQL()

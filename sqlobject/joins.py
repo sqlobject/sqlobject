@@ -62,13 +62,19 @@ class SOJoin(object):
             otherClass, self._setOtherClass)
         self.joinColumn = joinColumn
         self.joinMethodName = joinMethodName
-        self.orderBy = orderBy
+        self._orderBy = orderBy
         if not self.joinColumn:
             # Here we set up the basic join, which is
             # one-to-many, where the other class points to
             # us.
             self.joinColumn = styles.getStyle(
                 self.soClass).tableReference(self.soClass.sqlmeta.table)
+
+    def orderBy(self):
+        if self._orderBy is NoDefault:
+            self._orderBy = self.otherClass.sqlmeta.defaultOrder
+        return self._orderBy
+    orderBy = property(orderBy)
 
     def _setOtherClass(self, cls):
         self.otherClass = cls
@@ -77,8 +83,6 @@ class SOJoin(object):
         return False
 
     def _applyOrderBy(self, results, defaultSortClass):
-        if self.orderBy is NoDefault:
-            self.orderBy = defaultSortClass.sqlmeta.defaultOrder
         if self.orderBy is not None:
             results.sort(sorter(self.orderBy))
         return results
@@ -159,8 +163,6 @@ class SOSQLMultipleJoin(SOMultipleJoin):
         else:
             conn = None
         results = self.otherClass.select(getattr(self.otherClass.q, self.soClass.sqlmeta.style.dbColumnToPythonAttr(self.joinColumn)) == inst.id, connection=conn)
-        if self.orderBy is NoDefault:
-            self.orderBy = self.otherClass.sqlmeta.defaultOrder
         return results.orderBy(self.orderBy)
 
 class SQLMultipleJoin(Join):
@@ -235,6 +237,9 @@ class OtherTableToJoin(sqlbuilder.SQLExpression):
         self.interTable = interTable
         self.joinColumn = joinColumn
 
+    def tablesUsedImmediate(self):
+        return [self.otherTable, self.interTable]
+
     def __sqlrepr__(self, db):
         return '%s.%s = %s.%s' % (self.otherTable, self.otherIdName, self.interTable, self.joinColumn)
 
@@ -244,6 +249,9 @@ class JoinToTable(sqlbuilder.SQLExpression):
         self.idName = idName
         self.interTable = interTable
         self.joinColumn = joinColumn
+
+    def tablesUsedImmediate(self):
+        return [self.table, self.interTable]
     
     def __sqlrepr__(self, db):
         return '%s.%s = %s.%s' % (self.interTable, self.joinColumn, self.table, self.idName)
@@ -253,6 +261,9 @@ class TableToId(sqlbuilder.SQLExpression):
         self.table = table
         self.idName = idName
         self.idValue = idValue
+
+    def tablesUsedImmediate(self):
+        return [self.table]
 
     def __sqlrepr__(self, db):
         return '%s.%s = %s' % (self.table, self.idName, self.idValue)
@@ -270,8 +281,6 @@ class SOSQLRelatedJoin(SORelatedJoin):
             ),
             TableToId(self.soClass.sqlmeta.table, self.soClass.sqlmeta.idName, inst.id),
         ), clauseTables=(self.soClass.sqlmeta.table, self.otherClass.sqlmeta.table, self.intermediateTable))
-        if self.orderBy is NoDefault:
-            self.orderBy = self.otherClass.sqlmeta.defaultOrder
         return results.orderBy(self.orderBy)
 
 class SQLRelatedJoin(RelatedJoin):

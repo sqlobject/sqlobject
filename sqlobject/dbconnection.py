@@ -403,146 +403,15 @@ class DBAPI(DBConnection):
         """ Apply an accumulate function(s) (SUM, COUNT, MIN, AVG, MAX, etc...)
             to the select object.
         """
-        ops = select.ops
-        join = ops.get('join')
-        if join:
-            tables = self._fixTablesForJoins(select)
-        else:
-            tables = select.tables
-        q = "SELECT %s" % ", ".join([str(expression) for expression in expressions])
-        q += " FROM %s" % ", ".join(tables)
-        if join:
-            q += self._addJoins(select, tables)
-        q += " WHERE"
-        q = self._addWhereClause(select, q, limit=0, order=0)
+        q = select.queryForSelect().newItems(expressions).unlimited().orderBy(None)
+        q = self.sqlrepr(q)
         val = self.queryOne(q)
         if len(expressions) == 1:
             val = val[0]
         return val
 
     def queryForSelect(self, select):
-        ops = select.ops
-        join = ops.get('join')
-        cls = select.sourceClass
-        if join:
-            tables = self._fixTablesForJoins(select)
-        else:
-            tables = select.tables
-        if ops.get('distinct', False):
-            q = 'SELECT DISTINCT '
-        else:
-            q = 'SELECT '
-        if ops.get('lazyColumns', 0):
-            q += "%s.%s FROM %s" % \
-                 (cls.sqlmeta.table, cls.sqlmeta.idName,
-                  ", ".join(tables))
-        else:
-            columns = ", ".join(["%s.%s" % (cls.sqlmeta.table, col.dbName)
-                                 for col in cls.sqlmeta.columnList])
-            if columns:
-                q += "%s.%s, %s FROM %s" % \
-                     (cls.sqlmeta.table, cls.sqlmeta.idName, columns,
-                      ", ".join(tables))
-            else:
-                q += "%s.%s FROM %s" % \
-                     (cls.sqlmeta.table, cls.sqlmeta.idName,
-                      ", ".join(tables))
-
-        if join:
-            q += self._addJoins(select, tables)
-        q += " WHERE"
-        return self._addWhereClause(select, q)
-
-    def _fixTablesForJoins(self, select):
-        ops = select.ops
-        join = ops.get('join')
-        tables = select.tables
-        if type(join) is str:
-            return tables
-        else:
-            tables = tables[:] # maka a copy for modification
-            if isinstance(join, sqlbuilder.SQLJoin):
-                if join.table1 in tables: tables.remove(join.table1)
-                if join.table2 in tables: tables.remove(join.table2)
-            else:
-                for j in join:
-                    if j.table1 in tables: tables.remove(j.table1)
-                    if j.table2 in tables: tables.remove(j.table2)
-            return tables
-
-    def _addJoins(self, select, tables):
-        ops = select.ops
-        join = ops.get('join')
-        if type(join) is str:
-            join_str = ' ' + join
-        elif isinstance(join, sqlbuilder.SQLJoin):
-            if join.table1:
-                join_str = ", "
-            else:
-                join_str = ' '
-            join_str += self.sqlrepr(join)
-        else:
-            join_str = ""
-            for j in join:
-                if j.table1:
-                    sep = ", "
-                else:
-                    sep = ' '
-                join_str += sep + self.sqlrepr(j)
-        if not tables and join_str.startswith(','):
-            join_str = join_str[1:].strip()
-        return join_str
-
-    def _addWhereClause(self, select, startSelect, limit=1, order=1):
-
-        q = select.clause
-        if type(q) not in [type(''), type(u'')]:
-            q = self.sqlrepr(q)
-        ops = select.ops
-
-        def clauseList(lst, desc=False):
-            if type(lst) not in (type([]), type(())):
-                lst = [lst]
-            lst = [clauseQuote(i) for i in lst]
-            if desc:
-                lst = [sqlbuilder.DESC(i) for i in lst]
-            return ', '.join([self.sqlrepr(i) for i in lst])
-
-        def clauseQuote(s):
-            if type(s) is type(""):
-                if s.startswith('-'):
-                    desc = True
-                    s = s[1:]
-                else:
-                    desc = False
-                assert sqlbuilder.sqlIdentifier(s), "Strings in clauses are expected to be column identifiers.  I got: %r" % s
-                if s in select.sourceClass.sqlmeta.columns:
-                    s = select.sourceClass.sqlmeta.columns[s].dbName
-                if desc:
-                    return sqlbuilder.DESC(sqlbuilder.SQLConstant(s))
-                else:
-                    return sqlbuilder.SQLConstant(s)
-            else:
-                return s
-
-        if order and ops.get('dbOrderBy'):
-            q = "%s ORDER BY %s" % (q, clauseList(ops['dbOrderBy'], ops.get('reversed', False)))
-
-        start = ops.get('start', 0)
-        end = ops.get('end', None)
-
-        q = startSelect + ' ' + q
-
-        if limit and (start or end):
-            # @@: Raising an error might be an annoyance, but some warning is
-            # in order.
-            #assert ops.get('orderBy'), "Getting a slice of an unordered set is unpredictable!"
-            q = self._queryAddLimitOffset(q, start, end)
-
-        if ops.get('forUpdate'):
-            q += " FOR UPDATE";
-
-        return q
+        return self.sqlrepr(select.queryForSelect())
 
     def _SO_createJoinTable(self, join):
         self.query(self._SO_createJoinTableSQL(join))
@@ -647,35 +516,17 @@ class DBAPI(DBConnection):
                     self.sqlrepr(so.id)))
 
     def _SO_selectOne(self, so, columnNames):
-        columns = ", ".join(columnNames)
-        if columns:
-            return self.queryOne(
-                "SELECT %s FROM %s WHERE %s = (%s)" %
-                (columns,
-                 so.sqlmeta.table,
-                 so.sqlmeta.idName,
-                 self.sqlrepr(so.id)))
-        else:
-            return self.queryOne(
-                "SELECT NULL FROM %s WHERE %s = (%s)" %
-                (so.sqlmeta.table,
-                 so.sqlmeta.idName,
-                 self.sqlrepr(so.id)))
+        return self._SO_selectOneAlt(so, columnNames, so.q.id==so.id)
 
-    def _SO_selectOneAlt(self, cls, columnNames, column, value):
-        if isinstance(column, str):
-            column = (column,)
-            value = (value,)
-        if len(column) != len(value):
-            raise ValueError, "'column' and 'value' tuples must be of the same size"
-        columns = []
-        for i in xrange(len(column)):
-            columns.append("(%s) = (%s)" % (column[i], self.sqlrepr(value[i])))
-        condition = ' AND '.join(columns)
-        return self.queryOne("SELECT %s FROM %s WHERE %s" %
-                             (", ".join(columnNames),
-                              cls.sqlmeta.table,
-                              condition))
+
+    def _SO_selectOneAlt(self, so, columnNames, condition):
+        if columnNames:
+            columns = [isinstance(x, (str, unicode)) and sqlbuilder.SQLConstant(x) or x for x in columnNames]
+        else:
+            columns = None
+        return self.queryOne(self.sqlrepr(sqlbuilder.Select(columns,
+                                                            staticTables=[so.sqlmeta.table],
+                                                            clause=condition)))
 
     def _SO_delete(self, so):
         self.query("DELETE FROM %s WHERE %s = (%s)" %
@@ -1073,10 +924,8 @@ class ConnectionURIOpener(object):
             return self.cachedURIs[uri]
         if uri.find(':') != -1:
             scheme, rest = uri.split(':', 1)
-            assert self.schemeBuilders.has_key(scheme), (
-                   "No SQLObject driver exists for %s (only %s)"
-                   % (scheme, ', '.join(self.schemeBuilders.keys())))
-            conn = self.schemeBuilders[scheme]().connectionFromURI(uri)
+            connCls = self.dbConnectionForScheme(scheme)
+            conn = connCls.connectionFromURI(uri)
         else:
             # We just have a name, not a URI
             assert self.instanceNames.has_key(uri), \
@@ -1086,8 +935,15 @@ class ConnectionURIOpener(object):
         self.cachedURIs[uri] = conn
         return conn
 
+    def dbConnectionForScheme(self, scheme):
+        assert self.schemeBuilders.has_key(scheme), (
+               "No SQLObject driver exists for %s (only %s)"
+               % (scheme, ', '.join(self.schemeBuilders.keys())))
+        return self.schemeBuilders[scheme]()
+
 TheURIOpener = ConnectionURIOpener()
 
 registerConnection = TheURIOpener.registerConnection
 registerConnectionInstance = TheURIOpener.registerConnectionInstance
 connectionForURI = TheURIOpener.connectionForURI
+dbConnectionForScheme = TheURIOpener.dbConnectionForScheme

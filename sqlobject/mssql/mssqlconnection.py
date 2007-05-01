@@ -143,15 +143,16 @@ class MSSQLConnection(DBAPI):
             self.printDebug(conn, id, 'QueryIns', 'result')
         return id
 
-    def _queryAddLimitOffset(self, query, start, end):
+    def _queryAddLimitOffset(cls, query, start, end):
         if end and not start:
             limit_str = "SELECT TOP %i" % end
 
-            match = self.limit_re.match(query)
+            match = cls.limit_re.match(query)
             if match and len(match.groups()) == 2:
                 return ' '.join([limit_str, match.group(2)])
         else:
             return query
+    _queryAddLimitOffset = classmethod(_queryAddLimitOffset)
 
     def createReferenceConstraint(self, soClass, col):
         return col.mssqlCreateReferenceConstraint()
