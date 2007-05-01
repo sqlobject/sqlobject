@@ -1,0 +1,62 @@
+from sqlobject import *
+from sqlobject.sqlbuilder import *
+from sqlobject.tests.dbtest import *
+
+''' Testing for expressing join, foreign keys, and instance identity in SQLBuilder expressions.
+'''
+
+class SBPerson(SQLObject):
+    name = StringCol()
+    addresses = SQLMultipleJoin('SBAddress', joinColumn='personID')
+    sharedAddresses = SQLRelatedJoin('SBAddress', addRemoveName='SharedAddress')
+    
+class SBAddress(SQLObject):
+    city = StringCol()
+    person = ForeignKey('SBPerson')
+    sharedPeople = SQLRelatedJoin('SBPerson')
+    
+
+def setup_module(mod):
+    setupClass([SBPerson, SBAddress])
+    mod.ppl = inserts(SBPerson, [('James',),
+                                 ('Julia',)],
+                      'name')
+    mod.adds = inserts(SBAddress, [('London',mod.ppl[0].id),
+                                 ('Chicago',mod.ppl[1].id),
+                                 ('Abu Dhabi', mod.ppl[1].id)],
+                      'city personID')
+    mod.ppl[0].addSharedAddress(mod.adds[0])
+    mod.ppl[0].addSharedAddress(mod.adds[1])
+    mod.ppl[1].addSharedAddress(mod.adds[0])
+
+def testJoin():
+    assert list(SBPerson.select(AND(SBPerson.q.addresses,SBAddress.q.city=='London'))) == \
+            list(SBPerson.select(AND(SBPerson.q.id==SBAddress.q.personID, SBAddress.q.city=='London'))) == \
+            list(SBAddress.selectBy(city='London').throughTo.person)
+            
+def testFK():
+    assert list(SBPerson.select(AND(SBAddress.q.person, SBAddress.q.city=='London'))) == \
+            list(SBPerson.select(AND(SBPerson.q.id==SBAddress.q.personID, SBAddress.q.city=='London')))
+
+def testJoin2():
+    assert list(SBAddress.select(AND(SBPerson.q.addresses, SBPerson.q.name=='Julia'))) == \
+            list(SBAddress.select(AND(SBPerson.q.id==SBAddress.q.personID, SBPerson.q.name=='Julia'))) == \
+            list(SBPerson.selectBy(name='Julia').throughTo.addresses)
+            
+def testFK2():
+    assert list(SBAddress.select(AND(SBAddress.q.person, SBPerson.q.name=='Julia'))) == \
+            list(SBAddress.select(AND(SBPerson.q.id==SBAddress.q.personID, SBPerson.q.name=='Julia')))
+
+def testRelatedJoin():
+    assert list(SBAddress.select(AND(SBAddress.q.sharedPeople, SBPerson.q.name=='Julia'))) == \
+            list(SBPerson.selectBy(name='Julia').throughTo.sharedAddresses) == \
+            list(ppl[1].sharedAddresses)
+
+def testInstance():
+    assert list(SBAddress.select(AND(SBAddress.q.person, ppl[0]))) == \
+            list(SBAddress.select(AND(SBPerson.q.id==SBAddress.q.personID, SBPerson.q.id==ppl[0].id))) == \
+            list(ppl[0].addresses)
+            
+def testInstance2():
+    assert list(SBAddress.select(AND(SBPerson.q.addresses, ppl[0]))) == \
+            list(SBAddress.select(AND(SBPerson.q.id==SBAddress.q.personID, SBPerson.q.id==ppl[0].id)))

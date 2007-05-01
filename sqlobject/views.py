@@ -32,23 +32,16 @@ class ViewSQLObjectTable(SQLObjectTable):
     def __getattr__(self, attr):
         if attr == 'sqlmeta':
             raise AttributeError
-        alias = self.soClass.sqlmeta.alias
-        if attr.startswith('__'):
-            raise AttributeError
-        if attr == 'id':
-            return self.FieldClass(alias, self.tableName, 'id', attr)
-        elif attr not in self.soClass.sqlmeta.columns:
-            raise AttributeError("%s instance has no attribute '%s'" % (self.soClass.__name__, attr))
-        else:
-            column = self.soClass.sqlmeta.columns[attr]
-            if hasattr(column, "dbEncoding"):
-                return self.UnicodeFieldClass(alias, self.tableName, column.name,
-                    attr, column)
-            else:
-                return self.FieldClass(alias, self.tableName, column.name, attr)
+        return SQLObjectTable.__getattr__(self, attr)
 
-class ViewSQLObjectMeta(sqlmeta):
-    pass
+    def _getattrFromID(self, attr):
+        return self.FieldClass(self.soClass.sqlmeta.alias, self.tableName, 'id', attr)
+
+    def _getattrFromColumn(self, column, attr):
+        return self.FieldClass(self.soClass.sqlmeta.alias, self.tableName, column.name, attr)
+
+    def _getattrFromUnicodeColumn(self, column, attr):
+        return self.UnicodeFieldClass(self.soClass.sqlmeta.alias, self.tableName, column.name, attr, column)
 
 
 class ViewSQLObject(SQLObject):
@@ -60,9 +53,6 @@ class ViewSQLObject(SQLObject):
             table as an optional alternate name for the class alias
         See test_views.py for simple examples.
     '''
-    
-    class sqlmeta(ViewSQLObjectMeta):
-        pass
     
     def __classinit__(cls, new_attrs):
         SQLObject.__classinit__(cls, new_attrs)

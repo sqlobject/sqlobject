@@ -1615,6 +1615,12 @@ class SQLObject(object):
         cls._connection = value
     setConnection = classmethod(setConnection)
 
+    def __sqlrepr__(self, db):
+        return sqlbuilder.sqlrepr(self.__class__.q.id==self.id)
+    
+    def tablesUsedImmediate(self):
+        return [self.__class__.q]
+
 
 def capitalize(name):
     return name[0].capitalize() + name[1:]
