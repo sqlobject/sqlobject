@@ -651,7 +651,10 @@ class Select(SQLExpression):
         if self.ops['clause'] is not NoDefault:
             select += " WHERE %s" % sqlrepr(self.ops['clause'], db)
         if self.ops['groupBy'] is not NoDefault:
-            select += " GROUP BY %s" % sqlrepr(self.ops['groupBy'], db)
+            groupBy = sqlrepr(self.ops['groupBy'], db)
+            if isinstance(self.ops['groupBy'], (list, tuple)):
+                groupBy = groupBy[1:-1] # Remove parens
+            select += " GROUP BY %s" % groupBy
         if self.ops['having'] is not NoDefault:
             select += " HAVING %s" % sqlrepr(self.ops['having'], db)
         if self.ops['orderBy'] is not NoDefault and self.ops['orderBy'] is not None:
