@@ -398,7 +398,7 @@ class SQLObjectTable(Table):
 
     def _getattrFromID(self, attr):
         return self.FieldClass(self.tableName, self.soClass.sqlmeta.idName, attr)
-    
+
     def _getattrFromForeignKey(self, column, attr):
         ret =  getattr(self, column.name)==getattr(self.soClass, '_SO_class_'+column.foreignKey).q.id
         print column
@@ -851,7 +851,7 @@ class ColumnAS(SQLOp):
     ''' Just like SQLOp('AS', expr, name) except without the parentheses '''
     def __init__(self, expr, name):
         if isinstance(name, (str, unicode)):
-            name = SQLConstant(name)  
+            name = SQLConstant(name)
         SQLOp.__init__(self, 'AS', expr, name)
     def __sqlrepr__(self, db):
         return "%s %s %s" % (sqlrepr(self.expr1, db), self.op, sqlrepr(self.expr2, db))
