@@ -11,4 +11,3 @@ Sybase.  It should support Python versions back to 2.2.
 
 For more information please see the documentation in
 docs/SQLObject.txt, or online at http://sqlobject.org/
-
