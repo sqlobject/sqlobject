@@ -41,3 +41,16 @@ def test_1():
     assert trunks in hibrid.fightersAsSResult
     assert picollo not in hibrid.fightersAsSResult
     assert str(hibrid.fightersAsSResult.sum('power')) == '23'
+
+def test_multiple_join_transaction():
+    if not supports('transactions'):
+        return
+    createAllTables()
+    trans = Race._connection.transaction()
+    try:
+        namek=Race(name='namekuseijin', connection=trans)
+        gokou=RFighter(name='Gokou (Kakaruto)', race=namek, power=10, connection=trans)
+        assert namek.fightersAsSResult.count() == 1
+        assert namek.fightersAsSResult[0]._connection == trans
+    finally:
+        Race._connection.autoCommit = True
