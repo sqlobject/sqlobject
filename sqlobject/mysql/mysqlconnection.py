@@ -57,13 +57,14 @@ class MySQLConnection(DBAPI):
     connectionFromURI = classmethod(connectionFromURI)
 
     def makeConnection(self):
-        from MySQLdb.connections import Connection
-        if not hasattr(Connection, 'set_character_set'):
-            # monkeypatch pre MySQLdb 1.2.1
-            encoding = self.dbEncoding
-            def character_set_name(self):
-                return encoding + '_' + encoding
-            Connection.character_set_name = character_set_name
+        dbEncoding = self.dbEncoding
+        if dbEncoding:
+            from MySQLdb.connections import Connection
+            if not hasattr(Connection, 'set_character_set'):
+                # monkeypatch pre MySQLdb 1.2.1
+                def character_set_name(self):
+                    return dbEncoding + '_' + dbEncoding
+                Connection.character_set_name = character_set_name
         try:
             conn = self.module.connect(host=self.host, port=self.port,
                 db=self.db, user=self.user, passwd=self.password, **self.kw)
@@ -78,11 +79,12 @@ class MySQLConnection(DBAPI):
         if hasattr(conn, 'autocommit'):
             conn.autocommit(bool(self.autoCommit))
 
-        if hasattr(conn, 'set_character_set'): # MySQLdb 1.2.1 and later
-            conn.set_character_set(self.dbEncoding)
-        else: # pre MySQLdb 1.2.1
-            # works along with monkeypatching code above
-            conn.query("SET NAMES %s" % self.dbEncoding)
+        if self.dbEncoding:
+            if hasattr(conn, 'set_character_set'): # MySQLdb 1.2.1 and later
+                conn.set_character_set(self.dbEncoding)
+            else: # pre MySQLdb 1.2.1
+                # works along with monkeypatching code above
+                conn.query("SET NAMES %s" % self.dbEncoding)
 
         return conn
 
