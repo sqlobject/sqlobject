@@ -3,12 +3,12 @@ from sqlobject.tests.dbtest import *
 
 class Race(SQLObject):
     name = StringCol()
-    fightersAsList = MultipleJoin('RFighter')
-    fightersAsSResult = SQLMultipleJoin('RFighter')
+    fightersAsList = MultipleJoin('RFighter', joinColumn="rf_id")
+    fightersAsSResult = SQLMultipleJoin('RFighter', joinColumn="rf_id")
 
 class RFighter(SQLObject):
     name = StringCol()
-    race = ForeignKey('Race')
+    race = ForeignKey('Race', dbName="rf_id")
     power = IntCol()
 
 def createAllTables():

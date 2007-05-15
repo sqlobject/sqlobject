@@ -28,7 +28,7 @@ class UnicodeViewSQLObjectField(UnicodeField):
 class ViewSQLObjectTable(SQLObjectTable):
     FieldClass = ViewSQLObjectField
     UnicodeFieldClass = UnicodeViewSQLObjectField
-    
+
     def __getattr__(self, attr):
         if attr == 'sqlmeta':
             raise AttributeError
@@ -53,13 +53,13 @@ class ViewSQLObject(SQLObject):
             table as an optional alternate name for the class alias
         See test_views.py for simple examples.
     '''
-    
+
     def __classinit__(cls, new_attrs):
         SQLObject.__classinit__(cls, new_attrs)
         # like is_base
         if cls.__name__ != 'ViewSQLObject':
             dbName = hasattr(cls,'_connection') and (cls._connection and cls._connection.dbName) or None
-            
+
             if getattr(cls.sqlmeta, 'table', None):
                 cls.sqlmeta.alias = cls.sqlmeta.table
             else:
@@ -81,7 +81,7 @@ class ViewSQLObject(SQLObject):
                         aggregates[''].append(ascol)
                 else:
                     columns.append(ascol)
-            
+
             metajoin   = getattr(cls.sqlmeta, 'join', NoDefault)
             clause = getattr(cls.sqlmeta, 'clause', NoDefault)
             select = Select(columns,
@@ -91,17 +91,17 @@ class ViewSQLObject(SQLObject):
                             #distinctOn=cls.sqlmeta.idName,
                             join=metajoin,
                             clause=clause)
-            
+
             aggregates = aggregates.values()
             #print cls.__name__, sqlrepr(aggregates, dbName)
-            
+
             if aggregates != [[None]]:
                 join = []
                 last_alias = "%s_base" % alias
                 last_id = "id"
                 last = Alias(select, last_alias)
                 columns = [ColumnAS(SQLConstant("%s.%s"%(last_alias,x.expr2)), x.expr2) for x in columns]
-                
+
                 for i, agg in enumerate(aggregates):
                     restriction = agg[0]
                     if restriction is None:
@@ -121,22 +121,22 @@ class ViewSQLObject(SQLObject):
                     agg_join = LEFTJOINOn(last,
                                        new_alias,
                                        "%s.%s = %s.%s" % (last_alias, last_id, agg_alias, agg_id))
-                    
+
                     join.append(agg_join)
                     for col in agg:
                         columns.append(ColumnAS(SQLConstant("%s.%s"%(agg_alias, col.expr2)),col.expr2))
-                    
+
                     last = new_alias
                     last_alias = agg_alias
                     last_id = agg_id
                 select = Select(columns,
                                 join=join)
-            
+
             cls.sqlmeta.table = Alias(select, alias)
             cls.q = ViewSQLObjectTable(cls)
             for n,col in cls.sqlmeta.columns.iteritems():
-                col.dbName = getattr(cls.q, n)
-            
+                col.dbName = n
+
 def isAggregate(expr):
     if isinstance(expr, SQLCall):
         return True

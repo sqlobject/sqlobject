@@ -152,6 +152,12 @@ class SOMultipleJoin(SOJoin):
             conn = None
         return self._applyOrderBy([self.otherClass.get(id, conn) for (id,) in ids if id is not None], self.otherClass)
 
+    def _dbNameToPythonName(self):
+        for column in self.otherClass.sqlmeta.columns.values():
+            if column.dbName == self.joinColumn:
+                return column.name
+        return self.soClass.sqlmeta.style.dbColumnToPythonAttr(self.joinColumn)
+
 class MultipleJoin(Join):
     baseClass = SOMultipleJoin
 
@@ -162,7 +168,8 @@ class SOSQLMultipleJoin(SOMultipleJoin):
             conn = inst._connection
         else:
             conn = None
-        results = self.otherClass.select(getattr(self.otherClass.q, self.soClass.sqlmeta.style.dbColumnToPythonAttr(self.joinColumn)) == inst.id, connection=conn)
+        pythonColumn = self._dbNameToPythonName()
+        results = self.otherClass.select(getattr(self.otherClass.q, pythonColumn) == inst.id, connection=conn)
         return results.orderBy(self.orderBy)
 
 class SQLMultipleJoin(Join):
@@ -252,7 +259,7 @@ class JoinToTable(sqlbuilder.SQLExpression):
 
     def tablesUsedImmediate(self):
         return [self.table, self.interTable]
-    
+
     def __sqlrepr__(self, db):
         return '%s.%s = %s.%s' % (self.interTable, self.joinColumn, self.table, self.idName)
 
@@ -276,7 +283,7 @@ class SOSQLRelatedJoin(SORelatedJoin):
             conn = None
         results = self.otherClass.select(sqlbuilder.AND(
             OtherTableToJoin(
-                self.otherClass.sqlmeta.table, self.otherClass.sqlmeta.idName, 
+                self.otherClass.sqlmeta.table, self.otherClass.sqlmeta.idName,
                 self.intermediateTable, self.otherColumn
             ),
             JoinToTable(
@@ -305,7 +312,7 @@ class SOSingleJoin(SOMultipleJoin):
             conn = inst._connection
         else:
             conn = None
-        pythonColumn = self.soClass.sqlmeta.style.dbColumnToPythonAttr(self.joinColumn)
+        pythonColumn = self._dbNameToPythonName()
         results = self.otherClass.select(
             getattr(self.otherClass.q, pythonColumn) == inst.id,
             connection=conn
@@ -387,7 +394,7 @@ class SOManyToMany(object):
             & (sqlbuilder.Field(self.intermediateTable, self.joinColumn)
                == obj.id))
         select = self.otherClass.select(query)
-        return _ManyToManySelectWrapper(obj, self, select)        
+        return _ManyToManySelectWrapper(obj, self, select)
 
     def event_CreateTableSignal(self, soClass, connection, extra_sql,
                                 post_funcs):
@@ -411,14 +418,14 @@ class ManyToMany(boundattributes.BoundFactory):
     joinColumn = None
     otherColumn = None
     createJoinTable = True
-    
+
 class _ManyToManySelectWrapper(object):
 
     def __init__(self, forObject, join, select):
         self.forObject = forObject
         self.join = join
         self.select = select
-    
+
     def __getattr__(self, attr):
         # @@: This passes through private variable access too... should it?
         # Also magic methods, like __str__
@@ -456,7 +463,7 @@ class _ManyToManySelectWrapper(object):
         obj = self.join.otherClass(**kw)
         self.add(obj)
         return obj
-                
+
 class SOOneToMany(object):
 
     def __init__(self, soClass, name, join, joinColumn, **attrs):
@@ -502,7 +509,7 @@ class _OneToManySelectWrapper(object):
         self.forObject = forObject
         self.join = join
         self.select = select
-    
+
     def __getattr__(self, attr):
         # @@: This passes through private variable access too... should it?
         # Also magic methods, like __str__
@@ -523,4 +530,3 @@ class _OneToManySelectWrapper(object):
     def create(self, **kw):
         kw[self.join.joinColumn] = self.forObject.id
         return self.join.otherClass(**kw)
-    
