@@ -45,15 +45,18 @@ class ViewSQLObjectTable(SQLObjectTable):
 
 
 class ViewSQLObject(SQLObject):
-    '''A SQLObject class that derives all it's values from other SQLObject classes.
-        Columns on subclasses should use SQLBuilder constructs for dbName,
-        and sqlmeta should specify:
-            idName as a SQLBuilder construction
-            clause as SQLBuilder clause for specifying join conditions or other restrictions
-            table as an optional alternate name for the class alias
-        See test_views.py for simple examples.
-    '''
+    """
+    A SQLObject class that derives all it's values from other SQLObject classes.
+    Columns on subclasses should use SQLBuilder constructs for dbName,
+    and sqlmeta should specify:
 
+    * idName as a SQLBuilder construction
+    * clause as SQLBuilder clause for specifying join conditions or other restrictions
+    * table as an optional alternate name for the class alias
+
+    See test_views.py for simple examples.
+    """
+    
     def __classinit__(cls, new_attrs):
         SQLObject.__classinit__(cls, new_attrs)
         # like is_base
