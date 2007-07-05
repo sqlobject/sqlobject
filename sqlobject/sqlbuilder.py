@@ -381,7 +381,7 @@ class SQLObjectTable(Table):
             raise AttributeError
         if attr == 'id':
             return self._getattrFromID(attr)
-        elif attr+'ID' in self.soClass.sqlmeta.columns:
+        elif attr+'ID' in [k for (k, v) in self.soClass.sqlmeta.columns.items() if v.foreignKey]:
             column = self.soClass.sqlmeta.columns[attr+'ID']
             return self._getattrFromForeignKey(column, attr)
         elif attr in [x.joinMethodName for x in self.soClass.sqlmeta.joins]:
@@ -401,7 +401,6 @@ class SQLObjectTable(Table):
 
     def _getattrFromForeignKey(self, column, attr):
         ret =  getattr(self, column.name)==getattr(self.soClass, '_SO_class_'+column.foreignKey).q.id
-        print column
         return ret
 
     def _getattrFromJoin(self, join, attr):
