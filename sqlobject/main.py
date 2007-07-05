@@ -1273,7 +1273,9 @@ class SQLObject(object):
         post_funcs = []
         kw = dict([('class',self.__class__),('id',id)])
         self.sqlmeta.send(events.RowCreatedSignal, kw, post_funcs)
-
+        
+        for func in post_funcs:
+            func(self)
 
     def _SO_getID(self, obj):
         return getID(obj)
