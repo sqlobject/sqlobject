@@ -930,7 +930,8 @@ class SOEnumCol(SOCol):
         return [consts.isString, consts.InList(self.enumValues)]
 
     def createValidators(self):
-        return [EnumValidator(name = self.name, enumValues = self.enumValues)] + \
+        return [EnumValidator(name = self.name, enumValues = self.enumValues,
+                              notNone = self.notNone)] + \
             super(SOEnumCol, self).createValidators()
 
     def _mysqlType(self):
@@ -980,6 +981,8 @@ class EnumValidator(validators.Validator):
     def to_python(self, value, state):
         if value in self.enumValues:
             return value
+        elif not self.notNone and value is None:
+            return None
         else:
             raise validators.Invalid("expected a member of %r in the EnumCol '%s', got %r instead" % \
                                      (self.enumValues, self.name, value), value, state)

@@ -221,9 +221,18 @@ class MySQLConnection(DBAPI):
                 if self.dbEncoding: kw['dbEncoding'] = self.dbEncoding
             kw['name'] = soClass.sqlmeta.style.dbColumnToPythonAttr(field)
             kw['dbName'] = field
-            kw['notNone'] = not nullAllowed
+            
+            # Since MySQL 5.0, 'NO' is returned in the NULL column (SQLObject expected '')
+            kw['notNone'] = (nullAllowed.upper() != 'YES' and True or False)
+            
             if default and t.startswith('int'):
                 kw['default'] = int(default)
+            elif default and t.startswith('float'):
+                kw['default'] = float(default)
+            elif default == 'CURRENT_TIMESTAMP' and t == 'timestamp':
+                kw['default'] = None
+            elif default and colClass is col.BoolCol:
+                kw['default'] = int(default) and True or False
             else:
                 kw['default'] = default
             # @@ skip key...
@@ -234,12 +243,22 @@ class MySQLConnection(DBAPI):
     def guessClass(self, t):
         if t.startswith('int'):
             return col.IntCol, {}
+        elif t.startswith('enum'):
+            values = []
+            for i in t[5:-1].split(','): # take the enum() off and split
+                values.append(i[1:-1]) # remove the surrounding \'
+            return col.EnumCol, {'enumValues': values}
+        elif t.startswith('double'):
+            return col.FloatCol, {}
         elif t.startswith('varchar'):
+            colType = col.StringCol
+            if self.kw.get('use_unicode', False):
+                colType = col.UnicodeCol
             if t.endswith('binary'):
-                return col.StringCol, {'length': int(t[8:-8]),
+                return colType, {'length': int(t[8:-8]),
                                        'char_binary': True}
             else:
-                return col.StringCol, {'length': int(t[8:-1])}
+                return colType, {'length': int(t[8:-1])}
         elif t.startswith('char'):
             if t.endswith('binary'):
                 return col.StringCol, {'length': int(t[5:-8]),
