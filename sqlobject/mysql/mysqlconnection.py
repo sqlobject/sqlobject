@@ -271,6 +271,8 @@ class MySQLConnection(DBAPI):
             return col.DateTimeCol, {}
         elif t.startswith('date'):
             return col.DateCol, {}
+        elif t.startswith('time'):
+            return col.TimeCol, {}
         elif t.startswith('timestamp'):
             return col.TimestampCol, {}
         elif t.startswith('bool'):
