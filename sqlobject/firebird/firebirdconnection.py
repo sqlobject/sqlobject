@@ -192,11 +192,13 @@ class FirebirdConnection(DBAPI):
         colData = self.queryAll(fieldqry % tableName.upper())
         results = []
         for field, t, flength, fscale, nullAllowed, thedefault, blobType in colData:
-            if field == 'id':
+            field = field.strip()
+            idName = str(soClass.sqlmeta.idName or 'id').upper()
+            if field.upper() == idName:
                 continue
             colClass, kw = self.guessClass(t, flength, fscale)
             kw['name'] = soClass.sqlmeta.style.dbColumnToPythonAttr(field).strip()
-            kw['dbName'] = field.strip()
+            kw['dbName'] = field
             kw['notNone'] = not nullAllowed
             kw['default'] = thedefault
             results.append(colClass(**kw))
