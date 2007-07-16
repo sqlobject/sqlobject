@@ -173,26 +173,27 @@ class FirebirdConnection(DBAPI):
         """
 
         fieldqry = """\
-        SELECT RDB$RELATION_FIELDS.RDB$FIELD_NAME as field,
-               RDB$TYPES.RDB$TYPE_NAME as t,
-               RDB$FIELDS.RDB$FIELD_LENGTH as flength,
-               RDB$FIELDS.RDB$FIELD_SCALE as fscale,
-               RDB$RELATION_FIELDS.RDB$NULL_FLAG as nullAllowed,
-               RDB$RELATION_FIELDS.RDB$DEFAULT_VALUE as thedefault,
-               RDB$FIELDS.RDB$FIELD_SUB_TYPE as blobtype
-        FROM RDB$RELATION_FIELDS
-        INNER JOIN RDB$FIELDS ON
-            (RDB$RELATION_FIELDS.RDB$FIELD_SOURCE = RDB$FIELDS.RDB$FIELD_NAME)
-        INNER JOIN RDB$TYPES ON (RDB$FIELDS.RDB$FIELD_TYPE =
-                                 RDB$TYPES.RDB$TYPE)
-        WHERE
-            (RDB$RELATION_FIELDS.RDB$RELATION_NAME = '%s')
-            AND (RDB$TYPES.RDB$FIELD_NAME = 'RDB$FIELD_TYPE')"""
+        SELECT rf.RDB$FIELD_NAME as field,
+               t.RDB$TYPE_NAME as t,
+               f.RDB$FIELD_LENGTH as flength,
+               f.RDB$FIELD_SCALE as fscale,
+               rf.RDB$NULL_FLAG as nullAllowed,
+               coalesce(rf.RDB$DEFAULT_SOURCE, f.rdb$default_source) as thedefault,
+               f.RDB$FIELD_SUB_TYPE as blobtype
+        FROM RDB$RELATION_FIELDS rf
+        INNER JOIN RDB$FIELDS f ON rf.RDB$FIELD_SOURCE = f.RDB$FIELD_NAME
+        INNER JOIN RDB$TYPES t ON f.RDB$FIELD_TYPE = t.RDB$TYPE
+        WHERE rf.RDB$RELATION_NAME = '%s'
+        AND t.RDB$FIELD_NAME = 'RDB$FIELD_TYPE'"""
 
         colData = self.queryAll(fieldqry % tableName.upper())
         results = []
         for field, t, flength, fscale, nullAllowed, thedefault, blobType in colData:
-            field = field.strip()
+            field = field.strip().lower()
+            if thedefault:
+                thedefault = thedefault.split(' ')[1]
+                if thedefault.startswith("'") and thedefault.endswith("'"):
+                    thedefault = thedefault[1:-1]
             idName = str(soClass.sqlmeta.idName or 'id').upper()
             if field.upper() == idName:
                 continue
