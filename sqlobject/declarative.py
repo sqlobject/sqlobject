@@ -89,6 +89,10 @@ class _methodwrapper(object):
 def threadSafeMethod(lock):
     def decorator(fn):
         def _wrapper(self, *args, **kwargs):
+            # This prevents deadlocks.
+            # The class lock isn't really needed in __init__() while fetching.
+            if '_SO_fetch_no_create' in kwargs:
+                return fn(self, *args, **kwargs)
             lock.acquire()
             try:
                 return fn(self, *args, **kwargs)
