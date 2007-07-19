@@ -1044,7 +1044,11 @@ class SQLObject(object):
         if not self.sqlmeta._creating:
             self.sqlmeta.send(events.RowUpdateSignal, self, d)
         if len(d) != 1 or name not in d:
-            return self.set(**d)
+            # Already called RowUpdateSignal, don't call it again
+            # inside .set()
+            self.sqlmeta.row_update_sig_suppress = True
+            self.set(**d)
+            del self.sqlmeta.row_update_sig_suppress
         value = d[name]
         if from_python:
             dbValue = from_python(value, self._SO_validatorState)
@@ -1066,7 +1070,7 @@ class SQLObject(object):
             setattr(self, instanceName(name), value)
 
     def set(self, **kw):
-        if not self.sqlmeta._creating:
+        if not self.sqlmeta._creating and not getattr(self.sqlmeta, "row_update_sig_suppress", False):
             self.sqlmeta.send(events.RowUpdateSignal, self, kw)
         # set() is used to update multiple values at once,
         # potentially with one SQL statement if possible.
