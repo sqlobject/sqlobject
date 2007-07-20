@@ -204,14 +204,14 @@ if hasattr(time, 'struct_time'):
 
 if datetime:
     def DateTimeConverter(value, db):
-        return "'%4d-%02d-%02d %02d:%02d:%02d'" % (
+        return "'%04d-%02d-%02d %02d:%02d:%02d'" % (
             value.year, value.month, value.day,
             value.hour, value.minute, value.second)
 
     registerConverter(datetime.datetime, DateTimeConverter)
 
     def DateConverter(value, db):
-        return "'%4d-%02d-%02d'" % (value.year, value.month, value.day)
+        return "'%04d-%02d-%02d'" % (value.year, value.month, value.day)
 
     registerConverter(datetime.date, DateConverter)
 
