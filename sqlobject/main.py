@@ -1275,7 +1275,7 @@ class SQLObject(object):
         cache.created(id, self.__class__, self)
         self._init(id)
         post_funcs = []
-        kw = dict([('class',self.__class__),('id',id)])
+        kw = dict([('class', self.__class__), ('id', id)])
         self.sqlmeta.send(events.RowCreatedSignal, kw, post_funcs)
         
         for func in post_funcs:
