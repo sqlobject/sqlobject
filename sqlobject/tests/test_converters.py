@@ -55,7 +55,7 @@ def test_string_000():
     assert sqlrepr('A String\000Another', 'postgres') == "'A String\\0Another'"
 
 def test_string_():
-    assert sqlrepr('A String\'Another', 'postgres') == "'A String\\'Another'"
+    assert sqlrepr('A String\tAnother', 'postgres') == "'A String\\tAnother'"
     assert sqlrepr('A String\'Another', 'firebird') == "'A String''Another'"
 
 def test_simple_unicode():

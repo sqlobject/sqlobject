@@ -55,14 +55,14 @@ except ImportError:
 ########################################
 
 sqlStringReplace = [
+    ("'", "''"),
     ('\\', '\\\\'),
-    ("'", "\\'"),
     ('\000', '\\0'),
     ('\b', '\\b'),
     ('\n', '\\n'),
     ('\r', '\\r'),
     ('\t', '\\t'),
-    ]
+]
 
 def isoStr(val):
     """
@@ -109,10 +109,10 @@ def StringLikeConverter(value, db):
     elif isinstance(value, buffer_type):
         value = str(value)
 
-    if db in ('mysql', 'postgres'):
+    if db == 'postgres':
         for orig, repl in sqlStringReplace:
             value = value.replace(orig, repl)
-    elif db in ('sqlite', 'firebird', 'sybase', 'maxdb', 'mssql'):
+    elif db in ('sqlite', 'mysql', 'firebird', 'sybase', 'maxdb', 'mssql'):
         value = value.replace("'", "''")
     else:
         assert 0, "Database %s unknown" % db
