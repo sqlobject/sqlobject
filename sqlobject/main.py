@@ -609,12 +609,15 @@ class sqlmeta(object):
     ## Utility methods
     ########################################
 
+    def getColumns(sqlmeta):
+        return sqlmeta.columns.copy()
+
     def asDict(self):
         """
         Return the object as a dictionary of columns to values.
         """
         result = {}
-        for key in self.columns:
+        for key in self.getColumns():
             result[key] = getattr(self.instance, key)
         result['id'] = self.instance.id
         return result

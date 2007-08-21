@@ -201,12 +201,11 @@ class InheritableSQLMeta(sqlmeta):
             sm = sm.parentClass.sqlmeta
         return columns
 
-    def asDict(sqlmeta):
-        result = {}
-        for key in sqlmeta.getAllColumns():
-            result[key] = getattr(sqlmeta.instance, key)
-        result['id'] = sqlmeta.instance.id
-        return result
+    def getColumns(sqlmeta):
+        columns = sqlmeta.getAllColumns()
+        if columns.has_key('childName'):
+            del columns['childName']
+        return columns
 
 
 class InheritableSQLObject(SQLObject):
