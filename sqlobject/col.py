@@ -1396,6 +1396,11 @@ class BinaryValidator(validators.Validator):
         return binary
 
 class SOBLOBCol(SOStringCol):
+    def __init__(self, **kw):
+        # Change the default from 'auto' to False - this is a (mostly) binary column
+        if 'varchar' not in kw: kw['varchar'] = False
+        super(SOBLOBCol, self).__init__(**kw)
+
     def createValidators(self):
         return [BinaryValidator(name=self.name)] + \
             super(SOBLOBCol, self).createValidators()
