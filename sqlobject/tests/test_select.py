@@ -77,8 +77,7 @@ def test_04_indexed_ended_by_exception():
 def test_05_select_limit():
     setupIter()
     assert len(list(IterTest.select(limit=2))) == 2
-    raises(AssertionError, IterTest.select(limit=2).distinct)
-    raises(AssertionError, IterTest.select(limit=2).clone, start=1)
+    raises(AssertionError, IterTest.select(limit=2).count)
 
 def test_06_like():
     setupIter()
