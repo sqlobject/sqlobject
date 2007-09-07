@@ -9,8 +9,6 @@ from sqlobject.inheritance import InheritableSQLObject
 from sqlobject.versioning import Versioning
 from sqlobject.tests.dbtest import *
 
-from datetime import datetime
-
 
 class MyClass(SQLObject):
     name = StringCol()

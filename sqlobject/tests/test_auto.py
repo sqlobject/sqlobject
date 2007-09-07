@@ -1,13 +1,10 @@
+from datetime import datetime
+now = datetime.now
+
 from sqlobject import *
 from sqlobject.tests.dbtest import *
 from sqlobject import classregistry
 from py.test import raises
-
-try:
-    from datetime import datetime
-    now = datetime.now
-except ImportError:
-    from mx.DateTime import now
 
 ########################################
 ## Dynamic column tests

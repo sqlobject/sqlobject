@@ -36,12 +36,8 @@ from util.backports import count
 NoDefault = sqlbuilder.NoDefault
 True, False = 1==1, 0==1
 
-try:
-    import datetime
-except ImportError: # Python 2.2
-    datetime_available = False
-else:
-    datetime_available = True
+import datetime
+datetime_available = True
 
 try:
     from mx import DateTime
@@ -66,18 +62,11 @@ if mxdatetime_available:
         DateTimeType = type(DateTime.DateTime())
         TimeType = type(DateTime.DateTime.Time(DateTime.DateTime()))
 
-if datetime_available:
-    default_datetime_implementation = DATETIME_IMPLEMENTATION
-elif mxdatetime_available:
-    default_datetime_implementation = MXDATETIME_IMPLEMENTATION
-else:
-    default_datetime_implementation = None
+default_datetime_implementation = DATETIME_IMPLEMENTATION
 
 __all__ = ["datetime_available", "mxdatetime_available",
-    "default_datetime_implementation"
-]
-if datetime_available:
-    __all__.append("DATETIME_IMPLEMENTATION")
+        "default_datetime_implementation", "DATETIME_IMPLEMENTATION"]
+
 if mxdatetime_available:
     __all__.append("MXDATETIME_IMPLEMENTATION")
 
@@ -1031,43 +1020,42 @@ class SetCol(Col):
     baseClass = SOSetCol
 
 
-if datetime_available:
-    class DateTimeValidator(validators.DateValidator):
-        def to_python(self, value, state):
-            if value is None:
-                return None
-            if isinstance(value, (datetime.datetime, datetime.date, datetime.time, sqlbuilder.SQLExpression)):
-                return value
-            if mxdatetime_available:
-                if isinstance(value, DateTimeType):
-                    # convert mxDateTime instance to datetime
-                    if (self.format.find("%H") >= 0) or (self.format.find("%T")) >= 0:
-                        return datetime.datetime(value.year, value.month, value.day,
-                            value.hour, value.minute, int(value.second))
-                    else:
-                        return datetime.date(value.year, value.month, value.day)
-                elif isinstance(value, TimeType):
-                    # convert mxTime instance to time
-                    if self.format.find("%d") >= 0:
-                        return datetime.timedelta(seconds=value.seconds)
-                    else:
-                        return datetime.time(value.hour, value.minute, int(value.second))
-            try:
-                stime = time.strptime(value, self.format)
-            except:
-                raise validators.Invalid("expected a date/time string of the '%s' format in the DateTimeCol '%s', got %s %r instead" % \
-                    (self.format, self.name, type(value), value), value, state)
-            return datetime.datetime(*stime[:6])
+class DateTimeValidator(validators.DateValidator):
+    def to_python(self, value, state):
+        if value is None:
+            return None
+        if isinstance(value, (datetime.datetime, datetime.date, datetime.time, sqlbuilder.SQLExpression)):
+            return value
+        if mxdatetime_available:
+            if isinstance(value, DateTimeType):
+                # convert mxDateTime instance to datetime
+                if (self.format.find("%H") >= 0) or (self.format.find("%T")) >= 0:
+                    return datetime.datetime(value.year, value.month, value.day,
+                        value.hour, value.minute, int(value.second))
+                else:
+                    return datetime.date(value.year, value.month, value.day)
+            elif isinstance(value, TimeType):
+                # convert mxTime instance to time
+                if self.format.find("%d") >= 0:
+                    return datetime.timedelta(seconds=value.seconds)
+                else:
+                    return datetime.time(value.hour, value.minute, int(value.second))
+        try:
+            stime = time.strptime(value, self.format)
+        except:
+            raise validators.Invalid("expected a date/time string of the '%s' format in the DateTimeCol '%s', got %s %r instead" % \
+                (self.format, self.name, type(value), value), value, state)
+        return datetime.datetime(*stime[:6])
 
-        def from_python(self, value, state):
-            if value is None:
-                return None
-            if isinstance(value, (datetime.datetime, datetime.date, datetime.time, sqlbuilder.SQLExpression)):
-                return value
-            if hasattr(value, "strftime"):
-                return value.strftime(self.format)
-            raise validators.Invalid("expected a datetime in the DateTimeCol '%s', got %s %r instead" % \
-                (self.name, type(value), value), value, state)
+    def from_python(self, value, state):
+        if value is None:
+            return None
+        if isinstance(value, (datetime.datetime, datetime.date, datetime.time, sqlbuilder.SQLExpression)):
+            return value
+        if hasattr(value, "strftime"):
+            return value.strftime(self.format)
+        raise validators.Invalid("expected a datetime in the DateTimeCol '%s', got %s %r instead" % \
+            (self.name, type(value), value), value, state)
 
 if mxdatetime_available:
     class MXDateTimeValidator(validators.DateValidator):
@@ -1076,14 +1064,13 @@ if mxdatetime_available:
                 return None
             if isinstance(value, (DateTimeType, TimeType, sqlbuilder.SQLExpression)):
                 return value
-            if datetime_available: # convert datetime instance to mxDateTime
-                if isinstance(value, datetime.datetime):
-                    return DateTime.DateTime(value.year, value.month, value.day,
-                        value.hour, value.minute, value.second)
-                elif isinstance(value, datetime.date):
-                    return DateTime.Date(value.year, value.month, value.day)
-                elif isinstance(value, datetime.time):
-                    return DateTime.Time(value.hour, value.minute, value.second)
+            if isinstance(value, datetime.datetime):
+                return DateTime.DateTime(value.year, value.month, value.day,
+                    value.hour, value.minute, value.second)
+            elif isinstance(value, datetime.date):
+                return DateTime.Date(value.year, value.month, value.day)
+            elif isinstance(value, datetime.time):
+                return DateTime.Time(value.hour, value.minute, value.second)
             try:
                 stime = time.strptime(value, self.format)
             except:
@@ -1154,19 +1141,19 @@ class DateTimeCol(Col):
                        % DATETIME_IMPLEMENTATION)
     now = staticmethod(now)
 
-if datetime_available:
-    class DateValidator(DateTimeValidator):
-        def to_python(self, value, state):
-            if isinstance(value, datetime.datetime):
-                value = value.date()
-            if isinstance(value, datetime.date):
-                return value
-            value = super(DateValidator, self).to_python(value, state)
-            if isinstance(value, datetime.datetime):
-                value = value.date()
-            return value
 
-        from_python = to_python
+class DateValidator(DateTimeValidator):
+    def to_python(self, value, state):
+        if isinstance(value, datetime.datetime):
+            value = value.date()
+        if isinstance(value, datetime.date):
+            return value
+        value = super(DateValidator, self).to_python(value, state)
+        if isinstance(value, datetime.datetime):
+            value = value.date()
+        return value
+
+    from_python = to_python
 
 class SODateCol(SOCol):
     dateFormat = '%Y-%m-%d'
@@ -1215,21 +1202,20 @@ class DateCol(Col):
     baseClass = SODateCol
 
 
-if datetime_available:
-    class TimeValidator(DateTimeValidator):
-        def to_python(self, value, state):
-            if isinstance(value, datetime.time):
-                return value
-            if isinstance(value, datetime.timedelta):
-                if value.days:
-                    raise validators.Invalid(
-                        "the value for the TimeCol '%s' must has days=0, it has days=%d" %
-                            (self.name, value.days), value, state)
-                return datetime.time(*time.gmtime(value.seconds)[3:6])
-            value = super(TimeValidator, self).to_python(value, state)
-            if isinstance(value, datetime.datetime):
-                value = value.time()
+class TimeValidator(DateTimeValidator):
+    def to_python(self, value, state):
+        if isinstance(value, datetime.time):
             return value
+        if isinstance(value, datetime.timedelta):
+            if value.days:
+                raise validators.Invalid(
+                    "the value for the TimeCol '%s' must has days=0, it has days=%d" %
+                        (self.name, value.days), value, state)
+            return datetime.time(*time.gmtime(value.seconds)[3:6])
+        value = super(TimeValidator, self).to_python(value, state)
+        if isinstance(value, datetime.datetime):
+            value = value.time()
+        return value
 
 class SOTimeCol(SOCol):
     timeFormat = '%H:%M:%S'

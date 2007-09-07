@@ -15,10 +15,7 @@ except ImportError:
         DateTimeDeltaType = None
 
 import time
-try:
-    import datetime
-except ImportError:
-    datetime = None
+import datetime
 
 try:
     import Sybase
@@ -202,23 +199,22 @@ if hasattr(time, 'struct_time'):
 
     registerConverter(time.struct_time, StructTimeConverter)
 
-if datetime:
-    def DateTimeConverter(value, db):
-        return "'%04d-%02d-%02d %02d:%02d:%02d'" % (
-            value.year, value.month, value.day,
-            value.hour, value.minute, value.second)
+def DateTimeConverter(value, db):
+    return "'%04d-%02d-%02d %02d:%02d:%02d'" % (
+        value.year, value.month, value.day,
+        value.hour, value.minute, value.second)
 
-    registerConverter(datetime.datetime, DateTimeConverter)
+registerConverter(datetime.datetime, DateTimeConverter)
 
-    def DateConverter(value, db):
-        return "'%04d-%02d-%02d'" % (value.year, value.month, value.day)
+def DateConverter(value, db):
+    return "'%04d-%02d-%02d'" % (value.year, value.month, value.day)
 
-    registerConverter(datetime.date, DateConverter)
+registerConverter(datetime.date, DateConverter)
 
-    def TimeConverter(value, db):
-        return "'%02d:%02d:%02d'" % (value.hour, value.minute, value.second)
+def TimeConverter(value, db):
+    return "'%02d:%02d:%02d'" % (value.hour, value.minute, value.second)
 
-    registerConverter(datetime.time, TimeConverter)
+registerConverter(datetime.time, TimeConverter)
 
 if Decimal:
     def DecimalConverter(value, db):
