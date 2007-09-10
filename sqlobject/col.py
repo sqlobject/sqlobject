@@ -569,10 +569,7 @@ class IntValidator(validators.Validator):
         if isinstance(value, (int, long, sqlbuilder.SQLExpression)):
             return value
         try:
-            try:
-                return int(value)
-            except OverflowError: # for Python 2.2
-                return long(value)
+            return int(value)
         except:
             raise validators.Invalid("expected an int in the IntCol '%s', got %s %r instead" % \
                 (self.name, type(value), value), value, state)
