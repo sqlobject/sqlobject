@@ -43,10 +43,14 @@ def _set_extra():
 class Extra(SQLObject):
     name = StringCol()
     versions = Versioning(extraCols={'extra' : StringCol(default=_set_extra())})
+class HasAltId(SQLObject):
+    name = StringCol()
+    altid = IntCol(alternateID=True)
+    versions = Versioning()
 
 
 def setup():
-    classes = [MyClass, Base, Child, Government, Monarchy, VChild, Extra]
+    classes = [MyClass, Base, Child, Government, Monarchy, VChild, Extra, HasAltId]
     if hasattr(HasForeign, "_connection"):
         classes.insert(0, HasForeign)
     else:
@@ -157,3 +161,9 @@ def test_extra():
     extra.name = 'new'
     assert extra.versions[0].extra == 'read all about it'    
     assert sorted(extra.versions[0].getChangedFields()) == ['Name']
+
+def test_altid():
+    setup()
+    extra = HasAltId(name="fleem", altid=5) 
+    extra.name = "morx"
+

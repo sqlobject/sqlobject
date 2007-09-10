@@ -45,7 +45,12 @@ def getColumns(columns, cls):
     for column, defi in cls.sqlmeta.columnDefinitions.items():
         if column.endswith("ID") and isinstance(defi, ForeignKey):
             column = column[:-2]
-        columns[column] = defi.__class__(**defi._kw)
+
+        #remove incompatible constraints
+        kwds = dict(defi._kw)
+        for kw in ["alternateID", "unique"]:
+            if kw in kwds: del kwds[kw]
+        columns[column] = defi.__class__(**kwds)
 
     #ascend heirarchy
     if cls.sqlmeta.parentClass:
