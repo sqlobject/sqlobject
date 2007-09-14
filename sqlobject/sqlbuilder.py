@@ -888,9 +888,11 @@ class _LikeQuoted:
                 return "CONCAT(%s)" % ", ".join(values)
             else:
                 return " || ".join(values)
-        else: # assuming s is a string
-            s = _quote_percent(s, db)
+        elif isinstance(s, (str, unicode)):
+            s = _quote_percent(sqlrepr(s, db)[1:-1], db)
             return "'%s%s%s'" % (self.prefix, s, self.postfix)
+        else:
+           raise TypeError, "expected str, unicode or SQLExpression, got %s" % type(s)
 
 def _quote_percent(s, db):
     if db in ('postgres', 'mysql'):

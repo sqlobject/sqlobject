@@ -85,6 +85,7 @@ def test_06_like():
     assert len(list(IterTest.select(IterTest.q.name.endswith('a')))) == 1
     assert len(list(IterTest.select(IterTest.q.name.contains('a')))) == 1
     assert len(list(IterTest.select(IterTest.q.name.contains(func.lower('A'))))) == 1
+    assert len(list(IterTest.select(IterTest.q.name.contains("a'b")))) == 0
 
 def test_select_getOne():
     setupClass(IterTest)
