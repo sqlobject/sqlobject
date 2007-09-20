@@ -153,7 +153,7 @@ def export_csv_zip(soClasses, file=None, zip=None, filename_prefix='',
     close_zip_when_finished = True
     return_when_finished = False
     if file:
-        if isinstance(file, (str, unicode)):
+        if isinstance(file, basestring):
             close_when_finished = True
             file = open(file, 'wb')
     elif zip:

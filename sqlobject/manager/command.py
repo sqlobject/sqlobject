@@ -1256,7 +1256,7 @@ class CommandUpgrade(CommandRecord):
         return upgraders[-1]
 
 def update_sys_path(paths, verbose):
-    if isinstance(paths, (str, unicode)):
+    if isinstance(paths, basestring):
         paths = [paths]
     for path in paths:
         path = os.path.abspath(path)

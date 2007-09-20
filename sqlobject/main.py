@@ -1618,7 +1618,7 @@ class SQLObject(object):
         return items
 
     def setConnection(cls, value):
-        if isinstance(value, (str, unicode)):
+        if isinstance(value, basestring):
             value = dbconnection.connectionForURI(value)
         cls._connection = value
     setConnection = classmethod(setConnection)
@@ -1663,7 +1663,7 @@ def getID(obj):
         return obj
     elif type(obj) is type(1L):
         return int(obj)
-    elif type(obj) is type(""):
+    elif isinstance(obj, str):
         try:
             return int(obj)
         except ValueError:
@@ -1676,7 +1676,7 @@ def getObject(obj, klass):
         return klass(obj)
     elif type(obj) is type(1L):
         return klass(int(obj))
-    elif type(obj) is type(""):
+    elif isinstance(obj, str):
         return klass(int(obj))
     elif obj is None:
         return None

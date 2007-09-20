@@ -80,7 +80,7 @@ from converters import sqlrepr, registerConverter, TRUE, FALSE
 safeSQLRE = re.compile(r'^[a-zA-Z_][a-zA-Z0-9_\.]*$')
 def sqlIdentifier(obj):
     # some db drivers return unicode column names
-    return isinstance(obj, types.StringTypes) and bool(safeSQLRE.search(obj.strip()))
+    return isinstance(obj, basestring) and bool(safeSQLRE.search(obj.strip()))
 
 
 def execute(expr, executor):
@@ -584,7 +584,7 @@ class Select(SQLExpression):
             # None doesn't filter anything, it's just a no-op:
             return self
         clause = self.ops['clause']
-        if isinstance(clause, (str, unicode)):
+        if isinstance(clause, basestring):
             clause = SQLConstant('(%s)' % clause)
 
         if clause == SQLTrueClause:
@@ -849,7 +849,7 @@ def ISNOTNULL(expr):
 class ColumnAS(SQLOp):
     ''' Just like SQLOp('AS', expr, name) except without the parentheses '''
     def __init__(self, expr, name):
-        if isinstance(name, (str, unicode)):
+        if isinstance(name, basestring):
             name = SQLConstant(name)
         SQLOp.__init__(self, 'AS', expr, name)
     def __sqlrepr__(self, db):
@@ -888,7 +888,7 @@ class _LikeQuoted:
                 return "CONCAT(%s)" % ", ".join(values)
             else:
                 return " || ".join(values)
-        elif isinstance(s, (str, unicode)):
+        elif isinstance(s, basestring):
             s = _quote_percent(sqlrepr(s, db)[1:-1], db)
             return "'%s%s%s'" % (self.prefix, s, self.postfix)
         else:

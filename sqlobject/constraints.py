@@ -19,7 +19,7 @@ class BadValue(ValueError):
         ValueError.__init__(self, fullDesc, *args)
 
 def isString(obj, col, value):
-    if type(value) is not type(""):
+    if not isinstance(value, str):
         raise BadValue("only allows strings", obj, col, value)
 
 def notNull(obj, col, value):

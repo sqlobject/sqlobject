@@ -115,8 +115,8 @@ def StringLikeConverter(value, db):
         assert 0, "Database %s unknown" % db
     return "'%s'" % value
 
-registerConverter(type(""), StringLikeConverter)
-registerConverter(type(u""), StringLikeConverter)
+registerConverter(str, StringLikeConverter)
+registerConverter(unicode, StringLikeConverter)
 registerConverter(array_type, StringLikeConverter)
 registerConverter(buffer_type, StringLikeConverter)
 

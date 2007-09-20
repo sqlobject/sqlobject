@@ -3,8 +3,6 @@ import dbconnection
 import main
 import joins
 
-StringType = type('')
-
 class SelectResults(object):
     IterationClass = dbconnection.Iteration
 
@@ -76,7 +74,7 @@ class SelectResults(object):
             desc = True
         else:
             desc = False
-        if isinstance(orderBy, (str, unicode)):
+        if isinstance(orderBy, basestring):
             if orderBy in self.sourceClass.sqlmeta.columns:
                 val = getattr(self.sourceClass.q, self.sourceClass.sqlmeta.columns[orderBy].name)
                 if desc:
@@ -125,7 +123,7 @@ class SelectResults(object):
             # None doesn't filter anything, it's just a no-op:
             return self
         clause = self.clause
-        if isinstance(clause, (str, unicode)):
+        if isinstance(clause, basestring):
             clause = sqlbuilder.SQLConstant('(%s)' % self.clause)
         return self.newClause(sqlbuilder.AND(clause, filter_clause))
 
@@ -236,7 +234,7 @@ class SelectResults(object):
         """
         expressions = []
         for func_name, attribute in attributes:
-            if type(attribute) == StringType:
+            if isinstance(attribute, str):
                 expression = '%s(%s)' % (func_name, attribute)
             else:
                 expression = getattr(sqlbuilder.func, func_name)(attribute)

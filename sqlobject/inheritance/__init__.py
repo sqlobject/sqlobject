@@ -6,13 +6,6 @@ from sqlobject.main import sqlmeta, SQLObject, SelectResults, True, False, \
 import iteration
 
 
-try:
-    basestring
-except NameError: # Python 2.2
-    import types
-    basestring = (types.StringType, types.UnicodeType)
-
-
 def tablesUsedDict(obj, db):
     if hasattr(obj, "tablesUsedDict"):
         return obj.tablesUsedDict(db)
@@ -49,7 +42,7 @@ class InheritableSelectResults(SelectResults):
         #DSM: because if the user uses clauseTables
         #DSM: (and normal string SELECT), he must know what he wants
         #DSM: and will do himself the relationship between classes.
-        if type(clause) is not str:
+        if not isinstance(clause, str):
             tableRegistry = {}
             allClasses = classregistry.registry(
                 sourceClass.sqlmeta.registry).allClasses()
@@ -222,7 +215,7 @@ class InheritableSQLObject(SQLObject):
             for column in currentClass.sqlmeta.columnDefinitions.values():
                 if column.name == 'childName':
                     continue
-                if type(column) == ForeignKey:
+                if isinstance(column, ForeignKey):
                     continue
                 setattr(cls.q, column.name,
                     getattr(currentClass.q, column.name))

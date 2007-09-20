@@ -1297,7 +1297,7 @@ class DecimalValidator(validators.Validator):
             return None
         if isinstance(value, float):
             value = str(value)
-        if isinstance(value, (str, unicode)):
+        if isinstance(value, basestring):
             connection = state.soObject._connection
             if hasattr(connection, "decimalSeparator"):
                 value = value.replace(connection.decimalSeparator, ".")
