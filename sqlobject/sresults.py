@@ -128,7 +128,7 @@ class SelectResults(object):
         return self.newClause(sqlbuilder.AND(clause, filter_clause))
 
     def __getitem__(self, value):
-        if type(value) is type(slice(1)):
+        if isinstance(value, slice):
             assert not value.step, "Slices do not support steps"
             if not value.start and not value.stop:
                 # No need to copy, I'm immutable

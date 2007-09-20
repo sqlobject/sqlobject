@@ -1,4 +1,4 @@
-from sqlobject.sqlbuilder import sqlrepr, TRUE, FALSE
+from sqlobject.sqlbuilder import sqlrepr
 from sqlobject.sqlbuilder import SQLExpression, SQLObjectField, \
      Select, Insert, Update, Delete, Replace, \
      SQLTrueClauseClass, SQLConstant, SQLPrefix, SQLCall, SQLOp
@@ -77,10 +77,10 @@ def test_tuple():
     assert sqlrepr(('one','two','three'), 'postgres') == "('one', 'two', 'three')"
 
 def test_bool():
-    assert sqlrepr(TRUE, 'postgres') == "'t'"
-    assert sqlrepr(FALSE, 'postgres') == "'f'"
-    assert sqlrepr(TRUE, 'mysql') == "1"
-    assert sqlrepr(FALSE, 'mysql') == "0"
+    assert sqlrepr(True, 'postgres') == "'t'"
+    assert sqlrepr(False, 'postgres') == "'f'"
+    assert sqlrepr(True, 'mysql') == "1"
+    assert sqlrepr(False, 'mysql') == "0"
 
 def test_datetime():
     from datetime import datetime, date, time

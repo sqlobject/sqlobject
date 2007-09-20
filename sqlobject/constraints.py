@@ -27,15 +27,15 @@ def notNull(obj, col, value):
         raise BadValue("is defined NOT NULL", obj, col, value)
 
 def isInt(obj, col, value):
-    if type(value) not in (type(1), type(1L)):
+    if not isinstance(value, (int, long)):
         raise BadValue("only allows integers", obj, col, value)
 
 def isFloat(obj, col, value):
-    if type(value) not in (type(1), type(1L), type(1.1)):
+    if not isinstance(value, (int, long, float)):
         raise BadValue("only allows floating point numbers", obj, col, value)
 
 def isBool(obj, col, value):
-    if type(value) not in (type(True),):
+    if not isinstance(value, bool):
         raise BadValue("only allows booleans", obj, col, value)
 
 class InList:

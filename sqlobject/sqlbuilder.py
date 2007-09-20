@@ -75,7 +75,7 @@ import threading
 import types
 import classregistry
 
-from converters import sqlrepr, registerConverter, TRUE, FALSE
+from converters import sqlrepr, registerConverter
 
 safeSQLRE = re.compile(r'^[a-zA-Z_][a-zA-Z0-9_\.]*$')
 def sqlIdentifier(obj):
@@ -528,7 +528,7 @@ class Select(SQLExpression):
                  start=0, end=None, reversed=False, forUpdate=False,
                  clause=NoDefault, staticTables=NoDefault, distinctOn=NoDefault):
         self.ops = {}
-        if not isinstance(items, (type([]), type(()), types.GeneratorType)):
+        if not isinstance(items, (list, tuple, types.GeneratorType)):
             items = [items]
         if clause is NoDefault and where is not NoDefault:
             clause = where
@@ -694,7 +694,7 @@ class Insert(SQLExpression):
         insert = "INSERT INTO %s" % self.table
         allowNonDict = True
         template = self.template
-        if template is NoDefault and type(self.valueList[0]) is type({}):
+        if (template is NoDefault) and isinstance(self.valueList[0], dict):
             template = self.valueList[0].keys()
             allowNonDict = False
         if template is not NoDefault:
@@ -703,7 +703,7 @@ class Insert(SQLExpression):
         listToJoin = []
         listToJoin_app = listToJoin.append
         for value in self.valueList:
-            if type(value) is type({}):
+            if isinstance(value, dict):
                 if template is NoDefault:
                     raise TypeError, "You can't mix non-dictionaries with dictionaries in an INSERT if you don't provide a template (%s)" % repr(value)
                 value = dictToList(template, value)

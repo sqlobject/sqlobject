@@ -1,4 +1,4 @@
-import array
+from array import array
 
 try:
     import mx.DateTime.ISO
@@ -23,24 +23,7 @@ try:
 except ImportError:
     NumericType = None
 
-if type(1==1) == type(1):
-    class BOOL(object):
-        def __init__(self, value):
-            self.value = not not value
-        def __nonzero__(self):
-            return self.value
-        def __repr__(self):
-            if self:
-                return 'TRUE'
-            else:
-                return 'FALSE'
-    TRUE = BOOL(1)
-    FALSE = BOOL(0)
-else:
-    TRUE = 1==1
-    FALSE = 0==1
-
-from types import InstanceType, ClassType, TypeType
+from types import ClassType, InstanceType, NoneType
 
 try:
     from decimal import Decimal
@@ -85,7 +68,7 @@ class ConverterRegistry:
             self.basic[typ] = func
 
     def lookupConverter(self, value, default=None):
-        if type(value) == InstanceType:
+        if type(value) is InstanceType:
             # lookup on klasses dict
             return self.klass.get(value.__class__, default)
         return self.basic.get(type(value), default)
@@ -94,16 +77,13 @@ converters = ConverterRegistry()
 registerConverter = converters.registerConverter
 lookupConverter = converters.lookupConverter
 
-array_type = type(array.array('c', '')) # In Python 2.2 array.array and buffer
-buffer_type = type(buffer('')) # are functions, not classes
-
 def StringLikeConverter(value, db):
-    if isinstance(value, array_type):
+    if isinstance(value, array):
         try:
             value = value.tounicode()
         except ValueError:
             value = value.tostring()
-    elif isinstance(value, buffer_type):
+    elif isinstance(value, buffer):
         value = str(value)
 
     if db in ('mysql', 'postgres'):
@@ -117,18 +97,18 @@ def StringLikeConverter(value, db):
 
 registerConverter(str, StringLikeConverter)
 registerConverter(unicode, StringLikeConverter)
-registerConverter(array_type, StringLikeConverter)
-registerConverter(buffer_type, StringLikeConverter)
+registerConverter(array, StringLikeConverter)
+registerConverter(buffer, StringLikeConverter)
 
 def IntConverter(value, db):
     return repr(int(value))
 
-registerConverter(type(1), IntConverter)
+registerConverter(int, IntConverter)
 
 def LongConverter(value, db):
     return str(value)
 
-registerConverter(type(0L), LongConverter)
+registerConverter(long, LongConverter)
 
 if NumericType:
     registerConverter(NumericType, IntConverter)
@@ -145,16 +125,12 @@ def BoolConverter(value, db):
         else:
             return '0'
 
-if type(TRUE) == InstanceType:
-    # Python 2.2 compatibility:
-    registerConverter(BOOL, BoolConverter)
-else:
-    registerConverter(type(TRUE), BoolConverter)
+registerConverter(bool, BoolConverter)
 
 def FloatConverter(value, db):
     return repr(value)
 
-registerConverter(type(1.0), FloatConverter)
+registerConverter(float, FloatConverter)
 
 if DateTimeType:
     def DateTimeConverter(value, db):
@@ -170,14 +146,14 @@ if DateTimeType:
 def NoneConverter(value, db):
     return "NULL"
 
-registerConverter(type(None), NoneConverter)
+registerConverter(NoneType, NoneConverter)
 
 def SequenceConverter(value, db):
     return "(%s)" % ", ".join([sqlrepr(v, db) for v in value])
 
-registerConverter(type(()), SequenceConverter)
-registerConverter(type([]), SequenceConverter)
-registerConverter(type({}), SequenceConverter)
+registerConverter(tuple, SequenceConverter)
+registerConverter(list, SequenceConverter)
+registerConverter(dict, SequenceConverter)
 try:
     set, frozenset
 except NameError:

@@ -841,8 +841,7 @@ class SQLObject(object):
         if (not new_attrs.has_key('sqlmeta')
             and not is_base):
             # We have to create our own subclass, usually.
-            # type(className, bases_tuple, attr_dict) creates a new
-            # subclass:
+            # type(className, bases_tuple, attr_dict) creates a new subclass.
             cls.sqlmeta = type('sqlmeta', (cls.sqlmeta,), {})
         if not issubclass(cls.sqlmeta, sqlmeta):
             # We allow no superclass and an object superclass, instead
@@ -1659,9 +1658,9 @@ class SQLObjectState(object):
 def getID(obj):
     if isinstance(obj, SQLObject):
         return obj.id
-    elif type(obj) is type(1):
+    elif isinstance(obj, int):
         return obj
-    elif type(obj) is type(1L):
+    elif isinstance(obj, long):
         return int(obj)
     elif isinstance(obj, str):
         try:
@@ -1672,9 +1671,9 @@ def getID(obj):
         return None
 
 def getObject(obj, klass):
-    if type(obj) is type(1):
+    if isinstance(obj, int):
         return klass(obj)
-    elif type(obj) is type(1L):
+    elif isinstance(obj, long):
         return klass(int(obj))
     elif isinstance(obj, str):
         return klass(int(obj))

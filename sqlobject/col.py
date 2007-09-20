@@ -19,6 +19,7 @@ are what gets used.
 """
 
 import re, time
+from array import array
 try:
     import cPickle as pickle
 except ImportError:
@@ -30,7 +31,6 @@ import constraints as consts
 from formencode import compound
 from formencode import validators
 from classregistry import findClass
-from converters import array_type, buffer_type
 from util.backports import count
 
 NoDefault = sqlbuilder.NoDefault
@@ -150,7 +150,7 @@ class SOCol(object):
                 "The only string value allowed for cascade is 'null' (you gave: %r)" % cascade)
         self.cascade = cascade
 
-        if type(constraints) not in (type([]), type(())):
+        if not isinstance(constraints, (list, tuple)):
             constraints = [constraints]
         self.constraints = self.autoConstraints() + constraints
 
@@ -537,7 +537,7 @@ class UnicodeStringValidator(validators.Validator):
             return None
         if isinstance(value, unicode):
             return value
-        if isinstance(value, array_type): # MySQL
+        if isinstance(value, array): # MySQL
             return unicode(value.tostring(), self.db_encoding)
         return unicode(value, self.db_encoding)
 
@@ -651,17 +651,17 @@ class BoolValidator(validators.Validator):
         if value is None:
             return None
         elif not value:
-            return sqlbuilder.FALSE
+            return False
         else:
-            return sqlbuilder.TRUE
+            return True
 
     def from_python(self, value, state):
         if value is None:
             return None
         elif value:
-            return sqlbuilder.TRUE
+            return True
         else:
-            return sqlbuilder.FALSE
+            return False
 
 class SOBoolCol(SOCol):
     def autoConstraints(self):
@@ -1361,11 +1361,11 @@ class BinaryValidator(validators.Validator):
             if connection.dbName == "sqlite":
                 value = connection.module.decode(value)
             return value
-        if isinstance(value, (buffer_type, state.soObject._connection._binaryType)):
+        if isinstance(value, (buffer, state.soObject._connection._binaryType)):
             cachedValue = self._cachedValue
             if cachedValue and cachedValue[1] == value:
                 return cachedValue[0]
-            if isinstance(value, array_type): # MySQL
+            if isinstance(value, array): # MySQL
                 return value.tostring()
             return str(value) # buffer => string
         raise validators.Invalid("expected a string in the BLOBCol '%s', got %s %r instead" % \
