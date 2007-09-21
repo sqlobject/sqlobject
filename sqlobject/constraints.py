@@ -2,8 +2,6 @@
 Constraints
 """
 
-True, False = (1==1), (0==1)
-
 class BadValue(ValueError):
 
     def __init__(self, desc, obj, col, value, *args):

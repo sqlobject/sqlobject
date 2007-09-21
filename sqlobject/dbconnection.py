@@ -1,7 +1,5 @@
 from __future__ import generators
 
-True, False = 1==1, 0==1
-
 import threading
 from util.threadinglocal import local as threading_local
 import sys

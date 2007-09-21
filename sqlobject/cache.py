@@ -10,8 +10,6 @@ import threading
 from weakref import ref
 from time import time as now
 
-True, False = 1==1, 0==1
-
 class CacheFactory(object):
 
     """

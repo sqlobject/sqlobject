@@ -1,7 +1,7 @@
 from sqlobject import sqlbuilder
 from sqlobject import classregistry
 from sqlobject.col import StringCol, ForeignKey
-from sqlobject.main import sqlmeta, SQLObject, SelectResults, True, False, \
+from sqlobject.main import sqlmeta, SQLObject, SelectResults, \
    makeProperties, getterName, setterName
 import iteration
 

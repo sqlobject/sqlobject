@@ -3,8 +3,6 @@ import re
 __all__ = ["Style", "MixedCaseUnderscoreStyle", "DefaultStyle",
            "MixedCaseStyle"]
 
-True, False = 1==1, 0==1
-
 class Style(object):
 
     """

@@ -67,8 +67,6 @@ class VersionError(Exception):
 class NoDefault:
     pass
 
-True, False = (1==1), (0==1)
-
 import re, fnmatch
 import operator
 import threading

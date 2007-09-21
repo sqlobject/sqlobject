@@ -59,8 +59,6 @@ NoDefault = sqlbuilder.NoDefault
 class SQLObjectNotFound(LookupError): pass
 class SQLObjectIntegrityError(Exception): pass
 
-True, False = 1==1, 0==1
-
 def makeProperties(obj):
     """
     This function takes a dictionary of methods and finds

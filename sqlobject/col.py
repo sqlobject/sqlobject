@@ -34,7 +34,6 @@ from classregistry import findClass
 from util.backports import count
 
 NoDefault = sqlbuilder.NoDefault
-True, False = 1==1, 0==1
 
 import datetime
 datetime_available = True
