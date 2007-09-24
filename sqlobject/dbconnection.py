@@ -1,5 +1,3 @@
-from __future__ import generators
-
 import threading
 from util.threadinglocal import local as threading_local
 import sys

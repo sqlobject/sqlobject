@@ -32,7 +32,6 @@ Also defines classinstancemethod, which acts as either a class method
 or an instance method depending on where it is called.
 """
 
-from __future__ import generators
 import threading
 import events
 
@@ -40,16 +39,8 @@ __all__ = ('classinstancemethod', 'DeclarativeMeta', 'Declarative')
 
 import copy
 
-try:
-    import itertools
-    counter = itertools.count()
-except ImportError:
-    def _counter():
-        i = 0
-        while 1:
-            i += 1
-            yield i
-    counter = _counter()
+import itertools
+counter = itertools.count()
 
 class classinstancemethod(object):
     """
