@@ -133,14 +133,6 @@ class TestSelect:
         assert func([c.n1 for c in counters]) == value
 
     def test_1(self):
-        try:
-            sum
-        except NameError:
-            def sum(sequence):
-                s = 0
-                for item in sequence:
-                    s = s + item
-                return s
         self.accumulateEqual(sum,Counter2.select(orderBy='n1'),
                              sum(range(10)) * 10)
 
