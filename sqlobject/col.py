@@ -31,7 +31,7 @@ import constraints as consts
 from formencode import compound
 from formencode import validators
 from classregistry import findClass
-from util.backports import count
+from itertools import count
 
 NoDefault = sqlbuilder.NoDefault
 

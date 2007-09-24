@@ -10,12 +10,6 @@ class TestUnicode(SQLObject):
     col1 = UnicodeCol(alternateID=True)
     col2 = UnicodeCol(dbEncoding='latin-1')
 
-try:
-    enumerate
-except NameError: # Python 2.2
-    def enumerate(lst):
-        return [(i, lst[i]) for i in range(len(lst))]
-
 data = [u'\u00f0', u'test', 'ascii test']
 items = []
 

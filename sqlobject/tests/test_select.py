@@ -1,18 +1,8 @@
-from __future__ import generators # for enumerate
 from sqlobject import *
 from sqlobject.sqlbuilder import func
 from sqlobject.main import SQLObjectIntegrityError
 from dbtest import *
 from dbtest import setSQLiteConnectionFactory
-
-try:
-    enumerate
-except NameError:
-    def enumerate(iterable):
-        i = 0
-        for obj in iterable:
-            yield i, obj
-            i += 1
 
 class IterTest(SQLObject):
     name = StringCol(dbName='name_col')
