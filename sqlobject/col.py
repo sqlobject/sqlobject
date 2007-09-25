@@ -1433,12 +1433,12 @@ class PickleValidator(BinaryValidator):
     def from_python(self, value, state):
         if value is None:
             return None
-        return pickle.dumps(value)
+        return pickle.dumps(value, self.pickleProtocol)
 
 class SOPickleCol(SOBLOBCol):
 
     def __init__(self, **kw):
-        self.pickleProtocol = popKey(kw, 'pickleProtocol', 1)
+        self.pickleProtocol = popKey(kw, 'pickleProtocol', pickle.HIGHEST_PROTOCOL)
         super(SOPickleCol, self).__init__(**kw)
 
     def createValidators(self):
