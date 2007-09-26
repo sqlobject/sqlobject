@@ -56,7 +56,7 @@ def setup():
     else:
         classes.append(HasForeign)
     for cls in classes:
-        if hasattr(cls, 'versions') and hasattr(cls, "_connection") and \
+        if hasattr(cls, 'versions') and getattr(cls, "_connection", None) and \
                 cls._connection.tableExists(cls.sqlmeta.table):
             setupClass(cls.versions.versionClass)
         setupClass(cls)
