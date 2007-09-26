@@ -29,5 +29,11 @@ def test_unicode():
     #test string that contain non-plain-text
     #note: unicode column should be in unicode.
     #blob column should be text.  
-    MyTable(strc="", unic=u"\x82", bloc="\x82")
+    MyTable(strc="unic", unic=u"\x82", bloc="\x82")
+
+    m = MyTable.selectBy(strc='unic')
+    m = m[0]
+    assert m.bloc == "\x82"
+    assert m.unic == u"\x82"
+    
 
