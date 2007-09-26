@@ -1041,7 +1041,7 @@ class SQLObject(object):
         # the parts are set.  So we just keep them in a
         # dictionary until later:
         d = {name: value}
-        if not self.sqlmeta._creating:
+        if not self.sqlmeta._creating and not getattr(self.sqlmeta, "row_update_sig_suppress", False):
             self.sqlmeta.send(events.RowUpdateSignal, self, d)
         if len(d) != 1 or name not in d:
             # Already called RowUpdateSignal, don't call it again
