@@ -1,10 +1,11 @@
-from py.test import raises
-from sqlobject import *
 try:
     sorted
 except NameError:
-    # For Python 2.2 and 2.3:
+    # For Python 2.3:
     from sqlobject.events import sorted
+
+from py.test import raises
+from sqlobject import *
 from sqlobject.inheritance import InheritableSQLObject
 from sqlobject.versioning import Versioning
 from sqlobject.tests.dbtest import *
@@ -43,11 +44,11 @@ def _set_extra():
 class Extra(SQLObject):
     name = StringCol()
     versions = Versioning(extraCols={'extra' : StringCol(default=_set_extra())})
+
 class HasAltId(SQLObject):
     name = StringCol()
     altid = IntCol(alternateID=True)
     versions = Versioning()
-
 
 def setup():
     classes = [MyClass, Base, Child, Government, Monarchy, VChild, Extra, HasAltId]
@@ -66,7 +67,6 @@ def setup():
                 version.destroySelf()
 
 def test_versioning():
-
     #the simple case
     setup()
     mc = MyClass(name='fleem')
@@ -129,7 +129,6 @@ def test_restore():
     extra.versions[0].restore()
     assert extra.name == "fleem"
 
-
 def test_next():
     setup()
     base = Base(name='first', value=1)
@@ -166,4 +165,3 @@ def test_altid():
     setup()
     extra = HasAltId(name="fleem", altid=5) 
     extra.name = "morx"
-
