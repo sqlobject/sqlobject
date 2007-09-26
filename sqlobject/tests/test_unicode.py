@@ -7,7 +7,7 @@ from sqlobject.tests.dbtest import *
 
 class TestUnicode(SQLObject):
     count = IntCol(alternateID=True)
-    col1 = UnicodeCol(alternateID=True)
+    col1 = UnicodeCol(alternateID=True, length=100)
     col2 = UnicodeCol(dbEncoding='latin-1')
 
 data = [u'\u00f0', u'test', 'ascii test']
