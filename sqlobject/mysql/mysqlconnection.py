@@ -109,11 +109,7 @@ class MySQLConnection(DBAPI):
             try:
                 # For MySQLdb 1.2.1 and later, we go
                 # encoding->unicode->charset (in the mysql db)
-                if self.need_unicode and not isinstance(query, unicode):
-                    try:
-                        query = unicode(query, self.encoding)
-                    except UnicodeError:
-                        pass                        
+
                 return cursor.execute(query)
             except MySQLdb.OperationalError, e:
                 if e.args[0] in (MySQLdb.constants.CR.SERVER_GONE_ERROR, MySQLdb.constants.CR.SERVER_LOST):
