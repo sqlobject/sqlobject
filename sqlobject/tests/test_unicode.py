@@ -63,3 +63,17 @@ def test_select():
     assert len(rows) == 2
     rows = list(TestUnicode.selectBy(col1=u'\u00f0', col2=u'test'))
     assert len(rows) == 0
+
+    # starts/endswith/contains
+    rows = list(TestUnicode.select(TestUnicode.q.col1.startswith("test")))
+    assert len(rows) == 1
+    rows = list(TestUnicode.select(TestUnicode.q.col1.endswith("test")))
+    assert len(rows) == 2
+    rows = list(TestUnicode.select(TestUnicode.q.col1.contains("test")))
+    assert len(rows) == 2
+    rows = list(TestUnicode.select(TestUnicode.q.col1.startswith(u"\u00f0")))
+    assert len(rows) == 1
+    rows = list(TestUnicode.select(TestUnicode.q.col1.endswith(u"\u00f0")))
+    assert len(rows) == 1
+    rows = list(TestUnicode.select(TestUnicode.q.col1.contains(u"\u00f0")))
+    assert len(rows) == 1

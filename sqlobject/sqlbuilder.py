@@ -344,6 +344,19 @@ class UnicodeField(SQLObjectField):
         if isinstance(other, unicode):
             other = other.encode(self.column.dbEncoding)
         return SQLOp('<>', self, other)
+    def startswith(self, s):
+        if isinstance(s, unicode):
+            s = s.encode(self.column.dbEncoding)
+        return STARTSWITH(self, s)
+    def endswith(self, s):
+        if isinstance(s, unicode):
+            s = s.encode(self.column.dbEncoding)
+        return ENDSWITH(self, s)
+    def contains(self, s):
+        if isinstance(s, unicode):
+            s = s.encode(self.column.dbEncoding)
+        return CONTAINSSTRING(self, s)
+
 
 registerConverter(UnicodeField, SQLExprConverter)
 
