@@ -1458,7 +1458,7 @@ def pushKey(kw, name, value):
 
 all = []
 for key, value in globals().items():
-    if isinstance(value, type) and (issubclass(value, Col) or issubclass(value, SOCol)):
+    if isinstance(value, type) and (issubclass(value, (Col, SOCol))):
         all.append(key)
 __all__.extend(all)
 del all
