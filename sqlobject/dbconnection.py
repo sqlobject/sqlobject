@@ -13,7 +13,6 @@ import inspect
 import sqlbuilder
 from cache import CacheSet
 import col
-popKey = col.popKey
 import main
 from joins import sorter
 from converters import sqlrepr
@@ -566,12 +565,12 @@ class DBAPI(DBConnection):
         ops = {None: "IS"}
         data = {}
         if 'id' in kw:
-            data[soClass.sqlmeta.idName] = popKey(kw, 'id')
+            data[soClass.sqlmeta.idName] = kw.pop('id')
         for key, col in soClass.sqlmeta.columns.items():
             if key in kw:
-                data[col.dbName] = popKey(kw, key)
+                data[col.dbName] = kw.pop(key)
             elif col.foreignName in kw:
-                obj = popKey(kw, col.foreignName)
+                obj = kw.pop(col.foreignName)
                 if isinstance(obj, main.SQLObject):
                     data[col.dbName] = obj.id
                 else:

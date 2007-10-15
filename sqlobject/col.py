@@ -421,9 +421,9 @@ class Col(object):
 class SOStringLikeCol(SOCol):
     """A common ancestor for SOStringCol and SOUnicodeCol"""
     def __init__(self, **kw):
-        self.length = popKey(kw, 'length')
-        self.varchar = popKey(kw, 'varchar', 'auto')
-        self.char_binary = popKey(kw, 'char_binary', None) # A hack for MySQL
+        self.length = kw.pop('length', None)
+        self.varchar = kw.pop('varchar', 'auto')
+        self.char_binary = kw.pop('char_binary', None) # A hack for MySQL
         if not self.length:
             assert self.varchar == 'auto' or not self.varchar, \
                    "Without a length strings are treated as TEXT, not varchar"
@@ -551,7 +551,7 @@ class UnicodeStringValidator(validators.Validator):
 
 class SOUnicodeCol(SOStringLikeCol):
     def __init__(self, **kw):
-        self.dbEncoding = popKey(kw, 'dbEncoding', 'UTF-8')
+        self.dbEncoding = kw.pop('dbEncoding', 'UTF-8')
         super(SOUnicodeCol, self).__init__(**kw)
 
     def createValidators(self):
@@ -586,9 +586,9 @@ class IntValidator(validators.Validator):
 class SOIntCol(SOCol):
     # 3-03 @@: support precision, maybe max and min directly
     def __init__(self, **kw):
-        self.length = popKey(kw, 'length')
-        self.unsigned = bool(popKey(kw, 'unsigned'))
-        self.zerofill = bool(popKey(kw, 'unsigned'))
+        self.length = kw.pop('length', None)
+        self.unsigned = bool(kw.pop('unsigned', None))
+        self.zerofill = bool(kw.pop('zerofill', None))
         SOCol.__init__(self, **kw)
 
     def autoConstraints(self):
@@ -908,7 +908,7 @@ class ForeignKey(KeyCol):
 class SOEnumCol(SOCol):
 
     def __init__(self, **kw):
-        self.enumValues = popKey(kw, 'enumValues', None)
+        self.enumValues = kw.pop('enumValues', None)
         assert self.enumValues is not None, \
                'You must provide an enumValues keyword argument'
         super(SOEnumCol, self).__init__(**kw)
@@ -999,7 +999,7 @@ class SetValidator(validators.Validator):
 
 class SOSetCol(SOCol):
     def __init__(self, **kw):
-        self.setValues = popKey(kw, 'setValues', None)
+        self.setValues = kw.pop('setValues', None)
         assert self.setValues is not None, \
                 'You must provide a setValues keyword argument'
         super(SOSetCol, self).__init__(**kw)
@@ -1090,7 +1090,7 @@ class SODateTimeCol(SOCol):
     datetimeFormat = '%Y-%m-%d %H:%M:%S'
 
     def __init__(self, **kw):
-        datetimeFormat = popKey(kw, 'datetimeFormat')
+        datetimeFormat = kw.pop('datetimeFormat', None)
         if datetimeFormat:
             self.datetimeFormat = datetimeFormat
         super(SODateTimeCol, self).__init__(**kw)
@@ -1157,7 +1157,7 @@ class SODateCol(SOCol):
     dateFormat = '%Y-%m-%d'
 
     def __init__(self, **kw):
-        dateFormat = popKey(kw, 'dateFormat')
+        dateFormat = kw.pop('dateFormat', None)
         if dateFormat: self.dateFormat = dateFormat
         super(SODateCol, self).__init__(**kw)
 
@@ -1219,7 +1219,7 @@ class SOTimeCol(SOCol):
     timeFormat = '%H:%M:%S'
 
     def __init__(self, **kw):
-        timeFormat = popKey(kw, 'timeFormat')
+        timeFormat = kw.pop('timeFormat', None)
         if timeFormat:
             self.timeFormat = timeFormat
         super(SOTimeCol, self).__init__(**kw)
@@ -1315,10 +1315,10 @@ class DecimalValidator(validators.Validator):
 class SODecimalCol(SOCol):
 
     def __init__(self, **kw):
-        self.size = popKey(kw, 'size', NoDefault)
+        self.size = kw.pop('size', NoDefault)
         assert self.size is not NoDefault, \
                "You must give a size argument"
-        self.precision = popKey(kw, 'precision', NoDefault)
+        self.precision = kw.pop('precision', NoDefault)
         assert self.precision is not NoDefault, \
                "You must give a precision argument"
         super(SODecimalCol, self).__init__(**kw)
@@ -1440,7 +1440,7 @@ class PickleValidator(BinaryValidator):
 class SOPickleCol(SOBLOBCol):
 
     def __init__(self, **kw):
-        self.pickleProtocol = popKey(kw, 'pickleProtocol', pickle.HIGHEST_PROTOCOL)
+        self.pickleProtocol = kw.pop('pickleProtocol', pickle.HIGHEST_PROTOCOL)
         super(SOPickleCol, self).__init__(**kw)
 
     def createValidators(self):
@@ -1451,13 +1451,6 @@ class SOPickleCol(SOBLOBCol):
 class PickleCol(BLOBCol):
     baseClass = SOPickleCol
 
-
-def popKey(kw, name, default=None):
-    if not kw.has_key(name):
-        return default
-    value = kw[name]
-    del kw[name]
-    return value
 
 def pushKey(kw, name, value):
     if not kw.has_key(name):

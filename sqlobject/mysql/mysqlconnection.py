@@ -35,17 +35,17 @@ class MySQLConnection(DBAPI):
         for key in ("unix_socket", "init_command",
                 "read_default_file", "read_default_group", "conv"):
             if key in kw:
-                self.kw[key] = col.popKey(kw, key)
+                self.kw[key] = kw.pop(key)
         for key in ("connect_timeout", "compress", "named_pipe", "use_unicode",
                 "client_flag", "local_infile"):
             if key in kw:
-                self.kw[key] = int(col.popKey(kw, key))
+                self.kw[key] = int(kw.pop(key))
         if "charset" in kw:
-            self.dbEncoding = self.kw["charset"] = col.popKey(kw, "charset")
+            self.dbEncoding = self.kw["charset"] = kw.pop("charset")
         else:
             self.dbEncoding = None
         if "sqlobject_encoding" in kw:
-            self.encoding = col.popKey(kw, "sqlobject_encoding")
+            self.encoding = kw.pop("sqlobject_encoding")
         else:
             self.encoding = 'ascii'
         DBAPI.__init__(self, **kw)
@@ -220,10 +220,10 @@ class MySQLConnection(DBAPI):
                 if self.dbEncoding: kw['dbEncoding'] = self.dbEncoding
             kw['name'] = soClass.sqlmeta.style.dbColumnToPythonAttr(field)
             kw['dbName'] = field
-            
+
             # Since MySQL 5.0, 'NO' is returned in the NULL column (SQLObject expected '')
             kw['notNone'] = (nullAllowed.upper() != 'YES' and True or False)
-            
+
             if default and t.startswith('int'):
                 kw['default'] = int(default)
             elif default and t.startswith('float'):

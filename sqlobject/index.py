@@ -1,5 +1,4 @@
 from types import *
-import col
 from converters import sqlrepr
 
 class SODatabaseIndex(object):
@@ -18,7 +17,7 @@ class SODatabaseIndex(object):
         if not self.unique:
             raise AttributeError, (
                 "'%s' object has no attribute 'get' (index is not unique)" % self.name)
-        connection = col.popKey(kw, 'connection', None)
+        connection = kw.pop('connection', None)
         if args and kw:
             raise TypeError, "You cannot mix named and unnamed arguments"
         columns = [d['column'] for d in self.descriptions

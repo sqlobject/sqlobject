@@ -1,5 +1,4 @@
 from sqlobject.dbconnection import DBAPI
-from sqlobject.col import popKey
 from sqlobject import col, sqlbuilder
 from sqlobject.dberrors import *
 import thread
@@ -69,27 +68,27 @@ class SQLiteConnection(DBAPI):
                 sqlite2_Binary = sqlite.Binary
                 sqlite.Binary = lambda s: sqlite2_Binary(sqlite.encode(s))
             if 'factory' in kw:
-                factory = popKey(kw, 'factory')
+                factory = kw.pop('factory')
                 if isinstance(factory, str):
                     factory = globals()[factory]
                 opts['factory'] = factory(sqlite)
         else:
             opts['autocommit'] = bool(autoCommit)
             if 'encoding' in kw:
-                opts['encoding'] = popKey(kw, 'encoding')
+                opts['encoding'] = kw.pop('encoding')
             if 'mode' in kw:
-                opts['mode'] = int(popKey(kw, 'mode'), 0)
+                opts['mode'] = int(kw.pop('mode'), 0)
         if 'timeout' in kw:
             if using_sqlite2:
-                opts['timeout'] = float(popKey(kw, 'timeout'))
+                opts['timeout'] = float(kw.pop('timeout'))
             else:
-                opts['timeout'] = int(float(popKey(kw, 'timeout')) * 1000)
+                opts['timeout'] = int(float(kw.pop('timeout')) * 1000)
         if 'check_same_thread' in kw:
-            opts["check_same_thread"] = bool(popKey(kw, 'check_same_thread'))
+            opts["check_same_thread"] = bool(kw.pop('check_same_thread'))
         # use only one connection for sqlite - supports multiple)
         # cursors per connection
         self._connOptions = opts
-        self.use_table_info = popKey(kw, "use_table_info", False)
+        self.use_table_info = kw.pop("use_table_info", False)
         DBAPI.__init__(self, **kw)
         self._threadPool = {}
         self._threadOrigination = {}

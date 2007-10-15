@@ -41,8 +41,8 @@ class MSSQLConnection(DBAPI):
                 conn_str += "User Id=%s;Password=%s"
                 self.make_conn_str = lambda keys: [conn_str % (keys.host, keys.db, keys.user, keys.password)]
 
-            col.popKey(kw, "sspi")
-            col.popKey(kw, "ncli")
+            kw.pop("sspi", None)
+            kw.pop("ncli", None)
 
         else: # pymssql
             self.dbconnection = sqlmodule.connect

@@ -2,7 +2,6 @@ import sqlbuilder
 NoDefault = sqlbuilder.NoDefault
 import styles
 import classregistry
-from col import popKey
 import events
 
 __all__ = ['MultipleJoin', 'SQLMultipleJoin', 'RelatedJoin', 'SQLRelatedJoin',
@@ -19,10 +18,7 @@ class Join(object):
     def __init__(self, otherClass=None, **kw):
         kw['otherClass'] = otherClass
         self.kw = kw
-        if self.kw.has_key('joinMethodName'):
-            self._joinMethodName = popKey(self.kw, 'joinMethodName')
-        else:
-            self._joinMethodName = None
+        self._joinMethodName = self.kw.pop('joinMethodName', None)
 
     def _set_joinMethodName(self, value):
         assert self._joinMethodName == value or self._joinMethodName is None, "You have already given an explicit joinMethodName (%s), and you are now setting it to %s" % (self._joinMethodName, value)
@@ -304,7 +300,7 @@ def capitalize(name):
 class SOSingleJoin(SOMultipleJoin):
 
     def __init__(self, **kw):
-        self.makeDefault = popKey(kw, 'makeDefault', False)
+        self.makeDefault = kw.pop('makeDefault', False)
         SOMultipleJoin.__init__(self, **kw)
 
     def performJoin(self, inst):
