@@ -18,7 +18,7 @@ class SelectResults(object):
         if ops.get('orderBy', sqlbuilder.NoDefault) is sqlbuilder.NoDefault:
             ops['orderBy'] = sourceClass.sqlmeta.defaultOrder
         orderBy = ops['orderBy']
-        if isinstance(orderBy, list) or isinstance(orderBy, tuple):
+        if isinstance(orderBy, (tuple, list)):
             orderBy = map(self._mungeOrderBy, orderBy)
         else:
             orderBy = self._mungeOrderBy(orderBy)

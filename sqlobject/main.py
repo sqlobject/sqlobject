@@ -88,8 +88,7 @@ def makeProperties(obj):
         if len(setters) == 1 and setters.has_key('doc'):
             continue
         if d.has_key(var):
-            if isinstance(d[var], types.MethodType) \
-                   or isinstance(d[var], types.FunctionType):
+            if isinstance(d[var], (types.MethodType, types.FunctionType)):
                 warnings.warn(
                     "I tried to set the property %r, but it was "
                     "already set, as a method (%r).  Methods have "

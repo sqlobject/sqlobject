@@ -84,7 +84,7 @@ class SOJoin(object):
         return results
 
 def sorter(orderBy):
-    if isinstance(orderBy, tuple) or isinstance(orderBy, list):
+    if isinstance(orderBy, (tuple, list)):
         if len(orderBy) == 1:
             orderBy = orderBy[0]
         else:
