@@ -1,0 +1,16 @@
+==== $(example)  c
+----------------------------------------
+date: 2006-01-31T06:42:16
+id: 2
+ip: 84.190.227.75
+username: MB
+
+Sie werden jeweils nach Doppelklick gespeichert.
+==== $(example)  c +
+----------------------------------------
+date: 2006-01-31T06:42:36
+id: 3
+ip: 84.190.227.75
+username: MB
+
+Auch an unterschiedlichen Stellen geht das

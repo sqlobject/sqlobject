@@ -1,0 +1,43 @@
+TODO
+----
+
+* Use DBUtils_, especially SolidConnection.
+
+.. _DBUtils: http://www.webwareforpython.org/DBUtils
+
+* ``_fromDatabase`` currently doesn't support IDs that don't fit into
+  the normal naming scheme.  It should do so.  You can still use
+  ``_idName`` with ``_fromDatabase``.
+
+* More databases supported.  There has been interest and some work in
+  the progress for Oracle. IWBN to have Informix and DB2 drivers.
+
+* Better transaction support -- right now you can use transactions
+  for the database, but the object isn't transaction-aware, so
+  non-database persistence won't be able to be rolled back.
+
+* Optimistic locking and other techniques to handle concurrency.
+
+* Profile of SQLObject performance, so that I can identify bottlenecks.
+
+* Increase hooks with FormEncode validation and form generation package, so
+  SQLObject classes (read: schemas) can be published for editing more
+  directly and easily.  (First step: get Schema-generating method into
+  sqlmeta class)
+
+* Automatic joins in select queries.
+
+* More kinds of joins, and more powerful join results (closer to how
+  `select` works).
+
+* Refactor ``DBConnection`` to use parameterized queries instead of
+  generating query strings.
+
+* A hierarchy of exceptions. SQLObject should translate exceptions from
+  low-level drivers to a consistent set of high-level exceptions.
+
+* Merge SQLObject.create*, .create*SQL methods with DBPI.create* methods.
+
+* Made SQLObject unicode-based instead of just unicode-aware. All internal
+  processing should be done with unicode strings, conversion to/from ascii
+  strings should happen for non-unicode DB API drivers.

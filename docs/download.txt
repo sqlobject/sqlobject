@@ -1,0 +1,49 @@
+Download SQLObject
+++++++++++++++++++
+
+The latest releases are always available on the `Python Cheese Shop
+<http://cheeseshop.python.org/pypi/SQLObject>`_, and is installable
+with `easy_install
+<http://peak.telecommunity.com/DevCenter/EasyInstall>`_.
+
+You can install the latest release with::
+
+  easy_install -U SQLObject
+
+You can install the latest version of SQLObject with::
+
+  easy_install SQLObject==dev
+
+You can install the latest bug fixing branch with::
+
+  easy_install SQLObject==bugfix
+
+If you want to require a specific revision (because, for instance, you
+need a bugfix that hasn't appeared in a release), you can put this in
+your `setuptools
+<http://peak.telecommunity.com/DevCenter/setuptools>`_ using
+``setup.py`` file::
+
+  setup(...
+    install_requires=["SQLObject==bugfix,>=0.7.1dev-r1485"],
+  )
+
+This says that you *need* revision 1485 or higher.  But it also says
+that you can aquire the "bugfix" version to try to get that.  In fact,
+when you install ``SQLObject==bugfix`` you will be installing a
+specific version, and "bugfix" is just a kind of label for a way of
+acquiring the version (it points to a branch in the repository).
+
+Repository
+----------
+
+The SQLObject `Subversion <http://subversion.tigris.org/>`_ repository is located at http://svn.colorstudy.com/SQLObject/trunk
+
+If you are using a command-line Subversion client, you can check
+it out like::
+
+    svn co http://svn.colorstudy.com/SQLObject/trunk SQLObject
+
+If you are on Windows you may want to use `TortoiseSVN
+<http://tortoisesvn.tigris.org/>`_.
+

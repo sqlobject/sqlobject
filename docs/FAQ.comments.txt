@@ -1,0 +1,9 @@
+==== $(how-can-i-do-a-left-join)  c +
+----------------------------------------
+date: 2006-01-03T14:32:21
+email: b.n.lawrence@rl.ac.uk
+id: 1
+ip: 86.143.215.248
+username: bryan
+
+Ian, this works fine from Mozilla, but not from konqueror ... what exactly

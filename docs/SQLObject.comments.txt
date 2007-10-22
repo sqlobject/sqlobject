@@ -1,0 +1,63 @@
+==== $(left-join-and-other-joins)  c ++
+----------------------------------------
+date: 2005-12-07T08:36:44
+email: mkent@emdeon.com
+id: 3
+ip: 208.255.226.178
+username: Mike Kent
+
+It's probably just me, but I'm finding this part quite confusing.  You'd use a left join to join two tables together, but this example refers to THREE tables, MyTable, Table1, and Table2.  I haven't been able to grasp what's going on.
+==== $(one-to-many-relationships)  c ++++
+----------------------------------------
+date: 2005-12-07T08:46:22
+email: mkent@emdeon.com
+id: 4
+ip: 208.255.226.178
+username: Mike Kent
+
+If I have this correctly: For a one-to-many relationship, you use 'ForeignKey' on the 'has one' side, and you use 'MultipleJoin' on the 'has many' side.  I found this to be incredibly non-intuitive and confusing.  How about 'hasOneOf' and 'hasManyOf'?  Or would this cause a problem with a many-to-many relationship, since both sides would use 'hasManyOf'?
+==== $(col-class-specifying-columns)  c ++ c +++++ c
+----------------------------------------
+date: 2005-12-07T08:52:14
+email: mkent@emdeon.com
+id: 5
+ip: 208.255.226.178
+username: Mike Kent
+
+So if you declare a column as an alternateID, unique is implied, and we don't need to explicitly declare it?shouldn't this be protected???
+==== $(orderby) +
+----------------------------------------
+date: 2005-12-08T10:47:35
+email: chewie@wookimus.net
+id: 9
+ip: 134.84.144.61
+username: Chad Walstrom
+
+Text turned grey here.  This renders the text in the following Note unreadable unless you mouse-over.
+==== $(selecting-multiple-objects)
+----------------------------------------
+date: 2006-01-04T14:47:33
+email: jwinter@jwinter.org
+id: 10
+ip: 128.197.24.59
+username: Joe
+
+Think about breaking these SELECT statements onto several lines.  They're busting out of the page design now.
+==== $(col-class-specifying-columns)  c ++ c +++++ c +
+----------------------------------------
+date: 2006-02-02T15:43:28
+email: Man
+id: 11
+ip: 192.100.104.28
+username: Big
+
+StringCol's that are alternateID's must have a length property if you use them in MySQL.
+==== $(relatedjoin-many-to-many)  c ++++
+----------------------------------------
+date: 2006-05-18T14:17:19
+email: wellons@oreilly.com
+id: 12
+ip: 209.204.147.64
+username: Jonathan Wellons
+
+What is the advantage over traditional relations?
