@@ -691,7 +691,7 @@ class SOBoolCol(SOCol):
         return "BOOLEAN"
 
     def _sqliteType(self):
-        return "TINYINT"
+        return "BOOLEAN"
 
 class BoolCol(Col):
     baseClass = SOBoolCol

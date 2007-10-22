@@ -346,15 +346,17 @@ class SQLiteConnection(DBAPI):
 
     def guessClass(self, t):
         t = t.upper()
-        if t.find('INT') > 0:
+        if t.find('INT') >= 0:
             return col.IntCol, {}
-        elif t.find('TEXT') > 0 or t.find('CHAR') > 0 or t.find('CLOB') > 0:
+        elif t.find('TEXT') >= 0 or t.find('CHAR') >= 0 or t.find('CLOB') >= 0:
             return col.StringCol, {'length': 2**32-1}
-        elif t.find('BLOB') > 0:
+        elif t.find('BLOB') >= 0:
             return col.BLOBCol, {"length": 2**32-1}
-        elif t.find('REAL') > 0 or t.find('FLOAT') > 0:
+        elif t.find('REAL') >= 0 or t.find('FLOAT') >= 0:
             return col.FloatCol, {}
-        elif t.find('DECIMAL') > 0:
+        elif t.find('DECIMAL') >= 0:
+            return col.DecimalCol, {}
+        elif t.find('BOOL') >= 0:
             return col.DecimalCol, {}
         else:
             return col.Col, {}
