@@ -357,7 +357,7 @@ class SQLiteConnection(DBAPI):
         elif t.find('DECIMAL') >= 0:
             return col.DecimalCol, {}
         elif t.find('BOOL') >= 0:
-            return col.DecimalCol, {}
+            return col.BoolCol, {}
         else:
             return col.Col, {}
 
