@@ -61,6 +61,8 @@ SQLObject 0.9.2
 
 * Fixed a misspelled 'zerofill' option's name.
 
+* Fixed bugs in SQLiteConnection.guessColumn().
+
 * A number of changes ported from `SQLObject 0.7.9`_ and `SQLObject 0.8.6`_.
 
 SQLObject 0.9.1
