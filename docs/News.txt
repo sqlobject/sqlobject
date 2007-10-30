@@ -56,6 +56,8 @@ Features & Interface
 SQLObject 0.9.2
 ===============
 
+Released 30 Oct 2007.
+
 * Fixed a bug in Versioning - do not copy "alternateID" and "unique"
   attributes from the versioned table.
 
@@ -134,6 +136,8 @@ Bug Fixes
 
 SQLObject 0.8.6
 ===============
+
+Released 30 Oct 2007.
 
 * Removed SelectResults.__nonzero__, which was a design mistake. Raising an
   exception in __nonzero__() is inconsistent with other iterators
@@ -310,6 +314,8 @@ Bug Fixes
 
 SQLObject 0.7.9
 ===============
+
+Released 30 Oct 2007.
 
 Bug Fixes
 ---------
