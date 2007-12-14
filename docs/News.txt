@@ -16,6 +16,9 @@ Features & Interface
 * Dropped support for Python 2.2. The minimal version of Python for
   SQLObject is 2.3 now.
 
+* Removed actively deprecated attributes;
+  lowered deprecation level for other attributes to be removed after 0.10.
+
 * SQLBuilder Select supports the rest of SelectResults options (reversed,
   distinct, joins, etc.)
 

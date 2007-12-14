@@ -657,8 +657,8 @@ def deprecated(message, level=1, stacklevel=2):
     if warnings_level is not None and warnings_level <= level:
         warnings.warn(message, DeprecationWarning, stacklevel=stacklevel)
 
-if sys.version_info[:3] < (2, 3, 0):
-    deprecated("Support for Python 2.2 has been declared obsolete and will be removed in the next release of SQLObject")
+#if sys.version_info[:3] < (2, 4, 0):
+#    deprecated("Support for Python 2.3 has been declared obsolete and will be removed in the next release of SQLObject")
 
 def setDeprecationLevel(warning=1, exception=None):
     """
@@ -711,9 +711,6 @@ class SQLObject(object):
     _inheritable = False # Is this class inheritable?
     _parent = None # A reference to the parent instance
     childName = None # Children name (to be able to get a subclass)
-    # moved to sqlmeta in 0.8:
-    _parentClass = _sqlmeta_attr('parentClass', 1)
-    _childClasses = _sqlmeta_attr('childClasses', 1)
 
     # The law of Demeter: the class should not call another classes by name
     SelectResultsClass = SelectResults
@@ -802,21 +799,7 @@ class SQLObject(object):
 
         classregistry.registry(cls.sqlmeta.registry).addClass(cls)
 
-    _style = _sqlmeta_attr('style', 1)
-    _table = _sqlmeta_attr('table', 1)
-    _idName = _sqlmeta_attr('idName', 1)
-    _lazyUpdate = _sqlmeta_attr('lazyUpdate', 1)
-    _defaultOrder = _sqlmeta_attr('defaultOrder', 1)
-    _cacheValues = _sqlmeta_attr('cacheValues', 1)
-    _registry = _sqlmeta_attr('registry', 1)
-    _idType = _sqlmeta_attr('idType', 1)
-    _fromDatabase = _sqlmeta_attr('fromDatabase', 1)
-    _expired = _sqlmeta_attr('expired', 2)
-    addColumn = _sqlmeta_attr('addColumn', 1)
-    delColumn = _sqlmeta_attr('delColumn', 1)
-    addJoin = _sqlmeta_attr('addJoin', 1)
-    delJoin = _sqlmeta_attr('delJoin', 1)
-    addIndex = _sqlmeta_attr('addIndex', 1)
+    _expired = _sqlmeta_attr('expired', 1)
 
     # @classmethod
     def _SO_setupSqlmeta(cls, new_attrs, is_base):
@@ -868,22 +851,11 @@ class SQLObject(object):
         been deprecated; they are moved to the sqlmeta class, and
         a deprecation warning is given.
         """
-        for attr in ['_table', '_lazyUpdate', '_style', '_idName',
-                     '_defaultOrder', '_cacheValues', '_registry',
-                     '_idType', '_fromDatabase', '_idSequence']:
-            if new_attrs.has_key(attr):
-                new_name = attr[1:]
-                deprecated("%r is deprecated; please set the %r "
-                           "attribute in sqlmeta instead" %
-                           (attr, new_name), level=1,
-                           stacklevel=5)
-                setattr(cls.sqlmeta, new_name, new_attrs[attr])
-                delattr(cls, attr)
         for attr in ['_expired']:
             if new_attrs.has_key(attr):
                 deprecated("%r is deprecated and read-only; please do "
                            "not use it in your classes until it is fully "
-                           "deprecated" % attr, level=2, stacklevel=5)
+                           "deprecated" % attr, level=1, stacklevel=5)
 
     _SO_cleanDeprecatedAttrs = classmethod(_SO_cleanDeprecatedAttrs)
 
