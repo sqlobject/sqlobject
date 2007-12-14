@@ -330,6 +330,10 @@ SQLObject 0.7.10
 * With PySQLite2 do not use encode()/decode() from PySQLite1 - always use
   base64 for BLOBs.
 
+* MySQLConnection doesn't convert query strings to unicode (but allows to
+  pass unicode query strings if the user build ones). DB URI parameter
+  sqlobject_encoding is no longer used.
+
 SQLObject 0.7.9
 ===============
 

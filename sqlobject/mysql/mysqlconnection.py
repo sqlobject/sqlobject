@@ -1,6 +1,7 @@
+from sqlobject import col
 from sqlobject.dbconnection import DBAPI
 from sqlobject.dberrors import *
-from sqlobject import col
+from sqlobject.main import deprecated
 MySQLdb = None
 
 class ErrorMessage(str):
@@ -28,10 +29,6 @@ class MySQLConnection(DBAPI):
         self.user = user
         self.password = password
         self.kw = {}
-        if MySQLdb.version_info[:3] >= (1, 2, 1):
-            self.need_unicode = True
-        else:
-            self.need_unicode = False
         for key in ("unix_socket", "init_command",
                 "read_default_file", "read_default_group", "conv"):
             if key in kw:
@@ -45,9 +42,8 @@ class MySQLConnection(DBAPI):
         else:
             self.dbEncoding = None
         if "sqlobject_encoding" in kw:
-            self.encoding = kw.pop("sqlobject_encoding")
-        else:
-            self.encoding = 'ascii'
+            del kw["sqlobject_encoding"]
+            deprecated("sqlobject_encoding is deprecated and no longer used.")
         DBAPI.__init__(self, **kw)
 
     def connectionFromURI(cls, uri):
@@ -79,12 +75,12 @@ class MySQLConnection(DBAPI):
         if hasattr(conn, 'autocommit'):
             conn.autocommit(bool(self.autoCommit))
 
-        if self.dbEncoding:
+        if dbEncoding:
             if hasattr(conn, 'set_character_set'): # MySQLdb 1.2.1 and later
-                conn.set_character_set(self.dbEncoding)
+                conn.set_character_set(dbEncoding)
             else: # pre MySQLdb 1.2.1
                 # works along with monkeypatching code above
-                conn.query("SET NAMES %s" % self.dbEncoding)
+                conn.query("SET NAMES %s" % dbEncoding)
 
         return conn
 
@@ -107,9 +103,6 @@ class MySQLConnection(DBAPI):
         # done by calling ping(True) on the connection.
         for count in range(3):
             try:
-                # For MySQLdb 1.2.1 and later, we go
-                # encoding->unicode->charset (in the mysql db)
-
                 return cursor.execute(query)
             except MySQLdb.OperationalError, e:
                 if e.args[0] in (MySQLdb.constants.CR.SERVER_GONE_ERROR, MySQLdb.constants.CR.SERVER_LOST):
