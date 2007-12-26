@@ -1581,13 +1581,35 @@ class SQLObject(object):
         if isinstance(value, basestring):
             value = dbconnection.connectionForURI(value)
         cls._connection = value
+
     setConnection = classmethod(setConnection)
 
     def __sqlrepr__(self, db):
         return sqlbuilder.sqlrepr(self.__class__.q.id==self.id)
-    
+
     def tablesUsedImmediate(self):
         return [self.__class__.q]
+
+    def __eq__(self, other):
+        if self.__class__ is other.__class__:
+            if self.id == other.id:
+                return True
+        return False
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
+    def __lt__(self, other):
+       return NotImplemented
+
+    def __le__(self, other):
+       return NotImplemented
+
+    def __gt__(self, other):
+       return NotImplemented
+
+    def __ge__(self, other):
+       return NotImplemented
 
 
 def capitalize(name):
