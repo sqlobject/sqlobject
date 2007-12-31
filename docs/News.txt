@@ -60,6 +60,9 @@ Features & Interface
   considered equal is they have the same id; other methods return
   NotImplemented.
 
+* MySQLConnection (and DB URI) accept a number of SSL-related parameters:
+  ssl_key, ssl_cert, ssl_ca, ssl_capath.
+
 * A number of changes ported from `SQLObject 0.7.10`_.
 
 SQLObject 0.9.3
