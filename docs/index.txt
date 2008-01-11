@@ -69,4 +69,4 @@ Here's how you'd use the object::
    :height: 37
    :width: 125
    :alt: Hosted by SourceForge
-
+   :target: http://sourceforge.net/

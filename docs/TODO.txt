@@ -41,3 +41,9 @@ TODO
 * Made SQLObject unicode-based instead of just unicode-aware. All internal
   processing should be done with unicode strings, conversion to/from ascii
   strings should happen for non-unicode DB API drivers.
+
+.. image:: http://sourceforge.net/sflogo.php?group_id=74338&type=4
+   :height: 37
+   :width: 125
+   :alt: Hosted by SourceForge
+   :target: http://sourceforge.net/

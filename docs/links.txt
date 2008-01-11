@@ -88,3 +88,9 @@ Other Projects Using SQLObject
   on the web -- customized for you."  That's from their
   FAQ... basically it's a list of user-submitted articles with a group
   rating system, and personal adjustments.
+
+.. image:: http://sourceforge.net/sflogo.php?group_id=74338&type=4
+   :height: 37
+   :width: 125
+   :alt: Hosted by SourceForge
+   :target: http://sourceforge.net/

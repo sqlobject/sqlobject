@@ -81,3 +81,9 @@ Versions are stored in a special table which is created when the table
 for a versioned class is created.  Version tables are not altered when
 the main table is altered, so if you add a column to your main class,
 you will need to manually add the column to your version table. 
+
+.. image:: http://sourceforge.net/sflogo.php?group_id=74338&type=4
+   :height: 37
+   :width: 125
+   :alt: Hosted by SourceForge
+   :target: http://sourceforge.net/

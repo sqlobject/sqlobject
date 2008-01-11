@@ -22,3 +22,9 @@ Contributions have been made by:
 * David Turner, The Open Planning Project
 * Dan Pascu <dan at ag-projects.com>
 * Oleg Broytmann <phd@phd.pp.ru>
+
+.. image:: http://sourceforge.net/sflogo.php?group_id=74338&type=4
+   :height: 37
+   :width: 125
+   :alt: Hosted by SourceForge
+   :target: http://sourceforge.net/

@@ -527,3 +527,9 @@ Maybe you want to specify the charset too? No problem::
                 '''ALTER TABLE some_object CHARACTER SET utf8
                     COLLATE utf8_estonian_ci''']
                 }
+
+.. image:: http://sourceforge.net/sflogo.php?group_id=74338&type=4
+   :height: 37
+   :width: 125
+   :alt: Hosted by SourceForge
+   :target: http://sourceforge.net/

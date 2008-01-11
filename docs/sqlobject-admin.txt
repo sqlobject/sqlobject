@@ -208,3 +208,9 @@ Future
   people something to work with.  Maybe.
 
 * A command to trim versions, by merging upgrade scripts.
+
+.. image:: http://sourceforge.net/sflogo.php?group_id=74338&type=4
+   :height: 37
+   :width: 125
+   :alt: Hosted by SourceForge
+   :target: http://sourceforge.net/

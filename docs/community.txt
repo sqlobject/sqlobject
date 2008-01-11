@@ -26,3 +26,9 @@ The `Author List <docs/Authors.html>`_ tries to list all the major
 contributors.
 
 Wiki and another tracker are also at http://sqlobject.gcu.info/trac.
+
+.. image:: http://sourceforge.net/sflogo.php?group_id=74338&type=4
+   :height: 37
+   :width: 125
+   :alt: Hosted by SourceForge
+   :target: http://sourceforge.net/

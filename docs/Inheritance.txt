@@ -324,3 +324,9 @@ Limitations and notes
   class, even though the join method will work correctly.
 * If you have suggestion, bugs, or patch to this patch, you can
   contact the SQLObject team: <sqlobject-discuss at lists.sourceforge.net>
+
+.. image:: http://sourceforge.net/sflogo.php?group_id=74338&type=4
+   :height: 37
+   :width: 125
+   :alt: Hosted by SourceForge
+   :target: http://sourceforge.net/

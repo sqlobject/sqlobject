@@ -47,3 +47,8 @@ it out like::
 If you are on Windows you may want to use `TortoiseSVN
 <http://tortoisesvn.tigris.org/>`_.
 
+.. image:: http://sourceforge.net/sflogo.php?group_id=74338&type=4
+   :height: 37
+   :width: 125
+   :alt: Hosted by SourceForge
+   :target: http://sourceforge.net/
