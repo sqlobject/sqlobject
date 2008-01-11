@@ -1,3 +1,7 @@
+"""
+SQLObject 0.11
+"""
+
 from main import *
 from col import *
 from sqlbuilder import AND, OR, NOT, IN, LIKE, RLIKE, DESC, CONTAINSSTRING, const, func
