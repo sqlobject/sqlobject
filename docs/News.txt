@@ -63,6 +63,9 @@ Features & Interface
   considered equal is they have the same id; other methods return
   NotImplemented.
 
+* RowDestroySignal is send on destroying an SQLObject instance; postfunctions
+  are run after the row has been destroyed.
+
 * Changed the implementation type in BoolCol under SQLite from TINYINT to
   BOOLEAN and made fromDatabase machinery to recognize it.
 

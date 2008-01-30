@@ -1464,7 +1464,8 @@ class SQLObject(object):
     clearTable = classmethod(clearTable)
 
     def destroySelf(self):
-        self.sqlmeta.send(events.RowDestroySignal, self)
+        post_funcs = []
+        self.sqlmeta.send(events.RowDestroySignal, self, post_funcs)
         # Kills this object.  Kills it dead!
 
         klass = self.__class__
@@ -1525,6 +1526,9 @@ class SQLObject(object):
         self.sqlmeta._obsolete = True
         self._connection._SO_delete(self)
         self._connection.cache.expire(self.id, self.__class__)
+
+        for func in post_funcs:
+            func()
 
     def delete(cls, id, connection=None):
         obj = cls.get(id, connection=connection)

@@ -97,7 +97,14 @@ class RowCreatedSignal(Signal):
 class RowDestroySignal(Signal):
     """
     Called before an instance is deleted.  Sender is the instance's
-    class.  Arguments are ``(instance)``.  You cannot cancel the delete,
+    class.  Arguments are ``(instance, post_funcs)``.  
+
+    ``post_funcs`` is a list of callbacks, intended to have
+    functions appended to it, and are called without arguments. If 
+    any of the post_funcs raises an exception, the deletion is only
+    affected if this will prevent a commit.
+
+    You cannot cancel the delete,
     but you can raise an exception (which will probably cancel the
     delete, but also cause an uncaught exception if not expected).
 

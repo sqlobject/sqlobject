@@ -149,7 +149,7 @@ available via subversion at http://codespeak.net/svn/py/dist.  Read
 its `getting started`_ document for more.
 
 .. __: http://codespeak.net/py/current/doc/test.html
-.. _getting started: http://codespeak.net/py/current/doc/getting-started.html
+.. _getting started: http://codespeak.net/py/dist/test.html#starting-point-py-test-command-line-tool
 
 To actually run the test, you have to give it a database to connect
 to.  You do this with the ``TESTDB`` environmental variable (right now
@@ -163,7 +163,7 @@ one kind of feature, more or less.  If you are testing a module, call
 the test module ``tests/test_modulename.py`` -- only modules that
 start with ``test_`` will be picked up by py.test.
 
-The "framework" for testing is in ``tests/dbtest``.  There's a couple
+The "framework" for testing is in ``tests/dbtest``.  There's a couple of
 important functions:
 
 ``setupClass(soClass)`` creates the tables for the class.  It tries to

@@ -41,13 +41,13 @@ def test_row_create():
     assert len(watcher.log) == 2
     assert watcher.log[0] == ({'name': 'foo'}, [])
 
-def test_row_destrow():
+def test_row_destroy():
     setupClass(EventTester)
     watcher = make_listen(events.RowDestroySignal)
     f = EventTester(name='foo')
     assert not watcher.log
     f.destroySelf()
-    assert watcher.log == [(f,)]
+    assert watcher.log == [(f, [])]
     
 def test_row_update():
     setupClass(EventTester)
