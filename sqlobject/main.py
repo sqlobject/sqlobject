@@ -1554,6 +1554,9 @@ class SQLObject(object):
                   self.id,
                   ' '.join(['%s=%s' % (name, repr(value)) for name, value in self._reprItems()]))
 
+    def __sqlrepr__(self, db):
+        return str(self.id)
+
     def sqlrepr(cls, value, connection=None):
         return (connection or cls._connection).sqlrepr(value)
 
@@ -1583,9 +1586,6 @@ class SQLObject(object):
         cls._connection = value
 
     setConnection = classmethod(setConnection)
-
-    def __sqlrepr__(self, db):
-        return sqlbuilder.sqlrepr(self.__class__.q.id==self.id)
 
     def tablesUsedImmediate(self):
         return [self.__class__.q]

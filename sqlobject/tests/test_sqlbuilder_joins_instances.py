@@ -9,12 +9,12 @@ class SBPerson(SQLObject):
     name = StringCol()
     addresses = SQLMultipleJoin('SBAddress', joinColumn='personID')
     sharedAddresses = SQLRelatedJoin('SBAddress', addRemoveName='SharedAddress')
-    
+
 class SBAddress(SQLObject):
     city = StringCol()
     person = ForeignKey('SBPerson')
     sharedPeople = SQLRelatedJoin('SBPerson')
-    
+
 
 def setup_module(mod):
     setupClass([SBPerson, SBAddress])
@@ -30,33 +30,16 @@ def setup_module(mod):
     mod.ppl[1].addSharedAddress(mod.adds[0])
 
 def testJoin():
-    assert list(SBPerson.select(AND(SBPerson.q.addresses,SBAddress.q.city=='London'))) == \
-            list(SBPerson.select(AND(SBPerson.q.id==SBAddress.q.personID, SBAddress.q.city=='London'))) == \
-            list(SBAddress.selectBy(city='London').throughTo.person)
-            
-def testFK():
-    assert list(SBPerson.select(AND(SBAddress.q.person, SBAddress.q.city=='London'))) == \
-            list(SBPerson.select(AND(SBPerson.q.id==SBAddress.q.personID, SBAddress.q.city=='London')))
+    assert list(SBPerson.select(AND(SBPerson.q.id==SBAddress.q.personID, SBAddress.q.city=='London'))) == \
+           list(SBAddress.selectBy(city='London').throughTo.person)
 
-def testJoin2():
-    assert list(SBAddress.select(AND(SBPerson.q.addresses, SBPerson.q.name=='Julia'))) == \
-            list(SBAddress.select(AND(SBPerson.q.id==SBAddress.q.personID, SBPerson.q.name=='Julia'))) == \
-            list(SBPerson.selectBy(name='Julia').throughTo.addresses)
-            
-def testFK2():
-    assert list(SBAddress.select(AND(SBAddress.q.person, SBPerson.q.name=='Julia'))) == \
-            list(SBAddress.select(AND(SBPerson.q.id==SBAddress.q.personID, SBPerson.q.name=='Julia')))
+    assert list(SBAddress.select(AND(SBPerson.q.id==SBAddress.q.personID, SBPerson.q.name=='Julia'))) == \
+           list(SBPerson.selectBy(name='Julia').throughTo.addresses)
 
 def testRelatedJoin():
-    assert list(SBAddress.select(AND(SBAddress.q.sharedPeople, SBPerson.q.name=='Julia'))) == \
-            list(SBPerson.selectBy(name='Julia').throughTo.sharedAddresses) == \
-            list(ppl[1].sharedAddresses)
+    assert list(SBPerson.selectBy(name='Julia').throughTo.sharedAddresses) == \
+           list(ppl[1].sharedAddresses)
 
 def testInstance():
-    assert list(SBAddress.select(AND(SBAddress.q.person, ppl[0]))) == \
-            list(SBAddress.select(AND(SBPerson.q.id==SBAddress.q.personID, SBPerson.q.id==ppl[0].id))) == \
-            list(ppl[0].addresses)
-            
-def testInstance2():
-    assert list(SBAddress.select(AND(SBPerson.q.addresses, ppl[0]))) == \
-            list(SBAddress.select(AND(SBPerson.q.id==SBAddress.q.personID, SBPerson.q.id==ppl[0].id)))
+    assert list(SBAddress.select(AND(SBPerson.q.id==SBAddress.q.personID, SBPerson.q.id==ppl[0].id))) == \
+           list(ppl[0].addresses)
