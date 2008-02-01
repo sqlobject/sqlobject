@@ -706,8 +706,7 @@ values are:
    object the database will be queried for a value, i.e., a ``SELECT``
    will be issued.  If you want to handle concurrent access to the
    database from multiple processes then this is probably the way to
-   do so.  You should also use it with transactions_ (it is not
-   implied).
+   do so.
 
 `registry`:
    Because SQLObject uses strings to relate classes, and these
@@ -1368,16 +1367,6 @@ message to the low-level connection.
 One can call as much .commit()'s, but after a .rollback() one has to call
 .begin(). The last .commit() should be called as .commit(close=True) to
 release low-level connection.
-
-If you want to use transactions you should also turn `_cacheValues`
-off, like::
-
-    class Person(SQLObject):
-        _cacheValue = False
-
-This, though, makes attribute access very slow (SQLObject queries database
-for an every attribute access). If one wants to set `_cacheValue = True`
-one has to synchronize objects between threads herself.
 
 You can use SELECT FOR UPDATE in those databases that support it::
 
