@@ -22,10 +22,12 @@ Documentation
 * `Main SQLObject documentation <SQLObject.html>`_
 * `Frequently Asked Questions <FAQ.html>`_
 * `sqlbuilder documentation <SQLBuilder.html>`_
+* `select() and SelectResults <SelectResults.html>`_
 * `A brief description of SQLObject architecture <sqlobject-architecture.html>`_
 * `sqlobject-admin documentation <sqlobject-admin.html>`_
 * `Inheritance <Inheritance.html>`_
 * `Versioning <Versioning.html>`_
+* `Views <Views.html>`_
 * `Developer Guide <DeveloperGuide.html>`_
 * `Contributors <Authors.html>`_
 

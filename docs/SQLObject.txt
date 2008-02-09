@@ -134,8 +134,8 @@ the ``sqlobject`` class::
     >>> from sqlobject import *
     >>> import sys, os
 
-Declaring the Class
--------------------
+Declaring a Connection
+----------------------
 
 The connection URI must follow the standard URI syntax::
 
@@ -179,6 +179,9 @@ Lets first set up a connection::
 
 The ``sqlhub.processConnection`` assignment means that all classes
 will, by default, use this connection we've just set up.
+
+Declaring the Class
+-------------------
 
 We'll develop a simple addressbook-like database.  We could create the
 tables ourselves, and just have SQLObject access those tables, but
@@ -225,8 +228,10 @@ with SQLObject that don't have a single primary key, and you must
 treat that key as immutable (otherwise you'll confuse SQLObject
 terribly).
 
-You can `override the id name <#idName>`_ in the database, but it is
+You can `override the id name`_ in the database, but it is
 always called ``.id`` from Python.
+
+.. _`override the id name`: `Class sqlmeta`_
 
 Using the Class
 ---------------
@@ -337,9 +342,13 @@ Lazy Updates
 
 By default SQLObject sends an ``UPDATE`` to the database for every
 attribute you set, or every time you call ``.set()``.  If you want to
-avoid this many updates, add ``_lazyUpdate = True`` to your class
-definition.  Then updates will only be written to the database when
-you call ``inst.syncUpdate()`` or ``obj.sync()``: ``.sync()`` also
+avoid this many updates, add ``lazyUpdate = True`` to your class `sqlmeta
+definition`_.
+
+.. _`sqlmeta definition`: `Class sqlmeta`_
+
+Then updates will only be written to the database when
+you call ``inst.syncUpdate()`` or ``inst.sync()``: ``.sync()`` also
 refetches the data from the database, which ``.syncUpdate()`` does not
 do.
 
@@ -417,8 +426,12 @@ returns a list.  An example::
 
 .. note::
   MultipleJoin, as well as RelatedJoin, returns a list of results.
-  Would you prefer to get a SelectResults objects, you should use
-  SQLMultipleJoin and SQLRelated Join. Usage stays immutated.
+  It is often preferable to get a `SelectResults`_ object instead, 
+  in which case you should use
+  SQLMultipleJoin and SQLRelatedJoin. The declaration of these joins is
+  unchanged from above, but the returned iterator has many additional useful methods.
+
+.. _`SelectResults` : SelectResults.html
 
 Many-to-Many Relationships
 --------------------------
@@ -449,10 +462,12 @@ many-to-many relationship, which is represented with the
     >>> User.createTable()
     >>> Role.createTable()
 
-Note the use of the ``sqlmeta`` class.  This class is used to store
-different kinds of metadata (and override that metadata, like
-``table``).  This is new in SQLObject 0.7.  See the section `Class sqlmeta`_
-for more information on how it works and what attributes have special meanings.
+.. note::
+
+  The sqlmeta class is used to store
+  different kinds of metadata (and override that metadata, like table).
+  This is new in SQLObject 0.7. See the section `Class sqlmeta`_ for more
+  information on how it works and what attributes have special meanings.
 
 And usage::
 
@@ -523,15 +538,15 @@ keyword argument to override this).  Its use:
 Selecting Multiple Objects
 --------------------------
 
-While the full power of all the kinds of joins you can do with a
-relational database are not revealed in SQLObject, a simple ``SELECT``
-is available.
+SQLObject allows nearly arbitrary queries, with one overriding caveat:
+the resulting objects must be instances of a SQLObject class.
+``select`` is a class method which usually takes one argument, the equivalent
+to the SQL ``WHERE`` clause. A simple call (with the SQL that's generated)::
 
-``select`` is a class method, and you call it like (with the SQL
-that's generated)::
-
-    >>> Person._connection.debug = True
+    >>> Person._connection.debug = True # to print SQL as it's sent to the database
     >>> peeps = Person.select(Person.q.firstName=="John")
+    >>> # Notice that we haven't queried the database yet,
+    >>> # ``peeps`` is an iterable SelectResults instance.
     >>> list(peeps)
      1/Select  :  SELECT person.id, person.first_name, person.middle_initial, person.last_name FROM person WHERE (person.first_name = 'John')
      1/COMMIT  :  auto
@@ -568,7 +583,7 @@ create SQL manually (quoting is automatic if you use ``q``).
 
 .. _orderBy:
 
-You can use the keyword arguments `orderBy` to create ``ORDER BY`` in the
+You can use the keyword argument `orderBy` to create ``ORDER BY`` in the
 select statements: `orderBy` takes a string, which should be the *database*
 name of the column, or a column in the form ``Person.q.firstName``.  You
 can use ``"-colname"`` or ``DESC(Person.q.firstName``) to specify
@@ -576,69 +591,19 @@ descending order (this is translated to DESC, so it works on non-numeric
 types as well), or call ``MyClass.select().reversed()``. orderBy can also
 take a list of columns in the same format: ``["-weight", "name"]``.
 
-You can use the special class variable `_defaultOrder` to give a
+You can use the special `class sqlmeta variable`_ `defaultOrder` to give a
 default ordering for all selects.  To get an unordered result when
-`_defaultOrder` is used, use ``orderBy=None``.
+`defaultOrder` is used, use ``orderBy=None``.
 
-Select results are generators, which are lazily evaluated.  So the SQL
-is only executed when you iterate over the select results, or if you
-use ``list()`` to force the result to be executed.  When you iterate
-over the select results, rows are fetched one at a time.  This way you
-can iterate over large results without keeping the entire result set
-in memory.  You can also do things like ``.reversed()`` without
-fetching and reversing the entire result -- instead, SQLObject can
-change the SQL that is sent so you get equivalent results.
+.. _`class sqlmeta variable`: `Class sqlmeta`_
 
-You can also slice select results.  This modifies the SQL query, so
-``peeps[:10]`` will result in ``LIMIT 10`` being added to the end of
-the SQL query.  If the slice cannot be performed in the SQL (e.g.,
-peeps[:-10]), then the select is executed, and the slice is performed
-on the list of results.  This will generally only happen when you use
-negative indexes.
+Select results are generators that allow lazy execution of the underlying
+database query, and further modification of the query before execution.
+Methods are provided for reversing, slicing, ``SELECT DISTINCT``, and ``count``
+and other aggregates. For more information see the `SelectResults`_ documentation.
 
-In certain cases, you may get a select result with an object in it
-more than once, e.g., in some joins.  If you don't want this, you can
-add the keyword argument ``MyClass.select(..., distinct=True)``, which
-results in a ``SELECT DISTINCT`` call.
-
-You can get the length of the result without fetching all the results
-by calling ``count`` on the result object, like
-``MyClass.select().count()``.  A ``COUNT(*)`` query is used -- the
-actual objects are not fetched from the database.  Together with
-slicing, this makes batched queries easy to write:
-
-    start = 20
-    size = 10
-    query = Table.select()
-    results = query[start:start+size]
-    total = query.count()
-    print "Showing page %i of %i" % (start/size + 1, total/size + 1)
-
-.. note::
-
-   There are several factors when considering the efficiency of this
-   kind of batching, and it depends very much how the batching is
-   being used.  Consider a web application where you are showing an
-   average of 100 results, 10 at a time, and the results are ordered
-   by the date they were added to the database.  While slicing will
-   keep the database from returning all the results (and so save some
-   communication time), the database will still have to scan through
-   the entire result set to sort the items (so it knows which the
-   first ten are), and depending on your query may need to scan
-   through the entire table (depending on your use of indexes).
-   Indexes are probably the most important way to improve importance
-   in a case like this, and you may find caching to be more effective
-   than slicing.
-
-   In this case, caching would mean retrieving the *complete* results.
-   You can use ``list(MyClass.select(...))`` to do this.  You can save
-   these results for some limited period of time, as the user looks
-   through the results page by page.  This means the first page in a
-   search result will be slightly more expensive, but all later pages
-   will be very cheap.
-
-For more information on the where clause in the queries, see the
-`SQLBuilder documentation`_.
+For more information on the where clause in the queries see the
+`SQLBuilder`_ documentation.
 
 Select-By Method
 ~~~~~~~~~~~~~~~~
@@ -718,6 +683,9 @@ values are:
    A boolean (default false).  If true, then on class creation the
    database will be queried for the table's columns, and any missing
    columns (possible all columns) will be added automatically.
+
+The following attributes provide introspection but should not be set or
+directly - see `Runtime Column and Join Changes`_ for dynamically modifying these class elements.
 
 `columns`:
    A dictionary of ``{columnName: anSOColInstance}``.  You can get
@@ -1180,7 +1148,6 @@ different types of columns, when SQLObject creates your tables.
         MyTable.select((MyTable.q.name + MyTable.q.surname) == u'value'.encode(dbEncoding))
 
 
-.. Relationships_:
 
 Relationships Between Classes/Tables
 ------------------------------------
@@ -1366,11 +1333,11 @@ message to the low-level connection.
 
 One can call as much .commit()'s, but after a .rollback() one has to call
 .begin(). The last .commit() should be called as .commit(close=True) to
-release low-level connection.
+release low-level connection back to the connection pool.
 
 You can use SELECT FOR UPDATE in those databases that support it::
 
-    Person.select(Person.q.name=="value", forUpdate=True)
+    Person.select(Person.q.name=="value", forUpdate=True, connection=trans)
 
 
 Automatic Schema Generation
@@ -1454,32 +1421,35 @@ columns will be added.
 
 *This is not supported in SQLite*
 
-Runtime Column Changes
-----------------------
+Runtime Column and Join Changes
+-------------------------------
 
 *SQLite does not support this feature*
 
 You can add and remove columns to your class at runtime.  Such changes
 will effect all instances, since changes are made inplace to the
-class.  There are two methods, `addColumn` and `delColumn`, both of
+class.  There are two methods of the `class sqlmeta object`_,
+`addColumn` and `delColumn`, both of
 which take a `Col` object (or subclass) as an argument.  There's also
 an option argument `changeSchema` which, if True, will add or drop the
 column from the database (typically with an ``ALTER`` command).
 
 When adding columns, you must pass the name as part of the column
 constructor, like ``StringCol("username", length=20)``.  When removing
-columns, you can either use the Col object (as found in `_columns`, or
+columns, you can either use the Col object (as found in `sqlmeta.columns`, or
 which you used in `addColumn`), or you can use the column name (like
 ``MyClass.delColumn("username")``).
 
+.. _`class sqlmeta object`: `Class sqlmeta`_
+
 .. _addJoin:
 
-You can also add Joins__, like
+You can also add Joins_, like
 ``MyClass.addJoin(MultipleJoin("MyOtherClass"))``, and remove joins with
 `delJoin`.  `delJoin` does not take strings, you have to get the join
-object out of the `_joins` attribute.
+object out of the `sqlmeta.joins` attribute.
 
-__ Relationships_:
+.. _Joins : `Relationships between Classes/Tables`_
 
 Legacy Database Schemas
 =======================
@@ -1581,7 +1551,8 @@ use a different "Style" object to indicate a different naming
 convention.  For instance::
 
     class Person(SQLObject):
-        _style = MixedCaseStyle(longID=True)
+        class sqlmeta:
+            style = MixedCaseStyle(longID=True)
         firstName = StringCol()
         lastName = StringCol()
 
@@ -1607,22 +1578,8 @@ connection, like::
 Irregular Naming
 ----------------
 
-While naming conventions are nice, they are not always present.  You
-can control most of the names that SQLObject uses, independent of the
-Python names (so at least you don't have to propagate the
-irregularity to your brand-spanking new Python code).
+This is now covered in the `Class sqlmeta`_ section.
 
-Here's a simple example::
-
-    class User(SQLObject):
-        _table = "user_table"
-        _idName = "userid"
-
-        username = StringCol(length=20, dbName='name')
-
-The attribute `_table` overrides the table name.  `_idName` provides
-an alternative to ``id``.  The ``dbName`` keyword argument gives the
-column name.
 
 Non-Integer Keys
 ----------------
@@ -1727,7 +1684,7 @@ program quits).  SQLite does not restrict the types you can put in a
 column -- strings can go in integer columns, dates in integers, etc.
 
 SQLiteConnection doesn't support `automatic class generation`_ and
-SQLite does not support `runtime column changes`_.
+SQLite does not support `runtime column and join changes`_.
 
 SQLite may have concurrency issues, depending on your usage in a
 multi-threaded environment.

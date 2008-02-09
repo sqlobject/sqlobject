@@ -6,7 +6,7 @@ echo "Adding $parent to \$PYTHONPATH"
 export PYTHONPATH=$parent:$PYTHONPATH
 
 NORMAL="Authors DeveloperGuide FAQ Inheritance News News1
-        SQLBuilder SQLObject TODO Versioning
+        SQLBuilder SQLObject TODO Versioning Views SelectResults
         web/index web/links web/repository web/community
         index community sqlobject-architecture sqlobject-admin"
 
