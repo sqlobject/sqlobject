@@ -111,7 +111,8 @@ Only return first num many results. Equivalent to results[:num] slicing.
 ``lazyColumns(v)``
 ~~~~~~~~~~~~~~~~~~
 
-??
+Only fetch the IDs for the results, the rest of the columns will be
+retrieved when attributes of the returned instances are accessed.
 
 ``reversed()``
 ~~~~~~~~~~~~~~
@@ -180,14 +181,14 @@ This accessor lets you retrieve the objects related to your
 SelectResults by either a join or foreign key relationship,
 in the same manner as the cloning methods above. For instance::
 
-  ``Schools.select(Schools.q.student_satisfaction>90).throughTo.teachers``
+  Schools.select(Schools.q.student_satisfaction>90).throughTo.teachers
 
 returns a SelectResult of Teachers of Schools with satisfied students,
 assuming Schools has a SQLMultipleJoin or SQLRelatedJoin attribute
 named ``teachers``. Similarily, with a self-joining foreign key named
 ``father``::
 
-  ``Person.select(Person.q.name=='Steve').throughTo.father.throughTo.father
+  Person.select(Person.q.name=='Steve').throughTo.father.throughTo.father
 
-returns all those Persons who are the paternal grandfather of someone
+returns a SelectResult of Persons who are the paternal grandfather of someone
 named 'Steve'.
