@@ -1386,9 +1386,6 @@ class SQLObject(object):
     def createJoinTables(cls, ifNotExists=False, connection=None):
         conn = connection or cls._connection
         for join in cls._getJoinsToCreate():
-            if not getattr(join, 'createRelatedTable', True):
-                # This join has requested not to be created
-                continue
             if (ifNotExists and
                 conn.tableExists(join.intermediateTable)):
                 continue
@@ -1399,9 +1396,6 @@ class SQLObject(object):
         conn = connection or cls._connection
         sql = []
         for join in cls._getJoinsToCreate():
-            if not getattr(join, 'createRelatedTable', True):
-                # This join has requested not to be created
-                continue
             sql.append(conn._SO_createJoinTableSQL(join))
         return ';\n'.join(sql)
     createJoinTablesSQL = classmethod(createJoinTablesSQL)
@@ -1429,7 +1423,7 @@ class SQLObject(object):
         for join in cls.sqlmeta.joins:
             if not join:
                 continue
-            if not join.hasIntermediateTable():
+            if not join.hasIntermediateTable() or not getattr(join, 'createRelatedTable', True):
                 continue
             if join.soClass.__name__ > join.otherClass.__name__:
                 continue
@@ -1442,7 +1436,7 @@ class SQLObject(object):
         for join in cls.sqlmeta.joins:
             if not join:
                 continue
-            if not join.hasIntermediateTable():
+            if not join.hasIntermediateTable() or not getattr(join, 'createRelatedTable', True):
                 continue
             if join.soClass.__name__ > join.otherClass.__name__:
                 continue

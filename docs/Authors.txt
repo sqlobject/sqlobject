@@ -1,8 +1,7 @@
 Authors
 =======
 
-SQLObject was originally written and continues to be maintained by Ian
-Bicking <ianb@colorstudy.com>
+SQLObject was originally written by Ian Bicking <ianb@colorstudy.com>.
 
 Contributions have been made by:
 
@@ -21,6 +20,7 @@ Contributions have been made by:
 * Shahms King <shahms at shahms.com>
 * David Turner, The Open Planning Project
 * Dan Pascu <dan at ag-projects.com>
+* Diez B. Roggisch <deets at web.de>
 * Oleg Broytmann <phd@phd.pp.ru>
 
 .. image:: http://sourceforge.net/sflogo.php?group_id=74338&type=4

@@ -72,6 +72,12 @@ Features & Interface
 * MySQLConnection (and DB URI) accept a number of SSL-related parameters:
   ssl_key, ssl_cert, ssl_ca, ssl_capath.
 
+SQLObject 0.9.4
+===============
+
+* Prevent MultipleJoin from removing the intermediate table if it was not
+  created by the Join.
+
 SQLObject 0.9.3
 ===============
 
