@@ -10,6 +10,14 @@ News
 SQLObject (trunk)
 =================
 
+Features & Interface
+--------------------
+
+* Dropped support for Python 2.3. The minimal version of Python for
+  SQLObject is 2.4 now.
+
+* Use reversed() in manager/command.py instead of .__reversed__().
+
 SQLObject 0.10.0
 ================
 

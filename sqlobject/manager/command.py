@@ -193,7 +193,7 @@ class Command(object):
         # having to modify any core SQLObject component and namespace
         # contamination.
         # yemartin - 2006-08-08
-        
+
         class SQLObjectCircularReferenceError(Exception): pass
 
         def findReverseDependencies(cls):
@@ -209,7 +209,7 @@ class Command(object):
                     if other not in depended:
                         depended.append(other)
             return depended
-        
+
         # Cache to save already calculated dependency levels.
         dependency_levels = {}
         def calculateDependencyLevel(cls, dependency_stack=[]):
@@ -237,7 +237,7 @@ class Command(object):
                 level = 0
             dependency_levels[cls] = level
             return level
-        
+
         # Now simply calculate and sort by dependency levels:
         try:
             sorter = []
@@ -689,7 +689,7 @@ class CommandDrop(Command):
         v = self.options.verbose
         dropped = 0
         not_existing = 0
-        for soClass in self.classes().__reversed__():
+        for soClass in reversed(self.classes()):
             exists = soClass._connection.tableExists(soClass.sqlmeta.table)
             if v >= 1:
                 if exists:
