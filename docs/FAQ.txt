@@ -108,8 +108,8 @@ How can I define my own intermediate table in my Many-to-Many relationship?
 ---------------------------------------------------------------------------
 
 .. note::
-  In User and Role, SQLRelatedJoin is used with createRelatedTable=False 
-  so the intermediate table is not created automatically. We also set the 
+  In User and Role, SQLRelatedJoin is used with createRelatedTable=False
+  so the intermediate table is not created automatically. We also set the
   intermediate table name with intermediateTable='user_roles'.
   UserRoles is the definition of our intermediate table.
   UserRoles creates a unique index to make sure we don't have duplicate
@@ -117,10 +117,12 @@ How can I define my own intermediate table in my Many-to-Many relationship?
   We also added an extra field called active which has a boolean value.
   The active column might be used to activate/deactivate a given role for
   a user in this example.
-  Another common field to add in this an intermediate table might be a sort 
+  Another common field to add in this an intermediate table might be a sort
   field.
+  If you want to get a list of rows from the intermediate table directly
+  add a MultipleJoin to User or Role class.
 
-We'll expand on the User and Role example and define our own UserRoles class which 
+We'll expand on the User and Role example and define our own UserRoles class which
 will be the intermediate table for the User and Role Many-to-Many relationship.
 
 Example::

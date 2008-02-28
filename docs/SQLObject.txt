@@ -507,6 +507,8 @@ you're creating a UserRole intermediate table, with the two columns
 containing the foreign keys for the MTM relationship, and an additional
 DateTimeCol defaulting to datetime.datetime.now : that column will
 stay empty when adding roles with the addRole method.
+If you want to get a list of rows from the intermediate table directly
+add a MultipleJoin to User or Role class.
 
 You may notice that the columns have the extra keyword argument
 `alternateID`.  If you use ``alternateID=True``, this means that the
