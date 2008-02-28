@@ -122,6 +122,8 @@ Bug Fixes
 SQLObject 0.9.0
 ===============
 
+Released 10 May 2007.
+
 Features & Interface
 --------------------
 
