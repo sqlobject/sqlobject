@@ -302,3 +302,12 @@ class TestSO12(SQLObject):
 def test_sqlmeta_inherited_idName():
     setupClass(TestSO12)
     assert TestSO12.sqlmeta.idName == "my_id"
+
+class TestSO13(SQLObject):
+    name = StringCol()
+    value = IntCol(defaultSQL='1')
+
+def test_defaultSQL():
+    setupClass(TestSO13)
+    test = TestSO13(name="test")
+    assert test.value == 1

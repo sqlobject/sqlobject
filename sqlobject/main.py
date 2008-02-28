@@ -1199,8 +1199,14 @@ class SQLObject(object):
 
                 # If we don't get it, it's an error:
                 # If we specified an SQL DEFAULT, then we should use that
-                if default is NoDefault and column.defaultSQL is not None:
-                    raise TypeError, "%s() did not get expected keyword argument %s" % (self.__class__.__name__, column.name)
+                if default is NoDefault:
+                    if column.defaultSQL is None:
+                        raise TypeError, "%s() did not get expected keyword argument '%s'" % (self.__class__.__name__, column.name)
+                    else:
+                        # There is defaultSQL for the column - do not put
+                        # the column to kw so that the backend creates the value
+                        continue
+
                 # Otherwise we put it in as though they did pass
                 # that keyword:
 
