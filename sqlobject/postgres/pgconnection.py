@@ -256,7 +256,9 @@ class PostgresConnection(DBAPI):
         return results
 
     def guessClass(self, t):
-        if t.count('int'):
+        if t.count('point'): # poINT before INT
+            return col.StringCol, {}
+        elif t.count('int'):
             return col.IntCol, {}
         elif t.count('varying') or t.count('varchar'):
             if '(' in t:

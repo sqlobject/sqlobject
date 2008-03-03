@@ -88,6 +88,8 @@ SQLObject 0.9.4
 
 * Fixed a bug with no default when defaultSQL is defined for the column.
 
+* Recognize POINT data type as string in PostgresConnection.columnsFromSchema().
+
 SQLObject 0.9.3
 ===============
 
