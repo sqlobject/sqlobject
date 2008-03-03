@@ -182,15 +182,15 @@ class SQLExpression:
         return []
 
     def tablesUsed(self, db):
-        return self.tablesUsedDict(db).keys()
-    def tablesUsedDict(self, db):
-        tables = {}
+        return self.tablesUsedSet(db)
+    def tablesUsedSet(self, db):
+        tables = set()
         for table in self.tablesUsedImmediate():
             if hasattr(table, '__sqlrepr__'):
                 table = sqlrepr(table, db)
-            tables[table] = 1
+            tables.add(table)
         for component in self.components():
-            tables.update(tablesUsedDict(component, db))
+            tables.update(tablesUsedSet(component, db))
         return tables
     def tablesUsedImmediate(self):
         return []
@@ -204,9 +204,9 @@ def SQLExprConverter(value, db):
 
 registerConverter(SQLExpression, SQLExprConverter)
 
-def tablesUsedDict(obj, db):
-    if hasattr(obj, "tablesUsedDict"):
-        return obj.tablesUsedDict(db)
+def tablesUsedSet(obj, db):
+    if hasattr(obj, "tablesUsedSet"):
+        return obj.tablesUsedSet(db)
     else:
         return {}
 
@@ -613,22 +613,21 @@ class Select(SQLExpression):
                 join.append(_join)
             else:
                 join.extend(_join)
-        tables = {}
+        tables = set()
         for x in self.ops['staticTables']:
             if isinstance(x, SQLExpression):
                 x = sqlrepr(x, db)
-            tables[x] = 1
+            tables.add(x)
         things = list(self.ops['items']) + join
         if self.ops['clause'] is not NoDefault:
             things.append(self.ops['clause'])
         for thing in things:
             if isinstance(thing, SQLExpression):
-                tables.update(tablesUsedDict(thing, db))
+                tables.update(tablesUsedSet(thing, db))
         for j in join:
             t1, t2 = sqlrepr(j.table1, db), sqlrepr(j.table2, db)
-            if t1 in tables: del tables[t1]
-            if t2 in tables: del tables[t2]
-        tables = tables.keys()
+            if t1 in tables: tables.remove(t1)
+            if t2 in tables: tables.remove(t2)
         if tables:
             select += " FROM %s" % ", ".join(tables)
         elif join:

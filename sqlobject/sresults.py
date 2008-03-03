@@ -31,13 +31,13 @@ class SelectResults(object):
             ops["start"] = 0
             ops["end"] = ops.pop("limit")
 
-        tablesDict = sqlbuilder.tablesUsedDict(self.clause, self._getConnection().dbName)
+        tablesSet = sqlbuilder.tablesUsedSet(self.clause, self._getConnection().dbName)
         if clauseTables:
             for table in clauseTables:
-                tablesDict[table] = 1
+                tablesSet.add(table)
         self.clauseTables = clauseTables
         # Explicitly post-adding-in sqlmeta.table, sqlbuilder.Select will handle sqlrepr'ing and dupes
-        self.tables = tablesDict.keys() + [sourceClass.sqlmeta.table]
+        self.tables = list(tablesSet) + [sourceClass.sqlmeta.table]
 
     def queryForSelect(self):
         columns = [self.sourceClass.q.id] + [getattr(self.sourceClass.q, x.name) for x in self.sourceClass.sqlmeta.columnList]

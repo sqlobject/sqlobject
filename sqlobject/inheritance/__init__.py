@@ -5,17 +5,16 @@ from sqlobject.main import sqlmeta, SQLObject, SelectResults, \
    makeProperties, getterName, setterName
 import iteration
 
-
-def tablesUsedDict(obj, db):
-    if hasattr(obj, "tablesUsedDict"):
-        return obj.tablesUsedDict(db)
-    elif isinstance(obj, (tuple, list)):
-        d = {}
+def tablesUsedSet(obj, db):
+    if hasattr(obj, "tablesUsedSet"):
+        return obj.tablesUsedSet(db)
+    elif isinstance(obj, (tuple, list, set, frozenset)):
+        s = set()
         for component in obj:
-            d.update(tablesUsedDict(component, db))
-        return d
+            s.update(tablesUsedSet(component, db))
+        return s
     else:
-        return {}
+        return set()
 
 
 class InheritableSelectResults(SelectResults):
@@ -28,14 +27,14 @@ class InheritableSelectResults(SelectResults):
 
         dbName = (ops.get('connection',None) or sourceClass._connection).dbName
 
-        tablesDict = tablesUsedDict(clause, dbName)
-        tablesDict[str(sourceClass.sqlmeta.table)] = 1
+        tablesSet = tablesUsedSet(clause, dbName)
+        tablesSet.add(str(sourceClass.sqlmeta.table))
         orderBy = ops.get('orderBy')
         if inheritedTables:
             for tableName in inheritedTables:
-                tablesDict[str(tableName)] = 1
+                tablesSet.add(str(tableName))
         if orderBy and not isinstance(orderBy, basestring):
-            tablesDict.update(tablesUsedDict(orderBy, dbName))
+            tablesSet.update(tablesUsedSet(orderBy, dbName))
         #DSM: if this class has a parent, we need to link it
         #DSM: and be sure the parent is in the table list.
         #DSM: The following code is before clauseTables
@@ -47,7 +46,7 @@ class InheritableSelectResults(SelectResults):
             allClasses = classregistry.registry(
                 sourceClass.sqlmeta.registry).allClasses()
             for registryClass in allClasses:
-                if str(registryClass.sqlmeta.table) in tablesDict:
+                if str(registryClass.sqlmeta.table) in tablesSet:
                     #DSM: By default, no parents are needed for the clauses
                     tableRegistry[registryClass] = registryClass
             tableRegistryCopy = tableRegistry.copy()
@@ -74,7 +73,7 @@ class InheritableSelectResults(SelectResults):
                     parentClass = currentClass.sqlmeta.parentClass
                     parentClause.append(currentClass.q.id == parentClass.q.id)
                     currentClass = parentClass
-                    tablesDict[str(currentClass.sqlmeta.table)] = 1
+                    tablesSet.add(str(currentClass.sqlmeta.table))
             clause = reduce(sqlbuilder.AND, parentClause, clause)
 
         super(InheritableSelectResults, self).__init__(sourceClass,
