@@ -23,12 +23,9 @@ try:
 except ImportError:
     NumericType = None
 
+from decimal import Decimal
+from sets import Set, ImmutableSet
 from types import ClassType, InstanceType, NoneType
-
-try:
-    from decimal import Decimal
-except ImportError:
-    Decimal = None
 
 ########################################
 ## Quoting
@@ -156,7 +153,6 @@ registerConverter(list, SequenceConverter)
 registerConverter(dict, SequenceConverter)
 registerConverter(set, SequenceConverter)
 registerConverter(frozenset, SequenceConverter)
-from sets import Set, ImmutableSet
 registerConverter(Set, SequenceConverter)
 registerConverter(ImmutableSet, SequenceConverter)
 
@@ -183,11 +179,10 @@ def TimeConverter(value, db):
 
 registerConverter(datetime.time, TimeConverter)
 
-if Decimal:
-    def DecimalConverter(value, db):
-        return value.to_eng_string()
+def DecimalConverter(value, db):
+    return value.to_eng_string()
 
-    registerConverter(Decimal, DecimalConverter)
+registerConverter(Decimal, DecimalConverter)
 
 def sqlrepr(obj, db=None):
     try:

@@ -1271,10 +1271,7 @@ class TimestampCol(Col):
     baseClass = SOTimestampCol
 
 
-try:
-    from decimal import Decimal
-except ImportError:
-    Decimal = float
+from decimal import Decimal
 
 class DecimalValidator(validators.Validator):
     def to_python(self, value, state):
