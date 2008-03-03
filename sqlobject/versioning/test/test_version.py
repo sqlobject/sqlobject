@@ -1,9 +1,3 @@
-try:
-    sorted
-except NameError:
-    # For Python 2.3:
-    from sqlobject.events import sorted
-
 from py.test import raises
 from sqlobject import *
 from sqlobject.inheritance import InheritableSQLObject

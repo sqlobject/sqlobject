@@ -657,8 +657,8 @@ def deprecated(message, level=1, stacklevel=2):
     if warnings_level is not None and warnings_level <= level:
         warnings.warn(message, DeprecationWarning, stacklevel=stacklevel)
 
-#if sys.version_info[:3] < (2, 4, 0):
-#    deprecated("Support for Python 2.3 has been declared obsolete and will be removed in the next release of SQLObject")
+if sys.version_info[:3] < (2, 5, 0):
+    deprecated("Support for Python 2.4 has been declared obsolete and will be removed in the next release of SQLObject")
 
 def setDeprecationLevel(warning=1, exception=None):
     """

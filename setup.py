@@ -13,13 +13,6 @@ subpackages = ['firebird', 'include', 'include.pydispatch', 'inheritance',
                'manager', 'maxdb', 'mysql', 'mssql', 'postgres', 'sqlite',
                'sybase', 'util', 'versioning']
 
-import sys
-# patch distutils if it can't cope with the "classifiers" keyword
-if sys.version < '2.2.3':
-    from distutils.dist import DistributionMetadata
-    DistributionMetadata.classifiers = None
-    DistributionMetadata.download_url = None
-
 kw = {}
 if is_setuptools:
     kw['entry_points'] = """
