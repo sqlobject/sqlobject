@@ -329,6 +329,7 @@ class SQLiteConnection(DBAPI):
             else:
                 index_info = parts[2].strip().upper()
             kw['name'] = soClass.sqlmeta.style.dbColumnToPythonAttr(field)
+            kw['dbName'] = field
             import re
             nullble = re.search(r'(\b\S*)\sNULL', index_info)
             default = re.search(r"DEFAULT\s((?:\d[\dA-FX.]*)|(?:'[^']*')|(?:#[^#]*#))", index_info)
