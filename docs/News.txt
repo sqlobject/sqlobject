@@ -83,6 +83,9 @@ Features & Interface
 
 * SQLBuilder tablesUsedSet handles sqlrepr'able objects.
 
+* Under MySQL, PickleCol no longer used TEXT column types; the smallest
+  column is now BLOB - it is not possible to create TINYBLOB column.
+
 SQLObject 0.9.5
 ===============
 

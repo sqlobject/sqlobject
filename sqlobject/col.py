@@ -1445,6 +1445,14 @@ class SOPickleCol(SOBLOBCol):
             name=self.name, pickleProtocol=self.pickleProtocol)] + \
             super(SOPickleCol, self).createValidators()
 
+    def _mysqlType(self):
+        length = self.length
+        if length >= 2**24:
+            return "LONGBLOB"
+        if length >= 2**16:
+            return "MEDIUMBLOB"
+        return "BLOB"
+
 class PickleCol(BLOBCol):
     baseClass = SOPickleCol
 
