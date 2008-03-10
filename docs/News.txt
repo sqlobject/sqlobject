@@ -91,6 +91,9 @@ SQLObject 0.9.5
 
 * Fixed a minor bug in SQLiteConnection.columnsFromSchema() - set dbName.
 
+* A bug in delColumn() that removes all properties is fixed by recreating
+  properties.
+
 SQLObject 0.9.4
 ===============
 

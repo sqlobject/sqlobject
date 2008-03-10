@@ -486,6 +486,7 @@ class sqlmeta(object):
 
         if soClass._SO_finishedClassCreation:
             unmakeProperties(soClass)
+            makeProperties(soClass)
 
         for func in post_funcs:
             func(soClass, column)
@@ -580,6 +581,7 @@ class sqlmeta(object):
 
         if soClass._SO_finishedClassCreation:
             unmakeProperties(soClass)
+            makeProperties(soClass)
 
     delJoin = classmethod(delJoin)
 
