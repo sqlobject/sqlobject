@@ -89,6 +89,8 @@ Features & Interface
 SQLObject 0.9.5
 ===============
 
+Released 10 Mar 2008.
+
 * Fixed a minor bug in SQLiteConnection.columnsFromSchema() - set dbName.
 
 * A bug in delColumn() that removes all properties is fixed by recreating
