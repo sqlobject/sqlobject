@@ -1751,7 +1751,7 @@ This will then be mapped to either the correct driver format.  If running
 SQL Server on a "named" port, make sure to specify the port number in the
 URI.
 
-The two drivers currently supported are:
+The two drivers currently supported are pymssql_ and adodbapi_.
 
 .. _pymssql: http://pymssql.sourceforge.net/
 .. _adodbapi: http://adodbapi.sourceforge.net/
