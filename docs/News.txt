@@ -86,6 +86,11 @@ Features & Interface
 * Under MySQL, PickleCol no longer used TEXT column types; the smallest
   column is now BLOB - it is not possible to create TINYBLOB column.
 
+SQLObject 0.9.6
+===============
+
+* A bug in inheritable delColumn() that doesn't removes properties was fixed.
+
 SQLObject 0.9.5
 ===============
 

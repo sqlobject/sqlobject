@@ -2,7 +2,7 @@ from sqlobject import sqlbuilder
 from sqlobject import classregistry
 from sqlobject.col import StringCol, ForeignKey
 from sqlobject.main import sqlmeta, SQLObject, SelectResults, \
-   makeProperties, getterName, setterName
+   makeProperties, unmakeProperties, getterName, setterName
 import iteration
 
 def tablesUsedSet(obj, db):
@@ -126,19 +126,27 @@ class InheritableSQLMeta(sqlmeta):
 
     addColumn = classmethod(addColumn)
 
-    def delColumn(sqlmeta, column, changeSchema=False, connection=None):
-        soClass = sqlmeta.soClass
-        super(InheritableSQLMeta, sqlmeta).delColumn(column, changeSchema, connection)
+    def delColumn(sqlmeta, column, changeSchema=False, connection=None, childUpdate=False):
+        if childUpdate:
+            soClass = sqlmeta.soClass
+            unmakeProperties(soClass)
+            makeProperties(soClass)
 
-        if isinstance(column, str):
-            name = column
-        else:
-            name = column.name
+            if isinstance(column, str):
+                name = column
+            else:
+                name = column.name
+            delattr(soClass, name)
+            delattr(soClass.q, name)
+            return
+
+        super(InheritableSQLMeta, sqlmeta).delColumn(column, changeSchema, connection)
 
         #DSM: Update each child class if needed
         #DSM: and delete properties for this column
         for c in sqlmeta.childClasses.values():
-            delattr(c.q, name)
+            c.sqlmeta.delColumn(column, changeSchema=changeSchema,
+                connection=connection, childUpdate=True)
 
     delColumn = classmethod(delColumn)
 
@@ -173,15 +181,19 @@ class InheritableSQLMeta(sqlmeta):
 
     addJoin = classmethod(addJoin)
 
-    def delJoin(sqlmeta, joinDef):
-        soClass = sqlmeta.soClass
+    def delJoin(sqlmeta, joinDef, childUpdate=False):
+        if childUpdate:
+            soClass = sqlmeta.soClass
+            unmakeProperties(soClass)
+            makeProperties(soClass)
+            return
+
         super(InheritableSQLMeta, sqlmeta).delJoin(joinDef)
 
         #DSM: Update each child class if needed
         #DSM: and delete properties for this join
         for c in sqlmeta.childClasses.values():
-            # FIXME: what is ``meth``?
-            delattr(c, meth)
+            c.sqlmeta.delJoin(joinDef, childUpdate=True)
 
     delJoin = classmethod(delJoin)
 
