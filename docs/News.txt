@@ -10,6 +10,8 @@ News
 SQLObject (trunk)
 =================
 
+Released 11 Mar 2008.
+
 Features & Interface
 --------------------
 
