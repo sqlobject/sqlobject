@@ -798,6 +798,7 @@ class SQLObject(object):
         # more.
         if not is_base:
             cls.q = sqlbuilder.SQLObjectTable(cls)
+            cls.j = sqlbuilder.SQLObjectTableWithJoins(cls)
 
         classregistry.registry(cls.sqlmeta.registry).addClass(cls)
 

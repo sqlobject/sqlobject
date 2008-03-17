@@ -43,3 +43,20 @@ def testRelatedJoin():
 def testInstance():
     assert list(SBAddress.select(AND(SBPerson.q.id==SBAddress.q.personID, SBPerson.q.id==ppl[0].id))) == \
            list(ppl[0].addresses)
+
+def testFK():
+    assert list(SBPerson.select(AND(SBAddress.j.person, SBAddress.q.city=='London'))) == \
+            list(SBPerson.select(AND(SBPerson.q.id==SBAddress.q.personID, SBAddress.q.city=='London')))
+
+def testRelatedJoin2():
+    assert list(SBAddress.select(AND(SBAddress.j.sharedPeople, SBPerson.q.name=='Julia'))) == \
+           list(SBPerson.select(SBPerson.q.name=='Julia').throughTo.sharedAddresses)
+
+def testJoin2():
+    assert list(SBAddress.select(AND(SBPerson.j.addresses, SBPerson.q.name=='Julia'))) == \
+            list(SBAddress.select(AND(SBPerson.q.id==SBAddress.q.personID, SBPerson.q.name=='Julia'))) == \
+            list(SBPerson.selectBy(name='Julia').throughTo.addresses)
+            
+def testFK2():
+    assert list(SBAddress.select(AND(SBAddress.j.person, SBPerson.q.name=='Julia'))) == \
+            list(SBAddress.select(AND(SBPerson.q.id==SBAddress.q.personID, SBPerson.q.name=='Julia')))

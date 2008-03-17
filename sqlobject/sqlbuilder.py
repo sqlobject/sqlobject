@@ -414,6 +414,30 @@ class SQLObjectTable(Table):
     def _getattrFromUnicodeColumn(self, column, attr):
         return self.UnicodeFieldClass(self.tableName, column.dbName, attr, column)
 
+class SQLObjectTableWithJoins(SQLObjectTable):
+
+    def __getattr__(self, attr):
+        if attr+'ID' in [k for (k,v) in self.soClass.sqlmeta.columns.items() if v.foreignKey]:
+            column = self.soClass.sqlmeta.columns[attr+'ID']
+            return self._getattrFromForeignKey(column, attr)
+        elif attr in [x.joinMethodName for x in self.soClass.sqlmeta.joins]:
+            join = [x for x in self.soClass.sqlmeta.joins if x.joinMethodName == attr][0]
+            return self._getattrFromJoin(join, attr)
+        else:
+            return SQLObjectTable.__getattr__(self, attr)
+        
+    def _getattrFromForeignKey(self, column, attr):
+        ret =  getattr(self, column.name) == \
+              getattr(self.soClass, '_SO_class_'+column.foreignKey).q.id
+        return ret
+
+    def _getattrFromJoin(self, join, attr):
+        if hasattr(join, 'otherColumn'):
+            return AND(join.otherClass.q.id == Field(join.intermediateTable, join.otherColumn),
+                            Field(join.intermediateTable, join.joinColumn) == self.soClass.q.id)
+        else:
+            return getattr(join.otherClass.q, join.joinColumn)==self.soClass.q.id
+
 class TableSpace:
     TableClass = Table
 
