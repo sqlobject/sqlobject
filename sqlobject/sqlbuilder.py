@@ -425,7 +425,7 @@ class SQLObjectTableWithJoins(SQLObjectTable):
             return self._getattrFromJoin(join, attr)
         else:
             return SQLObjectTable.__getattr__(self, attr)
-        
+
     def _getattrFromForeignKey(self, column, attr):
         ret =  getattr(self, column.name) == \
               getattr(self.soClass, '_SO_class_'+column.foreignKey).q.id

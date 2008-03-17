@@ -56,7 +56,7 @@ def testJoin2():
     assert list(SBAddress.select(AND(SBPerson.j.addresses, SBPerson.q.name=='Julia'))) == \
             list(SBAddress.select(AND(SBPerson.q.id==SBAddress.q.personID, SBPerson.q.name=='Julia'))) == \
             list(SBPerson.selectBy(name='Julia').throughTo.addresses)
-            
+
 def testFK2():
     assert list(SBAddress.select(AND(SBAddress.j.person, SBPerson.q.name=='Julia'))) == \
             list(SBAddress.select(AND(SBPerson.q.id==SBAddress.q.personID, SBPerson.q.name=='Julia')))
