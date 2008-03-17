@@ -18,6 +18,9 @@ Features & Interface
 
 * Use reversed() in manager/command.py instead of .__reversed__().
 
+* Dropped support for PostgreSQL 7.2. The minimal supported version of
+  PostgreSQL is 7.3 now.
+
 SQLObject 0.10.0
 ================
 
