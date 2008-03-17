@@ -773,7 +773,7 @@ class SOForeignKey(SOKeyCol):
 
     def sqliteCreateSQL(self):
         sql = SOKeyCol.sqliteCreateSQL(self)
-        other = findClass(self.foreignKey)
+        other = findClass(self.foreignKey, self.soClass.sqlmeta.registry)
         tName = other.sqlmeta.table
         idName = other.sqlmeta.idName
         if self.cascade is not None:
@@ -855,7 +855,7 @@ class SOForeignKey(SOKeyCol):
 
     def sybaseCreateSQL(self):
         sql = SOKeyCol.sybaseCreateSQL(self)
-        other = findClass(self.foreignKey)
+        other = findClass(self.foreignKey, self.soClass.sqlmeta.registry)
         tName = other.sqlmeta.table
         idName = other.sqlmeta.idName
         reference = ('REFERENCES %(tName)s(%(idName)s) ' %
@@ -870,7 +870,7 @@ class SOForeignKey(SOKeyCol):
 
     def mssqlCreateSQL(self):
         sql = SOKeyCol.mssqlCreateSQL(self)
-        other = findClass(self.foreignKey)
+        other = findClass(self.foreignKey, self.soClass.sqlmeta.registry)
         tName = other.sqlmeta.table
         idName = other.sqlmeta.idName
         reference = ('REFERENCES %(tName)s(%(idName)s) ' %
@@ -884,7 +884,7 @@ class SOForeignKey(SOKeyCol):
         return None
 
     def maxdbCreateSQL(self):
-        other = findClass(self.foreignKey)
+        other = findClass(self.foreignKey, self.soClass.sqlmeta.registry)
         fidName = self.dbName
         #I assume that foreign key name is identical to the id of the reference table
         sql = ' '.join([fidName, self._maxdbType()])
