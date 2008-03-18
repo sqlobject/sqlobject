@@ -383,6 +383,8 @@ have used.
 You should use `MyClass.sqlrepr` to quote any values you use if you
 create SQL manually (quoting is automatic if you use ``q``).
 
+.. _orderBy:
+
 You can use the keyword arguments `orderBy` to create ``ORDER BY`` in the
 select statements: `orderBy` takes a string, which should be the *database*
 name of the column, or a column in the form ``Person.q.firstName``.  You
