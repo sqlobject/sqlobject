@@ -16,10 +16,19 @@ Features & Interface
 * Dropped support for Python 2.3. The minimal version of Python for
   SQLObject is 2.4 now.
 
-* Use reversed() in manager/command.py instead of .__reversed__().
-
 * Dropped support for PostgreSQL 7.2. The minimal supported version of
   PostgreSQL is 7.3 now.
+
+* New magic attribute 'j' similar to 'q' was added that automagically does
+  join with the other table in MultipleJoin or RelatedJoin.
+
+Minor features
+--------------
+
+* Use reversed() in manager/command.py instead of .__reversed__().
+
+Bug Fixes
+---------
 
 SQLObject 0.10.0
 ================

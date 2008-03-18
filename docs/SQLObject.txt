@@ -829,6 +829,17 @@ the ``.sync()`` method to write the updates to the database) and it is
 also telling that ``MyClass`` won't have any cache, so that every time
 you ask for some information it will be retrieved from the database.
 
+j-magic
+~~~~~~~
+
+There is a magic attribute `j` similar to q_ with attributes for
+ForeignKey and SQLMultipleJoin/SQLRelatedJoin, providing a shorthand for
+the SQLBuilder join expressions to traverse the given relationship. For
+example, for a ForeignKey AClass.j.someB is equivalent to
+(AClass.q.someBID==BClass.q.id), as is BClass.j.someAs for the matching
+SQLMultipleJoin.
+
+.. _q: q-magic_
 
 SQLObject Class
 ---------------
