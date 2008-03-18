@@ -337,6 +337,156 @@ This will send only one ``UPDATE`` statement.  You can also use `set`
 with non-database properties (there's no benefit, but it helps hide
 the difference between database and non-database attributes).
 
+Selecting Multiple Objects
+--------------------------
+
+While the full power of all the kinds of joins you can do with a
+relational database are not revealed in SQLObject, a simple ``SELECT``
+is available.
+
+``select`` is a class method, and you call it like (with the SQL
+that's generated)::
+
+    >>> Person._connection.debug = True
+    >>> peeps = Person.select(Person.q.firstName=="John")
+    >>> list(peeps)
+     1/Select  :  SELECT person.id, person.first_name, person.middle_initial, person.last_name FROM person WHERE (person.first_name = 'John')
+     1/COMMIT  :  auto
+    [<Person 1 firstName='John' middleInitial='Q' lastName='Doe'>]
+
+This example returns everyone with the first name John.  An expression
+could be more complicated as well, like::
+
+    >>> peeps = Person.select(
+    ...         AND(Address.q.personID == Person.q.id,
+    ...             Address.q.zip.startswith('504')))
+    >>> list(peeps)
+     1/Select  :  SELECT person.id, person.first_name, person.middle_initial, person.last_name FROM person, address WHERE ((address.person_id = person.id) AND (address.zip LIKE '504%'))
+     1/COMMIT  :  auto
+    []
+
+You'll note that classes have an attribute ``q``, which gives access
+to special objects for constructing query clauses.  All attributes
+under ``q`` refer to column names and if you construct logical
+statements with these it'll give you the SQL for that statement.  You
+can also create your SQL more manually::
+
+    >>> peeps = Person.select("""address.person_id = person.id AND
+    ...                          address.zip LIKE '504%'""",
+    ...                       clauseTables=['address'])
+
+Note that you have to use ``clauseTables`` if you use tables besides
+the one you are selecting from.  If you use the ``q`` attributes
+SQLObject will automatically figure out what extra classes you might
+have used.
+
+You should use `MyClass.sqlrepr` to quote any values you use if you
+create SQL manually (quoting is automatic if you use ``q``).
+
+You can use the keyword arguments `orderBy` to create ``ORDER BY`` in the
+select statements: `orderBy` takes a string, which should be the *database*
+name of the column, or a column in the form ``Person.q.firstName``.  You
+can use ``"-colname"`` or ``DESC(Person.q.firstName``) to specify
+descending order (this is translated to DESC, so it works on non-numeric
+types as well), or call ``MyClass.select().reversed()``. orderBy can also
+take a list of columns in the same format: ``["-weight", "name"]``.
+
+You can use the special class variable `_defaultOrder` to give a
+default ordering for all selects.  To get an unordered result when
+`_defaultOrder` is used, use ``orderBy=None``.
+
+Select results are generators, which are lazily evaluated.  So the SQL
+is only executed when you iterate over the select results, or if you
+use ``list()`` to force the result to be executed.  When you iterate
+over the select results, rows are fetched one at a time.  This way you
+can iterate over large results without keeping the entire result set
+in memory.  You can also do things like ``.reversed()`` without
+fetching and reversing the entire result -- instead, SQLObject can
+change the SQL that is sent so you get equivalent results.
+
+You can also slice select results.  This modifies the SQL query, so
+``peeps[:10]`` will result in ``LIMIT 10`` being added to the end of
+the SQL query.  If the slice cannot be performed in the SQL (e.g.,
+peeps[:-10]), then the select is executed, and the slice is performed
+on the list of results.  This will generally only happen when you use
+negative indexes.
+
+In certain cases, you may get a select result with an object in it
+more than once, e.g., in some joins.  If you don't want this, you can
+add the keyword argument ``MyClass.select(..., distinct=True)``, which
+results in a ``SELECT DISTINCT`` call.
+
+You can get the length of the result without fetching all the results
+by calling ``count`` on the result object, like
+``MyClass.select().count()``.  A ``COUNT(*)`` query is used -- the
+actual objects are not fetched from the database.  Together with
+slicing, this makes batched queries easy to write:
+
+    start = 20
+    size = 10
+    query = Table.select()
+    results = query[start:start+size]
+    total = query.count()
+    print "Showing page %i of %i" % (start/size + 1, total/size + 1)
+
+.. note::
+
+   There are several factors when considering the efficiency of this
+   kind of batching, and it depends very much how the batching is
+   being used.  Consider a web application where you are showing an
+   average of 100 results, 10 at a time, and the results are ordered
+   by the date they were added to the database.  While slicing will
+   keep the database from returning all the results (and so save some
+   communication time), the database will still have to scan through
+   the entire result set to sort the items (so it knows which the
+   first ten are), and depending on your query may need to scan
+   through the entire table (depending on your use of indexes).
+   Indexes are probably the most important way to improve importance
+   in a case like this, and you may find caching to be more effective
+   than slicing.
+
+   In this case, caching would mean retrieving the *complete* results.
+   You can use ``list(MyClass.select(...))`` to do this.  You can save
+   these results for some limited period of time, as the user looks
+   through the results page by page.  This means the first page in a
+   search result will be slightly more expensive, but all later pages
+   will be very cheap.
+
+For more information on the where clause in the queries, see the
+`SQLBuilder documentation`_.
+
+q-magic
+~~~~~~~
+
+Please note the use of the `q` attribute in examples above. `q` is an
+object that returns special objects to construct SQL expressions.
+Operations on objects returned by `q-magic` are not evaluated immediately
+but stored in a manner similar to symbolic algebra; the entire expression
+is evaluated by constructing a string that is sent then to the backend.
+
+For example, for the code::
+
+    >>> peeps = Person.select(Person.q.firstName=="John")
+
+SQLObject doesn't evaluate firstName but stores the expression:
+
+    Person.q.firstName=="John"
+
+converts it to the string "first_name = 'John'" and passes the string to
+the backend.
+
+selectBy Method
+~~~~~~~~~~~~~~~
+
+An alternative to ``.select`` is ``.selectBy``.  It works like:
+
+    >>> peeps = Person.selectBy(firstName="John", lastName="Doe")
+
+Each keyword argument is a column, and all the keyword arguments
+are ANDed together.  The return value is a `SelectResult`, so you
+can slice it, count it, order it, etc.
+
+
 Lazy Updates
 ------------
 
@@ -499,8 +649,8 @@ By the way, if you want to create an intermediate table of your own,
 maybe with additional columns, be aware that the standard SQLObject
 methods add/removesomething may not work as expected. Assuming that
 you are providing the join with the correct joinColumn and otherColumn
-arguments, be aware it's not possibile to insert extra data via such
-methodos, nor will they set any default value.
+arguments, be aware it's not possible to insert extra data via such
+methods, nor will they set any default value.
 
 Let's have an example: in the previous User/Role system,
 you're creating a UserRole intermediate table, with the two columns
@@ -537,88 +687,6 @@ keyword argument to override this).  Its use:
     >>> Role.byName('admin')
     <Role 1 name='admin'>
 
-Selecting Multiple Objects
---------------------------
-
-SQLObject allows nearly arbitrary queries, with one overriding caveat:
-the resulting objects must be instances of a SQLObject class.
-``select`` is a class method which usually takes one argument, the equivalent
-to the SQL ``WHERE`` clause. A simple call (with the SQL that's generated)::
-
-    >>> Person._connection.debug = True # to print SQL as it's sent to the database
-    >>> peeps = Person.select(Person.q.firstName=="John")
-    >>> # Notice that we haven't queried the database yet,
-    >>> # ``peeps`` is an iterable SelectResults instance.
-    >>> list(peeps)
-     1/Select  :  SELECT person.id, person.first_name, person.middle_initial, person.last_name FROM person WHERE (person.first_name = 'John')
-     1/COMMIT  :  auto
-    [<Person 1 firstName='John' middleInitial='Q' lastName='Doe'>]
-
-This example returns everyone with the first name John.  An expression
-could be more complicated as well, like::
-
-    >>> peeps = Person.select(
-    ...         AND(Address.q.personID == Person.q.id,
-    ...             Address.q.zip.startswith('504')))
-    >>> list(peeps)
-     1/Select  :  SELECT person.id, person.first_name, person.middle_initial, person.last_name FROM person, address WHERE ((address.person_id = person.id) AND (address.zip LIKE '504%'))
-     1/COMMIT  :  auto
-    []
-
-You'll note that classes have an attribute ``q``, which gives access
-to special objects for constructing query clauses.  All attributes
-under ``q`` refer to column names and if you construct logical
-statements with these it'll give you the SQL for that statement.  You
-can also create your SQL more manually::
-
-    >>> peeps = Person.select("""address.person_id = person.id AND
-    ...                          address.zip LIKE '504%'""",
-    ...                       clauseTables=['address'])
-
-Note that you have to use ``clauseTables`` if you use tables besides
-the one you are selecting from.  If you use the ``q`` attributes
-SQLObject will automatically figure out what extra classes you might
-have used.
-
-You should use `MyClass.sqlrepr` to quote any values you use if you
-create SQL manually (quoting is automatic if you use ``q``).
-
-.. _orderBy:
-
-You can use the keyword argument `orderBy` to create ``ORDER BY`` in the
-select statements: `orderBy` takes a string, which should be the *database*
-name of the column, or a column in the form ``Person.q.firstName``.  You
-can use ``"-colname"`` or ``DESC(Person.q.firstName``) to specify
-descending order (this is translated to DESC, so it works on non-numeric
-types as well), or call ``MyClass.select().reversed()``. orderBy can also
-take a list of columns in the same format: ``["-weight", "name"]``.
-
-You can use the special `class sqlmeta variable`_ `defaultOrder` to give a
-default ordering for all selects.  To get an unordered result when
-`defaultOrder` is used, use ``orderBy=None``.
-
-.. _`class sqlmeta variable`: `Class sqlmeta`_
-
-Select results are generators that allow lazy execution of the underlying
-database query, and further modification of the query before execution.
-Methods are provided for reversing, slicing, ``SELECT DISTINCT``, and ``count``
-and other aggregates. For more information see the `SelectResults`_ documentation.
-
-For more information on the where clause in the queries see the
-`SQLBuilder`_ documentation.
-
-Select-By Method
-~~~~~~~~~~~~~~~~
-
-An alternative to ``.select`` is ``.selectBy``.  It works like:
-
-    >>> peeps = Person.selectBy(firstName="John", lastName="Doe")
-
-Each keyword argument is a column, and all the keyword arguments
-are ANDed together.  The return value is a `SelectResult`, so you
-can slice it, count it, order it, etc.
-
-
 Class sqlmeta
 -------------
 
@@ -627,7 +695,7 @@ specifying metadata in a clearer way, without polluting the class
 namespace with more attributes.
 
 There are some special attributes that can be used inside this class
-that will change the behaviour of the class that contains it.  Those
+that will change the behavior of the class that contains it.  Those
 values are:
 
 `table`:
@@ -724,10 +792,8 @@ There is also one instance attribute:
 While in previous versions of SQLObject those attributes were defined
 directly at the class that will map your database data to Python and
 all of them were prefixed with an underscore, now it is suggested that
-you change your code to this new style.  The old way will be removed
-when SQLObject 0.8 is out and you'll receive lots of warning messages
-saying that if you're not using the ``sqlmeta`` class you're doing things
-in a deprecated way.
+you change your code to this new style.  The old way was removed
+in SQLObject 0.8.
 
 Please note: when using InheritedSQLObject, sqlmeta attributes don't
 get inherited, e.g. you can't access via the sqlmeta.columns dictionary
@@ -755,9 +821,9 @@ To use sqlmeta you should write code like this example::
 
 
 The above definition is creating a table ``my_class`` (the name may be
-different if you changet the ``style`` used) with two columns called
+different if you change the ``style`` used) with two columns called
 columnA and columnB.  There's also a third field that can be accessed
-using ``MyClass.attr1``.  The sqlmeta class is changing the behaviour
+using ``MyClass.attr1``.  The sqlmeta class is changing the behavior
 of ``MyClass`` so that it will perform lazy updates (you'll have to call
 the ``.sync()`` method to write the updates to the database) and it is
 also telling that ``MyClass`` won't have any cache, so that every time
@@ -767,12 +833,8 @@ you ask for some information it will be retrieved from the database.
 SQLObject Class
 ---------------
 
-Besides sqlmeta and columns specifications, there are a number of other
-special attributes you can set in your class.  Those are listed below but,
-except for the ``_connection`` attribute, all other are superseded by the
-implementation shown before with sqlmeta.  If you use them with SQLObject
-0.7 you'll get warnings about their deprecation and you'll probably have
-to convert your code in future releases, when these are dropped.
+There is one special attribute - `_connection`. It is the connection
+defined for the table.
 
 `_connection`:
     The connection object to use, from `DBConnection`.  You can also
@@ -782,32 +844,9 @@ to convert your code in future releases, when these are dropped.
     creation time, as described in transactions_.
 
     If you have defined `sqlhub.processConnection` then this attribute can
-    be ommited from your class and the sqlhub will be used instead.  If
+    be omitted from your class and the sqlhub will be used instead.  If
     you have several classes using the same connection that might be an
     advantage, besides saving a lot of typing.
-
-`_table`:
-    This is old style and works the same way as the `table` attribute
-    from sqlmeta class.
-
-`_joins`:
-    This is old style and works the same way as the `joins` attribute
-    from sqlmeta class.
-
-`_cacheValues`:
-    This is old style and works the same way as the `cacheValues`
-    attribute from sqlmeta class.
-
-.. _idName:
-
-`_idName`:
-    This is old style and works the same way as the `idName` attribute
-    from sqlmeta class.
-
-`_style`:
-    This is old style and works the same way as the `style` attribute
-    from sqlmeta class.
-
 
 Customizing the Objects
 -----------------------
@@ -1055,7 +1094,7 @@ different types of columns, when SQLObject creates your tables.
 `CurrencyCol`:
     Equivalent to ``DecimalCol(size=10, precision=2)``.
     WARNING: as DecimalCol MAY NOT return precise numbers, this column
-    may share the same behaviour. Please read the DecimalCol warning.
+    may share the same behavior. Please read the DecimalCol warning.
 
 `DateTimeCol`:
     A date and time (usually returned as an datetime or mxDateTime object).
@@ -1167,13 +1206,13 @@ joins.
 `None`:
     No action is taken on related deleted columns (this is the default).
     Following the Person/Address example, if you delete the object `Person` with
-    id 1 (Jonh Doe), the `Address` with id 1 (123 W Main St) will be kept
-    untouched (with ``perdonID=1``).
+    id 1 (John Doe), the `Address` with id 1 (123 W Main St) will be kept
+    untouched (with ``personID=1``).
 `False`:
     Deletion of an object that has other objects related to it using a
     `ForeignKey` will fail (sets ``ON DELETE RESTRICT``).
     Following the Person/Address example, if you delete the object `Person` with
-    id 1 (Jonh Doe) a `SQLObjectIntegrityError` exception will be raised,
+    id 1 (John Doe) a `SQLObjectIntegrityError` exception will be raised,
     because the `Address` with id 1 (123 W Main St) has a reference
     (``personID=1``) to it.
 `True`:
@@ -1181,14 +1220,14 @@ joins.
     `ForeignKey` will delete all the related objects too (sets ``ON DELETE
     CASCADE``).
     Following the Person/Address example, if you delete the object `Person` with
-    id 1 (Jonh Doe), the `Address` with id 1 (123 W Main St) will be deleted too.
+    id 1 (John Doe), the `Address` with id 1 (123 W Main St) will be deleted too.
 `'null'`:
     Deletion of an object that has other objects related to it using a
     `ForeignKey` will set the `ForeignKey` column to `NULL`/`None` (sets
     ``ON DELETE SET NULL``).
     Following the Person/Address example, if you delete the object `Person` with
-    id 1 (Jonh Doe), the `Address` with id 1 (123 W Main St) will be kept but
-    the reference to person will be set to `NULL`/`None` (``perdonID=None``).
+    id 1 (John Doe), the `Address` with id 1 (123 W Main St) will be kept but
+    the reference to person will be set to `NULL`/`None` (``personID=None``).
 
 
 MultipleJoin and SQLMultipleJoin: One-to-Many
@@ -1245,7 +1284,7 @@ __ `Multiple Join Keywords`_
 `intermediateTable`:
     The name of the intermediate table which references both classes.
     WARNING: you should pass the database table name, not the SQLO
-    class representine.
+    class representing.
 `addRemoveName`:
     In the `user/role example`__, the methods `addRole(role)` and
     `removeRole(role)` are created.  The ``Role`` portion of these
@@ -1429,7 +1468,7 @@ Runtime Column and Join Changes
 *SQLite does not support this feature*
 
 You can add and remove columns to your class at runtime.  Such changes
-will effect all instances, since changes are made inplace to the
+will effect all instances, since changes are made in place to the
 class.  There are two methods of the `class sqlmeta object`_,
 `addColumn` and `delColumn`, both of
 which take a `Col` object (or subclass) as an argument.  There's also
