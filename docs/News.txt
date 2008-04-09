@@ -22,6 +22,9 @@ Features & Interface
 * New magic attribute 'j' similar to 'q' was added that automagically does
   join with the other table in MultipleJoin or RelatedJoin.
 
+* SQLObject can now create and drop a database in MySQL, PostgreSQL, SQLite
+  and Firebird/Interbase.
+
 Minor features
 --------------
 

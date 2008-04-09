@@ -1,8 +1,9 @@
 import base64
+import os
+import thread
 from sqlobject.dbconnection import DBAPI
 from sqlobject import col, sqlbuilder
 from sqlobject.dberrors import *
-import thread
 
 sqlite = None
 using_sqlite2 = False
@@ -356,6 +357,17 @@ class SQLiteConnection(DBAPI):
             return col.BoolCol, {}
         else:
             return col.Col, {}
+
+    def createEmptyDatabase(self):
+        if self._memory:
+            return
+        open(self.filename, 'w').close()
+
+    def dropDatabase(self):
+        if self._memory:
+            return
+        os.unlink(self.filename)
+
 
 def stop_pysqlite2_converting_strings(s):
     return s

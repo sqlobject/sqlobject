@@ -226,3 +226,10 @@ class FirebirdConnection(DBAPI):
             return col.DateTimeCol, {}
         else:
             return col.Col, {}
+
+    def createEmptyDatabase(self):
+        self.module.create_database("CREATE DATABASE '%s' user '%s' password '%s'" % \
+                                            (self.db, self.user, self.password))
+
+    def dropDatabase(self):
+        self.module.drop_database()

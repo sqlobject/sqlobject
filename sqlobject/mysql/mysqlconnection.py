@@ -292,3 +292,12 @@ class MySQLConnection(DBAPI):
             return col.StringCol, {"length": 2**32, "varchar": True}
         else:
             return col.Col, {}
+
+    def _createOrDropDatabase(self, op="CREATE"):
+        self.query('%s DATABASE %s' % (op, self.db))
+
+    def createEmptyDatabase(self):
+        self._createOrDropDatabase()
+
+    def dropDatabase(self):
+        self._createOrDropDatabase(op="DROP")

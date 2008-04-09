@@ -292,7 +292,7 @@ class PostgresConnection(DBAPI):
                 return True
         return getattr(sqlbuilder.const, defaultstr)
 
-    def createEmptyDatabase(self):
+    def _createOrDropDatabase(self, op="CREATE"):
         # We have to connect to *some* database, so we'll connect to
         # template1, which is a common open database.
         # @@: This doesn't use self.use_dsn or self.dsn_dict
@@ -312,9 +312,15 @@ class PostgresConnection(DBAPI):
         # We must close the transaction with a commit so that
         # the CREATE DATABASE can work (which can't be in a transaction):
         cur.execute('COMMIT')
-        cur.execute('CREATE DATABASE %s' % self.db)
+        cur.execute('%s DATABASE %s' % (op, self.db))
         cur.close()
         conn.close()
+
+    def createEmptyDatabase(self):
+        self._createOrDropDatabase()
+
+    def dropDatabase(self):
+        self._createOrDropDatabase(op="DROP")
 
 
 # Converter for psycopg Binary type.
