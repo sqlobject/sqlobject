@@ -110,6 +110,9 @@ SQLObject 0.9.6
 
 * A minor bug was fixed in col.py - the registry must be passed to findClass().
 
+* Reverted the patch declarative.threadSafeMethod() - it causes more harm
+  then good.
+
 SQLObject 0.9.5
 ===============
 
@@ -467,9 +470,6 @@ Bug Fixes
 * Minor fix in FirebirdConnection.fromDatabase.
 
 * Fixed a bug with default field values for columns for Firebird connection.
-
-* Prevent a deadlock in declarative.threadSafeMethod() by not reacquiring
-  the class lock.
 
 * Fixed a bug in col.createSQL().
 

@@ -32,15 +32,14 @@ Also defines classinstancemethod, which acts as either a class method
 or an instance method depending on where it is called.
 """
 
-import threading
-import events
-
-__all__ = ('classinstancemethod', 'DeclarativeMeta', 'Declarative')
-
 import copy
+import events
 
 import itertools
 counter = itertools.count()
+
+__all__ = ('classinstancemethod', 'DeclarativeMeta', 'Declarative')
+
 
 class classinstancemethod(object):
     """
@@ -77,25 +76,6 @@ class _methodwrapper(object):
             return ('<bound method %s.%s of %r>'
                     % (self.type.__name__, self.func.func_name, self.obj))
 
-def threadSafeMethod(lock):
-    def decorator(fn):
-        def _wrapper(self, *args, **kwargs):
-            # This prevents deadlocks.
-            # The class lock isn't really needed in __init__() while fetching.
-            if '_SO_fetch_no_create' in kwargs:
-                return fn(self, *args, **kwargs)
-            lock.acquire()
-            try:
-                return fn(self, *args, **kwargs)
-            finally:
-                lock.release()
-        try:
-            _wrapper.func_name = fn.func_name
-        except TypeError:
-            pass
-        return _wrapper
-    return decorator
-
 class DeclarativeMeta(type):
 
     def __new__(meta, class_name, bases, new_attrs):
@@ -110,9 +90,6 @@ class DeclarativeMeta(type):
         if new_attrs.has_key('__classinit__'):
             cls.__classinit__ = staticmethod(cls.__classinit__.im_func)
         cls.__classinit__(cls, new_attrs)
-        if new_attrs.has_key('__init__'):
-            lock = threading.RLock()
-            cls.__init__ = threadSafeMethod(lock)(cls.__init__)
         for func in post_funcs:
             func(cls)
         return cls
