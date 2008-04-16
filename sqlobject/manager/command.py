@@ -874,7 +874,7 @@ class CommandRecord(Command):
     help = ('Record state of table definitions.  The state of each '
             'table is written out to a separate file in a directory, '
             'and that directory forms a "version".  A table is also '
-            'added to you datebase (%s) that reflects the version the '
+            'added to your datebase (%s) that reflects the version the '
             'database is currently at.  Use the upgrade command to '
             'sync databases with code.'
             % SQLObjectVersionTable.sqlmeta.table)
