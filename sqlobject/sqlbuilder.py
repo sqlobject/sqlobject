@@ -689,7 +689,7 @@ class Select(SQLExpression):
                 select += " ORDER BY %s" % sqlrepr(reverser(orderBy), db)
         start, end = self.ops['start'], self.ops['end']
         if self.ops['limit'] is not NoDefault:
-            end = start + limit
+            end = start + self.ops['limit']
         if start or end:
             from dbconnection import dbConnectionForScheme
             select = dbConnectionForScheme(db)._queryAddLimitOffset(select, start, end)
