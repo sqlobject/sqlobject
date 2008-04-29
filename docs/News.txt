@@ -33,6 +33,11 @@ Minor features
 Bug Fixes
 ---------
 
+SQLObject 0.10.1
+================
+
+* A number of changes ported from `SQLObject 0.9.6`_.
+
 SQLObject 0.10.0
 ================
 
