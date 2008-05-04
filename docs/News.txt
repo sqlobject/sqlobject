@@ -36,6 +36,8 @@ Bug Fixes
 SQLObject 0.10.1
 ================
 
+Released 4 May 2008.
+
 * Fixed a bug: limit doesn't work in sqlbuilder.Select.
 
 * A number of changes ported from `SQLObject 0.9.6`_.
