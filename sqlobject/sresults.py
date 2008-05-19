@@ -229,11 +229,15 @@ class SelectResults(object):
             or a dot-q attribute (like Table.q.aColumn)
         """
         expressions = []
+        conn = self._getConnection()
+        if self.ops.get('distinct'):
+            distinct = 'DISTINCT '
+        else:
+            distinct = ''
         for func_name, attribute in attributes:
-            if isinstance(attribute, str):
-                expression = '%s(%s)' % (func_name, attribute)
-            else:
-                expression = getattr(sqlbuilder.func, func_name)(attribute)
+            if not isinstance(attribute, str):
+                attribute = conn.sqlrepr(attribute)
+            expression = '%s(%s%s)' % (func_name, distinct, attribute)
             expressions.append(expression)
         return self.accumulate(*expressions)
 

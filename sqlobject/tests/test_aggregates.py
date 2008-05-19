@@ -1,7 +1,7 @@
 from sqlobject import *
 from sqlobject.tests.dbtest import *
 
-# Test MIN, AVG, MAX, SUM
+# Test MIN, AVG, MAX, COUNT, SUM
 
 
 class IntAccumulator(SQLObject):
@@ -49,11 +49,19 @@ def test_float():
 def test_many():
     setupClass(IntAccumulator)
     IntAccumulator(value=1)
+    IntAccumulator(value=1)
+    IntAccumulator(value=2)
     IntAccumulator(value=2)
     IntAccumulator(value=3)
+    IntAccumulator(value=3)
 
-    select = IntAccumulator.select()
     attribute = IntAccumulator.q.value
-    assert select.accumulateMany(
-      ("MIN", attribute), ("AVG", attribute), ("MAX", attribute)
-    ) == (1, 2, 3)
+    assert IntAccumulator.select().accumulateMany(
+        ("MIN", attribute), ("AVG", attribute), ("MAX", attribute),
+        ("COUNT", attribute), ("SUM", attribute)
+    ) == (1, 2, 3, 6, 12)
+
+    assert IntAccumulator.select(distinct=True).accumulateMany(
+        ("MIN", attribute), ("AVG", attribute), ("MAX", attribute),
+        ("COUNT", attribute), ("SUM", attribute)
+    ) == (1, 2, 3, 3, 6)
