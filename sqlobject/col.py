@@ -905,6 +905,21 @@ class ForeignKey(KeyCol):
     def __init__(self, foreignKey=None, **kw):
         super(ForeignKey, self).__init__(foreignKey=foreignKey, **kw)
 
+
+class EnumValidator(validators.Validator):
+
+    def to_python(self, value, state):
+        if value in self.enumValues:
+            return value
+        elif not self.notNone and value is None:
+            return None
+        else:
+            raise validators.Invalid("expected a member of %r in the EnumCol '%s', got %r instead" % \
+                                     (self.enumValues, self.name, value), value, state)
+
+    def from_python(self, value, state):
+        return self.to_python(value, state)
+
 class SOEnumCol(SOCol):
 
     def __init__(self, **kw):
@@ -963,20 +978,6 @@ class SOEnumCol(SOCol):
         else:
             return len(obj)
 
-class EnumValidator(validators.Validator):
-
-    def to_python(self, value, state):
-        if value in self.enumValues:
-            return value
-        elif not self.notNone and value is None:
-            return None
-        else:
-            raise validators.Invalid("expected a member of %r in the EnumCol '%s', got %r instead" % \
-                                     (self.enumValues, self.name, value), value, state)
-
-    def from_python(self, value, state):
-        return self.to_python(value, state)
-
 class EnumCol(Col):
     baseClass = SOEnumCol
 
@@ -1012,7 +1013,7 @@ class SOSetCol(SOCol):
             super(SOSetCol, self).createValidators()
 
     def _mysqlType(self):
-        return "SET(%s)" % ', '.join([sqlbuilder.sqlrepr(v, 'mysql') for v in self.enumValues])
+        return "SET(%s)" % ', '.join([sqlbuilder.sqlrepr(v, 'mysql') for v in self.setValues])
 
 class SetCol(Col):
     baseClass = SOSetCol
