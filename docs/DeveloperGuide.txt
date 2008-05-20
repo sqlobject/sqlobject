@@ -185,7 +185,8 @@ forced to write the test.  That's no fun for me, to just be writing
 tests.  So please, write tests; everything at least needs to be
 exercised, even if the tests are absolutely complete.
 
-Documentation ======= 
+Documentation
+=============
 
 Please write documentation.  Documentation should live in the docs/
 directory.  Pudge converts documentation from Restructured Text to

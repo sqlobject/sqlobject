@@ -41,10 +41,18 @@ import declarative
 import events
 from sresults import SelectResults
 from formencode import schema, compound
+from util.threadinglocal import local
 
 import sys
 if sys.version_info[:3] < (2, 2, 0):
     raise ImportError, "SQLObject requires Python 2.2.0 or later"
+
+"""
+This thread-local storage is needed for RowCreatedSignals. It gathers
+code-blocks to execute _after_ the whole hierachy of inherited SQLObjects
+is created. See SQLObject._create
+"""
+_postponed_local = local()
 
 NoDefault = sqlbuilder.NoDefault
 
@@ -1154,36 +1162,59 @@ class SQLObject(object):
             return joinClass.get(id)
 
     def __init__(self, **kw):
-        # We shadow the sqlmeta class with an instance of sqlmeta
-        # that points to us (our sqlmeta buddy object; where the
-        # sqlmeta class is our class's buddy class)
-        self.sqlmeta = self.__class__.sqlmeta(self)
-        # The get() classmethod/constructor uses a magic keyword
-        # argument when it wants an empty object, fetched from the
-        # database.  So we have nothing more to do in that case:
-        if kw.has_key('_SO_fetch_no_create'):
-            return
+        # If we are the outmost constructor of a hiearchy of
+        # InheritableSQLObjects (or simlpy _the_ constructor of a "normal"
+        # SQLObject), we create a threadlocal list that collects the
+        # RowCreatedSignals, and executes them if this very constructor is left
+        try:
+            _postponed_local.postponed_calls
+            postponed_created = False
+        except AttributeError:
+            _postponed_local.postponed_calls = []
+            postponed_created = True
 
-        post_funcs = []
-        self.sqlmeta.send(events.RowCreateSignal, kw, post_funcs)
+        try:
+            # We shadow the sqlmeta class with an instance of sqlmeta
+            # that points to us (our sqlmeta buddy object; where the
+            # sqlmeta class is our class's buddy class)
+            self.sqlmeta = self.__class__.sqlmeta(self)
+            # The get() classmethod/constructor uses a magic keyword
+            # argument when it wants an empty object, fetched from the
+            # database.  So we have nothing more to do in that case:
+            if kw.has_key('_SO_fetch_no_create'):
+                return
 
-        # Pass the connection object along if we were given one.
-        if kw.has_key('connection'):
-            self._connection = kw['connection']
-            self.sqlmeta._perConnection = True
-            del kw['connection']
+            post_funcs = []
+            self.sqlmeta.send(events.RowCreateSignal, kw, post_funcs)
 
-        self._SO_writeLock = threading.Lock()
+            # Pass the connection object along if we were given one.
+            if kw.has_key('connection'):
+                self._connection = kw['connection']
+                self.sqlmeta._perConnection = True
+                del kw['connection']
 
-        if kw.has_key('id'):
-            id = self.sqlmeta.idType(kw['id'])
-            del kw['id']
-        else:
-            id = None
+            self._SO_writeLock = threading.Lock()
 
-        self._create(id, **kw)
-        for func in post_funcs:
-            func(self)
+            if kw.has_key('id'):
+                id = self.sqlmeta.idType(kw['id'])
+                del kw['id']
+            else:
+                id = None
+
+            self._create(id, **kw)
+
+            for func in post_funcs:
+                func(self)
+        finally:
+            # if we are the creator of the tl-storage, we
+            # have to exectute and under all circumstances
+            # remove the tl-storage
+            if postponed_created:
+                try:
+                    for func in _postponed_local.postponed_calls:
+                        func()
+                finally:
+                    del _postponed_local.postponed_calls
 
     def _create(self, id, **kw):
 
@@ -1248,9 +1279,11 @@ class SQLObject(object):
         self._init(id)
         post_funcs = []
         kw = dict([('class', self.__class__), ('id', id)])
-        self.sqlmeta.send(events.RowCreatedSignal, kw, post_funcs)
-        for func in post_funcs:
-            func(self)
+        def _send_RowCreatedSignal():
+            self.sqlmeta.send(events.RowCreatedSignal, kw, post_funcs)
+            for func in post_funcs:
+                func(self)
+        _postponed_local.postponed_calls.append(_send_RowCreatedSignal)
 
     def _SO_getID(self, obj):
         return getID(obj)

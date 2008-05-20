@@ -117,6 +117,11 @@ Features & Interface
 SQLObject 0.9.7
 ===============
 
+* A bug fixed for RowCreatedSignal together with InheritableSQLObject:
+  run post_funcs after the entire hierarchy has been created.
+
+* Run post_funcs after RowDestroySignal.
+
 * Aggregate functions now honors 'distinct'.
 
 SQLObject 0.9.6

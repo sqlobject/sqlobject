@@ -1,6 +1,7 @@
 from sqlobject import *
 from sqlobject.tests.dbtest import *
 from sqlobject import events
+from sqlobject.inheritance import InheritableSQLObject
 import sys
 
 class EventTester(SQLObject):
@@ -32,7 +33,7 @@ def test_create():
     assert watcher.log[0][1] == (EventTester,)
     assert isinstance(watcher.log[0][2], dict)
     assert isinstance(watcher.log[0][3], list)
-    
+
 def test_row_create():
     setupClass(EventTester)
     watcher = make_listen(events.RowCreateSignal)
@@ -48,7 +49,7 @@ def test_row_destroy():
     assert not watcher.log
     f.destroySelf()
     assert watcher.log == [(f, [])]
-    
+
 def test_row_update():
     setupClass(EventTester)
     watcher = make_listen(events.RowUpdateSignal)
@@ -59,7 +60,7 @@ def test_row_update():
     assert watcher.log == [
         (f, {'name': 'bar2'}),
         (f, {'name': 'bar3'})]
-    
+
 def test_add_column():
     setupClass(EventTester)
     watcher = make_listen(events.AddColumnSignal)
@@ -72,3 +73,30 @@ def test_add_column():
         False, [])
     print zip(watcher.log[1], expect)
     assert watcher.log[1] == expect
+
+
+class A(InheritableSQLObject):
+    a = IntCol()
+
+class B(A):
+    b = IntCol()
+
+class C(B):
+    c = IntCol()
+
+
+def test_inheritance_row_created():
+    setupClass(A)
+    setupClass(B)
+    setupClass(C)
+
+    def test_query(instance):
+        id = instance.id
+        A.get(id)
+
+    def signal(kwargs, postfuncs):
+        postfuncs.append(test_query)
+
+    events.listen(signal, A, events.RowCreatedSignal)
+
+    C(a=1, b=2, c=3)
