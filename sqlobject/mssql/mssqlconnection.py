@@ -158,7 +158,7 @@ class MSSQLConnection(DBAPI):
         return col.mssqlCreateReferenceConstraint()
 
     def createColumn(self, soClass, col):
-        return col.mssqlCreateSQL()
+        return col.mssqlCreateSQL(self)
 
     def createIDColumn(self, soClass):
         key_type = {int: "INT", str: "TEXT"}[soClass.sqlmeta.idType]
@@ -180,7 +180,7 @@ class MSSQLConnection(DBAPI):
     def addColumn(self, tableName, column):
         self.query('ALTER TABLE %s ADD %s' %
                    (tableName,
-                    column.mssqlCreateSQL()))
+                    column.mssqlCreateSQL(self)))
 
     def delColumn(self, sqlmeta, column):
         self.query('ALTER TABLE %s DROP COLUMN %s' % (tableName.table, column.dbName))
@@ -276,3 +276,21 @@ class MSSQLConnection(DBAPI):
                                    'precision': scale}
         else:
             return col.Col, {}
+
+    @property
+    def server_version(self):
+        try:
+            server_version = self.queryAll("SELECT SERVERPROPERTY('productversion')")[0][0]
+            server_version = server_version.split('.')[0]
+            server_version = int(server_version)
+        except:
+            server_version = None # unknown
+        self.server_version = server_version # cache it forever
+        return server_version
+
+    @property
+    def can_use_max_types(self):
+        server_version = self.server_version
+        self.can_use_max_types = can_use_max_types = \
+            (server_version is not None) and (server_version >= 9)
+        return can_use_max_types

@@ -333,7 +333,8 @@ class SOCol(object):
     def sybaseCreateSQL(self):
         return ' '.join([self.dbName, self._sybaseType()] + self._extraSQL())
 
-    def mssqlCreateSQL(self):
+    def mssqlCreateSQL(self, connection=None):
+        self.connection = connection
         return ' '.join([self.dbName, self._mssqlType()] + self._extraSQL())
 
     def firebirdCreateSQL(self):
@@ -478,7 +479,10 @@ class SOStringLikeCol(SOCol):
         if self.customSQLType is not None:
             return self.customSQLType
         if not self.length:
-            type = 'varchar(4000)'
+            if self.connection and self.connection.can_use_max_types:
+                type = 'VARCHAR(MAX)'
+            else:
+                type = 'varchar(4000)'
         elif self.varchar:
             type = 'VARCHAR(%i)' % self.length
         else:
@@ -868,8 +872,8 @@ class SOForeignKey(SOKeyCol):
         # @@: Code from above should be moved here
         return None
 
-    def mssqlCreateSQL(self):
-        sql = SOKeyCol.mssqlCreateSQL(self)
+    def mssqlCreateSQL(self, connection=None):
+        sql = SOKeyCol.mssqlCreateSQL(self, connection)
         other = findClass(self.foreignKey, self.soClass.sqlmeta.registry)
         tName = other.sqlmeta.table
         idName = other.sqlmeta.idName
@@ -1402,7 +1406,10 @@ class SOBLOBCol(SOStringCol):
         return 'BYTEA'
 
     def _mssqlType(self):
-        return "IMAGE"
+        if self.connection and self.connection.can_use_max_types:
+            return 'VARBINARY(MAX)'
+        else:
+            return "IMAGE"
 
 class BLOBCol(StringCol):
     baseClass = SOBLOBCol
