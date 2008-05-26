@@ -1126,10 +1126,14 @@ different types of columns, when SQLObject creates your tables.
     number of digits stored, and `precision` for the number of digits
     after the decimal point.
     WARNING: it may happen that DecimalCol values, although correctly
-    stored in the DB, are returned as floats instead of decimals.
+    stored in the DB, are returned as floats instead of decimals. For
+    example, due to the `type affinity`_ SQLite stores decimals as integers
+    or floats (NUMERIC storage class).
     You should test with your database adapter, and you should try
     importing the Decimal type and your DB adapter before importing
     SQLObject.
+
+.. _`type affinity`: http://sqlite.org/datatype3.html#affinity
 
 `EnumCol`:
     One of several string values -- give the possible strings as a
