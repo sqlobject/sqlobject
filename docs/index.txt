@@ -13,7 +13,6 @@ applications.
 * `Download <download.html>`_
 * `Mailing list, bugs, etc. <community.html>`_
 * `Related projects and articles <links.html>`_
-* `Wiki and tracker <http://sqlobject.gcu.info/trac>`_
 
 Documentation
 =============
