@@ -1135,6 +1135,10 @@ different types of columns, when SQLObject creates your tables.
 
 .. _`type affinity`: http://sqlite.org/datatype3.html#affinity
 
+`DecimalStringCol`:
+    Similar to `DecimalCol` but stores data as strings to work around
+    problems in some drivers and type affinity problem in SQLite.
+
 `EnumCol`:
     One of several string values -- give the possible strings as a
     list, with the `enumValues` keyword argument.  MySQL has a native

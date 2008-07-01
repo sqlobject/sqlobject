@@ -1346,6 +1346,44 @@ class CurrencyCol(DecimalCol):
     baseClass = SOCurrencyCol
 
 
+class DecimalStringValidator(DecimalValidator):
+    def from_python(self, value, state):
+        if value is None:
+            return None
+        if isinstance(value, sqlbuilder.SQLExpression):
+            return value
+        if not isinstance(value, basestring):
+            value = str(value)
+        connection = state.soObject._connection
+        if hasattr(connection, "decimalSeparator"):
+            value = value.replace(connection.decimalSeparator, ".")
+        try:
+            Decimal(value) # Test if the value is valid
+        except:
+            raise validators.Invalid("can not parse Decimal value '%s' in the DecimalCol from '%s'" %
+                (value, getattr(state, 'soObject', '(unknown)')), value, state)
+        else:
+            return value
+
+class SODecimalStringCol(SOStringCol):
+    def __init__(self, **kw):
+        size = kw.pop('size', NoDefault)
+        assert size is not NoDefault, \
+               "You must give a size argument"
+        precision = kw.pop('precision', NoDefault)
+        assert precision is not NoDefault, \
+               "You must give a precision argument"
+        kw['length'] = size + precision
+        super(SODecimalStringCol, self).__init__(**kw)
+
+    def createValidators(self):
+        return [DecimalStringValidator()] + \
+            super(SODecimalStringCol, self).createValidators()
+
+class DecimalStringCol(StringCol):
+    baseClass = SODecimalStringCol
+
+
 class BinaryValidator(validators.Validator):
     """
     Validator for binary types.

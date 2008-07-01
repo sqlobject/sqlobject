@@ -30,6 +30,9 @@ Minor features
 
 * Use reversed() in manager/command.py instead of .__reversed__().
 
+* DecimalStringCol - similar to DecimalCol but stores data as strings to
+  work around problems in some drivers and type affinity problem in SQLite.
+
 SQLObject 0.10.2
 ================
 
