@@ -180,7 +180,8 @@ def TimeConverter(value, db):
 registerConverter(datetime.time, TimeConverter)
 
 def DecimalConverter(value, db):
-    return value.to_eng_string()
+    # See http://mail.python.org/pipermail/python-dev/2008-March/078189.html
+    return str(value.to_eng_string()) # Convert to str to work around a bug in Python 2.5.2
 
 registerConverter(Decimal, DecimalConverter)
 
