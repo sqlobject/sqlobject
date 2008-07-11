@@ -1347,38 +1347,48 @@ class CurrencyCol(DecimalCol):
 
 
 class DecimalStringValidator(DecimalValidator):
+    def to_python(self, value, state):
+        value = super(DecimalStringValidator, self).to_python(value, state)
+        if self.precision and isinstance(value, Decimal):
+            assert value < self.max, \
+                    "Value must be less than %s" % int(self.max)
+            value = value.quantize(self.precision)
+        return value
+
     def from_python(self, value, state):
-        if value is None:
-            return None
-        if isinstance(value, sqlbuilder.SQLExpression):
-            return value
-        if not isinstance(value, basestring):
+        value = super(DecimalStringValidator, self).from_python(value, state)
+        if isinstance(value, Decimal):
+            if self.precision:
+                assert value < self.max, \
+                        "Value must be less than %s" % int(self.max)
+                value = value.quantize(self.precision)
+            value = value.to_eng_string()
+        elif isinstance(value, (int, long)):
             value = str(value)
-        connection = state.soObject._connection
-        if hasattr(connection, "decimalSeparator"):
-            value = value.replace(connection.decimalSeparator, ".")
-        try:
-            Decimal(value) # Test if the value is valid
-        except:
-            raise validators.Invalid("can not parse Decimal value '%s' in the DecimalCol from '%s'" %
-                (value, getattr(state, 'soObject', '(unknown)')), value, state)
-        else:
-            return value
+        return value
 
 class SODecimalStringCol(SOStringCol):
     def __init__(self, **kw):
-        size = kw.pop('size', NoDefault)
-        assert size is not NoDefault, \
-               "You must give a size argument"
-        precision = kw.pop('precision', NoDefault)
-        assert precision is not NoDefault, \
-               "You must give a precision argument"
-        kw['length'] = size + precision
+        self.size = kw.pop('size', NoDefault)
+        assert (self.size is not NoDefault) and (self.size >= 0), \
+            "You must give a size argument as a positive integer"
+        self.precision = kw.pop('precision', NoDefault)
+        assert (self.precision is not NoDefault) and (self.precision >= 0), \
+               "You must give a precision argument as a positive integer"
+        kw['length'] = int(self.size) + int(self.precision)
+        self.quantize = kw.pop('quantize', False)
+        assert isinstance(self.quantize, bool), \
+                "quantize argument must be Boolean True/False"
         super(SODecimalStringCol, self).__init__(**kw)
 
     def createValidators(self):
-        return [DecimalStringValidator()] + \
-            super(SODecimalStringCol, self).createValidators()
+        if self.quantize:
+            v = DecimalStringValidator(
+                precision=Decimal(10) ** (-1 * int(self.precision)),
+                max=Decimal(10) ** (int(self.size) - int(self.precision)))
+        else:
+            v = DecimalStringValidator(precision=0)
+        return [v] + super(SODecimalStringCol, self).createValidators()
 
 class DecimalStringCol(StringCol):
     baseClass = SODecimalStringCol
