@@ -1137,7 +1137,9 @@ different types of columns, when SQLObject creates your tables.
 
 `DecimalStringCol`:
     Similar to `DecimalCol` but stores data as strings to work around
-    problems in some drivers and type affinity problem in SQLite.
+    problems in some drivers and type affinity problem in SQLite. As it
+    stores data as strings the column cannot be used in SQL expressions
+    (column1 + column2) and probably will has problems with ORDER BY.
 
 `EnumCol`:
     One of several string values -- give the possible strings as a
