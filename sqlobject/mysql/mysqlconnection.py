@@ -5,8 +5,8 @@ from sqlobject.main import deprecated
 MySQLdb = None
 
 class ErrorMessage(str):
-    def __new__(cls, e):
-        obj = str.__new__(cls, e[1])
+    def __new__(cls, e, append_msg=''):
+        obj = str.__new__(cls, e[1] + append_msg)
         obj.code = int(e[0])
         obj.module = e.__module__
         obj.exception = e.__class__.__name__
@@ -72,10 +72,8 @@ class MySQLConnection(DBAPI):
             if MySQLdb.version_info[:3] >= (1, 2, 2):
                 conn.ping(True) # Attempt to reconnect. This setting is persistent.
         except self.module.OperationalError, e:
-            raise OperationalError(
-                "%s; used connection string: host=%s, port=%s, db=%s, user=%s, pwd=%s" % (
-                e, self.host, self.port, self.db, self.user, self.password)
-            )
+            conninfo = "; used connection string: host=%(host)s, port=%(port)s, db=%(db)s, user=%(user)s" % self.__dict__
+            raise OperationalError(ErrorMessage(e, conninfo))
 
         if hasattr(conn, 'autocommit'):
             conn.autocommit(bool(self.autoCommit))
