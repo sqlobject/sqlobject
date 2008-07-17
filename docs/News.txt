@@ -130,6 +130,8 @@ SQLObject 0.9.8
 * Convert decimal.to_eng_string() to str to work around a bug in Python 2.5.2;
   see http://mail.python.org/pipermail/python-dev/2008-March/078189.html
 
+* Added test_default_style.py.
+
 SQLObject 0.9.7
 ===============
 
