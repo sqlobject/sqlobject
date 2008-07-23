@@ -152,11 +152,9 @@ its `getting started`_ document for more.
 .. _getting started: http://codespeak.net/py/dist/test.html#starting-point-py-test-command-line-tool
 
 To actually run the test, you have to give it a database to connect
-to.  You do this with the ``TESTDB`` environmental variable (right now
-py.test doesn't have a better way to add custom options).  You can
-give the complete URI to access your test database, or you can give it
-a shortcut like ``mysql`` (these shortcuts are defined in the top of
-``tests/dbtest.py``.
+to. You do so with the option "-D". You can either give a complete URI or one of several
+shortcuts like ``mysql`` (these shortcuts are defined in the top of
+``tests/dbtest.py``).
 
 All the tests are modules in ``sqlobject/tests``.  Each module tests
 one kind of feature, more or less.  If you are testing a module, call
