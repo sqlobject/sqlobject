@@ -45,7 +45,8 @@ supportsMatrix = {
     '-blobData': 'mssql',
     '-decimalColumn': 'mssql',
     '-emptyTable': 'mssql',
-    '-limitSelect' : 'mssql'
+    '-limitSelect' : 'mssql',
+    '+schema' : 'postgres',
     }
 
 

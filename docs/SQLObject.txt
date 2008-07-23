@@ -162,7 +162,8 @@ in-memory databases.
 Parameters are: ``debug`` (default: False), ``debugOutput`` (default: False),
 ``cache`` (default: True), ``autoCommit`` (default: True),
 ``debugThreading`` (default: False),
-``logger`` (default: None), ``loglevel`` (default: None).
+``logger`` (default: None), ``loglevel`` (default: None),
+``schema`` (default: None).
 
 If you want to pass True value in a connection URI - pass any non-empty
 string; an empty string for False.

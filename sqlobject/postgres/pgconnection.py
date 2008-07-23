@@ -85,6 +85,7 @@ class PostgresConnection(DBAPI):
                 dsn = ' '.join(dsn)
         self.dsn = dsn
         self.unicodeCols = unicodeCols
+        self.schema = kw.pop('schema', None)
         DBAPI.__init__(self, **kw)
 
     def connectionFromURI(cls, uri):
@@ -114,6 +115,9 @@ class PostgresConnection(DBAPI):
             # psycopg2 does not have an autocommit method.
             if hasattr(conn, 'autocommit'):
                 conn.autocommit(1)
+        if self.schema:
+            c = conn.cursor()
+            c.execute("SET search_path TO " + self.schema)
         return conn
 
     def _queryInsertID(self, conn, soInstance, id, names, values):
