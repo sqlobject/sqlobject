@@ -25,6 +25,8 @@ Features & Interface
 * SQLObject can now create and drop a database in MySQL, PostgreSQL, SQLite
   and Firebird/Interbase.
 
+* Added some support for schemas in PostgreSQL.
+
 Minor features
 --------------
 
