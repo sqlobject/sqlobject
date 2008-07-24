@@ -142,6 +142,8 @@ SQLObject 0.9.8
 
 * Added test_default_style.py.
 
+* Fixed a minor bug in SQLiteConnection that fails to parse Enum columns.
+
 SQLObject 0.9.7
 ===============
 

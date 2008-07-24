@@ -309,9 +309,9 @@ class SQLiteConnection(DBAPI):
             raise ValueError('The table %s ws not found in the database. Load failed.' % tableName)
         colData = colData[0].split('(', 1)[1].strip()[:-2]
         while colData.find('(') > -1:
-            st = colData.find('(')
-            en = colData.find(')')
-            colData = colData[:st] + colData[en+1:]
+            start = colData.find('(')
+            end = colData.find(')', start)
+            colData = colData[:start] + colData[end+1:]
         results = []
         for colDesc in colData.split(','):
             parts = colDesc.strip().split(' ', 2)
