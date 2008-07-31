@@ -1,12 +1,14 @@
 #!/usr/bin/env python
-import optparse
+
 import fnmatch
-import re
+import optparse
 import os
+import re
 import sys
 import textwrap
-import warnings
 import time
+import warnings
+
 try:
     from paste.deploy import appconfig
 except ImportError:
@@ -14,9 +16,9 @@ except ImportError:
 
 import sqlobject
 from sqlobject import col
-from sqlobject.util import moduleloader
-from sqlobject.declarative import DeclarativeMeta
 from sqlobject.classregistry import findClass
+from sqlobject.declarative import DeclarativeMeta
+from sqlobject.util import moduleloader
 
 # It's not very unsafe to use tempnam like we are doing:
 warnings.filterwarnings(
@@ -874,7 +876,7 @@ class CommandRecord(Command):
     help = ('Record state of table definitions.  The state of each '
             'table is written out to a separate file in a directory, '
             'and that directory forms a "version".  A table is also '
-            'added to your datebase (%s) that reflects the version the '
+            'added to your database (%s) that reflects the version the '
             'database is currently at.  Use the upgrade command to '
             'sync databases with code.'
             % SQLObjectVersionTable.sqlmeta.table)
