@@ -912,8 +912,9 @@ class ConnectionURIOpener(object):
     def connectionForURI(self, uri, **args):
         if args:
             if '?' not in uri:
-                uri += '?'
-            uri += urllib.urlencode(args)
+                uri += '?' + urllib.urlencode(args)
+            else:
+                uri += '&' + urllib.urlencode(args)
         if self.cachedURIs.has_key(uri):
             return self.cachedURIs[uri]
         if uri.find(':') != -1:
