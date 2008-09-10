@@ -49,6 +49,16 @@ def makeDebugWriter(loggerName, loglevel):
     logger = logging.getLogger(loggerName)
     return LogWriter(logger, loglevel)
 
+class Boolean(object):
+    """A bool class that also understands some special string keywords (yes/no, true/false, on/off, 1/0)"""
+    _keywords = {'1': True, 'yes': True, 'true': True, 'on': True,
+                 '0': False, 'no': False, 'false': False, 'off': False}
+    def __new__(cls, value):
+        try:
+            return Boolean._keywords[value.lower()]
+        except (AttributeError, KeyError):
+            return bool(value)
+
 class DBConnection:
 
     def __init__(self, name=None, debug=False, debugOutput=False,
@@ -56,16 +66,16 @@ class DBConnection:
                  debugThreading=False, registry=None,
                  logger=None, loglevel=None):
         self.name = name
-        self.debug = debug
-        self.debugOutput = debugOutput
-        self.debugThreading = debugThreading
+        self.debug = Boolean(debug)
+        self.debugOutput = Boolean(debugOutput)
+        self.debugThreading = Boolean(debugThreading)
         self.debugWriter = makeDebugWriter(logger, loglevel)
-        self.cache = CacheSet(cache=cache)
-        self.doCache = cache
+        self.doCache = Boolean(cache)
+        self.cache = CacheSet(cache=self.doCache)
         self.style = style
         self._connectionNumbers = {}
         self._connectionCount = 1
-        self.autoCommit = autoCommit
+        self.autoCommit = Boolean(autoCommit)
         self.registry = registry or None
         classregistry.registry(self.registry).addCallback(
             self.soClassAdded)
