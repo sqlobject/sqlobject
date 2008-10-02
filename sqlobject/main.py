@@ -1043,8 +1043,8 @@ class SQLObject(object):
         if self.sqlmeta.cacheValues:
             setattr(self, instanceName(name), value)
 
-    def set(self, **kw):
-        if not self.sqlmeta._creating and not getattr(self.sqlmeta, "row_update_sig_suppress", False):
+    def set(self, _suppress_set_sig=False, **kw):
+        if not self.sqlmeta._creating and not getattr(self.sqlmeta, "row_update_sig_suppress", False) and not _suppress_set_sig:
             self.sqlmeta.send(events.RowUpdateSignal, self, kw)
         # set() is used to update multiple values at once,
         # potentially with one SQL statement if possible.
