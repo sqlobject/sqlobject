@@ -523,7 +523,9 @@ class StringValidator(validators.Validator):
         if isinstance(value, str):
             return value
         if isinstance(value, unicode):
-            return value.encode("ascii")
+            connection = state.soObject._connection
+            dbEncoding = getattr(connection, "dbEncoding", "ascii")
+            return value.encode(dbEncoding)
         return value
 
 class SOStringCol(SOStringLikeCol):
