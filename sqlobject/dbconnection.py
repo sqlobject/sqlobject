@@ -83,7 +83,7 @@ class DBConnection:
         atexit.register(_closeConnection, weakref.ref(self))
 
     def uri(self):
-        auth = getattr(self, 'user', None) or ''
+        auth = getattr(self, 'user', '')
         if auth:
             if self.password:
                 auth = auth + ':' + self.password
