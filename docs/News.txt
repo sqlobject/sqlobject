@@ -46,6 +46,8 @@ Minor features
 SQLObject 0.10.3
 ================
 
+Released 1 Dec 2008.
+
 * A number of changes ported from `SQLObject 0.9.8`_.
 
 SQLObject 0.10.2
