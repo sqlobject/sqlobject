@@ -137,6 +137,8 @@ Features & Interface
 SQLObject 0.9.8
 ===============
 
+Released 1 Dec 2008.
+
 * Changed interpretation of strings in the DB URI for boolean parameters:
   '0', 'no', 'off' and 'false' are now interpreted as False.
 
