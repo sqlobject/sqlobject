@@ -833,6 +833,7 @@ class SOForeignKey(SOKeyCol):
 
     def mysqlCreateReferenceConstraint(self):
         sTName = self.soClass.sqlmeta.table
+        sTLocalName = sTName.split('.')[-1]
         other = findClass(self.foreignKey, self.soClass.sqlmeta.registry)
         tName = other.sqlmeta.table
         idName = other.sqlmeta.idName
@@ -845,7 +846,7 @@ class SOForeignKey(SOKeyCol):
                 action = 'ON DELETE RESTRICT'
         else:
             action = ''
-        constraint = ('ALTER TABLE %(sTName)s ADD CONSTRAINT %(sTName)s_%(colName)s_exists '
+        constraint = ('ALTER TABLE %(sTName)s ADD CONSTRAINT %(sTLocalName)s_%(colName)s_exists '
                       'FOREIGN KEY (%(colName)s) '
                       'REFERENCES %(tName)s (%(idName)s) '
                       '%(action)s' %
@@ -853,7 +854,8 @@ class SOForeignKey(SOKeyCol):
                        'colName': self.dbName,
                        'idName': idName,
                        'action': action,
-                       'sTName': sTName})
+                       'sTName': sTName,
+                       'sTLocalName': sTLocalName})
         return constraint
 
     def mysqlCreateSQL(self):
