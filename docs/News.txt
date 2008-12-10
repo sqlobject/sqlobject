@@ -36,7 +36,7 @@ Minor features
   to work around problems in some drivers and type affinity problem in
   SQLite.
 
-* Added sqlobject.include.hascol.HashCol - a column type that automatically
+* Added sqlobject.include.hashcol.HashCol - a column type that automatically
   hashes anything going into it, and returns out an object that hashes
   anything being compared to itself. Basically, it's good for really simple
   one-way password fields, and it even supports the assignment of None to

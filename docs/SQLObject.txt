@@ -1484,12 +1484,8 @@ attribute).  Do this like::
 You can still specify columns (in `_columns`), and only missing
 columns will be added.
 
-*This is not supported in SQLite*
-
 Runtime Column and Join Changes
 -------------------------------
-
-*SQLite does not support this feature*
 
 You can add and remove columns to your class at runtime.  Such changes
 will effect all instances, since changes are made in place to the
@@ -1747,9 +1743,6 @@ SQLite puts all data into one file, with a journal file that is opened
 in the same directory during operation (the file is deleted when the
 program quits).  SQLite does not restrict the types you can put in a
 column -- strings can go in integer columns, dates in integers, etc.
-
-SQLiteConnection doesn't support `automatic class generation`_ and
-SQLite does not support `runtime column and join changes`_.
 
 SQLite may have concurrency issues, depending on your usage in a
 multi-threaded environment.
