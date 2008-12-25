@@ -43,6 +43,11 @@ Minor features
   indicate no password set. By default, it uses the md5 library for
   hashing, but this can be changed in a HashCol definition.
 
+SQLObject 0.10.5
+================
+
+* A number of changes ported from `SQLObject 0.9.10`_.
+
 SQLObject 0.10.4
 ================
 
@@ -143,6 +148,16 @@ Features & Interface
 
 * Under MySQL, PickleCol no longer used TEXT column types; the smallest
   column is now BLOB - it is not possible to create TINYBLOB column.
+
+SQLObject 0.9.10
+================
+
+* Another unicode-related patch for MySQL; required because different
+  versions of MySQLdb require different handling::
+
+   - MySQLdb < 1.2.1: only ascii
+   - MySQLdb = 1.2.1: only unicode
+   - MySQLdb > 1.2.1: both ascii and unicode
 
 SQLObject 0.9.9
 ===============
