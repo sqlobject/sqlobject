@@ -1763,14 +1763,37 @@ Firebird support uses the kinterbasdb_ Python library.
 
 .. _kinterbasdb: http://kinterbasdb.sourceforge.net/
 
+There could be a problem if one tries to connect to a server running on w32
+from a program running on Unix; the problem is how to specify the database
+so that SQLObject correctly parses it. Vertical bar is replaces by
+a semicolon only on a w32. On Unix a vertical bar is a pretty normal
+character and must not be processed.
+
+The most correct way to fix the problem is to connect to the DB using
+a database name, not a file name. In the Firebird a DBA can set an alias
+instead of database name in the aliases.conf file
+
+Example from `Firebird 2.0 Administrators Manual`_::
+
+   # fbdb1 is on a Windows server:
+   fbdb1 = c:\Firebird\sample\Employee.fdb
+
+.. _`Firebird 2.0 Administrators Manual`: http://www.janus-software.com/fbmanual/manual.php?book=admin&topic=4
+
+Now a program can connect to firebird://host:port/fbdb1.
+
+One can edit aliases.conf whilst the server is running. There is no need to
+stop and restart the server in order for new aliases.conf entries to be
+recognised.
+
 If you are using indexes and get an error like *key size exceeds
 implementation restriction for index*, see `this page`_ to understand
 the restrictions on your indexing.
 
 .. _this page: http://www.volny.cz/iprenosil/interbase/ip_ib_indexcalculator.htm
 
-SybaseConnection
-----------------
+Sybase
+------
 
 `SybaseConnection` takes the arguments `host`, `db`, `user`, and
 `password`.  It also takes the extra boolean argument `locking` (default
