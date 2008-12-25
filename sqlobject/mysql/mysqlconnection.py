@@ -49,6 +49,12 @@ class MySQLConnection(DBAPI):
         if "sqlobject_encoding" in kw:
             del kw["sqlobject_encoding"]
             deprecated("sqlobject_encoding is deprecated and no longer used.")
+
+        # MySQLdb < 1.2.1: only ascii
+        # MySQLdb = 1.2.1: only unicode
+        # MySQLdb > 1.2.1: both ascii and unicode
+        self.need_unicode = (MySQLdb.version_info[:3] >= (1, 2, 1)) and (MySQLdb.version_info[:3] < (1, 2, 2))
+
         DBAPI.__init__(self, **kw)
 
     def connectionFromURI(cls, uri):
@@ -92,6 +98,12 @@ class MySQLConnection(DBAPI):
             conn.autocommit(auto)
 
     def _executeRetry(self, conn, cursor, query):
+        if self.need_unicode and not isinstance(query, unicode):
+            try:
+                query = unicode(query, self.dbEncoding)
+            except UnicodeError:
+                pass
+
         # When a server connection is lost and a query is attempted, most of
         # the time the query will raise a SERVER_LOST exception, then at the
         # second attempt to execute it, the mysql lib will reconnect and
