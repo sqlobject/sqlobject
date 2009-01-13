@@ -43,6 +43,9 @@ Minor features
   indicate no password set. By default, it uses the md5 library for
   hashing, but this can be changed in a HashCol definition.
 
+* Changed the order of testing of SQLite modules - look for external
+  PySQLite2 before sqlite3.
+
 SQLObject 0.10.5
 ================
 

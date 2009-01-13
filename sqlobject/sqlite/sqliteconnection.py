@@ -28,11 +28,11 @@ class SQLiteConnection(DBAPI):
         global using_sqlite2
         if sqlite is None:
             try:
-                import sqlite3 as sqlite
+                from pysqlite2 import dbapi2 as sqlite
                 using_sqlite2 = True
             except ImportError:
                 try:
-                    from pysqlite2 import dbapi2 as sqlite
+                    import sqlite3 as sqlite
                     using_sqlite2 = True
                 except ImportError:
                     import sqlite
