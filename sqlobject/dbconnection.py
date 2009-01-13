@@ -100,10 +100,6 @@ class DBConnection:
             db = path[1:]
         return uri + db
 
-    def isSupported(cls):
-        raise NotImplemented
-    isSupported = classmethod(isSupported)
-
     def connectionFromURI(cls, uri):
         raise NotImplemented
     connectionFromURI = classmethod(connectionFromURI)
@@ -899,17 +895,15 @@ class ConnectionURIOpener(object):
 
     def __init__(self):
         self.schemeBuilders = {}
-        self.schemeSupported = {}
         self.instanceNames = {}
         self.cachedURIs = {}
 
-    def registerConnection(self, schemes, builder, isSupported):
+    def registerConnection(self, schemes, builder):
         for uriScheme in schemes:
             assert not self.schemeBuilders.has_key(uriScheme) \
                    or self.schemeBuilders[uriScheme] is builder, \
                    "A driver has already been registered for the URI scheme %s" % uriScheme
             self.schemeBuilders[uriScheme] = builder
-            self.schemeSupported = isSupported
 
     def registerConnectionInstance(self, inst):
         if inst.name:
