@@ -162,6 +162,8 @@ SQLObject 0.9.10
    - MySQLdb = 1.2.1: only unicode
    - MySQLdb > 1.2.1: both ascii and unicode
 
+* Setup requires FormEncode version 1.1.1+.
+
 SQLObject 0.9.9
 ===============
 

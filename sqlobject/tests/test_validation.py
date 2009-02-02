@@ -12,6 +12,7 @@ class SOValidation(SQLObject):
     name2 = StringCol(validator=validators.ConfirmType(type=str), default='y')
     name3 = IntCol(validator=validators.Wrapper(fromPython=int), default=100)
     name4 = FloatCol(default=2.718)
+    name5 = PickleCol(default=None)
 
 class TestValidation:
 
@@ -42,3 +43,7 @@ class TestValidation:
         assert t.name3 == 1
         t.name3 = 0
         assert t.name3 == 0
+
+    def test_emptyValue(self):
+        t = SOValidation(name5={})
+        assert t.name5 == {}
