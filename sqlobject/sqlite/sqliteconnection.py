@@ -306,7 +306,7 @@ class SQLiteConnection(DBAPI):
         colData = self.queryOne("SELECT sql FROM sqlite_master WHERE type='table' AND name='%s'"
                                 % tableName)
         if not colData:
-            raise ValueError('The table %s ws not found in the database. Load failed.' % tableName)
+            raise ValueError('The table %s was not found in the database. Load failed.' % tableName)
         colData = colData[0].split('(', 1)[1].strip()[:-2]
         while colData.find('(') > -1:
             start = colData.find('(')
