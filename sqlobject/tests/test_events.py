@@ -75,28 +75,24 @@ def test_add_column():
     assert watcher.log[1] == expect
 
 
-class A(InheritableSQLObject):
+class InheritableEventTestA(InheritableSQLObject):
     a = IntCol()
 
-class B(A):
+class InheritableEventTestB(InheritableEventTestA):
     b = IntCol()
 
-class C(B):
+class InheritableEventTestC(InheritableEventTestB):
     c = IntCol()
 
+def _query(instance):
+    InheritableEventTestA.get(instance.id)
+
+def _signal(kwargs, postfuncs):
+    postfuncs.append(_query)
 
 def test_inheritance_row_created():
-    setupClass(A)
-    setupClass(B)
-    setupClass(C)
+    setupClass([InheritableEventTestA, InheritableEventTestB, InheritableEventTestC])
 
-    def test_query(instance):
-        id = instance.id
-        A.get(id)
+    events.listen(_signal, InheritableEventTestA, events.RowCreatedSignal)
 
-    def signal(kwargs, postfuncs):
-        postfuncs.append(test_query)
-
-    events.listen(signal, A, events.RowCreatedSignal)
-
-    C(a=1, b=2, c=3)
+    InheritableEventTestC(a=1, b=2, c=3)
