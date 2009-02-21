@@ -27,6 +27,8 @@ Features & Interface
 
 * Added some support for schemas in PostgreSQL.
 
+* RowDestroyedSignal and RowUpdatedSignal were added.
+
 Minor features
 --------------
 

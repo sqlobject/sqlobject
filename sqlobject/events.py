@@ -115,6 +115,17 @@ class RowDestroySignal(Signal):
     row can be deleted without first fetching it?
     """
 
+class RowDestroyedSignal(Signal):
+    """
+    Called after an instance is deleted.  Sender is the instance's
+    class.  Arguments are ``(instance)``.
+
+    This is called before the post_funcs of RowDestroySignal
+
+    Note: this is not called when an instance is destroyed through
+    garbage collection.
+    """
+
 class RowUpdateSignal(Signal):
     """
     Called when an instance is updated through a call to ``.set()``
@@ -122,6 +133,14 @@ class RowUpdateSignal(Signal):
     ``(instance, kwargs)``.  ``kwargs`` can be modified.  This is run
     *before* the instance is updated; if you want to look at the
     current values, simply look at ``instance``.
+    """
+
+class RowUpdatedSignal(Signal):
+    """
+    Called when an instance is updated through a call to ``.set()``
+    (or a column attribute assignment).  The arguments are
+    ``(instance)``. This is run *after* the instance is updated;
+    Works better with lazyUpdate = True
     """
 
 class AddColumnSignal(Signal):
