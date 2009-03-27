@@ -940,8 +940,8 @@ class SOEnumCol(SOCol):
         return [consts.isString, consts.InList(self.enumValues)]
 
     def createValidators(self):
-        return [EnumValidator(name = self.name, enumValues = self.enumValues,
-                              notNone = self.notNone)] + \
+        return [EnumValidator(name=self.name, enumValues=self.enumValues,
+                              notNone=self.notNone)] + \
             super(SOEnumCol, self).createValidators()
 
     def _mysqlType(self):
@@ -1017,7 +1017,7 @@ class SOSetCol(SOCol):
         return [consts.isString, consts.InList(self.setValues)]
 
     def createValidators(self):
-        return [SetValidator(name = self.name, setValues = self.setValues)] + \
+        return [SetValidator(name=self.name, setValues=self.setValues)] + \
             super(SOSetCol, self).createValidators()
 
     def _mysqlType(self):
@@ -1333,7 +1333,7 @@ class SODecimalCol(SOCol):
         return 'DECIMAL(%i, %i)' % (self.size, self.precision)
 
     def createValidators(self):
-        return [DecimalValidator()] + \
+        return [DecimalValidator(name=self.name)] + \
             super(SODecimalCol, self).createValidators()
 
 class DecimalCol(Col):

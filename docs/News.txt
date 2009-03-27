@@ -166,6 +166,8 @@ SQLObject 0.9.10
 
 * Setup requires FormEncode version 1.1.1+.
 
+* Fixed a minor bug - pass name to DecimalValidator.
+
 SQLObject 0.9.9
 ===============
 
