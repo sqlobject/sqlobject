@@ -69,10 +69,10 @@ class InheritableIteration(Iteration):
             klass = findClass(childName, registry)
             if len(ids) == 1:
                 select = klass.select(klass.q.id == ids[0],
-                    childUpdate=True)
+                    childUpdate=True, connection=dbconn)
             else:
                 select = klass.select(sqlbuilder.IN(klass.q.id, ids),
-                    childUpdate=True)
+                    childUpdate=True, connection=dbconn)
             query = dbconn.queryForSelect(select)
             if dbconn.debug:
                 dbconn.printDebug(rawconn, query, 'Select children of the class %s' % childName)

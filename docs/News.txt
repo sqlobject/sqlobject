@@ -168,6 +168,9 @@ SQLObject 0.9.10
 
 * Fixed a minor bug - pass name to DecimalValidator.
 
+* Fixed a bug in InheritableIteration - pass connection to child
+  klass.select().
+
 SQLObject 0.9.9
 ===============
 
