@@ -610,6 +610,7 @@ class sqlmeta(object):
 
     def getColumns(sqlmeta):
         return sqlmeta.columns.copy()
+    getColumns = classmethod(getColumns)
 
     def asDict(self):
         """

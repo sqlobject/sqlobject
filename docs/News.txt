@@ -53,6 +53,8 @@ SQLObject 0.10.5
 
 * A number of changes ported from `SQLObject 0.9.10`_.
 
+* sqlmeta.getColumns() becomes classmethod.
+
 SQLObject 0.10.4
 ================
 

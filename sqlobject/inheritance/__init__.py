@@ -212,12 +212,14 @@ class InheritableSQLMeta(sqlmeta):
             columns.update(sm.parentClass.sqlmeta.columns)
             sm = sm.parentClass.sqlmeta
         return columns
+    getAllColumns = classmethod(getAllColumns)
 
     def getColumns(sqlmeta):
         columns = sqlmeta.getAllColumns()
         if columns.has_key('childName'):
             del columns['childName']
         return columns
+    getColumns = classmethod(getColumns)
 
 
 class InheritableSQLObject(SQLObject):

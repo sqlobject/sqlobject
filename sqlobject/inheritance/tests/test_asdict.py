@@ -17,6 +17,17 @@ class Employee(InheritablePerson):
     _inheritable = False
     position = StringCol()
 
+def test_getColumns():
+    setupClass([InheritablePerson, Boss, Employee])
+
+    for klass, columns in (
+            (InheritablePerson, ['first', 'last']),
+            (Boss, ['department', 'first', 'last']),
+            (Employee, ['first', 'last', 'position'])):
+        _columns = klass.sqlmeta.getColumns().keys()
+        _columns.sort()
+        assert _columns == columns
+
 def test_asDict():
     setupClass([InheritablePerson, Boss, Employee])
     InheritablePerson(first='Oneof', last='Authors')
