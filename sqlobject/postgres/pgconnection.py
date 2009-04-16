@@ -238,19 +238,25 @@ class PostgresConnection(DBAPI):
         for field, t, notnull, defaultstr in colData:
             if field == primaryKey:
                 continue
-            colClass, kw = self.guessClass(t)
-            if self.unicodeCols and colClass is col.StringCol:
-                colClass = col.UnicodeCol
-                kw['dbEncoding'] = client_encoding
-            kw['name'] = soClass.sqlmeta.style.dbColumnToPythonAttr(field)
+            if keymap.has_key(field):
+                colClass = col.ForeignKey
+                kw = {'foreignKey': soClass.sqlmeta.style.dbTableToPythonClass(keymap[field])}
+                name = soClass.sqlmeta.style.dbColumnToPythonAttr(field)
+                if name.endswith('ID'):
+                    name = name[:-2]
+                kw['name'] = name
+            else:
+                colClass, kw = self.guessClass(t)
+                if self.unicodeCols and colClass is col.StringCol:
+                    colClass = col.UnicodeCol
+                    kw['dbEncoding'] = client_encoding
+                kw['name'] = soClass.sqlmeta.style.dbColumnToPythonAttr(field)
             kw['dbName'] = field
             kw['notNone'] = notnull
             if defaultstr is not None:
                 kw['default'] = self.defaultFromSchema(colClass, defaultstr)
             elif not notnull:
                 kw['default'] = None
-            if keymap.has_key(field):
-                kw['foreignKey'] = keymap[field]
             results.append(colClass(**kw))
         return results
 

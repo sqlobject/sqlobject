@@ -168,10 +168,15 @@ SQLObject 0.9.10
 
 * Setup requires FormEncode version 1.1.1+.
 
-* Fixed a minor bug - pass name to DecimalValidator.
+* A minor bug was fixed in creating a DecimalValidator - pass the column name
+  to it.
 
-* Fixed a bug in InheritableIteration - pass connection to child
+* A bug was fixed in InheritableIteration - pass connection to child
   klass.select().
+
+* A bug was fixed in PostgresConnection.columnsFromSchema() - foreign keys
+  are now recognized and created as proper ForeignKey with correct
+  column name and table name.
 
 SQLObject 0.9.9
 ===============
