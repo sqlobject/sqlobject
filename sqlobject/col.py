@@ -479,7 +479,7 @@ class SOStringLikeCol(SOCol):
         if self.customSQLType is not None:
             return self.customSQLType
         if not self.length:
-            if self.connection and self.connection.can_use_max_types:
+            if self.connection and self.connection.can_use_max_types():
                 type = 'VARCHAR(MAX)'
             else:
                 type = 'varchar(4000)'
@@ -1458,7 +1458,7 @@ class SOBLOBCol(SOStringCol):
         return 'BYTEA'
 
     def _mssqlType(self):
-        if self.connection and self.connection.can_use_max_types:
+        if self.connection and self.connection.can_use_max_types():
             return 'VARBINARY(MAX)'
         else:
             return "IMAGE"

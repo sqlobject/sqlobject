@@ -60,6 +60,7 @@ class MSSQLConnection(DBAPI):
         self.limit_re = re.compile('^\s*(select )(.*)', re.IGNORECASE)
         self.password = password
         self.module = sqlmodule
+        self._can_use_max_types = None
         DBAPI.__init__(self, **kw)
 
     def connectionFromURI(cls, uri):
@@ -277,7 +278,6 @@ class MSSQLConnection(DBAPI):
         else:
             return col.Col, {}
 
-    @property
     def server_version(self):
         try:
             server_version = self.queryAll("SELECT SERVERPROPERTY('productversion')")[0][0]
@@ -288,9 +288,10 @@ class MSSQLConnection(DBAPI):
         self.server_version = server_version # cache it forever
         return server_version
 
-    @property
     def can_use_max_types(self):
-        server_version = self.server_version
-        self.can_use_max_types = can_use_max_types = \
+        if self._can_use_max_types is not None:
+            return self._can_use_max_types
+        server_version = self.server_version()
+        self._can_use_max_types = can_use_max_types = \
             (server_version is not None) and (server_version >= 9)
         return can_use_max_types

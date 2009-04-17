@@ -178,6 +178,12 @@ SQLObject 0.9.10
   are now recognized and created as proper ForeignKey with correct
   column name and table name.
 
+* Bugs in PostgresConnection and MSSQLConnection related to properties was
+  fixed. A note for developers: from now on properties in DBConnection
+  classes are forbidden as they don't work with Transaction -
+  Transaction.__getattr__() cannot properly wrap 'self' so a property is
+  called with wrong 'self'.
+
 SQLObject 0.9.9
 ===============
 
