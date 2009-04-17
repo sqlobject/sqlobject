@@ -791,6 +791,9 @@ class Transaction(object):
             return
         self.rollback()
 
+    def close(self):
+        raise TypeError('You cannot just close transaction - you should either call rollback(), commit() or commit(close=True) to close the underlying connection.')
+
 class ConnectionHub(object):
 
     """

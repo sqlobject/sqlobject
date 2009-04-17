@@ -184,6 +184,10 @@ SQLObject 0.9.10
   Transaction.__getattr__() cannot properly wrap 'self' so a property is
   called with wrong 'self'.
 
+* Transaction instances now explicitly raises TypeError on close() -
+  without this calling Transaction.close() calls connection.close() which
+  is wrong.
+
 SQLObject 0.9.9
 ===============
 
