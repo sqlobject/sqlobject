@@ -287,3 +287,5 @@ ul.auto-toc {
 .stmlattr {color: #000000;}
 .stmlstring {color: #006600;}
 .stmlexpr {color: #004444;}
+
+img.noborder {border-style: none;}

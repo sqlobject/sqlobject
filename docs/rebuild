@@ -16,7 +16,8 @@ for NAME in $NORMAL ; do
         continue
     fi
     echo "Building $NAME."
-    rst2html.py --no-toc-backlinks -- "$NAME.txt" > "$NAME.html"
+    rst2html.py --no-toc-backlinks --stylesheet=default.css --link-stylesheet \
+        -- "$NAME.txt" > "$NAME.html"
 done
 
 exec source-highlight -f html interface.py

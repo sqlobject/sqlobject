@@ -42,8 +42,10 @@ TODO
   processing should be done with unicode strings, conversion to/from ascii
   strings should happen for non-unicode DB API drivers.
 
-.. image:: http://sourceforge.net/sflogo.php?group_id=74338&type=4
-   :height: 37
-   :width: 125
-   :alt: Hosted by SourceForge
-   :target: http://sourceforge.net/
+.. image:: http://sflogo.sourceforge.net/sflogo.php?group_id=74338&type=10
+   :target: http://sourceforge.net/projects/sqlobject
+   :class: noborder
+   :align: center
+   :height: 15
+   :width: 80
+   :alt: Get SQLObject at SourceForge.net. Fast, secure and Free Open Source software downloads
