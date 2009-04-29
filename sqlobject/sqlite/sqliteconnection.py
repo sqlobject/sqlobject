@@ -106,7 +106,12 @@ class SQLiteConnection(DBAPI):
     connectionFromURI = classmethod(connectionFromURI)
 
     def uri(self):
-        return 'sqlite:///%s' % self.filename
+        path = self.filename
+        if path == ":memory:":
+            path = "/:memory:"
+        else:
+            path = "//" + path
+        return 'sqlite:%s' % path
 
     def getConnection(self):
         # SQLite can't share connections between threads, and so can't
