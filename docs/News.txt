@@ -188,6 +188,9 @@ SQLObject 0.9.10
   without this calling Transaction.close() calls connection.close() which
   is wrong.
 
+* A bug in SQLiteConnection.columnsFromSchema() that led to an infinite
+  loop was fixed.
+
 SQLObject 0.9.9
 ===============
 
