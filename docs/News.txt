@@ -51,6 +51,8 @@ Minor features
 SQLObject 0.10.5
 ================
 
+Released 6 May 2009
+
 * A number of changes ported from `SQLObject 0.9.10`_.
 
 * sqlmeta.getColumns() becomes classmethod.
@@ -158,6 +160,8 @@ Features & Interface
 
 SQLObject 0.9.10
 ================
+
+Released 6 May 2009
 
 * Another unicode-related patch for MySQL; required because different
   versions of MySQLdb require different handling::
