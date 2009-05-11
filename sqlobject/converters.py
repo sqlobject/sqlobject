@@ -1,3 +1,4 @@
+import sys
 from array import array
 
 try:
@@ -24,7 +25,6 @@ except ImportError:
     NumericType = None
 
 from decimal import Decimal
-from sets import Set, ImmutableSet
 from types import ClassType, InstanceType, NoneType
 
 ########################################
@@ -153,8 +153,10 @@ registerConverter(list, SequenceConverter)
 registerConverter(dict, SequenceConverter)
 registerConverter(set, SequenceConverter)
 registerConverter(frozenset, SequenceConverter)
-registerConverter(Set, SequenceConverter)
-registerConverter(ImmutableSet, SequenceConverter)
+if sys.version_info[:3] < (2, 6, 0): # Module sets was deprecated in Python 2.6
+   from sets import Set, ImmutableSet
+   registerConverter(Set, SequenceConverter)
+   registerConverter(ImmutableSet, SequenceConverter)
 
 if hasattr(time, 'struct_time'):
     def StructTimeConverter(value, db):

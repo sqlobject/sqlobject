@@ -1,3 +1,4 @@
+import sys
 from sqlobject.sqlbuilder import sqlrepr
 from sqlobject.sqlbuilder import SQLExpression, SQLObjectField, \
      Select, Insert, Update, Delete, Replace, \
@@ -187,9 +188,10 @@ def test_sets():
         pass
     else:
         assert sqlrepr(set([1])) == "(1)"
-    try:
-        from sets import Set
-    except ImportError:
-        pass
-    else:
-        assert sqlrepr(Set([1])) == "(1)"
+    if sys.version_info[:3] < (2, 6, 0): # Module sets was deprecated in Python 2.6
+        try:
+            from sets import Set
+        except ImportError:
+            pass
+        else:
+            assert sqlrepr(Set([1])) == "(1)"
