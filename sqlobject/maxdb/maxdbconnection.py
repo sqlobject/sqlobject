@@ -257,7 +257,7 @@ class MaxdbConnection(DBAPI):
             # id is defined as primary key --> ok
             # We let sqlobject raise error if the 'id' is used for another column
             field_name = field.lower()
-            if field_name == 'id' and  pkmap[field_name]:
+            if (field_name == soClass.sqlmeta.idName) and pkmap[field_name]:
                 continue
 
             colClass, kw = self.guessClass(data_type,data_len,data_scale)

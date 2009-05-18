@@ -220,7 +220,7 @@ class MySQLConnection(DBAPI):
                                 % tableName)
         results = []
         for field, t, nullAllowed, key, default, extra in colData:
-            if field == 'id':
+            if field == soClass.sqlmeta.idName:
                 continue
             colClass, kw = self.guessClass(t)
             if self.kw.get('use_unicode') and colClass is col.StringCol:

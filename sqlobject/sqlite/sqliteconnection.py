@@ -280,7 +280,7 @@ class SQLiteConnection(DBAPI):
                         for col in sqlmeta.columnList if col.name != column.name]
         cols = ",\n".join(["    %s" % c for c in cols])
         self.query('CREATE TABLE %s (\n%s\n)' % (sqlmeta.table, cols))
-        all_columns = ', '.join(['id'] + [col.dbName for col in sqlmeta.columnList])
+        all_columns = ', '.join([sqlmeta.idName] + [col.dbName for col in sqlmeta.columnList])
         self.query('INSERT INTO %s (%s) SELECT %s FROM %s' % (
             sqlmeta.table, all_columns, all_columns, new_name))
         self.query('DROP TABLE %s' % new_name)

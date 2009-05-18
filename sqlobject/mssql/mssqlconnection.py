@@ -217,8 +217,7 @@ class MSSQLConnection(DBAPI):
                                 % tableName)
         results = []
         for field, size, t, precision, scale, nullAllowed, default, defaultText, is_identity in colData:
-            # Seems strange to skip the pk column?  What if it's not 'id'?
-            if field == 'id':
+            if field == soClass.sqlmeta.idName:
                 continue
             # precision is needed for decimal columns
             colClass, kw = self.guessClass(t, size, precision, scale)

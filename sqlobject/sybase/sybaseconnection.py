@@ -139,7 +139,7 @@ class SybaseConnection(DBAPI):
                                 % tableName)
         results = []
         for field, t, nullAllowed, default in colData:
-            if field == 'id':
+            if field == soClass.sqlmeta.idName:
                 continue
             colClass, kw = self.guessClass(t)
             kw['name'] = soClass.sqlmeta.style.dbColumnToPythonAttr(field)
