@@ -311,3 +311,9 @@ def test_defaultSQL():
     setupClass(TestSO13)
     test = TestSO13(name="test")
     assert test.value == 1
+
+def test_connection_override():
+    sqlhub.processConnection = connectionForURI('sqlite:///db1')
+    class TestSO14(SQLObject):
+        _connection = connectionForURI('sqlite:///db2')
+    assert TestSO14._connection.uri() == 'sqlite:///db2'

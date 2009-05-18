@@ -173,6 +173,9 @@ SQLObject 0.9.11
 
 * Use sqlmeta.idName instead of 'id' in all connection classes.
 
+* Fixed a bug that prevented to override per class _connection if there is
+  sqlhub.processConnection.
+
 SQLObject 0.9.10
 ================
 

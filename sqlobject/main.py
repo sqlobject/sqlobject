@@ -766,7 +766,10 @@ class SQLObject(object):
             if hasattr(mod, '__connection__'):
                 connection = mod.__connection__
 
-        if connection and not hasattr(cls, '_connection'):
+        # Do not check hasattr(cls, '_connection') here - it is possible
+        # SQLObject parent class has a connection attribute that came
+        # from sqlhub, e.g.; # check __dict__ only.
+        if connection and ('_connection' not in cls.__dict__):
             cls.setConnection(connection)
 
         # We have to check if there are columns in the inherited
