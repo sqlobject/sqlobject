@@ -172,7 +172,7 @@ SQLObject 0.9.11
 
 Released 18 May 2009
 
-* Two bug in SQLiteConnection.columnsFromSchema() were fixed: use
+* Two bugs in SQLiteConnection.columnsFromSchema() were fixed: use
   sqlmeta.idName instead of 'id'; convert default 'NULL' to None.
 
 * Use sqlmeta.idName instead of 'id' in all connection classes.
