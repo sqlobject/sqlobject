@@ -295,9 +295,12 @@ class SQLiteConnection(DBAPI):
         colData = self.queryAll("PRAGMA table_info(%s)" % tableName)
         results = []
         for index, field, t, nullAllowed, default, key in colData:
-            if field == 'id':
+            if field == soClass.sqlmeta.idName:
                 continue
             colClass, kw = self.guessClass(t)
+            if default == 'NULL':
+                nullAllowed = True
+                default = None
             kw['name'] = soClass.sqlmeta.style.dbColumnToPythonAttr(field)
             kw['dbName'] = field
             kw['notNone'] = not nullAllowed

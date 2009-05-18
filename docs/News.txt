@@ -53,6 +53,8 @@ SQLObject 0.10.6
 
 * Better support for Python 2.6: do not import the deprecated sets module.
 
+* A number of changes ported from `SQLObject 0.9.11`_.
+
 SQLObject 0.10.5
 ================
 
@@ -162,6 +164,12 @@ Features & Interface
 
 * Under MySQL, PickleCol no longer used TEXT column types; the smallest
   column is now BLOB - it is not possible to create TINYBLOB column.
+
+SQLObject 0.9.11
+================
+
+* Two bug in SQLiteConnection.columnsFromSchema() were fixed: use
+  sqlmeta.idName instead of 'id'; convert default 'NULL' to None.
 
 SQLObject 0.9.10
 ================
