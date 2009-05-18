@@ -51,6 +51,8 @@ Minor features
 SQLObject 0.10.6
 ================
 
+Released 18 May 2009
+
 * Better support for Python 2.6: do not import the deprecated sets module.
 
 * A number of changes ported from `SQLObject 0.9.11`_.
@@ -168,7 +170,7 @@ Features & Interface
 SQLObject 0.9.11
 ================
 
-Released 28 May 2009
+Released 18 May 2009
 
 * Two bug in SQLiteConnection.columnsFromSchema() were fixed: use
   sqlmeta.idName instead of 'id'; convert default 'NULL' to None.
