@@ -29,10 +29,10 @@ def _closeConnection(ref):
 
 class ConsoleWriter:
     def __init__(self, loglevel):
-        self.loglevel = loglevel
-        self.logfile = getattr(sys, loglevel or "stdout")
+        self.loglevel = loglevel # None or empty string for stdout; or 'stderr'
     def write(self, text):
-        self.logfile.write(text + '\n')
+        logfile = getattr(sys, self.loglevel or "stdout")
+        logfile.write(text + '\n')
 
 class LogWriter:
     def __init__(self, logger, loglevel):
