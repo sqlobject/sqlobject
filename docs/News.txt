@@ -27,13 +27,6 @@ Features & Interface
 
 * Added some support for schemas in PostgreSQL.
 
-* RowDestroyedSignal and RowUpdatedSignal were added.
-
-Minor features
---------------
-
-* Use reversed() in manager/command.py instead of .__reversed__().
-
 * Added DecimalStringCol - similar to DecimalCol but stores data as strings
   to work around problems in some drivers and type affinity problem in
   SQLite.
@@ -44,6 +37,13 @@ Minor features
   one-way password fields, and it even supports the assignment of None to
   indicate no password set. By default, it uses the md5 library for
   hashing, but this can be changed in a HashCol definition.
+
+* RowDestroyedSignal and RowUpdatedSignal were added.
+
+Minor features
+--------------
+
+* Use reversed() in manager/command.py instead of .__reversed__().
 
 * Minor change in logging to console - logger no longer stores the output
   file, it gets the file from module sys every time by name; this means
