@@ -7,8 +7,7 @@ export PYTHONPATH=$parent:$PYTHONPATH
 
 NORMAL="Authors DeveloperGuide FAQ Inheritance News
         SQLBuilder SQLObject SelectResults TODO Versioning Views
-        web/index web/links web/repository web/community
-        index community sqlobject-architecture sqlobject-admin"
+        community download index links sqlobject-admin sqlobject-architecture"
 
 for NAME in $NORMAL ; do
     if [ -e "$NAME.html" -a ! "$NAME.html" -ot "$NAME.txt" ] ; then
@@ -19,5 +18,3 @@ for NAME in $NORMAL ; do
     rst2html.py --no-toc-backlinks --stylesheet=default.css --link-stylesheet \
         -- "$NAME.txt" > "$NAME.html"
 done
-
-exec source-highlight -f html interface.py
