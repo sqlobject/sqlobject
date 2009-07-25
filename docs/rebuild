@@ -5,7 +5,7 @@ parent=`dirname $here`
 echo "Adding $parent to \$PYTHONPATH"
 export PYTHONPATH=$parent:$PYTHONPATH
 
-NORMAL="Authors DeveloperGuide FAQ Inheritance News News1
+NORMAL="Authors DeveloperGuide FAQ Inheritance News
         SQLBuilder SQLObject SelectResults TODO Versioning Views
         web/index web/links web/repository web/community
         index community sqlobject-architecture sqlobject-admin"
