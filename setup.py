@@ -21,7 +21,7 @@ if is_setuptools:
     """
 
 setup(name="SQLObject",
-      version="0.11",
+      version="0.12",
       description="Object-Relational Manager, aka database wrapper",
       long_description="""\
 SQLObject is a popular *Object Relational Manager* for providing an
@@ -35,7 +35,7 @@ applications.
 Supports MySQL, PostgreSQL, SQLite, Firebird, Sybase, MSSQL and MaxDB (SAPDB).
 
 For development see the `subversion repository
-<http://svn.colorstudy.com/SQLObject/trunk#egg=SQLObject-0.11dev>`_
+<http://svn.colorstudy.com/SQLObject/trunk#egg=SQLObject-0.12dev>`_
 """,
       classifiers=[
         "Development Status :: 5 - Production/Stable",
