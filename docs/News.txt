@@ -13,6 +13,9 @@ SQLObject (trunk)
 Features & Interface
 --------------------
 
+* SET client_encoding for PostgreSQL to the value of '?charset=' parameter
+  in DB URI.
+
 * Removed deprecated attribute and functions.
 
 SQLObject 0.11
