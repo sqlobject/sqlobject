@@ -13,7 +13,7 @@ SQLObject (trunk)
 Features & Interface
 --------------------
 
-* Removed the last remaininig deprecated attribute.
+* Removed deprecated attribute and functions.
 
 SQLObject 0.11
 ==============
