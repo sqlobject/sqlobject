@@ -17,6 +17,7 @@ def setup():
     global items
     items = []
     setupClass(TestUnicode)
+    TestUnicode._connection.query('SET client_encoding TO latin1')
     for i, n in enumerate(data):
         items.append(TestUnicode(count=i, col1=n, col2=n))
 
