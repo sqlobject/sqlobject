@@ -1,7 +1,6 @@
 from sqlobject import col
 from sqlobject.dbconnection import DBAPI
 from sqlobject.dberrors import *
-from sqlobject.main import deprecated
 MySQLdb = None
 
 class ErrorMessage(str):
@@ -46,9 +45,6 @@ class MySQLConnection(DBAPI):
             self.dbEncoding = self.kw["charset"] = kw.pop("charset")
         else:
             self.dbEncoding = None
-        if "sqlobject_encoding" in kw:
-            del kw["sqlobject_encoding"]
-            deprecated("sqlobject_encoding is deprecated and no longer used.")
 
         # MySQLdb < 1.2.1: only ascii
         # MySQLdb = 1.2.1: only unicode
