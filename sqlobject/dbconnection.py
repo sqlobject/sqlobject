@@ -950,3 +950,12 @@ registerConnection = TheURIOpener.registerConnection
 registerConnectionInstance = TheURIOpener.registerConnectionInstance
 connectionForURI = TheURIOpener.connectionForURI
 dbConnectionForScheme = TheURIOpener.dbConnectionForScheme
+
+# Register DB URI schemas
+import firebird
+import maxdb
+import mssql
+import mysql
+import postgres
+import sqlite
+import sybase
