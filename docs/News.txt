@@ -10,6 +10,11 @@ News
 SQLObject (trunk)
 =================
 
+Features & Interface
+--------------------
+
+* Removed the last remaininig deprecated attribute.
+
 SQLObject 0.11
 ==============
 

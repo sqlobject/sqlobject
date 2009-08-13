@@ -658,9 +658,9 @@ class _sqlmeta_attr(object):
 warnings_level = 1
 exception_level = None
 # Current levels:
-#  1) Actively deprecated in version after 0.9; removed after
-#  2) Deprecated after 1 (0.9?)
-#  3) Deprecated after 2 (0.10?)
+#  1) Actively deprecated
+#  2) Deprecated after 1
+#  3) Deprecated after 2
 
 def deprecated(message, level=1, stacklevel=2):
     if exception_level is not None and exception_level <= level:
@@ -814,8 +814,6 @@ class SQLObject(object):
 
         classregistry.registry(cls.sqlmeta.registry).addClass(cls)
 
-    _expired = _sqlmeta_attr('expired', 1)
-
     # @classmethod
     def _SO_setupSqlmeta(cls, new_attrs, is_base):
         """
@@ -866,7 +864,7 @@ class SQLObject(object):
         been deprecated; they are moved to the sqlmeta class, and
         a deprecation warning is given.
         """
-        for attr in ['_expired']:
+        for attr in ():
             if new_attrs.has_key(attr):
                 deprecated("%r is deprecated and read-only; please do "
                            "not use it in your classes until it is fully "
