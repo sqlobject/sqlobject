@@ -86,6 +86,10 @@ class PostgresConnection(DBAPI):
         self.dsn = dsn
         self.unicodeCols = unicodeCols
         self.schema = kw.pop('schema', None)
+        if "charset" in kw:
+            self.dbEncoding = self.kw["charset"] = kw.pop("charset")
+        else:
+            self.dbEncoding = None
         DBAPI.__init__(self, **kw)
 
     def connectionFromURI(cls, uri):
@@ -118,6 +122,9 @@ class PostgresConnection(DBAPI):
         if self.schema:
             c = conn.cursor()
             c.execute("SET search_path TO " + self.schema)
+        dbEncoding = self.dbEncoding
+        if dbEncoding:
+            conn.query("SET client_encoding TO %s" % dbEncoding)
         return conn
 
     def _queryInsertID(self, conn, soInstance, id, names, values):
