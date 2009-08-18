@@ -18,8 +18,8 @@ Features & Interface
 
 * Removed deprecated attribute and functions.
 
-* alternateMethodName for all unique fields, not only alternateID; this
-  makes SQLObject create by*() methods for all unique fields.
+* alternateMethodName defined for all unique fields, not only alternateID;
+  this makes SQLObject create by*() methods for all unique fields.
 
 SQLObject 0.11
 ==============
