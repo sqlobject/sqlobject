@@ -196,15 +196,15 @@ class SOCol(object):
         # alternateID means that this is a unique column that
         # can be used to identify rows
         self.alternateID = alternateID
-        if self.alternateID and alternateMethodName is None:
-            self.alternateMethodName = 'by' + self.name[0].capitalize() + self.name[1:]
-        else:
-            self.alternateMethodName = alternateMethodName
 
         if unique is NoDefault:
             self.unique = alternateID
         else:
             self.unique = unique
+        if self.unique and alternateMethodName is None:
+            self.alternateMethodName = 'by' + self.name[0].capitalize() + self.name[1:]
+        else:
+            self.alternateMethodName = alternateMethodName
 
         _validators = self.createValidators()
         if _validators:

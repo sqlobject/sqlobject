@@ -103,6 +103,16 @@ def test_selectBy_kwargs():
         return
     assert False, "IterTest(nonexistant='b') should raise TypeError"
 
+class UniqTest(SQLObject):
+    name = StringCol(dbName='name_col', unique=True)
+
+def test_by_uniq():
+    setupClass(UniqTest)
+    a = UniqTest(name='a')
+    b = UniqTest(name='b')
+    assert UniqTest.byName('a') is a
+    assert UniqTest.byName('b') is b
+
 class Counter2(SQLObject):
 
     n1 = IntCol(notNull=True)
