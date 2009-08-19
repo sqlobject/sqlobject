@@ -574,7 +574,10 @@ class DBAPI(DBConnection):
             data[soClass.sqlmeta.idName] = kw.pop('id')
         for key, col in soClass.sqlmeta.columns.items():
             if key in kw:
-                data[col.dbName] = kw.pop(key)
+                value = kw.pop(key)
+                if col.from_python:
+                    value = col.from_python(value, soClass)
+                data[col.dbName] = value
             elif col.foreignName in kw:
                 obj = kw.pop(col.foreignName)
                 if isinstance(obj, main.SQLObject):

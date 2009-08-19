@@ -1306,16 +1306,18 @@ class SQLObject(object):
         return getID(obj)
 
     def _findAlternateID(cls, name, dbName, value, connection=None):
-        if isinstance(value, unicode):
-            column = cls.sqlmeta.columns[name]
-            if isinstance(column, col.SOUnicodeCol):
-                value = value.encode(column.dbEncoding)
         if isinstance(name, str):
             name = (name,)
             value = (value,)
         if len(name) != len(value):
             raise ValueError, "'column' and 'value' tuples must be of the same size"
-        condition = sqlbuilder.AND(*[getattr(cls.q, n)==v for n,v in zip(name, value)])
+        new_value = []
+        for n, v in zip(name, value):
+            from_python = getattr(cls, '_SO_from_python_' + n)
+            if from_python:
+                v = from_python(v, cls)
+            new_value.append(v)
+        condition = sqlbuilder.AND(*[getattr(cls.q, n)==v for n,v in zip(name, new_value)])
         return (connection or cls._connection)._SO_selectOneAlt(
             cls,
             [cls.sqlmeta.idName] +
@@ -1364,11 +1366,6 @@ class SQLObject(object):
     select = classmethod(select)
 
     def selectBy(cls, connection=None, **kw):
-        for key, column in cls.sqlmeta.columns.items():
-            if (key in kw) and isinstance(column, col.SOUnicodeCol):
-                value = kw[key]
-                if isinstance(value, unicode):
-                    kw[key] = value.encode(column.dbEncoding)
         conn = connection or cls._connection
         return cls.SelectResultsClass(cls,
                              conn._SO_columnClause(cls, kw),

@@ -21,6 +21,9 @@ Features & Interface
 * alternateMethodName defined for all unique fields, not only alternateID;
   this makes SQLObject create by*() methods for all unique fields.
 
+* .selectBy(), .deleteBy() and .by*() methods pass all values through
+  .from_python(), not only unicode.
+
 SQLObject 0.11
 ==============
 
