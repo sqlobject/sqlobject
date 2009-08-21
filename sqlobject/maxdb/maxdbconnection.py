@@ -15,7 +15,6 @@ connection creation sample::
 """
 from sqlobject.dbconnection import DBAPI
 from sqlobject import col
-dbapi = None
 
 
 
@@ -63,9 +62,7 @@ class MaxdbConnection(DBAPI):
     def __init__ (self, user, password, database,
                   host='', autoCommit=1, sqlmode='internal',
                   isolation=None, timeout=None, **kw):
-        global dbapi
-        if dbapi is None:
-            from sapdb import dbapi
+        from sapdb import dbapi
         self.module = dbapi
         self.autoCommit = autoCommit
         self.user      = user
@@ -114,7 +111,7 @@ class MaxdbConnection(DBAPI):
         return '%s_SEQ'%(table[:SAPDBMAX_ID_LENGTH -4])
 
     def makeConnection(self):
-        conn = dbapi.Connection(
+        conn = self.module.Connection(
             self.user, self.password, self.database, self.host,
             **self._getConfigParams(self.sqlmode,self.autoCommit))
         return conn

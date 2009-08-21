@@ -3,8 +3,6 @@ import re
 from sqlobject import col
 from sqlobject import sqlbuilder
 from sqlobject.converters import registerConverter
-psycopg = None
-pgdb = None
 
 class PostgresConnection(DBAPI):
 
@@ -15,18 +13,15 @@ class PostgresConnection(DBAPI):
     def __init__(self, dsn=None, host=None, port=None, db=None,
                  user=None, password=None, usePygresql=False, unicodeCols=False,
                  **kw):
-        global psycopg, pgdb
         self.usePygresql = usePygresql
         if usePygresql:
-            if pgdb is None:
-                import pgdb
+            import pgdb
             self.module = pgdb
         else:
-            if psycopg is None:
-                try:
-                    import psycopg2 as psycopg
-                except ImportError:
-                    import psycopg
+            try:
+                import psycopg2 as psycopg
+            except ImportError:
+                import psycopg
             self.module = psycopg
 
             # Register a converter for psycopg Binary type.

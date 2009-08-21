@@ -9,8 +9,7 @@ def test_sqlite_factory():
     setupClass(SQLiteFactoryTest)
 
     if SQLiteFactoryTest._connection.dbName == "sqlite":
-        from sqlobject.sqlite import sqliteconnection
-        if not sqliteconnection.using_sqlite2:
+        if not SQLiteFactoryTest._connection.using_sqlite2:
             return
 
         factory = [None]
@@ -30,8 +29,7 @@ def test_sqlite_factory_str():
     setupClass(SQLiteFactoryTest)
 
     if SQLiteFactoryTest._connection.dbName == "sqlite":
-        from sqlobject.sqlite import sqliteconnection
-        if not sqliteconnection.using_sqlite2:
+        if not SQLiteFactoryTest._connection.using_sqlite2:
             return
 
         factory = [None]
@@ -40,6 +38,7 @@ def test_sqlite_factory_str():
                 pass
             factory[0] = MyConnection
             return MyConnection
+        from sqlobject.sqlite import sqliteconnection
         sqliteconnection.SQLiteConnectionFactory = SQLiteConnectionFactory
 
         setSQLiteConnectionFactory(SQLiteFactoryTest, "SQLiteConnectionFactory")
@@ -53,8 +52,7 @@ def test_sqlite_aggregate():
     setupClass(SQLiteFactoryTest)
 
     if SQLiteFactoryTest._connection.dbName == "sqlite":
-        from sqlobject.sqlite import sqliteconnection
-        if not sqliteconnection.using_sqlite2:
+        if not SQLiteFactoryTest._connection.using_sqlite2:
             return
 
         def SQLiteConnectionFactory(sqlite):

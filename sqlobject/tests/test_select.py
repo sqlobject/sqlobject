@@ -152,8 +152,7 @@ def test_select_RLIKE():
     setupClass(IterTest)
 
     if IterTest._connection.dbName == "sqlite":
-        from sqlobject.sqlite import sqliteconnection
-        if not sqliteconnection.using_sqlite2:
+        if not IterTest._connection.using_sqlite2:
             return
 
         # Implement regexp() function for SQLite; only works with PySQLite2

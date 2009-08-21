@@ -2,8 +2,6 @@ from sqlobject.dbconnection import DBAPI
 from sqlobject import col
 import re
 
-sqlmodule = None
-
 class MSSQLConnection(DBAPI):
 
     supportTransactions = True
@@ -12,15 +10,12 @@ class MSSQLConnection(DBAPI):
 
     def __init__(self, db, user, password='', host='localhost',
                  autoCommit=0, **kw):
-        global sqlmodule
-        if not sqlmodule:
-            try:
-                import adodbapi as sqlmodule
-            except ImportError:
-                import pymssql as sqlmodule
+        try:
+            import adodbapi as sqlmodule
+        except ImportError:
+            import pymssql as sqlmodule
 
         if sqlmodule.__name__ == 'adodbapi':
-            import adodbapi as sqlmodule
             self.dbconnection = sqlmodule.connect
             # ADO uses unicode only (AFAIK)
             self.usingUnicodeStrings = True

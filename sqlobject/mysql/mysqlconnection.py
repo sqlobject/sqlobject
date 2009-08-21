@@ -1,7 +1,6 @@
 from sqlobject import col
 from sqlobject.dbconnection import DBAPI
 from sqlobject.dberrors import *
-MySQLdb = None
 
 class ErrorMessage(str):
     def __new__(cls, e, append_msg=''):
@@ -18,9 +17,7 @@ class MySQLConnection(DBAPI):
     schemes = [dbName]
 
     def __init__(self, db, user, password='', host='localhost', port=0, **kw):
-        global MySQLdb
-        if MySQLdb is None:
-            import MySQLdb, MySQLdb.constants.CR, MySQLdb.constants.ER
+        import MySQLdb, MySQLdb.constants.CR, MySQLdb.constants.ER
         self.module = MySQLdb
         self.host = host
         self.port = port
@@ -49,7 +46,7 @@ class MySQLConnection(DBAPI):
         # MySQLdb < 1.2.1: only ascii
         # MySQLdb = 1.2.1: only unicode
         # MySQLdb > 1.2.1: both ascii and unicode
-        self.need_unicode = (MySQLdb.version_info[:3] >= (1, 2, 1)) and (MySQLdb.version_info[:3] < (1, 2, 2))
+        self.need_unicode = (self.module.version_info[:3] >= (1, 2, 1)) and (self.module.version_info[:3] < (1, 2, 2))
 
         DBAPI.__init__(self, **kw)
 
@@ -71,7 +68,7 @@ class MySQLConnection(DBAPI):
         try:
             conn = self.module.connect(host=self.host, port=self.port,
                 db=self.db, user=self.user, passwd=self.password, **self.kw)
-            if MySQLdb.version_info[:3] >= (1, 2, 2):
+            if self.module.version_info[:3] >= (1, 2, 2):
                 conn.ping(True) # Attempt to reconnect. This setting is persistent.
         except self.module.OperationalError, e:
             conninfo = "; used connection string: host=%(host)s, port=%(port)s, db=%(db)s, user=%(user)s" % self.__dict__
@@ -115,35 +112,35 @@ class MySQLConnection(DBAPI):
         for count in range(3):
             try:
                 return cursor.execute(query)
-            except MySQLdb.OperationalError, e:
-                if e.args[0] in (MySQLdb.constants.CR.SERVER_GONE_ERROR, MySQLdb.constants.CR.SERVER_LOST):
+            except self.module.OperationalError, e:
+                if e.args[0] in (self.module.constants.CR.SERVER_GONE_ERROR, self.module.constants.CR.SERVER_LOST):
                     if count == 2:
                         raise OperationalError(ErrorMessage(e))
                     if self.debug:
                         self.printDebug(conn, str(e), 'ERROR')
                 else:
                     raise OperationalError(ErrorMessage(e))
-            except MySQLdb.IntegrityError, e:
+            except self.module.IntegrityError, e:
                 msg = ErrorMessage(e)
-                if e.args[0] == MySQLdb.constants.ER.DUP_ENTRY:
+                if e.args[0] == self.module.constants.ER.DUP_ENTRY:
                     raise DuplicateEntryError(msg)
                 else:
                     raise IntegrityError(msg)
-            except MySQLdb.InternalError, e:
+            except self.module.InternalError, e:
                 raise InternalError(ErrorMessage(e))
-            except MySQLdb.ProgrammingError, e:
+            except self.module.ProgrammingError, e:
                 raise ProgrammingError(ErrorMessage(e))
-            except MySQLdb.DataError, e:
+            except self.module.DataError, e:
                 raise DataError(ErrorMessage(e))
-            except MySQLdb.NotSupportedError, e:
+            except self.module.NotSupportedError, e:
                 raise NotSupportedError(ErrorMessage(e))
-            except MySQLdb.DatabaseError, e:
+            except self.module.DatabaseError, e:
                 raise DatabaseError(ErrorMessage(e))
-            except MySQLdb.InterfaceError, e:
+            except self.module.InterfaceError, e:
                 raise InterfaceError(ErrorMessage(e))
-            except MySQLdb.Warning, e:
+            except self.module.Warning, e:
                 raise Warning(ErrorMessage(e))
-            except MySQLdb.Error, e:
+            except self.module.Error, e:
                 raise Error(ErrorMessage(e))
 
     def _queryInsertID(self, conn, soInstance, id, names, values):

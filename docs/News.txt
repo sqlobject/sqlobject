@@ -24,6 +24,13 @@ Features & Interface
 * .selectBy(), .deleteBy() and .by*() methods pass all values through
   .from_python(), not only unicode.
 
+Small Features
+--------------
+
+* Imported DB API drivers are stored as connection instance variables, not
+  in global variables; this allows to use different DB API drivers at the
+  same time; for example, PySQLite2 and sqlite3.
+
 SQLObject 0.11
 ==============
 

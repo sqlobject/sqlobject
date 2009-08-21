@@ -43,9 +43,9 @@ if mxdatetime_available:
     from mx.DateTime import now, Time
 
     dateFormat = None # use default
-    if getConnection().dbName == "sqlite":
-        from sqlobject.sqlite.sqliteconnection import using_sqlite2
-        if using_sqlite2:
+    connection = getConnection()
+    if connection.dbName == "sqlite":
+        if connection.using_sqlite2:
             # mxDateTime sends and PySQLite2 returns full date/time for dates
             dateFormat = "%Y-%m-%d %H:%M:%S"
 

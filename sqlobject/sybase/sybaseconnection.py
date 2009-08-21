@@ -1,21 +1,21 @@
 from sqlobject.dbconnection import DBAPI
 from sqlobject import col
-Sybase = None
 
 class SybaseConnection(DBAPI):
 
     supportTransactions = False
     dbName = 'sybase'
     schemes = [dbName]
+    NumericType = None
 
     def __init__(self, db, user, password='', host='localhost',
                  locking=1, **kw):
         db = db.strip('/')
-        global Sybase
-        if Sybase is None:
-            import Sybase
-            Sybase._ctx.debug = 0
+        import Sybase
+        Sybase._ctx.debug = 0
+        if SybaseConnection.NumericType is None:
             from Sybase import NumericType
+            SybaseConnection.NumericType = NumericType
             from sqlobject.converters import registerConverter, IntConverter
             registerConverter(NumericType, IntConverter)
         self.module = Sybase
@@ -48,7 +48,7 @@ class SybaseConnection(DBAPI):
         return c.fetchone()[0]
 
     def makeConnection(self):
-        return Sybase.connect(self.host, self.user, self.password,
+        return self.module.connect(self.host, self.user, self.password,
                               database=self.db, auto_commit=self.autoCommit,
                               locking=self.locking)
 

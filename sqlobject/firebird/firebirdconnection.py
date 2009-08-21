@@ -2,7 +2,6 @@ import re
 import os
 from sqlobject.dbconnection import DBAPI
 from sqlobject import col
-kinterbasdb = None
 
 class FirebirdConnection(DBAPI):
 
@@ -13,9 +12,7 @@ class FirebirdConnection(DBAPI):
     def __init__(self, host, db, user='sysdba',
                  password='masterkey', autoCommit=1,
                  dialect=None, role=None, charset=None, **kw):
-        global kinterbasdb
-        if kinterbasdb is None:
-            import kinterbasdb
+        import kinterbasdb
         self.module = kinterbasdb
 
         self.limit_re = re.compile('^\s*(select )(.*)', re.IGNORECASE)
@@ -53,13 +50,13 @@ class FirebirdConnection(DBAPI):
         # @@: Horrible auto-commit implementation.  Just horrible!
         try:
             conn.begin()
-        except kinterbasdb.ProgrammingError:
+        except self.module.ProgrammingError:
             pass
         try:
             val = meth(conn, *args)
             try:
                 conn.commit()
-            except kinterbasdb.ProgrammingError:
+            except self.module.ProgrammingError:
                 pass
         finally:
             self.releaseConnection(conn)
@@ -74,7 +71,7 @@ class FirebirdConnection(DBAPI):
         extra = {}
         if self.dialect:
             extra['dialect'] = self.dialect
-        return kinterbasdb.connect(
+        return self.module.connect(
             host=self.host,
             database=self.db,
             user=self.user,

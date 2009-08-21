@@ -5,8 +5,6 @@ from sqlobject.dbconnection import DBAPI
 from sqlobject import col, sqlbuilder
 from sqlobject.dberrors import *
 
-sqlite = None
-using_sqlite2 = False
 sqlite2_Binary = None
 
 class ErrorMessage(str):
@@ -24,32 +22,29 @@ class SQLiteConnection(DBAPI):
     schemes = [dbName]
 
     def __init__(self, filename, autoCommit=1, **kw):
-        global sqlite
-        global using_sqlite2
-        if sqlite is None:
+        try:
+            from pysqlite2 import dbapi2 as sqlite
+            self.using_sqlite2 = True
+        except ImportError:
             try:
-                from pysqlite2 import dbapi2 as sqlite
-                using_sqlite2 = True
+                import sqlite3 as sqlite
+                self.using_sqlite2 = True
             except ImportError:
-                try:
-                    import sqlite3 as sqlite
-                    using_sqlite2 = True
-                except ImportError:
-                    import sqlite
-                    using_sqlite2 = False
-            if using_sqlite2:
-                sqlite.encode = base64.encodestring
-                sqlite.decode = base64.decodestring
+                import sqlite
+                self.using_sqlite2 = False
+        if self.using_sqlite2:
+            sqlite.encode = base64.encodestring
+            sqlite.decode = base64.decodestring
         self.module = sqlite
         self.filename = filename  # full path to sqlite-db-file
         self._memory = filename == ':memory:'
         if self._memory:
-            if not using_sqlite2:
+            if not self.using_sqlite2:
                 raise ValueError(
                     "You must use sqlite2 to use in-memory databases")
         # connection options
         opts = {}
-        if using_sqlite2:
+        if self.using_sqlite2:
             if autoCommit:
                 opts["isolation_level"] = None
             if 'encoding' in kw:
@@ -75,7 +70,7 @@ class SQLiteConnection(DBAPI):
             if 'mode' in kw:
                 opts['mode'] = int(kw.pop('mode'), 0)
         if 'timeout' in kw:
-            if using_sqlite2:
+            if self.using_sqlite2:
                 opts['timeout'] = float(kw.pop('timeout'))
             else:
                 opts['timeout'] = int(float(kw.pop('timeout')) * 1000)
@@ -156,7 +151,7 @@ class SQLiteConnection(DBAPI):
             conn.close()
 
     def _setAutoCommit(self, conn, auto):
-        if using_sqlite2:
+        if self.using_sqlite2:
             if auto:
                 conn.isolation_level = None
             else:
@@ -165,14 +160,14 @@ class SQLiteConnection(DBAPI):
             conn.autocommit = auto
 
     def _setIsolationLevel(self, conn, level):
-        if not using_sqlite2:
+        if not self.using_sqlite2:
             return
         conn.isolation_level = level
 
     def makeConnection(self):
         if self._memory:
             return self._memoryConn
-        return sqlite.connect(self.filename, **self._connOptions)
+        return self.module.connect(self.filename, **self._connOptions)
 
     def _executeRetry(self, conn, cursor, query):
         if self.debug:
