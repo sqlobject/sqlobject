@@ -105,7 +105,7 @@ def test_sqlexpr():
     assert sqlrepr(instance) == repr(instance)
 
 def test_sqlobjectfield():
-    instance = SQLObjectField('test', 'test', 'test')
+    instance = SQLObjectField('test', 'test', 'test', None, None)
     assert sqlrepr(instance) == repr(instance)
 
 def test_select():

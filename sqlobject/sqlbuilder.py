@@ -321,44 +321,38 @@ class Field(SQLExpression):
         return executor.field(self.tableName, self.fieldName)
 
 class SQLObjectField(Field):
-    def __init__(self, tableName, fieldName, original):
-        self.original = original
+    def __init__(self, tableName, fieldName, original, soClass, column):
         Field.__init__(self, tableName, fieldName)
-
-registerConverter(SQLObjectField, SQLExprConverter)
-
-
-class UnicodeField(SQLObjectField):
-    def __init__(self, tableName, fieldName, original, column):
-        SQLObjectField.__init__(self, tableName, fieldName, original)
+        self.original = original
+        self.soClass = soClass
         self.column = column
+    def _from_python(self, value):
+        column = self.column
+        if not isinstance(value, SQLExpression) and column and column.from_python:
+            value = column.from_python(value, self.soClass)
+        return value
     def __eq__(self, other):
         if other is None:
             return ISNULL(self)
-        if isinstance(other, unicode):
-            other = other.encode(self.column.dbEncoding)
+        other = self._from_python(other)
         return SQLOp('=', self, other)
     def __ne__(self, other):
         if other is None:
             return ISNOTNULL(self)
-        if isinstance(other, unicode):
-            other = other.encode(self.column.dbEncoding)
+        other = self._from_python(other)
         return SQLOp('<>', self, other)
     def startswith(self, s):
-        if isinstance(s, unicode):
-            s = s.encode(self.column.dbEncoding)
+        s = self._from_python(s)
         return STARTSWITH(self, s)
     def endswith(self, s):
-        if isinstance(s, unicode):
-            s = s.encode(self.column.dbEncoding)
+        s = self._from_python(s)
         return ENDSWITH(self, s)
     def contains(self, s):
-        if isinstance(s, unicode):
-            s = s.encode(self.column.dbEncoding)
+        s = self._from_python(s)
         return CONTAINSSTRING(self, s)
 
+registerConverter(SQLObjectField, SQLExprConverter)
 
-registerConverter(UnicodeField, SQLExprConverter)
 
 class Table(SQLExpression):
     FieldClass = Field
@@ -378,7 +372,6 @@ class Table(SQLExpression):
 
 class SQLObjectTable(Table):
     FieldClass = SQLObjectField
-    UnicodeFieldClass = UnicodeField
 
     def __init__(self, soClass):
         self.soClass = soClass
@@ -394,10 +387,7 @@ class SQLObjectTable(Table):
             return self._getattrFromID(attr)
         elif attr in self.soClass.sqlmeta.columns:
             column = self.soClass.sqlmeta.columns[attr]
-            if hasattr(column, "dbEncoding"):
-                return self._getattrFromUnicodeColumn(column, attr)
-            else:
-                return self._getattrFromColumn(column, attr)
+            return self._getattrFromColumn(column, attr)
         elif attr+'ID' in [k for (k, v) in self.soClass.sqlmeta.columns.items() if v.foreignKey]:
             attr += 'ID'
             column = self.soClass.sqlmeta.columns[attr]
@@ -406,13 +396,10 @@ class SQLObjectTable(Table):
             raise AttributeError("%s instance has no attribute '%s'" % (self.soClass.__name__, attr))
 
     def _getattrFromID(self, attr):
-        return self.FieldClass(self.tableName, self.soClass.sqlmeta.idName, attr)
+        return self.FieldClass(self.tableName, self.soClass.sqlmeta.idName, attr, self.soClass, None)
 
     def _getattrFromColumn(self, column, attr):
-        return self.FieldClass(self.tableName, column.dbName, attr)
-
-    def _getattrFromUnicodeColumn(self, column, attr):
-        return self.UnicodeFieldClass(self.tableName, column.dbName, attr, column)
+        return self.FieldClass(self.tableName, column.dbName, attr, self.soClass, column)
 
 class SQLObjectTableWithJoins(SQLObjectTable):
 

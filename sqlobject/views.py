@@ -11,23 +11,15 @@ import types, threading
 
 class ViewSQLObjectField(SQLObjectField):
     def __init__(self, alias, *arg):
-        self.alias = alias
         SQLObjectField.__init__(self, *arg)
+        self.alias = alias
     def __sqlrepr__(self, db):
         return self.alias + "." + self.fieldName
     def tablesUsedImmediate(self):
         return [self.tableName]
 
-class UnicodeViewSQLObjectField(UnicodeField):
-    def __init__(self, alias, *arg):
-        self.alias = alias
-        UnicodeField.__init__(self, *arg)
-    __sqlrepr__ = ViewSQLObjectField.__sqlrepr__
-    tablesUsedImmediate = ViewSQLObjectField.tablesUsedImmediate
-
 class ViewSQLObjectTable(SQLObjectTable):
     FieldClass = ViewSQLObjectField
-    UnicodeFieldClass = UnicodeViewSQLObjectField
 
     def __getattr__(self, attr):
         if attr == 'sqlmeta':
@@ -35,13 +27,10 @@ class ViewSQLObjectTable(SQLObjectTable):
         return SQLObjectTable.__getattr__(self, attr)
 
     def _getattrFromID(self, attr):
-        return self.FieldClass(self.soClass.sqlmeta.alias, self.tableName, 'id', attr)
+        return self.FieldClass(self.soClass.sqlmeta.alias, self.tableName, 'id', attr, self.soClass, None)
 
     def _getattrFromColumn(self, column, attr):
-        return self.FieldClass(self.soClass.sqlmeta.alias, self.tableName, column.name, attr)
-
-    def _getattrFromUnicodeColumn(self, column, attr):
-        return self.UnicodeFieldClass(self.soClass.sqlmeta.alias, self.tableName, column.name, attr, column)
+        return self.FieldClass(self.soClass.sqlmeta.alias, self.tableName, column.name, attr, self.soClass, column)
 
 
 class ViewSQLObject(SQLObject):
