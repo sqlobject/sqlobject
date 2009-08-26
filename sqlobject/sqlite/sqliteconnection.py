@@ -47,9 +47,6 @@ class SQLiteConnection(DBAPI):
         if self.using_sqlite2:
             if autoCommit:
                 opts["isolation_level"] = None
-            if 'encoding' in kw:
-                import warnings
-                warnings.warn(DeprecationWarning("pysqlite2 does not support the encoding option"))
             opts["detect_types"] = sqlite.PARSE_DECLTYPES
             for col_type in "text", "char", "varchar", "date", "time", "datetime", "timestamp":
                 sqlite.register_converter(col_type, stop_pysqlite2_converting_strings)
