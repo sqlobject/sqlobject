@@ -44,7 +44,7 @@ class SQLiteConnection(DBAPI):
                 import sqlite
                 self.using_sqlite2 = False
         else:
-            raise ValueError('Unknown SQLite backend "%s", expected pysqlite2, sqlite3 or sqlite')
+            raise ValueError('Unknown SQLite backend "%s", expected pysqlite2, sqlite3 or sqlite' % backend)
         if self.using_sqlite2:
             sqlite.encode = base64.encodestring
             sqlite.decode = base64.decodestring
