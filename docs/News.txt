@@ -13,18 +13,18 @@ SQLObject (trunk)
 Features & Interface
 --------------------
 
-* SET client_encoding for PostgreSQL to the value of '?charset=' parameter
-  in DB URI.
-
-* alternateMethodName defined for all unique fields, not only alternateID;
-  this makes SQLObject create by*() methods for all unique fields.
-
 * .selectBy(), .deleteBy() and .by*() methods pass all values through
   .from_python(), not only unicode.
 
 * The user can choose a DB API driver for SQLite by using a "backend"
   parameter in DB URI or SQLiteConnection. Possible backends are:
   "pysqlite2" (alias "sqlite2"), "sqlite3", "sqlite" (alias "sqlite1").
+
+* alternateMethodName is defined for all unique fields, not only alternateID;
+  this makes SQLObject create .by*() methods for all unique fields.
+
+* SET client_encoding for PostgreSQL to the value of "charset" parameter
+  in DB URI or PostgresConnection.
 
 Small Features
 --------------
