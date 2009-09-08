@@ -21,6 +21,13 @@ Features & Interface
   "pysqlite2" (alias "sqlite2"), "sqlite3", "sqlite" (alias "sqlite1").
   Default is to test pysqlite2, sqlite3 and sqlite in that order.
 
+* The user can choose a DB API driver for PostgreSQL by using a "backend"
+  parameter in DB URI or PostgresConnection. Possible backends are:
+  "psycopg2", "psycopg1", "psycopg" (tries psycopg2 and psycopg1),
+  "pygresql". Default is "psycopg".
+  WARNING: API change! PostgresConnection's parameter "usePygresql" is now
+  replaced with "backend=pygresql".
+
 * alternateMethodName is defined for all unique fields, not only alternateID;
   this makes SQLObject create .by*() methods for all unique fields.
 

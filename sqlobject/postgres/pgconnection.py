@@ -8,22 +8,28 @@ class PostgresConnection(DBAPI):
 
     supportTransactions = True
     dbName = 'postgres'
-    schemes = [dbName, 'postgresql', 'psycopg']
+    schemes = [dbName, 'postgresql']
 
     def __init__(self, dsn=None, host=None, port=None, db=None,
-                 user=None, password=None, usePygresql=False, unicodeCols=False,
+                 user=None, password=None, backend='psycopg', unicodeCols=False,
                  **kw):
-        self.usePygresql = usePygresql
-        if usePygresql:
-            import pgdb
-            self.module = pgdb
-        else:
+        self.backend = backend
+        if backend == 'psycopg2':
+            import psycopg2 as psycopg
+        elif backend == 'psycopg1':
+            import psycopg
+        elif backend == 'psycopg':
             try:
                 import psycopg2 as psycopg
             except ImportError:
                 import psycopg
+        elif backend == 'pygresql':
+            import pgdb
+            self.module = pgdb
+        else:
+            raise ValueError('Unknown PostgreSQL backend "%s", expected psycopg2, psycopg1 or pygresql' % backend)
+        if backend.startswith('psycopg'):
             self.module = psycopg
-
             # Register a converter for psycopg Binary type.
             registerConverter(type(psycopg.Binary('')),
                               PsycoBinaryConverter)
@@ -37,7 +43,7 @@ class PostgresConnection(DBAPI):
         if host:
             dsn_dict["host"] = host
         if port:
-            if usePygresql:
+            if backend == 'pygresql':
                 dsn_dict["host"] = "%s:%d" % (host, port)
             else:
                 if psycopg.__version__.split('.')[0] == '1':
@@ -52,7 +58,7 @@ class PostgresConnection(DBAPI):
             dsn_dict["password"] = password
         self.use_dsn = dsn is not None
         if dsn is None:
-            if usePygresql:
+            if backend == 'pygresql':
                 dsn = ''
                 if host:
                     dsn += host
@@ -308,7 +314,7 @@ class PostgresConnection(DBAPI):
         # We have to connect to *some* database, so we'll connect to
         # template1, which is a common open database.
         # @@: This doesn't use self.use_dsn or self.dsn_dict
-        if self.usePygresql:
+        if self.backend == 'pygresql':
             dsn = '%s:template1:%s:%s' % (
                 self.host or '', self.user or '', self.password or '')
         else:

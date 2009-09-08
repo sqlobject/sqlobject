@@ -1733,6 +1733,11 @@ and a dsn string will be constructed.
 
 PostgresConnection supports transactions and all other features.
 
+The user can choose a DB API driver for PostgreSQL by using a "backend"
+parameter in DB URI or PostgresConnection. Possible backends are:
+"psycopg2", "psycopg1", "psycopg" (tries psycopg2 and psycopg1),
+"pygresql". Default is "psycopg".
+
 SQLite
 ------
 
