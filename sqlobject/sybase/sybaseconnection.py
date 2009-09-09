@@ -76,17 +76,16 @@ class SybaseConnection(DBAPI):
             values = [id] + values
 
         has_identity = self._hasIdentity(conn, table)
-        if has_identity:
-            if id is not None:
-                c.execute('SET IDENTITY_INSERT %s ON' % table)
-            else:
-                c.execute('SET IDENTITY_INSERT %s OFF' % table)
+        identity_insert_on = False
+        if has_identity and (id is not None):
+            identity_insert_on = True
+            c.execute('SET IDENTITY_INSERT %s ON' % table)
 
         q = self._insertSQL(table, names, values)
         if self.debug:
             print 'QueryIns: %s' % q
         c.execute(q)
-        if has_identity:
+        if has_identity and identity_insert_on:
             c.execute('SET IDENTITY_INSERT %s OFF' % table)
         if id is None:
             id = self.insert_id(conn)
