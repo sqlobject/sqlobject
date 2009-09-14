@@ -28,6 +28,11 @@ Features & Interface
   WARNING: API change! PostgresConnection's parameter "usePygresql" is now
   replaced with "backend=pygresql".
 
+* The user can choose a DB API driver for MSSQL by using a "backend"
+  parameter in DB URI or MSSQLConnection. Possible backends are: "adodb"
+  (alias "adodbapi") and "pymssql". Default is to test adodbapi and pymssql
+  in that order.
+
 * alternateMethodName is defined for all unique fields, not only alternateID;
   this makes SQLObject create .by*() methods for all unique fields.
 
