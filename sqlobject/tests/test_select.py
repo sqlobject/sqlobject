@@ -69,13 +69,22 @@ def test_05_select_limit():
     assert len(list(IterTest.select(limit=2))) == 2
     raises(AssertionError, IterTest.select(limit=2).count)
 
-def test_06_like():
+def test_06_contains():
     setupIter()
     assert len(list(IterTest.select(IterTest.q.name.startswith('a')))) == 1
-    assert len(list(IterTest.select(IterTest.q.name.endswith('a')))) == 1
     assert len(list(IterTest.select(IterTest.q.name.contains('a')))) == 1
     assert len(list(IterTest.select(IterTest.q.name.contains(func.lower('A'))))) == 1
     assert len(list(IterTest.select(IterTest.q.name.contains("a'b")))) == 0
+    assert len(list(IterTest.select(IterTest.q.name.endswith('a')))) == 1
+
+def test_07_contains_special():
+    setupClass(IterTest)
+    a = IterTest(name='\\test')
+    b = IterTest(name='100%')
+    c = IterTest(name='test_')
+    assert list(IterTest.select(IterTest.q.name.startswith('\\'))) == [a]
+    assert list(IterTest.select(IterTest.q.name.contains('%'))) == [b]
+    assert list(IterTest.select(IterTest.q.name.endswith('_'))) == [c]
 
 def test_select_getOne():
     setupClass(IterTest)

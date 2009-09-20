@@ -106,6 +106,10 @@ SQLObject 0.10.7
 
 * Fixed a bug: Sybase tables with identity column fire two identity_inserts.
 
+* Fixed a bug: q.startswith(), q.contains() and q.endswith() escape (with a
+  backslash) all special characters (backslashes, underscores and percent
+  signs).
+
 SQLObject 0.10.6
 ================
 

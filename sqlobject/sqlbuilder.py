@@ -840,13 +840,13 @@ def NOTIN(item, list):
         return NOT(_IN(item, list))
 
 def STARTSWITH(expr, pattern):
-    return SQLOp("LIKE", expr, _LikeQuoted(pattern) + '%')
+    return LIKE(expr, _LikeQuoted(pattern) + '%', escape='\\')
 
 def ENDSWITH(expr, pattern):
-    return SQLOp("LIKE", expr, '%' + _LikeQuoted(pattern))
+    return LIKE(expr, '%' + _LikeQuoted(pattern), escape='\\')
 
 def CONTAINSSTRING(expr, pattern):
-    return SQLOp("LIKE", expr, '%' + _LikeQuoted(pattern) + '%')
+    return LIKE(expr, '%' + _LikeQuoted(pattern) + '%', escape='\\')
 
 def ISNULL(expr):
     return SQLOp("IS", expr, None)
@@ -888,7 +888,7 @@ class _LikeQuoted:
             values = []
             if self.prefix:
                 values.append("'%s'" % self.prefix)
-            s = _quote_percent(sqlrepr(s, db), db)
+            s = _quote_like_special(sqlrepr(s, db), db)
             values.append(s)
             if self.postfix:
                 values.append("'%s'" % self.postfix)
@@ -897,16 +897,17 @@ class _LikeQuoted:
             else:
                 return " || ".join(values)
         elif isinstance(s, basestring):
-            s = _quote_percent(sqlrepr(s, db)[1:-1], db)
+            s = _quote_like_special(sqlrepr(s, db)[1:-1], db)
             return "'%s%s%s'" % (self.prefix, s, self.postfix)
         else:
            raise TypeError, "expected str, unicode or SQLExpression, got %s" % type(s)
 
-def _quote_percent(s, db):
-    if db in ('postgres', 'mysql'):
-        s = s.replace('%', '\\%')
+def _quote_like_special(s, db):
+    if db == 'postgres':
+        escape = r'\\'
     else:
-        s = s.replace('%', '%%')
+        escape = '\\'
+    s = s.replace('\\', r'\\').replace('%', escape+'%').replace('_', escape+'_')
     return s
 
 ########################################
@@ -1135,11 +1136,17 @@ class Outer:
 class LIKE(SQLExpression):
     op = "LIKE"
 
-    def __init__(self, expr, string):
+    def __init__(self, expr, string, escape=None):
         self.expr = expr
         self.string = string
+        self.escape = escape
     def __sqlrepr__(self, db):
-        return "(%s %s (%s))" % (sqlrepr(self.expr, db), self.op, sqlrepr(self.string, db))
+        escape = self.escape
+        like = "%s %s (%s)" % (sqlrepr(self.expr, db), self.op, sqlrepr(self.string, db))
+        if escape is None:
+            return "(%s)" % like
+        else:
+            return "(%s ESCAPE %s)" % (like, sqlrepr(escape, db))
     def components(self):
         return [self.expr, self.string]
     def execute(self, executor):
@@ -1157,15 +1164,16 @@ class LIKE(SQLExpression):
 class RLIKE(LIKE):
     op = "RLIKE"
 
+    op_db = {
+        'firebird': 'RLIKE',
+        'maxdb': 'RLIKE',
+        'mysql': 'RLIKE',
+        'postgres': '~',
+        'sqlite': 'REGEXP'
+    }
+
     def _get_op(self, db):
-        if db in ('mysql', 'maxdb', 'firebird'):
-            return "RLIKE"
-        elif db == 'sqlite':
-            return "REGEXP"
-        elif db == 'postgres':
-            return "~"
-        else:
-            return "LIKE"
+        return self.op_db.get(db, 'LIKE')
     def __sqlrepr__(self, db):
         return "(%s %s (%s))" % (
             sqlrepr(self.expr, db), self._get_op(db), sqlrepr(self.string, db)
