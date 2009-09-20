@@ -51,6 +51,8 @@ Small Features
 SQLObject 0.11.1
 ================
 
+Released 20 Sep 2009
+
 * A number of changes ported from `SQLObject 0.10.7`_.
 
 SQLObject 0.11.0
@@ -103,6 +105,8 @@ Minor features
 
 SQLObject 0.10.7
 ================
+
+Released 20 Sep 2009
 
 * Fixed a bug: Sybase tables with identity column fire two identity_inserts.
 
