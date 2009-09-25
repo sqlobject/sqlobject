@@ -48,6 +48,11 @@ Small Features
 
 * Removed all deprecated attribute and functions.
 
+SQLObject 0.11.2
+================
+
+* A change ported from `SQLObject 0.10.8`_.
+
 SQLObject 0.11.1
 ================
 
@@ -102,6 +107,11 @@ Minor features
 
 * Changed the order of testing of SQLite modules - look for external
   PySQLite2 before sqlite3.
+
+SQLObject 0.10.8
+================
+
+* Fixed a bug in logging to console - convert unicode to str.
 
 SQLObject 0.10.7
 ================
