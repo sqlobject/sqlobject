@@ -22,7 +22,7 @@ Contributions have been made by:
 * Dan Pascu <dan at ag-projects.com>
 * Diez B. Roggisch <deets at web.de>
 * Christopher Singley <csingley at gmail.com>
-* Oleg Broytmann <phd@phd.pp.ru>
+* Oleg Broytman <phd@phd.pp.ru>
 
 .. image:: http://sflogo.sourceforge.net/sflogo.php?group_id=74338&type=10
    :target: http://sourceforge.net/projects/sqlobject
