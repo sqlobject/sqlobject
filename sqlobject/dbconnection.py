@@ -832,7 +832,7 @@ class ConnectionHub(object):
         # I'm a little surprised we have to do this, but apparently
         # the object's private dictionary of attributes doesn't
         # override this descriptor.
-        if obj and obj.__dict__.has_key('_connection'):
+        if (obj is not None) and obj.__dict__.has_key('_connection'):
             return obj.__dict__['_connection']
         return self.getConnection()
 

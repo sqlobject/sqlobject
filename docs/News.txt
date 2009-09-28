@@ -113,6 +113,9 @@ SQLObject 0.10.8
 
 * Fixed a bug in logging to console - convert unicode to str.
 
+* Fixed an obscure bug in ConnectionHub triggered by an SQLObject class
+  whose instances can be coerced to boolean False.
+
 SQLObject 0.10.7
 ================
 
