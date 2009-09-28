@@ -22,29 +22,29 @@ class SQLiteConnection(DBAPI):
     schemes = [dbName]
 
     def __init__(self, filename, autoCommit=1, **kw):
-        backend = kw.pop('backend', None)
-        if backend is None:
+        backends = kw.pop('backend', None) or 'pysqlite2,sqlite3,sqlite'
+        for backend in backends.split(','):
+            backend = backend.strip()
+            if not backend:
+                continue
             try:
-                from pysqlite2 import dbapi2 as sqlite
-                self.using_sqlite2 = True
+                if backend in ('sqlite2', 'pysqlite2'):
+                        from pysqlite2 import dbapi2 as sqlite
+                        self.using_sqlite2 = True
+                elif backend == 'sqlite3':
+                        import sqlite3 as sqlite
+                        self.using_sqlite2 = True
+                elif backend in ('sqlite', 'sqlite1'):
+                        import sqlite
+                        self.using_sqlite2 = False
+                else:
+                    raise ValueError('Unknown SQLite backend "%s", expected pysqlite2, sqlite3 or sqlite' % backend)
             except ImportError:
-                try:
-                    import sqlite3 as sqlite
-                    self.using_sqlite2 = True
-                except ImportError:
-                    import sqlite
-                    self.using_sqlite2 = False
-        elif backend in ('sqlite2', 'pysqlite2'):
-                from pysqlite2 import dbapi2 as sqlite
-                self.using_sqlite2 = True
-        elif backend == 'sqlite3':
-                import sqlite3 as sqlite
-                self.using_sqlite2 = True
-        elif backend in ('sqlite', 'sqlite1'):
-                import sqlite
-                self.using_sqlite2 = False
+                pass
+            else:
+                break
         else:
-            raise ValueError('Unknown SQLite backend "%s", expected pysqlite2, sqlite3 or sqlite' % backend)
+            raise ImportError('Cannot find an SQLite backend, tried %s' % backends)
         if self.using_sqlite2:
             sqlite.encode = base64.encodestring
             sqlite.decode = base64.decodestring

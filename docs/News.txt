@@ -17,21 +17,23 @@ Features & Interface
   .from_python(), not only unicode.
 
 * The user can choose a DB API driver for SQLite by using a "backend"
-  parameter in DB URI or SQLiteConnection. Possible backends are:
-  "pysqlite2" (alias "sqlite2"), "sqlite3", "sqlite" (alias "sqlite1").
-  Default is to test pysqlite2, sqlite3 and sqlite in that order.
+  parameter in DB URI or SQLiteConnection that can be a comma-separated
+  list of backend names. Possible backends are: "pysqlite2" (alias
+  "sqlite2"), "sqlite3", "sqlite" (alias "sqlite1"). Default is to test
+  pysqlite2, sqlite3 and sqlite in that order.
 
 * The user can choose a DB API driver for PostgreSQL by using a "backend"
-  parameter in DB URI or PostgresConnection. Possible backends are:
-  "psycopg2", "psycopg1", "psycopg" (tries psycopg2 and psycopg1),
-  "pygresql". Default is "psycopg".
-  WARNING: API change! PostgresConnection's parameter "usePygresql" is now
-  replaced with "backend=pygresql".
+  parameter in DB URI or PostgresConnection that can be a comma-separated
+  list of backend names. Possible backends are: "psycopg2", "psycopg1",
+  "psycopg" (tries psycopg2 and psycopg1), "pygresql". Default is
+  "psycopg".
+  WARNING: API change! PostgresConnection's parameter
+  "usePygresql" is now replaced with "backend=pygresql".
 
 * The user can choose a DB API driver for MSSQL by using a "backend"
-  parameter in DB URI or MSSQLConnection. Possible backends are: "adodb"
-  (alias "adodbapi") and "pymssql". Default is to test adodbapi and pymssql
-  in that order.
+  parameter in DB URI or MSSQLConnection that can be a comma-separated list
+  of backend names. Possible backends are: "adodb" (alias "adodbapi") and
+  "pymssql". Default is to test adodbapi and pymssql in that order.
 
 * alternateMethodName is defined for all unique fields, not only alternateID;
   this makes SQLObject create .by*() methods for all unique fields.

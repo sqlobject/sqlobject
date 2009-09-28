@@ -13,21 +13,32 @@ class PostgresConnection(DBAPI):
     def __init__(self, dsn=None, host=None, port=None, db=None,
                  user=None, password=None, backend='psycopg', unicodeCols=False,
                  **kw):
-        self.backend = backend
-        if backend == 'psycopg2':
-            import psycopg2 as psycopg
-        elif backend == 'psycopg1':
-            import psycopg
-        elif backend == 'psycopg':
+        backends = kw.pop('backend', None) or 'psycopg'
+        for backend in backends.split(','):
+            backend = backend.strip()
+            if not backend:
+                continue
             try:
-                import psycopg2 as psycopg
+                if backend == 'psycopg2':
+                    import psycopg2 as psycopg
+                elif backend == 'psycopg1':
+                    import psycopg
+                elif backend == 'psycopg':
+                    try:
+                        import psycopg2 as psycopg
+                    except ImportError:
+                        import psycopg
+                elif backend == 'pygresql':
+                    import pgdb
+                    self.module = pgdb
+                else:
+                    raise ValueError('Unknown PostgreSQL backend "%s", expected psycopg2, psycopg1 or pygresql' % backend)
             except ImportError:
-                import psycopg
-        elif backend == 'pygresql':
-            import pgdb
-            self.module = pgdb
+                pass
+            else:
+                break
         else:
-            raise ValueError('Unknown PostgreSQL backend "%s", expected psycopg2, psycopg1 or pygresql' % backend)
+            raise ImportError('Cannot find a PostgreSQL backend, tried %s' % backends)
         if backend.startswith('psycopg'):
             self.module = psycopg
             # Register a converter for psycopg Binary type.

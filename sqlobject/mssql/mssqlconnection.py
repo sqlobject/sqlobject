@@ -10,18 +10,24 @@ class MSSQLConnection(DBAPI):
 
     def __init__(self, db, user, password='', host='localhost',
                  autoCommit=0, **kw):
-        backend = kw.pop('backend', None)
-        if backend is None:
+        backends = kw.pop('backend', None) or 'adodb,pymssql'
+        for backend in backends.split(','):
+            backend = backend.strip()
+            if not backend:
+                continue
             try:
-                import adodbapi as sqlmodule
+                if backend in ('adodb', 'adodbapi'):
+                    import adodbapi as sqlmodule
+                elif backend == 'pymssql':
+                    import pymssql as sqlmodule
+                else:
+                    raise ValueError('Unknown MSSQL backend "%s", expected adodb or pymssql' % backend)
             except ImportError:
-                import pymssql as sqlmodule
-        elif backend in ('adodb', 'adodbapi'):
-            import adodbapi as sqlmodule
-        elif backend == 'pymssql ':
-            import pymssql as sqlmodule
+                pass
+            else:
+                break
         else:
-            raise ValueError('Unknown MSSQL backend "%s", expected adodb or pymssql' % backend)
+            raise ImportError('Cannot find an MSSQL backend, tried %s' % backends)
         self.module = sqlmodule
 
         if sqlmodule.__name__ == 'adodbapi':
