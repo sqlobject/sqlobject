@@ -1271,6 +1271,8 @@ class SOTimestampCol(SODateTimeCol):
     """
 
     def __init__(self, **kw):
+        if 'default' not in kw:
+            kw['default'] = None
         SOCol.__init__(self, **kw)
 
     def _mysqlType(self):
