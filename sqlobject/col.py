@@ -355,7 +355,7 @@ class SOCol(object):
             return self
         if obj.sqlmeta._obsolete:
             raise RuntimeError('The object <%s %s> is obsolete' % (
-                obj__class__.__name__, obj.id))
+                obj.__class__.__name__, obj.id))
         if obj.sqlmeta.cacheColumns:
             columns = obj.sqlmeta._columnCache
             if columns is None:
