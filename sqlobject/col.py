@@ -354,7 +354,8 @@ class SOCol(object):
             # class attribute, return the descriptor itself
             return self
         if obj.sqlmeta._obsolete:
-            raise '@@: figure out the exception for a delete'
+            raise RuntimeError('The object <%s %s> is obsolete' % (
+                obj__class__.__name__, obj.id))
         if obj.sqlmeta.cacheColumns:
             columns = obj.sqlmeta._columnCache
             if columns is None:
@@ -975,7 +976,7 @@ class SOEnumCol(SOCol):
         return "VARCHAR(%i)" % (length), checkConstraint
 
     def _maxdbType(self):
-        raise "Enum type is not supported"
+        raise TypeError("Enum type is not supported on MAX DB")
 
     def _getlength(self, obj):
         """

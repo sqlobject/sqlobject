@@ -53,6 +53,8 @@ Small Features
 
 * Removed all deprecated attribute and functions.
 
+* Removed the last remained string exceptions.
+
 SQLObject 0.11.2
 ================
 
