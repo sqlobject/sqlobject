@@ -56,6 +56,8 @@ Small Features
 SQLObject 0.11.2
 ================
 
+Released 30 Sep 2009
+
 * A number of changes ported from `SQLObject 0.10.8`_.
 
 SQLObject 0.11.1
@@ -115,6 +117,8 @@ Minor features
 
 SQLObject 0.10.8
 ================
+
+Released 30 Sep 2009
 
 * Fixed a bug in logging to console - convert unicode to str.
 
