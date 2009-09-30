@@ -353,7 +353,7 @@ class SOCol(object):
         if obj is None:
             # class attribute, return the descriptor itself
             return self
-        if obj.sqlmeta.obsolete:
+        if obj.sqlmeta._obsolete:
             raise '@@: figure out the exception for a delete'
         if obj.sqlmeta.cacheColumns:
             columns = obj.sqlmeta._columnCache
