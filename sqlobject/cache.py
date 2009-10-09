@@ -180,18 +180,31 @@ class CacheFactory(object):
             self.expiredCache[id] = ref(obj)
 
     def cull(self):
-        """
-        Runs through the cache and expires objects.  E.g., if
-        ``cullFraction`` is 3, then every third object is moved to
+        """Runs through the cache and expires objects
+
+        E.g., if ``cullFraction`` is 3, then every third object is moved to
         the 'expired' (aka weakref) cache.
+
         """
         self.lock.acquire()
         try:
+            #remove dead references from the expired cache
+            keys = self.expiredCache.keys()
+            for key in keys:
+                if self.expiredCache[key]() is None:
+                    self.expiredCache.pop(key, None)
+
             keys = self.cache.keys()
             for i in xrange(self.cullOffset, len(keys), self.cullFraction):
                 id = keys[i]
-                self.expiredCache[id] = ref(self.cache[id])
+                # create a weakref, then remove from the cache
+                obj = ref(self.cache[id])
                 del self.cache[id]
+
+                #the object may have been gc'd when removed from the cache
+                #above, no need to place in expiredCache
+                if obj() is not None:
+                    self.expiredCache[id] = obj
             # This offset tries to balance out which objects we
             # expire, so no object will just hang out in the cache
             # forever.
