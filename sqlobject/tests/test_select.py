@@ -184,3 +184,8 @@ def test_select_RLIKE():
     assert IterTest.select(RLIKE(IterTest.q.name, "^sqlb.*$")).count() == 1
     assert IterTest.select(RLIKE(IterTest.q.name, "^sqlb.*$")).count() == 1
     assert IterTest.select(RLIKE(IterTest.q.name, "^sqlx.*$")).count() == 0
+
+def test_select_sqlbuilder():
+    setupClass(IterTest)
+    IterTest(name='sqlobject')
+    IterTest.select(IterTest.q.name==u'sqlobject')

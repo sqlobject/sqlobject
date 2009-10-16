@@ -889,7 +889,7 @@ class SQLObject(object):
         if val is None:
             try:
                 val = cls(_SO_fetch_no_create=1)
-                val._SO_validatorState = SQLObjectState(val)
+                val._SO_validatorState = sqlbuilder.SQLObjectState(val)
                 val._init(id, connection, selectResults)
                 cache.put(id, cls, val)
             finally:
@@ -1237,7 +1237,7 @@ class SQLObject(object):
 
         self.sqlmeta._creating = True
         self._SO_createValues = {}
-        self._SO_validatorState = SQLObjectState(self)
+        self._SO_validatorState = sqlbuilder.SQLObjectState(self)
 
         # First we do a little fix-up on the keywords we were
         # passed:
@@ -1684,13 +1684,6 @@ def rawGetterName(name):
     return '_SO_get_%s' % name
 def instanceName(name):
     return '_SO_val_%s' % name
-
-
-class SQLObjectState(object):
-
-    def __init__(self, soObject):
-        self.soObject = weakref.proxy(soObject)
-        self.protocol = 'sql'
 
 
 ########################################

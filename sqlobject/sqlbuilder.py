@@ -62,18 +62,27 @@ See the bottom of this module for some examples, and run it (i.e.
 ## Constants
 ########################################
 
+import fnmatch
+import operator
+import re
+import threading
+import types
+import weakref
+
+import classregistry
+from converters import sqlrepr, registerConverter
+
+
 class VersionError(Exception):
     pass
 class NoDefault:
     pass
 
-import re, fnmatch
-import operator
-import threading
-import types
-import classregistry
 
-from converters import sqlrepr, registerConverter
+class SQLObjectState(object):
+    def __init__(self, soObject):
+        self.soObject = weakref.proxy(soObject)
+
 
 safeSQLRE = re.compile(r'^[a-zA-Z_][a-zA-Z0-9_\.]*$')
 def sqlIdentifier(obj):
@@ -329,7 +338,7 @@ class SQLObjectField(Field):
     def _from_python(self, value):
         column = self.column
         if not isinstance(value, SQLExpression) and column and column.from_python:
-            value = column.from_python(value, self.soClass)
+            value = column.from_python(value, SQLObjectState(self.soClass))
         return value
     def __eq__(self, other):
         if other is None:
