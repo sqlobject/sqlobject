@@ -56,7 +56,7 @@ Small Features
   in global variables; this allows to use different DB API drivers at the
   same time; for example, PySQLite2 and sqlite3.
 
-* Removed all deprecated attribute and functions.
+* Removed all deprecated attributes and functions.
 
 * Removed the last remained string exceptions.
 
