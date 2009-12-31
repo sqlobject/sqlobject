@@ -13,7 +13,7 @@ class PostgresConnection(DBAPI):
     def __init__(self, dsn=None, host=None, port=None, db=None,
                  user=None, password=None, backend='psycopg', unicodeCols=False,
                  **kw):
-        backends = kw.pop('backend', None) or 'psycopg'
+        backends = backend
         for backend in backends.split(','):
             backend = backend.strip()
             if not backend:

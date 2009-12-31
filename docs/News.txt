@@ -10,6 +10,13 @@ News
 SQLObject (trunk)
 =================
 
+SQLObject 0.12.1
+================
+
+* Fixed a bug in PostgresConnection.
+
+* A change ported from `SQLObject 0.11.3`_.
+
 SQLObject 0.12
 ==============
 
@@ -62,6 +69,8 @@ Small Features
 
 SQLObject 0.11.3
 ================
+
+* Fixed a bug in FirebirdConnection.
 
 * A change ported from `SQLObject 0.10.9`_.
 
