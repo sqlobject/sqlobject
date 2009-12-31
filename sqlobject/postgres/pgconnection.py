@@ -99,7 +99,7 @@ class PostgresConnection(DBAPI):
         self.unicodeCols = unicodeCols
         self.schema = kw.pop('schema', None)
         if "charset" in kw:
-            self.dbEncoding = self.kw["charset"] = kw.pop("charset")
+            self.dbEncoding = kw.pop("charset")
         else:
             self.dbEncoding = None
         DBAPI.__init__(self, **kw)
