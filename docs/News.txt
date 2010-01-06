@@ -15,7 +15,7 @@ SQLObject 0.12.1
 
 * Fixed three bugs in PostgresConnection.
 
-* A change ported from `SQLObject 0.11.3`_.
+* A number of changes ported from `SQLObject 0.11.3`_.
 
 SQLObject 0.12
 ==============
@@ -69,6 +69,9 @@ Small Features
 
 SQLObject 0.11.3
 ================
+
+* Fixed a bug in col.py and dbconnection.py - if dbEncoding is None suppose
+  it's 'ascii'.
 
 * Fixed a bug in FirebirdConnection.
 
