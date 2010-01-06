@@ -13,7 +13,7 @@ SQLObject (trunk)
 SQLObject 0.12.1
 ================
 
-* Fixed two bugs in PostgresConnection.
+* Fixed three bugs in PostgresConnection.
 
 * A change ported from `SQLObject 0.11.3`_.
 

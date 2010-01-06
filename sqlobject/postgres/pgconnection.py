@@ -131,12 +131,12 @@ class PostgresConnection(DBAPI):
             # psycopg2 does not have an autocommit method.
             if hasattr(conn, 'autocommit'):
                 conn.autocommit(1)
+        c = conn.cursor()
         if self.schema:
-            c = conn.cursor()
             c.execute("SET search_path TO " + self.schema)
         dbEncoding = self.dbEncoding
         if dbEncoding:
-            conn.query("SET client_encoding TO %s" % dbEncoding)
+            c.execute("SET client_encoding TO %s" % dbEncoding)
         return conn
 
     def _queryInsertID(self, conn, soInstance, id, names, values):
