@@ -31,7 +31,7 @@ class ConsoleWriter:
     def __init__(self, connection, loglevel):
         # loglevel: None or empty string for stdout; or 'stderr'
         self.loglevel = loglevel or "stdout"
-        self.dbEncoding = getattr(connection, "dbEncoding") or "ascii"
+        self.dbEncoding = getattr(connection, "dbEncoding", None) or "ascii"
     def write(self, text):
         logfile = getattr(sys, self.loglevel)
         if isinstance(text, unicode):
