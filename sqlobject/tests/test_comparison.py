@@ -20,5 +20,3 @@ def test_eq():
     assert t1 == t3
     assert t2 == t4
     assert t1 <> t2
-    assert t1 < t2
-    assert not (t1 >= t2)
