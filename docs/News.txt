@@ -10,6 +10,12 @@ News
 SQLObject (trunk)
 =================
 
+Features & Interface
+--------------------
+
+* Added TimedeltaCol; currently it's only implemented on PostgreSQL as an
+  INTERVAL type.
+
 SQLObject 0.12.1
 ================
 

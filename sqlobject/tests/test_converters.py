@@ -1,4 +1,5 @@
 import sys
+from datetime import timedelta
 from sqlobject.sqlbuilder import sqlrepr
 from sqlobject.sqlbuilder import SQLExpression, SQLObjectField, \
      Select, Insert, Update, Delete, Replace, \
@@ -195,3 +196,7 @@ def test_sets():
             pass
         else:
             assert sqlrepr(Set([1])) == "(1)"
+
+def test_timedelta():
+    assert sqlrepr(timedelta(seconds=30*60)) == \
+        "INTERVAL '0 days 1800 seconds'"

@@ -1283,6 +1283,25 @@ class TimestampCol(Col):
     baseClass = SOTimestampCol
 
 
+class TimedeltaValidator(validators.Validator):
+    def to_python(self, value, state):
+        return value
+
+    def from_python(self, value, state):
+        return value
+
+class SOTimedeltaCol(SOCol):
+    def _postgresType(self):
+        return 'INTERVAL'
+
+    def createValidators(self):
+        return [TimedeltaValidator(name=self.name)] + \
+            super(SOTimedeltaCol, self).createValidators()
+
+class TimedeltaCol(Col):
+    baseClass = SOTimedeltaCol
+
+
 from decimal import Decimal
 
 class DecimalValidator(validators.Validator):

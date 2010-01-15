@@ -187,6 +187,14 @@ def DecimalConverter(value, db):
 
 registerConverter(Decimal, DecimalConverter)
 
+def TimedeltaConverter(value, db):
+    
+    return """INTERVAL '%d days %d seconds'""" % \
+        (value.days, value.seconds)
+
+registerConverter(datetime.timedelta, TimedeltaConverter)
+        
+
 def sqlrepr(obj, db=None):
     try:
         reprFunc = obj.__sqlrepr__
