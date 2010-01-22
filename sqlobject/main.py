@@ -44,8 +44,8 @@ from formencode import schema, compound
 from util.threadinglocal import local
 
 import sys
-if sys.version_info[:3] < (2, 2, 0):
-    raise ImportError, "SQLObject requires Python 2.2.0 or later"
+if sys.version_info[:3] < (2, 4, 0):
+    raise ImportError, "SQLObject requires Python 2.4.0 or later"
 
 """
 This thread-local storage is needed for RowCreatedSignals. It gathers
