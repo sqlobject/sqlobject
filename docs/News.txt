@@ -20,8 +20,8 @@ Small Features
 --------------
 
 * Do not pollute the base sqlmeta class to allow Style to set idName. In
-  the case of inherited idName inherited value takes precedence; To allow
-  Style to set idName resets inherited idName to None.
+  the case of inherited idName inherited value takes precedence; to allow
+  Style to set idName reset inherited idName to None.
 
 SQLObject 0.12.1
 ================
