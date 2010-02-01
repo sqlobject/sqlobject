@@ -298,12 +298,12 @@ Limitations and notes
   and override many methods - _SO_setValue(), sync(), syncUpdate() at
   least. Patches will be gladly accepted.
 * You'd better restrain yourself to simple use cases. The inheritance
-  implementation is easiliy choked on more complex cases.
+  implementation is easily choked on more complex cases.
 * A join between tables inherited from the same parent produces incorrect
   result due to joins to the same parent table (they must use different
   aliases).
 * Inheritance works in two stages - first it draws the IDs from the parent
-  table and then it drwas the rows from the children tables. The first
+  table and then it draws the rows from the children tables. The first
   stage could fail if you try to do complex things. For example,
   Children.select(orderBy=Children.q.column, distinct=True)
   could fail because at the first stage inheritance generates a SELECT
