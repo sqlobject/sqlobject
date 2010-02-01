@@ -291,29 +291,17 @@ def test_nonexisting_attr():
     else:
         assert 0, "Expected an AttributeError"
 
-class myid_sqlmeta(sqlmeta):
-    idName = "my_id"
-
 class TestSO12(SQLObject):
-    class sqlmeta(myid_sqlmeta):
-        pass
-    name = StringCol()
-
-def test_sqlmeta_inherited_idName():
-    setupClass(TestSO12)
-    assert TestSO12.sqlmeta.idName == "my_id"
-
-class TestSO13(SQLObject):
     name = StringCol()
     value = IntCol(defaultSQL='1')
 
 def test_defaultSQL():
-    setupClass(TestSO13)
-    test = TestSO13(name="test")
+    setupClass(TestSO12)
+    test = TestSO12(name="test")
     assert test.value == 1
 
 def test_connection_override():
     sqlhub.processConnection = connectionForURI('sqlite:///db1')
-    class TestSO14(SQLObject):
+    class TestSO13(SQLObject):
         _connection = connectionForURI('sqlite:///db2')
-    assert TestSO14._connection.uri() == 'sqlite:///db2'
+    assert TestSO13._connection.uri() == 'sqlite:///db2'

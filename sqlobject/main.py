@@ -853,7 +853,8 @@ class SQLObject(object):
                     del values[key]
             cls.sqlmeta = type('sqlmeta', (superclass,), values)
 
-        cls.sqlmeta.setClass(cls)
+        if not is_base: # Do not pollute the base sqlmeta class
+            cls.sqlmeta.setClass(cls)
 
     _SO_setupSqlmeta = classmethod(_SO_setupSqlmeta)
 
