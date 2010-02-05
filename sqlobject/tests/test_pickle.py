@@ -22,3 +22,7 @@ def test_pickleCol():
 
     assert test.question == test_question
     assert test.answer == test_answer
+
+    TestPickle._connection.cache.clear()
+    test = TestPickle.get(test.id, connection=TestPickle._connection)
+    raises(pickle.PicklingError, pickle.dumps, test, pickle.HIGHEST_PROTOCOL)
