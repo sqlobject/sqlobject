@@ -1675,6 +1675,22 @@ class SQLObject(object):
        return NotImplemented
 
 
+    def __getstate__(self):
+        if self.sqlmeta._perConnection:
+            from pickle import PicklingError
+            raise PicklingError('Cannot pickle an SQLObject instance that has a per-instance connection')
+        d = self.__dict__.copy()
+        del d['sqlmeta']
+        del d['_SO_writeLock']
+        return d
+
+    def __setstate__(self, d):
+        self.__init__(_SO_fetch_no_create=1)
+        self._SO_writeLock = threading.Lock()
+        self.__dict__.update(d)
+        self.__class__._connection.cache.put(self.id, self.__class__, self)
+
+
 def capitalize(name):
     return name[0].capitalize() + name[1:]
 

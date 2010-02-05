@@ -13,6 +13,9 @@ SQLObject (trunk)
 Features & Interface
 --------------------
 
+* SQLObject instances that don't have a per-instance connection can be
+  pickled and unpickled.
+
 * Added TimedeltaCol; currently it's only implemented on PostgreSQL as an
   INTERVAL type.
 
