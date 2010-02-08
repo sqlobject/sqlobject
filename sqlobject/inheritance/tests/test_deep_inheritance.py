@@ -13,26 +13,53 @@ class DIPerson(InheritableSQLObject):
     manager = ForeignKey("DIManager", default=None)
 
 class DIEmployee(DIPerson):
-    position = StringCol()
+    position = StringCol(unique=True)
 
 class DIManager(DIEmployee):
     subdudes = MultipleJoin("DIPerson", joinColumn="manager_id")
 
 def test_creation_fail():
     """
-    Try to creae an Manager without specifying a position.
-    this should fail without leaving any partial records in
+    Try to create a Manager without specifying a position.
+    This should fail without leaving any partial records in
     the database.
 
     """
     setupClass([DIManager, DIEmployee, DIPerson])
 
-    kwargs ={'firstName':'John', 'lastname':'Doe'}
+    kwargs ={'firstName': 'John', 'lastname': 'Doe'}
     raises(TypeError, DIManager, **kwargs)
-    #what we really need to check for is partial records in the database.
-    #the following is not really adaquate.
     persons = DIEmployee.select(DIPerson.q.firstName == 'John')
     assert persons.count() == 0
+
+def test_creation_fail2():
+    """
+    Try to create two Managers with the same position.
+    This should fail without leaving any partial records in
+    the database.
+
+    """
+    setupClass([DIManager, DIEmployee, DIPerson])
+
+    kwargs ={'firstName': 'John', 'lastName': 'Doe', 'position': 'Project Manager'}
+    DIManager(**kwargs)
+    persons = DIEmployee.select(DIPerson.q.firstName == 'John')
+    assert persons.count() == 1
+
+    kwargs ={'firstName': 'John', 'lastName': 'Doe II', 'position': 'Project Manager'}
+    raises(Exception, DIManager, **kwargs)
+    persons = DIPerson.select(DIPerson.q.firstName == 'John')
+    assert persons.count() == 1
+
+    if not supports('transactions'):
+        return
+    transaction = DIPerson._connection.transaction()
+    kwargs ={'firstName': 'John', 'lastName': 'Doe III', 'position': 'Project Manager'}
+    raises(Exception, DIManager, connection=transaction, **kwargs)
+    transaction.rollback()
+    transaction.begin()
+    persons = DIPerson.select(DIPerson.q.firstName == 'John', connection=transaction)
+    assert persons.count() == 1
 
 def test_deep_inheritance():
     setupClass([DIManager, DIEmployee, DIPerson])

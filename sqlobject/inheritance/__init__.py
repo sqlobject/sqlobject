@@ -1,9 +1,10 @@
-from sqlobject import sqlbuilder
+from sqlobject import dbconnection
 from sqlobject import classregistry
+from sqlobject import events
+from sqlobject import sqlbuilder
 from sqlobject.col import StringCol, ForeignKey
 from sqlobject.main import sqlmeta, SQLObject, SelectResults, \
    makeProperties, unmakeProperties, getterName, setterName
-from sqlobject import events
 import iteration
 
 def tablesUsedSet(obj, db):
@@ -109,7 +110,7 @@ class InheritableSQLMeta(sqlmeta):
                         def setfunc(self, val):
                             if not self.sqlmeta._creating and not getattr(self.sqlmeta, "row_update_sig_suppress", False):
                                 self.sqlmeta.send(events.RowUpdateSignal, self, {cname : val})
-                                
+
                             result = setattr(self._parent, cname, val)
                         return setfunc
 
@@ -384,7 +385,20 @@ class InheritableSQLObject(SQLObject):
 
             id = self._parent.id
 
-        super(InheritableSQLObject, self)._create(id, **kw)
+        # TC: Create this record and catch all exceptions in order to destroy
+        # TC: the parent if the child can not be created.
+        try:
+            super(InheritableSQLObject, self)._create(id, **kw)
+        except:
+            # If we are outside a transaction and this is a child, destroy the parent
+            connection = self._connection
+            if (not isinstance(connection, dbconnection.Transaction) and
+                    connection.autoCommit) and self.sqlmeta.parentClass:
+                self._parent.destroySelf()
+                #TC: Do we need to do this??
+                self._parent = None
+            # TC: Reraise the original exception
+            raise
 
     def _findAlternateID(cls, name, dbName, value, connection=None):
         result = list(cls.selectBy(connection, **{name: value}))
