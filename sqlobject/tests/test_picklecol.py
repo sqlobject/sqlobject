@@ -15,6 +15,8 @@ class PickleContainer(SQLObject):
     pickledata = PickleCol(default=None, length=65535)
 
 def test_pickleCol():
+    if not supports('blobData'):
+        return
     setupClass([PickleContainer], force=True)
     mypickledata = PickleData()
 
@@ -33,4 +35,3 @@ def test_pickleCol():
     assert s2.pi == mypickledata.pi
     assert s2.question == mypickledata.question
     assert s2.answer == mypickledata.answer
-
