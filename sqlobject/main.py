@@ -768,7 +768,7 @@ class SQLObject(object):
 
         # Do not check hasattr(cls, '_connection') here - it is possible
         # SQLObject parent class has a connection attribute that came
-        # from sqlhub, e.g.; # check __dict__ only.
+        # from sqlhub, e.g.; check __dict__ only.
         if connection and ('_connection' not in cls.__dict__):
             cls.setConnection(connection)
 
@@ -921,7 +921,7 @@ class SQLObject(object):
         # If no connection was given, we'll inherit the class
         # instance variable which should have a _connection
         # attribute.
-        if connection is not None:
+        if (connection is not None) and (self._connection != connection):
             self._connection = connection
             # Sometimes we need to know if this instance is
             # global or tied to a particular connection.
@@ -1207,9 +1207,10 @@ class SQLObject(object):
 
             # Pass the connection object along if we were given one.
             if kw.has_key('connection'):
-                self._connection = kw['connection']
-                self.sqlmeta._perConnection = True
-                del kw['connection']
+                connection = kw.pop('connection')
+                if self._connection != connection:
+                    self._connection = connection
+                    self.sqlmeta._perConnection = True
 
             self._SO_writeLock = threading.Lock()
 

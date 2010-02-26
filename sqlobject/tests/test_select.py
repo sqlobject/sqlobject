@@ -189,3 +189,8 @@ def test_select_sqlbuilder():
     setupClass(IterTest)
     IterTest(name='sqlobject')
     IterTest.select(IterTest.q.name==u'sqlobject')
+
+def test_select_perConnection():
+    setupClass(IterTest)
+    IterTest(name='a')
+    assert not IterTest.select().getOne().sqlmeta._perConnection

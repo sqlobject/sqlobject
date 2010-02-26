@@ -97,6 +97,9 @@ SQLObject 0.11.4
   connection is not a transaction and is in autocommit mode - remove
   parent row(s).
 
+* Do not set _perConnection flag if get() or _init() is passed the same
+  connection; this is often the case with select().
+
 SQLObject 0.11.3
 ================
 
