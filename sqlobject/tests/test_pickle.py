@@ -23,6 +23,11 @@ def test_pickleCol():
     assert test.question == test_question
     assert test.answer == test_answer
 
-    TestPickle._connection.cache.clear()
-    test = TestPickle.get(test.id, connection=TestPickle._connection)
+    connection = TestPickle._connection
+    if (connection.dbName == 'sqlite') and connection._memory:
+        return # The following test requires a different connection
+
+    test = TestPickle.get(test.id,
+        connection=getConnection(registry='')) # to make a different DB URI
+                                               # and open another connection
     raises(pickle.PicklingError, pickle.dumps, test, pickle.HIGHEST_PROTOCOL)
