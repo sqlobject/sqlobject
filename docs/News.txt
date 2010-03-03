@@ -26,6 +26,9 @@ Small Features
   the case of inherited idName inherited value takes precedence; to allow
   Style to set idName reset inherited idName to None.
 
+* Validators became stricter: StringCol and UnicodeCol now accept only str
+  or unicode, BoolCol accepts only bool or int, and so on.
+
 SQLObject 0.12.2
 ================
 

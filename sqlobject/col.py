@@ -516,23 +516,31 @@ class StringValidator(validators.Validator):
             connection = state.soObject._connection
             dbEncoding = getattr(connection, "dbEncoding", None) or "ascii"
             return value.encode(dbEncoding)
-        return value
+        if isinstance(value, (str, sqlbuilder.SQLExpression)):
+            return value
+        if self.dataType and isinstance(value, self.dataType):
+            return value
+        raise validators.Invalid("expected a str in the StringCol '%s', got %s %r instead" % \
+            (self.name, type(value), value), value, state)
 
     def from_python(self, value, state):
         if value is None:
             return None
-        if isinstance(value, str):
+        if isinstance(value, (str, sqlbuilder.SQLExpression)):
+            return value
+        if self.dataType and isinstance(value, self.dataType):
             return value
         if isinstance(value, unicode):
             connection = state.soObject._connection
             dbEncoding = getattr(connection, "dbEncoding", None) or "ascii"
             return value.encode(dbEncoding)
-        return value
+        raise validators.Invalid("expected a str in the StringCol '%s', got %s %r instead" % \
+            (self.name, type(value), value), value, state)
 
 class SOStringCol(SOStringLikeCol):
 
-    def createValidators(self):
-        return [StringValidator()] + \
+    def createValidators(self, dataType=None):
+        return [StringValidator(name=self.name, dataType=dataType)] + \
             super(SOStringCol, self).createValidators()
 
 class StringCol(Col):
@@ -543,18 +551,24 @@ class UnicodeStringValidator(validators.Validator):
     def to_python(self, value, state):
         if value is None:
             return None
-        if isinstance(value, unicode):
+        if isinstance(value, (unicode, sqlbuilder.SQLExpression)):
             return value
+        if isinstance(value, str):
+            return unicode(value, self.db_encoding)
         if isinstance(value, array): # MySQL
             return unicode(value.tostring(), self.db_encoding)
-        return unicode(value, self.db_encoding)
+        raise validators.Invalid("expected a str or a unicode in the UnicodeCol '%s', got %s %r instead" % \
+            (self.name, type(value), value), value, state)
 
     def from_python(self, value, state):
         if value is None:
             return None
-        if isinstance(value, str):
+        if isinstance(value, (str, sqlbuilder.SQLExpression)):
             return value
-        return value.encode(self.db_encoding)
+        if isinstance(value, unicode):
+            return value.encode(self.db_encoding)
+        raise validators.Invalid("expected a str or a unicode in the UnicodeCol '%s', got %s %r instead" % \
+            (self.name, type(value), value), value, state)
 
 class SOUnicodeCol(SOStringLikeCol):
     def __init__(self, **kw):
@@ -562,7 +576,8 @@ class SOUnicodeCol(SOStringLikeCol):
         super(SOUnicodeCol, self).__init__(**kw)
 
     def createValidators(self):
-        return [UnicodeStringValidator(db_encoding=self.dbEncoding)] + \
+        return [UnicodeStringValidator(name=self.name,
+                db_encoding=self.dbEncoding)] + \
             super(SOUnicodeCol, self).createValidators()
 
 class UnicodeCol(Col):
@@ -585,10 +600,10 @@ class IntValidator(validators.Validator):
     def from_python(self, value, state):
         if value is None:
             return None
-        if not isinstance(value, (int, long, sqlbuilder.SQLExpression)):
-            raise validators.Invalid("expected an int in the IntCol '%s', got %s %r instead" % \
-                (self.name, type(value), value), value, state)
-        return value
+        if isinstance(value, (int, long, sqlbuilder.SQLExpression)):
+            return value
+        raise validators.Invalid("expected an int in the IntCol '%s', got %s %r instead" % \
+            (self.name, type(value), value), value, state)
 
 class SOIntCol(SOCol):
     # 3-03 @@: support precision, maybe max and min directly
@@ -658,25 +673,21 @@ class BoolValidator(validators.Validator):
     def to_python(self, value, state):
         if value is None:
             return None
-        elif not value:
-            return False
-        else:
-            return True
+        if isinstance(value, (bool, sqlbuilder.SQLExpression)):
+            return value
+        if isinstance(value, (int, long)):
+            return bool(value)
+        raise validators.Invalid("expected a bool or an int in the BoolCol '%s', got %s %r instead" % \
+            (self.name, type(value), value), value, state)
 
-    def from_python(self, value, state):
-        if value is None:
-            return None
-        elif value:
-            return True
-        else:
-            return False
+    from_python = to_python
 
 class SOBoolCol(SOCol):
     def autoConstraints(self):
         return [consts.isBool]
 
     def createValidators(self):
-        return [BoolValidator()] + \
+        return [BoolValidator(name=self.name)] + \
             super(SOBoolCol, self).createValidators()
 
     def _postgresType(self):
@@ -711,19 +722,10 @@ class FloatValidator(validators.Validator):
             return None
         if isinstance(value, (int, long, float, sqlbuilder.SQLExpression)):
             return value
-        try:
-            return float(value)
-        except:
-            raise validators.Invalid("expected a float in the FloatCol '%s', got %s %r instead" % \
-                (self.name, type(value), value), value, state)
+        raise validators.Invalid("expected a float in the FloatCol '%s', got %s %r instead" % \
+            (self.name, type(value), value), value, state)
 
-    def from_python(self, value, state):
-        if value is None:
-            return None
-        if not isinstance(value, (int, long, float, sqlbuilder.SQLExpression)):
-            raise validators.Invalid("expected a float in the FloatCol '%s', got %s %r instead" % \
-                (self.name, type(value), value), value, state)
-        return value
+    from_python = to_python
 
 class SOFloatCol(SOCol):
     # 3-03 @@: support precision (e.g., DECIMAL)
@@ -922,12 +924,10 @@ class EnumValidator(validators.Validator):
             return value
         elif not self.notNone and value is None:
             return None
-        else:
-            raise validators.Invalid("expected a member of %r in the EnumCol '%s', got %r instead" % \
-                                     (self.enumValues, self.name, value), value, state)
+        raise validators.Invalid("expected a member of %r in the EnumCol '%s', got %r instead" % \
+            (self.enumValues, self.name, value), value, state)
 
-    def from_python(self, value, state):
-        return self.to_python(value, state)
+    from_python = to_python
 
 class SOEnumCol(SOCol):
 
@@ -997,15 +997,19 @@ class SetValidator(validators.Validator):
     """
 
     def to_python(self, value, state):
-        if not isinstance(value, str):
-            raise validators.Invalid("expected a value string, got % instead" % \
-                                      (value), value, state)
-        return tuple(value.split(","))
+        if isinstance(value, str):
+            return tuple(value.split(","))
+        raise validators.Invalid("expected a string in the SetCol '%s', got %s %r instead" % \
+            (self.name, type(value), value), value, state)
 
     def from_python(self, value, state):
-        if not isinstance(value, tuple):
+        if isinstance(value, basestring):
             value = (value,)
-        return ",".join([v for v in value])
+        try:
+            return ",".join(value)
+        except:
+            raise validators.Invalid("expected a string or a sequence of stringsin the SetCol '%s', got %s %r instead" % \
+                (self.name, type(value), value), value, state)
 
 class SOSetCol(SOCol):
     def __init__(self, **kw):
@@ -1154,7 +1158,7 @@ class DateValidator(DateTimeValidator):
     def to_python(self, value, state):
         if isinstance(value, datetime.datetime):
             value = value.date()
-        if isinstance(value, datetime.date):
+        if isinstance(value, (datetime.date, sqlbuilder.SQLExpression)):
             return value
         value = super(DateValidator, self).to_python(value, state)
         if isinstance(value, datetime.datetime):
@@ -1212,7 +1216,7 @@ class DateCol(Col):
 
 class TimeValidator(DateTimeValidator):
     def to_python(self, value, state):
-        if isinstance(value, datetime.time):
+        if isinstance(value, (datetime.time, sqlbuilder.SQLExpression)):
             return value
         if isinstance(value, datetime.timedelta):
             if value.days:
@@ -1287,8 +1291,7 @@ class TimedeltaValidator(validators.Validator):
     def to_python(self, value, state):
         return value
 
-    def from_python(self, value, state):
-        return value
+    from_python = to_python
 
 class SOTimedeltaCol(SOCol):
     def _postgresType(self):
@@ -1335,10 +1338,10 @@ class DecimalValidator(validators.Validator):
             except:
                 raise validators.Invalid("can not parse Decimal value '%s' in the DecimalCol from '%s'" %
                     (value, getattr(state, 'soObject', '(unknown)')), value, state)
-        if not isinstance(value, (int, long, Decimal, sqlbuilder.SQLExpression)):
-            raise validators.Invalid("expected a decimal in the DecimalCol '%s', got %s %r instead" % \
-                (self.name, type(value), value), value, state)
-        return value
+        if isinstance(value, (int, long, Decimal, sqlbuilder.SQLExpression)):
+            return value
+        raise validators.Invalid("expected a Decimal in the DecimalCol '%s', got %s %r instead" % \
+            (self.name, type(value), value), value, state)
 
 class SODecimalCol(SOCol):
 
@@ -1409,12 +1412,13 @@ class SODecimalStringCol(SOStringCol):
 
     def createValidators(self):
         if self.quantize:
-            v = DecimalStringValidator(
+            v = DecimalStringValidator(name=self.name,
                 precision=Decimal(10) ** (-1 * int(self.precision)),
                 max=Decimal(10) ** (int(self.size) - int(self.precision)))
         else:
-            v = DecimalStringValidator(precision=0)
-        return [v] + super(SODecimalStringCol, self).createValidators()
+            v = DecimalStringValidator(name=self.name, precision=0)
+        return [v] + \
+            super(SODecimalStringCol, self).createValidators(dataType=Decimal)
 
 class DecimalStringCol(StringCol):
     baseClass = SODecimalStringCol
@@ -1463,7 +1467,7 @@ class SOBLOBCol(SOStringCol):
 
     def createValidators(self):
         return [BinaryValidator(name=self.name)] + \
-            super(SOBLOBCol, self).createValidators()
+            super(SOBLOBCol, self).createValidators(dataType=buffer)
 
     def _mysqlType(self):
         length = self.length
@@ -1523,8 +1527,8 @@ class SOPickleCol(SOBLOBCol):
         super(SOPickleCol, self).__init__(**kw)
 
     def createValidators(self):
-        return [PickleValidator(
-            name=self.name, pickleProtocol=self.pickleProtocol)] + \
+        return [PickleValidator(name=self.name,
+                pickleProtocol=self.pickleProtocol)] + \
             super(SOPickleCol, self).createValidators()
 
     def _mysqlType(self):

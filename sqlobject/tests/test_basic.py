@@ -79,7 +79,7 @@ def test_boolCol():
     setupClass(Student)
     student = Student(is_smart=False)
     assert student.is_smart == False
-    student2 = Student(is_smart='false')
+    student2 = Student(is_smart=1)
     assert student2.is_smart == True
 
 class TestSO3(SQLObject):
