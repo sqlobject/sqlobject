@@ -97,7 +97,7 @@ class TestAuto:
       first_name VARCHAR(100),
       last_name VARCHAR(200) NOT NULL,
       age INT DEFAULT 0,
-      created VARCHAR(40) NOT NULL,
+      created TIMESTAMP NOT NULL,
       happy char(1) DEFAULT 'Y' NOT NULL,
       long_field TEXT,
       wannahavefun BOOL DEFAULT FALSE NOT NULL
@@ -123,7 +123,7 @@ class TestAuto:
       first_name VARCHAR(100),
       last_name VARCHAR(200) NOT NULL,
       age INT DEFAULT 0,
-      created VARCHAR(40) NOT NULL,
+      created DATETIME NOT NULL,
       happy char(1) DEFAULT 'Y' NOT NULL,
       long_field TEXT,
       wannahavefun BIT default(0) NOT NULL
@@ -136,7 +136,7 @@ class TestAuto:
       first_name VARCHAR(100),
       last_name VARCHAR(200) NOT NULL,
       age INT DEFAULT 0,
-      created VARCHAR(40) NOT NULL,
+      created DATETIME NOT NULL,
       happy char(1) DEFAULT 'Y' NOT NULL,
       long_field TEXT,
       wannahavefun BIT default(0) NOT NULL
