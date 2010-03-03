@@ -1229,6 +1229,8 @@ class TimeValidator(DateTimeValidator):
             value = value.time()
         return value
 
+    from_python = to_python
+
 class SOTimeCol(SOCol):
     timeFormat = '%H:%M:%S'
 
