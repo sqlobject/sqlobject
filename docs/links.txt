@@ -8,24 +8,17 @@ report with the link and title
 Articles and Documentation
 --------------------------
 
-* `SQLObject and CherryPy
-  <http://www.cherrypy.org/wiki/SQLObjectThreadPerConnection>`_.
-
-* `SQLObject & Database Programming in Python
-  <http://ianbicking.org/docs/sqlobject-presentation/sqlobject-and-database-programming.html>`_;
-  slides from a presentation on SQLObject.
-
 * `Connecting databases to Python with SQLObject
-  <http://www-128.ibm.com/developerworks/library/os-pythonsqlo/index.html?ca=drs>`_;
+  <http://www.ibm.com/developerworks/library/os-pythonsqlo/index.html>`_;
   an article at DeveloperWorks.
+
+* `DB migration using sqlobject-admin how-to
+  <http://www.algorithm.co.il/blogs/index.php/programming/python/simple-sqlobject-db-migration-how-to/>`_.
 
 * `Handling Form data with Formencode + SQLObject
   <http://www.groovie.org/articles/2005/08/24/handling-form-data-with-formencode-sqlobject>`_;
   a post by Ben Bangert about using SQLObject with `FormEncode
   <http://formencode.org>`_.
-
-* `Translation of SQLObject documentation to Japanese
-  <http://ymasuda.jp/python/sqlobject/doc_0.7/>`_.
 
 * `How to Use Database Agnostic SQL in SQLObject
   <http://groovie.org/articles/2005/11/01/how-to-use-database-agnostic-sql-in-sqlobject>`_.
@@ -42,34 +35,19 @@ Open Source Projects
 * `TurboGears <http://turbogears.org/>`_ Web Framework: also integrates
   with SQLObject.
 
-* `Pylons <http://pylons.groovie.org/>`_ Web Framework: `Myghty
+* `Pylons <http://pylonshq.com/>`_ Web Framework: `Myghty
   <http://www.myghty.org/>`_ based, with SQLObject integration.
 
 * `Catwalk <http://checkandshare.com/catwalk/>`_ is a web-based
   SQLObject browser and object editor (included in TurboGears)
   (`related blog items <http://www.checkandshare.com/blog/?cat=8>`_).
 
-* `Nabu <http://furius.ca/nabu/>`_, a publishing system.
-
 * `Ultra Gleeper <http://www.crummy.com/software/UltraGleeper/>`_, a
   Recommendation Engine for Web Pages.
 
-* `Teeny Tiny CMS <http://footils.org/cms/show/3>`_.
+* `rdflib <http://rdflib.net/>`_ contains a SQLObject backend.
 
-* `rdflib <http://rdflib.net/>`_ contains a `SQLObject backend
-  <http://svn.rdflib.net/trunk/rdflib/backends/_sqlobject.py>`_.
-
-* Enfold Systems' `EnTransit
-  <http://www.enfoldsystems.com/About/Talks/entransit-tutorial.pdf>`_
-  utilizes SQLObject and rdflib for storing transactional content from
-  Zope.  Also by Enfold is `Sample Inventory Program
-  <http://www.enfoldsystems.com/Products/Open/SIP>`_, an Open Source
-  Laboratory Inventory Management Systems.
-
-* `Bauble <http://bauble.belizebotanic.org/>`_, a Biodiversity
-  Collection Manager.
-
-* `Anemon <http://anemon.org/wikini/wakka.php?wiki=FirstPage>`_ DHCP
+* `Anemon <http://anemon.org/pmwiki/index.php?n=General.Presentation>`_ DHCP
   server.
 
 * `Guten <http://guten.sourceforge.net/>`_; an application for
@@ -80,14 +58,6 @@ Open Source Projects
   personal RSS Aggregator and Reader.
 
 * `Stoq <http://www.stoq.com.br/>`_, an open source retail system.
-
-Other Projects Using SQLObject
-------------------------------
-
-* `Reddit <http://reddit.com/>`_, "A source for what's new and popular
-  on the web -- customized for you."  That's from their
-  FAQ... basically it's a list of user-submitted articles with a group
-  rating system, and personal adjustments.
 
 .. image:: http://sflogo.sourceforge.net/sflogo.php?group_id=74338&type=10
    :target: http://sourceforge.net/projects/sqlobject
