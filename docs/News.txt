@@ -32,7 +32,9 @@ Small Features
 SQLObject 0.12.2
 ================
 
-* A bugfix ported from `SQLObject 0.11.4`_.
+Released 4 Mar 2010.
+
+* Bugfixes ported from `SQLObject 0.11.4`_.
 
 SQLObject 0.12.1
 ================
@@ -95,6 +97,8 @@ Small Features
 
 SQLObject 0.11.4
 ================
+
+Released 4 Mar 2010.
 
 * Fixed a bug in inheritance - if creation of the row failed and if the
   connection is not a transaction and is in autocommit mode - remove
