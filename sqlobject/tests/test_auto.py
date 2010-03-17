@@ -164,7 +164,7 @@ class TestAuto:
     DROP TABLE auto_test
     """
 
-    sqliteDrop = sybaseDrop = mssqlDrop = postgresDrop = rdbhostDrop
+    sqliteDrop = sybaseDrop = mssqlDrop = rdbhostDrop = postgresDrop
 
     def setup_method(self, meth):
         conn = getConnection()
