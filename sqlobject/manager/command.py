@@ -208,7 +208,7 @@ class Command(object):
                 if col.foreignKey:
                     other = findClass(col.foreignKey,
                                       col.soClass.sqlmeta.registry)
-                    if other not in depended:
+                    if (other is not cls) and (other not in depended):
                         depended.append(other)
             return depended
 
