@@ -507,48 +507,33 @@ class SOStringLikeCol(SOCol):
             return self._sqlType()
 
 
-# Special marker to test the dataType is a backend-specific Binary
-testDataTypeBinary = object()
-
 class StringValidator(validators.Validator):
 
     def to_python(self, value, state):
         if value is None:
             return None
+        connection = state.soObject._connection
         if isinstance(value, unicode):
-            connection = state.soObject._connection
             dbEncoding = getattr(connection, "dbEncoding", None) or "ascii"
             return value.encode(dbEncoding)
-        if isinstance(value, (str, buffer, sqlbuilder.SQLExpression)):
+        if self.dataType and isinstance(value, self.dataType):
             return value
-        if self.dataType:
-            if self.dataType is testDataTypeBinary:
-                connection = state.soObject._connection
-                dataType = connection._binaryType
-            else:
-                dataType = self.dataType
-            if isinstance(value, dataType):
-                return value
+        if isinstance(value, (str, buffer, connection._binaryType, sqlbuilder.SQLExpression)):
+            return value
         raise validators.Invalid("expected a str in the StringCol '%s', got %s %r instead" % \
             (self.name, type(value), value), value, state)
 
     def from_python(self, value, state):
         if value is None:
             return None
-        if isinstance(value, (str, buffer, sqlbuilder.SQLExpression)):
-            return value
-        if self.dataType:
-            if self.dataType is testDataTypeBinary:
-                connection = state.soObject._connection
-                dataType = connection._binaryType
-            else:
-                dataType = self.dataType
-            if isinstance(value, dataType):
-                return value
         if isinstance(value, unicode):
             connection = state.soObject._connection
             dbEncoding = getattr(connection, "dbEncoding", None) or "ascii"
             return value.encode(dbEncoding)
+        if self.dataType and isinstance(value, self.dataType):
+            return value
+        if isinstance(value, (str, buffer, sqlbuilder.SQLExpression)):
+            return value
         raise validators.Invalid("expected a str in the StringCol '%s', got %s %r instead" % \
             (self.name, type(value), value), value, state)
 
@@ -1484,7 +1469,7 @@ class SOBLOBCol(SOStringCol):
 
     def createValidators(self):
         return [BinaryValidator(name=self.name)] + \
-            super(SOBLOBCol, self).createValidators(dataType=testDataTypeBinary)
+            super(SOBLOBCol, self).createValidators()
 
     def _mysqlType(self):
         length = self.length
