@@ -104,6 +104,19 @@ class TestAuto:
     )
     """
 
+    rdbhostCreate = """
+    CREATE TABLE auto_test (
+      auto_id SERIAL PRIMARY KEY,
+      first_name VARCHAR(100),
+      last_name VARCHAR(200) NOT NULL,
+      age INT DEFAULT 0,
+      created VARCHAR(40) NOT NULL,
+      happy char(1) DEFAULT 'Y' NOT NULL,
+      long_field TEXT,
+      wannahavefun BOOL DEFAULT FALSE NOT NULL
+    )
+    """
+
     sqliteCreate = """
     CREATE TABLE auto_test (
       auto_id INTEGER PRIMARY KEY AUTOINCREMENT ,
@@ -151,7 +164,7 @@ class TestAuto:
     DROP TABLE auto_test
     """
 
-    sqliteDrop = sybaseDrop = mssqlDrop = postgresDrop
+    sqliteDrop = sybaseDrop = mssqlDrop = postgresDrop = rdbhostDrop
 
     def setup_method(self, meth):
         conn = getConnection()

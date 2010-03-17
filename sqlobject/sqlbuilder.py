@@ -912,7 +912,7 @@ class _LikeQuoted:
            raise TypeError, "expected str, unicode or SQLExpression, got %s" % type(s)
 
 def _quote_like_special(s, db):
-    if db == 'postgres':
+    if db in ('postgres', 'rdbhost'):
         escape = r'\\'
     else:
         escape = '\\'
@@ -1178,6 +1178,7 @@ class RLIKE(LIKE):
         'maxdb': 'RLIKE',
         'mysql': 'RLIKE',
         'postgres': '~',
+        'rdbhost': '~',
         'sqlite': 'REGEXP'
     }
 

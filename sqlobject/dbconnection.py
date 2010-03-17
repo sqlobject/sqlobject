@@ -966,5 +966,6 @@ import maxdb
 import mssql
 import mysql
 import postgres
+import rdbhost
 import sqlite
 import sybase

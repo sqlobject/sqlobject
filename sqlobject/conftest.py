@@ -23,6 +23,7 @@ connectionShortcuts = {
     'dbm': 'dbm:///data',
     'postgres': 'postgres:///test',
     'postgresql': 'postgres:///test',
+    'rdbhost': 'rdhbost://role:authcode@www.rdbhost.com/',
     'pygresql': 'pygresql://localhost/test',
     'sqlite': 'sqlite:/:memory:',
     'sybase': 'sybase://test:test123@sybase/test?autoCommit=0',

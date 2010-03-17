@@ -19,6 +19,9 @@ Features & Interface
 * Added TimedeltaCol; currently it's only implemented on PostgreSQL as an
   INTERVAL type.
 
+* Added a connection class for rdbhost.com (commercial Postgres-over-Web
+  service).
+
 Small Features
 --------------
 

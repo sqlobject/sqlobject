@@ -83,7 +83,7 @@ def StringLikeConverter(value, db):
     elif isinstance(value, buffer):
         value = str(value)
 
-    if db in ('mysql', 'postgres'):
+    if db in ('mysql', 'postgres', 'rdbhost'):
         for orig, repl in sqlStringReplace:
             value = value.replace(orig, repl)
     elif db in ('sqlite', 'firebird', 'sybase', 'maxdb', 'mssql'):
@@ -111,7 +111,7 @@ if NumericType:
     registerConverter(NumericType, IntConverter)
 
 def BoolConverter(value, db):
-    if db in ('postgres',):
+    if db in ('postgres', 'rdbhost'):
         if value:
             return "'t'"
         else:

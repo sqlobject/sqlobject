@@ -39,10 +39,10 @@ and you can use it like::
 """
 supportsMatrix = {
     '+exceptions': 'mysql sqlite',
-    '-transactions': 'mysql',
+    '-transactions': 'mysql rdbhost',
     '-dropTableCascade': 'sybase mssql',
     '-expressionIndex': 'mysql sqlite firebird mssql',
-    '-blobData': 'mssql',
+    '-blobData': 'mssql rdbhost',
     '-decimalColumn': 'mssql',
     '-emptyTable': 'mssql',
     '-limitSelect' : 'mssql',
@@ -276,6 +276,7 @@ def supports(feature):
         "The supportMatrix does not list this feature: %r"
         % feature)
 
+    
 # To avoid name clashes:
 _inserts = inserts
 
