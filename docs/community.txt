@@ -4,8 +4,6 @@ SQLObject Community
 SQLObject questions and discussion happens on the `sqlobject-discuss
 mailing list
 <http://lists.sourceforge.net/mailman/listinfo/sqlobject-discuss>`_.
-You may want to view the `searchable archives
-<http://pythonpaste.org/archives/list/sqlobject-discuss.en.html>`_.
 `Gmane <http://www.gmane.org/>`_ also has the list in
 gmane.comp.python.sqlobject accessible by
 `HTTP <http://news.gmane.org/gmane.comp.python.sqlobject>`_,
@@ -26,8 +24,6 @@ interested in contributing you should read the `Developer Guide
 
 The `Author List <docs/Authors.html>`_ tries to list all the major
 contributors.
-
-Wiki and another tracker are also at http://sqlobject.gcu.info/trac.
 
 .. image:: http://sflogo.sourceforge.net/sflogo.php?group_id=74338&type=10
    :target: http://sourceforge.net/projects/sqlobject
