@@ -19,14 +19,14 @@ def setup():
     setupClass(TestUnicode)
     if TestUnicode._connection.dbName == 'postgres':
         TestUnicode._connection.query('SET client_encoding TO latin1')
-    for i, n in enumerate(data):
-        items.append(TestUnicode(count=i, col1=n, col2=n))
+    for i, s in enumerate(data):
+        items.append(TestUnicode(count=i, col1=s, col2=s))
 
 def test_create():
     setup()
-    for n, item in zip(data, items):
+    for s, item in zip(data, items):
+        assert item.col1 == s
         assert item.col1 == item.col2
-        assert item.col1 == n
 
     conn = TestUnicode._connection
     rows = conn.queryAll("""
