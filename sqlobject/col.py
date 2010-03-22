@@ -554,9 +554,9 @@ class UnicodeStringValidator(validators.Validator):
         if isinstance(value, (unicode, sqlbuilder.SQLExpression)):
             return value
         if isinstance(value, str):
-            return unicode(value, self.db_encoding)
+            return unicode(value, self.dbEncoding)
         if isinstance(value, array): # MySQL
-            return unicode(value.tostring(), self.db_encoding)
+            return unicode(value.tostring(), self.dbEncoding)
         raise validators.Invalid("expected a str or a unicode in the UnicodeCol '%s', got %s %r instead" % \
             (self.name, type(value), value), value, state)
 
@@ -566,7 +566,7 @@ class UnicodeStringValidator(validators.Validator):
         if isinstance(value, (unicode, sqlbuilder.SQLExpression)):
             return value
         if isinstance(value, str):
-            return unicode(value, self.db_encoding)
+            return unicode(value, self.dbEncoding)
         raise validators.Invalid("expected a str or a unicode in the UnicodeCol '%s', got %s %r instead" % \
             (self.name, type(value), value), value, state)
 
@@ -577,7 +577,7 @@ class SOUnicodeCol(SOStringLikeCol):
 
     def createValidators(self):
         return [UnicodeStringValidator(name=self.name,
-                db_encoding=self.dbEncoding)] + \
+                dbEncoding=self.dbEncoding)] + \
             super(SOUnicodeCol, self).createValidators()
 
 class UnicodeCol(Col):

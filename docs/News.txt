@@ -35,6 +35,8 @@ Small Features
 * Better handling of circular dependencies in sqlobject-admin -
   do not include the class in the list of other classes.
 
+* Renamed db_encoding to dbEncoding in UnicodeStringValidator.
+
 SQLObject 0.12.2
 ================
 
