@@ -25,8 +25,6 @@ def setup():
 def test_create():
     setup()
     for s, item in zip(data, items):
-        print type(item.col1), repr(item.col1)
-        print type(item.col2), repr(item.col1)
         assert item.col1 == s
         assert item.col2 == s
 
