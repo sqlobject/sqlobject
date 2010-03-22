@@ -563,10 +563,10 @@ class UnicodeStringValidator(validators.Validator):
     def from_python(self, value, state):
         if value is None:
             return None
-        if isinstance(value, (str, sqlbuilder.SQLExpression)):
+        if isinstance(value, (unicode, sqlbuilder.SQLExpression)):
             return value
-        if isinstance(value, unicode):
-            return value.encode(self.db_encoding)
+        if isinstance(value, str):
+            return unicode(value, self.db_encoding)
         raise validators.Invalid("expected a str or a unicode in the UnicodeCol '%s', got %s %r instead" % \
             (self.name, type(value), value), value, state)
 
