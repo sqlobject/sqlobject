@@ -10,7 +10,7 @@ class TestUnicode(SQLObject):
     col1 = UnicodeCol(alternateID=True, length=100)
     col2 = UnicodeCol(dbEncoding='latin1')
 
-data = ['\xf0'.decode('latin1'), u'test', 'ascii test']
+data = [u'\u00f0', u'test', 'ascii test']
 items = []
 
 def setup():
