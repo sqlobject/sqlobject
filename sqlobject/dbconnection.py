@@ -38,7 +38,7 @@ class ConsoleWriter:
             try:
                 text = text.encode(self.dbEncoding)
             except UnicodeEncodeError:
-                text = repr(text)[1:-1]
+                text = repr(text)[2:-1] # Remove u'...' from the repr
         logfile.write(text + '\n')
 
 class LogWriter:
