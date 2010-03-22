@@ -8,9 +8,9 @@ from sqlobject.tests.dbtest import *
 class TestUnicode(SQLObject):
     count = IntCol(alternateID=True)
     col1 = UnicodeCol(alternateID=True, length=100)
-    col2 = UnicodeCol(dbEncoding='latin-1')
+    col2 = UnicodeCol(dbEncoding='latin1')
 
-data = [u'\u00f0', u'test', 'ascii test']
+data = ['\xf0'.decode('latin1'), u'test', 'ascii test']
 items = []
 
 def setup():
@@ -25,8 +25,10 @@ def setup():
 def test_create():
     setup()
     for s, item in zip(data, items):
+        print type(item.col1), repr(item.col1)
+        print type(item.col2), repr(item.col1)
         assert item.col1 == s
-        assert item.col1 == item.col2
+        assert item.col2 == s
 
     conn = TestUnicode._connection
     rows = conn.queryAll("""
