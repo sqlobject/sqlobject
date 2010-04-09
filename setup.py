@@ -10,8 +10,8 @@ except ImportError:
     is_setuptools = False
 
 subpackages = ['firebird', 'include', 'include.pydispatch', 'inheritance',
-               'manager', 'maxdb', 'mysql', 'mssql', 'postgres', 'sqlite',
-               'sybase', 'util', 'versioning']
+               'manager', 'maxdb', 'mysql', 'mssql', 'postgres', 'rdbhost',
+               'sqlite', 'sybase', 'util', 'versioning']
 
 kw = {}
 if is_setuptools:
