@@ -37,6 +37,11 @@ Small Features
 
 * Renamed db_encoding to dbEncoding in UnicodeStringValidator.
 
+SQLObject 0.12.3
+================
+
+* Bugfixes ported from `SQLObject 0.11.5`_.
+
 SQLObject 0.12.2
 ================
 
@@ -102,6 +107,12 @@ Small Features
 * Removed all deprecated attributes and functions.
 
 * Removed the last remained string exceptions.
+
+SQLObject 0.11.5
+================
+
+* Fixed a bug in replacing self._connection in the case no previous
+  self._connection has been set.
 
 SQLObject 0.11.4
 ================
