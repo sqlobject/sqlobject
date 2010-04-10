@@ -111,8 +111,8 @@ Small Features
 SQLObject 0.11.5
 ================
 
-* Fixed a bug in replacing self._connection in the case no previous
-  self._connection has been set.
+* Fixed a bug in replacing _connection in a case when no previous
+  _connection has been set.
 
 SQLObject 0.11.4
 ================
