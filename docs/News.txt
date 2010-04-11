@@ -40,7 +40,9 @@ Small Features
 SQLObject 0.12.3
 ================
 
-* Bugfixes ported from `SQLObject 0.11.5`_.
+Released 11 Apr 2010.
+
+* A bugfix ported from `SQLObject 0.11.5`_.
 
 SQLObject 0.12.2
 ================
@@ -110,6 +112,8 @@ Small Features
 
 SQLObject 0.11.5
 ================
+
+Released 11 Apr 2010.
 
 * Fixed a bug in replacing _connection in a case when no previous
   _connection has been set.
