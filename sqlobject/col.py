@@ -591,19 +591,16 @@ class IntValidator(validators.Validator):
             return None
         if isinstance(value, (int, long, sqlbuilder.SQLExpression)):
             return value
-        try:
-            return int(value)
-        except:
-            raise validators.Invalid("expected an int in the IntCol '%s', got %s %r instead" % \
+        for converter, attr_name in (int, '__int__'), (long, '__long__'):
+            if hasattr(value, attr_name):
+                try:
+                    return converter(value)
+                except:
+                    break
+        raise validators.Invalid("expected an int in the IntCol '%s', got %s %r instead" % \
                 (self.name, type(value), value), value, state)
 
-    def from_python(self, value, state):
-        if value is None:
-            return None
-        if isinstance(value, (int, long, sqlbuilder.SQLExpression)):
-            return value
-        raise validators.Invalid("expected an int in the IntCol '%s', got %s %r instead" % \
-            (self.name, type(value), value), value, state)
+    from_python = to_python
 
 class SOIntCol(SOCol):
     # 3-03 @@: support precision, maybe max and min directly
@@ -720,8 +717,14 @@ class FloatValidator(validators.Validator):
     def to_python(self, value, state):
         if value is None:
             return None
-        if isinstance(value, (int, long, float, sqlbuilder.SQLExpression)):
+        if isinstance(value, (float, int, long, sqlbuilder.SQLExpression)):
             return value
+        for converter, attr_name in  (float, '__float__'), (int, '__int__'), (long, '__long__'):
+            if hasattr(value, attr_name):
+                try:
+                    return converter(value)
+                except:
+                    break
         raise validators.Invalid("expected a float in the FloatCol '%s', got %s %r instead" % \
             (self.name, type(value), value), value, state)
 

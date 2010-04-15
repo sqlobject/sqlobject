@@ -16,8 +16,11 @@ Features & Interface
 * SQLObject instances that don't have a per-instance connection can be
   pickled and unpickled.
 
-* Added TimedeltaCol; currently it's only implemented on PostgreSQL as an
-  INTERVAL type.
+* Validators became stricter: StringCol and UnicodeCol now accept only str
+  or unicode; BoolCol accepts only bool or int; IntCol accepts int, long or
+  an instance of a class that implements __int__ or __long__; FloatCol
+  accepts float, int, long or an instance of a class that implements
+  __float__, __int__ or __long__.
 
 * Added a connection class for rdbhost.com (commercial Postgres-over-Web
   service).
@@ -25,12 +28,12 @@ Features & Interface
 Small Features
 --------------
 
+* Added TimedeltaCol; currently it's only implemented on PostgreSQL as an
+  INTERVAL type.
+
 * Do not pollute the base sqlmeta class to allow Style to set idName. In
   the case of inherited idName inherited value takes precedence; to allow
   Style to set idName reset inherited idName to None.
-
-* Validators became stricter: StringCol and UnicodeCol now accept only str
-  or unicode, BoolCol accepts only bool or int, and so on.
 
 * Better handling of circular dependencies in sqlobject-admin -
   do not include the class in the list of other classes.
