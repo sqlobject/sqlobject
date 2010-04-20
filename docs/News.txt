@@ -124,7 +124,7 @@ SQLObject 0.11.6
 ================
 
 * A bug was fixed in SQLiteConnection.columnsFromSchema(): pass None as
-  size/precision, this is better than no value at all.
+  size/precision to DecimalCol, this is better than no value at all.
 
 SQLObject 0.11.5
 ================
