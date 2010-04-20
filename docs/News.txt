@@ -40,6 +40,11 @@ Small Features
 
 * Renamed db_encoding to dbEncoding in UnicodeStringValidator.
 
+SQLObject 0.12.4
+================
+
+* A bugfix ported from `SQLObject 0.11.6`_.
+
 SQLObject 0.12.3
 ================
 
@@ -112,6 +117,12 @@ Small Features
 * Removed all deprecated attributes and functions.
 
 * Removed the last remained string exceptions.
+
+SQLObject 0.11.6
+================
+
+* A bug was fixed in SQLiteConnection.columnsFromSchema(): pass None as
+  size/precision, this is better than no value at all.
 
 SQLObject 0.11.5
 ================

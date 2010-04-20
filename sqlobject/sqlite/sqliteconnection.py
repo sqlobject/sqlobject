@@ -365,7 +365,7 @@ class SQLiteConnection(DBAPI):
         elif t.find('REAL') >= 0 or t.find('FLOAT') >= 0:
             return col.FloatCol, {}
         elif t.find('DECIMAL') >= 0:
-            return col.DecimalCol, {}
+            return col.DecimalCol, {'size': None, 'precision': None}
         elif t.find('BOOL') >= 0:
             return col.BoolCol, {}
         else:
