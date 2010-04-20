@@ -582,7 +582,7 @@ class DBAPI(DBConnection):
             if key in kw:
                 value = kw.pop(key)
                 if col.from_python:
-                    value = col.from_python(value, soClass)
+                    value = col.from_python(value, sqlbuilder.SQLObjectState(soClass))
                 data[col.dbName] = value
             elif col.foreignName in kw:
                 obj = kw.pop(col.foreignName)

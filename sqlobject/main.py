@@ -1318,7 +1318,7 @@ class SQLObject(object):
         for n, v in zip(name, value):
             from_python = getattr(cls, '_SO_from_python_' + n)
             if from_python:
-                v = from_python(v, cls)
+                v = from_python(v, sqlbuilder.SQLObjectState(cls))
             new_value.append(v)
         condition = sqlbuilder.AND(*[getattr(cls.q, n)==v for n,v in zip(name, new_value)])
         return (connection or cls._connection)._SO_selectOneAlt(

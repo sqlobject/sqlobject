@@ -43,7 +43,9 @@ Small Features
 SQLObject 0.12.4
 ================
 
-* A bugfix ported from `SQLObject 0.11.6`_.
+* Bugs were fixed in calling from_python().
+
+* A bugfix was ported from `SQLObject 0.11.6`_.
 
 SQLObject 0.12.3
 ================
