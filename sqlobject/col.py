@@ -523,19 +523,7 @@ class StringValidator(validators.Validator):
         raise validators.Invalid("expected a str in the StringCol '%s', got %s %r instead" % \
             (self.name, type(value), value), value, state)
 
-    def from_python(self, value, state):
-        if value is None:
-            return None
-        if isinstance(value, unicode):
-            connection = state.soObject._connection
-            dbEncoding = getattr(connection, "dbEncoding", None) or "ascii"
-            return value.encode(dbEncoding)
-        if self.dataType and isinstance(value, self.dataType):
-            return value
-        if isinstance(value, (str, buffer, sqlbuilder.SQLExpression)):
-            return value
-        raise validators.Invalid("expected a str in the StringCol '%s', got %s %r instead" % \
-            (self.name, type(value), value), value, state)
+    from_python = to_python
 
 class SOStringCol(SOStringLikeCol):
 
