@@ -43,6 +43,8 @@ Small Features
 SQLObject 0.12.4
 ================
 
+Released 5 May 2010.
+
 * Bugs were fixed in calling from_python().
 
 * A bugfix was ported from `SQLObject 0.11.6`_.
@@ -122,6 +124,8 @@ Small Features
 
 SQLObject 0.11.6
 ================
+
+Released 5 May 2010.
 
 * A bug was fixed in SQLiteConnection.columnsFromSchema(): pass None as
   size/precision to DecimalCol; DecimalCol doesn't allow default values (to
