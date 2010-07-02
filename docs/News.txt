@@ -40,6 +40,8 @@ Small Features
 
 * Renamed db_encoding to dbEncoding in UnicodeStringValidator.
 
+* A new parameter 'sslmode' was added to PostgresConnection.
+
 SQLObject 0.12.4
 ================
 

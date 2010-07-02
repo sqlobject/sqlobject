@@ -66,6 +66,9 @@ class PostgresConnection(DBAPI):
             dsn_dict["user"] = user
         if password:
             dsn_dict["password"] = password
+        sslmode = kw.pop("sslmode", None)
+        if sslmode:
+            dsn_dict["sslmode"] = sslmode
         self.use_dsn = dsn is not None
         if dsn is None:
             if backend == 'pygresql':
@@ -93,6 +96,8 @@ class PostgresConnection(DBAPI):
                     dsn.append('host=%s' % host)
                 if port:
                     dsn.append('port=%d' % port)
+                if sslmode:
+                    dsn.append('sslmode=%s' % sslmode)
                 dsn = ' '.join(dsn)
         self.dsn = dsn
         self.unicodeCols = kw.pop('unicodeCols', False)
