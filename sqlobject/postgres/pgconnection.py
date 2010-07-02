@@ -11,8 +11,7 @@ class PostgresConnection(DBAPI):
     schemes = [dbName, 'postgresql']
 
     def __init__(self, dsn=None, host=None, port=None, db=None,
-                 user=None, password=None, backend='psycopg', unicodeCols=False,
-                 **kw):
+                 user=None, password=None, backend='psycopg', **kw):
         backends = backend
         for backend in backends.split(','):
             backend = backend.strip()
@@ -96,12 +95,9 @@ class PostgresConnection(DBAPI):
                     dsn.append('port=%d' % port)
                 dsn = ' '.join(dsn)
         self.dsn = dsn
-        self.unicodeCols = unicodeCols
+        self.unicodeCols = kw.pop('unicodeCols', False)
         self.schema = kw.pop('schema', None)
-        if "charset" in kw:
-            self.dbEncoding = kw.pop("charset")
-        else:
-            self.dbEncoding = None
+        self.dbEncoding = kw.pop("charset", None)
         DBAPI.__init__(self, **kw)
 
     def connectionFromURI(cls, uri):
