@@ -660,9 +660,7 @@ class BoolValidator(validators.Validator):
             return None
         if isinstance(value, (bool, sqlbuilder.SQLExpression)):
             return value
-        if isinstance(value, (int, long)):
-            return bool(value)
-        if hasattr(value, '__nonzero__'):
+        if isinstance(value, (int, long)) or hasattr(value, '__nonzero__'):
             return bool(value)
         raise validators.Invalid("expected a bool or an int in the BoolCol '%s', got %s %r instead" % \
             (self.name, type(value), value), value, state)
