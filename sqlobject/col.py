@@ -513,13 +513,15 @@ class StringValidator(validators.Validator):
         if value is None:
             return None
         connection = state.soObject._connection
+        dbEncoding = getattr(connection, "dbEncoding", None) or "ascii"
         if isinstance(value, unicode):
-            dbEncoding = getattr(connection, "dbEncoding", None) or "ascii"
             return value.encode(dbEncoding)
         if self.dataType and isinstance(value, self.dataType):
             return value
         if isinstance(value, (str, buffer, connection._binaryType, sqlbuilder.SQLExpression)):
             return value
+        if hasattr(value, '__unicode__'):
+            return unicode(value).encode(dbEncoding)
         raise validators.Invalid("expected a str in the StringCol '%s', got %s %r instead" % \
             (self.name, type(value), value), value, state)
 
@@ -545,6 +547,8 @@ class UnicodeStringValidator(validators.Validator):
             return unicode(value, self.dbEncoding)
         if isinstance(value, array): # MySQL
             return unicode(value.tostring(), self.dbEncoding)
+        if hasattr(value, '__unicode__'):
+            return unicode(value)
         raise validators.Invalid("expected a str or a unicode in the UnicodeCol '%s', got %s %r instead" % \
             (self.name, type(value), value), value, state)
 
@@ -555,6 +559,8 @@ class UnicodeStringValidator(validators.Validator):
             return value
         if isinstance(value, unicode):
             return value.encode(self.dbEncoding)
+        if hasattr(value, '__unicode__'):
+            return unicode(value).encode(self.dbEncoding)
         raise validators.Invalid("expected a str or a unicode in the UnicodeCol '%s', got %s %r instead" % \
             (self.name, type(value), value), value, state)
 

@@ -14,6 +14,7 @@ class SOValidation(SQLObject):
     name4 = FloatCol(default=2.718)
     name5 = PickleCol(default=None)
     name6 = BoolCol(default=None)
+    name7 = UnicodeCol(default=None)
 
 class TestValidation:
 
@@ -32,6 +33,7 @@ class TestValidation:
         raises(validators.Invalid, setattr, t, 'name3', '1')
         raises(validators.Invalid, setattr, t, 'name4', '1')
         raises(validators.Invalid, setattr, t, 'name6', '1')
+        raises(validators.Invalid, setattr, t, 'name7', 1)
         t.name2 = 'you'
         assert t.name2 == 'you'
 
