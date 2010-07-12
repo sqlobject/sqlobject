@@ -662,6 +662,8 @@ class BoolValidator(validators.Validator):
             return value
         if isinstance(value, (int, long)):
             return bool(value)
+        if hasattr(value, '__nonzero__'):
+            return bool(value)
         raise validators.Invalid("expected a bool or an int in the BoolCol '%s', got %s %r instead" % \
             (self.name, type(value), value), value, state)
 

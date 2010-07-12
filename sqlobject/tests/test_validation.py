@@ -13,6 +13,7 @@ class SOValidation(SQLObject):
     name3 = IntCol(validator=validators.Wrapper(fromPython=int), default=100)
     name4 = FloatCol(default=2.718)
     name5 = PickleCol(default=None)
+    name6 = BoolCol(default=None)
 
 class TestValidation:
 
@@ -21,24 +22,22 @@ class TestValidation:
 
     def test_validate(self):
         t = SOValidation(name='hey')
-        raises(validators.Invalid, setattr, t,
-               'name', '!!!')
+        raises(validators.Invalid, setattr, t, 'name', '!!!')
         t.name = 'you'
+        assert t.name == 'you'
 
     def test_confirmType(self):
         t = SOValidation(name2='hey')
-        raises(validators.Invalid, setattr, t,
-               'name2', 1)
-        raises(validators.Invalid, setattr, t,
-               'name3', '1')
-        raises(validators.Invalid, setattr, t,
-               'name4', '1')
+        raises(validators.Invalid, setattr, t, 'name2', 1)
+        raises(validators.Invalid, setattr, t, 'name3', '1')
+        raises(validators.Invalid, setattr, t, 'name4', '1')
+        raises(validators.Invalid, setattr, t, 'name6', '1')
         t.name2 = 'you'
+        assert t.name2 == 'you'
 
     def test_wrapType(self):
         t = SOValidation(name3=1)
-        raises(validators.Invalid, setattr, t,
-               'name3', 'x')
+        raises(validators.Invalid, setattr, t, 'name3', 'x')
         t.name3 = 1L
         assert t.name3 == 1
         t.name3 = 0

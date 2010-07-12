@@ -17,10 +17,11 @@ Features & Interface
   pickled and unpickled.
 
 * Validators became stricter: StringCol and UnicodeCol now accept only str
-  or unicode; BoolCol accepts only bool or int; IntCol accepts int, long or
-  an instance of a class that implements __int__ or __long__; FloatCol
-  accepts float, int, long or an instance of a class that implements
-  __float__, __int__ or __long__.
+  or unicode; BoolCol accepts only bool or int or an instance of a class
+  that implements __nonzero__; IntCol accepts int, long or an instance of a
+  class that implements __int__ or __long__; FloatCol accepts float, int,
+  long or an instance of a class that implements __float__, __int__ or
+  __long__.
 
 * Added a connection class for rdbhost.com (commercial Postgres-over-Web
   service).
