@@ -1733,9 +1733,9 @@ and a dsn string will be constructed.
 
 PostgresConnection supports transactions and all other features.
 
-The user can choose a DB API driver for PostgreSQL by using a "backend"
+The user can choose a DB API driver for PostgreSQL by using a "driver"
 parameter in DB URI or PostgresConnection that can be a comma-separated
-list of backend names. Possible backends are: "psycopg2", "psycopg1",
+list of driver names. Possible drivers are: "psycopg2", "psycopg1",
 "psycopg" (tries psycopg2 and psycopg1), "pygresql". Default is "psycopg".
 
 SQLite
@@ -1752,9 +1752,9 @@ column -- strings can go in integer columns, dates in integers, etc.
 SQLite may have concurrency issues, depending on your usage in a
 multi-threaded environment.
 
-The user can choose a DB API driver for SQLite by using a "backend"
+The user can choose a DB API driver for SQLite by using a "driver"
 parameter in DB URI or SQLiteConnection that can be a comma-separated list
-of backend names. Possible backends are: "pysqlite2" (alias "sqlite2"),
+of driver names. Possible drivers are: "pysqlite2" (alias "sqlite2"),
 "sqlite3", "sqlite" (alias "sqlite1"). Default is to test pysqlite2,
 sqlite3 and sqlite in that order.
 
@@ -1846,9 +1846,9 @@ The two drivers currently supported are pymssql_ and adodbapi_.
 .. _pymssql: http://pymssql.sourceforge.net/
 .. _adodbapi: http://adodbapi.sourceforge.net/
 
-The user can choose a DB API driver for MSSQL by using a "backend"
+The user can choose a DB API driver for MSSQL by using a "driver"
 parameter in DB URI or MSSQLConnection that can be a comma-separated list
-of backend names. Possible backends are: "adodb" (alias "adodbapi") and
+of driver names. Possible drivers are: "adodb" (alias "adodbapi") and
 "pymssql". Default is to test adodbapi and pymssql in that order.
 
 Events (signals)
