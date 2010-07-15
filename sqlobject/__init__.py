@@ -1,5 +1,5 @@
 """
-SQLObject 0.13
+SQLObject 0.14
 """
 
 from col import *
