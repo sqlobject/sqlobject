@@ -22,29 +22,30 @@ class SQLiteConnection(DBAPI):
     schemes = [dbName]
 
     def __init__(self, filename, autoCommit=1, **kw):
-        backends = kw.pop('backend', None) or 'pysqlite2,sqlite3,sqlite'
-        for backend in backends.split(','):
-            backend = backend.strip()
-            if not backend:
+        drivers = kw.pop('driver', None) or \
+            kw.pop('backend', None) or 'pysqlite2,sqlite3,sqlite'
+        for driver in drivers.split(','):
+            driver = driver.strip()
+            if not driver:
                 continue
             try:
-                if backend in ('sqlite2', 'pysqlite2'):
+                if driver in ('sqlite2', 'pysqlite2'):
                         from pysqlite2 import dbapi2 as sqlite
                         self.using_sqlite2 = True
-                elif backend == 'sqlite3':
+                elif driver == 'sqlite3':
                         import sqlite3 as sqlite
                         self.using_sqlite2 = True
-                elif backend in ('sqlite', 'sqlite1'):
+                elif driver in ('sqlite', 'sqlite1'):
                         import sqlite
                         self.using_sqlite2 = False
                 else:
-                    raise ValueError('Unknown SQLite backend "%s", expected pysqlite2, sqlite3 or sqlite' % backend)
+                    raise ValueError('Unknown SQLite driver "%s", expected pysqlite2, sqlite3 or sqlite' % driver)
             except ImportError:
                 pass
             else:
                 break
         else:
-            raise ImportError('Cannot find an SQLite backend, tried %s' % backends)
+            raise ImportError('Cannot find an SQLite driver, tried %s' % drivers)
         if self.using_sqlite2:
             sqlite.encode = base64.encodestring
             sqlite.decode = base64.decodestring

@@ -10,24 +10,25 @@ class MSSQLConnection(DBAPI):
 
     def __init__(self, db, user, password='', host='localhost',
                  autoCommit=0, **kw):
-        backends = kw.pop('backend', None) or 'adodb,pymssql'
-        for backend in backends.split(','):
-            backend = backend.strip()
-            if not backend:
+        drivers = kw.pop('driver', None) or \
+            kw.pop('backend', None) or 'adodb,pymssql'
+        for driver in drivers.split(','):
+            driver = driver.strip()
+            if not driver:
                 continue
             try:
-                if backend in ('adodb', 'adodbapi'):
+                if driver in ('adodb', 'adodbapi'):
                     import adodbapi as sqlmodule
-                elif backend == 'pymssql':
+                elif driver == 'pymssql':
                     import pymssql as sqlmodule
                 else:
-                    raise ValueError('Unknown MSSQL backend "%s", expected adodb or pymssql' % backend)
+                    raise ValueError('Unknown MSSQL driver "%s", expected adodb or pymssql' % driver)
             except ImportError:
                 pass
             else:
                 break
         else:
-            raise ImportError('Cannot find an MSSQL backend, tried %s' % backends)
+            raise ImportError('Cannot find an MSSQL driver, tried %s' % drivers)
         self.module = sqlmodule
 
         if sqlmodule.__name__ == 'adodbapi':

@@ -11,34 +11,35 @@ class PostgresConnection(DBAPI):
     schemes = [dbName, 'postgresql']
 
     def __init__(self, dsn=None, host=None, port=None, db=None,
-                 user=None, password=None, backend='psycopg', **kw):
-        backends = backend
-        for backend in backends.split(','):
-            backend = backend.strip()
-            if not backend:
+                 user=None, password=None, **kw):
+        drivers = kw.pop('driver', None) or \
+            kw.pop('backend', None) or 'psycopg'
+        for driver in drivers.split(','):
+            driver = driver.strip()
+            if not driver:
                 continue
             try:
-                if backend == 'psycopg2':
+                if driver == 'psycopg2':
                     import psycopg2 as psycopg
-                elif backend == 'psycopg1':
+                elif driver == 'psycopg1':
                     import psycopg
-                elif backend == 'psycopg':
+                elif driver == 'psycopg':
                     try:
                         import psycopg2 as psycopg
                     except ImportError:
                         import psycopg
-                elif backend == 'pygresql':
+                elif driver == 'pygresql':
                     import pgdb
                     self.module = pgdb
                 else:
-                    raise ValueError('Unknown PostgreSQL backend "%s", expected psycopg2, psycopg1 or pygresql' % backend)
+                    raise ValueError('Unknown PostgreSQL driver "%s", expected psycopg2, psycopg1 or pygresql' % driver)
             except ImportError:
                 pass
             else:
                 break
         else:
-            raise ImportError('Cannot find a PostgreSQL backend, tried %s' % backends)
-        if backend.startswith('psycopg'):
+            raise ImportError('Cannot find a PostgreSQL driver, tried %s' % drivers)
+        if driver.startswith('psycopg'):
             self.module = psycopg
             # Register a converter for psycopg Binary type.
             registerConverter(type(psycopg.Binary('')),
@@ -53,7 +54,7 @@ class PostgresConnection(DBAPI):
         if host:
             dsn_dict["host"] = host
         if port:
-            if backend == 'pygresql':
+            if driver == 'pygresql':
                 dsn_dict["host"] = "%s:%d" % (host, port)
             else:
                 if psycopg.__version__.split('.')[0] == '1':
@@ -71,7 +72,7 @@ class PostgresConnection(DBAPI):
             dsn_dict["sslmode"] = sslmode
         self.use_dsn = dsn is not None
         if dsn is None:
-            if backend == 'pygresql':
+            if driver == 'pygresql':
                 dsn = ''
                 if host:
                     dsn += host
@@ -99,6 +100,7 @@ class PostgresConnection(DBAPI):
                 if sslmode:
                     dsn.append('sslmode=%s' % sslmode)
                 dsn = ' '.join(dsn)
+        self.driver = driver
         self.dsn = dsn
         self.unicodeCols = kw.pop('unicodeCols', False)
         self.schema = kw.pop('schema', None)
@@ -326,7 +328,7 @@ class PostgresConnection(DBAPI):
         # We have to connect to *some* database, so we'll connect to
         # template1, which is a common open database.
         # @@: This doesn't use self.use_dsn or self.dsn_dict
-        if self.backend == 'pygresql':
+        if self.driver == 'pygresql':
             dsn = '%s:template1:%s:%s' % (
                 self.host or '', self.user or '', self.password or '')
         else:
