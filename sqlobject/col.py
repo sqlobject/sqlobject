@@ -72,20 +72,6 @@ if mxdatetime_available:
 
 creationOrder = count()
 
-class SQLValidator(compound.All):
-    def attemptConvert(self, value, state, validate):
-        if validate is validators.to_python:
-            vlist = list(self.validators[:])
-            vlist.reverse()
-        elif validate is validators.from_python:
-            vlist = self.validators
-        else:
-            raise RuntimeError
-        for validator in vlist:
-            value = validate(validator, value, state)
-        return value
-
-
 ########################################
 ## Columns
 ########################################
@@ -209,7 +195,7 @@ class SOCol(object):
         _validators = self.createValidators()
         if _validators:
             if validator: _validators.append(validator)
-            self.validator = SQLValidator.join(_validators[0], *_validators[1:])
+            self.validator = compound.All.join(_validators[0], *_validators[1:])
         else:
             self.validator = validator
         self.noCache = noCache

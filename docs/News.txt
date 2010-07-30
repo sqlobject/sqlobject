@@ -47,6 +47,9 @@ Small Features
 
 * A new parameter 'sslmode' was added to PostgresConnection.
 
+* Removed SQLValidator - its attemptConvert was never called because in
+  FormEncode it's named attempt_convert.
+
 SQLObject 0.12.5
 ================
 
