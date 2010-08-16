@@ -1,11 +1,14 @@
-import sqlbuilder
-NoDefault = sqlbuilder.NoDefault
-import styles
+from itertools import count
 import classregistry
 import events
+import styles
+import sqlbuilder
 
 __all__ = ['MultipleJoin', 'SQLMultipleJoin', 'RelatedJoin', 'SQLRelatedJoin',
            'SingleJoin', 'ManyToMany', 'OneToMany']
+
+creationOrder = count()
+NoDefault = sqlbuilder.NoDefault
 
 def getID(obj):
     try:
@@ -19,6 +22,7 @@ class Join(object):
         kw['otherClass'] = otherClass
         self.kw = kw
         self._joinMethodName = self.kw.pop('joinMethodName', None)
+        self.creationOrder = self.kw.pop('creationOrder', None)
 
     def _set_joinMethodName(self, value):
         assert self._joinMethodName == value or self._joinMethodName is None, "You have already given an explicit joinMethodName (%s), and you are now setting it to %s" % (self._joinMethodName, value)
@@ -34,7 +38,8 @@ class Join(object):
         if self.kw.has_key('joinMethodName'):
             self._joinMethodName = self.kw['joinMethodName']
             del self.kw['joinMethodName']
-        return self.baseClass(soClass=soClass,
+        return self.baseClass(creationOrder=self.creationOrder,
+                              soClass=soClass,
                               joinDef=self,
                               joinMethodName=self._joinMethodName,
                               **self.kw)
@@ -45,12 +50,14 @@ class Join(object):
 class SOJoin(object):
 
     def __init__(self,
+                 creationOrder,
                  soClass=None,
                  otherClass=None,
                  joinColumn=None,
                  joinMethodName=None,
                  orderBy=NoDefault,
                  joinDef=None):
+        self.creationOrder = creationOrder
         self.soClass = soClass
         self.joinDef = joinDef
         self.otherClassName = otherClass

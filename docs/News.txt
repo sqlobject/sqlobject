@@ -10,6 +10,12 @@ News
 SQLObject (trunk)
 =================
 
+Features & Interface
+--------------------
+
+* The lists of columns/indices/joins are now sorted according to the order
+  of creation.
+
 SQLObject 0.13.0
 ================
 

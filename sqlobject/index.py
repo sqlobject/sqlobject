@@ -1,5 +1,8 @@
+from itertools import count
 from types import *
 from converters import sqlrepr
+
+creationOrder = count()
 
 class SODatabaseIndex(object):
 
@@ -7,10 +10,12 @@ class SODatabaseIndex(object):
                  soClass,
                  name,
                  columns,
+                 creationOrder,
                  unique=False):
         self.soClass = soClass
         self.name = name
         self.descriptions = self.convertColumns(columns)
+        self.creationOrder = creationOrder
         self.unique = unique
 
     def get(self, *args, **kw):
@@ -33,7 +38,7 @@ class SODatabaseIndex(object):
                     kw[columns[i].foreignName] = args[i]
                 else:
                     kw[columns[i].name] = args[i]
-	return self.soClass.selectBy(connection=connection, **kw).getOne()
+        return self.soClass.selectBy(connection=connection, **kw).getOne()
 
     def convertColumns(self, columns):
         """
@@ -148,6 +153,7 @@ class DatabaseIndex(object):
     def __init__(self, *columns, **kw):
         kw['columns'] = columns
         self.kw = kw
+        self.creationOrder = creationOrder.next()
 
     def setName(self, value):
         assert self.kw.get('name') is None, "You cannot change a name after it has already been set (from %s to %s)" % (self.kw['name'], value)
@@ -162,7 +168,8 @@ class DatabaseIndex(object):
     name = property(_get_name, _set_name)
 
     def withClass(self, soClass):
-        return self.baseClass(soClass=soClass, **self.kw)
+        return self.baseClass(soClass=soClass,
+            creationOrder=self.creationOrder, **self.kw)
 
     def __repr__(self):
         return '<%s %s %s>' % (

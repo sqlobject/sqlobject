@@ -144,13 +144,12 @@ def findDependantColumns(name, klass):
     return depends
 
 def _collectAttributes(cls, new_attrs, look_for_class, delete=True,
-                       set_name=False, sort=False):
+                       set_name=False):
     """
     Finds all attributes in `new_attrs` that are instances of
     `look_for_class`.  Returns them as a list.  If `delete` is true
     they are also removed from the `cls`.  If `set_name` is true, then
-    the ``.name`` attribute is set for any matching objects.  If
-    `sort` is true, then they will be sorted by ``obj.creationOrder``.
+    the ``.name`` attribute is set for any matching objects.
     """
     result = []
     for attr, value in new_attrs.items():
@@ -160,9 +159,6 @@ def _collectAttributes(cls, new_attrs, look_for_class, delete=True,
                 value.name = attr
             if delete:
                 delattr(cls, attr)
-    if sort:
-        result.sort(
-            lambda a, b: cmp(a.creationOrder, b.creationOrder))
     return result
 
 class CreateNewSQLObject:
@@ -209,9 +205,9 @@ class sqlmeta(object):
     columnDefinitions = {}
 
     # These are lists of the join and index objects:
-    joins = []
     indexes = []
     indexDefinitions = []
+    joins = []
     joinDefinitions = []
 
     __metaclass__ = declarative.DeclarativeMeta
@@ -735,7 +731,7 @@ class SQLObject(object):
         cls._SO_setupSqlmeta(new_attrs, is_base)
 
         implicitColumns = _collectAttributes(
-            cls, new_attrs, col.Col, set_name=True, sort=True)
+            cls, new_attrs, col.Col, set_name=True)
         implicitJoins = _collectAttributes(
             cls, new_attrs, joins.Join, set_name=True)
         implicitIndexes = _collectAttributes(
@@ -772,32 +768,41 @@ class SQLObject(object):
         if connection and ('_connection' not in cls.__dict__):
             cls.setConnection(connection)
 
+        sqlmeta = cls.sqlmeta
+
         # We have to check if there are columns in the inherited
         # _columns where the attribute has been set to None in this
         # class.  If so, then we need to remove that column from
         # _columns.
-        for key in cls.sqlmeta.columnDefinitions.keys():
+        for key in sqlmeta.columnDefinitions.keys():
             if (key in new_attrs
                 and new_attrs[key] is None):
-                del cls.sqlmeta.columnDefinitions[key]
+                del sqlmeta.columnDefinitions[key]
 
-        for column in cls.sqlmeta.columnDefinitions.values():
-            cls.sqlmeta.addColumn(column)
+        for column in sqlmeta.columnDefinitions.values():
+            sqlmeta.addColumn(column)
 
         for column in implicitColumns:
-            cls.sqlmeta.addColumn(column)
+            sqlmeta.addColumn(column)
 
         # Now the class is in an essentially OK-state, so we can
         # set up any magic attributes:
         declarative.setup_attributes(cls, new_attrs)
 
-        if cls.sqlmeta.fromDatabase:
-            cls.sqlmeta.addColumnsFromDatabase()
+        if sqlmeta.fromDatabase:
+            sqlmeta.addColumnsFromDatabase()
 
         for j in implicitJoins:
-            cls.sqlmeta.addJoin(j)
+            sqlmeta.addJoin(j)
         for i in implicitIndexes:
-            cls.sqlmeta.addIndex(i)
+            sqlmeta.addIndex(i)
+
+        order_getter = lambda o: o.creationOrder
+        sqlmeta.columnList.sort(key=order_getter)
+        sqlmeta.indexes.sort(key=order_getter)
+        sqlmeta.indexDefinitions.sort(key=order_getter)
+        sqlmeta.joins.sort(key=order_getter)
+        sqlmeta.joinDefinitions.sort(key=order_getter)
 
         # We don't setup the properties until we're finished with the
         # batch adding of all the columns...
@@ -812,7 +817,7 @@ class SQLObject(object):
             cls.q = sqlbuilder.SQLObjectTable(cls)
             cls.j = sqlbuilder.SQLObjectTableWithJoins(cls)
 
-        classregistry.registry(cls.sqlmeta.registry).addClass(cls)
+        classregistry.registry(sqlmeta.registry).addClass(cls)
 
     # @classmethod
     def _SO_setupSqlmeta(cls, new_attrs, is_base):
