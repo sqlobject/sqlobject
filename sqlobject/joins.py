@@ -22,7 +22,7 @@ class Join(object):
         kw['otherClass'] = otherClass
         self.kw = kw
         self._joinMethodName = self.kw.pop('joinMethodName', None)
-        self.creationOrder = self.kw.pop('creationOrder', None)
+        self.creationOrder = creationOrder.next()
 
     def _set_joinMethodName(self, value):
         assert self._joinMethodName == value or self._joinMethodName is None, "You have already given an explicit joinMethodName (%s), and you are now setting it to %s" % (self._joinMethodName, value)
