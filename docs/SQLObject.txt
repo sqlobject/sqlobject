@@ -1083,6 +1083,10 @@ column.
     the beginnig of the list to the end; ``to_python()`` in the reverse
     order. That said, ``from_python()`` method of this validator is called
     last, after all validators in the list; ``to_python()`` is called first.
+`validator2`:
+    Another validator. It is inserted in the beginning of the list of the
+    list of validators, i.e. its ``from_python()`` method is called first;
+    ``to_python()`` last.
 
 .. _formencode: http://formencode.org/
 .. _validator: http://formencode.org/Validator.html

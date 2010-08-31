@@ -6,6 +6,23 @@ from formencode import validators
 ## Validation/conversion
 ########################################
 
+class SOTestValidator(validators.Validator):
+    def to_python(self, value, state):
+        if value:
+            self.save_value.append(value)
+            return 1
+        return value
+
+    def from_python(self, value, state):
+        if value:
+            self.save_value.append(value)
+            return 2
+        return value
+
+validator1 = SOTestValidator(save_value=[])
+validator2 = SOTestValidator(save_value=[])
+
+
 class SOValidation(SQLObject):
 
     name = StringCol(validator=validators.PlainText(),
@@ -17,6 +34,7 @@ class SOValidation(SQLObject):
     name6 = BoolCol(default=None)
     name7 = UnicodeCol(default=None)
     name8 = IntCol(default=None)
+    name9 = IntCol(validator=validator1, validator2=validator2, default=0)
 
 class SOValidationTest(object):
     def __init__(self, value):
@@ -78,3 +96,9 @@ class TestValidation:
     def test_emptyValue(self):
         t = SOValidation(name5={})
         assert t.name5 == {}
+
+    def test_validator2(self):
+        t = SOValidation(name9=1)
+        t = SOValidation(name9=2)
+        assert validator1.save_value == [2, 2, 2, 2, 2, 2]
+        assert validator2.save_value == [1, 1, 1, 2, 1, 1]

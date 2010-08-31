@@ -97,6 +97,7 @@ class SOCol(object):
                  sqlType=None,
                  columnDef=None,
                  validator=None,
+                 validator2=None,
                  immutable=False,
                  cascade=None,
                  lazy=False,
@@ -193,11 +194,13 @@ class SOCol(object):
             self.alternateMethodName = alternateMethodName
 
         _validators = self.createValidators()
-        if _validators:
-            if validator: _validators.append(validator)
+        if validator: _validators.append(validator)
+        if validator2: _validators.insert(0, validator2)
+        _vlen = len(_validators)
+        if _vlen == 1:
+            self.validator = _validators[0]
+        elif _vlen > 1:
             self.validator = compound.All.join(_validators[0], *_validators[1:])
-        else:
-            self.validator = validator
         self.noCache = noCache
         self.lazy = lazy
         # this is in case of ForeignKey, where we rename the column

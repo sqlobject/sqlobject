@@ -16,6 +16,10 @@ Features & Interface
 * The lists of columns/indices/joins are now sorted according to the order
   of creation.
 
+* validator2 was added to all columns; it is inserted at the beginning of
+  the list of validators, i.e. its ``from_python()`` method is called
+  first, ``to_python()`` is called last, after all validators in the list.
+
 SQLObject 0.13.0
 ================
 
