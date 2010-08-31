@@ -1077,7 +1077,12 @@ column.
     an object that provides ``to_python()`` and ``from_python()``
     to validate *and* convert (adapt or cast) the values when they are
     read/written from/to the database. You should see formencode_
-    validator_ documentation for more details.
+    validator_ documentation for more details. This validator is appended
+    to the end of the list of the list of column validators. If the column
+    has a list of validators their ``from_python()`` methods are ran from
+    the beginnig of the list to the end; ``to_python()`` in the reverse
+    order. That said, ``from_python()`` method of this validator is called
+    last, after all validators in the list; ``to_python()`` is called first.
 
 .. _formencode: http://formencode.org/
 .. _validator: http://formencode.org/Validator.html
