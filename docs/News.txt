@@ -20,6 +20,10 @@ Features & Interface
   the list of validators, i.e. its ``from_python()`` method is called
   first, ``to_python()`` is called last, after all validators in the list.
 
+* SQLiteConnection's parameter use_table_info became boolean with default
+  value True.
+
+
 SQLObject 0.13.0
 ================
 

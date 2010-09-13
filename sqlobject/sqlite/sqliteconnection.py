@@ -1,7 +1,7 @@
 import base64
 import os
 import thread
-from sqlobject.dbconnection import DBAPI
+from sqlobject.dbconnection import DBAPI, Boolean
 from sqlobject import col, sqlbuilder
 from sqlobject.dberrors import *
 
@@ -73,7 +73,7 @@ class SQLiteConnection(DBAPI):
                     factory = globals()[factory]
                 opts['factory'] = factory(sqlite)
         else:
-            opts['autocommit'] = bool(autoCommit)
+            opts['autocommit'] = Boolean(autoCommit)
             if 'encoding' in kw:
                 opts['encoding'] = kw.pop('encoding')
             if 'mode' in kw:
@@ -84,11 +84,11 @@ class SQLiteConnection(DBAPI):
             else:
                 opts['timeout'] = int(float(kw.pop('timeout')) * 1000)
         if 'check_same_thread' in kw:
-            opts["check_same_thread"] = bool(kw.pop('check_same_thread'))
+            opts["check_same_thread"] = Boolean(kw.pop('check_same_thread'))
         # use only one connection for sqlite - supports multiple)
         # cursors per connection
         self._connOptions = opts
-        self.use_table_info = kw.pop("use_table_info", False)
+        self.use_table_info = Boolean(kw.pop("use_table_info", True))
         DBAPI.__init__(self, **kw)
         self._threadPool = {}
         self._threadOrigination = {}
