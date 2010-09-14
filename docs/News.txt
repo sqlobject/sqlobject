@@ -16,13 +16,13 @@ Features & Interface
 * The lists of columns/indices/joins are now sorted according to the order
   of creation.
 
-* validator2 was added to all columns; it is inserted at the beginning of
-  the list of validators, i.e. its ``from_python()`` method is called
+* ``validator2`` was added to all columns; it is inserted at the beginning
+  of the list of validators, i.e. its ``from_python()`` method is called
   first, ``to_python()`` is called last, after all validators in the list.
 
-* SQLiteConnection's parameter use_table_info became boolean with default
-  value True.
-
+* SQLiteConnection's parameter ``use_table_info`` became boolean with default
+  value True; this means the default schema parser is now based on ``PRAGMA
+  table_info()``.
 
 SQLObject 0.13.0
 ================
