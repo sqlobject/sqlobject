@@ -24,6 +24,8 @@ Features & Interface
   value True; this means the default schema parser is now based on ``PRAGMA
   table_info()``.
 
+* Major API change: attribute 'dirty' was moved to sqlmeta.
+
 SQLObject 0.13.0
 ================
 

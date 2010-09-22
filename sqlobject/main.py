@@ -210,8 +210,6 @@ class sqlmeta(object):
     joins = []
     joinDefinitions = []
 
-    __metaclass__ = declarative.DeclarativeMeta
-
     # These attributes shouldn't be shared with superclasses:
     _unshared_attributes = ['table', 'columns', 'childName']
 
@@ -237,6 +235,11 @@ class sqlmeta(object):
     parentClass = None # A reference to the parent class
     childClasses = {} # References to child classes, keyed by childName
     childName = None # Class name for inheritance child object creation
+
+    # Does the row require syncing?
+    dirty = False
+
+    __metaclass__ = declarative.DeclarativeMeta
 
     def __classinit__(cls, new_attrs):
         for attr in cls._unshared_attributes:
@@ -900,7 +903,7 @@ class SQLObject(object):
                 cache.put(id, cls, val)
             finally:
                 cache.finishPut(cls)
-        elif selectResults and not val.dirty:
+        elif selectResults and not val.sqlmeta.dirty:
             val._SO_writeLock.acquire()
             try:
                 val._SO_selectInit(selectResults)
@@ -941,7 +944,7 @@ class SQLObject(object):
                 raise SQLObjectNotFound, "The object %s by the ID %s does not exist" % (self.__class__.__name__, self.id)
         self._SO_selectInit(selectResults)
         self._SO_createValues = {}
-        self.dirty = False
+        self.sqlmeta.dirty = False
 
     def _SO_loadValue(self, attrName):
         try:
@@ -995,7 +998,7 @@ class SQLObject(object):
                 values = [(self.sqlmeta.columns[v[0]].dbName, v[1])
                           for v in self._SO_createValues.items()]
                 self._connection._SO_update(self, values)
-            self.dirty = False
+            self.sqlmeta.dirty = False
             self._SO_createValues = {}
         finally:
             self._SO_writeLock.release()
@@ -1045,7 +1048,7 @@ class SQLObject(object):
         if to_python:
             value = to_python(dbValue, self._SO_validatorState)
         if self.sqlmeta._creating or self.sqlmeta.lazyUpdate:
-            self.dirty = True
+            self.sqlmeta.dirty = True
             self._SO_createValues[name] = dbValue
             setattr(self, instanceName(name), value)
             return
@@ -1104,7 +1107,7 @@ class SQLObject(object):
                 except AttributeError, e:
                     raise AttributeError, '%s (with attribute %r)' % (e, name)
 
-            self.dirty = True
+            self.sqlmeta.dirty = True
             return
 
         self._SO_writeLock.acquire()
@@ -1287,7 +1290,7 @@ class SQLObject(object):
         # Get rid of _SO_create*, we aren't creating anymore.
         # Doesn't have to be threadsafe because we're still in
         # new(), which doesn't need to be threadsafe.
-        self.dirty = False
+        self.sqlmeta.dirty = False
         if not self.sqlmeta.lazyUpdate:
             del self._SO_createValues
         else:
