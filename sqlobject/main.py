@@ -804,7 +804,9 @@ class SQLObject(object):
         sqlmeta.columnList.sort(key=order_getter)
         sqlmeta.indexes.sort(key=order_getter)
         sqlmeta.indexDefinitions.sort(key=order_getter)
-        sqlmeta.joins.sort(key=order_getter)
+        # Joins cannot be sorted because addJoin created accessors
+        # that remember indexes.
+        #sqlmeta.joins.sort(key=order_getter)
         sqlmeta.joinDefinitions.sort(key=order_getter)
 
         # We don't setup the properties until we're finished with the
