@@ -197,7 +197,9 @@ class SOCol(object):
         if validator: _validators.append(validator)
         if validator2: _validators.insert(0, validator2)
         _vlen = len(_validators)
-        if _vlen == 1:
+        if _vlen == 0:
+            self.validator = None # Set sef.{from,to}_python
+        elif _vlen == 1:
             self.validator = _validators[0]
         elif _vlen > 1:
             self.validator = compound.All.join(_validators[0], *_validators[1:])
