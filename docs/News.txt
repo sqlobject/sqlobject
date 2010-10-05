@@ -13,6 +13,12 @@ SQLObject (trunk)
 Features & Interface
 --------------------
 
+SQLObject 0.14.0
+================
+
+Features & Interface
+--------------------
+
 * The lists of columns/indices/joins are now sorted according to the order
   of creation.
 
