@@ -21,7 +21,7 @@ if is_setuptools:
     """
 
 setup(name="SQLObject",
-      version="0.14",
+      version="0.15",
       description="Object-Relational Manager, aka database wrapper",
       long_description="""\
 SQLObject is a popular *Object Relational Manager* for providing an
