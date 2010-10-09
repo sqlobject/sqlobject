@@ -20,7 +20,7 @@ Features & Interface
 --------------------
 
 * The lists of columns/indices/joins are now sorted according to the order
-  of creation.
+  of declaration.
 
 * ``validator2`` was added to all columns; it is inserted at the beginning
   of the list of validators, i.e. its ``from_python()`` method is called
