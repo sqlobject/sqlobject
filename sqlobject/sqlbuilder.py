@@ -80,8 +80,9 @@ class NoDefault:
 
 
 class SQLObjectState(object):
-    def __init__(self, soObject):
+    def __init__(self, soObject, connection=None):
         self.soObject = weakref.proxy(soObject)
+        self.connection = connection
 
 
 safeSQLRE = re.compile(r'^[a-zA-Z_][a-zA-Z0-9_\.]*$')

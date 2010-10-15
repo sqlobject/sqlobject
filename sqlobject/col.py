@@ -503,13 +503,19 @@ class StringValidator(validators.Validator):
     def to_python(self, value, state):
         if value is None:
             return None
-        connection = state.soObject._connection
-        dbEncoding = getattr(connection, "dbEncoding", None) or "ascii"
+        try:
+            connection = state.connection or state.soObject._connection
+        except AttributeError:
+            dbEncoding = "ascii"
+            binaryType = type(None) # Just a simple workaround
+        else:
+            dbEncoding = getattr(connection, "dbEncoding", None) or "ascii"
+            binaryType = connection._binaryType
         if isinstance(value, unicode):
             return value.encode(dbEncoding)
         if self.dataType and isinstance(value, self.dataType):
             return value
-        if isinstance(value, (str, buffer, connection._binaryType, sqlbuilder.SQLExpression)):
+        if isinstance(value, (str, buffer, binaryType, sqlbuilder.SQLExpression)):
             return value
         if hasattr(value, '__unicode__'):
             return unicode(value).encode(dbEncoding)
@@ -1305,9 +1311,13 @@ class DecimalValidator(validators.Validator):
             return value
         if isinstance(value, float):
             value = str(value)
-        connection = state.soObject._connection
-        if hasattr(connection, "decimalSeparator"):
-            value = value.replace(connection.decimalSeparator, ".")
+        try:
+            connection = state.connection or state.soObject._connection
+        except AttributeError:
+            pass
+        else:
+            if hasattr(connection, "decimalSeparator"):
+                value = value.replace(connection.decimalSeparator, ".")
         try:
             return Decimal(value)
         except:
@@ -1320,9 +1330,13 @@ class DecimalValidator(validators.Validator):
         if isinstance(value, float):
             value = str(value)
         if isinstance(value, basestring):
-            connection = state.soObject._connection
-            if hasattr(connection, "decimalSeparator"):
-                value = value.replace(connection.decimalSeparator, ".")
+            try:
+                connection = state.connection or state.soObject._connection
+            except AttributeError:
+                pass
+            else:
+                if hasattr(connection, "decimalSeparator"):
+                    value = value.replace(connection.decimalSeparator, ".")
             try:
                 return Decimal(value)
             except:
@@ -1427,12 +1441,19 @@ class BinaryValidator(validators.Validator):
     def to_python(self, value, state):
         if value is None:
             return None
+        try:
+            connection = state.connection or state.soObject._connection
+        except AttributeError:
+            dbName = None
+            binaryType = type(None) # Just a simple workaround
+        else:
+            dbName = connection.dbName
+            binaryType = connection._binaryType
         if isinstance(value, str):
-            connection = state.soObject._connection
-            if connection.dbName == "sqlite":
+            if dbName == "sqlite":
                 value = connection.module.decode(value)
             return value
-        if isinstance(value, (buffer, state.soObject._connection._binaryType)):
+        if isinstance(value, (buffer, binaryType)):
             cachedValue = self._cachedValue
             if cachedValue and cachedValue[1] == value:
                 return cachedValue[0]
@@ -1445,7 +1466,8 @@ class BinaryValidator(validators.Validator):
     def from_python(self, value, state):
         if value is None:
             return None
-        binary = state.soObject._connection.createBinary(value)
+        connection = state.connection or state.soObject._connection
+        binary = connection.createBinary(value)
         self._cachedValue = (value, binary)
         return binary
 
@@ -1497,8 +1519,12 @@ class PickleValidator(BinaryValidator):
         if value is None:
             return None
         if isinstance(value, unicode):
-            connection = state.soObject._connection
-            dbEncoding = getattr(connection, "dbEncoding", None) or "ascii"
+            try:
+                connection = state.connection or state.soObject._connection
+            except AttributeError:
+                dbEncoding = "ascii"
+            else:
+                dbEncoding = getattr(connection, "dbEncoding", None) or "ascii"
             value = value.encode(dbEncoding)
         if isinstance(value, str):
             return pickle.loads(value)

@@ -34,6 +34,12 @@ Features & Interface
 
 * Major API change: attribute 'dirty' was moved to sqlmeta.
 
+SQLObject 0.13.1
+================
+
+* A bug was fixed in a subtle case when a per-instance connection is not
+  passed to validators.
+
 SQLObject 0.13.0
 ================
 
