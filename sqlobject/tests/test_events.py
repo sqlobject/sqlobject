@@ -37,10 +37,12 @@ def test_create():
 def test_row_create():
     setupClass(EventTester)
     watcher = make_listen(events.RowCreateSignal)
-    EventTester(name='foo')
-    EventTester(name='bar')
+    row1 = EventTester(name='foo')
+    row2 = EventTester(name='bar')
     assert len(watcher.log) == 2
-    assert watcher.log[0] == ({'name': 'foo'}, [])
+    assert watcher.log == [
+        (row1, {'name': 'foo'}, []),
+        (row2, {'name': 'bar'}, [])]
 
 def test_row_destroy():
     setupClass(EventTester)
@@ -102,9 +104,11 @@ class InheritableEventTestC(InheritableEventTestB):
     c = IntCol()
 
 def _query(instance):
-    InheritableEventTestA.get(instance.id)
+    row = InheritableEventTestA.get(instance.id)
+    assert isinstance(row, InheritableEventTestC)
+    assert row.c == 3
 
-def _signal(kwargs, postfuncs):
+def _signal(instance, kwargs, postfuncs):
     postfuncs.append(_query)
 
 def test_inheritance_row_created():

@@ -70,7 +70,7 @@ dispatcher.connect(_makeSubclassConnections, signal=ClassCreateSignal)
 class RowCreateSignal(Signal):
     """
     Called before an instance is created, with the class as the
-    sender.  Called with the arguments ``(kwargs, post_funcs)``.
+    sender.  Called with the arguments ``(instance, kwargs, post_funcs)``.
     There may be a ``connection`` argument.  ``kwargs``may be usefully
     modified.  ``post_funcs`` is a list of callbacks, intended to have
     functions appended to it, and are called with the arguments
@@ -82,7 +82,7 @@ class RowCreateSignal(Signal):
 class RowCreatedSignal(Signal):
     """
     Called after an instance is created, with the class as the
-    sender.  Called with the arguments ``(kwargs, post_funcs)``.
+    sender.  Called with the arguments ``(instance, kwargs, post_funcs)``.
     There may be a ``connection`` argument.  ``kwargs``may be usefully
     modified.  ``post_funcs`` is a list of callbacks, intended to have
     functions appended to it, and are called with the arguments

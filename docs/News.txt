@@ -13,6 +13,10 @@ SQLObject (trunk)
 Features & Interface
 --------------------
 
+* Major API change: all signals are sent with the instance (or the class)
+  as the first parameter. The following signals were changed:
+  RowCreateSignal, RowCreatedSignal, DeleteColumnSignal.
+
 SQLObject 0.14.1
 ================
 

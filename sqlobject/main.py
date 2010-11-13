@@ -461,8 +461,8 @@ class sqlmeta(object):
                 raise IndexError(
                     "Column with definition %r not found" % column)
         post_funcs = []
-        cls.send(events.DeleteColumnSignal, connection, column.name, column,
-                 post_funcs)
+        cls.send(events.DeleteColumnSignal, cls.soClass, connection,
+                 column.name, column, post_funcs)
         name = column.name
         del sqlmeta.columns[name]
         del sqlmeta.columnDefinitions[name]
@@ -1207,7 +1207,7 @@ class SQLObject(object):
                 return
 
             post_funcs = []
-            self.sqlmeta.send(events.RowCreateSignal, kw, post_funcs)
+            self.sqlmeta.send(events.RowCreateSignal, self, kw, post_funcs)
 
             # Pass the connection object along if we were given one.
             if kw.has_key('connection'):
@@ -1303,7 +1303,7 @@ class SQLObject(object):
         post_funcs = []
         kw = dict([('class', self.__class__), ('id', id)])
         def _send_RowCreatedSignal():
-            self.sqlmeta.send(events.RowCreatedSignal, kw, post_funcs)
+            self.sqlmeta.send(events.RowCreatedSignal, self, kw, post_funcs)
             for func in post_funcs:
                 func(self)
         _postponed_local.postponed_calls.append(_send_RowCreatedSignal)
