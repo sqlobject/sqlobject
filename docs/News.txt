@@ -17,6 +17,10 @@ Features & Interface
   as the first parameter. The following signals were changed:
   RowCreateSignal, RowCreatedSignal, DeleteColumnSignal.
 
+* Major API change: post-functions for all signals are called with the
+  instance as the first parameter. The following signals were changed:
+  RowUpdatedSignal, RowDestroySignal, RowDestroyedSignal.
+
 SQLObject 0.14.1
 ================
 

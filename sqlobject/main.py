@@ -1001,7 +1001,7 @@ class SQLObject(object):
         post_funcs = []
         self.sqlmeta.send(events.RowUpdatedSignal, self, post_funcs)
         for func in post_funcs:
-            func()
+            func(self)
 
     def expire(self):
         if self.sqlmeta.expired:
@@ -1058,7 +1058,7 @@ class SQLObject(object):
         post_funcs = []
         self.sqlmeta.send(events.RowUpdatedSignal, self, post_funcs)
         for func in post_funcs:
-            func()
+            func(self)
 
     def set(self, _suppress_set_sig=False, **kw):
         if not self.sqlmeta._creating and not getattr(self.sqlmeta, "row_update_sig_suppress", False) and not _suppress_set_sig:
@@ -1150,7 +1150,7 @@ class SQLObject(object):
         post_funcs = []
         self.sqlmeta.send(events.RowUpdatedSignal, self, post_funcs)
         for func in post_funcs:
-            func()
+            func(self)
 
     def _SO_selectInit(self, row):
         for col, colValue in zip(self.sqlmeta.columnList, row):
@@ -1584,12 +1584,12 @@ class SQLObject(object):
         self._connection.cache.expire(self.id, self.__class__)
 
         for func in post_funcs:
-            func()
+            func(self)
 
         post_funcs = []
         self.sqlmeta.send(events.RowDestroyedSignal, self, post_funcs)
         for func in post_funcs:
-            func()
+            func(self)
 
     def delete(cls, id, connection=None):
         obj = cls.get(id, connection=connection)

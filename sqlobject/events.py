@@ -100,8 +100,8 @@ class RowDestroySignal(Signal):
     class.  Arguments are ``(instance, post_funcs)``.
 
     ``post_funcs`` is a list of callbacks, intended to have
-    functions appended to it, and are called without arguments. If
-    any of the post_funcs raises an exception, the deletion is only
+    functions appended to it, and are called with arguments ``(instance)``.
+    If any of the post_funcs raises an exception, the deletion is only
     affected if this will prevent a commit.
 
     You cannot cancel the delete, but you can raise an exception (which will
@@ -139,8 +139,10 @@ class RowUpdatedSignal(Signal):
     """
     Called when an instance is updated through a call to ``.set()``
     (or a column attribute assignment).  The arguments are
-    ``(instance)``. This is run *after* the instance is updated;
-    Works better with lazyUpdate = True
+    ``(instance, post_funcs)``. ``post_funcs`` is a list of callbacks,
+    intended to have functions appended to it, and are called with the
+    arguments ``(new_instance)``. This is run *after* the instance is
+    updated; Works better with lazyUpdate = True.
     """
 
 class AddColumnSignal(Signal):
