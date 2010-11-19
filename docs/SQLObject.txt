@@ -1883,7 +1883,7 @@ Example::
        # GOOD method 2
        kwargs['last_updated'] = datetime.datetime.now()
 
-   def created_listener(kwargs, post_funcs):
+   def created_listener(instance, kwargs, post_funcs):
        """"email me when new users added"""
        # email() implementation left as an exercise for the reader
        msg = "%s just was just added to the database!" % kwargs['name']
