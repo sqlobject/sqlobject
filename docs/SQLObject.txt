@@ -394,9 +394,11 @@ descending order (this is translated to DESC, so it works on non-numeric
 types as well), or call ``MyClass.select().reversed()``. orderBy can also
 take a list of columns in the same format: ``["-weight", "name"]``.
 
-You can use the special class variable `_defaultOrder` to give a
+You can use the `sqlmeta`_ class variable `defaultOrder` to give a
 default ordering for all selects.  To get an unordered result when
-`_defaultOrder` is used, use ``orderBy=None``.
+`defaultOrder` is used, use ``orderBy=None``.
+
+.. _`sqlmeta`: `Class sqlmeta`_
 
 Select results are generators, which are lazily evaluated.  So the SQL
 is only executed when you iterate over the select results, or if you
@@ -1290,7 +1292,7 @@ Several keyword arguments are allowed to the `MultipleJoin` constructor:
     You should pass that parameter.
 `orderBy`:
     Like the `orderBy`_ argument to `select()`, you can specify
-    the order that the joined objects should be returned in.  `_defaultOrder`
+    the order that the joined objects should be returned in.  `defaultOrder`
     will be used if not specified; ``None`` forces unordered results.
 `joinMethodName`:
     When adding joins dynamically (using the class method `addJoin`_),
