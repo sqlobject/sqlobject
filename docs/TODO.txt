@@ -83,6 +83,12 @@ TODO
 
 * py-postgresql driver: http://python.projects.postgresql.org/
 
+* MySQL Connector/Python: https://launchpad.net/myconnpy
+
+* oursql MySQL bindings: https://launchpad.net/oursql
+
+* pyfirebirdsql: https://github.com/nakagami/pyfirebirdsql
+
 * dict API: use getitem interface for column access instead of getattr; reserve
   getattr for internal attributes only; this helps to avoid collisions with
   internal attributes.
