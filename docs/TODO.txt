@@ -1,6 +1,96 @@
 TODO
 ----
 
+* Stop supporting parameter 'backend'.
+
+* Proper %-encoded URI.
+
+* __version__.py
+
+* Release 1.0.
+
+* Decorators @classmethod and @staticmethod.
+
+* Declare one encoding for all UnicodeCol's per table or even per connection.
+  Don't forget about fromDatabase.
+
+* Allow to override ConsoleWriter/LogWriter classes and makeDebugWriter
+  function.
+
+* delColumn('foreignKey'), delColumn('foreignKeyID')
+
+* RelatedJoin.hasOther(otherObject[.id])
+
+* tableParamSQL::
+
+    class MyTable(SQLObject):
+       class sqlmeta:
+          tableParamSQL = 'ENGINE InnoDB'
+          tableParamSQL = {'mysql': 'ENGINE InnoDB'}
+
+* List tables in the DB. The query in MySQL is 'SHOW TABLES'; in SQLite it is
+
+    SELECT name FROM sqlite_master WHERE type='table' ORDER BY name
+
+  and in Postgres it is something like
+
+    SELECT c.relname FROM pg_class c, pg_type t
+    WHERE c.reltype = t.oid AND t.typname = 'table'.
+
+* List databases in the connection.
+
+* IntervalCol
+
+* TimedeltaCol
+
+* Invert tests isinstance(obj, (tuple, list)) to not isinstance(obj, basestr)
+  to allow any iterable.
+
+* SQLObject.fastInsert().
+
+* Always use .lazyIter().
+
+* Optimize Iteration.next() - use cursor.fetchmany().
+
+* Generators instead of loops (fetchall => fetchone).
+
+* Cache columns in sqlmeta.getColumns(); reset the cache on add/Del Column/Join.
+
+* Stop supporting Python 2.4: use 'with lock'; use hashlib instead of md5.
+
+* Stop supporting Python 2.5: remove import sets.
+
+* Expression columns - in SELECT but not in INSERT/UPDATE. Something like this::
+
+    class MyClass(SQLObject):
+        function1 = ExpressionCol(func.my_function(MyClass.q.col1))
+        function2 = ExpressionCol('sum(col2)')
+
+* Catch all DB API exceptions and convert them to sqlobject.dberrors.
+
+* Memcache.
+
+* Parametrized queries.
+
+* PREPARE/EXECUTE
+
+* Protect all .encode(), catch UnicodeEncode exceptions and reraise Invalid.
+
+* Better joins - automatic joins in .select()
+  based on ForeignKey/MultipleJoin/RelatedJoin.
+
+* Python 3.0+.
+
+* py-postgresql driver: http://python.projects.postgresql.org/
+
+* dict API: use getitem interface for column access instead of getattr; reserve
+  getattr for internal attributes only; this helps to avoid collisions with
+  internal attributes.
+
+* Or move column values access to a separate namespace, e.g. .c: row.c.name.
+
+* More documentation. Wiki. Trac. Mercurial.
+
 * Use DBUtils_, especially SolidConnection.
 
 .. _DBUtils: http://www.webwareforpython.org/DBUtils
