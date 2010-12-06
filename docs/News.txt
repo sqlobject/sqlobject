@@ -16,6 +16,8 @@ Features & Interface
 SQLObject 0.15.0
 ================
 
+Released 6 Dec 2010.
+
 Features & Interface
 --------------------
 
