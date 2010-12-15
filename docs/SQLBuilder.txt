@@ -66,6 +66,31 @@ like::
 To pass a constant, use the ``const`` variable which is actually an
 alias for func.
 
+SQL statements
+==============
+
+SQLBuilder implements objects that execute SQL statements. SQLObject
+uses them internally in its `higher-level API`_, but users can use this
+mid-level API to executes SQL queries that aren't supported by the
+high-level API. To use these objects first construct an instance of a
+statement object, then ask the connection to convert the instance to an
+SQL query and finally ask the connection to execute the query and return
+the results. For example, for Select class::
+
+    >>> from sqlobject.sqlbuilder import *
+    >> select = Select(['name', 'AVG(salary)'], staticTables=['employees'],
+    >>     groupBy='name') # create an instance
+    >> query = connection.sqlrepr(select) # Convert to SQL string:
+    >>     # SELECT name, AVG(salary) FROM employees GROUP BY name
+    >> rows = connection.queryAll(query) # Execute the query
+    >>     # and get back the reuslt as a list of rows
+    >>     # where every row is a sequence of length 2 (name and average salary)
+
+.. _`higher-level API`: SQLObject.html
+
+Select
+~~~~~~
+
 .. image:: http://sflogo.sourceforge.net/sflogo.php?group_id=74338&type=10
    :target: http://sourceforge.net/projects/sqlobject
    :class: noborder
