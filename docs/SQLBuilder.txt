@@ -83,7 +83,7 @@ the results. For example, for Select class::
     >> query = connection.sqlrepr(select) # Convert to SQL string:
     >>     # SELECT name, AVG(salary) FROM employees GROUP BY name
     >> rows = connection.queryAll(query) # Execute the query
-    >>     # and get back the reuslt as a list of rows
+    >>     # and get back the result as a list of rows
     >>     # where every row is a sequence of length 2 (name and average salary)
 
 .. _`higher-level API`: SQLObject.html
