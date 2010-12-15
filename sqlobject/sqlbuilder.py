@@ -49,9 +49,7 @@ objects, as well as the proper SQL representation of basic Python
 types (None==NULL).
 
 There are a number of DB-specific SQL features that this does not
-implement.  There are a bunch of normal ANSI features also not present
--- particularly left joins, among others.  You may wish to only use
-this to generate ``WHERE`` clauses.
+implement.  There are a bunch of normal ANSI features also not present.
 
 See the bottom of this module for some examples, and run it (i.e.
 ``python sql.py``) to see the results of those examples.
