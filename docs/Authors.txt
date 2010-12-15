@@ -23,6 +23,7 @@ Contributions have been made by:
 * Diez B. Roggisch <deets at web.de>
 * Christopher Singley <csingley at gmail.com>
 * David Keeney <dkeeney at rdbhost.com>
+* Daniel Fetchinson <fetchinson@googlemail.com>
 * Oleg Broytman <phd@phd.pp.ru>
 
 .. image:: http://sflogo.sourceforge.net/sflogo.php?group_id=74338&type=10
