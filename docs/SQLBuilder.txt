@@ -9,10 +9,10 @@ for more.  Its functionality is also available through the special
 
 .. _`relevant SQLObject documentation`: SQLObject.html#exported-symbols
 
-Using SQLBuilder
-================
+SQLExpression
+=============
 
-SQLBuilder uses clever overriding of operators to make Python
+SQLExpression uses clever overriding of operators to make Python
 expressions build SQL expressions -- so long as you start with a Magic
 Object that knows how to fake it.
 
@@ -63,7 +63,8 @@ like::
 
     >> person.created < func.NOW()
 
-That's it -- enjoy!
+To pass a constant, use the ``const`` variable which is actually an
+alias for func.
 
 .. image:: http://sflogo.sourceforge.net/sflogo.php?group_id=74338&type=10
    :target: http://sourceforge.net/projects/sqlobject
