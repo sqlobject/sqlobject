@@ -91,6 +91,51 @@ the results. For example, for Select class::
 Select
 ~~~~~~
 
+A class to build SELECT queries. Accepts a number of parameters, all
+parameters are optional.
+
+`items`:
+   A string, an SQLExpression or a sequence of strings or
+   SQLExpression's, represents the list of columns. If there are
+   SQLExpression's Select derives a list of tables for SELECT query.
+
+`where`:
+   A string or an SQLExpression, represents the WHERE clause.
+
+`groupBy`:
+   A string or an SQLExpression, represents the GROUP BY clause.
+
+`having`:
+   A string or an SQLExpression, represents the HAVING part of the GROUP
+   BY clause.
+
+`orderBy`:
+   A string or an SQLExpression, represents the ORDER BY clause.
+
+`limit`:
+   A string or an SQLExpression, represents the LIMIT clause.
+
+`join`:
+   A (list of) JOINs (LEFT JOIN, etc.)
+
+`distinct`:
+   A bool flag to turn on DISTINCT query.
+
+`start`, `end`:
+   Integers. Alternative ways to calculate LIMIT. `limit`, if passed,
+   overrides `end`.
+
+`reversed`:
+   A bool flag to do sorting (ORDER BY) in the reverse direction.
+
+`forUpdate`:
+   A bool flag to turn on SELECT FOR UPDATE query.
+
+`staticTables`:
+   A sequence of strings or SQLExpression's that name tables for FROM.
+   This parameter must be used if `items` is a list of strings from
+   which Select cannot derive a list of tables.
+
 .. image:: http://sflogo.sourceforge.net/sflogo.php?group_id=74338&type=10
    :target: http://sourceforge.net/projects/sqlobject
    :class: noborder
