@@ -143,3 +143,25 @@ parameters are optional.
    :height: 15
    :width: 80
    :alt: Get SQLObject at SourceForge.net. Fast, secure and Free Open Source software downloads
+
+Nested SQL statements (subqueries)
+==================================
+
+There are a few special operators that receive as parameter SQL
+statements. These are IN, NOTIN, EXISTS, NOTEXISTS, SOME, ANY and ALL.
+Consider the following example: You are interested in removing records
+from a table using deleteMany. However, the criterion for doing so
+depends on another table.
+
+You would expect the following to work::
+
+    >> PersonWorkplace.deleteMany(where=
+       ((PersonWorkplace.q.WorkplaceID==Workplace.q.id) &
+       (Workplace.q.id==SOME_ID)))
+
+But this doesn't work! However, you can't do a join in a deleteMany
+call. To work around this issue, use IN::
+
+    >> PersonWorkplace.deleteMany(where=
+       IN(PersonWorkplace.q.WorkplaceID,
+       Select(Workplace.q.id, Workplace.q.id==SOME_ID)))
