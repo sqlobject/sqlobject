@@ -136,13 +136,37 @@ parameters are optional.
    This parameter must be used if `items` is a list of strings from
    which Select cannot derive a list of tables.
 
-.. image:: http://sflogo.sourceforge.net/sflogo.php?group_id=74338&type=10
-   :target: http://sourceforge.net/projects/sqlobject
-   :class: noborder
-   :align: center
-   :height: 15
-   :width: 80
-   :alt: Get SQLObject at SourceForge.net. Fast, secure and Free Open Source software downloads
+Insert
+~~~~~~
+
+A class to build INSERT queries. Accepts a number of parameters.
+Use connection.query(query) to execute the query.
+
+`table`:
+   A string that names the table to INSERT into.
+
+`valueList`:
+   A list of (key, value) sequences or {key: value} dictionaries; keys
+   are column names. Either `valueList` or `values` must be passed, but
+   not both. Example::
+
+    >> insert = Insert('person', valueList=[('name', 'Test'), ('age', 42)])
+           # or
+    >> insert = Insert('person', valueList=[{'name': 'Test'}, {'age': 42}])
+           # Both generate the same query:
+           # INSERT INTO person (name, age) VALUES ('Test', 42)
+    >> query = connection.sqlrepr(insert)
+    >> connection.query(query)
+
+`values`:
+   A dictionary {key: value}; keys are column names. Either `valueList`
+   or `values` must be passed, but not both. Example::
+
+    >> insert = Insert('person', values={'name': 'Test', 'age': 42})
+           # The query is the same
+           # INSERT INTO person (name, age) VALUES ('Test', 42)
+    >> query = connection.sqlrepr(insert)
+    >> connection.query(query)
 
 Nested SQL statements (subqueries)
 ==================================
@@ -165,3 +189,11 @@ call. To work around this issue, use IN::
     >> PersonWorkplace.deleteMany(where=
        IN(PersonWorkplace.q.WorkplaceID,
        Select(Workplace.q.id, Workplace.q.id==SOME_ID)))
+
+.. image:: http://sflogo.sourceforge.net/sflogo.php?group_id=74338&type=10
+   :target: http://sourceforge.net/projects/sqlobject
+   :class: noborder
+   :align: center
+   :height: 15
+   :width: 80
+   :alt: Get SQLObject at SourceForge.net. Fast, secure and Free Open Source software downloads
