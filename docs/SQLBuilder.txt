@@ -2,6 +2,8 @@
 SQLBuilder
 ``````````
 
+.. contents::
+
 A number of variables from SQLBuilder are included with ``from
 sqlobject import *`` -- see the `relevant SQLObject documentation`_
 for more.  Its functionality is also available through the special
@@ -167,6 +169,10 @@ Use connection.query(query) to execute the query.
            # INSERT INTO person (name, age) VALUES ('Test', 42)
     >> query = connection.sqlrepr(insert)
     >> connection.query(query)
+
+Instances of the class work fast and thus are suitable for
+mass-insertion. If one needs to populate a database with SQLObject
+running a lot of INSERT queries this class is the way to go.
 
 Nested SQL statements (subqueries)
 ==================================
