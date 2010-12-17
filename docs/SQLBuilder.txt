@@ -181,7 +181,7 @@ A class to build UPDATE queries. Accepts a number of parameters.
 Use connection.query(query) to execute the query.
 
 `table`:
-   A string that names the table to INSERT into.
+   A string that names the table to UPDATE.
 
 `values`:
    A dictionary {key: value}; keys are column names.
