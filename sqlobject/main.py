@@ -7,7 +7,7 @@ SQLObject 0.16
 SQLObject is a object-relational mapper.  See SQLObject.html or
 SQLObject.txt for more.
 
-With the help by Oleg Broytman <phd@phd.pp.ru> and many other contributors.
+With the help by Oleg Broytman and many other contributors.
 See Authors.txt.
 
 This program is free software; you can redistribute it and/or modify

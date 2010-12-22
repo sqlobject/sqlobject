@@ -24,7 +24,7 @@ Contributions have been made by:
 * Christopher Singley <csingley at gmail.com>
 * David Keeney <dkeeney at rdbhost.com>
 * Daniel Fetchinson <fetchinson at googlemail.com>
-* Oleg Broytman <phd@phd.pp.ru>
+* Oleg Broytman <phd@phdru.name>
 
 .. image:: http://sflogo.sourceforge.net/sflogo.php?group_id=74338&type=10
    :target: http://sourceforge.net/projects/sqlobject
