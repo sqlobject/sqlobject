@@ -197,6 +197,25 @@ Example::
            # UPDATE person SET name='Test', age=42 WHERE id=1
     >> connection.query(query)
 
+Delete
+~~~~~~
+
+A class to build DELETE FROM queries. Accepts a number of parameters.
+Use connection.query(query) to execute the query.
+
+`table`:
+   A string that names the table to UPDATE.
+
+`where`:
+   A string or an SQLExpression, represents the WHERE clause.
+
+Example::
+
+    >> update = Delete('person', where='id=1')
+    >> query = connection.sqlrepr(update)
+           # DELETE FROM person WHERE id=1
+    >> connection.query(query)
+
 Nested SQL statements (subqueries)
 ==================================
 
