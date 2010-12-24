@@ -94,7 +94,7 @@ Select
 ~~~~~~
 
 A class to build SELECT queries. Accepts a number of parameters, all
-parameters are optional.
+parameters except `items` are optional.
 
 `items`:
    A string, an SQLExpression or a sequence of strings or
