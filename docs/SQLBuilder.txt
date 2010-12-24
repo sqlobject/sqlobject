@@ -97,25 +97,24 @@ A class to build SELECT queries. Accepts a number of parameters, all
 parameters except `items` are optional.
 
 `items`:
-   A string, an SQLExpression or a sequence of strings or
-   SQLExpression's, represents the list of columns. If there are
-   SQLExpression's Select derives a list of tables for SELECT query.
+   An SQLExpression or a sequence of SQLExpression's, represents the
+   list of columns. If there are q-values SQLExpression's Select derives
+   a list of tables for SELECT query.
 
 `where`:
-   A string or an SQLExpression, represents the WHERE clause.
+   An SQLExpression, represents the WHERE clause.
 
 `groupBy`:
-   A string or an SQLExpression, represents the GROUP BY clause.
+   An SQLExpression, represents the GROUP BY clause.
 
 `having`:
-   A string or an SQLExpression, represents the HAVING part of the GROUP
-   BY clause.
+   An SQLExpression, represents the HAVING part of the GROUP BY clause.
 
 `orderBy`:
-   A string or an SQLExpression, represents the ORDER BY clause.
+   An SQLExpression, represents the ORDER BY clause.
 
 `limit`:
-   A string or an SQLExpression, represents the LIMIT clause.
+   An SQLExpression, represents the LIMIT clause.
 
 `join`:
    A (list of) JOINs (LEFT JOIN, etc.)
@@ -187,7 +186,7 @@ Use connection.query(query) to execute the query.
    A dictionary {key: value}; keys are column names. Required.
 
 `where`:
-   An optional string or an SQLExpression, represents the WHERE clause.
+   An optional SQLExpression, represents the WHERE clause.
 
 Example::
 
@@ -207,9 +206,9 @@ Use connection.query(query) to execute the query.
    A string that names the table to UPDATE. Required.
 
 `where`:
-   A string or an SQLExpression, represents the WHERE clause. Required.
-   If you need to delete all rows pass ``where=None``; this is a safety
-   measure.
+   An optional string or an SQLExpression, represents the WHERE clause.
+   Required. If you need to delete all rows pass ``where=None``; this is
+   a safety measure.
 
 Example::
 
