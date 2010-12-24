@@ -145,7 +145,7 @@ A class to build INSERT queries. Accepts a number of parameters.
 Use connection.query(query) to execute the query.
 
 `table`:
-   A string that names the table to INSERT into.
+   A string that names the table to INSERT into. Required.
 
 `valueList`:
    A list of (key, value) sequences or {key: value} dictionaries; keys
@@ -181,13 +181,13 @@ A class to build UPDATE queries. Accepts a number of parameters.
 Use connection.query(query) to execute the query.
 
 `table`:
-   A string that names the table to UPDATE.
+   A string that names the table to UPDATE. Required.
 
 `values`:
-   A dictionary {key: value}; keys are column names.
+   A dictionary {key: value}; keys are column names. Required.
 
 `where`:
-   A string or an SQLExpression, represents the WHERE clause.
+   An optional string or an SQLExpression, represents the WHERE clause.
 
 Example::
 
@@ -204,10 +204,12 @@ A class to build DELETE FROM queries. Accepts a number of parameters.
 Use connection.query(query) to execute the query.
 
 `table`:
-   A string that names the table to UPDATE.
+   A string that names the table to UPDATE. Required.
 
 `where`:
-   A string or an SQLExpression, represents the WHERE clause.
+   A string or an SQLExpression, represents the WHERE clause. Required.
+   If you need to delete all rows pass ``where=None``; this is a safety
+   measure.
 
 Example::
 
