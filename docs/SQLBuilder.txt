@@ -77,7 +77,7 @@ mid-level API to execute SQL queries that are not supported by the
 high-level API. To use these objects first construct an instance of a
 statement object, then ask the connection to convert the instance to an
 SQL query and finally ask the connection to execute the query and return
-the results. For example, for Select class::
+the results. For example, for ``Select`` class::
 
     >>> from sqlobject.sqlbuilder import *
     >> select = Select(['name', 'AVG(salary)'], staticTables=['employees'],
@@ -93,58 +93,59 @@ the results. For example, for Select class::
 Select
 ~~~~~~
 
-A class to build SELECT queries. Accepts a number of parameters, all
+A class to build ``SELECT`` queries. Accepts a number of parameters, all
 parameters except `items` are optional.
 
 `items`:
    An SQLExpression or a sequence of SQLExpression's, represents the
-   list of columns. If there are q-values SQLExpression's Select derives
-   a list of tables for SELECT query.
+   list of columns. If there are q-values SQLExpression's ``Select``
+   derives a list of tables for SELECT query.
 
 `where`:
-   An SQLExpression, represents the WHERE clause.
+   An SQLExpression, represents the ``WHERE`` clause.
 
 `groupBy`:
-   An SQLExpression, represents the GROUP BY clause.
+   An SQLExpression, represents the ``GROUP BY`` clause.
 
 `having`:
-   An SQLExpression, represents the HAVING part of the GROUP BY clause.
+   An SQLExpression, represents the ``HAVING`` part of the ``GROUP BY``
+   clause.
 
 `orderBy`:
-   An SQLExpression, represents the ORDER BY clause.
+   An SQLExpression, represents the ``ORDER BY`` clause.
 
 `limit`:
-   An SQLExpression, represents the LIMIT clause.
+   An SQLExpression, represents the ``LIMIT`` clause.
 
 `join`:
-   A (list of) JOINs (LEFT JOIN, etc.)
+   A (list of) JOINs (``LEFT JOIN``, etc.)
 
 `distinct`:
-   A bool flag to turn on DISTINCT query.
+   A bool flag to turn on ``DISTINCT`` query.
 
 `start`, `end`:
-   Integers. Alternative ways to calculate LIMIT. `limit`, if passed,
+   Integers. Alternative ways to calculate ``LIMIT``. `limit`, if passed,
    overrides `end`.
 
 `reversed`:
-   A bool flag to do sorting (ORDER BY) in the reverse direction.
+   A bool flag to do ``ORDER BY`` in the reverse direction.
 
 `forUpdate`:
-   A bool flag to turn on SELECT FOR UPDATE query.
+   A bool flag to turn on ``SELECT FOR UPDATE`` query.
 
 `staticTables`:
-   A sequence of strings or SQLExpression's that name tables for FROM.
-   This parameter must be used if `items` is a list of strings from
-   which Select cannot derive a list of tables.
+   A sequence of strings or SQLExpression's that name tables for
+   ``FROM``. This parameter must be used if `items` is a list of strings
+   from which Select cannot derive a list of tables.
 
 Insert
 ~~~~~~
 
-A class to build INSERT queries. Accepts a number of parameters.
-Use connection.query(query) to execute the query.
+A class to build ``INSERT`` queries. Accepts a number of parameters.
+Use ``connection.query(query)`` to execute the query.
 
 `table`:
-   A string that names the table to INSERT into. Required.
+   A string that names the table to ``INSERT`` into. Required.
 
 `valueList`:
    A list of (key, value) sequences or {key: value} dictionaries; keys
@@ -171,22 +172,22 @@ Use connection.query(query) to execute the query.
 
 Instances of the class work fast and thus are suitable for
 mass-insertion. If one needs to populate a database with SQLObject
-running a lot of INSERT queries this class is the way to go.
+running a lot of ``INSERT`` queries this class is the way to go.
 
 Update
 ~~~~~~
 
-A class to build UPDATE queries. Accepts a number of parameters.
-Use connection.query(query) to execute the query.
+A class to build ``UPDATE`` queries. Accepts a number of parameters.
+Use ``connection.query(query)`` to execute the query.
 
 `table`:
-   A string that names the table to UPDATE. Required.
+   A string that names the table to ``UPDATE``. Required.
 
 `values`:
    A dictionary {key: value}; keys are column names. Required.
 
 `where`:
-   An optional SQLExpression, represents the WHERE clause.
+   An optional SQLExpression, represents the ``WHERE`` clause.
 
 Example::
 
@@ -199,16 +200,16 @@ Example::
 Delete
 ~~~~~~
 
-A class to build DELETE FROM queries. Accepts a number of parameters.
-Use connection.query(query) to execute the query.
+A class to build ``DELETE FROM`` queries. Accepts a number of parameters.
+Use ``connection.query(query)`` to execute the query.
 
 `table`:
-   A string that names the table to UPDATE. Required.
+   A string that names the table to ``UPDATE``. Required.
 
 `where`:
-   An optional string or an SQLExpression, represents the WHERE clause.
-   Required. If you need to delete all rows pass ``where=None``; this is
-   a safety measure.
+   An optional string or an SQLExpression, represents the ``WHERE``
+   clause. Required. If you need to delete all rows pass ``where=None``;
+   this is a safety measure.
 
 Example::
 
@@ -221,10 +222,10 @@ Nested SQL statements (subqueries)
 ==================================
 
 There are a few special operators that receive as parameter SQL
-statements. These are IN, NOTIN, EXISTS, NOTEXISTS, SOME, ANY and ALL.
-Consider the following example: You are interested in removing records
-from a table using deleteMany. However, the criterion for doing so
-depends on another table.
+statements. These are ``IN``, ``NOTIN``, ``EXISTS``, ``NOTEXISTS``,
+``SOME``, ``ANY`` and ``ALL``. Consider the following example: You are
+interested in removing records from a table using deleteMany. However,
+the criterion for doing so depends on another table.
 
 You would expect the following to work::
 
@@ -233,7 +234,7 @@ You would expect the following to work::
        (Workplace.q.id==SOME_ID)))
 
 But this doesn't work! However, you can't do a join in a deleteMany
-call. To work around this issue, use IN::
+call. To work around this issue, use ``IN``::
 
     >> PersonWorkplace.deleteMany(where=
        IN(PersonWorkplace.q.WorkplaceID,
