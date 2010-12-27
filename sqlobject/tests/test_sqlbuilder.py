@@ -1,4 +1,25 @@
-from sqlobject.sqlbuilder import AND, SQLOp, sqlrepr
+from sqlobject import *
+from sqlobject.sqlbuilder import *
+from sqlobject.tests.dbtest import *
+
+class TestSQLBuilder(SQLObject):
+    name = StringCol()
+    value = IntCol()
+
+def test_Select():
+    setupClass(TestSQLBuilder)
+
+    select1 = Select([const.id, func.MAX(const.salary)], staticTables=['employees'])
+    assert sqlrepr(select1) == 'SELECT id, MAX(salary) FROM employees'
+
+    select2 = Select([TestSQLBuilder.q.name, TestSQLBuilder.q.value])
+    assert sqlrepr(select2) == 'SELECT test_sql_builder.name, test_sql_builder.value FROM test_sql_builder'
+
+    union = Union(select1, select2)
+    assert sqlrepr(union) == 'SELECT id, MAX(salary) FROM employees UNION SELECT test_sql_builder.name, test_sql_builder.value FROM test_sql_builder'
+
+    union = Union(TestSQLBuilder.select().queryForSelect())
+    assert sqlrepr(union) == 'SELECT test_sql_builder.id, test_sql_builder.name, test_sql_builder.value FROM test_sql_builder WHERE 1 = 1'
 
 def test_empty_AND():
     assert AND() == None

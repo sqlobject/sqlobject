@@ -412,7 +412,7 @@ class SQLObjectTable(Table):
 class SQLObjectTableWithJoins(SQLObjectTable):
 
     def __getattr__(self, attr):
-        if attr+'ID' in [k for (k,v) in self.soClass.sqlmeta.columns.items() if v.foreignKey]:
+        if attr+'ID' in [k for (k, v) in self.soClass.sqlmeta.columns.items() if v.foreignKey]:
             column = self.soClass.sqlmeta.columns[attr+'ID']
             return self._getattrFromForeignKey(column, attr)
         elif attr in [x.joinMethodName for x in self.soClass.sqlmeta.joins]:
@@ -477,7 +477,7 @@ class AliasTable(Table):
     def __init__(self, table, alias=None):
         if hasattr(table, "sqlmeta"):
             tableName = SQLConstant(table.sqlmeta.table)
-        elif isinstance(table, (Select,Union)):
+        elif isinstance(table, (Select, Union)):
             assert alias is not None, "Alias name cannot be constructed from Select instances, please provide 'alias' kw."
             tableName = Subquery('', table)
             table = None
@@ -527,7 +527,7 @@ class Union(SQLExpression):
                 if isinstance(t, Table):
                     t = t.tableName
                 if not isinstance(t, SQLExpression):
-                    t = SQLConstant(t.sqlmeta.table)
+                    t = SQLConstant(t)
             tabs.append(t)
         self.tables = tabs
 
@@ -1246,7 +1246,7 @@ class ImportProxy(SQLExpression):
         self.sqlmeta = _Delay_proxy(table=_DelayClass(self, clsName))
         self.q = self
         self.soClass = None
-        classregistry.registry(registry).addClassCallback(clsName,lambda foreign, me: setattr(me, 'soClass', foreign), self)
+        classregistry.registry(registry).addClassCallback(clsName, lambda foreign, me: setattr(me, 'soClass', foreign), self)
 
     def __nonzero__(self):
         return True
