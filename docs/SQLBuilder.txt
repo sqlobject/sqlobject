@@ -85,7 +85,7 @@ the results. For example, for ``Select`` class::
     >> query = connection.sqlrepr(select) # Convert to SQL string:
     >>     # SELECT name, AVG(salary) FROM employees GROUP BY name
     >> rows = connection.queryAll(query) # Execute the query
-    >>     # and get back the result as a list of rows
+    >>     # and get back the results as a list of rows
     >>     # where every row is a sequence of length 2 (name and average salary)
 
 .. _`higher-level API`: SQLObject.html
@@ -94,7 +94,8 @@ Select
 ~~~~~~
 
 A class to build ``SELECT`` queries. Accepts a number of parameters, all
-parameters except `items` are optional.
+parameters except `items` are optional. Use ``connection.queryAll(query)``
+to execute the query and get back the results as a list of rows.
 
 `items`:
    An SQLExpression or a sequence of SQLExpression's, represents the
@@ -217,6 +218,24 @@ Example::
     >> query = connection.sqlrepr(update)
            # DELETE FROM person WHERE id=1
     >> connection.query(query)
+
+Union
+~~~~~
+
+A class to build ``UNION`` queries. Accepts a number of parameters -
+``Select`` queries. Use ``connection.queryAll(query)`` to execute the
+query and get back the results.
+
+Example::
+
+    >> select1 = Select(['min', func.MIN(const.salary)], staticTables=['employees'])
+    >> select2 = Select(['max', func.MAX(const.salary)], staticTables=['employees'])
+    >> union = Union(select1, select2)
+    >> query = connection.sqlrepr(union)
+           # SELECT 'min', MIN(salary) FROM employees
+           #    UNION
+           # SELECT 'max', MAX(salary) FROM employees
+    >> rows = connection.queryAll(query)
 
 Nested SQL statements (subqueries)
 ==================================
