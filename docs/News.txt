@@ -13,6 +13,11 @@ SQLObject (trunk)
 Features & Interface
 --------------------
 
+SQLObject 0.15.1
+================
+
+* A bugfix was ported from `SQLObject 0.14.1`_.
+
 SQLObject 0.15.0
 ================
 
@@ -28,6 +33,11 @@ Features & Interface
 * Major API change: post-processing functions for all signals are called
   with the instance as the first parameter. The following signals were
   changed: RowUpdatedSignal, RowDestroySignal, RowDestroyedSignal.
+
+SQLObject 0.14.2
+================
+
+* A minor bug was fixed in sqlbuilder.Union.
 
 SQLObject 0.14.1
 ================
