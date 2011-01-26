@@ -81,6 +81,8 @@ TODO
 
 * Python 3.0+.
 
+* Switch from setuptools to distribute.
+
 * py-postgresql driver: http://python.projects.postgresql.org/
 
 * MySQL Connector/Python: https://launchpad.net/myconnpy
@@ -96,6 +98,8 @@ TODO
 * Or move column values access to a separate namespace, e.g. .c: row.c.name.
 
 * More documentation. Wiki. Trac. Mercurial.
+
+* RSS 2.0 and Atom news feeds.
 
 * Use DBUtils_, especially SolidConnection.
 
