@@ -1,8 +1,6 @@
 TODO
 ----
 
-* Stop supporting parameter 'backend'.
-
 * Proper %-encoded URI.
 
 * __version__.py

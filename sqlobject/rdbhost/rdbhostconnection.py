@@ -18,15 +18,15 @@ class RdbhostConnection(PostgresConnection):
     schemes = [dbName]
 
     def __init__(self, dsn=None, host=None, port=None, db=None,
-                 user=None, password=None, backend='rdbhost', unicodeCols=False,
+                 user=None, password=None, unicodeCols=False, driver='rdbhost',
                  **kw):
-        backends = backend
-        for backend in backends.split(','):
-            backend = backend.strip()
-            if not backend:
+        drivers = driver
+        for driver in drivers.split(','):
+            driver = driver.strip()
+            if not driver:
                 continue
             try:
-                if backend == 'rdbhost':
+                if driver == 'rdbhost':
                     from rdbhdb import rdbhdb as rdb
                     # monkey patch % escaping into Cursor._execute
                     old_execute = getattr(rdb.Cursor, '_execute')
@@ -38,13 +38,13 @@ class RdbhostConnection(PostgresConnection):
                     setattr(rdb.Cursor, '_execute', _execute)
                     self.module = rdb
                 else:
-                    raise ValueError('Unknown Rdbhost backend %s'%backend)
+                    raise ValueError('Unknown Rdbhost driver %s' % driver)
             except ImportError:
                 pass
             else:
                 break
         else:
-            raise ImportError('Cannot find the Rdbhost backend')
+            raise ImportError('Cannot find the Rdbhost driver')
         self.user = user
         self.host = host
         self.port = port

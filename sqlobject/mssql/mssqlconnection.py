@@ -10,8 +10,7 @@ class MSSQLConnection(DBAPI):
 
     def __init__(self, db, user, password='', host='localhost',
                  autoCommit=0, **kw):
-        drivers = kw.pop('driver', None) or \
-            kw.pop('backend', None) or 'adodb,pymssql'
+        drivers = kw.pop('driver', None) or 'adodb,pymssql'
         for driver in drivers.split(','):
             driver = driver.strip()
             if not driver:

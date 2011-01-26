@@ -22,8 +22,7 @@ class SQLiteConnection(DBAPI):
     schemes = [dbName]
 
     def __init__(self, filename, autoCommit=1, **kw):
-        drivers = kw.pop('driver', None) or \
-            kw.pop('backend', None) or 'pysqlite2,sqlite3,sqlite'
+        drivers = kw.pop('driver', None) or 'pysqlite2,sqlite3,sqlite'
         for driver in drivers.split(','):
             driver = driver.strip()
             if not driver:

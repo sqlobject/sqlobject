@@ -12,8 +12,7 @@ class PostgresConnection(DBAPI):
 
     def __init__(self, dsn=None, host=None, port=None, db=None,
                  user=None, password=None, **kw):
-        drivers = kw.pop('driver', None) or \
-            kw.pop('backend', None) or 'psycopg'
+        drivers = kw.pop('driver', None) or 'psycopg'
         for driver in drivers.split(','):
             driver = driver.strip()
             if not driver:

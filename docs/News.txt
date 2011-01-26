@@ -13,6 +13,8 @@ SQLObject (trunk)
 Features & Interface
 --------------------
 
+* Parameter 'backend' in DB URI is no longer supported, use parameter 'driver'.
+
 SQLObject 0.15.1
 ================
 
