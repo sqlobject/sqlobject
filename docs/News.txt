@@ -13,7 +13,8 @@ SQLObject (trunk)
 Features & Interface
 --------------------
 
-* Parameter 'backend' in DB URI is no longer supported, use parameter 'driver'.
+* Parameter ``backend`` in DB URI is no longer supported, use parameter
+  ``driver``.
 
 SQLObject 0.15.1
 ================
@@ -67,7 +68,7 @@ Features & Interface
   value True; this means the default schema parser is now based on ``PRAGMA
   table_info()``.
 
-* Major API change: attribute 'dirty' was moved to sqlmeta.
+* Major API change: attribute ``dirty`` was moved to sqlmeta.
 
 SQLObject 0.13.1
 ================
@@ -114,7 +115,7 @@ Small Features
 
 * Renamed db_encoding to dbEncoding in UnicodeStringValidator.
 
-* A new parameter 'sslmode' was added to PostgresConnection.
+* A new parameter ``sslmode`` was added to PostgresConnection.
 
 * Removed SQLValidator - its attemptConvert was never called because in
   FormEncode it's named attempt_convert.
@@ -122,8 +123,9 @@ Small Features
 SQLObject 0.12.5
 ================
 
-* 'backend' parameter was renamed to 'driver'. To preserve backward
-  compatibility 'backend' is recognized and will be recognized for some time.
+* ``backend`` parameter was renamed to ``driver``. To preserve backward
+  compatibility ``backend`` is still recognized and will be recognized
+  for some time.
 
 SQLObject 0.12.4
 ================
@@ -168,29 +170,30 @@ Features & Interface
 * .selectBy(), .deleteBy() and .by*() methods pass all values through
   .from_python(), not only unicode.
 
-* The user can choose a DB API driver for SQLite by using a "backend"
+* The user can choose a DB API driver for SQLite by using a ``backend``
   parameter in DB URI or SQLiteConnection that can be a comma-separated
-  list of backend names. Possible backends are: "pysqlite2" (alias
-  "sqlite2"), "sqlite3", "sqlite" (alias "sqlite1"). Default is to test
-  pysqlite2, sqlite3 and sqlite in that order.
+  list of backend names. Possible backends are: ``pysqlite2`` (alias
+  ``sqlite2``), ``sqlite3``, ``sqlite`` (alias ``sqlite1``). Default is
+  to test pysqlite2, sqlite3 and sqlite in that order.
 
-* The user can choose a DB API driver for PostgreSQL by using a "backend"
+* The user can choose a DB API driver for PostgreSQL by using a ``backend``
   parameter in DB URI or PostgresConnection that can be a comma-separated
-  list of backend names. Possible backends are: "psycopg2", "psycopg1",
-  "psycopg" (tries psycopg2 and psycopg1), "pygresql". Default is
-  "psycopg".
+  list of backend names. Possible backends are: ``psycopg2``, ``psycopg1``,
+  ``psycopg`` (tries psycopg2 and psycopg1), ``pygresql``. Default is
+  ``psycopg``.
   WARNING: API change! PostgresConnection's parameter
-  "usePygresql" is now replaced with "backend=pygresql".
+  ``usePygresql`` is now replaced with ``backend=pygresql``.
 
-* The user can choose a DB API driver for MSSQL by using a "backend"
-  parameter in DB URI or MSSQLConnection that can be a comma-separated list
-  of backend names. Possible backends are: "adodb" (alias "adodbapi") and
-  "pymssql". Default is to test adodbapi and pymssql in that order.
+* The user can choose a DB API driver for MSSQL by using a ``backend``
+  parameter in DB URI or MSSQLConnection that can be a comma-separated
+  list of backend names. Possible backends are: ``adodb`` (alias
+  ``adodbapi``) and ``pymssql``. Default is to test adodbapi and pymssql
+  in that order.
 
 * alternateMethodName is defined for all unique fields, not only alternateID;
   this makes SQLObject create .by*() methods for all unique fields.
 
-* SET client_encoding for PostgreSQL to the value of "charset" parameter
+* SET client_encoding for PostgreSQL to the value of ``charset`` parameter
   in DB URI or PostgresConnection.
 
 * TimestampCol() can be instantiated without any defaults, in this case
@@ -286,8 +289,9 @@ Features & Interface
 * Dropped support for PostgreSQL 7.2. The minimal supported version of
   PostgreSQL is 7.3 now.
 
-* New magic attribute 'j' similar to 'q' was added that automagically does
-  join with the other table in MultipleJoin or RelatedJoin.
+* New magic attribute ``j`` similar to ``q`` was added that
+  automagically does join with the other table in MultipleJoin or
+  RelatedJoin.
 
 * SQLObject can now create and drop a database in MySQL, PostgreSQL, SQLite
   and Firebird/Interbase.

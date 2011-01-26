@@ -151,10 +151,10 @@ its `getting started`_ document for more.
 .. __: http://codespeak.net/py/current/doc/test.html
 .. _getting started: http://codespeak.net/py/dist/test.html#starting-point-py-test-command-line-tool
 
-To actually run the test, you have to give it a database to connect
-to. You do so with the option "-D". You can either give a complete URI or one of several
-shortcuts like ``mysql`` (these shortcuts are defined in the top of
-``tests/dbtest.py``).
+To actually run the test, you have to give it a database to connect to.
+You do so with the option ``-D``. You can either give a complete URI or
+one of several shortcuts like ``mysql`` (these shortcuts are defined in
+the top of ``tests/dbtest.py``).
 
 All the tests are modules in ``sqlobject/tests``.  Each module tests
 one kind of feature, more or less.  If you are testing a module, call

@@ -477,7 +477,7 @@ SQLObject doesn't evaluate firstName but stores the expression:
 
     Person.q.firstName=="John"
 
-converts it to the string "first_name = 'John'" and passes the string to
+converts it to the string ``first_name = 'John'`` and passes the string to
 the backend.
 
 selectBy Method
@@ -1279,17 +1279,17 @@ Several keyword arguments are allowed to the `MultipleJoin` constructor:
 .. _`Multiple Join Keywords`:
 
 `joinColumn`:
-    The column name of the key that points to this table.  So, if you have
-    a table ``Product``, and another table has a column ``ProductNo`` that
-    points to this table, then you'd use ``joinColumn="ProductNo"``.
-    WARNING: the argument you pass must conform to the column name in the
-    database, not to the column in the class. So, if you have a SQLObject
-    containing the 'ProductNo' column, this will probably be translated
-    into 'product_no_id' in the DB ( product_no is the normal uppercase-
-    to-lowercase + underscores SQLO Translation, the added _id is just
-    because the column referring to the table is probably a ForeignKey,
-    and SQLO translates foreign keys that way).
-    You should pass that parameter.
+    The column name of the key that points to this table.  So, if you
+    have a table ``Product``, and another table has a column
+    ``ProductNo`` that points to this table, then you'd use
+    ``joinColumn="ProductNo"``. WARNING: the argument you pass must
+    conform to the column name in the database, not to the column in the
+    class. So, if you have a SQLObject containing the ``ProductNo``
+    column, this will probably be translated into ``product_no_id`` in
+    the DB (``product_no`` is the normal uppercase- to-lowercase +
+    underscores SQLO Translation, the added _id is just because the
+    column referring to the table is probably a ForeignKey, and SQLO
+    translates foreign keys that way). You should pass that parameter.
 `orderBy`:
     Like the `orderBy`_ argument to `select()`, you can specify
     the order that the joined objects should be returned in.  `defaultOrder`
@@ -1407,9 +1407,10 @@ The ``trans`` object here is essentially a wrapper around a single
 database connection, and `commit` and `rollback` just pass that
 message to the low-level connection.
 
-One can call as much .commit()'s, but after a .rollback() one has to call
-.begin(). The last .commit() should be called as .commit(close=True) to
-release low-level connection back to the connection pool.
+One can call as much ``.commit()``'s, but after a ``.rollback()`` one
+has to call ``.begin()``. The last ``.commit()`` should be called as
+``.commit(close=True)`` to release low-level connection back to the
+connection pool.
 
 You can use SELECT FOR UPDATE in those databases that support it::
 
@@ -1563,7 +1564,7 @@ If the database table/view has ONE NUMERIC Primary Key then sqlmeta - idName
 should be used to map the table column name to SQLObject id column.
 
 If the Primary Key consists only of number columns it is possible to create a
-virtual column "id" this way:
+virtual column ``id`` this way:
 
 Example for Postgresql:
 
@@ -1592,7 +1593,7 @@ which returns a 3digit number which can be concatenated as shown above.
 
 Caveats:
 
-* this way the "id" may become a very large integer number which may cause
+* this way the ``id`` may become a very large integer number which may cause
   troubles elsewhere.
 
 * no performance loss takes place if the where clauses specifies the PK
@@ -1619,7 +1620,7 @@ key is assumed to be simply ``id``.
 
 Other styles exist.  A typical one is mixed case column names, and a
 primary key that includes the table name, like ``ProductID``.  You can
-use a different "Style" object to indicate a different naming
+use a different `Style` object to indicate a different naming
 convention.  For instance::
 
     class Person(SQLObject):
@@ -1674,13 +1675,14 @@ You can pass the keyword argument `debug` to any connector.  If set to
 true, then any SQL sent to the database will also be printed to the
 console.
 
-You can additionally pass `logger` keyword argument which should be a name
-of the logger to use. If specified and `debug` is ``True``, SQLObject will
-write debug print statements via that logger instead of printing directly
-to console. The argument `loglevel` allows to choose the logging level - it
-can be "debug", "info", "warning", "error", "critical" or "exception". In
-case `logger` is empty or absent SQLObject uses prints instead of logging;
-`loglevel` can be "stdout" or "stderr" in this case; default is "stdout".
+You can additionally pass `logger` keyword argument which should be a
+name of the logger to use. If specified and `debug` is ``True``,
+SQLObject will write debug print statements via that logger instead of
+printing directly to console. The argument `loglevel` allows to choose
+the logging level - it can be ``debug``, ``info``, ``warning``,
+``error``, ``critical`` or ``exception``. In case `logger` is absent or
+empty SQLObject uses ``print``'s instead of logging; `loglevel` can be
+``stdout`` or ``stderr`` in this case; default is ``stdout``.
 
 To configure logging one can do something like that::
 
@@ -1711,7 +1713,7 @@ transactions_ when using the InnoDB backend, and SQLObject currently
 does not have support for explicitly defining the backend when using
 ``createTable``.
 
-Keyword argument "conv" allows to pass a list of custom converters.
+Keyword argument ``conv`` allows to pass a list of custom converters.
 Example::
 
     import time
@@ -1744,10 +1746,11 @@ and a dsn string will be constructed.
 
 PostgresConnection supports transactions and all other features.
 
-The user can choose a DB API driver for PostgreSQL by using a "driver"
+The user can choose a DB API driver for PostgreSQL by using a ``driver``
 parameter in DB URI or PostgresConnection that can be a comma-separated
-list of driver names. Possible drivers are: "psycopg2", "psycopg1",
-"psycopg" (tries psycopg2 and psycopg1), "pygresql". Default is "psycopg".
+list of driver names. Possible drivers are: ``psycopg2``, ``psycopg1``,
+``psycopg`` (tries psycopg2 and psycopg1), ``pygresql``. Default is
+``psycopg``.
 
 SQLite
 ------
@@ -1763,10 +1766,10 @@ column -- strings can go in integer columns, dates in integers, etc.
 SQLite may have concurrency issues, depending on your usage in a
 multi-threaded environment.
 
-The user can choose a DB API driver for SQLite by using a "driver"
+The user can choose a DB API driver for SQLite by using a ``driver``
 parameter in DB URI or SQLiteConnection that can be a comma-separated list
-of driver names. Possible drivers are: "pysqlite2" (alias "sqlite2"),
-"sqlite3", "sqlite" (alias "sqlite1"). Default is to test pysqlite2,
+of driver names. Possible drivers are: ``pysqlite2`` (alias ``sqlite2``),
+``sqlite3``, ``sqlite`` (alias ``sqlite1``). Default is to test pysqlite2,
 sqlite3 and sqlite in that order.
 
 Firebird
@@ -1852,15 +1855,15 @@ This will then be mapped to either the correct driver format.  If running
 SQL Server on a "named" port, make sure to specify the port number in the
 URI.
 
-The two drivers currently supported are pymssql_ and adodbapi_.
+The two drivers currently supported are adodbapi_ and pymssql_.
 
-.. _pymssql: http://pymssql.sourceforge.net/
 .. _adodbapi: http://adodbapi.sourceforge.net/
+.. _pymssql: http://pymssql.sourceforge.net/
 
-The user can choose a DB API driver for MSSQL by using a "driver"
+The user can choose a DB API driver for MSSQL by using a ``driver``
 parameter in DB URI or MSSQLConnection that can be a comma-separated list
-of driver names. Possible drivers are: "adodb" (alias "adodbapi") and
-"pymssql". Default is to test adodbapi and pymssql in that order.
+of driver names. Possible drivers are: ``adodb`` (alias ``adodbapi``) and
+``pymssql``. Default is to test ``adodbapi`` and ``pymssql`` in that order.
 
 Events (signals)
 ================
@@ -2043,9 +2046,9 @@ the outer query.
 Select() is used instead of .select() because you need to control what
 columns the inner query returns.
 
-Available queries are IN(), NOTIN(), EXISTS(), NOTEXISTS(), SOME(), ANY()
-and ALL(). The last 3 are used with comparison operators, like this:
-"somevalue = ANY(Select(...))".
+Available queries are ``IN()``, ``NOTIN()``, ``EXISTS()``,
+``NOTEXISTS()``, ``SOME()``, ``ANY()`` and ``ALL()``. The last 3 are
+used with comparison operators, like this: ``somevalue = ANY(Select(...))``.
 
 Utilities
 ---------

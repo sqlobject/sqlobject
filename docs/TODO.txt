@@ -26,7 +26,7 @@ TODO
           tableParamSQL = 'ENGINE InnoDB'
           tableParamSQL = {'mysql': 'ENGINE InnoDB'}
 
-* List tables in the DB. The query in MySQL is 'SHOW TABLES'; in SQLite it is
+* List tables in the DB. The query in MySQL is ``SHOW TABLES``; in SQLite it is
 
     SELECT name FROM sqlite_master WHERE type='table' ORDER BY name
 
@@ -54,7 +54,7 @@ TODO
 
 * Cache columns in sqlmeta.getColumns(); reset the cache on add/Del Column/Join.
 
-* Stop supporting Python 2.4: use 'with lock'; use hashlib instead of md5.
+* Stop supporting Python 2.4: use ``with lock``; use hashlib instead of md5.
 
 * Stop supporting Python 2.5: remove import sets.
 

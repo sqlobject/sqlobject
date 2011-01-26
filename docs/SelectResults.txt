@@ -191,7 +191,7 @@ named ``teachers``. Similarily, with a self-joining foreign key named
   Person.select(Person.q.name=='Steve').throughTo.father.throughTo.father
 
 returns a SelectResult of Persons who are the paternal grandfather of someone
-named 'Steve'.
+named ``Steve``.
 
 .. image:: http://sflogo.sourceforge.net/sflogo.php?group_id=74338&type=10
    :target: http://sourceforge.net/projects/sqlobject
