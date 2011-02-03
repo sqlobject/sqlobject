@@ -13,6 +13,8 @@ SQLObject (trunk)
 Features & Interface
 --------------------
 
+* In SQLite, id columns are made AUTOINCREMENT.
+
 * Parameter ``backend`` in DB URI is no longer supported, use parameter
   ``driver``.
 

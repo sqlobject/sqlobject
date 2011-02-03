@@ -252,8 +252,9 @@ class SQLiteConnection(DBAPI):
         return self._createIDColumn(soClass.sqlmeta)
 
     def _createIDColumn(self, sqlmeta):
-        key_type = {int: "INTEGER", str: "TEXT"}[sqlmeta.idType]
-        return '%s %s PRIMARY KEY' % (sqlmeta.idName, key_type)
+        if sqlmeta.idType == str:
+            return '%s TEXT PRIMARY KEY' % sqlmeta.idName
+        return '%s INTEGER PRIMARY KEY AUTOINCREMENT' % sqlmeta.idName
 
     def joinSQLType(self, join):
         return 'INT NOT NULL'
