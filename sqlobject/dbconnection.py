@@ -1,22 +1,20 @@
-import threading
-from util.threadinglocal import local as threading_local
-import sys
-import re
-import warnings
 import atexit
-import os
+import inspect
 import new
+import sys
+import threading
 import types
 import urllib
+import warnings
 import weakref
-import inspect
-import sqlbuilder
+
 from cache import CacheSet
-import col
-import main
-from joins import sorter
-from converters import sqlrepr
 import classregistry
+import col
+from converters import sqlrepr
+import main
+import sqlbuilder
+from util.threadinglocal import local as threading_local
 
 warnings.filterwarnings("ignore", "DB-API extension cursor.lastrowid used")
 
@@ -84,8 +82,7 @@ class DBConnection:
         self._connectionCount = 1
         self.autoCommit = Boolean(autoCommit)
         self.registry = registry or None
-        classregistry.registry(self.registry).addCallback(
-            self.soClassAdded)
+        classregistry.registry(self.registry).addCallback(self.soClassAdded)
         registerConnectionInstance(self)
         atexit.register(_closeConnection, weakref.ref(self))
 
