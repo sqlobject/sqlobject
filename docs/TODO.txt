@@ -17,6 +17,9 @@ TODO
 
 * delColumn('foreignKey'), delColumn('foreignKeyID')
 
+* ForeignKey('Table', otherColumn='other_id') to allow ForeignKey to
+  point to a non-id column.
+
 * RelatedJoin.hasOther(otherObject[.id])
 
 * tableParamSQL::
