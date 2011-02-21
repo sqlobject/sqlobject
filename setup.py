@@ -52,7 +52,7 @@ For development see the `subversion repository
       download_url="http://cheeseshop.python.org/pypi/SQLObject/1.0",
       license="LGPL",
       packages=["sqlobject"] + ['sqlobject.%s' % package for package in subpackages],
-      scripts=["scripts/sqlobject-admin"],
+      scripts=["scripts/sqlobject-admin", "scripts/sqlobject-convertURI"],
       install_requires=["FormEncode>=1.1.1"],
       extras_require={
         'mysql': ['MySQLdb'],

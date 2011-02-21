@@ -1,8 +1,6 @@
 TODO
 ----
 
-* Proper %-encoded URI.
-
 * __version__.py
 
 * Release 1.0.
@@ -79,6 +77,8 @@ TODO
 
 * Better joins - automatic joins in .select()
   based on ForeignKey/MultipleJoin/RelatedJoin.
+
+* Deprecate, then remove connectionForOldURI.
 
 * Python 3.0+.
 

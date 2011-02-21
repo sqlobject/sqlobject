@@ -8,7 +8,7 @@ class SybaseConnection(DBAPI):
     schemes = [dbName]
     NumericType = None
 
-    def __init__(self, db, user, password='', host='localhost',
+    def __init__(self, db, user, password='', host='localhost', port=None,
                  locking=1, **kw):
         db = db.strip('/')
         import Sybase
@@ -21,6 +21,7 @@ class SybaseConnection(DBAPI):
         self.module = Sybase
         self.locking = int(locking)
         self.host = host
+        self.port = port
         self.db = db
         self.user = user
         self.password = password
@@ -32,11 +33,10 @@ class SybaseConnection(DBAPI):
         kw['autoCommit'] = autoCommit
         DBAPI.__init__(self, **kw)
 
-    def connectionFromURI(cls, uri):
-        user, password, host, port, path, args = cls._parseURI(uri)
-        return cls(user=user, password=password, host=host or 'localhost',
-                   db=path, **args)
-    connectionFromURI = classmethod(connectionFromURI)
+    def _connectionFromParams(cls, user, password, host, port, path, args):
+        return cls(user=user, password=password,
+                   host=host or 'localhost', port=port, db=path, **args)
+    _connectionFromParams = classmethod(_connectionFromParams)
 
     def insert_id(self, conn):
         """

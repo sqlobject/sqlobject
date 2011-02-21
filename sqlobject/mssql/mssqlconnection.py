@@ -8,7 +8,7 @@ class MSSQLConnection(DBAPI):
     dbName = 'mssql'
     schemes = [dbName]
 
-    def __init__(self, db, user, password='', host='localhost',
+    def __init__(self, db, user, password='', host='localhost', port=None,
                  autoCommit=0, **kw):
         drivers = kw.pop('driver', None) or 'adodb,pymssql'
         for driver in drivers.split(','):
@@ -64,6 +64,7 @@ class MSSQLConnection(DBAPI):
 
         self.autoCommit=int(autoCommit)
         self.host = host
+        self.port = port
         self.db = db
         self.user = user
         self.password = password
@@ -72,12 +73,11 @@ class MSSQLConnection(DBAPI):
         self._can_use_max_types = None
         DBAPI.__init__(self, **kw)
 
-    def connectionFromURI(cls, uri):
-        user, password, host, port, path, args = cls._parseURI(uri)
+    def _connectionFromParams(cls, user, password, host, port, path, args):
         path = path.strip('/')
-        return cls(user=user, password=password, host=host or 'localhost',
-                   db=path, **args)
-    connectionFromURI = classmethod(connectionFromURI)
+        return cls(user=user, password=password,
+                   host=host or 'localhost', port=port, db=path, **args)
+    _connectionFromParams = classmethod(_connectionFromParams)
 
     def insert_id(self, conn):
         """

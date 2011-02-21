@@ -11,13 +11,14 @@ class FirebirdConnection(DBAPI):
 
     limit_re = re.compile('^\s*(select )(.*)', re.IGNORECASE)
 
-    def __init__(self, host, db, user='sysdba',
+    def __init__(self, host, port, db, user='sysdba',
                  password='masterkey', autoCommit=1,
                  dialect=None, role=None, charset=None, **kw):
         import kinterbasdb
         self.module = kinterbasdb
 
         self.host = host
+        self.port = port
         self.db = db
         self.user = user
         self.password = password
@@ -30,8 +31,7 @@ class FirebirdConnection(DBAPI):
 
         DBAPI.__init__(self, **kw)
 
-    def connectionFromURI(cls, uri):
-        auth, password, host, port, path, args = cls._parseURI(uri)
+    def _connectionFromParams(cls, auth, password, host, port, path, args):
         if not password:
             password = 'masterkey'
         if not auth:
@@ -40,8 +40,8 @@ class FirebirdConnection(DBAPI):
         if (path[0] == '/') and path[-3:].lower() not in ('fdb', 'gdb'):
             path = path[1:]
         path = path.replace('/', os.sep)
-        return cls(host, db=path, user=auth, password=password, **args)
-    connectionFromURI = classmethod(connectionFromURI)
+        return cls(host, port, db=path, user=auth, password=password, **args)
+    _connectionFromParams = classmethod(_connectionFromParams)
 
     def _runWithConnection(self, meth, *args):
         if not self.autoCommit:

@@ -152,12 +152,8 @@ Examples::
     postgres:///full/path/to/socket/database
     postgres://host:5432/database
     sqlite:///full/path/to/database
-    sqlite:/C|/full/path/to/database
+    sqlite:/C:/full/path/to/database
     sqlite:/:memory:
-
-Note that there is a special syntax to specify full path on w32 systems
-(useable for sqlite and firebird); also sqlite can manipulate special
-in-memory databases.
 
 Parameters are: ``debug`` (default: False), ``debugOutput`` (default: False),
 ``cache`` (default: True), ``autoCommit`` (default: True),

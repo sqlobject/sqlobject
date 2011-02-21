@@ -59,27 +59,28 @@ class MaxdbConnection(DBAPI):
     dbName = 'maxdb'
     schemes = [dbName]
 
-    def __init__ (self, user, password, database,
-                  host='', autoCommit=1, sqlmode='internal',
+    def __init__ (self, host='', port=None, user=None, password=None,
+                  database=None, autoCommit=1, sqlmode='internal',
                   isolation=None, timeout=None, **kw):
         from sapdb import dbapi
         self.module = dbapi
-        self.autoCommit = autoCommit
+        self.host      = host
+        self.port      = port
         self.user      = user
         self.password  = password
         self.database  = database
-        self.host      = host
+        self.autoCommit = autoCommit
         self.sqlmode   = sqlmode
         self.isolation = isolation
         self.timeout   = timeout
 
         DBAPI.__init__(self, **kw)
 
-    def connectionFromURI(cls, uri):
-        auth, password, host, port, path, args = cls._parseURI(uri)
+    def _connectionFromParams(cls, auth, password, host, port, path, args):
         path = path.replace('/', os.path.sep)
-        return cls(host, db=path, user=auth, password=password, **args)
-    connectionFromURI = classmethod(connectionFromURI)
+        return cls(host, port, user=auth, password=password,
+            database=path, **args)
+    _connectionFromParams = classmethod(_connectionFromParams)
 
     def _getConfigParams(self,sqlmode,auto):
         autocommit='off'

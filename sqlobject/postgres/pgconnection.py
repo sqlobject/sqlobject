@@ -106,15 +106,14 @@ class PostgresConnection(DBAPI):
         self.dbEncoding = kw.pop("charset", None)
         DBAPI.__init__(self, **kw)
 
-    def connectionFromURI(cls, uri):
-        user, password, host, port, path, args = cls._parseURI(uri)
+    def _connectionFromParams(cls, user, password, host, port, path, args):
         path = path.strip('/')
         if (host is None) and path.count('/'): # Non-default unix socket
             path_parts = path.split('/')
             host = '/' + '/'.join(path_parts[:-1])
             path = path_parts[-1]
         return cls(host=host, port=port, db=path, user=user, password=password, **args)
-    connectionFromURI = classmethod(connectionFromURI)
+    _connectionFromParams = classmethod(_connectionFromParams)
 
     def _setAutoCommit(self, conn, auto):
         # psycopg2 does not have an autocommit method.

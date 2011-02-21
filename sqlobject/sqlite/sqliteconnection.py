@@ -95,25 +95,27 @@ class SQLiteConnection(DBAPI):
             self._memoryConn = sqlite.connect(
                 self.filename, **self._connOptions)
 
-    def connectionFromURI(cls, uri):
-        user, password, host, port, path, args = cls._parseURI(uri)
-        assert host is None, (
+    def _connectionFromParams(cls, user, password, host, port, path, args):
+        assert host is None and port is None, (
             "SQLite can only be used locally (with a URI like "
-            "sqlite:///file or sqlite:/file, not %r)" % uri)
+            "sqlite:/file or sqlite:///file, not sqlite://%s%s)" %
+            (host, ':%r' % port if port else ''))
         assert user is None and password is None, (
             "You may not provide usernames or passwords for SQLite "
             "databases")
         if path == "/:memory:":
             path = ":memory:"
         return cls(filename=path, **args)
-    connectionFromURI = classmethod(connectionFromURI)
+    _connectionFromParams = classmethod(_connectionFromParams)
 
     def uri(self):
         path = self.filename
         if path == ":memory:":
             path = "/:memory:"
-        else:
+        elif path.startswith('/'):
             path = "//" + path
+        else:
+            path = "///" + path
         return 'sqlite:%s' % path
 
     def getConnection(self):

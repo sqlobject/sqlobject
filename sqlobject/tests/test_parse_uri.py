@@ -18,7 +18,7 @@ def test_parse():
 
     user, password, host, port, path, args = _parseURI("mysql://user:pass%20word@host/database?unix_socket=/var/mysql/socket")
     assert user == "user"
-    assert password == "pass%20word"
+    assert password == "pass word"
     assert host == "host"
     assert port is None
     assert path == "/database"
@@ -41,9 +41,9 @@ def test_parse():
     assert args == {}
 
     user, password, host, port, path, args = _parseURI("postgres:///full/path/to/socket/database")
-    assert user == None
+    assert user is None
     assert password is None
-    assert host == None
+    assert host is None
     assert port is None
     assert path == "/full/path/to/socket/database"
     assert args == {}
@@ -78,5 +78,13 @@ def test_parse():
         assert password is None
         assert host is None
         assert port is None
-        assert path == "C:/full/path/to/database"
+        assert path == "/C:/full/path/to/database"
+        assert args == {}
+
+        user, password, host, port, path, args = _parseURI("sqlite:///C:/full/path/to/database")
+        assert user is None
+        assert password is None
+        assert host is None
+        assert port is None
+        assert path == "/C:/full/path/to/database"
         assert args == {}

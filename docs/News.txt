@@ -13,6 +13,11 @@ SQLObject (trunk)
 Features & Interface
 --------------------
 
+* Major API change: DB URI parser was changed to use urllib.split*() and
+  unquote(). This means any username/password/path are allowed in DB
+  URIs if they are properly %-encoded, and DB URIs are automatically
+  unquoted.
+
 * In SQLite, id columns are made AUTOINCREMENT.
 
 * Parameter ``backend`` in DB URI is no longer supported, use parameter

@@ -1,6 +1,8 @@
 import atexit
+from cgi import parse_qsl
 import inspect
 import new
+import os
 import sys
 import threading
 import types
@@ -87,7 +89,7 @@ class DBConnection:
         atexit.register(_closeConnection, weakref.ref(self))
 
     def uri(self):
-        auth = getattr(self, 'user', '')
+        auth = getattr(self, 'user', '') or ''
         if auth:
             if self.password:
                 auth = auth + ':' + self.password
@@ -98,17 +100,23 @@ class DBConnection:
         uri = '%s://%s' % (self.dbName, auth)
         if self.host:
             uri += self.host
+            if self.port:
+                uri += ':%d' % self.port
         uri += '/'
         db = self.db
         if db.startswith('/'):
             db = path[1:]
         return uri + db
 
+    def connectionFromOldURI(cls, uri):
+        return cls._connectionFromParams(*cls._parseOldURI(uri))
+    connectionFromOldURI = classmethod(connectionFromOldURI)
+
     def connectionFromURI(cls, uri):
-        raise NotImplemented
+        return cls._connectionFromParams(*cls._parseURI(uri))
     connectionFromURI = classmethod(connectionFromURI)
 
-    def _parseURI(uri):
+    def _parseOldURI(uri):
         schema, rest = uri.split(':', 1)
         assert rest.startswith('/'), "URIs must start with scheme:/ -- you did not include a / (in %r)" % rest
         if rest.startswith('/') and not rest.startswith('//'):
@@ -155,6 +163,42 @@ class DBConnection:
                 argname, argvalue = single.split('=', 1)
                 argvalue = urllib.unquote(argvalue)
                 args[argname] = argvalue
+        return user, password, host, port, path, args
+    _parseOldURI = staticmethod(_parseOldURI)
+
+    def _parseURI(uri):
+        protocol, request = urllib.splittype(uri)
+        user, password, port = None, None, None
+        host, path = urllib.splithost(request)
+
+        if host:
+            user, host = urllib.splituser(host)
+            if user:
+                user, password = urllib.splitpasswd(user)
+            host, port = urllib.splitport(host)
+            if port: port = int(port)
+        elif host == '':
+            host = None
+
+        # hash-tag is splitted but ignored
+        path, tag = urllib.splittag(path)
+        path, query = urllib.splitquery(path)
+
+        path = urllib.unquote(path)
+        if (os.name == 'nt') and (len(path) > 2):
+            # Preserve backward compatibility with URIs like /C|/path;
+            # replace '|' by ':'
+            if path[2] == '|':
+                path = "%s:%s" % (path[0:2], path[3:])
+            # Remove leading slash
+            if (path[0] == '/') and (path[2] == ':'):
+                path = path[1:]
+
+        args = {}
+        if query:
+            for name, value in parse_qsl(query):
+                args[name] = value
+
         return user, password, host, port, path, args
     _parseURI = staticmethod(_parseURI)
 
