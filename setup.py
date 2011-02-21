@@ -21,7 +21,7 @@ if is_setuptools:
     """
 
 setup(name="SQLObject",
-      version="0.16",
+      version="1.0",
       description="Object-Relational Manager, aka database wrapper",
       long_description="""\
 SQLObject is a popular *Object Relational Manager* for providing an
@@ -35,7 +35,7 @@ applications.
 Supports MySQL, PostgreSQL, SQLite, Firebird, Sybase, MSSQL and MaxDB (SAPDB).
 
 For development see the `subversion repository
-<http://svn.colorstudy.com/SQLObject/trunk#egg=SQLObject-0.16dev>`_
+<http://svn.colorstudy.com/SQLObject/trunk#egg=SQLObject-1.0dev>`_
 """,
       classifiers=[
         "Development Status :: 5 - Production/Stable",
@@ -49,7 +49,7 @@ For development see the `subversion repository
       author="Ian Bicking",
       author_email="ianb@colorstudy.com",
       url="http://sqlobject.org/devel/",
-      download_url="http://cheeseshop.python.org/pypi/SQLObject/0.16",
+      download_url="http://cheeseshop.python.org/pypi/SQLObject/1.0",
       license="LGPL",
       packages=["sqlobject"] + ['sqlobject.%s' % package for package in subpackages],
       scripts=["scripts/sqlobject-admin"],
@@ -83,10 +83,9 @@ SQLObject is an object-relational mapper.  Your database tables are described
 as classes, and rows are instances of those classes.  SQLObject is meant to be
 easy to use and quick to get started with.
 
-SQLObject supports a number of backends: MySQL, PostgreSQL, SQLite, and
-Firebird.  It also has newly added support for Sybase, MSSQL and MaxDB (also
-known as SAPDB).
-
+It currently supports MySQL through the `MySQLdb` package, PostgreSQL
+through the `psycopg` package, SQLite, Firebird, MaxDB (SAP DB), MS SQL
+Sybase and Rdbhost.  It should support Python versions back to 2.4.
 
 Where is SQLObject
 ==================
