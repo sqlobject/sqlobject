@@ -11,7 +11,7 @@ connection creation sample::
 
     __connection__ = DBConnection.maxdbConnection(
         host=hostname, database=dbname,
-        user=user_name, password=user_password,autoCommit=1,debug=1)
+        user=user_name, password=user_password, autoCommit=1, debug=1)
 """
 from sqlobject.dbconnection import DBAPI
 from sqlobject import col
@@ -68,7 +68,7 @@ class MaxdbConnection(DBAPI):
         self.port      = port
         self.user      = user
         self.password  = password
-        self.database  = database
+        self.db        = database
         self.autoCommit = autoCommit
         self.sqlmode   = sqlmode
         self.isolation = isolation
@@ -97,9 +97,8 @@ class MaxdbConnection(DBAPI):
 
     def _setAutoCommit(self, conn, auto):
         conn.close()
-        conn.__init__(self.user, self.password, self.database,
-                      self.host,
-                      **self._getConfigParams(self.sqlmode,auto))
+        conn.__init__(self.user, self.password, self.db, self.host,
+                      **self._getConfigParams(self.sqlmode, auto))
 
     def createSequenceName(self,table):
         """
@@ -113,8 +112,8 @@ class MaxdbConnection(DBAPI):
 
     def makeConnection(self):
         conn = self.module.Connection(
-            self.user, self.password, self.database, self.host,
-            **self._getConfigParams(self.sqlmode,self.autoCommit))
+            self.user, self.password, self.db, self.host,
+            **self._getConfigParams(self.sqlmode, self.autoCommit))
         return conn
 
     def _queryInsertID(self, conn, soInstance, id, names, values):
