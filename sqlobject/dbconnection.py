@@ -172,9 +172,12 @@ class DBConnection:
         host, path = urllib.splithost(request)
 
         if host:
-            user, host = urllib.splituser(host)
+            # Python < 2.7 have a problem - splituser() calls unquote() too early
+            #user, host = urllib.splituser(host)
+            if '@' in host:
+                user, host = host.split('@', 1)
             if user:
-                user, password = urllib.splitpasswd(user)
+                user, password = [urllib.unquote(x) for x in urllib.splitpasswd(user)]
             host, port = urllib.splitport(host)
             if port: port = int(port)
         elif host == '':

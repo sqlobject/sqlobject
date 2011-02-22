@@ -59,6 +59,8 @@ TODO
 
 * Stop supporting Python 2.5: remove import sets.
 
+* Stop supporting Python 2.6: restore using urllib.splituser in _parseURI.
+
 * Expression columns - in SELECT but not in INSERT/UPDATE. Something like this::
 
     class MyClass(SQLObject):
