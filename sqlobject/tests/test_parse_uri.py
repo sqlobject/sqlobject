@@ -48,9 +48,9 @@ def test_parse():
     assert path == "/full/path/to/socket/database"
     assert args == {}
 
-    user, password, host, port, path, args = _parseURI("postgres://user:at@inpwd@host/database")
-    assert user == "user"
-    assert password == "at@inpwd"
+    user, password, host, port, path, args = _parseURI("postgres://us%3Aer:p%40ssword@host/database")
+    assert user == "us:er"
+    assert password == "p@ssword"
     assert host == "host"
     assert port is None
     assert path == "/database"

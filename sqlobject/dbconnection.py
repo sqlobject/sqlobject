@@ -177,7 +177,7 @@ class DBConnection:
             if '@' in host:
                 user, host = host.split('@', 1)
             if user:
-                user, password = [urllib.unquote(x) for x in urllib.splitpasswd(user)]
+                user, password = [x and urllib.unquote(x) or None for x in urllib.splitpasswd(user)]
             host, port = urllib.splitport(host)
             if port: port = int(port)
         elif host == '':
