@@ -1,6 +1,7 @@
 import base64
 import os
 import thread
+import urllib
 from sqlobject.dbconnection import DBAPI, Boolean
 from sqlobject import col, sqlbuilder
 from sqlobject.dberrors import *
@@ -112,10 +113,12 @@ class SQLiteConnection(DBAPI):
         path = self.filename
         if path == ":memory:":
             path = "/:memory:"
-        elif path.startswith('/'):
-            path = "//" + path
         else:
-            path = "///" + path
+            if path.startswith('/'):
+                path = "//" + path
+            else:
+                path = "///" + path
+            path = urllib.quote(path)
         return 'sqlite:%s' % path
 
     def getConnection(self):

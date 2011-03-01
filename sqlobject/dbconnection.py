@@ -88,7 +88,7 @@ class DBConnection:
         registerConnectionInstance(self)
         atexit.register(_closeConnection, weakref.ref(self))
 
-    def uri(self):
+    def oldUri(self):
         auth = getattr(self, 'user', '') or ''
         if auth:
             if self.password:
@@ -105,8 +105,29 @@ class DBConnection:
         uri += '/'
         db = self.db
         if db.startswith('/'):
-            db = path[1:]
+            db = db[1:]
         return uri + db
+
+    def uri(self):
+        auth = getattr(self, 'user', '') or ''
+        if auth:
+            auth = urllib.quote(auth)
+            if self.password:
+                auth = auth + ':' + urllib.quote(self.password)
+            auth = auth + '@'
+        else:
+            assert not getattr(self, 'password', None), (
+                'URIs cannot express passwords without usernames')
+        uri = '%s://%s' % (self.dbName, auth)
+        if self.host:
+            uri += self.host
+            if self.port:
+                uri += ':%d' % self.port
+        uri += '/'
+        db = self.db
+        if db.startswith('/'):
+            db = db[1:]
+        return uri + urllib.quote(db)
 
     def connectionFromOldURI(cls, uri):
         return cls._connectionFromParams(*cls._parseOldURI(uri))
