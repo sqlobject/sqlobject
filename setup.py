@@ -21,7 +21,7 @@ if is_setuptools:
     """
 
 setup(name="SQLObject",
-      version="1.0",
+      version="1.1",
       description="Object-Relational Manager, aka database wrapper",
       long_description="""\
 SQLObject is a popular *Object Relational Manager* for providing an
@@ -35,7 +35,7 @@ applications.
 Supports MySQL, PostgreSQL, SQLite, Firebird, Sybase, MSSQL and MaxDB (SAPDB).
 
 For development see the `subversion repository
-<http://svn.colorstudy.com/SQLObject/trunk#egg=SQLObject-1.0dev>`_
+<http://svn.colorstudy.com/SQLObject/trunk#egg=SQLObject-1.1dev>`_
 """,
       classifiers=[
         "Development Status :: 5 - Production/Stable",
@@ -49,7 +49,7 @@ For development see the `subversion repository
       author="Ian Bicking",
       author_email="ianb@colorstudy.com",
       url="http://sqlobject.org/devel/",
-      download_url="http://cheeseshop.python.org/pypi/SQLObject/1.0",
+      download_url="http://cheeseshop.python.org/pypi/SQLObject/1.1",
       license="LGPL",
       packages=["sqlobject"] + ['sqlobject.%s' % package for package in subpackages],
       scripts=["scripts/sqlobject-admin", "scripts/sqlobject-convertOldURI"],
