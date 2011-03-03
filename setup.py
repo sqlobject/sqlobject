@@ -1,5 +1,5 @@
-# ez_setup doesn't work with Python 2.2, so we use distutils
-# in that case:
+#!/usr/bin/env python
+
 try:
     from ez_setup import use_setuptools
     use_setuptools()

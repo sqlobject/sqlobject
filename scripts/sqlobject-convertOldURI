@@ -14,6 +14,5 @@ except (ImportError, pkg_resources.DistributionNotFound):
     pass
 
 from sqlobject import connectionForURI
-
 conn = connectionForURI(uri, oldUri=True)
 print conn.uri()
