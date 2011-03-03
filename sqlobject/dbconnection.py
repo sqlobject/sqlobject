@@ -991,7 +991,7 @@ class ConnectionURIOpener(object):
             assert inst.name.find(':') == -1, "You cannot include ':' in your class names (%r)" % cls.name
             self.instanceNames[inst.name] = inst
 
-    def connectionForURI(self, uri, **args):
+    def connectionForURI(self, uri, oldUri=False, **args):
         if args:
             if '?' not in uri:
                 uri += '?' + urllib.urlencode(args)
@@ -1002,7 +1002,10 @@ class ConnectionURIOpener(object):
         if uri.find(':') != -1:
             scheme, rest = uri.split(':', 1)
             connCls = self.dbConnectionForScheme(scheme)
-            conn = connCls.connectionFromURI(uri)
+            if oldUri:
+                conn = connCls.connectionFromOldURI(uri)
+            else:
+                conn = connCls.connectionFromURI(uri)
         else:
             # We just have a name, not a URI
             assert self.instanceNames.has_key(uri), \

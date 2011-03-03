@@ -13,9 +13,7 @@ try:
 except (ImportError, pkg_resources.DistributionNotFound):
     pass
 
-from sqlobject.dbconnection import dbConnectionForScheme
+from sqlobject import connectionForURI
 
-scheme = uri.split(':')[0]
-connCls = dbConnectionForScheme(scheme)
-conn = connCls.connectionFromOldURI(uri)
+conn = connectionForURI(uri, oldUri=True)
 print conn.uri()
