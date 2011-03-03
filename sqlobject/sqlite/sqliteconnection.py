@@ -109,6 +109,14 @@ class SQLiteConnection(DBAPI):
         return cls(filename=path, **args)
     _connectionFromParams = classmethod(_connectionFromParams)
 
+    def oldUri(self):
+        path = self.filename
+        if path == ":memory:":
+            path = "/:memory:"
+        else:
+            path = "//" + path
+        return 'sqlite:%s' % path
+
     def uri(self):
         path = self.filename
         if path == ":memory:":
