@@ -1,6 +1,6 @@
 """
 SQLObject 1.1
---------------
+-------------
 
 :author: Ian Bicking <ianb@colorstudy.com>
 
