@@ -8,6 +8,8 @@ class MSSQLConnection(DBAPI):
     dbName = 'mssql'
     schemes = [dbName]
 
+    limit_re = re.compile('^\s*(select )(.*)', re.IGNORECASE)
+
     def __init__(self, db, user, password='', host='localhost', port=None,
                  autoCommit=0, **kw):
         drivers = kw.pop('driver', None) or 'adodb,pymssql'
@@ -68,7 +70,6 @@ class MSSQLConnection(DBAPI):
         self.db = db
         self.user = user
         self.password = password
-        self.limit_re = re.compile('^\s*(select )(.*)', re.IGNORECASE)
         self.password = password
         self._can_use_max_types = None
         DBAPI.__init__(self, **kw)
