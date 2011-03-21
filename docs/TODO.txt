@@ -1,8 +1,6 @@
 TODO
 ----
 
-* __version__.py
-
 * Release 1.0.
 
 * Decorators @classmethod and @staticmethod.

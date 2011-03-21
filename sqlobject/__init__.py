@@ -1,6 +1,7 @@
 """
 SQLObject 1.1
 """
+from __version__ import version, version_info
 
 from col import *
 from index import *

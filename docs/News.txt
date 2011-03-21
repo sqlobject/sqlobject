@@ -21,6 +21,10 @@ Features & Interface
   URIs if they are properly %-encoded, and DB URIs are automatically
   unquoted.
 
+* A new module ``__version__.py`` was added. New variables ``version``
+  (string) and ``version_info`` (5-tuple: major, minor, micro, release
+  level, serial) are imported into ``sqlobject`` namespace.
+
 * In SQLite, id columns are made AUTOINCREMENT.
 
 * Parameter ``backend`` in DB URI is no longer supported, use parameter
