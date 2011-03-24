@@ -31,6 +31,10 @@ def test_1syntax_in():
     assert str(select) == \
         "SELECT test_in1.id, test_in1.col1 FROM test_in1 WHERE test_in1.col1 IN (SELECT test_in2.col2 FROM test_in2)"
 
+    select = TestIn1.select(IN(TestIn1.q.col1, TestIn2.select()))
+    assert str(select) == \
+        "SELECT test_in1.id, test_in1.col1 FROM test_in1 WHERE test_in1.col1 IN (SELECT test_in2.id FROM test_in2 WHERE 1 = 1)"
+
 def test_2perform_in():
     insert()
     select = TestIn1.select(IN(TestIn1.q.col1, Select(TestIn2.q.col2)))

@@ -10,6 +10,11 @@ News
 SQLObject (trunk)
 =================
 
+Features & Interface
+--------------------
+
+* SelectResults (returned from .select()) is allowed in IN(column, list).
+
 SQLObject 1.0.0
 ===============
 

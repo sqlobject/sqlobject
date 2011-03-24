@@ -836,6 +836,11 @@ def _IN(item, list):
     return SQLOp("IN", item, list)
 
 def IN(item, list):
+    from sresults import SelectResults # Import here to avoid circular import
+    if isinstance(list, SelectResults):
+        query = list.queryForSelect()
+        query.ops['items'] = [list.sourceClass.q.id]
+        list = query
     if isinstance(list, Select):
         return INSubquery(item, list)
     else:
