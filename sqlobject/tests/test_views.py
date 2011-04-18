@@ -32,7 +32,8 @@ class ViewPhone(ViewSQLObject):
     number = StringCol(dbName=PhoneNumber.q.number)
     phoneNumber = ForeignKey('PhoneNumber', dbName=PhoneNumber.q.id)
     calls = SQLMultipleJoin('PhoneCall', joinColumn='phoneNumberID')
-    vCalls = SQLMultipleJoin('ViewPhoneCall', joinColumn='phoneNumberID')
+    vCalls = SQLMultipleJoin('ViewPhoneCall', joinColumn='phoneNumberID',
+                                              orderBy='id')
 
 class ViewPhoneMore(ViewSQLObject):
     ''' View on top of view '''
