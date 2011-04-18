@@ -97,3 +97,10 @@ def test_sqlite_threaded():
     # made above (at least will with most database drivers, but
     # this will cause an error in SQLite):
     do_select()
+
+
+def test_empty_string():
+    setupClass(TestSO1)
+    test = TestSO1(name=None, passwd='')
+    assert test.name is None
+    assert test.passwd == ''

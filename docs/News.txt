@@ -37,6 +37,14 @@ Features & Interface
 * Parameter ``backend`` in DB URI is no longer supported, use parameter
   ``driver``.
 
+Internals
+---------
+
+* A different workaround is used in SQLiteConnection to prevent PySQLite
+  from converting strings to unicode - in the case of a registered text
+  conversion function PySQLite silently converts empty strings to Nones;
+  now SQLObject uses text_factory instead.
+
 SQLObject 0.15.1
 ================
 

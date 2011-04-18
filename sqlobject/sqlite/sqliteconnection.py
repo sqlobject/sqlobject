@@ -59,10 +59,6 @@ class SQLiteConnection(DBAPI):
         if self.using_sqlite2:
             if autoCommit:
                 opts["isolation_level"] = None
-            opts["detect_types"] = sqlite.PARSE_DECLTYPES
-            for col_type in "text", "char", "varchar", "date", "time", "datetime", "timestamp":
-                sqlite.register_converter(col_type, stop_pysqlite2_converting_strings)
-                sqlite.register_converter(col_type.upper(), stop_pysqlite2_converting_strings)
             global sqlite2_Binary
             if sqlite2_Binary is None:
                 sqlite2_Binary = sqlite.Binary
@@ -95,6 +91,9 @@ class SQLiteConnection(DBAPI):
         if self._memory:
             self._memoryConn = sqlite.connect(
                 self.filename, **self._connOptions)
+            # Convert text data from SQLite to str, not unicode -
+            # SQLObject converts it to unicode itself.
+            self._memoryConn.text_factory = str
 
     def _connectionFromParams(cls, user, password, host, port, path, args):
         assert host is None and port is None, (
@@ -188,7 +187,9 @@ class SQLiteConnection(DBAPI):
     def makeConnection(self):
         if self._memory:
             return self._memoryConn
-        return self.module.connect(self.filename, **self._connOptions)
+        conn = self.module.connect(self.filename, **self._connOptions)
+        conn.text_factory = str # Convert text data to str, not unicode
+        return conn
 
     def _executeRetry(self, conn, cursor, query):
         if self.debug:
@@ -394,7 +395,3 @@ class SQLiteConnection(DBAPI):
         if self._memory:
             return
         os.unlink(self.filename)
-
-
-def stop_pysqlite2_converting_strings(s):
-    return s
