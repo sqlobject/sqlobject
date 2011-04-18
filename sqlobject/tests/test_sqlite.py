@@ -1,6 +1,8 @@
+import threading
 from sqlobject import *
 from sqlobject.tests.dbtest import *
 from sqlobject.tests.dbtest import setSQLiteConnectionFactory
+from test_basic import TestSO1
 
 class SQLiteFactoryTest(SQLObject):
     name = StringCol()
@@ -81,3 +83,17 @@ def test_sqlite_aggregate():
         SQLiteFactoryTest(name='sqlbuilder')
         assert SQLiteFactoryTest.select(orderBy="name").accumulateOne("group_concat", "name") == \
             "sqlbuilder, sqlobject"
+
+
+def do_select():
+    list(TestSO1.select())
+
+def test_sqlite_threaded():
+    setupClass(TestSO1)
+    t = threading.Thread(target=do_select)
+    t.start()
+    t.join()
+    # This should reuse the same connection as the connection
+    # made above (at least will with most database drivers, but
+    # this will cause an error in SQLite):
+    do_select()
