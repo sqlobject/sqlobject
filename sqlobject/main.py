@@ -1343,7 +1343,7 @@ class SQLObject(object):
                 names = ', '.join(names)
                 raise SQLObjectNotFound, "The %s by unique index %s(%s) does not exist" % (cls.__name__, idxName, names)
         if obj:
-           return obj
+            return obj
         if connection:
             obj = cls.get(result[0], connection=connection, selectResults=result[1:])
         else:
@@ -1538,8 +1538,8 @@ class SQLObject(object):
             # Free related joins
             for join in k.sqlmeta.joins:
                 if isinstance(join, joins.SORelatedJoin) and join.otherClassName == klass.__name__:
-                     q = "DELETE FROM %s WHERE %s=%d" % (join.intermediateTable, join.otherColumn, self.id)
-                     self._connection.query(q)
+                    q = "DELETE FROM %s WHERE %s=%d" % (join.intermediateTable, join.otherColumn, self.id)
+                    self._connection.query(q)
 
             cols = findDependantColumns(klass.__name__, k)
 
@@ -1668,16 +1668,16 @@ class SQLObject(object):
         return not self.__eq__(other)
 
     def __lt__(self, other):
-       return NotImplemented
+        return NotImplemented
 
     def __le__(self, other):
-       return NotImplemented
+        return NotImplemented
 
     def __gt__(self, other):
-       return NotImplemented
+        return NotImplemented
 
     def __ge__(self, other):
-       return NotImplemented
+        return NotImplemented
 
 
     def __getstate__(self):
