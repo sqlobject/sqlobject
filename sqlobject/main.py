@@ -40,7 +40,6 @@ import classregistry
 import declarative
 import events
 from sresults import SelectResults
-from formencode import schema, compound
 from util.threadinglocal import local
 
 import sys
