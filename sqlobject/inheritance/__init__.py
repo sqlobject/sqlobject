@@ -93,6 +93,7 @@ class InheritableSelectResults(SelectResults):
         return clone.accumulateMany(skipInherited=True, *attributes)
 
 class InheritableSQLMeta(sqlmeta):
+    @classmethod
     def addColumn(sqlmeta, columnDef, changeSchema=False, connection=None, childUpdate=False):
         soClass = sqlmeta.soClass
         #DSM: Try to add parent properties to the current class
@@ -133,8 +134,7 @@ class InheritableSQLMeta(sqlmeta):
             c.sqlmeta.addColumn(columnDef, connection=connection, childUpdate=True)
             if q: setattr(c.q, columnDef.name, q)
 
-    addColumn = classmethod(addColumn)
-
+    @classmethod
     def delColumn(sqlmeta, column, changeSchema=False, connection=None, childUpdate=False):
         if childUpdate:
             soClass = sqlmeta.soClass
@@ -157,8 +157,7 @@ class InheritableSQLMeta(sqlmeta):
             c.sqlmeta.delColumn(column, changeSchema=changeSchema,
                 connection=connection, childUpdate=True)
 
-    delColumn = classmethod(delColumn)
-
+    @classmethod
     def addJoin(sqlmeta, joinDef, childUpdate=False):
         soClass = sqlmeta.soClass
         #DSM: Try to add parent properties to the current class
@@ -188,8 +187,7 @@ class InheritableSQLMeta(sqlmeta):
         for c in sqlmeta.childClasses.values():
             c.sqlmeta.addJoin(joinDef, childUpdate=True)
 
-    addJoin = classmethod(addJoin)
-
+    @classmethod
     def delJoin(sqlmeta, joinDef, childUpdate=False):
         if childUpdate:
             soClass = sqlmeta.soClass
@@ -204,8 +202,7 @@ class InheritableSQLMeta(sqlmeta):
         for c in sqlmeta.childClasses.values():
             c.sqlmeta.delJoin(joinDef, childUpdate=True)
 
-    delJoin = classmethod(delJoin)
-
+    @classmethod
     def getAllColumns(sqlmeta):
         columns = sqlmeta.columns.copy()
         sm = sqlmeta
@@ -213,14 +210,13 @@ class InheritableSQLMeta(sqlmeta):
             columns.update(sm.parentClass.sqlmeta.columns)
             sm = sm.parentClass.sqlmeta
         return columns
-    getAllColumns = classmethod(getAllColumns)
 
+    @classmethod
     def getColumns(sqlmeta):
         columns = sqlmeta.getAllColumns()
         if columns.has_key('childName'):
             del columns['childName']
         return columns
-    getColumns = classmethod(getColumns)
 
 
 class InheritableSQLObject(SQLObject):
@@ -249,7 +245,7 @@ class InheritableSQLObject(SQLObject):
                     getattr(currentClass.q, column.name))
             currentClass = currentClass.sqlmeta.parentClass
 
-    # @classmethod
+    @classmethod
     def _SO_setupSqlmeta(cls, new_attrs, is_base):
         # Note: cannot use super(InheritableSQLObject, cls)._SO_setupSqlmeta -
         #       InheritableSQLObject is not defined when it's __classinit__
@@ -284,8 +280,7 @@ class InheritableSQLObject(SQLObject):
             if not sqlmeta.childName:
                 sqlmeta.childName = cls.__name__
 
-    _SO_setupSqlmeta = classmethod(_SO_setupSqlmeta)
-
+    @classmethod
     def get(cls, id, connection=None, selectResults=None, childResults=None, childUpdate=False):
 
         val = super(InheritableSQLObject, cls).get(id, connection, selectResults)
@@ -318,8 +313,7 @@ class InheritableSQLObject(SQLObject):
         #DSM: We can now return ourself
         return val
 
-    get = classmethod(get)
-
+    @classmethod
     def _notifyFinishClassCreation(cls):
         sqlmeta = cls.sqlmeta
         # verify names of added columns
@@ -347,7 +341,6 @@ class InheritableSQLObject(SQLObject):
             # There are no joins - call addJoin to propagate joins
             # from parent classes to children
             sqlmeta.addJoin(None)
-    _notifyFinishClassCreation = classmethod(_notifyFinishClassCreation)
 
     def _create(self, id, **kw):
 
@@ -400,14 +393,15 @@ class InheritableSQLObject(SQLObject):
             # TC: Reraise the original exception
             raise
 
+    @classmethod
     def _findAlternateID(cls, name, dbName, value, connection=None):
         result = list(cls.selectBy(connection, **{name: value}))
         if not result:
             return result, None
         obj = result[0]
         return [obj.id], obj
-    _findAlternateID = classmethod(_findAlternateID)
 
+    @classmethod
     def select(cls, clause=None, *args, **kwargs):
         parentClass = cls.sqlmeta.parentClass
         childUpdate = kwargs.pop('childUpdate', None)
@@ -469,8 +463,8 @@ class InheritableSQLObject(SQLObject):
         else:
             return super(InheritableSQLObject, cls).select(
                 clause, *args, **kwargs)
-    select = classmethod(select)
 
+    @classmethod
     def selectBy(cls, connection=None, **kw):
         clause = []
         foreignColumns = {}
@@ -503,8 +497,6 @@ class InheritableSQLObject(SQLObject):
             clause = None # select all
         conn = connection or cls._connection
         return cls.SelectResultsClass(cls, clause, connection=conn)
-
-    selectBy = classmethod(selectBy)
 
     def destroySelf(self):
         #DSM: If this object has parents, recursivly kill them

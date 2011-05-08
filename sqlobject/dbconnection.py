@@ -129,14 +129,15 @@ class DBConnection:
             db = db[1:]
         return uri + urllib.quote(db)
 
+    @classmethod
     def connectionFromOldURI(cls, uri):
         return cls._connectionFromParams(*cls._parseOldURI(uri))
-    connectionFromOldURI = classmethod(connectionFromOldURI)
 
+    @classmethod
     def connectionFromURI(cls, uri):
         return cls._connectionFromParams(*cls._parseURI(uri))
-    connectionFromURI = classmethod(connectionFromURI)
 
+    @staticmethod
     def _parseOldURI(uri):
         schema, rest = uri.split(':', 1)
         assert rest.startswith('/'), "URIs must start with scheme:/ -- you did not include a / (in %r)" % rest
@@ -185,8 +186,8 @@ class DBConnection:
                 argvalue = urllib.unquote(argvalue)
                 args[argname] = argvalue
         return user, password, host, port, path, args
-    _parseOldURI = staticmethod(_parseOldURI)
 
+    @staticmethod
     def _parseURI(uri):
         protocol, request = urllib.splittype(uri)
         user, password, port = None, None, None
@@ -224,7 +225,6 @@ class DBConnection:
                 args[name] = value
 
         return user, password, host, port, path, args
-    _parseURI = staticmethod(_parseURI)
 
     def soClassAdded(self, soClass):
         """

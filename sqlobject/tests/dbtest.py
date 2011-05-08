@@ -124,6 +124,7 @@ class InstalledTestDatabase(sqlobject.SQLObject):
     createSQL = sqlobject.StringCol(notNull=True)
     connectionURI = sqlobject.StringCol(notNull=True)
 
+    @classmethod
     def installOrClear(cls, soClasses, force=False):
         cls.setup()
         reversed = list(soClasses)[:]
@@ -162,8 +163,8 @@ class InstalledTestDatabase(sqlobject.SQLObject):
             table = soClass.sqlmeta.table
             if not soClass._connection.tableExists(table):
                 cls.install(soClass)
-    installOrClear = classmethod(installOrClear)
 
+    @classmethod
     def install(cls, soClass):
         """
         Creates the given table in its database.
@@ -182,8 +183,8 @@ class InstalledTestDatabase(sqlobject.SQLObject):
             connectionURI=soClass._connection.uri())
         for extra_sql in all_extra:
             soClass._connection.query(extra_sql)
-    install = classmethod(install)
 
+    @classmethod
     def drop(cls, soClass):
         """
         Drops a the given table from its database
@@ -193,22 +194,21 @@ class InstalledTestDatabase(sqlobject.SQLObject):
             soClass._connection.query(sql)
         else:
             soClass.dropTable()
-    drop = classmethod(drop)
 
+    @classmethod
     def clear(cls, soClass):
         """
         Removes all the rows from a table.
         """
         soClass.clearTable()
-    clear = classmethod(clear)
 
+    @classmethod
     def setup(cls):
         """
         This sets up *this* table.
         """
         if not cls._connection.tableExists(cls.sqlmeta.table):
             cls.createTable()
-    setup = classmethod(setup)
 
 installOrClear = InstalledTestDatabase.installOrClear
 

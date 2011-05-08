@@ -74,11 +74,11 @@ class MSSQLConnection(DBAPI):
         self._can_use_max_types = None
         DBAPI.__init__(self, **kw)
 
+    @classmethod
     def _connectionFromParams(cls, user, password, host, port, path, args):
         path = path.strip('/')
         return cls(user=user, password=password,
                    host=host or 'localhost', port=port, db=path, **args)
-    _connectionFromParams = classmethod(_connectionFromParams)
 
     def insert_id(self, conn):
         """
@@ -154,6 +154,7 @@ class MSSQLConnection(DBAPI):
             self.printDebug(conn, id, 'QueryIns', 'result')
         return id
 
+    @classmethod
     def _queryAddLimitOffset(cls, query, start, end):
         if end and not start:
             limit_str = "SELECT TOP %i" % end
@@ -163,7 +164,6 @@ class MSSQLConnection(DBAPI):
                 return ' '.join([limit_str, match.group(2)])
         else:
             return query
-    _queryAddLimitOffset = classmethod(_queryAddLimitOffset)
 
     def createReferenceConstraint(self, soClass, col):
         return col.mssqlCreateReferenceConstraint()

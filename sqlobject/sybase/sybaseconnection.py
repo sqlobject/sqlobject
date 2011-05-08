@@ -33,10 +33,10 @@ class SybaseConnection(DBAPI):
         kw['autoCommit'] = autoCommit
         DBAPI.__init__(self, **kw)
 
+    @classmethod
     def _connectionFromParams(cls, user, password, host, port, path, args):
         return cls(user=user, password=password,
                    host=host or 'localhost', port=port, db=path, **args)
-    _connectionFromParams = classmethod(_connectionFromParams)
 
     def insert_id(self, conn):
         """
@@ -93,12 +93,12 @@ class SybaseConnection(DBAPI):
             self.printDebug(conn, id, 'QueryIns', 'result')
         return id
 
+    @classmethod
     def _queryAddLimitOffset(cls, query, start, end):
         # XXX Sybase doesn't support OFFSET
         if end:
             return "SET ROWCOUNT %i %s SET ROWCOUNT 0" % (end, query)
         return query
-    _queryAddLimitOffset = classmethod(_queryAddLimitOffset)
 
     def createReferenceConstraint(self, soClass, col):
         return None

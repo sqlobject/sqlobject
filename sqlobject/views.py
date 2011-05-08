@@ -1,8 +1,3 @@
-#from sqlobject.sqlbuilder import *
-#from sqlobject.declarative import classinstancemethod
-#from sqlobject import classregistry
-#from SQLObject import SQLObject
-#from sqlobject.col import Col, KeyCol
 from sqlbuilder import *
 from main import SQLObject, sqlmeta
 import types, threading

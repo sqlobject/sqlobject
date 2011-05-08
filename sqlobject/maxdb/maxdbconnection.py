@@ -76,11 +76,11 @@ class MaxdbConnection(DBAPI):
 
         DBAPI.__init__(self, **kw)
 
+    @classmethod
     def _connectionFromParams(cls, auth, password, host, port, path, args):
         path = path.replace('/', os.path.sep)
         return cls(host, port, user=auth, password=password,
             database=path, **args)
-    _connectionFromParams = classmethod(_connectionFromParams)
 
     def _getConfigParams(self,sqlmode,auto):
         autocommit='off'
@@ -133,6 +133,7 @@ class MaxdbConnection(DBAPI):
             self.printDebug(conn, id, 'QueryIns', 'result')
         return id
 
+    @classmethod
     def sqlAddLimit(cls,query,limit):
         sql = query
         sql = sql.replace("SELECT","SELECT ROWNO, ")
@@ -141,15 +142,13 @@ class MaxdbConnection(DBAPI):
         else:
             sql = sql + 'WHERE ' + limit
         return sql
-    sqlAddLimit = classmethod(sqlAddLimit)
 
+    @classmethod
     def _queryAddLimitOffset(cls, query, start, end):
         if start:
             raise LowerBoundOfSliceIsNotSupported
         limit = ' ROWNO   <= %d ' % (end)
         return cls.sqlAddLimit(query,limit)
-    _queryAddLimitOffset = classmethod(_queryAddLimitOffset)
-
 
     def createTable(self, soClass):
         #we create the table in a transaction because the addition of the

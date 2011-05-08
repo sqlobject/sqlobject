@@ -31,6 +31,7 @@ class FirebirdConnection(DBAPI):
 
         DBAPI.__init__(self, **kw)
 
+    @classmethod
     def _connectionFromParams(cls, auth, password, host, port, path, args):
         if not password:
             password = 'masterkey'
@@ -41,7 +42,6 @@ class FirebirdConnection(DBAPI):
             path = path[1:]
         path = path.replace('/', os.sep)
         return cls(host, port, db=path, user=auth, password=password, **args)
-    _connectionFromParams = classmethod(_connectionFromParams)
 
     def _runWithConnection(self, meth, *args):
         if not self.autoCommit:
@@ -104,6 +104,7 @@ class FirebirdConnection(DBAPI):
             self.printDebug(conn, id, 'QueryIns', 'result')
         return id
 
+    @classmethod
     def _queryAddLimitOffset(cls, query, start, end):
         """Firebird slaps the limit and offset (actually 'first' and
         'skip', respectively) statement right after the select."""
@@ -119,7 +120,6 @@ class FirebirdConnection(DBAPI):
             return ' '.join([limit_str, match.group(2)])
         else:
             return query
-    _queryAddLimitOffset = classmethod(_queryAddLimitOffset)
 
     def createTable(self, soClass):
         self.query('CREATE TABLE %s (\n%s\n)' % \

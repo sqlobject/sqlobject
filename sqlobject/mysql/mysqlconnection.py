@@ -50,10 +50,10 @@ class MySQLConnection(DBAPI):
 
         DBAPI.__init__(self, **kw)
 
+    @classmethod
     def _connectionFromParams(cls, user, password, host, port, path, args):
         return cls(db=path.strip('/'), user=user or '', password=password or '',
                    host=host or 'localhost', port=port or 0, **args)
-    _connectionFromParams = classmethod(_connectionFromParams)
 
     def makeConnection(self):
         dbEncoding = self.dbEncoding
@@ -162,13 +162,13 @@ class MySQLConnection(DBAPI):
             self.printDebug(conn, id, 'QueryIns', 'result')
         return id
 
+    @classmethod
     def _queryAddLimitOffset(cls, query, start, end):
         if not start:
             return "%s LIMIT %i" % (query, end)
         if not end:
             return "%s LIMIT %i, -1" % (query, start)
         return "%s LIMIT %i, %i" % (query, start, end-start)
-    _queryAddLimitOffset = classmethod(_queryAddLimitOffset)
 
     def createReferenceConstraint(self, soClass, col):
         return col.mysqlCreateReferenceConstraint()

@@ -1136,6 +1136,7 @@ class SODateTimeCol(SOCol):
 
 class DateTimeCol(Col):
     baseClass = SODateTimeCol
+    @staticmethod
     def now():
         if default_datetime_implementation == DATETIME_IMPLEMENTATION:
             return datetime.datetime.now()
@@ -1145,7 +1146,6 @@ class DateTimeCol(Col):
             assert 0, ("No datetime implementation available "
                        "(DATETIME_IMPLEMENTATION=%r)"
                        % DATETIME_IMPLEMENTATION)
-    now = staticmethod(now)
 
 
 class DateValidator(DateTimeValidator):

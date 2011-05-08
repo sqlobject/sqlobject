@@ -158,6 +158,7 @@ class Declarative(object):
         kw['__alsocopy'] = self.__dict__
         return self.__class__(*args, **kw)
 
+    @classinstancemethod
     def singleton(self, cls):
         if self:
             return self
@@ -165,8 +166,8 @@ class Declarative(object):
         if not hasattr(cls, name):
             setattr(cls, name, cls(declarative_count=cls.declarative_count))
         return getattr(cls, name)
-    singleton = classinstancemethod(singleton)
 
+    @classinstancemethod
     def __repr__(self, cls):
         if self:
             name = '%s object' % self.__class__.__name__
@@ -188,15 +189,13 @@ class Declarative(object):
         else:
             return '<%s %s>' % (name, ' '.join(args))
 
+    @staticmethod
     def _repr_vars(dictNames):
         names = [n for n in dictNames
                  if not n.startswith('_')
                  and n != 'declarative_count']
         names.sort()
         return names
-    _repr_vars = staticmethod(_repr_vars)
-
-    __repr__ = classinstancemethod(__repr__)
 
 def setup_attributes(cls, new_attrs):
     for name, value in new_attrs.items():

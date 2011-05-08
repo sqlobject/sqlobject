@@ -245,11 +245,11 @@ class sqlmeta(object):
     def __init__(self, instance):
         self.instance = weakref.proxy(instance)
 
+    @classmethod
     def send(cls, signal, *args, **kw):
         events.send(signal, cls.soClass, *args, **kw)
 
-    send = classmethod(send)
-
+    @classmethod
     def setClass(cls, soClass):
         cls.soClass = soClass
         if not cls.style:
@@ -288,8 +288,6 @@ class sqlmeta(object):
         cls.joins = []
         cls.joinDefinitions = cls.joinDefinitions[:]
 
-    setClass = classmethod(setClass)
-
     ############################################################
     ## Adding special values, like columns and indexes
     ############################################################
@@ -298,6 +296,7 @@ class sqlmeta(object):
     ## Column handling
     ########################################
 
+    @classmethod
     def addColumn(cls, columnDef, changeSchema=False, connection=None):
         post_funcs = []
         cls.send(events.AddColumnSignal, cls.soClass, connection,
@@ -433,8 +432,7 @@ class sqlmeta(object):
         for func in post_funcs:
             func(soClass, column)
 
-    addColumn = classmethod(addColumn)
-
+    @classmethod
     def addColumnsFromDatabase(sqlmeta, connection=None):
         soClass = sqlmeta.soClass
         conn = connection or soClass._connection
@@ -444,8 +442,7 @@ class sqlmeta(object):
                     columnDef.name = columnDef.name.encode('ascii')
                 sqlmeta.addColumn(columnDef)
 
-    addColumnsFromDatabase = classmethod(addColumnsFromDatabase)
-
+    @classmethod
     def delColumn(cls, column, changeSchema=False, connection=None):
         sqlmeta = cls
         soClass = sqlmeta.soClass
@@ -493,12 +490,11 @@ class sqlmeta(object):
         for func in post_funcs:
             func(soClass, column)
 
-    delColumn = classmethod(delColumn)
-
     ########################################
     ## Join handling
     ########################################
 
+    @classmethod
     def addJoin(cls, joinDef):
         sqlmeta = cls
         soClass = cls.soClass
@@ -547,8 +543,7 @@ class sqlmeta(object):
         if soClass._SO_finishedClassCreation:
             makeProperties(soClass)
 
-    addJoin = classmethod(addJoin)
-
+    @classmethod
     def delJoin(sqlmeta, joinDef):
         soClass = sqlmeta.soClass
         for join in sqlmeta.joins:
@@ -585,26 +580,24 @@ class sqlmeta(object):
             unmakeProperties(soClass)
             makeProperties(soClass)
 
-    delJoin = classmethod(delJoin)
-
     ########################################
     ## Indexes
     ########################################
 
+    @classmethod
     def addIndex(cls, indexDef):
         cls.indexDefinitions.append(indexDef)
         index = indexDef.withClass(cls.soClass)
         cls.indexes.append(index)
         setattr(cls.soClass, index.name, index)
-    addIndex = classmethod(addIndex)
 
     ########################################
     ## Utility methods
     ########################################
 
+    @classmethod
     def getColumns(sqlmeta):
         return sqlmeta.columns.copy()
-    getColumns = classmethod(getColumns)
 
     def asDict(self):
         """
@@ -616,6 +609,7 @@ class sqlmeta(object):
         result['id'] = self.instance.id
         return result
 
+    @classmethod
     def expireAll(sqlmeta, connection=None):
         """
         Expire all instances of this class.
@@ -627,7 +621,6 @@ class sqlmeta(object):
         for item in cache_set.getAll(soClass):
             item.expire()
 
-    expireAll = classmethod(expireAll)
 
 sqlhub = dbconnection.ConnectionHub()
 
@@ -816,7 +809,7 @@ class SQLObject(object):
 
         classregistry.registry(sqlmeta.registry).addClass(cls)
 
-    # @classmethod
+    @classmethod
     def _SO_setupSqlmeta(cls, new_attrs, is_base):
         """
         This fixes up the sqlmeta attribute.  It handles both the case
@@ -858,9 +851,7 @@ class SQLObject(object):
         if not is_base: # Do not pollute the base sqlmeta class
             cls.sqlmeta.setClass(cls)
 
-    _SO_setupSqlmeta = classmethod(_SO_setupSqlmeta)
-
-    # @classmethod
+    @classmethod
     def _SO_cleanDeprecatedAttrs(cls, new_attrs):
         """
         This removes attributes on SQLObject subclasses that have
@@ -873,8 +864,7 @@ class SQLObject(object):
                            "not use it in your classes until it is fully "
                            "deprecated" % attr, level=1, stacklevel=5)
 
-    _SO_cleanDeprecatedAttrs = classmethod(_SO_cleanDeprecatedAttrs)
-
+    @classmethod
     def get(cls, id, connection=None, selectResults=None):
 
         assert id is not None, 'None is not a possible id for %s' % cls.__name__
@@ -906,11 +896,9 @@ class SQLObject(object):
                 val._SO_writeLock.release()
         return val
 
-    get = classmethod(get)
-
+    @classmethod
     def _notifyFinishClassCreation(cls):
         pass
-    _notifyFinishClassCreation = classmethod(_notifyFinishClassCreation)
 
     def _init(self, id, connection=None, selectResults=None):
         assert id is not None
@@ -1310,6 +1298,7 @@ class SQLObject(object):
     def _SO_getID(self, obj):
         return getID(obj)
 
+    @classmethod
     def _findAlternateID(cls, name, dbName, value, connection=None):
         if isinstance(name, str):
             name = (name,)
@@ -1328,8 +1317,8 @@ class SQLObject(object):
             [cls.sqlmeta.idName] +
             [column.dbName for column in cls.sqlmeta.columnList],
             condition), None
-    _findAlternateID = classmethod(_findAlternateID)
 
+    @classmethod
     def _SO_fetchAlternateID(cls, name, dbName, value, connection=None, idxName=None):
         result, obj = cls._findAlternateID(name, dbName, value, connection)
         if not result:
@@ -1348,12 +1337,12 @@ class SQLObject(object):
         else:
             obj = cls.get(result[0], selectResults=result[1:])
         return obj
-    _SO_fetchAlternateID = classmethod(_SO_fetchAlternateID)
 
+    @classmethod
     def _SO_depends(cls):
         return findDependencies(cls.__name__, cls.sqlmeta.registry)
-    _SO_depends = classmethod(_SO_depends)
 
+    @classmethod
     def select(cls, clause=None, clauseTables=None,
                orderBy=NoDefault, limit=None,
                lazyColumns=False, reversed=False,
@@ -1368,22 +1357,20 @@ class SQLObject(object):
                              distinct=distinct,
                              connection=connection,
                              join=join, forUpdate=forUpdate)
-    select = classmethod(select)
 
+    @classmethod
     def selectBy(cls, connection=None, **kw):
         conn = connection or cls._connection
         return cls.SelectResultsClass(cls,
                              conn._SO_columnClause(cls, kw),
                              connection=conn)
 
-    selectBy = classmethod(selectBy)
-
+    @classmethod
     def tableExists(cls, connection=None):
         conn = connection or cls._connection
         return conn.tableExists(cls.sqlmeta.table)
 
-    tableExists = classmethod(tableExists)
-
+    @classmethod
     def dropTable(cls, ifExists=False, dropJoinTables=True, cascade=False,
                   connection=None):
         conn = connection or cls._connection
@@ -1400,8 +1387,8 @@ class SQLObject(object):
             connection.query(sql)
         for func in post_funcs:
             func(cls, conn)
-    dropTable = classmethod(dropTable)
 
+    @classmethod
     def createTable(cls, ifNotExists=False, createJoinTables=True,
                     createIndexes=True, applyConstraints=True,
                     connection=None):
@@ -1427,8 +1414,8 @@ class SQLObject(object):
         for func in post_funcs:
             func(cls, conn)
         return extra_sql
-    createTable = classmethod(createTable)
 
+    @classmethod
     def createTableSQL(cls, createJoinTables=True, createIndexes=True,
                        connection=None):
         conn = connection or cls._connection
@@ -1442,8 +1429,8 @@ class SQLObject(object):
             if index_sql:
                 sql += ';\n' + index_sql
         return sql, constraints
-    createTableSQL = classmethod(createTableSQL)
 
+    @classmethod
     def createJoinTables(cls, ifNotExists=False, connection=None):
         conn = connection or cls._connection
         for join in cls._getJoinsToCreate():
@@ -1451,24 +1438,24 @@ class SQLObject(object):
                 conn.tableExists(join.intermediateTable)):
                 continue
             conn._SO_createJoinTable(join)
-    createJoinTables = classmethod(createJoinTables)
 
+    @classmethod
     def createJoinTablesSQL(cls, connection=None):
         conn = connection or cls._connection
         sql = []
         for join in cls._getJoinsToCreate():
             sql.append(conn._SO_createJoinTableSQL(join))
         return ';\n'.join(sql)
-    createJoinTablesSQL = classmethod(createJoinTablesSQL)
 
+    @classmethod
     def createIndexes(cls, ifNotExists=False, connection=None):
         conn = connection or cls._connection
         for index in cls.sqlmeta.indexes:
             if not index:
                 continue
             conn._SO_createIndex(cls, index)
-    createIndexes = classmethod(createIndexes)
 
+    @classmethod
     def createIndexesSQL(cls, connection=None):
         conn = connection or cls._connection
         sql = []
@@ -1477,8 +1464,8 @@ class SQLObject(object):
                 continue
             sql.append(conn.createIndexSQL(cls, index))
         return ';\n'.join(sql)
-    createIndexesSQL = classmethod(createIndexesSQL)
 
+    @classmethod
     def _getJoinsToCreate(cls):
         joins = []
         for join in cls.sqlmeta.joins:
@@ -1490,8 +1477,8 @@ class SQLObject(object):
                 continue
             joins.append(join)
         return joins
-    _getJoinsToCreate = classmethod(_getJoinsToCreate)
 
+    @classmethod
     def dropJoinTables(cls, ifExists=False, connection=None):
         conn = connection or cls._connection
         for join in cls.sqlmeta.joins:
@@ -1506,8 +1493,7 @@ class SQLObject(object):
                 continue
             conn._SO_dropJoinTable(join)
 
-    dropJoinTables = classmethod(dropJoinTables)
-
+    @classmethod
     def clearTable(cls, connection=None, clearJoinTables=True):
         # 3-03 @@: Maybe this should check the cache... but it's
         # kind of crude anyway, so...
@@ -1516,7 +1502,6 @@ class SQLObject(object):
         if clearJoinTables:
             for join in cls._getJoinsToCreate():
                 conn.clearTable(join.intermediateTable)
-    clearTable = classmethod(clearTable)
 
     def destroySelf(self):
         post_funcs = []
@@ -1590,24 +1575,21 @@ class SQLObject(object):
         for func in post_funcs:
             func(self)
 
+    @classmethod
     def delete(cls, id, connection=None):
         obj = cls.get(id, connection=connection)
         obj.destroySelf()
 
-    delete = classmethod(delete)
-
+    @classmethod
     def deleteMany(cls, where=NoDefault, connection=None):
         conn = connection or cls._connection
         conn.query(conn.sqlrepr(sqlbuilder.Delete(cls.sqlmeta.table, where)))
 
-    deleteMany = classmethod(deleteMany)
-
+    @classmethod
     def deleteBy(cls, connection=None, **kw):
         conn = connection or cls._connection
         conn.query(conn.sqlrepr(sqlbuilder.Delete(cls.sqlmeta.table,
             conn._SO_columnClause(cls, kw))))
-
-    deleteBy = classmethod(deleteBy)
 
     def __repr__(self):
         if not hasattr(self, 'id'):
@@ -1621,18 +1603,16 @@ class SQLObject(object):
     def __sqlrepr__(self, db):
         return str(self.id)
 
+    @classmethod
     def sqlrepr(cls, value, connection=None):
         return (connection or cls._connection).sqlrepr(value)
 
-    sqlrepr = classmethod(sqlrepr)
-
+    @classmethod
     def coerceID(cls, value):
         if isinstance(value, cls):
             return value.id
         else:
             return cls.sqlmeta.idType(value)
-
-    coerceID = classmethod(coerceID)
 
     def _reprItems(self):
         items = []
@@ -1644,12 +1624,11 @@ class SQLObject(object):
             items.append((col.name, value))
         return items
 
+    @classmethod
     def setConnection(cls, value):
         if isinstance(value, basestring):
             value = dbconnection.connectionForURI(value)
         cls._connection = value
-
-    setConnection = classmethod(setConnection)
 
     def tablesUsedImmediate(self):
         return [self.__class__.q]

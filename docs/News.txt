@@ -15,6 +15,11 @@ Features & Interface
 
 * SelectResults (returned from .select()) is allowed in IN(column, list).
 
+Source code
+-----------
+
+* Decorators @classmethod and @staticmethod are used everywhere.
+
 Internals
 ---------
 

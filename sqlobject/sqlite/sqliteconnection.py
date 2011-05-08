@@ -95,6 +95,7 @@ class SQLiteConnection(DBAPI):
             # SQLObject converts it to unicode itself.
             self._memoryConn.text_factory = str
 
+    @classmethod
     def _connectionFromParams(cls, user, password, host, port, path, args):
         assert host is None and port is None, (
             "SQLite can only be used locally (with a URI like "
@@ -106,7 +107,6 @@ class SQLiteConnection(DBAPI):
         if path == "/:memory:":
             path = ":memory:"
         return cls(filename=path, **args)
-    _connectionFromParams = classmethod(_connectionFromParams)
 
     def oldUri(self):
         path = self.filename
@@ -248,13 +248,13 @@ class SQLiteConnection(DBAPI):
         else:
             return DBAPI._insertSQL(self, table, names, values)
 
+    @classmethod
     def _queryAddLimitOffset(cls, query, start, end):
         if not start:
             return "%s LIMIT %i" % (query, end)
         if not end:
             return "%s LIMIT 0 OFFSET %i" % (query, start)
         return "%s LIMIT %i OFFSET %i" % (query, end-start, start)
-    _queryAddLimitOffset = classmethod(_queryAddLimitOffset)
 
     def createColumn(self, soClass, col):
         return col.sqliteCreateSQL()

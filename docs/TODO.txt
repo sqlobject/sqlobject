@@ -1,8 +1,6 @@
 TODO
 ----
 
-* Decorators @classmethod and @staticmethod.
-
 * Declare one encoding for all UnicodeCol's per table or even per connection.
   Don't forget about fromDatabase.
 

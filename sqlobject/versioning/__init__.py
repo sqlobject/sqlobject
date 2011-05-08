@@ -29,11 +29,11 @@ class Version(SQLObject):
 
         return fields
 
+    @classmethod
     def select(cls, clause=None, *args, **kw):
         if not getattr(cls, '_connection', None):
             cls._connection = cls.masterClass._connection
         return super(Version, cls).select(clause, *args, **kw)
-    select = classmethod(select)
 
     def __getattr__(self, attr):
         if self.__dict__.has_key(attr):

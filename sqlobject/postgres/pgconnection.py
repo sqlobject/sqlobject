@@ -106,6 +106,7 @@ class PostgresConnection(DBAPI):
         self.dbEncoding = kw.pop("charset", None)
         DBAPI.__init__(self, **kw)
 
+    @classmethod
     def _connectionFromParams(cls, user, password, host, port, path, args):
         path = path.strip('/')
         if (host is None) and path.count('/'): # Non-default unix socket
@@ -113,7 +114,6 @@ class PostgresConnection(DBAPI):
             host = '/' + '/'.join(path_parts[:-1])
             path = path_parts[-1]
         return cls(host=host, port=port, db=path, user=user, password=password, **args)
-    _connectionFromParams = classmethod(_connectionFromParams)
 
     def _setAutoCommit(self, conn, auto):
         # psycopg2 does not have an autocommit method.
@@ -159,13 +159,13 @@ class PostgresConnection(DBAPI):
             self.printDebug(conn, id, 'QueryIns', 'result')
         return id
 
+    @classmethod
     def _queryAddLimitOffset(cls, query, start, end):
         if not start:
             return "%s LIMIT %i" % (query, end)
         if not end:
             return "%s OFFSET %i" % (query, start)
         return "%s LIMIT %i OFFSET %i" % (query, end-start, start)
-    _queryAddLimitOffset = classmethod(_queryAddLimitOffset)
 
     def createColumn(self, soClass, col):
         return col.postgresCreateSQL()
