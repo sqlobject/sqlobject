@@ -36,7 +36,7 @@ class Version(SQLObject):
         return super(Version, cls).select(clause, *args, **kw)
 
     def __getattr__(self, attr):
-        if self.__dict__.has_key(attr):
+        if attr in self.__dict__:
             return self.__dict__[attr]
         else:
             return getattr(self.master, attr)

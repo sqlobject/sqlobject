@@ -63,7 +63,7 @@ class _methodwrapper(object):
         self.type = type
 
     def __call__(self, *args, **kw):
-        assert not kw.has_key('self') and not kw.has_key('cls'), (
+        assert not 'self' in kw and not 'cls' in kw, (
             "You cannot use 'self' or 'cls' arguments to a "
             "classinstancemethod")
         return self.func(*((self.obj, self.type) + args), **kw)
@@ -87,7 +87,7 @@ class DeclarativeMeta(type):
         cls = type.__new__(meta, class_name, bases, new_attrs)
         for func in early_funcs:
             func(cls)
-        if new_attrs.has_key('__classinit__'):
+        if '__classinit__' in new_attrs:
             cls.__classinit__ = staticmethod(cls.__classinit__.im_func)
         cls.__classinit__(cls, new_attrs)
         for func in post_funcs:
@@ -107,7 +107,7 @@ class Declarative(object):
     def __classinit__(cls, new_attrs):
         cls.declarative_count = counter.next()
         for name in cls.__mutableattributes__:
-            if not new_attrs.has_key(name):
+            if name not in new_attrs:
                 setattr(cls, copy.copy(getattr(cls, name)))
 
     def __instanceinit__(self, new_attrs):
@@ -119,7 +119,7 @@ class Declarative(object):
                         % (self.__class__.__name__, name))
         for name, value in new_attrs.items():
             setattr(self, name, value)
-        if not new_attrs.has_key('declarative_count'):
+        if 'declarative_count' not in new_attrs:
             self.declarative_count = counter.next()
 
     def __init__(self, *args, **kw):
@@ -127,7 +127,7 @@ class Declarative(object):
             assert len(self.__unpackargs__) == 2, \
                    "When using __unpackargs__ = ('*', varname), you must only provide a single variable name (you gave %r)" % self.__unpackargs__
             name = self.__unpackargs__[1]
-            if kw.has_key(name):
+            if name in kw:
                 raise TypeError(
                     "keyword parameter '%s' was given by position and name"
                     % name)
@@ -140,14 +140,14 @@ class Declarative(object):
                        len(self.__unpackargs__),
                        len(args)))
             for name, arg in zip(self.__unpackargs__, args):
-                if kw.has_key(name):
+                if name in kw:
                     raise TypeError(
                         "keyword parameter '%s' was given by position and name"
                         % name)
                 kw[name] = arg
-        if kw.has_key('__alsocopy'):
+        if '__alsocopy' in kw:
             for name, value in kw['__alsocopy'].items():
-                if not kw.has_key(name):
+                if name not in kw:
                     if name in self.__mutableattributes__:
                         value = copy.copy(value)
                     kw[name] = value
@@ -175,7 +175,7 @@ class Declarative(object):
         else:
             name = '%s class' % cls.__name__
             v = cls.__dict__.copy()
-        if v.has_key('declarative_count'):
+        if 'declarative_count' in v:
             name = '%s %i' % (name, v['declarative_count'])
             del v['declarative_count']
         # @@: simplifying repr:

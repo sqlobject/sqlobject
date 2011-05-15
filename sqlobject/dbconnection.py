@@ -786,7 +786,7 @@ class Transaction(object):
 
     def _SO_delete(self, inst):
         cls = inst.__class__.__name__
-        if not self._deletedCache.has_key(cls):
+        if not cls in self._deletedCache:
             self._deletedCache[cls] = []
         self._deletedCache[cls].append(inst.id)
         meth = new.instancemethod(self._dbConnection._SO_delete.im_func, self, self.__class__)
@@ -897,7 +897,7 @@ class ConnectionHub(object):
         # I'm a little surprised we have to do this, but apparently
         # the object's private dictionary of attributes doesn't
         # override this descriptor.
-        if (obj is not None) and obj.__dict__.has_key('_connection'):
+        if (obj is not None) and '_connection' in obj.__dict__:
             return obj.__dict__['_connection']
         return self.getConnection()
 
@@ -978,14 +978,14 @@ class ConnectionURIOpener(object):
 
     def registerConnection(self, schemes, builder):
         for uriScheme in schemes:
-            assert not self.schemeBuilders.has_key(uriScheme) \
+            assert not uriScheme in self.schemeBuilders \
                    or self.schemeBuilders[uriScheme] is builder, \
                    "A driver has already been registered for the URI scheme %s" % uriScheme
             self.schemeBuilders[uriScheme] = builder
 
     def registerConnectionInstance(self, inst):
         if inst.name:
-            assert not self.instanceNames.has_key(inst.name) \
+            assert not inst.name in self.instanceNames \
                    or self.instanceNames[inst.name] is cls, \
                    "A instance has already been registered with the name %s" % inst.name
             assert inst.name.find(':') == -1, "You cannot include ':' in your class names (%r)" % cls.name
@@ -997,7 +997,7 @@ class ConnectionURIOpener(object):
                 uri += '?' + urllib.urlencode(args)
             else:
                 uri += '&' + urllib.urlencode(args)
-        if self.cachedURIs.has_key(uri):
+        if uri in self.cachedURIs:
             return self.cachedURIs[uri]
         if uri.find(':') != -1:
             scheme, rest = uri.split(':', 1)
@@ -1008,7 +1008,7 @@ class ConnectionURIOpener(object):
                 conn = connCls.connectionFromURI(uri)
         else:
             # We just have a name, not a URI
-            assert self.instanceNames.has_key(uri), \
+            assert uri in self.instanceNames, \
                    "No SQLObject driver exists under the name %s" % uri
             conn = self.instanceNames[uri]
         # @@: Do we care if we clobber another connection?
@@ -1016,7 +1016,7 @@ class ConnectionURIOpener(object):
         return conn
 
     def dbConnectionForScheme(self, scheme):
-        assert self.schemeBuilders.has_key(scheme), (
+        assert scheme in self.schemeBuilders, (
                "No SQLObject driver exists for %s (only %s)"
                % (scheme, ', '.join(self.schemeBuilders.keys())))
         return self.schemeBuilders[scheme]()

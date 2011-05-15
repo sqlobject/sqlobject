@@ -92,9 +92,9 @@ def makeProperties(obj):
         elif var.startswith('_doc_'):
             props.setdefault(var[5:], {})['doc'] = value
     for var, setters in props.items():
-        if len(setters) == 1 and setters.has_key('doc'):
+        if len(setters) == 1 and 'doc' in setters:
             continue
-        if d.has_key(var):
+        if var in d:
             if isinstance(d[var], (types.MethodType, types.FunctionType)):
                 warnings.warn(
                     "I tried to set the property %r, but it was "
@@ -119,7 +119,7 @@ def unmakeProperties(obj):
     for var, value in d.items():
         if isinstance(value, property):
             for prop in [value.fget, value.fset, value.fdel]:
-                if prop and not d.has_key(prop.__name__):
+                if prop and not prop.__name__ in d:
                     delFunc(obj, var)
                     break
 
@@ -238,7 +238,7 @@ class sqlmeta(object):
 
     def __classinit__(cls, new_attrs):
         for attr in cls._unshared_attributes:
-            if not new_attrs.has_key(attr):
+            if attr not in new_attrs:
                 setattr(cls, attr, None)
         declarative.setup_attributes(cls, new_attrs)
 
@@ -464,17 +464,17 @@ class sqlmeta(object):
         del sqlmeta.columnDefinitions[name]
         sqlmeta.columnList.remove(column)
         delattr(soClass, rawGetterName(name))
-        if sqlmeta._plainGetters.has_key(name):
+        if name in sqlmeta._plainGetters:
             delattr(soClass, getterName(name))
         delattr(soClass, rawSetterName(name))
-        if sqlmeta._plainSetters.has_key(name):
+        if name in sqlmeta._plainSetters:
             delattr(soClass, setterName(name))
         if column.foreignKey:
             delattr(soClass, rawGetterName(soClass.sqlmeta.style.instanceIDAttrToAttr(name)))
-            if sqlmeta._plainForeignGetters.has_key(name):
+            if name in sqlmeta._plainForeignGetters:
                 delattr(soClass, getterName(name))
             delattr(soClass, rawSetterName(soClass.sqlmeta.style.instanceIDAttrToAttr(name)))
-            if sqlmeta._plainForeignSetters.has_key(name):
+            if name in sqlmeta._plainForeignSetters:
                 delattr(soClass, setterName(name))
         if column.alternateMethodName:
             delattr(soClass, column.alternateMethodName)
@@ -565,15 +565,15 @@ class sqlmeta(object):
                 # by index.
                 sqlmeta.joins[i] = None
         delattr(soClass, rawGetterName(meth))
-        if sqlmeta._plainJoinGetters.has_key(meth):
+        if meth in sqlmeta._plainJoinGetters:
             delattr(soClass, getterName(meth))
         if hasattr(join, 'remove'):
             delattr(soClass, '_SO_remove' + join.addRemovePrefix)
-            if sqlmeta._plainJoinRemovers.has_key(meth):
+            if meth in sqlmeta._plainJoinRemovers:
                 delattr(soClass, 'remove' + join.addRemovePrefix)
         if hasattr(join, 'add'):
             delattr(soClass, '_SO_add' + join.addRemovePrefix)
-            if sqlmeta._plainJoinAdders.has_key(meth):
+            if meth in sqlmeta._plainJoinAdders:
                 delattr(soClass, 'add' + join.addRemovePrefix)
 
         if soClass._SO_finishedClassCreation:
@@ -728,11 +728,11 @@ class SQLObject(object):
         if not is_base:
             cls._SO_cleanDeprecatedAttrs(new_attrs)
 
-        if new_attrs.has_key('_connection'):
+        if '_connection' in new_attrs:
             connection = new_attrs['_connection']
             del cls._connection
-            assert not new_attrs.has_key('connection')
-        elif new_attrs.has_key('connection'):
+            assert 'connection' not in new_attrs
+        elif 'connection' in new_attrs:
             connection = new_attrs['connection']
             del cls.connection
         else:
@@ -818,7 +818,7 @@ class SQLObject(object):
         inheritance.  Lastly it calls sqlmeta.setClass, which handles
         much of the setup.
         """
-        if (not new_attrs.has_key('sqlmeta')
+        if ('sqlmeta' not in new_attrs
             and not is_base):
             # We have to create our own subclass, usually.
             # type(className, bases_tuple, attr_dict) creates a new subclass.
@@ -859,7 +859,7 @@ class SQLObject(object):
         a deprecation warning is given.
         """
         for attr in ():
-            if new_attrs.has_key(attr):
+            if attr in new_attrs:
                 deprecated("%r is deprecated and read-only; please do "
                            "not use it in your classes until it is fully "
                            "deprecated" % attr, level=1, stacklevel=5)
@@ -1056,7 +1056,7 @@ class SQLObject(object):
         # Filter out items that don't map to column names.
         # Those will be set directly on the object using
         # setattr(obj, name, value).
-        is_column = self.sqlmeta._plainSetters.has_key
+        is_column = lambda _c: _c in self.sqlmeta._plainSetters
         f_is_column = lambda item: is_column(item[0])
         f_not_column = lambda item: not is_column(item[0])
         items = kw.items()
@@ -1190,14 +1190,14 @@ class SQLObject(object):
             # The get() classmethod/constructor uses a magic keyword
             # argument when it wants an empty object, fetched from the
             # database.  So we have nothing more to do in that case:
-            if kw.has_key('_SO_fetch_no_create'):
+            if '_SO_fetch_no_create' in kw:
                 return
 
             post_funcs = []
             self.sqlmeta.send(events.RowCreateSignal, self, kw, post_funcs)
 
             # Pass the connection object along if we were given one.
-            if kw.has_key('connection'):
+            if 'connection' in kw:
                 connection = kw.pop('connection')
                 if getattr(self, '_connection', None) is not connection:
                     self._connection = connection
@@ -1205,7 +1205,7 @@ class SQLObject(object):
 
             self._SO_writeLock = threading.Lock()
 
-            if kw.has_key('id'):
+            if 'id' in kw:
                 id = self.sqlmeta.idType(kw['id'])
                 del kw['id']
             else:
@@ -1238,7 +1238,7 @@ class SQLObject(object):
 
             # Then we check if the column wasn't passed in, and
             # if not we try to get the default.
-            if not kw.has_key(column.name) and not kw.has_key(column.foreignName):
+            if column.name not in kw and column.foreignName not in kw:
                 default = column.default
 
                 # If we don't get it, it's an error:

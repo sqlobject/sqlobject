@@ -35,7 +35,7 @@ class Join(object):
     name = joinMethodName
 
     def withClass(self, soClass):
-        if self.kw.has_key('joinMethodName'):
+        if 'joinMethodName' in self.kw:
             self._joinMethodName = self.kw['joinMethodName']
             del self.kw['joinMethodName']
         return self.baseClass(creationOrder=self.creationOrder,

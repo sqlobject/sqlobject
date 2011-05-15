@@ -269,7 +269,7 @@ class MaxdbConnection(DBAPI):
             if default is not None:
                 kw['default'] = default
 
-            if keymap.has_key(field_name):
+            if field_name in keymap:
                 kw['foreignKey'] = keymap[field_name]
 
             results.append(colClass(**kw))

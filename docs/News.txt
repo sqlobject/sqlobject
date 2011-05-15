@@ -21,10 +21,12 @@ Features & Interface
   now SQLObject uses text_factory instead and properly returns empty
   strings.
 
-Source code
------------
+Source code and internals
+-------------------------
 
 * Decorators @classmethod and @staticmethod are used everywhere.
+
+* All 'mydict.has_key(name)' checks were replaced with 'name in mydict'.
 
 SQLObject 1.0.0
 ===============

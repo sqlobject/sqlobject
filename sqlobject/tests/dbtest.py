@@ -99,7 +99,7 @@ def getConnection(**kw):
 
 def getConnectionURI():
     name = conftest.option.Database
-    if conftest.connectionShortcuts.has_key(name):
+    if name in conftest.connectionShortcuts:
         name = conftest.connectionShortcuts[name]
     return name
 

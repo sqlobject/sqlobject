@@ -65,7 +65,7 @@ def db_differences(soClass, conn):
                 existing[col.dbName] = col
             missing = {}
             for col in soClass.sqlmeta.columnList:
-                if existing.has_key(col.dbName):
+                if col.dbName in existing:
                     del existing[col.dbName]
                 else:
                     missing[col.dbName] = col
@@ -220,7 +220,7 @@ class Command(object):
             using the dependency_stack to detect any circular reference.
             """
             # Return value from the cache if already calculated
-            if dependency_levels.has_key(cls):
+            if cls in dependency_levels:
                 return dependency_levels[cls]
             # Check for circular references
             if cls in dependency_stack:
@@ -766,7 +766,7 @@ class CommandStatus(Command):
                 existing[col.dbName] = col
             missing = {}
             for col in soClass.sqlmeta.columnList:
-                if existing.has_key(col.dbName):
+                if col.dbName in existing:
                     del existing[col.dbName]
                 else:
                     missing[col.dbName] = col
@@ -968,7 +968,7 @@ class CommandRecord(Command):
             for fn in os.listdir(last_version_dir):
                 if not fn.endswith('.sql'):
                     continue
-                if not files_copy.has_key(fn):
+                if not fn in files_copy:
                     if v > 1:
                         print "Missing file %s" % fn
                     break

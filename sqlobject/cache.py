@@ -230,9 +230,9 @@ class CacheFactory(object):
             return
         self.lock.acquire()
         try:
-            if self.cache.has_key(id):
+            if id in self.cache:
                 del self.cache[id]
-            if self.expiredCache.has_key(id):
+            if id in self.expiredCache:
                 del self.expiredCache[id]
         finally:
             self.lock.release()
@@ -323,7 +323,7 @@ class CacheSet(object):
         if cls is None:
             for cache in self.caches.values():
                 cache.clear()
-        elif self.caches.has_key(cls.__name__):
+        elif cls.__name__ in self.caches:
             self.caches[cls.__name__].clear()
 
     def tryGet(self, id, cls):
@@ -356,7 +356,7 @@ class CacheSet(object):
         if cls is None:
             for cache in self.caches.values():
                 cache.expireAll()
-        elif self.caches.has_key(cls.__name__):
+        elif cls.__name__ in self.caches:
             self.caches[cls.__name__].expireAll()
 
     def getAll(self, cls=None):

@@ -258,7 +258,7 @@ class PostgresConnection(DBAPI):
         for field, t, notnull, defaultstr in colData:
             if field == primaryKey:
                 continue
-            if keymap.has_key(field):
+            if field in keymap:
                 colClass = col.ForeignKey
                 kw = {'foreignKey': soClass.sqlmeta.style.dbTableToPythonClass(keymap[field])}
                 name = soClass.sqlmeta.style.dbColumnToPythonAttr(field)

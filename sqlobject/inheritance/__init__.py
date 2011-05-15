@@ -57,7 +57,7 @@ class InheritableSelectResults(SelectResults):
                     continue
                 currentClass = childClass
                 while currentClass:
-                    if tableRegistryCopy.has_key(currentClass):
+                    if currentClass in tableRegistryCopy:
                         if currentClass in tableRegistry:
                             #DSM: Remove this class as it is a parent one
                             #DSM: of a needed children
@@ -214,7 +214,7 @@ class InheritableSQLMeta(sqlmeta):
     @classmethod
     def getColumns(sqlmeta):
         columns = sqlmeta.getAllColumns()
-        if columns.has_key('childName'):
+        if 'childName' in columns:
             del columns['childName']
         return columns
 
@@ -349,7 +349,7 @@ class InheritableSQLObject(SQLObject):
         #DSM: Note: we can't use the ** call paremeter directly
         #DSM: as we must be able to delete items from the dictionary
         #DSM: (and our children must know that the items were removed!)
-        if kw.has_key('kw'):
+        if 'kw' in kw:
             kw = kw['kw']
         #DSM: If we are the children of an inheritable class,
         #DSM: we must first create our parent

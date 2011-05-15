@@ -23,7 +23,7 @@ class SelectResults(object):
         else:
             orderBy = self._mungeOrderBy(orderBy)
         ops['dbOrderBy'] = orderBy
-        if ops.has_key('connection') and ops['connection'] is None:
+        if 'connection' in ops and ops['connection'] is None:
             del ops['connection']
         if ops.get('limit', None):
             assert not ops.get('start', None) and not ops.get('end', None), \

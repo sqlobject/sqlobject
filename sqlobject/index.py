@@ -26,7 +26,7 @@ class SODatabaseIndex(object):
         if args and kw:
             raise TypeError, "You cannot mix named and unnamed arguments"
         columns = [d['column'] for d in self.descriptions
-            if d.has_key('column')]
+            if 'column' in d]
         if kw and len(kw) != len(columns) or args and len(args) != len(columns):
             raise TypeError, ("get() takes exactly %d argument and an optional "
                 "named argument 'connection' (%d given)" % (
@@ -49,12 +49,12 @@ class SODatabaseIndex(object):
         for desc in columns:
             if not isinstance(desc, dict):
                 desc = {'column': desc}
-            if desc.has_key('expression'):
-                assert not desc.has_key('column'), (
+            if 'expression' in desc:
+                assert 'column' not in desc, (
                     'You cannot provide both an expression and a column '
                     '(for %s in index %s in %s)' %
                     (desc, self.name, self.soClass))
-                assert not desc.has_key('length'), (
+                assert 'length' not in desc, (
                     'length does not apply to expressions (for %s in '
                     'index %s in %s)' %
                     (desc, self.name, self.soClass))
@@ -64,7 +64,7 @@ class SODatabaseIndex(object):
             if not isinstance(columnName, str):
                 columnName = columnName.name
             colDict = self.soClass.sqlmeta.columns
-            if not colDict.has_key(columnName):
+            if columnName not in colDict:
                 for possible in colDict.values():
                     if possible.origName == columnName:
                         column = possible
@@ -91,7 +91,7 @@ class SODatabaseIndex(object):
             uniqueOrIndex = 'INDEX'
         spec = []
         for desc in self.descriptions:
-            if desc.has_key('expression'):
+            if 'expression' in desc:
                 spec.append(self.getExpression(desc, 'sqlite'))
             else:
                 spec.append(desc['column'].dbName)
@@ -111,9 +111,9 @@ class SODatabaseIndex(object):
             uniqueOrIndex = 'INDEX'
         spec = []
         for desc in self.descriptions:
-            if desc.has_key('expression'):
+            if 'expression' in desc:
                 spec.append(self.getExpression(desc, 'mysql'))
-            elif desc.has_key('length'):
+            elif 'length' in desc:
                 spec.append('%s(%d)' % (desc['column'].dbName, desc['length']))
             else:
                 spec.append(desc['column'].dbName)
