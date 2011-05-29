@@ -6,17 +6,17 @@ class PhoneNumber(SQLObject):
     number = StringCol()
     calls = SQLMultipleJoin('PhoneCall')
     incoming = SQLMultipleJoin('PhoneCall', joinColumn='toID')
-    
+
 class PhoneCall(SQLObject):
     phoneNumber = ForeignKey('PhoneNumber')
     to = ForeignKey('PhoneNumber')
     minutes = IntCol()
-    
+
 class ViewPhoneCall(ViewSQLObject):
     class sqlmeta:
         idName = PhoneCall.q.id
         clause = PhoneCall.q.phoneNumberID==PhoneNumber.q.id
-    
+
     minutes = IntCol(dbName=PhoneCall.q.minutes)
     number = StringCol(dbName=PhoneNumber.q.number)
     phoneNumber = ForeignKey('PhoneNumber', dbName=PhoneNumber.q.id)
@@ -26,7 +26,7 @@ class ViewPhone(ViewSQLObject):
     class sqlmeta:
         idName = PhoneNumber.q.id
         clause = PhoneCall.q.phoneNumberID==PhoneNumber.q.id
-    
+
     minutes = IntCol(dbName=func.SUM(PhoneCall.q.minutes))
     numberOfCalls = IntCol(dbName=func.COUNT(PhoneCall.q.phoneNumberID))
     number = StringCol(dbName=PhoneNumber.q.number)
@@ -40,7 +40,7 @@ class ViewPhoneMore(ViewSQLObject):
     class sqlmeta:
         idName = ViewPhone.q.id
         clause = ViewPhone.q.id == PhoneCall.q.toID
-    
+
     number = StringCol(dbName=ViewPhone.q.number)
     timesCalled = IntCol(dbName=func.COUNT(PhoneCall.q.toID))
     timesCalledLong = IntCol(dbName=func.COUNT(PhoneCall.q.toID))
@@ -50,13 +50,13 @@ class ViewPhoneMore(ViewSQLObject):
 class ViewPhoneMore2(ViewPhoneMore):
     class sqlmeta:
         table = 'vpm'
-    
+
 
 class ViewPhoneInnerAggregate(ViewPhone):
     twiceMinutes = IntCol(dbName=func.SUM(PhoneCall.q.minutes)*2)
 
 def setup_module(mod):
-    setupClass([mod.PhoneNumber,mod.PhoneCall])
+    setupClass([mod.PhoneNumber, mod.PhoneCall])
     mod.ViewPhoneCall._connection = mod.PhoneNumber._connection
     mod.ViewPhone._connection = mod.PhoneNumber._connection
     mod.ViewPhoneMore._connection = mod.PhoneNumber._connection
@@ -123,11 +123,11 @@ def testSelect():
     assert s.count() == len(phones)
     s = ViewPhoneCall.select()
     assert s.count() == len(calls)
-    
+
 def testSelect2():
     s = ViewPhone.select(ViewPhone.q.number==phones[0].number)
     assert s.getOne().phoneNumber == phones[0]
-    
+
 def testDistinctCount():
     # This test is for SelectResults non-* based count when distinct
     # We're really just checking this doesn't raise anything due to lack of sqlrepr'ing
