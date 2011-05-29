@@ -28,6 +28,12 @@ Source code and internals
 
 * All 'mydict.has_key(name)' checks were replaced with 'name in mydict'.
 
+SQLObject 1.0.1
+===============
+
+* A syntax incompatibility was fixed in SQLiteConnection that prevented
+  SQLObject to be used with Python 2.4.
+
 SQLObject 1.0.0
 ===============
 

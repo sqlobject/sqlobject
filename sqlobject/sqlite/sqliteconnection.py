@@ -100,7 +100,7 @@ class SQLiteConnection(DBAPI):
         assert host is None and port is None, (
             "SQLite can only be used locally (with a URI like "
             "sqlite:/file or sqlite:///file, not sqlite://%s%s)" %
-            (host, ':%r' % port if port else ''))
+            (host, port and ':%r' % port or ''))
         assert user is None and password is None, (
             "You may not provide usernames or passwords for SQLite "
             "databases")
