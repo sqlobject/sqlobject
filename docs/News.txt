@@ -31,6 +31,8 @@ Source code and internals
 SQLObject 1.0.1
 ===============
 
+Released 30 May 2011.
+
 * A syntax incompatibility was fixed in SQLiteConnection that prevented
   SQLObject to be used with Python 2.4.
 
