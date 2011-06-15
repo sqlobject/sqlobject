@@ -1,9 +1,6 @@
 TODO
 ----
 
-* Declare one encoding for all UnicodeCol's per table or even per connection.
-  Don't forget about fromDatabase.
-
 * Allow to override ConsoleWriter/LogWriter classes and makeDebugWriter
   function.
 

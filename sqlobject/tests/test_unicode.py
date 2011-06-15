@@ -38,8 +38,7 @@ def test_create():
         assert data[count].encode('utf-8') == col1
         assert data[count].encode('latin1') == col2
 
-def test_select():
-    setup()
+def _test_select():
     for i, value in enumerate(data):
         rows = list(TestUnicode.select(TestUnicode.q.col1 == value))
         assert len(rows) == 1
@@ -79,3 +78,29 @@ def test_select():
     assert len(rows) == 1
     rows = list(TestUnicode.select(TestUnicode.q.col1.contains(u"\u00f0")))
     assert len(rows) == 1
+
+def test_select():
+    setup()
+    _test_select()
+
+def test_dbEncoding():
+    setup()
+    assert TestUnicode.sqlmeta.dbEncoding is None
+    assert not hasattr(TestUnicode._connection, 'dbEncoding') or \
+        TestUnicode._connection.dbEncoding is None
+
+    TestUnicode.sqlmeta.dbEncoding = 'utf-8'
+    _test_select()
+    TestUnicode.sqlmeta.dbEncoding = 'latin-1'
+    raises(AssertionError, _test_select)
+    TestUnicode.sqlmeta.dbEncoding = 'ascii'
+    raises(UnicodeEncodeError, _test_select)
+    TestUnicode.sqlmeta.dbEncoding = None
+
+    TestUnicode._connection.dbEncoding = 'utf-8'
+    _test_select()
+    TestUnicode._connection.dbEncoding = 'latin-1'
+    raises(AssertionError, _test_select)
+    TestUnicode._connection.dbEncoding = 'ascii'
+    raises(UnicodeEncodeError, _test_select)
+    del TestUnicode.sqlmeta.dbEncoding

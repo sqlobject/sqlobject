@@ -21,6 +21,11 @@ Features & Interface
   now SQLObject uses text_factory instead and properly returns empty
   strings.
 
+* It is now possible to declare one encoding for all UnicodeCol's per
+  table (as sqlmeta.dbEncoding) or per connection (as connection.dbEncoding).
+  Default (if dbEncoding is found neither in column nor in table nor in
+  connection) is 'utf-8'.
+
 Source code and internals
 -------------------------
 

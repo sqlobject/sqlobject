@@ -535,15 +535,21 @@ class StringCol(Col):
 
 class UnicodeStringValidator(validators.Validator):
 
+    def getDbEncoding(self, state):
+        try:
+            return self.dbEncoding
+        except AttributeError:
+            return self.soCol.getDbEncoding(state)
+
     def to_python(self, value, state):
         if value is None:
             return None
         if isinstance(value, (unicode, sqlbuilder.SQLExpression)):
             return value
         if isinstance(value, str):
-            return unicode(value, self.dbEncoding)
+            return unicode(value, self.getDbEncoding(state))
         if isinstance(value, array): # MySQL
-            return unicode(value.tostring(), self.dbEncoding)
+            return unicode(value.tostring(), self.getDbEncoding(state))
         if hasattr(value, '__unicode__'):
             return unicode(value)
         raise validators.Invalid("expected a str or a unicode in the UnicodeCol '%s', got %s %r instead" % \
@@ -555,21 +561,36 @@ class UnicodeStringValidator(validators.Validator):
         if isinstance(value, (str, sqlbuilder.SQLExpression)):
             return value
         if isinstance(value, unicode):
-            return value.encode(self.dbEncoding)
+            return value.encode(self.getDbEncoding(state))
         if hasattr(value, '__unicode__'):
-            return unicode(value).encode(self.dbEncoding)
+            return unicode(value).encode(self.getDbEncoding(state))
         raise validators.Invalid("expected a str or a unicode in the UnicodeCol '%s', got %s %r instead" % \
             (self.name, type(value), value), value, state)
 
 class SOUnicodeCol(SOStringLikeCol):
     def __init__(self, **kw):
-        self.dbEncoding = kw.pop('dbEncoding', 'UTF-8')
+        self.dbEncoding = kw.pop('dbEncoding', None)
         super(SOUnicodeCol, self).__init__(**kw)
 
     def createValidators(self):
-        return [UnicodeStringValidator(name=self.name,
-                dbEncoding=self.dbEncoding)] + \
+        return [UnicodeStringValidator(name=self.name, soCol=self)] + \
             super(SOUnicodeCol, self).createValidators()
+
+    def getDbEncoding(self, state):
+        if self.dbEncoding:
+            return self.dbEncoding
+        dbEncoding = state.soObject.sqlmeta.dbEncoding
+        if dbEncoding:
+            return dbEncoding
+        try:
+            connection = state.connection or state.soObject._connection
+        except AttributeError:
+            dbEncoding = None
+        else:
+            dbEncoding = getattr(connection, "dbEncoding", None)
+        if not dbEncoding:
+            dbEncoding = "utf-8"
+        return dbEncoding
 
 class UnicodeCol(Col):
     baseClass = SOUnicodeCol

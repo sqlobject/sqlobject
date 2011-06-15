@@ -234,6 +234,9 @@ class sqlmeta(object):
     # Does the row require syncing?
     dirty = False
 
+    # Default encoding for UnicodeCol's
+    dbEncoding = None
+
     __metaclass__ = declarative.DeclarativeMeta
 
     def __classinit__(cls, new_attrs):
