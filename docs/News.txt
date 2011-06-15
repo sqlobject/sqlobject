@@ -13,6 +13,12 @@ SQLObject (trunk)
 Features & Interface
 --------------------
 
+SQLObject 1.1
+=============
+
+Features & Interface
+--------------------
+
 * SelectResults (returned from .select()) is allowed in IN(column, list).
 
 * A different workaround is used in SQLiteConnection to prevent PySQLite
