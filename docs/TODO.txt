@@ -1,6 +1,8 @@
 TODO
 ----
 
+* Deprecate parsing sqlobject.__doc__ to find out version.
+
 * Allow to override ConsoleWriter/LogWriter classes and makeDebugWriter
   function.
 
