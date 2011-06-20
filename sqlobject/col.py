@@ -458,7 +458,7 @@ class SOStringLikeCol(SOCol):
 
     def _sqliteType(self):
         self._check_case_sensitive("SQLite")
-        return super(SOStringLikeCol, self)._sqliteType().replace("CHAR(", "CHAR (")
+        return super(SOStringLikeCol, self)._sqliteType()
 
     def _sybaseType(self):
         self._check_case_sensitive("SYBASE")
@@ -974,8 +974,7 @@ class SOEnumCol(SOCol):
         checkConstraint = "CHECK (%s in (%s))" % (self.dbName, enumValues)
         return "VARCHAR(%i) %s" % (length, checkConstraint)
 
-    def _sqliteType(self):
-        return self._postgresType().replace("CHAR(", "CHAR (")
+    _sqliteType = _postgresType
 
     def _sybaseType(self):
         return self._postgresType()
