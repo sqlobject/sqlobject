@@ -13,6 +13,14 @@ SQLObject (trunk)
 Features & Interface
 --------------------
 
+SQLObject 1.1.1
+===============
+
+* Parsing sqlobject.__doc__ for version number is declared obsolete. Use
+  sqlobject.version or version_info.
+
+* Documented sqlmeta.dbEncoding and connection.dbEncoding.
+
 SQLObject 1.1
 =============
 

@@ -755,6 +755,14 @@ values are:
    database will be queried for the table's columns, and any missing
    columns (possible all columns) will be added automatically.
 
+`dbEncoding`:
+   UnicodeCol_ looks up `sqlmeta.dbEncoding` if `column.dbEncoding` is
+   ``None`` (if `sqlmeta.dbEncoding` is ``None`` UnicodeCol_ looks up
+   `connection.dbEncoding` and if `dbEncoding` isn't defined anywhere it
+   defaults to ``"utf-8"``).
+
+.. _UnicodeCol: `Column Types`_
+
 The following attributes provide introspection but should not be set or
 directly - see `Runtime Column and Join Changes`_ for dynamically modifying these class elements.
 
@@ -1194,10 +1202,12 @@ different types of columns, when SQLObject creates your tables.
         ``VARCHAR``.
 
 `UnicodeCol`:
-    A subclass of `StringCol`.  Also accepts a dbEncoding keyword
-    argument, which defaults to ``"UTF-8"``.  Values coming in and
-    out from the database will be encoded and decoded.  **Note**:
-    there are some limitations on using UnicodeCol in queries:
+    A subclass of `StringCol`.  Also accepts a `dbEncoding` keyword
+    argument, it defaults to ``None`` which means to lookup `dbEncoding`
+    in sqlmeta_ and connection, and if `dbEncoding` isn't defined
+    anywhere it defaults to ``"utf-8"``.  Values coming in and out from
+    the database will be encoded and decoded.  **Note**: there are some
+    limitations on using UnicodeCol in queries:
 
     - only simple q-magic fields are supported; no expressions;
     - only == and <> operators are supported;
