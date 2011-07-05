@@ -14,17 +14,14 @@ def function( receiver ):
 	If fromMethod is true, then the callable already
 	has its first argument bound
 	"""
-	if hasattr(receiver, '__call__'):
-		# receiver is a class instance; assume it is callable.
-		# Reassign receiver to the actual method that will be called.
-		if hasattr( receiver.__call__, 'im_func') or hasattr( receiver.__call__, 'im_code'):
-			receiver = receiver.__call__
-	if hasattr( receiver, 'im_func' ):
-		# an instance-method...
+	if hasattr(receiver, 'im_func'):
 		return receiver, receiver.im_func.func_code, 1
-	elif not hasattr( receiver, 'func_code'):
+	elif hasattr(receiver, 'func_code'):
+		return receiver, receiver.func_code, 0
+	elif hasattr(receiver, '__call__'):
+		return function(receiver.__call__)
+	else:
 		raise ValueError('unknown reciever type %s %s'%(receiver, type(receiver)))
-	return receiver, receiver.func_code, 0
 
 def robustApply(receiver, *arguments, **named):
 	"""Call receiver with arguments and an appropriate subset of named
