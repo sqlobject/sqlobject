@@ -1,7 +1,8 @@
 from sqlobject import declarative
 from sqlobject import boundattributes
+import py.test
 
-disabled = True
+pytestmark = py.test.mark.skipif('True')
 
 class TestMe(object):
 
