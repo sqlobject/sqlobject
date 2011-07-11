@@ -1,8 +1,8 @@
 Download SQLObject
 ++++++++++++++++++
 
-The latest releases are always available on the `Python Cheese Shop
-<http://cheeseshop.python.org/pypi/SQLObject>`_, and is installable
+The latest releases are always available on the `Python Package Index
+<http://pypi.python.org/pypi/SQLObject>`_, and is installable
 with `easy_install
 <http://peak.telecommunity.com/DevCenter/EasyInstall>`_.
 
