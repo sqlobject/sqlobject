@@ -1,8 +1,6 @@
 TODO
 ----
 
-* Deprecate parsing sqlobject.__doc__ to find out version.
-
 * Allow to override ConsoleWriter/LogWriter classes and makeDebugWriter
   function.
 
@@ -19,6 +17,8 @@ TODO
        class sqlmeta:
           tableParamSQL = 'ENGINE InnoDB'
           tableParamSQL = {'mysql': 'ENGINE InnoDB'}
+
+* SQLObject.fastInsert().
 
 * List tables in the DB. The query in MySQL is ``SHOW TABLES``; in SQLite it is
 
@@ -37,8 +37,6 @@ TODO
 
 * Invert tests isinstance(obj, (tuple, list)) to not isinstance(obj, basestr)
   to allow any iterable.
-
-* SQLObject.fastInsert().
 
 * Always use .lazyIter().
 
@@ -60,11 +58,13 @@ TODO
         function1 = ExpressionCol(func.my_function(MyClass.q.col1))
         function2 = ExpressionCol('sum(col2)')
 
-* Catch all DB API exceptions and convert them to sqlobject.dberrors.
+* A hierarchy of exceptions. SQLObject should translate exceptions from
+  low-level drivers to a consistent set of high-level exceptions.
 
 * Memcache.
 
-* Parametrized queries.
+* Refactor ``DBConnection`` to use parameterized queries instead of
+  generating query strings.
 
 * PREPARE/EXECUTE
 
@@ -125,12 +125,6 @@ TODO
 
 * More kinds of joins, and more powerful join results (closer to how
   `select` works).
-
-* Refactor ``DBConnection`` to use parameterized queries instead of
-  generating query strings.
-
-* A hierarchy of exceptions. SQLObject should translate exceptions from
-  low-level drivers to a consistent set of high-level exceptions.
 
 * Merge SQLObject.create*, .create*SQL methods with DBPI.create* methods.
 
