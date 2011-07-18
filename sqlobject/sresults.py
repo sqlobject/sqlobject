@@ -1,7 +1,9 @@
-import sqlbuilder
 import dbconnection
-import main
 import joins
+import main
+import sqlbuilder
+
+__all__ = ['SelectResults']
 
 class SelectResults(object):
     IterationClass = dbconnection.Iteration
@@ -152,8 +154,8 @@ class SelectResults(object):
                         end = start
                     else:
                         end = value.stop + self.ops.get('start', 0)
-                        if self.ops.get('end', None) is not None \
-                           and value['end'] < end:
+                        if self.ops.get('end', None) is not None and \
+                                self.ops['end'] < end:
                             # truncated by previous slice:
                             end = self.ops['end']
                 else:
@@ -342,5 +344,3 @@ class SelectResults(object):
         clause = sqlbuilder.AND(otherClass.q.id == getattr(intTable, join.otherColumn),
                      getattr(intTable, colName) == query.q.id)
         return otherClass, clause
-
-__all__ = ['SelectResults']

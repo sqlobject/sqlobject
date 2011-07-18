@@ -54,6 +54,12 @@ Source code and internals
 
 * All 'mydict.has_key(name)' checks were replaced with 'name in mydict'.
 
+SQLObject 1.0.2
+===============
+
+* A bug was fixed in SelectResults slicing that prevented to slice a
+  slice (my_results[:20][1:5]).
+
 SQLObject 1.0.1
 ===============
 
