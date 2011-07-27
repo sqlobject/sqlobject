@@ -16,6 +16,11 @@ Features & Interface
 * A bug caused by psycopg2 recently added a new boolean not callable
   autocommit attribute was fixed.
 
+SQLObject 1.1.2
+===============
+
+* A bugfix was ported from `SQLObject 1.0.2`_.
+
 SQLObject 1.1.1
 ===============
 

@@ -1,6 +1,8 @@
 TODO
 ----
 
+* Make strings special-cased in Select to allow Select(['name', 'value']).
+
 * Allow to override ConsoleWriter/LogWriter classes and makeDebugWriter
   function.
 
@@ -34,6 +36,8 @@ TODO
 * IntervalCol
 
 * TimedeltaCol
+
+* Cached join results.
 
 * Invert tests isinstance(obj, (tuple, list)) to not isinstance(obj, basestr)
   to allow any iterable.
