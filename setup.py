@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 
+from imp import load_source
+from os.path import abspath, dirname, isfile, join
+
 try:
     from ez_setup import use_setuptools
     use_setuptools()
@@ -9,7 +12,9 @@ except ImportError:
     from distutils.core import setup
     is_setuptools = False
 
-from sqlobject import version
+versionpath = join(abspath(dirname(__file__)), "sqlobject", "__version__.py")
+load_source("sqlobject_version", versionpath)
+from sqlobject_version import version
 
 subpackages = ['firebird', 'include', 'include.pydispatch', 'inheritance',
                'manager', 'maxdb', 'mysql', 'mssql', 'postgres', 'rdbhost',
