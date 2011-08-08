@@ -19,6 +19,8 @@ Features & Interface
 SQLObject 1.1.2
 ===============
 
+Released 8 Aug 2011.
+
 * A bugfix was ported from `SQLObject 1.0.2`_.
 
 SQLObject 1.1.1
@@ -61,6 +63,8 @@ Source code and internals
 
 SQLObject 1.0.2
 ===============
+
+Released 8 Aug 2011.
 
 * A bug was fixed in SelectResults slicing that prevented to slice a
   slice (my_results[:20][1:5]).
