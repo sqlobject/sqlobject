@@ -137,7 +137,7 @@ class PostgresConnection(DBAPI):
             c.execute("SET search_path TO " + self.schema)
         dbEncoding = self.dbEncoding
         if dbEncoding:
-            c.execute("SET client_encoding TO %s" % dbEncoding)
+            c.execute("SET client_encoding TO '%s'" % dbEncoding)
         return conn
 
     def _queryInsertID(self, conn, soInstance, id, names, values):
