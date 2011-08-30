@@ -16,6 +16,13 @@ Features & Interface
 * A bug caused by psycopg2 recently added a new boolean not callable
   autocommit attribute was fixed.
 
+SQLObject 1.1.3
+===============
+
+Released 30 Aug 2011.
+
+* A bugfix was ported from `SQLObject 1.0.3`_.
+
 SQLObject 1.1.2
 ===============
 
@@ -63,6 +70,8 @@ Source code and internals
 
 SQLObject 1.0.3
 ===============
+
+Released 30 Aug 2011.
 
 * Fixed a bug with Postgres - add quotes in "SET client_encoding" query.
 
