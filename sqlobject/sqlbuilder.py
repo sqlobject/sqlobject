@@ -95,6 +95,12 @@ def execute(expr, executor):
     else:
         return expr
 
+
+def _str_or_sqlrepr(expr, db):
+    if isinstance(expr, basestring):
+        return expr
+    return sqlrepr(expr, db)
+
 ########################################
 ## Expression generation
 ########################################
@@ -372,9 +378,7 @@ class Table(SQLExpression):
             raise AttributeError
         return self.FieldClass(self.tableName, attr)
     def __sqlrepr__(self, db):
-        if isinstance(self.tableName, str):
-            return self.tableName
-        return sqlrepr(self.tableName, db)
+        return _str_or_sqlrepr(self.tableName, db)
     def execute(self, executor):
         raise ValueError, "Tables don't have values"
 
@@ -616,11 +620,11 @@ class Select(SQLExpression):
         if self.ops['distinct']:
             select += " DISTINCT"
             if self.ops['distinctOn'] is not NoDefault:
-                select += " ON(%s)" % sqlrepr(self.ops['distinctOn'], db)
+                select += " ON(%s)" % _str_or_sqlrepr(self.ops['distinctOn'], db)
         if not self.ops['lazyColumns']:
-            select += " %s" % ", ".join([str(sqlrepr(v, db)) for v in self.ops['items']])
+            select += " %s" % ", ".join([str(_str_or_sqlrepr(v, db)) for v in self.ops['items']])
         else:
-            select += " %s" % sqlrepr(self.ops['items'][0], db)
+            select += " %s" % _str_or_sqlrepr(self.ops['items'][0], db)
 
         join = []
         join_str = ''
@@ -644,8 +648,9 @@ class Select(SQLExpression):
             if isinstance(thing, SQLExpression):
                 tables.update(tablesUsedSet(thing, db))
         for j in join:
-            t1, t2 = sqlrepr(j.table1, db), sqlrepr(j.table2, db)
+            t1 = _str_or_sqlrepr(j.table1, db)
             if t1 in tables: tables.remove(t1)
+            t2 = _str_or_sqlrepr(j.table2, db)
             if t2 in tables: tables.remove(t2)
         if tables:
             select += " FROM %s" % ", ".join(tables)
@@ -664,14 +669,14 @@ class Select(SQLExpression):
             select += join_str
 
         if self.ops['clause'] is not NoDefault:
-            select += " WHERE %s" % sqlrepr(self.ops['clause'], db)
+            select += " WHERE %s" % _str_or_sqlrepr(self.ops['clause'], db)
         if self.ops['groupBy'] is not NoDefault:
-            groupBy = sqlrepr(self.ops['groupBy'], db)
+            groupBy = _str_or_sqlrepr(self.ops['groupBy'], db)
             if isinstance(self.ops['groupBy'], (list, tuple)):
                 groupBy = groupBy[1:-1] # Remove parens
             select += " GROUP BY %s" % groupBy
         if self.ops['having'] is not NoDefault:
-            select += " HAVING %s" % sqlrepr(self.ops['having'], db)
+            select += " HAVING %s" % _str_or_sqlrepr(self.ops['having'], db)
         if self.ops['orderBy'] is not NoDefault and self.ops['orderBy'] is not None:
             orderBy = self.ops['orderBy']
             if self.ops['reversed']:
@@ -679,9 +684,9 @@ class Select(SQLExpression):
             else:
                 reverser = lambda x: x
             if isinstance(orderBy, (list, tuple)):
-                select += " ORDER BY %s" % ", ".join([sqlrepr(reverser(x), db) for x in orderBy])
+                select += " ORDER BY %s" % ", ".join([_str_or_sqlrepr(reverser(x), db) for x in orderBy])
             else:
-                select += " ORDER BY %s" % sqlrepr(reverser(orderBy), db)
+                select += " ORDER BY %s" % _str_or_sqlrepr(reverser(orderBy), db)
         start, end = self.ops['start'], self.ops['end']
         if self.ops['limit'] is not NoDefault:
             end = start + self.ops['limit']

@@ -33,3 +33,14 @@ def test_empty_AND():
     assert sqlrepr(AND(1, 2, '3'), "sqlite") == \
         sqlrepr(SQLOp("AND", 1, SQLOp("AND", 2, '3')), "sqlite") == \
         "((1) AND ((2) AND ('3')))"
+
+def test_str_or_sqlrepr():
+    select = Select(['id', 'name'], staticTables=['employees'],
+        where='value>0', orderBy='id')
+    assert sqlrepr(select, 'sqlite') == \
+        'SELECT id, name FROM employees WHERE value>0 ORDER BY id'
+
+    select = Select(['id', 'name'], staticTables=['employees'],
+        where='value>0', orderBy='id', lazyColumns=True)
+    assert sqlrepr(select, 'sqlite') == \
+        'SELECT id FROM employees WHERE value>0 ORDER BY id'

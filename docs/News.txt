@@ -13,6 +13,9 @@ SQLObject (trunk)
 Features & Interface
 --------------------
 
+* Strings are treated specially in Select to allow
+  Select(['id, 'name'], where='value = 42').
+
 * A bug caused by psycopg2 recently added a new boolean not callable
   autocommit attribute was fixed.
 

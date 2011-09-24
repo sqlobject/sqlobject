@@ -1,8 +1,6 @@
 TODO
 ----
 
-* Make strings special-cased in Select to allow Select(['name', 'value']).
-
 * Allow to override ConsoleWriter/LogWriter classes and makeDebugWriter
   function.
 
