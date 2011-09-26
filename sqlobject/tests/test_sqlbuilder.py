@@ -44,3 +44,21 @@ def test_str_or_sqlrepr():
         where='value>0', orderBy='id', lazyColumns=True)
     assert sqlrepr(select, 'sqlite') == \
         'SELECT id FROM employees WHERE value>0 ORDER BY id'
+
+    insert = Insert('employees', values={'id': 1, 'name': 'test'})
+    assert sqlrepr(insert, 'sqlite') == \
+        "INSERT INTO employees (id, name) VALUES (1, 'test')"
+
+    update = Update('employees', {'name': 'test'}, where='id=1')
+    assert sqlrepr(update, 'sqlite') == \
+        "UPDATE employees SET name='test' WHERE id=1"
+
+    delete = Delete('employees', where='id=1')
+    assert sqlrepr(delete, 'sqlite') == \
+        "DELETE FROM employees WHERE id=1"
+
+    raises(TypeError, Delete, 'employees')
+
+    delete = Delete('employees', where=None)
+    assert sqlrepr(delete, 'sqlite') == \
+        "DELETE FROM employees"

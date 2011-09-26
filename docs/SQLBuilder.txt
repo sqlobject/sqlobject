@@ -188,7 +188,7 @@ Use ``connection.query(query)`` to execute the query.
    A dictionary {key: value}; keys are column names. Required.
 
 `where`:
-   An optional SQLExpression, represents the ``WHERE`` clause.
+   An optional string or SQLExpression, represents the ``WHERE`` clause.
 
 Example::
 

@@ -769,7 +769,7 @@ class Update(SQLExpression):
                     update += ","
                 update += " %s=%s" % (key, sqlrepr(value, db))
         if self.whereClause is not NoDefault:
-            update += " WHERE %s" % sqlrepr(self.whereClause, db)
+            update += " WHERE %s" % _str_or_sqlrepr(self.whereClause, db)
         return update
     def sqlName(self):
         return "UPDATE"
@@ -788,8 +788,7 @@ class Delete(SQLExpression):
         whereClause = self.whereClause
         if whereClause is None:
             return "DELETE FROM %s" % self.table
-        if isinstance(whereClause, SQLExpression):
-            whereClause = sqlrepr(whereClause, db)
+        whereClause = _str_or_sqlrepr(whereClause, db)
         return "DELETE FROM %s WHERE %s" % (self.table, whereClause)
 
 registerConverter(Delete, SQLExprConverter)
