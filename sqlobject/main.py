@@ -450,7 +450,12 @@ class sqlmeta(object):
         sqlmeta = cls
         soClass = sqlmeta.soClass
         if isinstance(column, str):
-            column = sqlmeta.columns[column]
+            if column in sqlmeta.columns:
+                column = sqlmeta.columns[column]
+            elif column+'ID' in sqlmeta.columns:
+                column = sqlmeta.columns[column+'ID']
+            else:
+                raise ValueError('Unknown column ' + column)
         if isinstance(column, col.Col):
             for c in sqlmeta.columns.values():
                 if column is c.columnDef:

@@ -4,8 +4,6 @@ TODO
 * Allow to override ConsoleWriter/LogWriter classes and makeDebugWriter
   function.
 
-* delColumn('foreignKey'), delColumn('foreignKeyID')
-
 * ForeignKey('Table', otherColumn='other_id') to allow ForeignKey to
   point to a non-id column.
 

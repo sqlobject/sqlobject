@@ -16,6 +16,8 @@ Features & Interface
 * Strings are treated specially in Select to allow
   Select(['id, 'name'], where='value = 42'). Update allows string in WHERE.
 
+* delColumn now accepts a ForeignKey's name without 'ID'.
+
 * A bug caused by psycopg2 recently added a new boolean not callable
   autocommit attribute was fixed.
 
