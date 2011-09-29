@@ -120,7 +120,7 @@ class InstalledTestDatabase(sqlobject.SQLObject):
     """
 
     _connection = installedDBTracker
-    tableName = sqlobject.StringCol(notNull=True)
+    table_name = sqlobject.StringCol(notNull=True)
     createSQL = sqlobject.StringCol(notNull=True)
     connectionURI = sqlobject.StringCol(notNull=True)
 
@@ -140,7 +140,7 @@ class InstalledTestDatabase(sqlobject.SQLObject):
             if not soClass._connection.tableExists(table):
                 continue
             items = list(cls.selectBy(
-                tableName=table,
+                table_name=table,
                 connectionURI=soClass._connection.uri()))
             if items:
                 instance = items[0]
@@ -178,7 +178,7 @@ class InstalledTestDatabase(sqlobject.SQLObject):
             sql, extra_sql = soClass.createTableSQL()
             soClass.createTable(applyConstraints=False)
             all_extra.extend(extra_sql)
-        cls(tableName=soClass.sqlmeta.table,
+        cls(table_name=soClass.sqlmeta.table,
             createSQL=sql,
             connectionURI=soClass._connection.uri())
         for extra_sql in all_extra:
