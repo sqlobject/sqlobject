@@ -1,9 +1,6 @@
 TODO
 ----
 
-* Allow to override ConsoleWriter/LogWriter classes and makeDebugWriter
-  function.
-
 * ForeignKey('Table', otherColumn='other_id') to allow ForeignKey to
   point to a non-id column.
 
@@ -18,16 +15,17 @@ TODO
 
 * SQLObject.fastInsert().
 
-* List tables in the DB. The query in MySQL is ``SHOW TABLES``; in SQLite it is
+* List databases in the connection.
 
-    SELECT name FROM sqlite_master WHERE type='table' ORDER BY name
+* List tables/indices in the DB. The query in MySQL is ``SHOW TABLES``;
+  in SQLite it is
+
+    SELECT name FROM sqlite_master WHERE type='table' ORDER BY name;
 
   and in Postgres it is something like
 
     SELECT c.relname FROM pg_class c, pg_type t
     WHERE c.reltype = t.oid AND t.typname = 'table'.
-
-* List databases in the connection.
 
 * IntervalCol
 
@@ -44,7 +42,7 @@ TODO
 
 * Generators instead of loops (fetchall => fetchone).
 
-* Cache columns in sqlmeta.getColumns(); reset the cache on add/Del Column/Join.
+* Cache columns in sqlmeta.getColumns(); reset the cache on add/del Column/Join.
 
 * Stop supporting Python 2.4: use ``with lock``; use hashlib instead of md5.
 
@@ -66,7 +64,7 @@ TODO
 * Refactor ``DBConnection`` to use parameterized queries instead of
   generating query strings.
 
-* PREPARE/EXECUTE
+* PREPARE/EXECUTE.
 
 * Protect all .encode(), catch UnicodeEncode exceptions and reraise Invalid.
 
@@ -114,12 +112,12 @@ TODO
   the progress for Oracle. IWBN to have Informix and DB2 drivers.
 
 * Better transaction support -- right now you can use transactions
-  for the database, but the object isn't transaction-aware, so
+  for the database, but objects aren't transaction-aware, so
   non-database persistence won't be able to be rolled back.
 
 * Optimistic locking and other techniques to handle concurrency.
 
-* Profile of SQLObject performance, so that I can identify bottlenecks.
+* Profile of SQLObject performance to identify bottlenecks.
 
 * Increase hooks with FormEncode validation and form generation package, so
   SQLObject classes (read: schemas) can be published for editing more
@@ -136,6 +134,9 @@ TODO
 * Made SQLObject unicode-based instead of just unicode-aware. All internal
   processing should be done with unicode strings, conversion to/from ascii
   strings should happen for non-unicode DB API drivers.
+
+* Allow to override ConsoleWriter/LogWriter classes and makeDebugWriter
+  function.
 
 .. image:: http://sflogo.sourceforge.net/sflogo.php?group_id=74338&type=10
    :target: http://sourceforge.net/projects/sqlobject
