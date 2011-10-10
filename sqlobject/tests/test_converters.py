@@ -111,7 +111,7 @@ def test_sqlobjectfield():
 
 def test_select():
     instance = Select('test')
-    assert sqlrepr(instance, 'mysql') == "SELECT 'test'"
+    assert sqlrepr(instance, 'mysql') == "SELECT test"
 
 def test_insert():
     # Single column, no keyword arguments.
