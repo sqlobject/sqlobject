@@ -396,10 +396,10 @@ class sqlmeta(object):
             if sqlmeta.cacheValues:
                 # self._SO_class_className is a reference
                 # to the class in question.
-                getter = eval('lambda self: self._SO_foreignKey(self._SO_loadValue(%r), self._SO_class_%s)' % (instanceName(name), column.foreignKey))
+                getter = eval('lambda self: self._SO_foreignKey(self._SO_loadValue(%r), self._SO_class_%s, %s)' % (instanceName(name), column.foreignKey, column.refColumn and repr(column.refColumn)))
             else:
                 # Same non-caching version as above.
-                getter = eval('lambda self: self._SO_foreignKey(self._SO_getValue(%s), self._SO_class_%s)' % (repr(name), column.foreignKey))
+                getter = eval('lambda self: self._SO_foreignKey(self._SO_getValue(%s), self._SO_class_%s, %s)' % (repr(name), column.foreignKey, column.refColumn and repr(column.refColumn)))
             setattr(soClass, rawGetterName(origName), getter)
 
             # And we set the _get_columnName version
@@ -410,7 +410,7 @@ class sqlmeta(object):
             if not column.immutable:
                 # The setter just gets the ID of the object,
                 # and then sets the real column.
-                setter = eval('lambda self, val: setattr(self, %s, self._SO_getID(val))' % (repr(name)))
+                setter = eval('lambda self, val: setattr(self, %s, self._SO_getID(val, %s))' % (repr(name), column.refColumn and repr(column.refColumn)))
                 setattr(soClass, rawSetterName(origName), setter)
                 if not hasattr(soClass, setterName(origName)):
                     setattr(soClass, setterName(origName), setter)
@@ -1170,13 +1170,17 @@ class SQLObject(object):
             value = column.to_python(value, self._SO_validatorState)
         return value
 
-    def _SO_foreignKey(self, id, joinClass):
-        if id is None:
+    def _SO_foreignKey(self, value, joinClass, idName=None):
+        if value is None:
             return None
-        elif self.sqlmeta._perConnection:
-            return joinClass.get(id, connection=self._connection)
+        if self.sqlmeta._perConnection:
+            connection = self._connection
         else:
-            return joinClass.get(id)
+            connection = None
+        if idName is None: # Get by id
+            return joinClass.get(value, connection=connection)
+        return joinClass.select(
+            getattr(joinClass.q, idName)==value, connection=connection).getOne()
 
     def __init__(self, **kw):
         # If we are the outmost constructor of a hiearchy of
@@ -1303,8 +1307,8 @@ class SQLObject(object):
                 func(self)
         _postponed_local.postponed_calls.append(_send_RowCreatedSignal)
 
-    def _SO_getID(self, obj):
-        return getID(obj)
+    def _SO_getID(self, obj, refColumn=None):
+        return getID(obj, refColumn)
 
     @classmethod
     def _findAlternateID(cls, name, dbName, value, connection=None):
@@ -1701,9 +1705,9 @@ def instanceName(name):
 ## Utility functions (for external consumption)
 ########################################
 
-def getID(obj):
+def getID(obj, refColumn=None):
     if isinstance(obj, SQLObject):
-        return obj.id
+        return getattr(obj, refColumn or 'id')
     elif isinstance(obj, int):
         return obj
     elif isinstance(obj, long):

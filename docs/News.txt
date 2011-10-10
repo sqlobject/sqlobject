@@ -14,7 +14,12 @@ Features & Interface
 --------------------
 
 * Strings are treated specially in Select to allow
-  Select(['id, 'name'], where='value = 42'). Update allows string in WHERE.
+  Select(['id, 'name'], where='value = 42'). Update allows a string in
+  WHERE.
+
+* ForeignKey('Table', refColumn='refcol_id') to allow ForeignKey to
+  point to a non-id column; the referred column must be a unique integer
+  column.
 
 * delColumn now accepts a ForeignKey's name without 'ID'.
 

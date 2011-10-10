@@ -768,6 +768,10 @@ class SOKeyCol(SOCol):
     # 3-03 @@: this should have a simplified constructor
     # Should provide foreign key information for other DBs.
 
+    def __init__(self, **kw):
+        self.refColumn = kw.pop('refColumn', None)
+        super(SOKeyCol, self).__init__(**kw)
+
     def _sqlType(self):
         return self.key_type[self.soClass.sqlmeta.idType]
 
@@ -788,18 +792,18 @@ class SOForeignKey(SOKeyCol):
     def __init__(self, **kw):
         foreignKey = kw['foreignKey']
         style = kw['soClass'].sqlmeta.style
-        if not kw.get('name'):
-            kw['name'] = style.instanceAttrToIDAttr(style.pythonClassToAttr(foreignKey))
-        else:
+        if kw.get('name'):
             kw['origName'] = kw['name']
             kw['name'] = style.instanceAttrToIDAttr(kw['name'])
+        else:
+            kw['name'] = style.instanceAttrToIDAttr(style.pythonClassToAttr(foreignKey))
         super(SOForeignKey, self).__init__(**kw)
 
     def sqliteCreateSQL(self):
         sql = SOKeyCol.sqliteCreateSQL(self)
         other = findClass(self.foreignKey, self.soClass.sqlmeta.registry)
         tName = other.sqlmeta.table
-        idName = other.sqlmeta.idName
+        idName = self.refColumn or other.sqlmeta.idName
         if self.cascade is not None:
             if self.cascade == 'null':
                 action = 'ON DELETE SET NULL'
@@ -828,7 +832,7 @@ class SOForeignKey(SOKeyCol):
         sTName = self.soClass.sqlmeta.table
         other = findClass(self.foreignKey, self.soClass.sqlmeta.registry)
         tName = other.sqlmeta.table
-        idName = other.sqlmeta.idName
+        idName = self.refColumn or other.sqlmeta.idName
         if self.cascade is not None:
             if self.cascade == 'null':
                 action = 'ON DELETE SET NULL'
@@ -854,7 +858,7 @@ class SOForeignKey(SOKeyCol):
         sTLocalName = sTName.split('.')[-1]
         other = findClass(self.foreignKey, self.soClass.sqlmeta.registry)
         tName = other.sqlmeta.table
-        idName = other.sqlmeta.idName
+        idName = self.refColumn or other.sqlmeta.idName
         if self.cascade is not None:
             if self.cascade == 'null':
                 action = 'ON DELETE SET NULL'
@@ -883,7 +887,7 @@ class SOForeignKey(SOKeyCol):
         sql = SOKeyCol.sybaseCreateSQL(self)
         other = findClass(self.foreignKey, self.soClass.sqlmeta.registry)
         tName = other.sqlmeta.table
-        idName = other.sqlmeta.idName
+        idName = self.refColumn or other.sqlmeta.idName
         reference = ('REFERENCES %(tName)s(%(idName)s) ' %
                      {'tName':tName,
                       'idName':idName})
@@ -898,7 +902,7 @@ class SOForeignKey(SOKeyCol):
         sql = SOKeyCol.mssqlCreateSQL(self, connection)
         other = findClass(self.foreignKey, self.soClass.sqlmeta.registry)
         tName = other.sqlmeta.table
-        idName = other.sqlmeta.idName
+        idName = self.refColumn or other.sqlmeta.idName
         reference = ('REFERENCES %(tName)s(%(idName)s) ' %
                      {'tName':tName,
                       'idName':idName})
@@ -915,7 +919,7 @@ class SOForeignKey(SOKeyCol):
         #I assume that foreign key name is identical to the id of the reference table
         sql = ' '.join([fidName, self._maxdbType()])
         tName = other.sqlmeta.table
-        idName  = other.sqlmeta.idName
+        idName  = self.refColumn or other.sqlmeta.idName
         sql=sql + ',' + '\n'
         sql=sql + 'FOREIGN KEY (%s) REFERENCES %s(%s)'%(fidName,tName,idName)
         return sql

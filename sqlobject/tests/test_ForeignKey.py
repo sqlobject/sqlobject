@@ -4,6 +4,7 @@ from sqlobject.tests.dbtest import InstalledTestDatabase
 
 class TestComposerKey(SQLObject):
     name = StringCol()
+    id2 = IntCol(default=None, unique=True)
 
 class TestWorkKey(SQLObject):
     class sqlmeta:
@@ -14,6 +15,10 @@ class TestWorkKey(SQLObject):
 
 class TestWorkKey2(SQLObject):
     title = StringCol()
+
+class TestOtherColumn(SQLObject):
+    key1 = ForeignKey('TestComposerKey', default=None)
+    key2 = ForeignKey('TestComposerKey', refColumn='id2', default=None)
 
 def test1():
     setupClass([TestComposerKey, TestWorkKey])
@@ -69,3 +74,13 @@ def test2():
     InstalledTestDatabase.drop(TestWorkKey)
     setupClass([TestComposerKey, TestWorkKey2], force=True)
     TestWorkKey2.sqlmeta.addColumn(ForeignKey('TestComposerKey'), changeSchema=True)
+
+def test_otherColumn():
+    setupClass([TestComposerKey, TestOtherColumn])
+    test_composer1 = TestComposerKey(name='Test1')
+    test_composer2 = TestComposerKey(name='Test2', id2=2)
+    test_fkey = TestOtherColumn(key1=test_composer1)
+    test_other = TestOtherColumn(key2=test_composer2.id2)
+    getConnection().cache.clear()
+    assert test_fkey.key1 == test_composer1
+    assert test_other.key2 == test_composer2
