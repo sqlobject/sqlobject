@@ -31,6 +31,7 @@ from formencode import compound, validators
 from classregistry import findClass
 import constraints as constrs
 import sqlbuilder
+from styles import capword
 
 NoDefault = sqlbuilder.NoDefault
 
@@ -188,7 +189,7 @@ class SOCol(object):
         else:
             self.unique = unique
         if self.unique and alternateMethodName is None:
-            self.alternateMethodName = 'by' + self.name[0].capitalize() + self.name[1:]
+            self.alternateMethodName = 'by' + capword(self.name)
         else:
             self.alternateMethodName = alternateMethodName
 

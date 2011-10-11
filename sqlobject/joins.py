@@ -3,6 +3,7 @@ import classregistry
 import events
 import styles
 import sqlbuilder
+from styles import capword
 
 __all__ = ['MultipleJoin', 'SQLMultipleJoin', 'RelatedJoin', 'SQLRelatedJoin',
            'SingleJoin', 'ManyToMany', 'OneToMany']
@@ -139,10 +140,10 @@ class SOMultipleJoin(SOJoin):
             else:
                 name = name + "s"
             self.joinMethodName = name
-        if not addRemoveName:
-            self.addRemoveName = capitalize(self.otherClassName)
-        else:
+        if addRemoveName:
             self.addRemoveName = addRemoveName
+        else:
+            self.addRemoveName = capword(self.otherClassName)
 
     def performJoin(self, inst):
         ids = inst._connection._SO_selectJoin(
@@ -300,9 +301,6 @@ class SOSQLRelatedJoin(SORelatedJoin):
 
 class SQLRelatedJoin(RelatedJoin):
     baseClass = SOSQLRelatedJoin
-
-def capitalize(name):
-    return name[0].capitalize() + name[1:]
 
 class SOSingleJoin(SOMultipleJoin):
 

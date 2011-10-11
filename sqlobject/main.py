@@ -1686,9 +1686,6 @@ class SQLObject(object):
         self.__class__._connection.cache.put(self.id, self.__class__, self)
 
 
-def capitalize(name):
-    return name[0].capitalize() + name[1:]
-
 def setterName(name):
     return '_set_%s' % name
 def rawSetterName(name):
