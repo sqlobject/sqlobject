@@ -18,20 +18,19 @@ So, in summary: Col objects are what you define, but SOCol objects
 are what gets used.
 """
 
-import re, time
 from array import array
+from itertools import count
+import re, time
 try:
     import cPickle as pickle
 except ImportError:
     import pickle
-import sqlbuilder
 # Sadly the name "constraints" conflicts with many of the function
 # arguments in this module, so we rename it:
-import constraints as consts
-from formencode import compound
-from formencode import validators
+from formencode import compound, validators
 from classregistry import findClass
-from itertools import count
+import constraints as constrs
+import sqlbuilder
 
 NoDefault = sqlbuilder.NoDefault
 
@@ -149,7 +148,7 @@ class SOCol(object):
         elif notNone is not NoDefault:
             self.notNone = notNone
         if self.notNone:
-            self.constraints = [consts.notNull] + self.constraints
+            self.constraints = [constrs.notNull] + self.constraints
 
         self.name = name
         self.soClass = soClass
@@ -427,9 +426,9 @@ class SOStringLikeCol(SOCol):
         super(SOStringLikeCol, self).__init__(**kw)
 
     def autoConstraints(self):
-        constraints = [consts.isString]
+        constraints = [constrs.isString]
         if self.length is not None:
-            constraints += [consts.MaxLength(self.length)]
+            constraints += [constrs.MaxLength(self.length)]
         return constraints
 
     def _sqlType(self):
@@ -623,7 +622,7 @@ class SOIntCol(SOCol):
         SOCol.__init__(self, **kw)
 
     def autoConstraints(self):
-        return [consts.isInt]
+        return [constrs.isInt]
 
     def createValidators(self):
         return [IntValidator(name=self.name)] + \
@@ -693,7 +692,7 @@ class BoolValidator(validators.Validator):
 
 class SOBoolCol(SOCol):
     def autoConstraints(self):
-        return [consts.isBool]
+        return [constrs.isBool]
 
     def createValidators(self):
         return [BoolValidator(name=self.name)] + \
@@ -746,7 +745,7 @@ class SOFloatCol(SOCol):
     # 3-03 @@: support precision (e.g., DECIMAL)
 
     def autoConstraints(self):
-        return [consts.isFloat]
+        return [constrs.isFloat]
 
     def createValidators(self):
         return [FloatValidator(name=self.name)] + \
@@ -957,7 +956,7 @@ class SOEnumCol(SOCol):
         super(SOEnumCol, self).__init__(**kw)
 
     def autoConstraints(self):
-        return [consts.isString, consts.InList(self.enumValues)]
+        return [constrs.isString, constrs.InList(self.enumValues)]
 
     def createValidators(self):
         return [EnumValidator(name=self.name, enumValues=self.enumValues,
@@ -1037,7 +1036,7 @@ class SOSetCol(SOCol):
         super(SOSetCol, self).__init__(**kw)
 
     def autoConstraints(self):
-        return [consts.isString, consts.InList(self.setValues)]
+        return [constrs.isString, constrs.InList(self.setValues)]
 
     def createValidators(self):
         return [SetValidator(name=self.name, setValues=self.setValues)] + \
