@@ -23,6 +23,12 @@ Features & Interface
 
 * delColumn now accepts a ForeignKey's name without 'ID'.
 
+* Support for PostgreSQL 7.* is dropped. The minimal supported version of
+  PostgreSQL is 8.1 now.
+
+* Quoting rules changed for PostgreSQL: SQLObject uses E'' escape string
+  if the string contains characters escaped with backslash.
+
 * A bug caused by psycopg2 recently added a new boolean not callable
   autocommit attribute was fixed.
 

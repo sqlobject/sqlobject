@@ -68,7 +68,7 @@ import types
 import weakref
 
 import classregistry
-from converters import sqlrepr, registerConverter
+from converters import registerConverter, sqlrepr, quote_str, unquote_str
 
 
 class VersionError(Exception):
@@ -904,18 +904,18 @@ class _LikeQuoted:
         if isinstance(s, SQLExpression):
             values = []
             if self.prefix:
-                values.append("'%s'" % self.prefix)
+                values.append(quote_str(self.prefix, db))
             s = _quote_like_special(sqlrepr(s, db), db)
             values.append(s)
             if self.postfix:
-                values.append("'%s'" % self.postfix)
+                values.append(quote_str(self.postfix, db))
             if db == "mysql":
                 return "CONCAT(%s)" % ", ".join(values)
             else:
                 return " || ".join(values)
         elif isinstance(s, basestring):
-            s = _quote_like_special(sqlrepr(s, db)[1:-1], db)
-            return "'%s%s%s'" % (self.prefix, s, self.postfix)
+            s = _quote_like_special(unquote_str(sqlrepr(s, db)), db)
+            return quote_str("%s%s%s" % (self.prefix, s, self.postfix), db)
         else:
            raise TypeError, "expected str, unicode or SQLExpression, got %s" % type(s)
 

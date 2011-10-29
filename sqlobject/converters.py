@@ -1,5 +1,10 @@
-import sys
 from array import array
+import datetime
+from decimal import Decimal
+import sys
+import time
+from types import ClassType, InstanceType, NoneType
+
 
 try:
     import mx.DateTime.ISO
@@ -15,17 +20,12 @@ except ImportError:
         DateTimeType = None
         DateTimeDeltaType = None
 
-import time
-import datetime
-
 try:
     import Sybase
     NumericType=Sybase.NumericType
 except ImportError:
     NumericType = None
 
-from decimal import Decimal
-from types import ClassType, InstanceType, NoneType
 
 ########################################
 ## Quoting
@@ -90,6 +90,8 @@ def StringLikeConverter(value, db):
         value = value.replace("'", "''")
     else:
         assert 0, "Database %s unknown" % db
+    if db in ('postgres', 'rdbhost') and ('\\' in value):
+        return "E'%s'" % value
     return "'%s'" % value
 
 registerConverter(str, StringLikeConverter)
@@ -188,12 +190,12 @@ def DecimalConverter(value, db):
 registerConverter(Decimal, DecimalConverter)
 
 def TimedeltaConverter(value, db):
-    
+
     return """INTERVAL '%d days %d seconds'""" % \
         (value.days, value.seconds)
 
 registerConverter(datetime.timedelta, TimedeltaConverter)
-        
+
 
 def sqlrepr(obj, db=None):
     try:
@@ -206,3 +208,17 @@ def sqlrepr(obj, db=None):
         return converter(obj, db)
     else:
         return reprFunc(db)
+
+
+def quote_str(s, db):
+    if db in ('postgres', 'rdbhost') and ('\\' in s):
+        return "E'%s'" % s
+    return "'%s'" % s
+
+def unquote_str(s):
+    if s.upper().startswith("E'") and s.endswith("'"):
+        return s[2:-1]
+    elif s.startswith("'") and s.endswith("'"):
+        return s[1:-1]
+    else:
+        return s

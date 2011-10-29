@@ -1,10 +1,12 @@
-import sys
 from datetime import timedelta
-from sqlobject.sqlbuilder import sqlrepr
+import sys
+
+from sqlobject.converters import registerConverter, sqlrepr, \
+     quote_str, unquote_str
 from sqlobject.sqlbuilder import SQLExpression, SQLObjectField, \
      Select, Insert, Update, Delete, Replace, \
-     SQLTrueClauseClass, SQLConstant, SQLPrefix, SQLCall, SQLOp
-from sqlobject.converters import registerConverter
+     SQLTrueClauseClass, SQLConstant, SQLPrefix, SQLCall, SQLOp, \
+     _LikeQuoted
 
 class TestClass:
 
@@ -41,23 +43,23 @@ def test_simple_string():
     assert sqlrepr('A String', 'firebird') == "'A String'"
 
 def test_string_newline():
-    assert sqlrepr('A String\nAnother', 'postgres') == "'A String\\nAnother'"
+    assert sqlrepr('A String\nAnother', 'postgres') == "E'A String\\nAnother'"
     assert sqlrepr('A String\nAnother', 'sqlite') == "'A String\nAnother'"
 
 def test_string_tab():
-    assert sqlrepr('A String\tAnother', 'postgres') == "'A String\\tAnother'"
+    assert sqlrepr('A String\tAnother', 'postgres') == "E'A String\\tAnother'"
 
 def test_string_r():
-    assert sqlrepr('A String\rAnother', 'postgres') == "'A String\\rAnother'"
+    assert sqlrepr('A String\rAnother', 'postgres') == "E'A String\\rAnother'"
 
 def test_string_b():
-    assert sqlrepr('A String\bAnother', 'postgres') == "'A String\\bAnother'"
+    assert sqlrepr('A String\bAnother', 'postgres') == "E'A String\\bAnother'"
 
 def test_string_000():
-    assert sqlrepr('A String\000Another', 'postgres') == "'A String\\0Another'"
+    assert sqlrepr('A String\000Another', 'postgres') == "E'A String\\0Another'"
 
 def test_string_():
-    assert sqlrepr('A String\tAnother', 'postgres') == "'A String\\tAnother'"
+    assert sqlrepr('A String\tAnother', 'postgres') == "E'A String\\tAnother'"
     assert sqlrepr('A String\'Another', 'firebird') == "'A String''Another'"
 
 def test_simple_unicode():
@@ -200,3 +202,18 @@ def test_sets():
 def test_timedelta():
     assert sqlrepr(timedelta(seconds=30*60)) == \
         "INTERVAL '0 days 1800 seconds'"
+
+def test_quote_unquote_str():
+    assert quote_str('test%', 'postgres') == "'test%'"
+    assert quote_str('test%', 'sqlite') == "'test%'"
+    assert quote_str('test\%', 'postgres') == "E'test\\%'"
+    assert quote_str('test\\%', 'sqlite') == "'test\%'"
+    assert unquote_str("'test%'") == 'test%'
+    assert unquote_str("'test\\%'") == 'test\\%'
+    assert unquote_str("E'test\\%'") == 'test\\%'
+
+def test_like_quoted():
+    assert sqlrepr(_LikeQuoted('test'), 'postgres') == "'test'"
+    assert sqlrepr(_LikeQuoted('test'), 'sqlite') == "'test'"
+    assert sqlrepr(_LikeQuoted('test%'), 'postgres') == r"E'test\\%'"
+    assert sqlrepr(_LikeQuoted('test%'), 'sqlite') == r"'test\%'"
