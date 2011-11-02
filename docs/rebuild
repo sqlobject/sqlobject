@@ -1,9 +1,10 @@
-#!/bin/sh
+#! /bin/sh
 
 here=`pwd`
 parent=`dirname "$here"`
 echo "Adding $parent to \$PYTHONPATH"
-export PYTHONPATH="$parent${PYTHONPATH:+:$PYTHONPATH}"
+PYTHONPATH="$parent${PYTHONPATH:+:$PYTHONPATH}"
+export PYTHONPATH
 
 NORMAL="Authors DeveloperGuide FAQ Inheritance News
         SQLBuilder SQLObject SelectResults TODO Versioning Views
