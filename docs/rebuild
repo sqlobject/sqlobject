@@ -3,7 +3,7 @@
 here=`pwd`
 parent=`dirname $here`
 echo "Adding $parent to \$PYTHONPATH"
-export PYTHONPATH=$parent:$PYTHONPATH
+export PYTHONPATH=$parent${PYTHONPATH:+:$PYTHONPATH}
 
 NORMAL="Authors DeveloperGuide FAQ Inheritance News
         SQLBuilder SQLObject SelectResults TODO Versioning Views
