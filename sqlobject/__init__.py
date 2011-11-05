@@ -1,6 +1,4 @@
-"""
-SQLObject 1.2
-"""
+"""SQLObject"""
 from __version__ import version, version_info
 
 from col import *

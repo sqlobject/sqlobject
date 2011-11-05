@@ -35,6 +35,9 @@ Features & Interface
 * A bug caused by psycopg2 recently added a new boolean not callable
   autocommit attribute was fixed.
 
+* sqlobject.__doc__ and main.__doc__ no longer contain version number.
+  Use sqlobject.version or version_info.
+
 SQLObject 1.1.3
 ===============
 
