@@ -10,6 +10,11 @@ News
 SQLObject (trunk)
 =================
 
+SQLObject 1.2.1
+===============
+
+* A bugfix was ported from `SQLObject 1.1.4`_.
+
 SQLObject 1.2.0
 ===============
 
@@ -39,6 +44,12 @@ Features & Interface
 
 * sqlobject.__doc__ and main.__doc__ no longer contain version number.
   Use sqlobject.version or version_info.
+
+SQLObject 1.1.4
+===============
+
+* A bug was fixed in handling ``modulo`` operator - SQLite implements
+  only ``%``, MySQL - only ``MOD()``, PostgreSQL implements both.
 
 SQLObject 1.1.3
 ===============

@@ -133,7 +133,7 @@ class SQLExpression:
     def __abs__(self):
         return SQLConstant("ABS")(self)
     def __mod__(self, other):
-        return SQLConstant("MOD")(self, other)
+        return SQLModulo(self, other)
     def __rmod__(self, other):
         return SQLConstant("MOD")(other, self)
 
@@ -265,7 +265,18 @@ class SQLOp(SQLExpression):
             return operatorMap[self.op.upper()](execute(self.expr1, executor),
                                                 execute(self.expr2, executor))
 
+class SQLModulo(SQLOp):
+    def __init__(self, expr1, expr2):
+        SQLOp.__init__(self, '%', expr1, expr2)
+    def __sqlrepr__(self, db):
+        if db == 'sqlite':
+            return SQLOp.__sqlrepr__(self, db)
+        s1 = sqlrepr(self.expr1, db)
+        s2 = sqlrepr(self.expr2, db)
+        return "MOD(%s, %s)" % (s1, s2)
+
 registerConverter(SQLOp, SQLExprConverter)
+registerConverter(SQLModulo, SQLExprConverter)
 
 class SQLCall(SQLExpression):
     def __init__(self, expr, args):
