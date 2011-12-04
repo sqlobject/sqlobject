@@ -13,6 +13,8 @@ SQLObject (trunk)
 SQLObject 1.2.1
 ===============
 
+Released 4 Dec 2011.
+
 * A bugfix was ported from `SQLObject 1.1.4`_.
 
 SQLObject 1.2.0
@@ -47,6 +49,8 @@ Features & Interface
 
 SQLObject 1.1.4
 ===============
+
+Released 4 Dec 2011.
 
 * A bug was fixed in handling ``modulo`` operator - SQLite implements
   only ``%``, MySQL - only ``MOD()``, PostgreSQL implements both.
