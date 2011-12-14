@@ -139,7 +139,7 @@ class PostgresConnection(DBAPI):
             else:
                 conn = self.module.connect(**self.dsn_dict)
         except self.module.OperationalError, e:
-            raise self.module.OperationalError("%s; used connection string %r" % (e, self.dsn))
+            raise OperationalError("%s; used connection string %r" % (e, self.dsn))
         if self.autoCommit: self._setAutoCommit(conn, 1)
         c = conn.cursor()
         if self.schema:
