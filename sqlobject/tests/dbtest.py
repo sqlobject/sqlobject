@@ -38,7 +38,7 @@ and you can use it like::
             return
 """
 supportsMatrix = {
-    '+exceptions': 'mysql sqlite',
+    '+exceptions': 'mysql postgres sqlite',
     '-transactions': 'mysql rdbhost',
     '-dropTableCascade': 'sybase mssql',
     '-expressionIndex': 'mysql sqlite firebird mssql',

@@ -3,6 +3,15 @@ import re
 from sqlobject import col
 from sqlobject import sqlbuilder
 from sqlobject.converters import registerConverter
+from sqlobject.dberrors import *
+
+class ErrorMessage(str):
+    def __new__(cls, e):
+        obj = str.__new__(cls, e[0])
+        obj.code = None
+        obj.module = e.__module__
+        obj.exception = e.__class__.__name__
+        return obj
 
 class PostgresConnection(DBAPI):
 
@@ -134,11 +143,41 @@ class PostgresConnection(DBAPI):
         if self.autoCommit: self._setAutoCommit(conn, 1)
         c = conn.cursor()
         if self.schema:
-            c.execute("SET search_path TO " + self.schema)
+            self._executeRetry(conn, c, "SET search_path TO " + self.schema)
         dbEncoding = self.dbEncoding
         if dbEncoding:
-            c.execute("SET client_encoding TO '%s'" % dbEncoding)
+            self._executeRetry(conn, c, "SET client_encoding TO '%s'" % dbEncoding)
         return conn
+
+    def _executeRetry(self, conn, cursor, query):
+        if self.debug:
+            self.printDebug(conn, query, 'QueryR')
+        try:
+            return cursor.execute(query)
+        except self.module.OperationalError, e:
+            raise OperationalError(ErrorMessage(e))
+        except self.module.IntegrityError, e:
+            msg = ErrorMessage(e)
+            if e.pgcode == '23505':
+                raise DuplicateEntryError(msg)
+            else:
+                raise IntegrityError(msg)
+        except self.module.InternalError, e:
+            raise InternalError(ErrorMessage(e))
+        except self.module.ProgrammingError, e:
+            raise ProgrammingError(ErrorMessage(e))
+        except self.module.DataError, e:
+            raise DataError(ErrorMessage(e))
+        except self.module.NotSupportedError, e:
+            raise NotSupportedError(ErrorMessage(e))
+        except self.module.DatabaseError, e:
+            raise DatabaseError(ErrorMessage(e))
+        except self.module.InterfaceError, e:
+            raise InterfaceError(ErrorMessage(e))
+        except self.module.Warning, e:
+            raise Warning(ErrorMessage(e))
+        except self.module.Error, e:
+            raise Error(ErrorMessage(e))
 
     def _queryInsertID(self, conn, soInstance, id, names, values):
         table = soInstance.sqlmeta.table
@@ -147,14 +186,14 @@ class PostgresConnection(DBAPI):
                                '%s_%s_seq' % (table, idName)
         c = conn.cursor()
         if id is None:
-            c.execute("SELECT NEXTVAL('%s')" % sequenceName)
+            self._executeRetry(conn, c, "SELECT NEXTVAL('%s')" % sequenceName)
             id = c.fetchone()[0]
         names = [idName] + names
         values = [id] + values
         q = self._insertSQL(table, names, values)
         if self.debug:
             self.printDebug(conn, q, 'QueryIns')
-        c.execute(q)
+        self._executeRetry(conn, c, q)
         if self.debugOutput:
             self.printDebug(conn, id, 'QueryIns', 'result')
         return id
@@ -341,8 +380,8 @@ class PostgresConnection(DBAPI):
         cur = conn.cursor()
         # We must close the transaction with a commit so that
         # the CREATE DATABASE can work (which can't be in a transaction):
-        cur.execute('COMMIT')
-        cur.execute('%s DATABASE %s' % (op, self.db))
+        self._executeRetry(conn, cur, 'COMMIT')
+        self._executeRetry(conn, cur, '%s DATABASE %s' % (op, self.db))
         cur.close()
         conn.close()
 

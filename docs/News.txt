@@ -10,6 +10,12 @@ News
 SQLObject (trunk)
 =================
 
+Features & Interface
+--------------------
+
+* PostgresConnection performs translation of exceptions to standard
+  SQLObject's hierarchy of exceptions.
+
 SQLObject 1.2.1
 ===============
 
