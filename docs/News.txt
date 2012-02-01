@@ -16,6 +16,11 @@ Features & Interface
 * PostgresConnection performs translation of exceptions to standard
   SQLObject's hierarchy of exceptions.
 
+SQLObject 1.2.2
+===============
+
+* A bugfix was ported from `SQLObject 1.1.5`_.
+
 SQLObject 1.2.1
 ===============
 
@@ -52,6 +57,11 @@ Features & Interface
 
 * sqlobject.__doc__ and main.__doc__ no longer contain version number.
   Use sqlobject.version or version_info.
+
+SQLObject 1.1.5
+===============
+
+* A bug was fixed in SQLiteConnection - clear _threadPool on close().
 
 SQLObject 1.1.4
 ===============

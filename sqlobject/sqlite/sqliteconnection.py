@@ -191,6 +191,10 @@ class SQLiteConnection(DBAPI):
         conn.text_factory = str # Convert text data to str, not unicode
         return conn
 
+    def close(self):
+        DBAPI.close(self)
+        self._threadPool = {}
+
     def _executeRetry(self, conn, cursor, query):
         if self.debug:
             self.printDebug(conn, query, 'QueryR')
