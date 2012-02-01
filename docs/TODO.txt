@@ -76,6 +76,8 @@ TODO
 
 * py-postgresql driver: http://python.projects.postgresql.org/
 
+* pg8000 driver: http://code.google.com/p/pg8000/
+
 * MySQL Connector/Python: https://launchpad.net/myconnpy
 
 * oursql MySQL bindings: https://launchpad.net/oursql
