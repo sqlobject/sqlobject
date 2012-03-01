@@ -19,6 +19,8 @@ Features & Interface
 SQLObject 1.2.2
 ===============
 
+Released 1 Mar 2012.
+
 * A bugfix was ported from `SQLObject 1.1.5`_.
 
 SQLObject 1.2.1
@@ -60,6 +62,8 @@ Features & Interface
 
 SQLObject 1.1.5
 ===============
+
+Released 1 Mar 2012.
 
 * A bug was fixed in SQLiteConnection - clear _threadPool on close().
 
