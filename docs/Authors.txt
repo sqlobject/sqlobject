@@ -25,6 +25,7 @@ Contributions have been made by:
 * David Keeney <dkeeney at rdbhost.com>
 * Daniel Fetchinson <fetchinson at googlemail.com>
 * Neil Muller <drnlmuller+sqlobject at gmail.com>
+* Petr Jakes <petr.jakes at tpc.cz>
 * Oleg Broytman <phd@phdru.name>
 
 .. image:: http://sflogo.sourceforge.net/sflogo.php?group_id=74338&type=10
