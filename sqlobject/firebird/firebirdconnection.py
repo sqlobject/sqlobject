@@ -84,6 +84,7 @@ class FirebirdConnection(DBAPI):
             extra['dialect'] = self.dialect
         return self.module.connect(
             host=self.host,
+            port=self.port,
             database=self.db,
             user=self.user,
             password=self.password,
