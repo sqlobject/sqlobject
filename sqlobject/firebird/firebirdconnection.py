@@ -1,8 +1,8 @@
-import re
 import os
+import re
 import warnings
-from sqlobject.dbconnection import DBAPI
 from sqlobject import col
+from sqlobject.dbconnection import DBAPI
 
 kinterbasdb = None
 
