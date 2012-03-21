@@ -18,7 +18,7 @@ Features & Interface
 
 * Major update in FirebirdConnection: introspection was completely
   rewritten and extended; ``charset`` was renamed to ``dbEncoding``;
-  a longstanding bug was fixed - passed port to connect().
+  a longstanding bug was fixed - pass port to connect().
 
 SQLObject 1.2.2
 ===============
