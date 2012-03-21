@@ -65,6 +65,9 @@ TODO
 
 * Protect all .encode(), catch UnicodeEncode exceptions and reraise Invalid.
 
+* More kinds of joins, and more powerful join results (closer to how
+  `select` works).
+
 * Better joins - automatic joins in .select()
   based on ForeignKey/MultipleJoin/RelatedJoin.
 
@@ -74,13 +77,13 @@ TODO
 
 * Switch from setuptools to distribute.
 
-* py-postgresql driver: http://python.projects.postgresql.org/
-
-* pg8000 driver: http://code.google.com/p/pg8000/
+* oursql MySQL bindings: https://launchpad.net/oursql
 
 * MySQL Connector/Python: https://launchpad.net/myconnpy
 
-* oursql MySQL bindings: https://launchpad.net/oursql
+* pg8000 driver: http://code.google.com/p/pg8000/
+
+* py-postgresql driver: http://python.projects.postgresql.org/
 
 * pyfirebirdsql: https://github.com/nakagami/pyfirebirdsql
 
@@ -88,7 +91,8 @@ TODO
   getattr for internal attributes only; this helps to avoid collisions with
   internal attributes.
 
-* Or move column values access to a separate namespace, e.g. .c: row.c.name.
+* Or move column values access to a separate namespace, e.g. .c:
+  row.c.column.
 
 * Convert documentation to Sphinx_ format and publish it on
   http://readthedocs.org/
@@ -122,11 +126,6 @@ TODO
   SQLObject classes (read: schemas) can be published for editing more
   directly and easily.  (First step: get Schema-generating method into
   sqlmeta class)
-
-* Automatic joins in select queries.
-
-* More kinds of joins, and more powerful join results (closer to how
-  `select` works).
 
 * Merge SQLObject.create*, .create*SQL methods with DBPI.create* methods.
 
