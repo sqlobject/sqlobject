@@ -1729,7 +1729,7 @@ def getObject(obj, klass):
     else:
         return obj
 
-__all__ = ['NoDefault', 'SQLObject', 'sqlmeta',
-           'getID', 'getObject',
-           'SQLObjectNotFound', 'sqlhub',
-           'setDeprecationLevel']
+__all__ = ['NoDefault', 'SQLObject', 'sqlmeta', 'sqlhub',
+           'getID', 'getObject', 'setDeprecationLevel',
+           'SQLObjectNotFound', 'SQLObjectIntegrityError',
+          ]
