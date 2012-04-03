@@ -21,7 +21,7 @@ Features & Interface
 * PostgresConnection performs translation of exceptions to standard
   SQLObject's hierarchy of exceptions.
 
-* Major update in FirebirdConnection: introspection was completely
+* Major update of FirebirdConnection: introspection was completely
   rewritten and extended; ``charset`` was renamed to ``dbEncoding``;
   a longstanding bug was fixed - pass port to connect().
 

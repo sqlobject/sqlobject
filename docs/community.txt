@@ -25,6 +25,9 @@ interested in contributing you should read the `Developer Guide
 The `Author List <docs/Authors.html>`_ tries to list all the major
 contributors.
 
+One can also contribute to `community-editable recipe/documentation site
+<https://sites.google.com/site/sqlobject/>`_.
+
 .. image:: http://sflogo.sourceforge.net/sflogo.php?group_id=74338&type=10
    :target: http://sourceforge.net/projects/sqlobject
    :class: noborder
