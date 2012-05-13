@@ -47,6 +47,8 @@ TODO
 
 * Create JSONCol.
 
+* Make version_info a namedtuple.
+
 * Stop supporting Python 2.6: restore using urllib.splituser in _parseURI.
 
 * Expression columns - in SELECT but not in INSERT/UPDATE. Something like this::

@@ -289,6 +289,9 @@ class PostgresConnection(DBAPI):
             assert match, "Unparseable contraint definition: %r" % indexDef
             assert primaryKey is None, "Already found primary key (%r), then found: %r" % (primaryKey, indexDef)
             primaryKey = match.group(1)
+        if primaryKey is None:
+            # VIEWs don't have PRIMARY KEYs - accept help from user
+            primaryKey = soClass.sqlmeta.idName
         assert primaryKey, "No primary key found in table %r" % tableName
         if primaryKey.startswith('"'):
             assert primaryKey.endswith('"')

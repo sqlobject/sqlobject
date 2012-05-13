@@ -10,6 +10,11 @@ News
 SQLObject (trunk)
 =================
 
+SQLObject 1.3.1
+===============
+
+* A bugfix was ported from `SQLObject 1.2.3`_.
+
 SQLObject 1.3.0
 ===============
 
@@ -24,6 +29,12 @@ Features & Interface
 * Major update of FirebirdConnection: introspection was completely
   rewritten and extended; ``charset`` was renamed to ``dbEncoding``;
   a longstanding bug was fixed - pass port to connect().
+
+SQLObject 1.2.3
+===============
+
+* Fixed a minor bug in PostgreSQL introspection: VIEWs don't have
+  PRIMARY KEYs - use sqlmeta.idName as the key if there is no one.
 
 SQLObject 1.2.2
 ===============
