@@ -41,9 +41,10 @@ TODO
 
 * Cache columns in sqlmeta.getColumns(); reset the cache on add/del Column/Join.
 
-* Stop supporting Python 2.4: use ``with lock``; use hashlib instead of md5.
+* Stop supporting Python 2.4: use hashlib instead of md5.
 
-* Stop supporting Python 2.5: remove import sets.
+* Stop supporting Python 2.5: remove import sets; use ``with lock``;
+  make ConnectionHub a context manager instead of .doInTransaction().
 
 * Create JSONCol.
 
