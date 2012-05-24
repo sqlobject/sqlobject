@@ -3,12 +3,16 @@ TODO
 
 * RelatedJoin.hasOther(otherObject[.id])
 
-* tableParamSQL::
+* createParamsPre/Post::
 
     class MyTable(SQLObject):
-       class sqlmeta:
-          tableParamSQL = 'ENGINE InnoDB'
-          tableParamSQL = {'mysql': 'ENGINE InnoDB'}
+        class sqlmeta:
+            createParamsPre = 'TEMPORARY IF NOT EXISTS'
+            createParamsPre = {temporary: True, ifNotExists: True,
+                               'postgres': 'LOCAL'}
+            createParamsPost = 'ENGINE InnoDB'
+            createParamsPost = {'mysql': 'ENGINE InnoDB',
+                                'postgres': 'WITH OIDS'}
 
 * SQLObject.fastInsert().
 
