@@ -1682,15 +1682,14 @@ class SQLObject(object):
         return d
 
     def __setstate__(self, d):
-        id = d['id']
-        cls = self.__class__
-        cache = self._connection.cache
-        if cache.get(id, cls) is not None:
-            raise ValueError(
-                "Cannot unpickle %s row with id=%s - the id already exists in the cache" % (cls.__name__, id))
         self.__init__(_SO_fetch_no_create=1)
         self._SO_writeLock = threading.Lock()
         self.__dict__.update(d)
+        cls = self.__class__
+        cache = self._connection.cache
+        if cache.tryGet(self.id, cls) is not None:
+            raise ValueError(
+                "Cannot unpickle %s row with id=%s - a different instance with the id already exists in the cache" % (cls.__name__, self.id))
         cache.created(id, cls, self)
 
 

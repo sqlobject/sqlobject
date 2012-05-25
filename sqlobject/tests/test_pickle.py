@@ -15,15 +15,16 @@ test_answer = 42
 
 def test_pickleCol():
     setupClass(TestPickle)
+    connection = TestPickle._connection
     test = TestPickle(question=test_question, answer=test_answer)
 
     pickle_data = pickle.dumps(test, pickle.HIGHEST_PROTOCOL)
+    connection.cache.clear()
     test = pickle.loads(pickle_data)
 
     assert test.question == test_question
     assert test.answer == test_answer
 
-    connection = TestPickle._connection
     if (connection.dbName == 'sqlite') and connection._memory:
         return # The following test requires a different connection
 
