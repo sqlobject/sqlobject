@@ -216,7 +216,7 @@ def quote_str(s, db):
     return "'%s'" % s
 
 def unquote_str(s):
-    if s.upper().startswith("E'") and s.endswith("'"):
+    if s[:2].upper().startswith("E'") and s.endswith("'"):
         return s[2:-1]
     elif s.startswith("'") and s.endswith("'"):
         return s[1:-1]
