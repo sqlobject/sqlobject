@@ -10,6 +10,11 @@ News
 SQLObject (trunk)
 =================
 
+SQLObject 1.3.2
+===============
+
+* A bugfix was ported from `SQLObject 1.2.4`_.
+
 SQLObject 1.3.1
 ===============
 
@@ -31,6 +36,12 @@ Features & Interface
 * Major update of FirebirdConnection: introspection was completely
   rewritten and extended; ``charset`` was renamed to ``dbEncoding``;
   a longstanding bug was fixed - pass port to connect().
+
+SQLObject 1.2.4
+===============
+
+* Fixed a bug in sqlbuilder.Select.filter - removed comparison with
+  SQLTrueClause.
 
 SQLObject 1.2.3
 ===============

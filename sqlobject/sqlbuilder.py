@@ -618,12 +618,7 @@ class Select(SQLExpression):
         clause = self.ops['clause']
         if isinstance(clause, basestring):
             clause = SQLConstant('(%s)' % clause)
-
-        if clause == SQLTrueClause:
-            newClause = filter_clause
-        else:
-            newClause = AND(clause, filter_clause)
-        return self.newClause(newClause)
+        return self.newClause(AND(clause, filter_clause))
 
     def __sqlrepr__(self, db):
 

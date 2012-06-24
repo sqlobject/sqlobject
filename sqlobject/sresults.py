@@ -122,7 +122,7 @@ class SelectResults(object):
             return self
         clause = self.clause
         if isinstance(clause, basestring):
-            clause = sqlbuilder.SQLConstant('(%s)' % self.clause)
+            clause = sqlbuilder.SQLConstant('(%s)' % clause)
         return self.newClause(sqlbuilder.AND(clause, filter_clause))
 
     def __getitem__(self, value):
