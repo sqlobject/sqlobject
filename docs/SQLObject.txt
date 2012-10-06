@@ -212,6 +212,7 @@ names that don't fit conventions (see `Irregular Naming`_).
 Now we'll create the table in the database::
 
     >>> Person.createTable()
+    []
 
 We can change the type of the various columns by using something other
 than `StringCol`, or using different arguments.  More about this in
@@ -302,13 +303,16 @@ same actions with the SQL that is sent, along with some commentary::
     >>> Person._connection.debug = True
     >>> p = Person(firstName='Bob', lastName='Hope')
      1/QueryIns:  INSERT INTO person (last_name, middle_initial, first_name) VALUES ('Hope', NULL, 'Bob')
+     1/QueryR  :  INSERT INTO person (last_name, middle_initial, first_name) VALUES ('Hope', NULL, 'Bob')
      1/COMMIT  :  auto
-     1/QueryOne:  SELECT first_name, middle_initial, last_name FROM person WHERE id = 2
+     1/QueryOne:  SELECT first_name, middle_initial, last_name FROM person WHERE ((person.id) = (2))
+     1/QueryR  :  SELECT first_name, middle_initial, last_name FROM person WHERE ((person.id) = (2))
      1/COMMIT  :  auto
     >>> p
     <Person 2 firstName='Bob' middleInitial=None lastName='Hope'>
     >>> p.middleInitial = 'Q'
-     1/Query   :  UPDATE person SET middle_initial = 'Q' WHERE id = 2
+     1/Query   :  UPDATE person SET middle_initial = ('Q') WHERE id = (2)
+     1/QueryR  :  UPDATE person SET middle_initial = ('Q') WHERE id = (2)
      1/COMMIT  :  auto
     >>> p2 = Person.get(1)
     >>> # Note: no database access, since we're just grabbing the same
@@ -347,7 +351,8 @@ that's generated)::
     >>> Person._connection.debug = True
     >>> peeps = Person.select(Person.q.firstName=="John")
     >>> list(peeps)
-     1/Select  :  SELECT person.id, person.first_name, person.middle_initial, person.last_name FROM person WHERE (person.first_name = 'John')
+     1/Select  :  SELECT person.id, person.first_name, person.middle_initial, person.last_name FROM person WHERE ((person.first_name) = ('John'))
+     1/QueryR  :  SELECT person.id, person.first_name, person.middle_initial, person.last_name FROM person WHERE ((person.first_name) = ('John'))
      1/COMMIT  :  auto
     [<Person 1 firstName='John' middleInitial='Q' lastName='Doe'>]
 
@@ -368,6 +373,7 @@ under ``q`` refer to column names and if you construct logical
 statements with these it'll give you the SQL for that statement.  You
 can also create your SQL more manually::
 
+    >>> Person._connection.debug = False  # Needed for doctests
     >>> peeps = Person.select("""address.person_id = person.id AND
     ...                          address.zip LIKE '504%'""",
     ...                       clauseTables=['address'])
@@ -523,6 +529,7 @@ addresses, of course::
     ...     zip = StringCol(length=9)
     ...     person = ForeignKey('Person')
     >>> Address.createTable()
+    []
 
 Note the column ``person = ForeignKey("Person")``.  This is a
 reference to a `Person` object.  We refer to other classes by name
@@ -611,7 +618,9 @@ many-to-many relationship, which is represented with the
     ...     users = RelatedJoin('User')
 
     >>> User.createTable()
+    []
     >>> Role.createTable()
+    []
 
 .. note::
 
