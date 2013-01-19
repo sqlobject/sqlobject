@@ -505,12 +505,12 @@ class StringValidator(validators.Validator):
             return None
         try:
             connection = state.connection or state.soObject._connection
+            binaryType = connection._binaryType
         except AttributeError:
             dbEncoding = "ascii"
             binaryType = type(None) # Just a simple workaround
         else:
             dbEncoding = getattr(connection, "dbEncoding", None) or "ascii"
-            binaryType = connection._binaryType
         if isinstance(value, unicode):
             return value.encode(dbEncoding)
         if self.dataType and isinstance(value, self.dataType):
