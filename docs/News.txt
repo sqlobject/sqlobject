@@ -10,6 +10,16 @@ News
 SQLObject (trunk)
 =================
 
+Features & Interface
+--------------------
+
+* Support for PostgreSQL 8.1 is dropped. The minimal supported version of
+  PostgreSQL is 8.2 now.
+
+* Optimization in PostgresConnection: use INSERT...RETURNING id
+  to get the autoincremented id in one query instead of two
+  (SELECT id + INSERT).
+
 SQLObject 1.3.2
 ===============
 

@@ -189,15 +189,20 @@ class PostgresConnection(DBAPI):
         sequenceName = soInstance.sqlmeta.idSequence or \
                                '%s_%s_seq' % (table, idName)
         c = conn.cursor()
+        if id is not None:
+            names = [idName] + names
+            values = [id] + values
+        if names and values:
+            q = self._insertSQL(table, names, values)
+        else:
+            q = "INSERT INTO %s DEFAULT VALUES" % table
         if id is None:
-            self._executeRetry(conn, c, "SELECT NEXTVAL('%s')" % sequenceName)
-            id = c.fetchone()[0]
-        names = [idName] + names
-        values = [id] + values
-        q = self._insertSQL(table, names, values)
+            q += " RETURNING " + idName
         if self.debug:
             self.printDebug(conn, q, 'QueryIns')
         self._executeRetry(conn, c, q)
+        if id is None:
+            id = c.fetchone()[0]
         if self.debugOutput:
             self.printDebug(conn, id, 'QueryIns', 'result')
         return id
