@@ -144,12 +144,11 @@ Testing
 Tests are important.  Tests keep everything from falling apart.  All
 new additions should have tests.
 
-Testing uses `py.test`__, an alternative to ``unittest``.  It is
-available via subversion at http://codespeak.net/svn/py/dist.  Read
-its `getting started`_ document for more.
+Testing uses py.test, an alternative to ``unittest``.  It is available at
+http://pytest.org/ and http://pypi.python.org/pypi/pytest.  Read its `getting
+started`_ document for more.
 
-.. __: http://codespeak.net/py/current/doc/test.html
-.. _getting started: http://codespeak.net/py/dist/test.html#starting-point-py-test-command-line-tool
+.. _getting started: http://pytest.org/latest/getting-started.html
 
 To actually run the test, you have to give it a database to connect to.
 You do so with the option ``-D``. You can either give a complete URI or
@@ -175,7 +174,7 @@ If you ``import *`` you'll also get py.test's version of raises_, an
 ``inserts`` function that can create instances for you, and a couple
 miscellaneous functions.
 
-.. _raises: http://codespeak.net/py/current/doc/test.html#id4
+.. _raises: http://pytest.org/latest/assert.html#assertions-about-expected-exceptions
 
 
 If you submit a patch or implement a feature without a test, I'll be

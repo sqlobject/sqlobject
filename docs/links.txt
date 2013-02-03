@@ -29,9 +29,6 @@ Articles and Documentation
 Open Source Projects
 --------------------
 
-* `sqlos Zope 3 SQLObject integration
-  <http://codespeak.net/z3/sqlos/>`_.
-
 * `TurboGears <http://turbogears.org/>`_ Web Framework: also integrates
   with SQLObject.
 
