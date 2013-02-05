@@ -18,7 +18,9 @@ Features & Interface
 
 * Optimization in PostgresConnection: use INSERT...RETURNING id
   to get the autoincremented id in one query instead of two
-  (SELECT id + INSERT).
+  (INSERT + SELECT id).
+
+* Changed the way to get if the table has identity in MS SQL.
 
 SQLObject 1.3.2
 ===============

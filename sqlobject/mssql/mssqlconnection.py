@@ -100,13 +100,10 @@ class MSSQLConnection(DBAPI):
         return con
 
     HAS_IDENTITY = """
-       SELECT col.name, col.status, obj.name
-       FROM syscolumns col
-       JOIN sysobjects obj
-       ON obj.id = col.id
-       WHERE obj.name = '%s'
-       and col.autoval is not null
-
+       select 1
+       from INFORMATION_SCHEMA.COLUMNS
+       where TABLE_NAME = '%s'
+       and COLUMNPROPERTY(object_id(TABLE_NAME), COLUMN_NAME, 'IsIdentity') = 1
     """
     def _hasIdentity(self, conn, table):
         query = self.HAS_IDENTITY % table
