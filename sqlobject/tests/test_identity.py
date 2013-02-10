@@ -9,10 +9,8 @@ class TestIdentity(SQLObject):
     n = IntCol()
 
 def test_identity():
-    if getConnection().dbName != "mssql":
-        return
-
-    # create table
+    # (re)create table
+    TestIdentity.dropTable(connection=getConnection(), ifExists=True)
     setupClass(TestIdentity)
 
     # insert without giving identity
@@ -22,7 +20,7 @@ def test_identity():
     assert(i1get.n == 100)
 
     # insert while giving identity
-    i1 = TestIdentity(id=2, n=200)
+    i2 = TestIdentity(id=2, n=200)
     # verify result
     i2get = TestIdentity.get(2)
     assert(i2get.n == 200)
