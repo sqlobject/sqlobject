@@ -474,7 +474,7 @@ class SOStringLikeCol(SOCol):
             if self.connection and self.connection.can_use_max_types():
                 type = 'VARCHAR(MAX)'
             else:
-                type = 'varchar(4000)'
+                type = 'VARCHAR(4000)'
         elif self.varchar:
             type = 'VARCHAR(%i)' % self.length
         else:
@@ -533,6 +533,17 @@ class SOStringCol(SOStringLikeCol):
 class StringCol(Col):
     baseClass = SOStringCol
 
+
+class NQuoted(sqlbuilder.SQLExpression):
+    def __init__(self, value):
+        assert isinstance(value, unicode)
+        self.value = value
+    def __hash__(self):
+        return hash(self.value)
+    def __sqlrepr__(self, db):
+        assert db == 'mssql'
+        return "N" + sqlbuilder.sqlrepr(self.value, db)
+
 class UnicodeStringValidator(validators.Validator):
 
     def getDbEncoding(self, state):
@@ -561,6 +572,13 @@ class UnicodeStringValidator(validators.Validator):
         if isinstance(value, (str, sqlbuilder.SQLExpression)):
             return value
         if isinstance(value, unicode):
+            try:
+                connection = state.connection or state.soObject._connection
+            except AttributeError:
+                pass
+            else:
+                if connection.dbName == 'mssql':
+                    return NQuoted(value)
             return value.encode(self.getDbEncoding(state))
         if hasattr(value, '__unicode__'):
             return unicode(value).encode(self.getDbEncoding(state))
@@ -571,6 +589,11 @@ class SOUnicodeCol(SOStringLikeCol):
     def __init__(self, **kw):
         self.dbEncoding = kw.pop('dbEncoding', None)
         super(SOUnicodeCol, self).__init__(**kw)
+
+    def _mssqlType(self):
+        if self.customSQLType is not None:
+            return self.customSQLType
+        return 'N' + super(SOUnicodeCol, self)._mssqlType()
 
     def createValidators(self):
         return [UnicodeStringValidator(name=self.name, soCol=self)] + \

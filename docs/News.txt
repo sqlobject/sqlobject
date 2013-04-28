@@ -22,6 +22,8 @@ Features & Interface
 
 * Changed the way to get if the table has identity in MS SQL.
 
+* NCHAR/NVARCHAR and N''-quoted strings for MS SQL.
+
 SQLObject 1.3.2
 ===============
 
