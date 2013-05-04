@@ -83,6 +83,16 @@ For development see the `subversion repository
 """
 @@ INTRO
 
+
+What's new in SQLObject
+=======================
+
+@@ CHANGES
+
+For a more complete list, please see the news:
+http://sqlobject.org/docs/News.html
+
+
 What is SQLObject
 =================
 
@@ -93,6 +103,7 @@ easy to use and quick to get started with.
 It currently supports MySQL through the `MySQLdb` package, PostgreSQL
 through the `psycopg` package, SQLite, Firebird, MaxDB (SAP DB), MS SQL
 Sybase and Rdbhost.  It should support Python versions back to 2.4.
+
 
 Where is SQLObject
 ==================
@@ -110,15 +121,6 @@ Download:
 http://pypi.python.org/pypi/SQLObject/@@
 
 News and changes:
-http://sqlobject.org/docs/News.html
-
-
-What's New
-==========
-
-@@ CHANGES
-
-For a more complete list, please see the news:
 http://sqlobject.org/docs/News.html
 
 -- 
