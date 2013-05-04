@@ -118,7 +118,7 @@ Archives:
 http://news.gmane.org/gmane.comp.python.sqlobject
 
 Download:
-http://pypi.python.org/pypi/SQLObject/@@
+https://pypi.python.org/pypi/SQLObject/@@
 
 News and changes:
 http://sqlobject.org/docs/News.html
