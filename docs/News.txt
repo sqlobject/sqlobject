@@ -13,6 +13,8 @@ SQLObject (trunk)
 SQLObject 1.4.0
 ===============
 
+Released 18 May 2013.
+
 Features & Interface
 --------------------
 

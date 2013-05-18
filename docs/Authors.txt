@@ -26,6 +26,7 @@ Contributions have been made by:
 * Daniel Fetchinson <fetchinson at googlemail.com>
 * Neil Muller <drnlmuller+sqlobject at gmail.com>
 * Petr Jakes <petr.jakes at tpc.cz>
+* Ken Lalonde
 * Andrew Ziem <ahz001 at gmail.com>
 * Oleg Broytman <phd@phdru.name>
 
