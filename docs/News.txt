@@ -41,6 +41,9 @@ Released 26 May 2013.
 * Fixed bugs in pickling and unpickling (remove/restore a weak proxy to self,
   fixed cache handling).
 
+* Added an example of using SQLObject with web.py by Rhubarb Sin
+  to the links page.
+
 SQLObject 1.3.2
 ===============
 

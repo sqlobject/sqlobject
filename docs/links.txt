@@ -26,6 +26,9 @@ Articles and Documentation
 * `Using SQLObject with memcached
   <http://www.zachary.com/s/blog/2005/09/18/sqlobject_and_memcached,_part_1>`_.
 
+* `Example of using SQLObject with web.py under mod_wsgi
+  <https://github.com/RhubarbSin/example-sqlobject-webpy>`_.
+
 Open Source Projects
 --------------------
 
