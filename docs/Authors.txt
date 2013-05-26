@@ -28,6 +28,7 @@ Contributions have been made by:
 * Petr Jakes <petr.jakes at tpc.cz>
 * Ken Lalonde
 * Andrew Ziem <ahz001 at gmail.com>
+* Andrew Trusty <atrusty at gatech.edu>
 * Oleg Broytman <phd@phdru.name>
 
 .. image:: http://sflogo.sourceforge.net/sflogo.php?group_id=74338&type=10
