@@ -682,6 +682,8 @@ class DBAPI(DBConnection):
             return
         self._poolLock.acquire()
         try:
+            if not self._pool: # _pool could be filled in a different thread
+                return
             conns = self._pool[:]
             self._pool[:] = []
             for conn in conns:

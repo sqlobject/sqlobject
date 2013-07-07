@@ -7,6 +7,12 @@ News
 
 .. _start:
 
+SQLObject (trunk)
+=================
+
+* A bug was fixed in DBConnection.close(); close() doesn't raise
+  an UnboundLocalError if connection pool is empty.
+
 SQLObject 1.4.1
 ===============
 
