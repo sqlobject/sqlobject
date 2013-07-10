@@ -10,6 +10,15 @@ News
 SQLObject (trunk)
 =================
 
+Features & Interface
+--------------------
+
+* Helpers for class Outer were changed to lookup columns in table's
+  declarations.
+
+Bugfixes
+--------
+
 * A bug was fixed in DBConnection.close(); close() doesn't raise
   an UnboundLocalError if connection pool is empty.
 

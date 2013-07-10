@@ -1135,21 +1135,12 @@ def FULLOUTERJOINUsing(table1, table2, using_columns):
 ## Subqueries (subselects)
 ########################################
 
-class OuterField(Field):
+class OuterField(SQLObjectField):
     def tablesUsedImmediate(self):
         return []
 
-class OuterTable(Table):
+class OuterTable(SQLObjectTable):
     FieldClass = OuterField
-
-    def __init__(self, table):
-        if hasattr(table, "sqlmeta"):
-            tableName = table.sqlmeta.table
-        else:
-            tableName = table
-            table = None
-        Table.__init__(self, tableName)
-        self.table = table
 
 class Outer:
     def __init__(self, table):
