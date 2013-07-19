@@ -90,6 +90,8 @@ TODO
 
 * MySQL Connector/Python: https://launchpad.net/myconnpy
 
+* Pure Python Mysql Interface: https://github.com/nasi/MyPy
+
 * pg8000 driver: http://code.google.com/p/pg8000/
 
 * py-postgresql driver: http://python.projects.postgresql.org/
