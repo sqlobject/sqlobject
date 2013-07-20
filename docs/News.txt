@@ -10,6 +10,9 @@ News
 SQLObject (trunk)
 =================
 
+SQLObject 1.5.0
+===============
+
 Features & Interface
 --------------------
 
