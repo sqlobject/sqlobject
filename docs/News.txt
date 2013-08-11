@@ -19,6 +19,11 @@ Features & Interface
 * Helpers for class Outer were changed to lookup columns in table's
   declarations.
 
+Minor features
+--------------
+
+* A number of fixes for tests.
+
 Bugfixes
 --------
 
