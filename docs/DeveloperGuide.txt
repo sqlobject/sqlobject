@@ -8,9 +8,7 @@ SQLObject Developer Guide
 .. _start:
 
 These are some notes on developing SQLObject.  I'll try to expand them
-as things come up.  If you are committing to the SQLObject repository,
-please also read ``/using-this-repository.txt``, which is just about
-file layout and repository cooperation.
+as things come up.
 
   -- Ian Bicking
 

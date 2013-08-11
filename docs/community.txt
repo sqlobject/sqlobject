@@ -16,13 +16,13 @@ Bugs should be submitted to the `bug tracker
 <http://sourceforge.net/tracker/?group_id=74338&atid=540674>`_.
 
 Development takes place in the `subversion repository
-<repository.html>`_.  There are `development docs`_.  If you are
+<download.html#repository>`_.  There are `development docs`_.  If you are
 interested in contributing you should read the `Developer Guide
-<docs/DeveloperGuide.html>`_.
+<DeveloperGuide.html>`_.
 
 .. _`development docs`: /devel/
 
-The `Author List <docs/Authors.html>`_ tries to list all the major
+The `Author List <Authors.html>`_ tries to list all the major
 contributors.
 
 One can also contribute to `community-editable recipe/documentation site
