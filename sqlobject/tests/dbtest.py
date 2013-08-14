@@ -12,7 +12,7 @@ import sqlobject.conftest as conftest
 
 if sys.platform[:3] == "win":
     def getcwd():
-        return os.getcwd().replace(':', '|')
+        return os.getcwd().replace('\\', '/')
 else:
     getcwd = os.getcwd
 
