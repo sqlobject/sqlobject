@@ -29,7 +29,7 @@ def test_getColumns():
         assert _columns == columns
 
 def test_asDict():
-    setupClass([InheritablePersonAD, ManagerAD, EmployeeAD])
+    setupClass([InheritablePersonAD, ManagerAD, EmployeeAD], force=True)
     InheritablePersonAD(firstName='Oneof', lastName='Authors')
     ManagerAD(firstName='ManagerAD', lastName='The', department='Dep')
     EmployeeAD(firstName='Project', lastName='Leader', position='Project leader')

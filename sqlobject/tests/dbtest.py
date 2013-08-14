@@ -40,7 +40,7 @@ and you can use it like::
 supportsMatrix = {
     '+exceptions': 'mysql postgres sqlite',
     '-transactions': 'mysql rdbhost',
-    '-dropTableCascade': 'sybase mssql',
+    '-dropTableCascade': 'sybase mssql mysql',
     '-expressionIndex': 'mysql sqlite firebird mssql',
     '-blobData': 'mssql rdbhost',
     '-decimalColumn': 'mssql',

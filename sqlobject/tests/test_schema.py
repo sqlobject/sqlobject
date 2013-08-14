@@ -19,3 +19,5 @@ def test_connection_schema():
     setupClass(Test)
     Test(foo='bar')
     assert conn.queryAll("SELECT * FROM test.test")
+    conn.schema = None
+    conn.query('SET search_path TO public')
