@@ -216,13 +216,6 @@ class Dummy(object):
         for name, value in kw.items():
             setattr(self, name, value)
 
-def d(**kw):
-    """
-    Because ``dict(**kw)`` doesn't work in Python 2.2, this is a
-    replacement.
-    """
-    return kw
-
 def inserts(cls, data, schema=None):
     """
     Creates a bunch of rows.
@@ -317,5 +310,5 @@ def setupLogging():
     logger.addHandler(hdlr)
 
 __all__ = ['getConnection', 'getConnectionURI', 'setupClass', 'Dummy', 'raises',
-           'd', 'inserts', 'supports', 'deprecated_module',
+           'inserts', 'supports', 'deprecated_module',
            'setup_module', 'teardown_module', 'setupLogging']
