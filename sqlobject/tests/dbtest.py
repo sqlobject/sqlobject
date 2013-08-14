@@ -2,19 +2,13 @@
 The framework for making database tests.
 """
 
-import sys
+import logging
 import os
 import re
+import sys
 from py.test import raises
-import py
 import sqlobject
 import sqlobject.conftest as conftest
-
-try:
-    import logging
-    loggingModuleAvailable = True
-except ImportError:
-    loggingModuleAvailable = False
 
 if sys.platform[:3] == "win":
     def getcwd():
@@ -314,8 +308,6 @@ def teardown_module(mod=None):
     sqlobject.main.exception_level = 0
 
 def setupLogging():
-    if not loggingModuleAvailable:
-        return
     fmt = '[%(asctime)s] %(name)s %(levelname)s: %(message)s'
     formatter = logging.Formatter(fmt)
     hdlr = logging.StreamHandler(sys.stderr)
