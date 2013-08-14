@@ -75,6 +75,7 @@ def test_transaction_delete(close=False):
     finally:
         trans.rollback()
         connection.autoCommit = True
+        connection.close()
 
 def test_transaction_delete_with_close():
     test_transaction_delete(close=True)

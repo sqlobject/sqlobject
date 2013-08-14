@@ -72,7 +72,8 @@ def test_deep_inheritance():
     person_id = DIPerson(firstName='Oneof', lastName='Authors',
         manager=manager).id
 
-    cache = getConnection().cache
+    conn = getConnection()
+    cache = conn.cache
     cache.clear()
 
     managers = list(DIManager.select())
@@ -97,3 +98,4 @@ def test_deep_inheritance():
 
     person = DIEmployee.get(manager_id)
     assert isinstance(person, DIManager)
+    conn.close()
