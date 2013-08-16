@@ -7,7 +7,7 @@ from sqlobject.tests.dbtest import *
 ########################################
 
 class TestException(SQLObject):
-    name = StringCol(unique=True)
+    name = StringCol(unique=True, length=100)
 
 def test_exceptions():
     if not supports("exceptions"):

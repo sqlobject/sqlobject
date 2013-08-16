@@ -8,12 +8,12 @@ from sqlobject.inheritance import InheritableSQLObject
 ########################################
 
 class DIPerson(InheritableSQLObject):
-    firstName = StringCol()
+    firstName = StringCol(length=100)
     lastName = StringCol(alternateID=True, length=255)
     manager = ForeignKey("DIManager", default=None)
 
 class DIEmployee(DIPerson):
-    position = StringCol(unique=True)
+    position = StringCol(unique=True, length=100)
 
 class DIManager(DIEmployee):
     subdudes = MultipleJoin("DIPerson", joinColumn="manager_id")
