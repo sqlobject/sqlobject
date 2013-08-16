@@ -61,16 +61,25 @@ class MSSQLConnection(DBAPI):
             sqlmodule.Binary = lambda st: str(st)
             # don't know whether pymssql uses unicode
             self.usingUnicodeStrings = False
-            self.make_conn_str = lambda keys:  \
-                   ["", keys.user, keys.password, keys.host, keys.db]
+            def _make_conn_str(keys):
+                keys_dict = {}
+                for attr, value in (
+                    ('user', keys.user),
+                    ('password', keys.password),
+                    ('host', keys.host),
+                    ('port', keys.port),
+                    ('database', keys.db),
+                ):
+                    if value: keys_dict[attr] = value
+                return keys_dict
+            self.make_conn_str = _make_conn_str
 
         self.autoCommit=int(autoCommit)
+        self.user = user
+        self.password = password
         self.host = host
         self.port = port
         self.db = db
-        self.user = user
-        self.password = password
-        self.password = password
         self._can_use_max_types = None
         DBAPI.__init__(self, **kw)
 
