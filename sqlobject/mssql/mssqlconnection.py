@@ -48,10 +48,10 @@ class MSSQLConnection(DBAPI):
             # MSDE does not allow SQL server login 
             if kw.get("sspi"):
                 conn_str += "Integrated Security=SSPI;Persist Security Info=False"
-                self.make_conn_str = lambda keys: [conn_str % (keys.host, keys.db)]
+                self.make_conn_str = lambda keys: conn_str % (keys.host, keys.db)
             else:
                 conn_str += "User Id=%s;Password=%s"
-                self.make_conn_str = lambda keys: [conn_str % (keys.host, keys.db, keys.user, keys.password)]
+                self.make_conn_str = lambda keys: conn_str % (keys.host, keys.db, keys.user, keys.password)
 
             kw.pop("sspi", None)
             kw.pop("ncli", None)
@@ -100,7 +100,11 @@ class MSSQLConnection(DBAPI):
         return c.fetchone()[0]
 
     def makeConnection(self):
-        con = self.dbconnection( *self.make_conn_str(self) )
+        conn_descr = self.make_conn_str(self)
+        if isinstance(conn_descr, dict):
+            con = self.dbconnection(**conn_descr)
+        else:
+            con = self.dbconnection(conn_descr)
         cur = con.cursor()
         cur.execute('SET ANSI_NULLS ON')
         cur.execute("SELECT CAST('12345.21' AS DECIMAL(10, 2))")
