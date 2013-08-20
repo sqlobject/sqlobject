@@ -964,6 +964,9 @@ class EnumValidator(SOValidator):
 
     def to_python(self, value, state):
         if value in self.enumValues:
+            if isinstance(value, unicode):
+                dbEncoding = self.getDbEncoding(state)
+                value = value.encode(dbEncoding)
             return value
         elif not self.notNone and value is None:
             return None

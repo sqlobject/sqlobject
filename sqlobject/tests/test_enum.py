@@ -52,3 +52,17 @@ def testDefaultOther():
 
     e = EnumWithDefaultOther()
     assert e.l == 'a'
+
+
+class EnumUnicode(SQLObject):
+
+    n = UnicodeCol()
+    l = EnumCol(enumValues=['a', 'b'])
+
+def testUnicode():
+    setupClass(EnumUnicode)
+
+    EnumUnicode(n=u'a', l='a')
+    EnumUnicode(n=u'b', l=u'b')
+    EnumUnicode(n=u'\u201c', l='a')
+    EnumUnicode(n=u'\u201c', l=u'b')
