@@ -25,10 +25,11 @@ try:
     import cPickle as pickle
 except ImportError:
     import pickle
-# Sadly the name "constraints" conflicts with many of the function
-# arguments in this module, so we rename it:
+import weakref
 from formencode import compound, validators
 from classregistry import findClass
+# Sadly the name "constraints" conflicts with many of the function
+# arguments in this module, so we rename it:
 import constraints as constrs
 import sqlbuilder
 from styles import capword
@@ -106,6 +107,7 @@ class SOCol(object):
                  title=None,
                  tags=[],
                  origName=None,
+                 dbEncoding=None,
                  extra_vars=None):
 
         super(SOCol, self).__init__()
@@ -197,6 +199,9 @@ class SOCol(object):
         if validator: _validators.append(validator)
         if validator2: _validators.insert(0, validator2)
         _vlen = len(_validators)
+        if _vlen:
+            for _validator in _validators:
+                _validator.soCol=weakref.proxy(self)
         if _vlen == 0:
             self.validator = None # Set sef.{from,to}_python
         elif _vlen == 1:
@@ -210,6 +215,7 @@ class SOCol(object):
         self.origName = origName or name
         self.title = title
         self.tags = tags
+        self.dbEncoding = dbEncoding
 
         if extra_vars:
             for name, value in extra_vars.items():
@@ -368,6 +374,22 @@ class SOCol(object):
     def __delete__(self, obj):
         raise AttributeError("I can't be deleted from %r" % obj)
 
+    def getDbEncoding(self, state, default='utf-8'):
+        if self.dbEncoding:
+            return self.dbEncoding
+        dbEncoding = state.soObject.sqlmeta.dbEncoding
+        if dbEncoding:
+            return dbEncoding
+        try:
+            connection = state.connection or state.soObject._connection
+        except AttributeError:
+            dbEncoding = None
+        else:
+            dbEncoding = getattr(connection, "dbEncoding", None)
+        if not dbEncoding:
+            dbEncoding = default
+        return dbEncoding
+
 
 class Col(object):
 
@@ -409,6 +431,13 @@ class Col(object):
             self.__class__.__name__, hex(abs(id(self)))[2:],
             self._name or '(unnamed)')
 
+
+class SOValidator(validators.Validator):
+    def getDbEncoding(self, state, default='utf-8'):
+        try:
+            return self.dbEncoding
+        except AttributeError:
+            return self.soCol.getDbEncoding(state, default=default)
 
 
 class SOStringLikeCol(SOCol):
@@ -498,7 +527,7 @@ class SOStringLikeCol(SOCol):
             return self._sqlType()
 
 
-class StringValidator(validators.Validator):
+class StringValidator(SOValidator):
 
     def to_python(self, value, state):
         if value is None:
@@ -507,10 +536,8 @@ class StringValidator(validators.Validator):
             connection = state.connection or state.soObject._connection
             binaryType = connection._binaryType
         except AttributeError:
-            dbEncoding = "ascii"
             binaryType = type(None) # Just a simple workaround
-        else:
-            dbEncoding = getattr(connection, "dbEncoding", None) or "ascii"
+        dbEncoding = self.getDbEncoding(state, default='ascii')
         if isinstance(value, unicode):
             return value.encode(dbEncoding)
         if self.dataType and isinstance(value, self.dataType):
@@ -544,13 +571,7 @@ class NQuoted(sqlbuilder.SQLExpression):
         assert db == 'mssql'
         return "N" + sqlbuilder.sqlrepr(self.value, db)
 
-class UnicodeStringValidator(validators.Validator):
-
-    def getDbEncoding(self, state):
-        try:
-            return self.dbEncoding
-        except AttributeError:
-            return self.soCol.getDbEncoding(state)
+class UnicodeStringValidator(SOValidator):
 
     def to_python(self, value, state):
         if value is None:
@@ -586,40 +607,20 @@ class UnicodeStringValidator(validators.Validator):
             (self.name, type(value), value), value, state)
 
 class SOUnicodeCol(SOStringLikeCol):
-    def __init__(self, **kw):
-        self.dbEncoding = kw.pop('dbEncoding', None)
-        super(SOUnicodeCol, self).__init__(**kw)
-
     def _mssqlType(self):
         if self.customSQLType is not None:
             return self.customSQLType
         return 'N' + super(SOUnicodeCol, self)._mssqlType()
 
     def createValidators(self):
-        return [UnicodeStringValidator(name=self.name, soCol=self)] + \
+        return [UnicodeStringValidator(name=self.name)] + \
             super(SOUnicodeCol, self).createValidators()
-
-    def getDbEncoding(self, state):
-        if self.dbEncoding:
-            return self.dbEncoding
-        dbEncoding = state.soObject.sqlmeta.dbEncoding
-        if dbEncoding:
-            return dbEncoding
-        try:
-            connection = state.connection or state.soObject._connection
-        except AttributeError:
-            dbEncoding = None
-        else:
-            dbEncoding = getattr(connection, "dbEncoding", None)
-        if not dbEncoding:
-            dbEncoding = "utf-8"
-        return dbEncoding
 
 class UnicodeCol(Col):
     baseClass = SOUnicodeCol
 
 
-class IntValidator(validators.Validator):
+class IntValidator(SOValidator):
 
     def to_python(self, value, state):
         if value is None:
@@ -700,7 +701,7 @@ class BigIntCol(Col):
     baseClass = SOBigIntCol
 
 
-class BoolValidator(validators.Validator):
+class BoolValidator(SOValidator):
 
     def to_python(self, value, state):
         if value is None:
@@ -747,7 +748,7 @@ class BoolCol(Col):
     baseClass = SOBoolCol
 
 
-class FloatValidator(validators.Validator):
+class FloatValidator(SOValidator):
 
     def to_python(self, value, state):
         if value is None:
@@ -959,10 +960,13 @@ class ForeignKey(KeyCol):
         super(ForeignKey, self).__init__(foreignKey=foreignKey, **kw)
 
 
-class EnumValidator(validators.Validator):
+class EnumValidator(SOValidator):
 
     def to_python(self, value, state):
         if value in self.enumValues:
+            if isinstance(value, unicode):
+                dbEncoding = self.getDbEncoding(state)
+                value = value.encode(dbEncoding)
             return value
         elif not self.notNone and value is None:
             return None
@@ -1032,7 +1036,7 @@ class EnumCol(Col):
     baseClass = SOEnumCol
 
 
-class SetValidator(validators.Validator):
+class SetValidator(SOValidator):
     """
     Translates Python tuples into SQL comma-delimited SET strings.
     """
@@ -1330,7 +1334,7 @@ class TimestampCol(Col):
     baseClass = SOTimestampCol
 
 
-class TimedeltaValidator(validators.Validator):
+class TimedeltaValidator(SOValidator):
     def to_python(self, value, state):
         return value
 
@@ -1350,7 +1354,7 @@ class TimedeltaCol(Col):
 
 from decimal import Decimal
 
-class DecimalValidator(validators.Validator):
+class DecimalValidator(SOValidator):
     def to_python(self, value, state):
         if value is None:
             return None
@@ -1475,7 +1479,7 @@ class DecimalStringCol(StringCol):
     baseClass = SODecimalStringCol
 
 
-class BinaryValidator(validators.Validator):
+class BinaryValidator(SOValidator):
     """
     Validator for binary types.
 
@@ -1566,12 +1570,7 @@ class PickleValidator(BinaryValidator):
         if value is None:
             return None
         if isinstance(value, unicode):
-            try:
-                connection = state.connection or state.soObject._connection
-            except AttributeError:
-                dbEncoding = "ascii"
-            else:
-                dbEncoding = getattr(connection, "dbEncoding", None) or "ascii"
+            dbEncoding = self.getDbEncoding(state, default='ascii')
             value = value.encode(dbEncoding)
         if isinstance(value, str):
             return pickle.loads(value)

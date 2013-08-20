@@ -22,6 +22,8 @@ Features & Interface
 Minor features
 --------------
 
+* Encode unicode enum values to str.
+
 * A number of fixes for tests.
 
 Bugfixes
