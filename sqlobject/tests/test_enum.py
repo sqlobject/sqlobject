@@ -1,6 +1,6 @@
 from sqlobject import *
+from sqlobject.col import validators
 from sqlobject.tests.dbtest import *
-from formencode import Invalid
 
 ########################################
 ## Enum test
@@ -17,8 +17,9 @@ def testBad():
     raises(
         (Enum1._connection.module.IntegrityError,
          Enum1._connection.module.ProgrammingError,
-         Invalid),
+         validators.Invalid),
         Enum1, l='b')
+
 
 class EnumWithNone(SQLObject):
 
@@ -30,6 +31,7 @@ def testNone():
         e = EnumWithNone(l=l)
         assert e.l == l
 
+
 class EnumWithDefaultNone(SQLObject):
 
     l = EnumCol(enumValues=['a', 'bcd', 'e', None], default=None)
@@ -39,6 +41,7 @@ def testDefaultNone():
 
     e = EnumWithDefaultNone()
     assert e.l == None
+
 
 class EnumWithDefaultOther(SQLObject):
 
