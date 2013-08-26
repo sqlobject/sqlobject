@@ -51,7 +51,6 @@ This thread-local storage is needed for RowCreatedSignals. It gathers
 code-blocks to execute _after_ the whole hierachy of inherited SQLObjects
 is created. See SQLObject._create
 """
-_postponed_local = local()
 
 NoDefault = sqlbuilder.NoDefault
 
@@ -632,22 +631,8 @@ class sqlmeta(object):
 
 sqlhub = dbconnection.ConnectionHub()
 
-class _sqlmeta_attr(object):
 
-    def __init__(self, name, deprecation_level):
-        self.name = name
-        self.deprecation_level = deprecation_level
-
-    def __get__(self, obj, type=None):
-        if self.deprecation_level is not None:
-            deprecated(
-                'Use of this attribute should be replaced with '
-                '.sqlmeta.%s' % self.name, level=self.deprecation_level)
-        return getattr((type or obj).sqlmeta, self.name)
-
-
-# @@: This should become a public interface or documented or
-# something.  Turning it on gives earlier warning about things
+# Turning it on gives earlier warning about things
 # that will be deprecated (having this off we won't flood people
 # with warnings right away).
 warnings_level = 1
@@ -677,12 +662,11 @@ def setDeprecationLevel(warning=1, exception=None):
 
     The levels currently mean:
 
-      1) Deprecated in current version (0.9).  Will be removed in next
-         version (0.10)
+      1) Deprecated in current version.  Will be removed in next version.
 
       2) Planned to deprecate in next version, remove later.
 
-      3) Planned to deprecate sometime, remove sometime much later ;)
+      3) Planned to deprecate sometime, remove sometime much later.
 
     As the SQLObject versions progress, the deprecation level of
     specific features will go down, indicating the advancing nature of
@@ -697,6 +681,22 @@ def setDeprecationLevel(warning=1, exception=None):
     warnings_level = warning
     exception_level = exception
 
+
+class _sqlmeta_attr(object):
+
+    def __init__(self, name, deprecation_level):
+        self.name = name
+        self.deprecation_level = deprecation_level
+
+    def __get__(self, obj, type=None):
+        if self.deprecation_level is not None:
+            deprecated(
+                'Use of this attribute should be replaced with '
+                '.sqlmeta.%s' % self.name, level=self.deprecation_level)
+        return getattr((type or obj).sqlmeta, self.name)
+
+
+_postponed_local = local()
 
 # SQLObject is the superclass for all SQLObject classes, of
 # course.  All the deeper magic is done in MetaSQLObject, and
@@ -1742,7 +1742,7 @@ def getObject(obj, klass):
     else:
         return obj
 
-__all__ = ['NoDefault', 'SQLObject', 'sqlmeta', 'sqlhub',
-           'getID', 'getObject', 'setDeprecationLevel',
-           'SQLObjectNotFound', 'SQLObjectIntegrityError',
+__all__ = ['NoDefault', 'SQLObject',
+           'SQLObjectIntegrityError', 'SQLObjectNotFound',
+           'getID', 'getObject', 'setDeprecationLevel', 'sqlhub', 'sqlmeta',
           ]
