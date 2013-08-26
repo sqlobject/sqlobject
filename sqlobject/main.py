@@ -1744,5 +1744,5 @@ def getObject(obj, klass):
 
 __all__ = ['NoDefault', 'SQLObject',
            'SQLObjectIntegrityError', 'SQLObjectNotFound',
-           'getID', 'getObject', 'setDeprecationLevel', 'sqlhub', 'sqlmeta',
+           'getID', 'getObject', 'sqlhub', 'sqlmeta',
           ]

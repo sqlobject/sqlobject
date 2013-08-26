@@ -21,6 +21,8 @@ Minor features
 
 * Encode unicode enum values to str.
 
+* Removed setDeprecationLevel from the list of public functions.
+
 * A number of fixes for tests.
 
 Bugfixes
