@@ -16,6 +16,9 @@ Features & Interface
 * Helpers for class Outer were changed to lookup columns in table's
   declarations.
 
+* Support for Python 2.4 is declared obsolete and will be removed
+  in the next release.
+
 Minor features
 --------------
 
