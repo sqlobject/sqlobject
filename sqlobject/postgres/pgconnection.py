@@ -6,9 +6,13 @@ from sqlobject.converters import registerConverter
 from sqlobject.dberrors import *
 
 class ErrorMessage(str):
-    def __new__(cls, e):
-        obj = str.__new__(cls, e[0])
-        obj.code = None
+    def __new__(cls, e, append_msg=''):
+        obj = str.__new__(cls, e[0] + append_msg)
+        if e.__module__ == 'psycopg2':
+            obj.code = getattr(e, 'pgcode', None)
+            obj.error = getattr(e, 'pgerror', None)
+        else:
+            obj.code = obj.error = None
         obj.module = e.__module__
         obj.exception = e.__class__.__name__
         return obj
@@ -139,7 +143,7 @@ class PostgresConnection(DBAPI):
             else:
                 conn = self.module.connect(**self.dsn_dict)
         except self.module.OperationalError, e:
-            raise OperationalError("%s; used connection string %r" % (e, self.dsn))
+            raise OperationalError(ErrorMessage(e, "used connection string %r" % self.dsn))
 
         # For printDebug in _executeRetry
         self._connectionNumbers[id(conn)] = self._connectionCount
