@@ -25,6 +25,9 @@ Features & Interface
 Minor features
 --------------
 
+* When a PostgresConnection raises an exception the instance has
+  code/error attributes copied from psycopg2's pgcode/pgerror attributes.
+
 * Encode unicode enum values to str.
 
 * Removed setDeprecationLevel from the list of public functions.
