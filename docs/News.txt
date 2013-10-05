@@ -39,6 +39,11 @@ Bugfixes
 
 * Fixed parameters for pymssql.
 
+Documentation
+-------------
+
+* Old FSF address was changed to the new one.
+
 SQLObject 1.4.1
 ===============
 
