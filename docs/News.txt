@@ -42,6 +42,13 @@ Bugfixes
 
 * Fixed parameters for pymssql.
 
+Documentation
+-------------
+
+* GNU LGPL text was added as docs/LICENSE file.
+
+* Old FSF address was changed to the new one.
+
 SQLObject 1.4.1
 ===============
 

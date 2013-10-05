@@ -2,6 +2,7 @@ include *.txt
 include *.html
 include *.css
 include examples/*.py
+include docs/LICENSE
 include docs/*.txt
 include docs/*.html
 include docs/*.css
