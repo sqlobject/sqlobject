@@ -1,7 +1,7 @@
-from md5 import md5
+from hashlib import md5
 
 ########################################
-## md5.md5
+## hashlib.md5
 ########################################
 
 def test_md5():
