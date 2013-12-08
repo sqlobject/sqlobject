@@ -7,6 +7,12 @@ News
 
 .. _start:
 
+SQLObject 1.5.1
+===============
+
+* SQLiteConnection.close() now closes and reopens a connection
+  to in-memory database.
+
 SQLObject 1.5.0
 ===============
 

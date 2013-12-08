@@ -41,6 +41,7 @@ supportsMatrix = {
     '-emptyTable': 'mssql',
     '-limitSelect' : 'mssql',
     '+schema' : 'postgres',
+    '+memorydb': 'sqlite',
     }
 
 
