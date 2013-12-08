@@ -89,11 +89,7 @@ class SQLiteConnection(DBAPI):
         self._threadPool = {}
         self._threadOrigination = {}
         if self._memory:
-            self._memoryConn = sqlite.connect(
-                self.filename, **self._connOptions)
-            # Convert text data from SQLite to str, not unicode -
-            # SQLObject converts it to unicode itself.
-            self._memoryConn.text_factory = str
+            self.makeMemoryConnection()
 
     @classmethod
     def _connectionFromParams(cls, user, password, host, port, path, args):
@@ -184,6 +180,13 @@ class SQLiteConnection(DBAPI):
             return
         conn.isolation_level = level
 
+    def makeMemoryConnection(self):
+        self._memoryConn = self.module.connect(
+            self.filename, **self._connOptions)
+        # Convert text data from SQLite to str, not unicode -
+        # SQLObject converts it to unicode itself.
+        self._memoryConn.text_factory = str
+
     def makeConnection(self):
         if self._memory:
             return self._memoryConn
@@ -194,6 +197,9 @@ class SQLiteConnection(DBAPI):
     def close(self):
         DBAPI.close(self)
         self._threadPool = {}
+        if self._memory:
+            self._memoryConn.close()
+            self.makeMemoryConnection()
 
     def _executeRetry(self, conn, cursor, query):
         if self.debug:

@@ -16,6 +16,12 @@ Features & Interface
 * Python 2.4 is no longer supported. The minimal supported version is
   Python 2.5.
 
+SQLObject 1.5.1
+===============
+
+* SQLiteConnection.close() now closes and reopens a connection
+  to in-memory database.
+
 SQLObject 1.5.0
 ===============
 
