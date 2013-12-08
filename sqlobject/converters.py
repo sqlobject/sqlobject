@@ -7,16 +7,11 @@ from types import ClassType, InstanceType, NoneType
 
 
 try:
-    import mx.DateTime.ISO
-    origISOStr = mx.DateTime.ISO.strGMT
     from mx.DateTime import DateTimeType, DateTimeDeltaType
 except ImportError:
     try:
-        import DateTime.ISO
-        origISOStr = DateTime.ISO.strGMT
         from DateTime import DateTimeType, DateTimeDeltaType
     except ImportError:
-        origISOStr = None
         DateTimeType = None
         DateTimeDeltaType = None
 
@@ -40,17 +35,6 @@ sqlStringReplace = [
     ('\r', '\\r'),
     ('\t', '\\t'),
 ]
-
-def isoStr(val):
-    """
-    Gets rid of time zone information
-    (@@: should we convert to GMT?)
-    """
-    val = origISOStr(val)
-    if val.find('+') == -1:
-        return val
-    else:
-        return val[:val.find('+')]
 
 class ConverterRegistry:
 
@@ -133,12 +117,12 @@ registerConverter(float, FloatConverter)
 
 if DateTimeType:
     def DateTimeConverter(value, db):
-        return "'%s'" % isoStr(value)
+        return "'%s'" % value.strftime("%Y-%m-%d %H:%M:%S.%s")
 
     registerConverter(DateTimeType, DateTimeConverter)
 
     def TimeConverter(value, db):
-        return "'%s'" % value.strftime("%T")
+        return "'%s'" % value.strftime("%H:%M:%S")
 
     registerConverter(DateTimeDeltaType, TimeConverter)
 
@@ -167,9 +151,9 @@ if hasattr(time, 'struct_time'):
     registerConverter(time.struct_time, StructTimeConverter)
 
 def DateTimeConverter(value, db):
-    return "'%04d-%02d-%02d %02d:%02d:%02d'" % (
+    return "'%04d-%02d-%02d %02d:%02d:%02d.%d'" % (
         value.year, value.month, value.day,
-        value.hour, value.minute, value.second)
+        value.hour, value.minute, value.second, value.microsecond)
 
 registerConverter(datetime.datetime, DateTimeConverter)
 
@@ -179,7 +163,7 @@ def DateConverter(value, db):
 registerConverter(datetime.date, DateConverter)
 
 def TimeConverter(value, db):
-    return "'%02d:%02d:%02d'" % (value.hour, value.minute, value.second)
+    return "'%02d:%02d:%02d.%d'" % (value.hour, value.minute, value.second, value.microsecond)
 
 registerConverter(datetime.time, TimeConverter)
 

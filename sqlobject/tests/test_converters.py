@@ -88,11 +88,11 @@ def test_bool():
 
 def test_datetime():
     from datetime import datetime, date, time
-    assert sqlrepr(datetime(2005, 7, 14, 13, 31, 2)) == "'2005-07-14 13:31:02'"
+    assert sqlrepr(datetime(2005, 7, 14, 13, 31, 2)) == "'2005-07-14 13:31:02.0'"
     assert sqlrepr(date(2005, 7, 14)) == "'2005-07-14'"
-    assert sqlrepr(time(13, 31, 2)) == "'13:31:02'"
+    assert sqlrepr(time(13, 31, 2)) == "'13:31:02.0'"
     # now dates before 1900
-    assert sqlrepr(datetime(1428, 7, 14, 13, 31, 2)) == "'1428-07-14 13:31:02'"
+    assert sqlrepr(datetime(1428, 7, 14, 13, 31, 2)) == "'1428-07-14 13:31:02.0'"
     assert sqlrepr(date(1428, 7, 14)) == "'1428-07-14'"
 
 def test_instance():

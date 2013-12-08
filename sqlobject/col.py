@@ -20,7 +20,9 @@ are what gets used.
 
 from array import array
 from itertools import count
-import re, time
+import re
+import sys
+import time
 try:
     import cPickle as pickle
 except ImportError:
@@ -1098,11 +1100,23 @@ class DateTimeValidator(validators.DateValidator):
                 else:
                     return datetime.time(value.hour, value.minute, int(value.second))
         try:
-            stime = time.strptime(value, self.format)
+            if self.format.find(".%f") >= 0:
+                if '.' in value:
+                    _value = value.split('.')
+                    microseconds = _value[-1]
+                    if len(microseconds) > 6:
+                        _value[-1] = microseconds[:6]
+                        value = '.'.join(_value)
+                else:
+                    value += '.0'
+            if sys.version_info[:3] < (2, 6, 0): # datetime.strptime in python2.5 doesn't support '%f' format
+                stime = time.strptime(value, self.format)
+                return datetime.datetime(*stime[:6])
+            else:
+                return datetime.datetime.strptime(value, self.format)
         except:
             raise validators.Invalid("expected a date/time string of the '%s' format in the DateTimeCol '%s', got %s %r instead" % \
                 (self.format, self.name, type(value), value), value, state)
-        return datetime.datetime(*stime[:6])
 
     def from_python(self, value, state):
         if value is None:
@@ -1129,11 +1143,25 @@ if mxdatetime_available:
             elif isinstance(value, datetime.time):
                 return DateTime.Time(value.hour, value.minute, value.second)
             try:
-                stime = time.strptime(value, self.format)
+                if self.format.find(".%f") >= 0:
+                    if '.' in value:
+                        _value = value.split('.')
+                        microseconds = _value[-1]
+                        if len(microseconds) > 6:
+                            _value[-1] = microseconds[:6]
+                            value = '.'.join(_value)
+                    else:
+                        value += '.0'
+                if sys.version_info[:3] < (2, 6, 0): # datetime.strptime in python2.5 doesn't support '%f' format
+                    stime = time.strptime(value, self.format)
+                    return DateTime.mktime(stime)
+                else:
+                    value = datetime.datetime.strptime(value, self.format)
+                    return DateTime.DateTime(value.year, value.month, value.day,
+                        value.hour, value.minute, value.second)
             except:
                 raise validators.Invalid("expected a date/time string of the '%s' format in the DateTimeCol '%s', got %s %r instead" % \
                     (self.format, self.name, type(value), value), value, state)
-            return DateTime.mktime(stime)
 
         def from_python(self, value, state):
             if value is None:
@@ -1146,7 +1174,7 @@ if mxdatetime_available:
                 (self.name, type(value), value), value, state)
 
 class SODateTimeCol(SOCol):
-    datetimeFormat = '%Y-%m-%d %H:%M:%S'
+    datetimeFormat = '%Y-%m-%d %H:%M:%S.%f'
 
     def __init__(self, **kw):
         datetimeFormat = kw.pop('datetimeFormat', None)
@@ -1277,7 +1305,7 @@ class TimeValidator(DateTimeValidator):
     from_python = to_python
 
 class SOTimeCol(SOCol):
-    timeFormat = '%H:%M:%S'
+    timeFormat = '%H:%M:%S.%f'
 
     def __init__(self, **kw):
         timeFormat = kw.pop('timeFormat', None)

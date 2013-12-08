@@ -16,6 +16,10 @@ Features & Interface
 * Python 2.4 is no longer supported. The minimal supported version is
   Python 2.5.
 
+* DateTimeCol and TimeCol preserve microseconds. The feature requires
+  Python 2.6+ because in Python 2.5 datetime.strptime doesn't support
+  '%f' format.
+
 SQLObject 1.5.1
 ===============
 
