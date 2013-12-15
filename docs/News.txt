@@ -10,6 +10,8 @@ News
 SQLObject 1.5.1
 ===============
 
+Released 15 Dec 2013.
+
 * SQLiteConnection.close() now closes and reopens a connection
   to in-memory database.
 
