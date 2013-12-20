@@ -26,6 +26,16 @@ if is_setuptools:
     [paste.filter_app_factory]
     main = sqlobject.wsgi_middleware:make_middleware
     """
+    kw['install_requires'] = ["FormEncode>=1.1.1"]
+    kw['extras_require'] = {
+        'mysql': ['MySQLdb'],
+        'postgresql': ['psycopg'], # or pgdb from PyGreSQL
+        'sqlite': ['pysqlite'],
+        'firebird': ['kinterbasdb'],
+        'sybase': ['Sybase'],
+        'mssql': ['adodbapi'], # or pymssql
+        'sapdb': ['sapdb'],
+        }
 
 setup(name="SQLObject",
       version=version,
@@ -60,16 +70,6 @@ For development see the `subversion repository
       license="LGPL",
       packages=["sqlobject"] + ['sqlobject.%s' % package for package in subpackages],
       scripts=["scripts/sqlobject-admin", "scripts/sqlobject-convertOldURI"],
-      install_requires=["FormEncode>=1.1.1"],
-      extras_require={
-        'mysql': ['MySQLdb'],
-        'postgresql': ['psycopg'], # or pgdb from PyGreSQL
-        'sqlite': ['pysqlite'],
-        'firebird': ['kinterbasdb'],
-        'sybase': ['Sybase'],
-        'mssql': ['adodbapi'], # or pymssql
-        'sapdb': ['sapdb'],
-        },
       **kw
       )
 

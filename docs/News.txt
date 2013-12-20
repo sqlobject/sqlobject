@@ -24,6 +24,8 @@ Features & Interface
   with microseconds cannot be read back with older versions of
   SQLObject.
 
+* Upgrade ez_setup to 1.4.2.
+
 SQLObject 1.5.1
 ===============
 

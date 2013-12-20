@@ -1,8 +1,6 @@
 TODO
 ----
 
-* Upgrade ez_setup to 1.4.2.
-
 * RelatedJoin.hasOther(otherObject[.id])
 
 * createParamsPre/Post::
