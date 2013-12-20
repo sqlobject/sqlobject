@@ -61,6 +61,8 @@ and `GitHub <https://github.com/sqlobject>`_.
         ],
       author="Ian Bicking",
       author_email="ianb@colorstudy.com",
+      maintainer="Oleg Broytman",
+      maintainer_email="phd@phdru.name",
       url="http://sqlobject.org/",
       download_url="https://pypi.python.org/pypi/SQLObject/%s" % version,
       license="LGPL",
