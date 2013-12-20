@@ -65,6 +65,8 @@ For development see the `subversion repository
         ],
       author="Ian Bicking",
       author_email="ianb@colorstudy.com",
+      maintainer="Oleg Broytman",
+      maintainer_email="phd@phdru.name",
       url="http://sqlobject.org/devel/",
       download_url="https://pypi.python.org/pypi/SQLObject/%s" % version,
       license="LGPL",
