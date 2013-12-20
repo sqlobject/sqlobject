@@ -20,6 +20,10 @@ Features & Interface
   Python 2.6+ because in Python 2.5 datetime.strptime doesn't support
   '%f' format.
 
+  WARNING: backward compatibility problem! Date/Time columns created
+  with microseconds cannot be read back with older versions of
+  SQLObject.
+
 SQLObject 1.5.1
 ===============
 
