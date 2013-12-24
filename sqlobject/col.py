@@ -1104,8 +1104,12 @@ class DateTimeValidator(validators.DateValidator):
                 if '.' in value:
                     _value = value.split('.')
                     microseconds = _value[-1]
-                    if len(microseconds) > 6:
+                    _l = len(microseconds)
+                    if _l < 6:
+                        _value[-1] = '%06d' % int(microseconds)
+                    if _l > 6:
                         _value[-1] = microseconds[:6]
+                    if _l != 6:
                         value = '.'.join(_value)
                 else:
                     value += '.0'
@@ -1147,8 +1151,12 @@ if mxdatetime_available:
                     if '.' in value:
                         _value = value.split('.')
                         microseconds = _value[-1]
-                        if len(microseconds) > 6:
+                        _l = len(microseconds)
+                        if _l < 6:
+                            _value[-1] = '%06d' % int(microseconds)
+                        if _l > 6:
                             _value[-1] = microseconds[:6]
+                        if _l != 6:
                             value = '.'.join(_value)
                     else:
                         value += '.0'
