@@ -67,7 +67,7 @@ For development see the `subversion repository
       author_email="ianb@colorstudy.com",
       maintainer="Oleg Broytman",
       maintainer_email="phd@phdru.name",
-      url="http://sqlobject.org/devel/",
+      url="http://sqlobject.org/",
       download_url="https://pypi.python.org/pypi/SQLObject/%s" % version,
       license="LGPL",
       packages=["sqlobject"] + ['sqlobject.%s' % package for package in subpackages],
