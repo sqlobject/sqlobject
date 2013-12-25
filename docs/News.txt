@@ -7,9 +7,6 @@ News
 
 .. _start:
 
-SQLObject (trunk)
-=================
-
 SQLObject 1.6.0
 ===============
 
