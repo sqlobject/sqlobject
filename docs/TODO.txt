@@ -81,7 +81,8 @@ TODO
 
 * Deprecate, then remove connectionForOldURI.
 
-* Python 3.0+.
+* Python 3.0+. For an attempt to port FormEncode to py3k see
+  https://bitbucket.org/fetchinson/formencode-py3k
 
 * Switch from setuptools to distribute.
 
