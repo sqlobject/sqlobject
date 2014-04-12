@@ -7,6 +7,11 @@ News
 
 .. _start:
 
+SQLObject 1.5.2
+===============
+
+* Adapt duplicate error message strings for SQLite 3.8.
+
 SQLObject 1.5.1
 ===============
 
