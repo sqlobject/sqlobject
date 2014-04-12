@@ -26,6 +26,8 @@ Features & Interface
 
 * Upgrade ez_setup to 1.4.2.
 
+* A bugfix was ported from `SQLObject 1.5.2`_.
+
 SQLObject 1.5.2
 ===============
 
