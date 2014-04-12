@@ -210,7 +210,8 @@ class SQLiteConnection(DBAPI):
             raise OperationalError(ErrorMessage(e))
         except self.module.IntegrityError, e:
             msg = ErrorMessage(e)
-            if msg.startswith('column') and msg.endswith('not unique'):
+            if msg.startswith('column') and msg.endswith('not unique') \
+            or msg.startswith('UNIQUE constraint failed:'):
                 raise DuplicateEntryError(msg)
             else:
                 raise IntegrityError(msg)
