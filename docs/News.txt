@@ -10,6 +10,8 @@ News
 SQLObject 1.5.2
 ===============
 
+Released 13 Apr 2014.
+
 * Adapt duplicate error message strings for SQLite 3.8.
 
 SQLObject 1.5.1
