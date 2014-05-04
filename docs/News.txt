@@ -11,7 +11,7 @@ SQLObject 1.7.0
 ===============
 
 * DateTimeCol and TimeCol can read values with microseconds (created by
-  SQLObject 2.0).
+  SQLObject 2.0) but do not write microseconds back.
 
 SQLObject 1.6.0
 ===============
