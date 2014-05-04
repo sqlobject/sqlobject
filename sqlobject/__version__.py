@@ -1,7 +1,7 @@
 
-version = '1.7'
-major   = 1
-minor   = 7
+version = '2.0'
+major   = 2
+minor   = 0
 micro   = 0
 release_level = 'trunk'
 serial  = 0
