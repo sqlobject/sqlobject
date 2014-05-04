@@ -25,8 +25,7 @@ def test_dateTime():
     assert dt1.col1.day == _now.day
     assert dt1.col1.hour == _now.hour
     assert dt1.col1.minute == _now.minute
-    assert dt1.col1.second == _now.second
-    assert dt1.col1.microsecond == _now.microsecond
+    assert dt1.col1.second == int(_now.second)
 
     assert isinstance(dt1.col2, date)
     assert not isinstance(dt1.col2, datetime)
@@ -37,8 +36,7 @@ def test_dateTime():
     assert isinstance(dt1.col3, time)
     assert dt1.col3.hour == _now.hour
     assert dt1.col3.minute == _now.minute
-    assert dt1.col3.second == _now.second
-    assert dt1.col3.microsecond == _now.microsecond
+    assert dt1.col3.second == int(_now.second)
 
 if mxdatetime_available:
     col.default_datetime_implementation = MXDATETIME_IMPLEMENTATION
@@ -49,7 +47,7 @@ if mxdatetime_available:
     if connection.dbName == "sqlite":
         if connection.using_sqlite2:
             # mxDateTime sends and PySQLite2 returns full date/time for dates
-            dateFormat = "%Y-%m-%d %H:%M:%S.%f"
+            dateFormat = "%Y-%m-%d %H:%M:%S"
 
     class DateTime2(SQLObject):
         col1 = DateTimeCol()
@@ -59,7 +57,7 @@ if mxdatetime_available:
     def test_mxDateTime():
         setupClass(DateTime2)
         _now = now()
-        dt2 = DateTime2(col1=_now, col2=_now, col3=Time(_now.hour, _now.minute, _now.second))
+        dt2 = DateTime2(col1=_now, col2=_now, col3=Time(_now.hour, _now.minute, int(_now.second)))
 
         assert isinstance(dt2.col1, col.DateTimeType)
         assert dt2.col1.year == _now.year
