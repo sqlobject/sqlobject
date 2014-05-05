@@ -155,10 +155,6 @@ registerConverter(list, SequenceConverter)
 registerConverter(dict, SequenceConverter)
 registerConverter(set, SequenceConverter)
 registerConverter(frozenset, SequenceConverter)
-if sys.version_info[:3] < (2, 6, 0): # Module sets was deprecated in Python 2.6
-   from sets import Set, ImmutableSet
-   registerConverter(Set, SequenceConverter)
-   registerConverter(ImmutableSet, SequenceConverter)
 
 if hasattr(time, 'struct_time'):
     def StructTimeConverter(value, db):

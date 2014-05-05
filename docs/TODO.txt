@@ -45,7 +45,7 @@ TODO
 
 * Cache columns in sqlmeta.getColumns(); reset the cache on add/del Column/Join.
 
-* Stop supporting Python 2.5: remove import sets; use ``with lock``;
+* Stop supporting Python 2.5: use ``with lock``;
   make ConnectionHub a context manager instead of .doInTransaction();
   replace time.strptime with datetime.strptime. Upgrade ez_setup to 2.0+.
 
