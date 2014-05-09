@@ -25,6 +25,9 @@ SQLObject 1.7.0
 Features & Interface
 --------------------
 
+* Python 2.5 is no longer supported. The minimal supported version is
+  Python 2.6.
+
 * DateTimeCol and TimeCol can read values with microseconds (created by
   SQLObject 2.0) but do not write microseconds back.
 
