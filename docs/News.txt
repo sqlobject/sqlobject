@@ -16,8 +16,8 @@ SQLObject 2.0.0
 * DateTimeCol and TimeCol can read and write values with microseconds.
 
   WARNING: backward compatibility problem! Date/Time columns created
-  with microseconds cannot be read back with versions of SQLObject older
-  than 1.7.
+  with microseconds cannot be read back from SQLite databases (and
+  perhaps other backends) with versions of SQLObject older than 1.7.
 
 SQLObject 1.7.0
 ===============
