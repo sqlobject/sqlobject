@@ -1113,11 +1113,7 @@ class DateTimeValidator(validators.DateValidator):
                         value = '.'.join(_value)
                 else:
                     value += '.0'
-            if sys.version_info[:3] < (2, 6, 0): # datetime.strptime in python2.5 doesn't support '%f' format
-                stime = time.strptime(value, self.format)
-                return datetime.datetime(*stime[:6])
-            else:
-                return datetime.datetime.strptime(value, self.format)
+            return datetime.datetime.strptime(value, self.format)
         except:
             raise validators.Invalid("expected a date/time string of the '%s' format in the DateTimeCol '%s', got %s %r instead" % \
                 (self.format, self.name, type(value), value), value, state)
@@ -1160,13 +1156,9 @@ if mxdatetime_available:
                             value = '.'.join(_value)
                     else:
                         value += '.0'
-                if sys.version_info[:3] < (2, 6, 0): # datetime.strptime in python2.5 doesn't support '%f' format
-                    stime = time.strptime(value, self.format)
-                    return DateTime.mktime(stime)
-                else:
-                    value = datetime.datetime.strptime(value, self.format)
-                    return DateTime.DateTime(value.year, value.month, value.day,
-                        value.hour, value.minute, value.second)
+                value = datetime.datetime.strptime(value, self.format)
+                return DateTime.DateTime(value.year, value.month, value.day,
+                    value.hour, value.minute, value.second)
             except:
                 raise validators.Invalid("expected a date/time string of the '%s' format in the DateTimeCol '%s', got %s %r instead" % \
                     (self.format, self.name, type(value), value), value, state)
