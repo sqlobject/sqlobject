@@ -47,7 +47,7 @@ TODO
 
 * Stop supporting Python 2.5:
   make ConnectionHub a context manager instead of .doInTransaction();
-  replace time.strptime with datetime.strptime. Upgrade ez_setup to 2.0+.
+  Upgrade ez_setup to 2.0+.
 
 * Create JSONCol.
 
