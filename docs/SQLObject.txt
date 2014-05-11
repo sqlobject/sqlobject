@@ -1432,6 +1432,13 @@ You can use SELECT FOR UPDATE in those databases that support it::
 
     Person.select(Person.q.name=="value", forUpdate=True, connection=trans)
 
+Method ``sqlhub.doInTransaction`` can be used to run a piece of code in
+a transaction. The method accepts a callable and positional and keywords
+arguments. It begins a transaction using its ``processConnection`` or
+``threadConnection``, calls the callable, commits the transaction and
+closes the underlying connection; it returns whatever the callable
+returned. If an error occurs during call to the callable it rolls the
+transaction back and reraise the exception.
 
 Automatic Schema Generation
 ---------------------------
