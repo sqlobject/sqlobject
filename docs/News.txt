@@ -19,7 +19,13 @@ Features & Interface
 * Support for Python 2.5 is declared obsolete and will be removed
   in the next release.
 
+Minor features
+--------------
+
 * Upgrade ez_setup to 1.4.2.
+
+Bugfixes
+--------
 
 * A bugfix was ported from `SQLObject 1.5.2`_.
 
