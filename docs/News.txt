@@ -27,6 +27,8 @@ Bugfixes
 SQLObject 1.6.0
 ===============
 
+Released 15 May 2014.
+
 Features & Interface
 --------------------
 
