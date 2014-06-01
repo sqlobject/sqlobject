@@ -46,8 +46,7 @@ TODO
 * Cache columns in sqlmeta.getColumns(); reset the cache on add/del Column/Join.
 
 * Stop supporting Python 2.5:
-  make ConnectionHub a context manager instead of .doInTransaction();
-  Upgrade ez_setup to 2.0+.
+  make ConnectionHub a context manager instead of .doInTransaction().
 
 * Create JSONCol.
 

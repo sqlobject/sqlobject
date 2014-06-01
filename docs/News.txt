@@ -31,6 +31,11 @@ Features & Interface
 * DateTimeCol and TimeCol can read values with microseconds (created by
   SQLObject 2.0) but do not write microseconds back.
 
+Minor features
+--------------
+
+* Upgrade ez_setup to 3.6.0.
+
 Bugfixes
 --------
 
