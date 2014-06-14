@@ -34,7 +34,7 @@ Features & Interface
 Minor features
 --------------
 
-* Upgrade ez_setup to 3.6.0.
+* Upgrade ez_setup to 5.0.
 
 Bugfixes
 --------
