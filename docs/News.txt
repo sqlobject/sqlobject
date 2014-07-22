@@ -40,6 +40,9 @@ Features & Interface
 * Python 2.4 is no longer supported. The minimal supported version is
   Python 2.5.
 
+* Support for Python 2.5 is declared obsolete and will be removed
+  in the next release.
+
 Minor features
 --------------
 
