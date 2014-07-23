@@ -110,7 +110,7 @@ TODO
 
 .. _Sphinx: http://sphinx.pocoo.org/index.html
 
-* More documentation. Wiki. Trac. Git or Mercurial.
+* More documentation. Wiki. Trac.
 
 * RSS 2.0 and Atom news feeds.
 
