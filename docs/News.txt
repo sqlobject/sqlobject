@@ -65,6 +65,11 @@ Bugfixes
 
 * A bugfix was ported from `SQLObject 1.5.2`_.
 
+Development
+-----------
+
+* Development switched from Subvesion to git.
+
 SQLObject 1.5.2
 ===============
 
