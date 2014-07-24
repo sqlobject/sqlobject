@@ -1,0 +1,10 @@
+*~
+*.tmp
+*.pyc
+*.pyo
+/MANIFEST
+/SQLObject.egg-info
+/build
+/data
+/dist
+/temp
