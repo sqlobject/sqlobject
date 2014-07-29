@@ -7,17 +7,22 @@ News
 
 .. _start:
 
-SQLObject (trunk)
-=================
+SQLObject 2.0.0 (master)
+========================
 
-SQLObject 2.0.0
-===============
+Features & Interface
+--------------------
 
 * DateTimeCol and TimeCol can read and write values with microseconds.
 
   WARNING: backward compatibility problem! Date/Time columns created
   with microseconds cannot be read back from SQLite databases (and
   perhaps other backends) with versions of SQLObject older than 1.7.
+
+Development
+-----------
+
+* Development was switched from Subversion to git.
 
 SQLObject 1.7.0
 ===============
