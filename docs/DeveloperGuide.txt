@@ -15,10 +15,10 @@ as things come up.
 Development Installation
 ========================
 
-First install `FormEncode <http://formencode.org>`_::
+First install `FormEncode <http://www.formencode.org/en/latest/download.html>`_::
 
-    $ svn co http://svn.colorstudy.com/FormEncode/trunk FormEncode
-    $ cd FormEncode
+    $ git clone git://github.com/formencode/formencode.git
+    $ cd formencode
     $ sudo python setup.py develop
 
 Then do the same for SQLObject::
