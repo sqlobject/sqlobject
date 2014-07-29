@@ -23,8 +23,8 @@ First install `FormEncode <http://www.formencode.org/en/latest/download.html>`_:
 
 Then do the same for SQLObject::
 
-    $ svn co http://svn.colorstudy.com/SQLObject/trunk SQLObject
-    $ cd SQLObject
+    $ git clone git clone git://git.code.sf.net/p/sqlobject/sqlobject
+    $ cd sqlobject
     $ sudo python setup.py develop
 
 Voila!  The packages are globally installed, but the files from the
