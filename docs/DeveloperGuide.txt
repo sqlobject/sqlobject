@@ -29,7 +29,7 @@ Then do the same for SQLObject::
 
 Voila!  The packages are globally installed, but the files from the
 checkout were not copied into ``site-packages``.  See `setuptools
-<http://peak.telecommunity.com/DevCenter/setuptools>`_ for more.
+<http://pythonhosted.org/setuptools/>`_ for more.
 
 Style Guide
 ===========
