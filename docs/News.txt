@@ -19,6 +19,11 @@ Features & Interface
   with microseconds cannot be read back from SQLite databases (and
   perhaps other backends) with versions of SQLObject older than 1.7.
 
+Minor features
+--------------
+
+* Upgrade ez_setup to 5.4.1.
+
 Development
 -----------
 
