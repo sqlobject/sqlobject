@@ -51,8 +51,9 @@ applications.
 
 Supports MySQL, PostgreSQL, SQLite, Firebird, Sybase, MSSQL and MaxDB (SAPDB).
 
-For development see the `subversion repository
-<http://svn.colorstudy.com/SQLObject/trunk>`_
+For development see the git repositories at
+http://sourceforge.net/p/sqlobject/_list/git and
+https://github.com/sqlobject
 """,
       classifiers=[
         "Development Status :: 5 - Production/Stable",
