@@ -7,6 +7,13 @@ News
 
 .. _start:
 
+SQLObject 1.5.3
+===============
+
+Released 26 Oct 2014.
+
+* Allow unicode in .orderBy(u'-column').
+
 SQLObject 1.5.2
 ===============
 
