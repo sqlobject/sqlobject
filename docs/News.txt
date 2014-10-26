@@ -22,7 +22,7 @@ Features & Interface
 Minor features
 --------------
 
-* Upgrade ez_setup to 5.4.1.
+* Upgrade ez_setup to 5.4.2.
 
 Development
 -----------
