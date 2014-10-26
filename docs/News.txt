@@ -49,7 +49,14 @@ Minor features
 Bugfixes
 --------
 
-* A bugfix was ported from `SQLObject 1.5.2`_.
+* Two bugfixes were ported from `SQLObject 1.5.2`_ and `SQLObject 1.5.3`_.
+
+SQLObject 1.6.1
+===============
+
+Released 26 Oct 2014.
+
+* A bugfix was ported from `SQLObject 1.5.3`_.
 
 SQLObject 1.6.0
 ===============
@@ -79,6 +86,13 @@ Development
 -----------
 
 * Development switched from Subvesion to git.
+
+SQLObject 1.5.3
+===============
+
+Released 26 Oct 2014.
+
+* Allow unicode in .orderBy(u'-column').
 
 SQLObject 1.5.2
 ===============

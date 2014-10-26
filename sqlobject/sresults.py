@@ -67,7 +67,7 @@ class SelectResults(object):
         return conn.queryForSelect(self)
 
     def _mungeOrderBy(self, orderBy):
-        if isinstance(orderBy, str) and orderBy.startswith('-'):
+        if isinstance(orderBy, basestring) and orderBy.startswith('-'):
             orderBy = orderBy[1:]
             desc = True
         else:
