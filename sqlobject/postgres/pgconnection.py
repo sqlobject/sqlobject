@@ -280,6 +280,17 @@ class PostgresConnection(DBAPI):
             AND pg_index.indisprimary
         """
 
+        otherKeyQuery = """
+        SELECT pg_index.indisprimary,
+            pg_catalog.pg_get_indexdef(pg_index.indexrelid)
+        FROM pg_catalog.pg_class c, pg_catalog.pg_class c2,
+            pg_catalog.pg_index AS pg_index
+        WHERE c.relname = %s
+            AND c.oid = pg_index.indrelid
+            AND pg_index.indexrelid = c2.oid
+            AND NOT pg_index.indisprimary
+        """
+
         keyData = self.queryAll(keyQuery % self.sqlrepr(tableName))
         keyRE = re.compile(r"\((.+)\) REFERENCES (.+)\(")
         keymap = {}
@@ -305,6 +316,18 @@ class PostgresConnection(DBAPI):
         if primaryKey.startswith('"'):
             assert primaryKey.endswith('"')
             primaryKey = primaryKey[1:-1]
+
+        otherData = self.queryAll(otherKeyQuery % self.sqlrepr(tableName))
+        otherRE = primaryRE
+        otherKeys = []
+        for isPrimary, indexDef in otherData:
+            match = otherRE.search(indexDef)
+            assert match, "Unparseable constraint definition: %r" % indexDef
+            otherKey = match.group(1)
+            if otherKey.startswith('"'):
+                assert otherKey.endswith('"')
+                otherKey = otherKey[1:-1]
+            otherKeys.append(otherKey)
 
         colData = self.queryAll(colQuery % self.sqlrepr(tableName))
         results = []
@@ -332,6 +355,8 @@ class PostgresConnection(DBAPI):
                 kw['default'] = self.defaultFromSchema(colClass, defaultstr)
             elif not notnull:
                 kw['default'] = None
+            if field in otherKeys:
+                kw['alternateID'] = True
             results.append(colClass(**kw))
         return results
 

@@ -22,6 +22,9 @@ Features & Interface
 Minor features
 --------------
 
+* PostgresConnection, when used with fromDatabase=True, sets alternateID
+  for unique columns.
+
 * Upgrade ez_setup to 5.4.2.
 
 Development
