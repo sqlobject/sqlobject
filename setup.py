@@ -69,7 +69,7 @@ https://github.com/sqlobject
       maintainer="Oleg Broytman",
       maintainer_email="phd@phdru.name",
       url="http://sqlobject.org/devel/",
-      download_url="https://pypi.python.org/pypi/SQLObject/%sdev-20140817" % version,
+      download_url="https://pypi.python.org/pypi/SQLObject/%sdev-20141028" % version,
       license="LGPL",
       packages=["sqlobject"] + ['sqlobject.%s' % package for package in subpackages],
       scripts=["scripts/sqlobject-admin", "scripts/sqlobject-convertOldURI"],
