@@ -1,0 +1,25 @@
+language: python
+python:
+  - "2.6"
+  - "2.7"
+
+env:
+  - DB=mysql
+  - DB=postgres
+  - DB=sqlite
+
+install:
+  - if [[ $DB == mysql ]]; then pip install --use-mirrors mysql-python; fi;
+  - if [[ $DB == postgres ]]; then pip install --use-mirrors psycopg2; fi;
+  - pip install --use-mirrors pytest 'FormEncode>=1.1.1'
+  - pip install .
+
+before_script:
+  - if [[ $DB == mysql ]]; then mysql -e 'create database sqlobject_test;'; fi;
+  - if [[ $DB == postgres ]]; then psql -c 'create database sqlobject_test;' -U postgres; fi;
+
+script:
+  - cd sqlobject
+  - if [[ $DB == mysql ]]; then py.test -D mysql://root:@localhost/sqlobject_test; fi
+  - if [[ $DB == postgres ]]; then py.test -D postgres://postgres:@localhost/sqlobject_test; fi
+  - if [[ $DB == sqlite ]]; then py.test -D sqlite:///tmp/sqlobject_test.sqdb; fi
