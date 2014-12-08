@@ -7,6 +7,12 @@ News
 
 .. _start:
 
+SQLObject 1.5.4
+===============
+
+* Fix a minor bug in MSSQLConnection: do not override callable server_version
+  with a non-callable.
+
 SQLObject 1.5.3
 ===============
 
