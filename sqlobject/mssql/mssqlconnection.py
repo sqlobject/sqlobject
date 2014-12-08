@@ -80,6 +80,7 @@ class MSSQLConnection(DBAPI):
         self.host = host
         self.port = port
         self.db = db
+        self._server_version = None
         self._can_use_max_types = None
         DBAPI.__init__(self, **kw)
 
@@ -298,13 +299,15 @@ class MSSQLConnection(DBAPI):
             return col.Col, {}
 
     def server_version(self):
+        if self._server_version is not None:
+            return self._server_version
         try:
-            server_version = self.queryAll("SELECT SERVERPROPERTY('productversion')")[0][0]
+            server_version = self.queryOne("SELECT SERVERPROPERTY('productversion')")[0]
             server_version = server_version.split('.')[0]
             server_version = int(server_version)
         except:
             server_version = None # unknown
-        self.server_version = server_version # cache it forever
+        self._server_version = server_version
         return server_version
 
     def can_use_max_types(self):
