@@ -22,12 +22,18 @@ Features & Interface
 Minor features
 --------------
 
-* Upgrade ez_setup to 5.3.
+* Upgrade ez_setup to 2.2.
 
 Bugfixes
 --------
 
-* Two bugfixes were ported from `SQLObject 1.5.2`_ and `SQLObject 1.5.3`_.
+* Thre bugfixes were ported from `SQLObject 1.5.2`_, `SQLObject 1.5.3`_
+  and `SQLObject 1.5.4`_.
+
+SQLObject 1.6.2
+===============
+
+* A bugfix was ported from `SQLObject 1.5.4`_.
 
 SQLObject 1.6.1
 ===============
@@ -59,6 +65,12 @@ Bugfixes
 --------
 
 * A bugfix was ported from `SQLObject 1.5.2`_.
+
+SQLObject 1.5.4
+===============
+
+* Fix a minor bug in MSSQLConnection: do not override callable server_version
+  with a non-callable.
 
 SQLObject 1.5.3
 ===============
