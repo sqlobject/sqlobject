@@ -10,6 +10,8 @@ News
 SQLObject 1.5.4
 ===============
 
+Released 8 Dec 2014.
+
 * Fix a minor bug in MSSQLConnection: do not override callable server_version
   with a non-callable.
 
