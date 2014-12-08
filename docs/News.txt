@@ -40,6 +40,8 @@ Documentation
 SQLObject 1.7.0
 ===============
 
+Released 8 Dec 2014.
+
 Features & Interface
 --------------------
 
@@ -62,6 +64,8 @@ Bugfixes
 
 SQLObject 1.6.2
 ===============
+
+Released 8 Dec 2014.
 
 * A bugfix was ported from `SQLObject 1.5.4`_.
 
@@ -103,6 +107,8 @@ Development
 
 SQLObject 1.5.4
 ===============
+
+Released 8 Dec 2014.
 
 * Fix a minor bug in MSSQLConnection: do not override callable server_version
   with a non-callable.
