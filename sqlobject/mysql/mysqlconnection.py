@@ -48,6 +48,8 @@ class MySQLConnection(DBAPI):
         # MySQLdb > 1.2.1: both ascii and unicode
         self.need_unicode = (self.module.version_info[:3] >= (1, 2, 1)) and (self.module.version_info[:3] < (1, 2, 2))
 
+        self._server_version = None
+        self._can_use_microseconds = None
         DBAPI.__init__(self, **kw)
 
     @classmethod
@@ -303,3 +305,35 @@ class MySQLConnection(DBAPI):
 
     def dropDatabase(self):
         self._createOrDropDatabase(op="DROP")
+
+    def server_version(self):
+        if self._server_version is not None:
+            return self._server_version
+        try:
+            server_version = self.queryOne("SELECT VERSION()")[0]
+            server_version = server_version.split('-', 1)
+            db_tag = "MySQL"
+            if len(server_version) == 2:
+                if "MariaDB" in server_version[1]:
+                    db_tag = "MariaDB"
+                server_version = server_version[0]
+            server_version = tuple(int(v) for v in server_version.split('.'))
+            server_version = (server_version, db_tag)
+        except:
+            server_version = None # unknown
+        self._server_version = server_version
+        return server_version
+
+    def can_use_microseconds(self):
+        if self._can_use_microseconds is not None:
+            return self._can_use_microseconds
+        server_version = self.server_version()
+        if server_version is None:
+            return None
+        server_version, db_tag = server_version
+        if db_tag == "MariaDB":
+            can_use_microseconds = (server_version >= (5, 3, 0))
+        else: # MySQL
+            can_use_microseconds = (server_version >= (5, 6, 4))
+        self._can_use_microseconds = can_use_microseconds
+        return can_use_microseconds
