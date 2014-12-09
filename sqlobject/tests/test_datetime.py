@@ -1,3 +1,4 @@
+import py.test
 from sqlobject import *
 from sqlobject.tests.dbtest import *
 
@@ -26,7 +27,6 @@ def test_dateTime():
     assert dt1.col1.hour == _now.hour
     assert dt1.col1.minute == _now.minute
     assert dt1.col1.second == _now.second
-    assert dt1.col1.microsecond == _now.microsecond
 
     assert isinstance(dt1.col2, date)
     assert not isinstance(dt1.col2, datetime)
@@ -38,6 +38,18 @@ def test_dateTime():
     assert dt1.col3.hour == _now.hour
     assert dt1.col3.minute == _now.minute
     assert dt1.col3.second == _now.second
+
+def test_microseconds():
+    connection = getConnection()
+    if hasattr(connection, 'can_use_microseconds') and \
+            not connection.can_use_microseconds():
+        py.test.skip("The database doesn't support microseconds; microseconds are supported by MariaDB since version 5.3.0 and by MySQL since version 5.6.4.")
+
+    setupClass(DateTime1)
+    _now = datetime.now()
+    dt1 = DateTime1(col1=_now, col2=_now, col3=_now.time())
+
+    assert dt1.col1.microsecond == _now.microsecond
     assert dt1.col3.microsecond == _now.microsecond
 
 if mxdatetime_available:
