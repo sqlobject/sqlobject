@@ -51,15 +51,20 @@ applications.
 
 Supports MySQL, PostgreSQL, SQLite, Firebird, Sybase, MSSQL and MaxDB (SAPDB).
 
-For development see the git repositories at
-http://sourceforge.net/p/sqlobject/_list/git and
-https://github.com/sqlobject
+For development see the projects at
+`SourceForge <http://sourceforge.net/projects/sqlobject/>`_
+and `GitHub <https://github.com/sqlobject>`_.
+
+.. image:: https://travis-ci.org/sqlobject/sqlobject.svg?branch=master
+   :target: https://travis-ci.org/sqlobject/sqlobject
 """,
       classifiers=[
         "Development Status :: 5 - Production/Stable",
         "Intended Audience :: Developers",
         "License :: OSI Approved :: GNU Library or Lesser General Public License (LGPL)",
         "Programming Language :: Python",
+        "Programming Language :: Python :: 2",
+        "Programming Language :: Python :: 2 :: Only",
         "Topic :: Database",
         "Topic :: Database :: Front-Ends",
         "Topic :: Software Development :: Libraries :: Python Modules",
