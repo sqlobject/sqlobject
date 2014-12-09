@@ -176,7 +176,7 @@ class MySQLConnection(DBAPI):
         return col.mysqlCreateReferenceConstraint()
 
     def createColumn(self, soClass, col):
-        return col.mysqlCreateSQL()
+        return col.mysqlCreateSQL(self)
 
     def createIndexSQL(self, soClass, index):
         return index.mysqlCreateIndexSQL(soClass)
@@ -204,7 +204,7 @@ class MySQLConnection(DBAPI):
     def addColumn(self, tableName, column):
         self.query('ALTER TABLE %s ADD COLUMN %s' %
                    (tableName,
-                    column.mysqlCreateSQL()))
+                    column.mysqlCreateSQL(self)))
 
     def delColumn(self, sqlmeta, column):
         self.query('ALTER TABLE %s DROP COLUMN %s' % (sqlmeta.table, column.dbName))

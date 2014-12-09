@@ -16,7 +16,13 @@ Features & Interface
 * DateTimeCol and TimeCol can read and write values with microseconds.
 
   WARNING: microseconds are supported by MariaDB since version 5.3.0 and
-  by MySQL since version 5.6.4.
+  by MySQL since version 5.6.4, and even these versions require special
+  handling: columns to store microseconds have to be declared with
+  precision 6: TIME(6), DATETIME(6), TIMESTAMP(6). SQLObject does the
+  right thing when creating a new database but existing databases have
+  to be changed: run something like
+  ``ALTER TABLE name MODIFY COLUMN col TIME(6)`` for every column that
+  you want to store microseconds.
 
   WARNING: backward compatibility problem! Date/Time columns created
   with microseconds cannot be read back from SQLite databases (and

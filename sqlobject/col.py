@@ -320,7 +320,8 @@ class SOCol(object):
     def _maxdbType(self):
         return self._sqlType()
 
-    def mysqlCreateSQL(self):
+    def mysqlCreateSQL(self, connection=None):
+        self.connection = connection
         return ' '.join([self.dbName, self._mysqlType()] + self._extraSQL())
 
     def postgresCreateSQL(self):
@@ -906,8 +907,8 @@ class SOForeignKey(SOKeyCol):
                        'sTLocalName': sTLocalName})
         return constraint
 
-    def mysqlCreateSQL(self):
-        return SOKeyCol.mysqlCreateSQL(self)
+    def mysqlCreateSQL(self, connection=None):
+        return SOKeyCol.mysqlCreateSQL(self, connection)
 
     def sybaseCreateSQL(self):
         sql = SOKeyCol.sybaseCreateSQL(self)
@@ -1193,7 +1194,10 @@ class SODateTimeCol(SOCol):
         return _validators
 
     def _mysqlType(self):
-        return 'DATETIME'
+        if self.connection and self.connection.can_use_microseconds():
+            return 'DATETIME(6)'
+        else:
+            return 'DATETIME'
 
     def _postgresType(self):
         return 'TIMESTAMP'
@@ -1324,7 +1328,10 @@ class SOTimeCol(SOCol):
         return _validators
 
     def _mysqlType(self):
-        return 'TIME'
+        if self.connection and self.connection.can_use_microseconds():
+            return 'TIME(6)'
+        else:
+            return 'TIME'
 
     def _postgresType(self):
         return 'TIME'
@@ -1356,7 +1363,10 @@ class SOTimestampCol(SODateTimeCol):
         SOCol.__init__(self, **kw)
 
     def _mysqlType(self):
-        return 'TIMESTAMP'
+        if self.connection and self.connection.can_use_microseconds():
+            return 'TIMESTAMP(6)'
+        else:
+            return 'TIMESTAMP'
 
 class TimestampCol(Col):
     baseClass = SOTimestampCol
