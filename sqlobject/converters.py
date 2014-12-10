@@ -147,7 +147,7 @@ if hasattr(time, 'struct_time'):
     registerConverter(time.struct_time, StructTimeConverter)
 
 def DateTimeConverter(value, db):
-    return "'%04d-%02d-%02d %02d:%02d:%02d.%d'" % (
+    return "'%04d-%02d-%02d %02d:%02d:%02d.%06d'" % (
         value.year, value.month, value.day,
         value.hour, value.minute, value.second, value.microsecond)
 
@@ -159,7 +159,7 @@ def DateConverter(value, db):
 registerConverter(datetime.date, DateConverter)
 
 def TimeConverter(value, db):
-    return "'%02d:%02d:%02d.%d'" % (value.hour, value.minute, value.second, value.microsecond)
+    return "'%02d:%02d:%02d.%06d'" % (value.hour, value.minute, value.second, value.microsecond)
 
 registerConverter(datetime.time, TimeConverter)
 
