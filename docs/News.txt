@@ -85,6 +85,11 @@ Released 26 Oct 2014.
 
 * Allow unicode in .orderBy(u'-column').
 
+Development
+-----------
+
+* Development switched from Subvesion to git.
+
 SQLObject 1.5.2
 ===============
 

@@ -15,21 +15,21 @@ as things come up.
 Development Installation
 ========================
 
-First install `FormEncode <http://formencode.org>`_::
+First install `FormEncode <http://www.formencode.org/en/latest/download.html>`_::
 
-    $ svn co http://svn.colorstudy.com/FormEncode/trunk FormEncode
-    $ cd FormEncode
+    $ git clone git://github.com/formencode/formencode.git
+    $ cd formencode
     $ sudo python setup.py develop
 
 Then do the same for SQLObject::
 
-    $ svn co http://svn.colorstudy.com/SQLObject/trunk SQLObject
-    $ cd SQLObject
+    $ git clone git clone git://git.code.sf.net/p/sqlobject/sqlobject
+    $ cd sqlobject
     $ sudo python setup.py develop
 
 Voila!  The packages are globally installed, but the files from the
 checkout were not copied into ``site-packages``.  See `setuptools
-<http://peak.telecommunity.com/DevCenter/setuptools>`_ for more.
+<http://pythonhosted.org/setuptools/>`_ for more.
 
 Style Guide
 ===========
@@ -135,7 +135,6 @@ Python Style Guide.  Some things to take particular note of:
   underscores (smushedwords).
 
 
-
 Testing
 =======
 
@@ -174,11 +173,15 @@ miscellaneous functions.
 
 .. _raises: http://pytest.org/latest/assert.html#assertions-about-expected-exceptions
 
-
 If you submit a patch or implement a feature without a test, I'll be
 forced to write the test.  That's no fun for me, to just be writing
 tests.  So please, write tests; everything at least needs to be
 exercised, even if the tests are absolutely complete.
+
+We now use Travis CI to run tests. See the status:
+
+.. image:: https://travis-ci.org/sqlobject/sqlobject.svg?branch=1.6
+   :target: https://travis-ci.org/sqlobject/sqlobject
 
 Documentation
 =============
