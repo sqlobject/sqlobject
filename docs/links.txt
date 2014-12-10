@@ -1,9 +1,10 @@
 SQLObject Links
 ===============
 
-If you have a link you'd like added to this page, please `submit a bug
-report with the link and title
-<http://sourceforge.net/tracker/?atid=540672&group_id=74338&func=browse>`_.
+If you have a link you'd like added to this page, please submit a bug
+report with the link and title at `bug tracker
+<http://sourceforge.net/p/sqlobject/bugs/>`_ or send pull requests at
+`GitHub <https://github.com/sqlobject/sqlobject>`_).
 
 Articles and Documentation
 --------------------------
