@@ -1,4 +1,4 @@
-SQLObject 1.7.0
+SQLObject 1.7.1
 ===============
 
 Thanks for looking at SQLObject.  SQLObject is an object-relational
