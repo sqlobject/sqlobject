@@ -7,6 +7,14 @@ News
 
 .. _start:
 
+SQLObject 1.6.3
+===============
+
+Released 11 Dec 2014.
+
+* Documentation updates and setuptools change were ported
+  from `SQLObject 1.5.5`_.
+
 SQLObject 1.6.2
 ===============
 
