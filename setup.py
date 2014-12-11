@@ -59,7 +59,7 @@ and `GitHub <https://github.com/sqlobject>`_.
    :target: https://travis-ci.org/sqlobject/sqlobject
 """,
       classifiers=[
-        "Development Status :: 4 - Beta",
+        "Development Status :: 1 - Planning",
         "Intended Audience :: Developers",
         "License :: OSI Approved :: GNU Library or Lesser General Public License (LGPL)",
         "Programming Language :: Python",
