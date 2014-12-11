@@ -1,8 +1,10 @@
-include *.txt
-include *.html
-include *.css
-include docs/LICENSE
-include docs/*.txt
-include docs/*.html
-include docs/*.css
-recursive-include tests *.py
+include .gitignore docs/.gitignore .travis.yml MANIFEST.in ez_setup.py
+include *.txt docs/LICENSE docs/*.txt docs/rebuild
+include sqlobject/include/pydispatch/README.txt
+include sqlobject/maxdb/readme.txt
+recursive-include docs *.css *.html *.js *.gif *.py
+recursive-include debian *
+recursive-include sqlobject/tests *.py
+recursive-include sqlobject/inheritance/tests *.py
+recursive-include sqlobject/versioning/test *.py
+
