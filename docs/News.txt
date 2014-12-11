@@ -32,6 +32,14 @@ Bugfixes
 * Thre bugfixes were ported from `SQLObject 1.5.2`_, `SQLObject 1.5.3`_
   and `SQLObject 1.5.4`_.
 
+SQLObject 1.6.3
+===============
+
+Released 11 Dec 2014.
+
+* Documentation updates and setuptools change were ported
+  from `SQLObject 1.5.5`_.
+
 SQLObject 1.6.2
 ===============
 
@@ -69,6 +77,16 @@ Bugfixes
 --------
 
 * A bugfix was ported from `SQLObject 1.5.2`_.
+
+SQLObject 1.5.5
+===============
+
+Released 11 Dec 2014.
+
+* Documentation update: change URLs for development with git, add
+  Travis CI build status image.
+
+* Extend sdist: include everything into source distribution.
 
 SQLObject 1.5.4
 ===============
