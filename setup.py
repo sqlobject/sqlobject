@@ -55,7 +55,7 @@ For development see the projects at
 `SourceForge <http://sourceforge.net/projects/sqlobject/>`_
 and `GitHub <https://github.com/sqlobject>`_.
 
-.. image:: https://travis-ci.org/sqlobject/sqlobject.svg?branch=master
+.. image:: https://travis-ci.org/sqlobject/sqlobject.svg?branch=2.0
    :target: https://travis-ci.org/sqlobject/sqlobject
 """,
       classifiers=[
@@ -73,7 +73,7 @@ and `GitHub <https://github.com/sqlobject>`_.
       author_email="ianb@colorstudy.com",
       maintainer="Oleg Broytman",
       maintainer_email="phd@phdru.name",
-      url="http://sqlobject.org/devel/",
+      url="http://sqlobject.org/",
       download_url="https://pypi.python.org/pypi/SQLObject/%sdev-20141211" % version,
       license="LGPL",
       packages=["sqlobject"] + ['sqlobject.%s' % package for package in subpackages],

@@ -7,8 +7,8 @@ News
 
 .. _start:
 
-SQLObject 2.0.0 (master)
-========================
+SQLObject 2.0.0
+===============
 
 Features & Interface
 --------------------
