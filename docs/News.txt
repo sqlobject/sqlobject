@@ -7,6 +7,14 @@ News
 
 .. _start:
 
+SQLObject 1.7.2
+===============
+
+Released 14 Dec 2014.
+
+* Fix a bug: zero-pad microseconds on the right, not on the left; 0.0835
+  seconds means 83500 microseconds.
+
 SQLObject 1.7.1
 ===============
 
