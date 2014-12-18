@@ -66,8 +66,7 @@ ADODBAPI_ (Win32).
 .. _FreeTDS: http://www.freetds.org/
 .. _ADODBAPI: http://adodbapi.sourceforge.net/
 
-Python 2.6 or higher is required.  SQLObject makes extensive use of
-new-style classes.
+Python 2.6 or 2.7 is required.
 
 Compared To Other Database Wrappers
 ===================================

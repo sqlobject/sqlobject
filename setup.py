@@ -110,7 +110,7 @@ easy to use and quick to get started with.
 
 It currently supports MySQL through the `MySQLdb` package, PostgreSQL
 through the `psycopg` package, SQLite, Firebird, MaxDB (SAP DB), MS SQL
-Sybase and Rdbhost.  It should support Python versions back to 2.6.
+Sybase and Rdbhost.  Python 2.6 or 2.7 is required.
 
 
 Where is SQLObject
