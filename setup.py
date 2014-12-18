@@ -16,9 +16,11 @@ versionpath = join(abspath(dirname(__file__)), "sqlobject", "__version__.py")
 load_source("sqlobject_version", versionpath)
 from sqlobject_version import version
 
-subpackages = ['firebird', 'include', 'include.pydispatch', 'inheritance',
+subpackages = ['firebird', 'include', 'include.pydispatch',
+               'inheritance', 'inheritance.tests',
                'manager', 'maxdb', 'mysql', 'mssql', 'postgres', 'rdbhost',
-               'sqlite', 'sybase', 'util', 'versioning']
+               'sqlite', 'sybase', 'tests', 'util',
+               'versioning', 'versioning.test']
 
 kw = {}
 if is_setuptools:

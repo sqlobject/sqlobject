@@ -10,7 +10,7 @@ News
 SQLObject 1.5.6
 ===============
 
-* Extend bdist_egg: include docs in the egg.
+* Extend setup.py: include docs and tests into the egg.
 
 SQLObject 1.5.5
 ===============
