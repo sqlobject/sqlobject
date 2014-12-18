@@ -7,7 +7,7 @@ classes, and your rows in Python instances.
 
 It currently supports MySQL through the `MySQLdb` package, PostgreSQL
 through the `psycopg` package, SQLite, Firebird, MaxDB (SAP DB), MS SQL
-Sybase and Rdbhost.  It should support Python versions back to 2.5.
+Sybase and Rdbhost.  Python 2.5 or higher is required.
 
 For more information please see the documentation in
 docs/SQLObject.txt, or online at http://sqlobject.org/
