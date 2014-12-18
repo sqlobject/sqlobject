@@ -16,9 +16,11 @@ versionpath = join(abspath(dirname(__file__)), "sqlobject", "__version__.py")
 load_source("sqlobject_version", versionpath)
 from sqlobject_version import version
 
-subpackages = ['firebird', 'include', 'include.pydispatch', 'inheritance',
+subpackages = ['firebird', 'include', 'include.pydispatch',
+               'inheritance', 'inheritance.tests',
                'manager', 'maxdb', 'mysql', 'mssql', 'postgres', 'rdbhost',
-               'sqlite', 'sybase', 'util', 'versioning']
+               'sqlite', 'sybase', 'tests', 'util',
+               'versioning', 'versioning.test']
 
 kw = {}
 if is_setuptools:
@@ -56,7 +58,7 @@ For development see the projects at
 and `GitHub <https://github.com/sqlobject>`_.
 
 .. image:: https://travis-ci.org/sqlobject/sqlobject.svg?branch=1.7
-   :target: https://travis-ci.org/sqlobject/sqlobject
+  :target: https://travis-ci.org/sqlobject/sqlobject
 """,
       classifiers=[
         "Development Status :: 5 - Production/Stable",
@@ -64,6 +66,8 @@ and `GitHub <https://github.com/sqlobject>`_.
         "License :: OSI Approved :: GNU Library or Lesser General Public License (LGPL)",
         "Programming Language :: Python",
         "Programming Language :: Python :: 2",
+        "Programming Language :: Python :: 2.6",
+        "Programming Language :: Python :: 2.7",
         "Programming Language :: Python :: 2 :: Only",
         "Topic :: Database",
         "Topic :: Database :: Front-Ends",
@@ -78,6 +82,27 @@ and `GitHub <https://github.com/sqlobject>`_.
       license="LGPL",
       packages=["sqlobject"] + ['sqlobject.%s' % package for package in subpackages],
       scripts=["scripts/sqlobject-admin", "scripts/sqlobject-convertOldURI"],
+      package_data={"sqlobject": [
+                        "../docs/LICENSE", "../docs/*.txt", "../docs/*.css",
+                        "../docs/html/*.html", "../docs/html/*.css",
+                        "../docs/html/sqlobject/*.html",
+                        "../docs/html/sqlobject/firebird/*.html",
+                        "../docs/html/sqlobject/include/*.html",
+                        "../docs/html/sqlobject/inheritance/*.html",
+                        "../docs/html/sqlobject/manager/*.html",
+                        "../docs/html/sqlobject/maxdb/*.html",
+                        "../docs/html/sqlobject/mssql/*.html",
+                        "../docs/html/sqlobject/mysql/*.html",
+                        "../docs/html/sqlobject/postgres/*.html",
+                        "../docs/html/sqlobject/rdbhost/*.html",
+                        "../docs/html/sqlobject/sqlite/*.html",
+                        "../docs/html/sqlobject/sybase/*.html",
+                        "../docs/html/sqlobject/util/*.html",
+                        "../docs/html/sqlobject/versioning/*.html",
+                    ],
+                    "sqlobject.include": ["pydispatch/README.txt"],
+                    "sqlobject.maxdb": ["readme.txt"],
+                   },
       **kw
       )
 
