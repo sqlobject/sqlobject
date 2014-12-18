@@ -82,6 +82,27 @@ and `GitHub <https://github.com/sqlobject>`_.
         'mssql': ['adodbapi'], # or pymssql
         'sapdb': ['sapdb'],
         },
+      package_data={"sqlobject": [
+                        "../docs/LICENSE", "../docs/*.txt", "../docs/*.css",
+                        "../docs/html/*.html", "../docs/html/*.css",
+                        "../docs/html/sqlobject/*.html",
+                        "../docs/html/sqlobject/firebird/*.html",
+                        "../docs/html/sqlobject/include/*.html",
+                        "../docs/html/sqlobject/inheritance/*.html",
+                        "../docs/html/sqlobject/manager/*.html",
+                        "../docs/html/sqlobject/maxdb/*.html",
+                        "../docs/html/sqlobject/mssql/*.html",
+                        "../docs/html/sqlobject/mysql/*.html",
+                        "../docs/html/sqlobject/postgres/*.html",
+                        "../docs/html/sqlobject/rdbhost/*.html",
+                        "../docs/html/sqlobject/sqlite/*.html",
+                        "../docs/html/sqlobject/sybase/*.html",
+                        "../docs/html/sqlobject/util/*.html",
+                        "../docs/html/sqlobject/versioning/*.html",
+                    ],
+                    "sqlobject.include": ["pydispatch/README.txt"],
+                    "sqlobject.maxdb": ["readme.txt"],
+                   },
       **kw
       )
 
