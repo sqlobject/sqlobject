@@ -52,6 +52,7 @@ more abstract, and provides substantial database independence for
 applications.
 
 Supports MySQL, PostgreSQL, SQLite, Firebird, Sybase, MSSQL and MaxDB (SAPDB).
+Python 2.5 or higher is required.
 
 For development see the projects at
 `SourceForge <http://sourceforge.net/projects/sqlobject/>`_
