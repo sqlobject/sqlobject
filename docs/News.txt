@@ -53,6 +53,13 @@ Bugfixes
 
 * A bugfix was ported from `SQLObject 1.5.2`_.
 
+SQLObject 1.5.6
+===============
+
+Released 18 Dec 2014.
+
+* Extend setup.py: include docs and tests into the egg.
+
 SQLObject 1.5.5
 ===============
 
