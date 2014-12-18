@@ -46,7 +46,7 @@ For development see the projects at
 and `GitHub <https://github.com/sqlobject>`_.
 
 .. image:: https://travis-ci.org/sqlobject/sqlobject.svg?branch=1.5
-   :target: https://travis-ci.org/sqlobject/sqlobject
+  :target: https://travis-ci.org/sqlobject/sqlobject
 """,
       classifiers=[
         "Development Status :: 5 - Production/Stable",
