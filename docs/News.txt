@@ -13,6 +13,8 @@ SQLObject 3.0.0 (master)
 SQLObject 2.0.0
 ===============
 
+Released 20 Dec 2014.
+
 Features & Interface
 --------------------
 
