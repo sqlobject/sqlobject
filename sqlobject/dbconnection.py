@@ -643,7 +643,7 @@ class DBAPI(DBConnection):
         data = {}
         if 'id' in kw:
             data[soClass.sqlmeta.idName] = kw.pop('id')
-        for key, col in soClass.sqlmeta.columns.items():
+        for key, col in sorted(soClass.sqlmeta.columns.items()):
             if key in kw:
                 value = kw.pop(key)
                 if col.from_python:
