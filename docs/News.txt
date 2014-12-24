@@ -19,6 +19,8 @@ Minor features
 * In queries generated with sqlbuilder's Insert/Update, if values are
   passed using dictionaries, columns are sorted alphabetically.
 
+* Tables in SELECT...FROM clause are sorted alphabetically.
+
 SQLObject 2.0.0
 ===============
 

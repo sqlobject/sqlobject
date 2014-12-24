@@ -659,7 +659,7 @@ class Select(SQLExpression):
             t2 = _str_or_sqlrepr(j.table2, db)
             if t2 in tables: tables.remove(t2)
         if tables:
-            select += " FROM %s" % ", ".join(tables)
+            select += " FROM %s" % ", ".join(sorted(tables))
         elif join:
             select += " FROM"
         tablesYet = tables
