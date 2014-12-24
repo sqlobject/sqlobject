@@ -722,7 +722,7 @@ class Insert(SQLExpression):
         allowNonDict = True
         template = self.template
         if (template is NoDefault) and isinstance(self.valueList[0], dict):
-            template = self.valueList[0].keys()
+            template = list(sorted(self.valueList[0].keys()))
             allowNonDict = False
         if template is not NoDefault:
             insert += " (%s)" % ", ".join(template)
@@ -768,7 +768,7 @@ class Update(SQLExpression):
                     update += ","
                 update += " %s=%s" % (self.template[i], sqlrepr(self.values[i], db))
         else:
-            for key, value in self.values.items():
+            for key, value in sorted(self.values.items()):
                 if first:
                     first = False
                 else:

@@ -985,8 +985,11 @@ class SQLObject(object):
         self._SO_writeLock.acquire()
         try:
             if self.sqlmeta.columns:
-                values = [(self.sqlmeta.columns[v[0]].dbName, v[1])
-                          for v in self._SO_createValues.items()]
+                columns = self.sqlmeta.columns
+                values = [(columns[v[0]].dbName, v[1])
+                          for v in sorted(
+                              self._SO_createValues.items(),
+                              key=lambda c: columns[c[0]].creationOrder)]
                 self._connection._SO_update(self, values)
             self.sqlmeta.dirty = False
             self._SO_createValues = {}
@@ -1136,8 +1139,10 @@ class SQLObject(object):
                     raise AttributeError, '%s (with attribute %r)' % (e, name)
 
             if toUpdate:
+                toUpdate = toUpdate.items()
+                toUpdate.sort(key=lambda c: self.sqlmeta.columns[c[0]].creationOrder)
                 args = [(self.sqlmeta.columns[name].dbName, value)
-                        for name, value in toUpdate.items()]
+                        for name, value in toUpdate]
                 self._connection._SO_update(self, args)
         finally:
             self._SO_writeLock.release()
@@ -1278,6 +1283,7 @@ class SQLObject(object):
         # These are all the column values that were supposed
         # to be set, but were delayed until now:
         setters = self._SO_createValues.items()
+        setters.sort(key=lambda c: self.sqlmeta.columns[c[0]].creationOrder)
         # Here's their database names:
         names = [self.sqlmeta.columns[v[0]].dbName for v in setters]
         values = [v[1] for v in setters]
