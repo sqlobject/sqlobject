@@ -58,11 +58,11 @@ For development see the projects at
 `SourceForge <http://sourceforge.net/projects/sqlobject/>`_
 and `GitHub <https://github.com/sqlobject>`_.
 
-.. image:: https://travis-ci.org/sqlobject/sqlobject.svg?branch=2.0
+.. image:: https://travis-ci.org/sqlobject/sqlobject.svg?branch=2.1
   :target: https://travis-ci.org/sqlobject/sqlobject
 """,
       classifiers=[
-        "Development Status :: 5 - Production/Stable",
+        "Development Status :: 4 - Beta",
         "Intended Audience :: Developers",
         "License :: OSI Approved :: GNU Library or Lesser General Public License (LGPL)",
         "Programming Language :: Python",
@@ -79,7 +79,7 @@ and `GitHub <https://github.com/sqlobject>`_.
       maintainer="Oleg Broytman",
       maintainer_email="phd@phdru.name",
       url="http://sqlobject.org/",
-      download_url="https://pypi.python.org/pypi/SQLObject/%s" % version,
+      download_url="https://pypi.python.org/pypi/SQLObject/%sdev" % version,
       license="LGPL",
       packages=["sqlobject"] + ['sqlobject.%s' % package for package in subpackages],
       scripts=["scripts/sqlobject-admin", "scripts/sqlobject-convertOldURI"],

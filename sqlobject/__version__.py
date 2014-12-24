@@ -1,8 +1,8 @@
 
-version = '2.0.0'
+version = '2.1'
 major   = 2
-minor   = 0
+minor   = 1
 micro   = 0
-release_level = 'final'
+release_level = 'branch'
 serial  = 0
 version_info = (major, minor, micro, release_level, serial)

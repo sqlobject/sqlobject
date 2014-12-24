@@ -7,6 +7,9 @@ News
 
 .. _start:
 
+SQLObject 2.1.0
+===============
+
 SQLObject 2.0.0
 ===============
 
