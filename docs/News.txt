@@ -10,6 +10,18 @@ News
 SQLObject 3.0.0 (master)
 ========================
 
+SQLObject 2.1.0
+===============
+
+Minor features
+--------------
+
+* In queries generated with SQLObject's tables columns are sorted in the
+  order they are declared in the table.
+
+* In queries generated with sqlbuilder's Insert/Update, if values are
+  passed using dictionaries, columns are sorted alphabetically.
+
 SQLObject 2.0.0
 ===============
 
