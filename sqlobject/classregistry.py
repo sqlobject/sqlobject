@@ -15,7 +15,7 @@ Use like::
     >>> import classregistry
     >>> registry = classregistry.registry('MyModules')
     >>> def afterMyClassExists(cls):
-    ...    print 'Class finally exists:', cls
+    ...    print('Class finally exists: %s' % cls)
     >>> registry.addClassCallback('MyClass', afterMyClassExists)
     >>> class MyClass:
     ...    pass

@@ -1,3 +1,4 @@
+from __future__ import print_function
 import sys
 import types
 from sqlobject.include.pydispatch import dispatcher
@@ -203,6 +204,7 @@ def summarize_events_by_sender(sender=None, output=None, indent=0):
     """
     if output is None:
         output = sys.stdout
+    leader = ' ' * indent
     if sender is None:
         send_list = [
             (deref(dispatcher.senders.get(sid)), listeners)
@@ -213,18 +215,18 @@ def summarize_events_by_sender(sender=None, output=None, indent=0):
             if not real_sender:
                 continue
             header = 'Sender: %r' % real_sender
-            print >> output, (' '*indent) + header
-            print >> output, (' '*indent) + '='*len(header)
+            print(leader + header, file=output)
+            print(leader + ('=' * len(header)), file=output)
             summarize_events_by_sender(real_sender, output=output, indent=indent+2)
     else:
         for signal, receivers in sorted_items(dispatcher.connections.get(id(sender), [])):
             receivers = [deref(r) for r in receivers if deref(r)]
             header = 'Signal: %s (%i receivers)' % (sort_name(signal),
                                                     len(receivers))
-            print >> output, (' '*indent) + header
-            print >> output, (' '*indent) + '-'*len(header)
+            print(leader + header, file=output)
+            print(leader + ('-' * len(header)), file=output)
             for receiver in sorted(receivers, key=sort_name):
-                print >> output, (' '*indent) + '  ' + nice_repr(receiver)
+                print(leader + '  ' + nice_repr(receiver), file=output)
 
 def deref(value):
     if isinstance(value, dispatcher.WEAKREF_TYPES):
@@ -262,26 +264,27 @@ def debug_events():
 
 def _debug_send(signal=dispatcher.Any, sender=dispatcher.Anonymous,
                 *arguments, **named):
-    print "send %s from %s: %s" % (
-        nice_repr(signal), nice_repr(sender), fmt_args(*arguments, **named))
+    print("send %s from %s: %s" % (
+          nice_repr(signal), nice_repr(sender),
+          fmt_args(*arguments, **named)))
     return _real_dispatcher_send(signal, sender, *arguments, **named)
 
 def _debug_sendExact(signal=dispatcher.Any, sender=dispatcher.Anonymous,
                      *arguments, **named):
-    print "sendExact %s from %s: %s" % (
-        nice_repr(signal), nice_repr(sender), fmt_args(*arguments, **name))
+    print("sendExact %s from %s: %s" % (
+          nice_repr(signal), nice_repr(sender), fmt_args(*arguments, **name)))
     return _real_dispatcher_sendExact(signal, sender, *arguments, **named)
 
 def _debug_connect(receiver, signal=dispatcher.Any, sender=dispatcher.Any,
                    weak=True):
-    print "connect %s to %s signal %s" % (
-        nice_repr(receiver), nice_repr(signal), nice_repr(sender))
+    print("connect %s to %s signal %s" % (
+          nice_repr(receiver), nice_repr(signal), nice_repr(sender)))
     return _real_dispatcher_connect(receiver, signal, sender, weak)
 
 def _debug_disconnect(receiver, signal=dispatcher.Any, sender=dispatcher.Any,
                       weak=True):
-    print "disconnecting %s from %s signal %s" % (
-        nice_repr(receiver), nice_repr(signal), nice_repr(sender))
+    print("disconnecting %s from %s signal %s" % (
+          nice_repr(receiver), nice_repr(signal), nice_repr(sender)))
     return disconnect(receiver, signal, sender, weak)
 
 def fmt_args(*arguments, **name):
