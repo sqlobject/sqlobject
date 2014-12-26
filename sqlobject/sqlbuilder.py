@@ -181,9 +181,9 @@ class SQLExpression:
         return repr(self)
 
     def __cmp__(self, other):
-        raise VersionError, "Python 2.1+ required"
+        raise VersionError("Python 2.1+ required")
     def __rcmp__(self, other):
-        raise VersionError, "Python 2.1+ required"
+        raise VersionError("Python 2.1+ required")
 
     def startswith(self, s):
         return STARTSWITH(self, s)
@@ -287,7 +287,7 @@ class SQLCall(SQLExpression):
     def components(self):
         return [self.expr] + list(self.args)
     def execute(self, executor):
-        raise ValueError, "I don't yet know how to locally execute functions"
+        raise ValueError("I don't yet know how to locally execute functions")
 
 registerConverter(SQLCall, SQLExprConverter)
 
@@ -316,7 +316,7 @@ class SQLConstant(SQLExpression):
     def __sqlrepr__(self, db):
         return self.const
     def execute(self, executor):
-        raise ValueError, "I don't yet know how to execute SQL constants"
+        raise ValueError("I don't yet know how to execute SQL constants")
 
 registerConverter(SQLConstant, SQLExprConverter)
 
@@ -391,7 +391,7 @@ class Table(SQLExpression):
     def __sqlrepr__(self, db):
         return _str_or_sqlrepr(self.tableName, db)
     def execute(self, executor):
-        raise ValueError, "Tables don't have values"
+        raise ValueError("Tables don't have values")
 
 class SQLObjectTable(Table):
     FieldClass = SQLObjectField
@@ -711,7 +711,7 @@ class Insert(SQLExpression):
         self.table = table
         if valueList:
             if values:
-                raise TypeError, "You may only give valueList *or* values"
+                raise TypeError("You may only give valueList *or* values")
             self.valueList = valueList
         else:
             self.valueList = [values]
@@ -732,10 +732,10 @@ class Insert(SQLExpression):
         for value in self.valueList:
             if isinstance(value, dict):
                 if template is NoDefault:
-                    raise TypeError, "You can't mix non-dictionaries with dictionaries in an INSERT if you don't provide a template (%s)" % repr(value)
+                    raise TypeError("You can't mix non-dictionaries with dictionaries in an INSERT if you don't provide a template (%s)" % repr(value))
                 value = dictToList(template, value)
             elif not allowNonDict:
-                raise TypeError, "You can't mix non-dictionaries with dictionaries in an INSERT if you don't provide a template (%s)" % repr(value)
+                raise TypeError("You can't mix non-dictionaries with dictionaries in an INSERT if you don't provide a template (%s)" % repr(value))
             listToJoin_app("(%s)" % ", ".join([sqlrepr(v, db) for v in value]))
         insert = "%s%s" % (insert, ", ".join(listToJoin))
         return insert
@@ -747,7 +747,7 @@ def dictToList(template, dict):
     for key in template:
         list.append(dict[key])
     if len(dict.keys()) > len(template):
-        raise TypeError, "Extra entries in dictionary that aren't asked for in template (template=%s, dict=%s)" % (repr(template), repr(dict))
+        raise TypeError("Extra entries in dictionary that aren't asked for in template (template=%s, dict=%s)" % (repr(template), repr(dict)))
     return list
 
 class Update(SQLExpression):
@@ -788,7 +788,7 @@ class Delete(SQLExpression):
     def __init__(self, table, where=NoDefault):
         self.table = table
         if where is NoDefault:
-            raise TypeError, "You must give a where clause or pass in None to indicate no where clause"
+            raise TypeError("You must give a where clause or pass in None to indicate no where clause")
         self.whereClause = where
     def __sqlrepr__(self, db):
         whereClause = self.whereClause
@@ -923,7 +923,7 @@ class _LikeQuoted:
             s = _quote_like_special(unquote_str(sqlrepr(s, db)), db)
             return quote_str("%s%s%s" % (self.prefix, s, self.postfix), db)
         else:
-           raise TypeError, "expected str, unicode or SQLExpression, got %s" % type(s)
+           raise TypeError("expected str, unicode or SQLExpression, got %s" % type(s))
 
 def _quote_like_special(s, db):
     if db in ('postgres', 'rdbhost'):
@@ -1021,9 +1021,9 @@ class SQLJoinConditional(SQLJoin):
                 (Table1.q.col1, Table2.q.col2)
         """
         if not on_condition and not using_columns:
-            raise TypeError, "You must give ON condition or USING columns"
+            raise TypeError("You must give ON condition or USING columns")
         if on_condition and using_columns:
-            raise TypeError, "You must give ON condition or USING columns but not both"
+            raise TypeError("You must give ON condition or USING columns but not both")
         SQLJoin.__init__(self, table1, table2, op)
         self.on_condition = on_condition
         self.using_columns = using_columns

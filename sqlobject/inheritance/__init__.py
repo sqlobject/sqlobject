@@ -370,7 +370,7 @@ class InheritableSQLObject(SQLObject):
             for col in self.sqlmeta.columnList:
                 if (col._default == sqlbuilder.NoDefault) and \
                         (col.name not in kw) and (col.foreignName not in kw):
-                    raise TypeError, "%s() did not get expected keyword argument %s" % (self.__class__.__name__, col.name)
+                    raise TypeError("%s() did not get expected keyword argument %s" % (self.__class__.__name__, col.name))
 
             parent_kw['childName'] = self.sqlmeta.childName
             self._parent = parentClass(kw=parent_kw,

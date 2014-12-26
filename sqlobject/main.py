@@ -44,7 +44,7 @@ from util.threadinglocal import local
 
 import sys
 if sys.version_info[:3] < (2, 6, 0):
-    raise ImportError, "SQLObject requires Python 2.6 or 2.7"
+    raise ImportError("SQLObject requires Python 2.6 or 2.7")
 
 """
 This thread-local storage is needed for RowCreatedSignals. It gathers
@@ -931,7 +931,7 @@ class SQLObject(object):
             dbNames = [col.dbName for col in self.sqlmeta.columnList]
             selectResults = self._connection._SO_selectOne(self, dbNames)
             if not selectResults:
-                raise SQLObjectNotFound, "The object %s by the ID %s does not exist" % (self.__class__.__name__, self.id)
+                raise SQLObjectNotFound("The object %s by the ID %s does not exist" % (self.__class__.__name__, self.id))
         self._SO_selectInit(selectResults)
         self._SO_createValues = {}
         self.sqlmeta.dirty = False
@@ -958,7 +958,7 @@ class SQLObject(object):
                 dbNames = [col.dbName for col in self.sqlmeta.columnList]
                 selectResults = self._connection._SO_selectOne(self, dbNames)
                 if not selectResults:
-                    raise SQLObjectNotFound, "The object %s by the ID %s has been deleted" % (self.__class__.__name__, self.id)
+                    raise SQLObjectNotFound("The object %s by the ID %s has been deleted" % (self.__class__.__name__, self.id))
                 self._SO_selectInit(selectResults)
                 result = getattr(self, attrName)
                 return result
@@ -973,7 +973,7 @@ class SQLObject(object):
             dbNames = [col.dbName for col in self.sqlmeta.columnList]
             selectResults = self._connection._SO_selectOne(self, dbNames)
             if not selectResults:
-                raise SQLObjectNotFound, "The object %s by the ID %s has been deleted" % (self.__class__.__name__, self.id)
+                raise SQLObjectNotFound("The object %s by the ID %s has been deleted" % (self.__class__.__name__, self.id))
             self._SO_selectInit(selectResults)
             self.sqlmeta.expired = False
         finally:
@@ -1094,11 +1094,11 @@ class SQLObject(object):
                     getattr(self.__class__, name)
                 except AttributeError:
                     if name not in self.sqlmeta.columns:
-                        raise TypeError, "%s.set() got an unexpected keyword argument %s" % (self.__class__.__name__, name)
+                        raise TypeError("%s.set() got an unexpected keyword argument %s" % (self.__class__.__name__, name))
                 try:
                     setattr(self, name, value)
                 except AttributeError, e:
-                    raise AttributeError, '%s (with attribute %r)' % (e, name)
+                    raise AttributeError('%s (with attribute %r)' % (e, name))
 
             self.sqlmeta.dirty = True
             return
@@ -1132,11 +1132,11 @@ class SQLObject(object):
                     getattr(self.__class__, name)
                 except AttributeError:
                     if name not in self.sqlmeta.columns:
-                        raise TypeError, "%s.set() got an unexpected keyword argument %s" % (self.__class__.__name__, name)
+                        raise TypeError("%s.set() got an unexpected keyword argument %s" % (self.__class__.__name__, name))
                 try:
                     setattr(self, name, value)
                 except AttributeError, e:
-                    raise AttributeError, '%s (with attribute %r)' % (e, name)
+                    raise AttributeError('%s (with attribute %r)' % (e, name))
 
             if toUpdate:
                 toUpdate = toUpdate.items()
@@ -1262,7 +1262,7 @@ class SQLObject(object):
                 # If we specified an SQL DEFAULT, then we should use that
                 if default is NoDefault:
                     if column.defaultSQL is None:
-                        raise TypeError, "%s() did not get expected keyword argument '%s'" % (self.__class__.__name__, column.name)
+                        raise TypeError("%s() did not get expected keyword argument '%s'" % (self.__class__.__name__, column.name))
                     else:
                         # There is defaultSQL for the column - do not put
                         # the column to kw so that the backend creates the value
@@ -1322,7 +1322,7 @@ class SQLObject(object):
             name = (name,)
             value = (value,)
         if len(name) != len(value):
-            raise ValueError, "'column' and 'value' tuples must be of the same size"
+            raise ValueError("'column' and 'value' tuples must be of the same size")
         new_value = []
         for n, v in zip(name, value):
             from_python = getattr(cls, '_SO_from_python_' + n)
@@ -1341,13 +1341,13 @@ class SQLObject(object):
         result, obj = cls._findAlternateID(name, dbName, value, connection)
         if not result:
             if idxName is None:
-                raise SQLObjectNotFound, "The %s by alternateID %s = %s does not exist" % (cls.__name__, name, repr(value))
+                raise SQLObjectNotFound("The %s by alternateID %s = %s does not exist" % (cls.__name__, name, repr(value)))
             else:
                 names = []
                 for i in xrange(len(name)):
                     names.append("%s = %s" % (name[i], repr(value[i])))
                 names = ', '.join(names)
-                raise SQLObjectNotFound, "The %s by unique index %s(%s) does not exist" % (cls.__name__, idxName, names)
+                raise SQLObjectNotFound("The %s by unique index %s(%s) does not exist" % (cls.__name__, idxName, names))
         if obj:
             return obj
         if connection:
@@ -1570,7 +1570,7 @@ class SQLObject(object):
                 if results.count():
                     # Restrictions only apply if there are
                     # matching records on the related table
-                    raise SQLObjectIntegrityError, (
+                    raise SQLObjectIntegrityError(
                         "Tried to delete %s::%s but "
                         "table %s has a restriction against it" %
                         (klass.__name__, self.id, k.__name__))

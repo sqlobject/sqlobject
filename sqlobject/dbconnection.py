@@ -658,7 +658,7 @@ class DBAPI(DBConnection):
                     data.append((soColumn.dbName, obj))
         if kw:
             # pick the first key from kw to use to raise the error,
-            raise TypeError, "got an unexpected keyword argument(s): %r" % kw.keys()
+            raise TypeError("got an unexpected keyword argument(s): %r" % kw.keys())
 
         if not data:
             return None

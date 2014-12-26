@@ -71,7 +71,7 @@ def test_inheritance_select():
     except:
         pass
     else:
-        raise RuntimeError, "unknown person %s" % person
+        raise RuntimeError("unknown person %s" % person)
 
     person = InheritablePerson.byLastName("Leader")
     assert person.firstName == "Project"
