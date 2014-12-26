@@ -102,7 +102,7 @@ and `GitHub <https://github.com/sqlobject>`_.
                         "../docs/html/sqlobject/util/*.html",
                         "../docs/html/sqlobject/versioning/*.html",
                     ],
-                    "sqlobject.include": ["pydispatch/README.txt"],
+                    "sqlobject.include": ["pydispatch/*.txt"],
                     "sqlobject.maxdb": ["readme.txt"],
                    },
       **kw
