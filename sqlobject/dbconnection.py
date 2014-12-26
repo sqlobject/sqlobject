@@ -167,9 +167,9 @@ class DBConnection:
             try:
                 port = int(port)
             except ValueError:
-                raise ValueError, "port must be integer, got '%s' instead" % port
+                raise ValueError("port must be integer, got '%s' instead" % port)
             if not (1 <= port <= 65535):
-                raise ValueError, "port must be integer in the range 1-65535, got '%d' instead" % port
+                raise ValueError("port must be integer in the range 1-65535, got '%d' instead" % port)
             host = _host
         else:
             port = None
@@ -363,7 +363,7 @@ class DBAPI(DBConnection):
                 if self.debug:
                     self.printDebug(conn, 'auto/exception', 'ROLLBACK')
                 conn.rollback()
-                raise Exception, 'Object used outside of a transaction; implicit COMMIT or ROLLBACK not allowed'
+                raise Exception('Object used outside of a transaction; implicit COMMIT or ROLLBACK not allowed')
             elif self.autoCommit:
                 if self.debug:
                     self.printDebug(conn, 'auto', 'COMMIT')
