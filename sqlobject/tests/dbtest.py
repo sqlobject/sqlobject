@@ -1,6 +1,7 @@
 """
 The framework for making database tests.
 """
+from __future__ import print_function
 
 import logging
 import os
@@ -102,8 +103,7 @@ try:
     connection = getConnection()
 except Exception, e:
     # At least this module should be importable...
-    print >> sys.stderr, (
-        "Could not open database: %s" % e)
+    print("Could not open database: %s" % e, file=sys.stderr)
 
 
 class InstalledTestDatabase(sqlobject.SQLObject):

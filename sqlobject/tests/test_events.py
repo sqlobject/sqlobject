@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 from sqlobject import *
 from sqlobject.tests.dbtest import *
 from sqlobject import events
@@ -90,7 +92,7 @@ def test_add_column():
         NewEventTester, None,
         'name2', NewEventTester.sqlmeta.columnDefinitions['name2'],
         False, [])
-    print zip(watcher.log[1], expect)
+    print(zip(watcher.log[1], expect))
     assert watcher.log[1] == expect
 
 

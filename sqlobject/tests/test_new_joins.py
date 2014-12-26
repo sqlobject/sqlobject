@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 from sqlobject import *
 from sqlobject.tests.dbtest import *
 
@@ -37,11 +39,11 @@ class TestJoin:
         z = AddressJoinerNew.byZip('11111')
         b.addressJoiners.add(z)
         self.assertZipsEqual(b.addressJoiners, ['11111'])
-        print str(z.personJoiners), repr(z.personJoiners)
+        print(str(z.personJoiners), repr(z.personJoiners))
         self.assertNamesEqual(z.personJoiners, ['bob'])
         z2 = AddressJoinerNew.byZip('22222')
         b.addressJoiners.add(z2)
-        print str(b.addressJoiners)
+        print(str(b.addressJoiners))
         self.assertZipsEqual(b.addressJoiners, ['11111', '22222'])
         self.assertNamesEqual(z2.personJoiners, ['bob'])
         b.addressJoiners.remove(z)
@@ -92,8 +94,8 @@ class TestJoin2:
     def test_basic(self):
         bob = PersonJoinerNew2.byName('bob')
         sally = PersonJoinerNew2.byName('sally')
-        print bob.addressJoiner2s
-        print bob
+        print(bob.addressJoiner2s)
+        print(bob)
         assert len(list(bob.addressJoiner2s)) == 3
         assert len(list(sally.addressJoiner2s)) == 1
         bob.addressJoiner2s[0].destroySelf()
