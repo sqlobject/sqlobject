@@ -5,6 +5,17 @@ what arguments a given callable object can take,
 and subset the given arguments to match only
 those which are acceptable.
 """
+import sys
+if sys.hexversion >= 0x3000000:
+    im_func = '__func__'
+    im_self = '__self__'
+    im_code = '__code__'
+    func_code = '__code__'
+else:
+    im_func = 'im_func'
+    im_self = 'im_self'
+    im_code = 'im_code'
+    func_code = 'func_code'
 
 def function( receiver ):
 	"""Get function-like callable object for given receiver
@@ -14,14 +25,16 @@ def function( receiver ):
 	If fromMethod is true, then the callable already
 	has its first argument bound
 	"""
-	if hasattr(receiver, 'im_func'):
-		return receiver, receiver.im_func.func_code, 1
-	elif hasattr(receiver, 'func_code'):
-		return receiver, receiver.func_code, 0
-	elif hasattr(receiver, '__call__'):
-		return function(receiver.__call__)
-	else:
+	if hasattr(receiver, '__call__'):
+		# Reassign receiver to the actual method that will be called.
+		if hasattr( receiver.__call__, im_func) or hasattr( receiver.__call__, im_code):
+			receiver = receiver.__call__
+	if hasattr( receiver, im_func ):
+		# an instance-method...
+		return receiver, getattr(getattr(receiver, im_func), func_code), 1
+	elif not hasattr( receiver, func_code):
 		raise ValueError('unknown reciever type %s %s'%(receiver, type(receiver)))
+	return receiver, getattr(receiver,func_code), 0
 
 def robustApply(receiver, *arguments, **named):
 	"""Call receiver with arguments and an appropriate subset of named
@@ -42,5 +55,3 @@ def robustApply(receiver, *arguments, **named):
 			if arg not in acceptable:
 				del named[arg]
 	return receiver(*arguments, **named)
-
-			

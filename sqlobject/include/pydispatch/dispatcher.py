@@ -26,18 +26,12 @@ Internal attributes:
 		vs. the original code.)
 """
 from __future__ import generators
-import types, weakref
+import weakref
 import saferef, robustapply, errors
 
 __author__ = "Patrick K. O'Brien <pobrien@orbtech.com>"
-__cvsid__ = "$Id: dispatcher.py,v 1.9 2005/09/17 04:55:57 mcfletch Exp $"
-__version__ = "$Revision: 1.9 $"[11:-2]
-
-try:
-	True
-except NameError:
-	True = 1==1
-	False = 1==0
+__cvsid__ = "$Id: dispatcher.py,v 1.1 2010/03/30 15:45:55 mcfletch Exp $"
+__version__ = "$Revision: 1.1 $"[11:-2]
 
 class _Parameter:
 	"""Used to represent default parameter values."""
@@ -296,7 +290,7 @@ def getAllReceivers( sender = Any, signal = Any ):
 		for receiver in set:
 			if receiver: # filter out dead instance-method weakrefs
 				try:
-					if not receiver in receivers:
+					if receiver not in receivers:
 						receivers[receiver] = 1
 						yield receiver
 				except TypeError:
@@ -377,28 +371,29 @@ def _removeReceiver(receiver):
 		# During module cleanup the mapping will be replaced with None
 		return False
 	backKey = id(receiver)
-	for senderkey in sendersBack.get(backKey,()):
-		try:
-			signals = connections[senderkey].keys()
-		except KeyError,err:
-			pass
-		else:
-			for signal in signals:
-				try:
-					receivers = connections[senderkey][signal]
-				except KeyError:
-					pass
-				else:
-					try:
-						receivers.remove( receiver )
-					except Exception, err:
-						pass
-				_cleanupConnections(senderkey, signal)
 	try:
-		del sendersBack[ backKey ]
+		backSet = sendersBack.pop(backKey)
 	except KeyError:
-		pass
-			
+		return False 
+	else:
+		for senderkey in backSet:
+			try:
+				signals = connections[senderkey].keys()
+			except KeyError:
+				pass
+			else:
+				for signal in signals:
+					try:
+						receivers = connections[senderkey][signal]
+					except KeyError:
+						pass
+					else:
+						try:
+							receivers.remove( receiver )
+						except Exception:
+							pass
+					_cleanupConnections(senderkey, signal)
+
 def _cleanupConnections(senderkey, signal):
 	"""Delete any empty signals for senderkey. Delete senderkey if empty."""
 	try:

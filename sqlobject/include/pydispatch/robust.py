@@ -1,6 +1,6 @@
 """Module implementing error-catching version of send (sendRobust)"""
-from dispatcher import Any, Anonymous, liveReceivers, getAllReceivers
-from robustapply import robustApply
+from pydispatch.dispatcher import Any, Anonymous, liveReceivers, getAllReceivers
+from pydispatch.robustapply import robustApply
 
 def sendRobust(
 	signal=Any, 
