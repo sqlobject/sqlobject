@@ -80,7 +80,6 @@ class ViewSQLObject(SQLObject):
                             clause=clause)
 
             aggregates = aggregates.values()
-            #print cls.__name__, sqlrepr(aggregates, dbName)
 
             if aggregates != [[None]]:
                 join = []

@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 from sqlobject import *
 from sqlobject.dberrors import *
 from sqlobject.tests.dbtest import *
@@ -61,28 +63,28 @@ def test_index_get_1():
     PersonIndexGet.nameIndex.get(firstName='John', lastName='Cleese')
 
     try:
-        print PersonIndexGet.nameIndex.get(firstName='Graham', lastName='Chapman')
+        print(PersonIndexGet.nameIndex.get(firstName='Graham', lastName='Chapman'))
     except Exception, e:
         pass
     else:
         raise AssertError
 
     try:
-        print PersonIndexGet.nameIndex.get('Terry', lastName='Gilliam')
+        print(PersonIndexGet.nameIndex.get('Terry', lastName='Gilliam'))
     except Exception, e:
         pass
     else:
         raise AssertError
 
     try:
-        print PersonIndexGet.nameIndex.get('Terry', 'Gilliam', 65)
+        print(PersonIndexGet.nameIndex.get('Terry', 'Gilliam', 65))
     except Exception, e:
         pass
     else:
         raise AssertError
 
     try:
-        print PersonIndexGet.nameIndex.get('Terry')
+        print(PersonIndexGet.nameIndex.get('Terry'))
     except Exception, e:
         pass
     else:

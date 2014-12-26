@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+from __future__ import print_function
 
 import fnmatch
 import optparse
@@ -109,7 +110,7 @@ class CommandRunner(object):
             self.command_aliases[alias] = name
 
     def invalid(self, msg, code=2):
-        print msg
+        print(msg)
         sys.exit(code)
 
 the_runner = CommandRunner()
@@ -251,11 +252,11 @@ class Command(object):
         except SQLObjectCircularReferenceError, msg:
             # Failsafe: return the classes as-is if a circular reference
             # prevented the dependency levels to be calculated.
-            print ("Warning: a circular reference was detected in the "
-                    "model. Unable to sort the classes by dependency: they "
-                    "will be treated in alphabetic order. This may or may "
-                    "not work depending on your database backend. "
-                    "The error was:\n%s" % msg)
+            print("Warning: a circular reference was detected in the "
+                   "model. Unable to sort the classes by dependency: they "
+                   "will be treated in alphabetic order. This may or may "
+                   "not work depending on your database backend. "
+                   "The error was:\n%s" % msg)
             return classes
         return ordered_classes
 
@@ -347,21 +348,21 @@ class Command(object):
                     % '\n  * '.join([soClass.__name__
                                      for soClass in missing]))
         if require_some and not all:
-            print 'No classes found!'
+            print('No classes found!')
             if self.options.modules:
-                print 'Looked in modules: %s' % ', '.join(self.options.modules)
+                print('Looked in modules: %s' % ', '.join(self.options.modules))
             else:
-                print 'No modules specified'
+                print('No modules specified')
             if self.options.packages:
-                print 'Looked in packages: %s' % ', '.join(self.options.packages)
+                print('Looked in packages: %s' % ', '.join(self.options.packages))
             else:
-                print 'No packages specified'
+                print('No packages specified')
             if self.options.class_matchers:
-                print 'Matching class pattern: %s' % self.options.class_matches
+                print('Matching class pattern: %s' % self.options.class_matches)
             if self.options.eggs:
-                print 'Looked in eggs: %s' % ', '.join(self.options.eggs)
+                print('Looked in eggs: %s' % ', '.join(self.options.eggs))
             else:
-                print 'No eggs specified'
+                print('No eggs specified')
             sys.exit(1)
         return self.orderClassesByDependencyLevel(all)
 
@@ -464,11 +465,11 @@ class Command(object):
                     module = moduleloader.load_module(module_name)
                 except ImportError, err:
                     if self.options.verbose:
-                        print 'Could not import module "%s". Error was : "%s"' % (module_name, err)
+                        print('Could not import module "%s". Error was : "%s"' % (module_name, err))
                     continue
                 except Exception, exc:
                     if self.options.verbose:
-                        print 'Unknown exception while processing module "%s" : "%s"' % (module_name, exc)
+                        print('Unknown exception while processing module "%s" : "%s"' % (module_name, exc))
                     continue
                 classes = self.classes_from_module(module)
                 all.extend(classes)
@@ -484,7 +485,7 @@ class Command(object):
             if not mod:
                 continue
             if self.options.verbose:
-                print 'Looking in module %s' % mod
+                print('Looking in module %s' % mod)
             modules.extend(self.classes_from_module(
                 moduleloader.load_module(mod)))
         return modules
@@ -503,7 +504,7 @@ class Command(object):
         dist = pkg_resources.get_distribution(egg_spec)
         if not dist.has_metadata('sqlobject.txt'):
             if warn_no_sqlobject:
-                print 'No sqlobject.txt in %s egg info' % egg_spec
+                print('No sqlobject.txt in %s egg info' % egg_spec)
             return None, {}
         result = {}
         for line in dist.get_metadata_lines('sqlobject.txt'):
@@ -513,7 +514,7 @@ class Command(object):
             name, value = line.split('=', 1)
             name = name.strip().lower()
             if name in result:
-                print 'Warning: %s appears more than once in sqlobject.txt' % name
+                print('Warning: %s appears more than once in sqlobject.txt' % name)
             result[name.strip().lower()] = value.strip()
         return dist, result
 
@@ -537,7 +538,7 @@ class Command(object):
                 return default
             if response and response[0].lower() in ('y', 'n'):
                 return response[0].lower() == 'y'
-            print 'Y or N please'
+            print('Y or N please')
 
     def shorten_filename(self, fn):
         """
@@ -558,7 +559,7 @@ class Command(object):
         f = open(fn, 'w')
         f.write(pretext)
         f.close()
-        print '$EDITOR %s' % fn
+        print('$EDITOR %s' % fn)
         os.system('$EDITOR %s' % fn)
         f = open(fn, 'r')
         content = f.read()
@@ -582,16 +583,16 @@ class CommandSQL(Command):
         allConstraints = []
         for cls in classes:
             if self.options.verbose >= 1:
-                print '-- %s from %s' % (
-                    cls.__name__, cls.__module__)
+                print('-- %s from %s' % (
+                      cls.__name__, cls.__module__))
             createSql, constraints = cls.createTableSQL()
-            print createSql.strip() + ';\n'
+            print(createSql.strip() + ';\n')
             allConstraints.append(constraints)
         for constraints in allConstraints:
             if constraints:
                 for constraint in constraints:
                     if constraint:
-                        print constraint.strip() + ';\n'
+                        print(constraint.strip() + ';\n')
 
 
 class CommandList(Command):
@@ -603,12 +604,12 @@ class CommandList(Command):
 
     def command(self):
         if self.options.verbose >= 1:
-            print 'Classes found:'
+            print('Classes found:')
         classes = self.classes(require_connection=False)
         for soClass in classes:
-            print '%s.%s' % (soClass.__module__, soClass.__name__)
+            print('%s.%s' % (soClass.__module__, soClass.__name__))
             if self.options.verbose >= 1:
-                print '  Table: %s' % soClass.sqlmeta.table
+                print('  Table: %s' % soClass.sqlmeta.table)
 
 class CommandCreate(Command):
 
@@ -635,11 +636,11 @@ class CommandCreate(Command):
                         soClass._connection.createEmptyDatabase()
                     except soClass._connection.module.ProgrammingError, e:
                         if str(e).find('already exists') != -1:
-                            print 'Database already exists'
+                            print('Database already exists')
                         else:
                             raise
                 else:
-                    print '(simulating; cannot create database)'
+                    print('(simulating; cannot create database)')
                 dbs_created.append(soClass._connection)
             if soClass._connection not in constraints.keys():
                 constraints[soClass._connection] = []
@@ -647,12 +648,12 @@ class CommandCreate(Command):
             if v >= 1:
                 if exists:
                     existing += 1
-                    print '%s already exists.' % soClass.__name__
+                    print('%s already exists.' % soClass.__name__)
                 else:
-                    print 'Creating %s' % soClass.__name__
+                    print('Creating %s' % soClass.__name__)
             if v >= 2:
                 sql, extra = soClass.createTableSQL()
-                print sql
+                print(sql)
             if (not self.options.simulate
                 and not exists):
                 if self.options.interactive:
@@ -662,7 +663,7 @@ class CommandCreate(Command):
                         if tableConstraints:
                             constraints[soClass._connection].append(tableConstraints)
                     else:
-                        print 'Cancelled'
+                        print('Cancelled')
                 else:
                     created += 1
                     tableConstraints = soClass.createTable(applyConstraints=False)
@@ -670,14 +671,14 @@ class CommandCreate(Command):
                         constraints[soClass._connection].append(tableConstraints)
         for connection in constraints.keys():
             if v >= 2:
-                print 'Creating constraints'
+                print('Creating constraints')
             for constraintList in constraints[connection]:
                 for constraint in constraintList:
                     if constraint:
                         connection.query(constraint)
         if v >= 1:
-            print '%i tables created (%i already exist)' % (
-                created, existing)
+            print('%i tables created (%i already exist)' % (
+                  created, existing))
 
 
 class CommandDrop(Command):
@@ -695,10 +696,10 @@ class CommandDrop(Command):
             exists = soClass._connection.tableExists(soClass.sqlmeta.table)
             if v >= 1:
                 if exists:
-                    print 'Dropping %s' % soClass.__name__
+                    print('Dropping %s' % soClass.__name__)
                 else:
                     not_existing += 1
-                    print '%s does not exist.' % soClass.__name__
+                    print('%s does not exist.' % soClass.__name__)
             if (not self.options.simulate
                 and exists):
                 if self.options.interactive:
@@ -706,13 +707,13 @@ class CommandDrop(Command):
                         dropped += 1
                         soClass.dropTable()
                     else:
-                        print 'Cancelled'
+                        print('Cancelled')
                 else:
                     dropped += 1
                     soClass.dropTable()
         if v >= 1:
-            print '%i tables dropped (%i didn\'t exist)' % (
-                dropped, not_existing)
+            print('%i tables dropped (%i didn\'t exist)' % (
+                  dropped, not_existing))
 
 class CommandStatus(Command):
 
@@ -730,7 +731,7 @@ class CommandStatus(Command):
         if self.printed:
             return
         self.printed = True
-        print 'Checking %s...' % soClass.__name__
+        print('Checking %s...' % soClass.__name__)
 
     def command(self):
         good = 0
@@ -744,7 +745,7 @@ class CommandStatus(Command):
                 self.print_class(soClass)
             if not conn.tableExists(soClass.sqlmeta.table):
                 self.print_class(soClass)
-                print '  Does not exist in database'
+                print('  Does not exist in database')
                 missing_tables += 1
                 continue
             try:
@@ -752,13 +753,13 @@ class CommandStatus(Command):
                                                  soClass)
             except AttributeError:
                 if not columnsFromSchema_warning:
-                    print 'Database does not support reading columns'
+                    print('Database does not support reading columns')
                     columnsFromSchema_warning = True
                 good += 1
                 continue
             except AssertionError, e:
-                print 'Cannot read db table %s: %s' % (
-                    soClass.sqlmeta.table, e)
+                print('Cannot read db table %s: %s' % (
+                    soClass.sqlmeta.table, e))
                 continue
             existing = {}
             for col in columns:
@@ -773,18 +774,18 @@ class CommandStatus(Command):
             if existing:
                 self.print_class(soClass)
                 for col in existing.values():
-                    print '  Database has extra column: %s' % col.dbName
+                    print('  Database has extra column: %s' % col.dbName)
             if missing:
                 self.print_class(soClass)
                 for col in missing.values():
-                    print '  Database missing column: %s' % col.dbName
+                    print('  Database missing column: %s' % col.dbName)
             if existing or missing:
                 bad += 1
             else:
                 good += 1
         if self.options.verbose:
-            print '%i in sync; %i out of sync; %i not in database' % (
-                good, bad, missing_tables)
+            print('%i in sync; %i out of sync; %i not in database' % (
+                  good, bad, missing_tables))
 
 class CommandHelp(Command):
 
@@ -799,20 +800,20 @@ class CommandHelp(Command):
         if self.args:
             the_runner.run([self.invoked_as, self.args[0], '-h'])
         else:
-            print 'Available commands:'
-            print '  (use "%s help COMMAND" or "%s COMMAND -h" ' % (
-                self.prog_name, self.prog_name)
-            print '  for more information)'
+            print('Available commands:')
+            print('  (use "%s help COMMAND" or "%s COMMAND -h" ' % (
+                  self.prog_name, self.prog_name))
+            print('  for more information)')
             items = the_runner.commands.items()
             items.sort()
             max_len = max([len(cn) for cn, c in items])
             for command_name, command in items:
-                print '%s:%s %s' % (command_name,
+                print('%s:%s %s' % (command_name,
                                     ' '*(max_len-len(command_name)),
-                                    command.summary)
+                                    command.summary))
                 if command.aliases:
-                    print '%s (Aliases: %s)' % (
-                        ' '*max_len, ', '.join(command.aliases))
+                    print('%s (Aliases: %s)' % (
+                        ' '*max_len, ', '.join(command.aliases)))
 
 class CommandExecute(Command):
 
@@ -834,7 +835,7 @@ class CommandExecute(Command):
         args = self.args
         if self.options.use_stdin:
             if self.options.verbose:
-                print "Reading additional SQL from stdin (Ctrl-D or Ctrl-Z to finish)..."
+                print("Reading additional SQL from stdin (Ctrl-D or Ctrl-Z to finish)...")
             args.append(sys.stdin.read())
         self.conn = self.connection().getConnection()
         self.cursor = self.conn.cursor()
@@ -843,22 +844,22 @@ class CommandExecute(Command):
 
     def execute_sql(self, sql):
         if self.options.verbose:
-            print sql
+            print(sql)
         try:
             self.cursor.execute(sql)
         except Exception, e:
             if not self.options.verbose:
-                print sql
-            print "****Error:"
-            print '    ', e
+                print(sql)
+            print("****Error:")
+            print('    ', e)
             return
         desc = self.cursor.description
         rows = self.cursor.fetchall()
         if self.options.verbose:
             if not self.cursor.rowcount:
-                print "No rows accessed"
+                print("No rows accessed")
             else:
-                print "%i rows accessed" % self.cursor.rowcount
+                print("%i rows accessed" % self.cursor.rowcount)
         if desc:
             for name, type_code, display_size, internal_size, precision, scale, null_ok in desc:
                 sys.stdout.write("%s\t" % name)
@@ -867,7 +868,7 @@ class CommandExecute(Command):
             for col in row:
                 sys.stdout.write("%r\t" % col)
             sys.stdout.write("\n")
-        print
+        print()
 
 class CommandRecord(Command):
 
@@ -928,12 +929,12 @@ class CommandRecord(Command):
         sim = self.options.simulate
         classes = self.classes()
         if not classes:
-            print "No classes found!"
+            print("No classes found!")
             return
 
         output_dir = self.find_output_dir()
         version = os.path.basename(output_dir)
-        print "Creating version %s" % version
+        print("Creating version %s" % version)
         conns = []
         files = {}
         for cls in self.classes():
@@ -963,14 +964,14 @@ class CommandRecord(Command):
         last_version_dir = self.find_last_version()
         if last_version_dir and not self.options.force_create:
             if v > 1:
-                print "Checking %s to see if it is current" % last_version_dir
+                print("Checking %s to see if it is current" % last_version_dir)
             files_copy = files.copy()
             for fn in os.listdir(last_version_dir):
                 if not fn.endswith('.sql'):
                     continue
                 if not fn in files_copy:
                     if v > 1:
-                        print "Missing file %s" % fn
+                        print("Missing file %s" % fn)
                     break
                 f = open(os.path.join(last_version_dir, fn), 'r')
                 content = f.read()
@@ -978,32 +979,32 @@ class CommandRecord(Command):
                 if (self.strip_comments(files_copy[fn])
                     != self.strip_comments(content)):
                     if v > 1:
-                        print "Content does not match: %s" % fn
+                        print("Content does not match: %s" % fn)
                     break
                 del files_copy[fn]
             else:
                 # No differences so far
                 if not files_copy:
                     # Used up all files
-                    print ("Current status matches version %s"
-                           % os.path.basename(last_version_dir))
+                    print("Current status matches version %s"
+                          % os.path.basename(last_version_dir))
                     return
                 if v > 1:
-                    print "Extra files: %s" % ', '.join(files_copy.keys())
+                    print("Extra files: %s" % ', '.join(files_copy.keys()))
             if v:
-                print ("Current state does not match %s"
-                       % os.path.basename(last_version_dir))
+                print("Current state does not match %s"
+                      % os.path.basename(last_version_dir))
         if v > 1 and not last_version_dir:
-            print "No last version to check"
+            print("No last version to check")
         if not sim:
             os.mkdir(output_dir)
         if v:
-            print 'Making directory %s' % self.shorten_filename(output_dir)
+            print('Making directory %s' % self.shorten_filename(output_dir))
         files = files.items()
         files.sort()
         for fn, content in files:
             if v:
-                print '  Writing %s' % self.shorten_filename(fn)
+                print('  Writing %s' % self.shorten_filename(fn))
             if not sim:
                 f = open(os.path.join(output_dir, fn), 'w')
                 f.write(content)
@@ -1021,16 +1022,16 @@ class CommandRecord(Command):
                             diff = '  %s: %s' % (cls.sqlmeta.table, diff)
                         all_diffs.append(diff)
             if all_diffs:
-                print 'Database does not match schema:'
-                print '\n'.join(all_diffs)
+                print('Database does not match schema:')
+                print('\n'.join(all_diffs))
                 for conn in conns:
                     self.update_db(version, conn)
         else:
             all_diffs = []
         if self.options.open_editor:
             if not last_version_dir:
-                print ("Cannot edit upgrader because there is no "
-                       "previous version")
+                print("Cannot edit upgrader because there is no "
+                      "previous version")
             else:
                 breaker = ('-'*20 + ' lines below this will be ignored '
                            + '-'*20)
@@ -1044,17 +1045,17 @@ class CommandRecord(Command):
                     f = open(fn, 'w')
                     f.write(text)
                     f.close()
-                    print 'Wrote to %s' % fn
+                    print('Wrote to %s' % fn)
 
     def update_db(self, version, conn):
         v = self.options.verbose
         if not conn.tableExists(SQLObjectVersionTable.sqlmeta.table):
             if v:
-                print ('Creating table %s'
-                       % SQLObjectVersionTable.sqlmeta.table)
+                print('Creating table %s'
+                      % SQLObjectVersionTable.sqlmeta.table)
             sql = SQLObjectVersionTable.createTableSQL(connection=conn)
             if v > 1:
-                print sql
+                print(sql)
             if not self.options.simulate:
                 SQLObjectVersionTable.createTable(connection=conn)
         if not self.options.simulate:
@@ -1073,7 +1074,7 @@ class CommandRecord(Command):
         if base is None:
             base = CONFIG.get('sqlobject_history_dir', '.')
         if not os.path.exists(base):
-            print 'Creating history directory %s' % self.shorten_filename(base)
+            print('Creating history directory %s' % self.shorten_filename(base))
             if not self.options.simulate:
                 os.makedirs(base)
         return base
@@ -1084,8 +1085,8 @@ class CommandRecord(Command):
             dir = os.path.join(self.base_dir(), today + '-' +
                                self.options.version_name)
             if os.path.exists(dir):
-                print ("Error, directory already exists: %s"
-                       % dir)
+                print("Error, directory already exists: %s"
+                      % dir)
                 sys.exit(1)
             return dir
         extra = ''
@@ -1114,18 +1115,18 @@ class CommandRecord(Command):
         sim = self.options.simulate
         version = self.options.force_db_version
         if not self.version_regex.search(version):
-            print "Versions must be in the format YYYY-MM-DD..."
-            print "You version %s does not fit this" % version
+            print("Versions must be in the format YYYY-MM-DD...")
+            print("You version %s does not fit this" % version)
             return
         version_dir = os.path.join(self.base_dir(), version)
         if not os.path.exists(version_dir):
             if v:
-                print 'Creating %s' % self.shorten_filename(version_dir)
+                print('Creating %s' % self.shorten_filename(version_dir))
             if not sim:
                 os.mkdir(version_dir)
         elif v:
-            print ('Directory %s exists'
-                   % self.shorten_filename(version_dir))
+            print('Directory %s exists'
+                  % self.shorten_filename(version_dir))
         if self.options.db_record:
             self.update_db(version, self.connection())
 
@@ -1162,51 +1163,51 @@ class CommandUpgrade(CommandRecord):
         else:
             fname = self.find_last_version()
             if fname is None:
-                print "No version exists, use 'record' command to create one"
+                print("No version exists, use 'record' command to create one")
                 return
             version_to = os.path.basename(fname)
         current = self.current_version()
         if v:
-            print 'Current version: %s' % current
+            print('Current version: %s' % current)
         version_list = self.make_plan(current, version_to)
         if not version_list:
-            print 'Database up to date'
+            print('Database up to date')
             return
         if v:
-            print 'Plan:'
+            print('Plan:')
             for next_version, upgrader in version_list:
-                print '  Use %s to upgrade to %s' % (
-                    self.shorten_filename(upgrader), next_version)
+                print('  Use %s to upgrade to %s' % (
+                      self.shorten_filename(upgrader), next_version))
         conn = self.connection()
         for next_version, upgrader in version_list:
             f = open(upgrader)
             sql = f.read()
             f.close()
             if v:
-                print "Running:"
-                print sql
-                print '-'*60
+                print("Running:")
+                print(sql)
+                print('-' * 60)
             if not sim:
                 try:
                     conn.query(sql)
                 except:
-                    print "Error in script: %s" % upgrader
+                    print("Error in script: %s" % upgrader)
                     raise
             self.update_db(next_version, conn)
-        print 'Done.'
+        print('Done.')
 
 
     def current_version(self):
         conn = self.connection()
         if not conn.tableExists(SQLObjectVersionTable.sqlmeta.table):
-            print 'No sqlobject_version table!'
+            print('No sqlobject_version table!')
             sys.exit(1)
         versions = list(SQLObjectVersionTable.select(connection=conn))
         if not versions:
-            print 'No rows in sqlobject_version!'
+            print('No rows in sqlobject_version!')
             sys.exit(1)
         if len(versions) > 1:
-            print 'Ambiguous sqlobject_version_table'
+            print('Ambiguous sqlobject_version_table')
             sys.exit(1)
         return versions[0].version
 
@@ -1216,9 +1217,9 @@ class CommandUpgrade(CommandRecord):
         dbname = self.connection().dbName
         next_version, upgrader = self.best_upgrade(current, dest, dbname)
         if not upgrader:
-            print 'No way to upgrade from %s to %s' % (current, dest)
-            print ('(you need a %s/upgrade_%s_%s.sql script)'
-                   % (current, dbname, dest))
+            print('No way to upgrade from %s to %s' % (current, dest))
+            print('(you need a %s/upgrade_%s_%s.sql script)'
+                  % (current, dbname, dest))
             sys.exit(1)
         plan = [(next_version, upgrader)]
         if next_version == dest:
@@ -1229,30 +1230,30 @@ class CommandUpgrade(CommandRecord):
     def best_upgrade(self, current, dest, target_dbname):
         current_dir = os.path.join(self.base_dir(), current)
         if self.options.verbose > 1:
-            print ('Looking in %s for upgraders'
-                   % self.shorten_filename(current_dir))
+            print('Looking in %s for upgraders'
+                  % self.shorten_filename(current_dir))
         upgraders = []
         for fn in os.listdir(current_dir):
             match = self.upgrade_regex.search(fn)
             if not match:
                 if self.options.verbose > 1:
-                    print 'Not an upgrade script: %s' % fn
+                    print('Not an upgrade script: %s' % fn)
                 continue
             dbname = match.group(1)
             version = match.group(2)
             if dbname != target_dbname:
                 if self.options.verbose > 1:
-                    print 'Not for this database: %s (want %s)' % (
-                        dbname, target_dbname)
+                    print('Not for this database: %s (want %s)' % (
+                          dbname, target_dbname))
                 continue
             if version > dest:
                 if self.options.verbose > 1:
-                    print 'Version too new: %s (only want %s)' % (
-                        version, dest)
+                    print('Version too new: %s (only want %s)' % (
+                          version, dest))
             upgraders.append((version, os.path.join(current_dir, fn)))
         if not upgraders:
             if self.options.verbose > 1:
-                print 'No upgraders found in %s' % current_dir
+                print('No upgraders found in %s' % current_dir)
             return None, None
         upgraders.sort()
         return upgraders[-1]
@@ -1264,7 +1265,7 @@ def update_sys_path(paths, verbose):
         path = os.path.abspath(path)
         if path not in sys.path:
             if verbose > 1:
-                print 'Adding %s to path' % path
+                print('Adding %s to path' % path)
             sys.path.insert(0, path)
 
 if __name__ == '__main__':

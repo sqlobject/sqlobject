@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 from dbtest import *
 from sqlobject import sqlhub, SQLObject, StringCol
 import py.test
@@ -32,7 +34,7 @@ def makestack(abort=False, begin=False, fail=False, **kw):
     return app
 
 def runapp(**kw):
-    print '-'*8
+    print('-' * 8)
     app = makestack(**kw)
     env = {}
     def start_response(*args):

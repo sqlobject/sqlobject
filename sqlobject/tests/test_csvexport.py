@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 from sqlobject import *
 from dbtest import *
 import csv
@@ -10,10 +12,10 @@ def assert_export(result, *args, **kw):
     export_csv(*args, **kw)
     s = f.getvalue().replace('\r\n', '\n')
     if result.strip() != s.strip():
-        print '**Expected:'
-        print result
-        print '**Got:'
-        print s
+        print('**Expected:')
+        print(result)
+        print('**Got:')
+        print(s)
         assert result.strip() == s.strip()
 
 class SimpleCSV(SQLObject):

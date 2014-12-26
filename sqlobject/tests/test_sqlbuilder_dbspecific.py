@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 from sqlobject import *
 from sqlobject.sqlbuilder import *
 from sqlobject.tests.dbtest import *
@@ -19,8 +21,8 @@ def makeSelect():
     return Select(SBButton.q.id, clause=makeClause())
 
 def checkCount(q, c, msg=''):
-    print "STRING:", str(q)
-    print "POSTGR:", sqlrepr(q, 'postgres')
+    print("STRING:", str(q))
+    print("POSTGR:", sqlrepr(q, 'postgres'))
     assert sqlrepr(q, 'postgres').count("'t'") == c and sqlrepr(q, 'postgres') != str(q), msg
 
 def testSimple():
