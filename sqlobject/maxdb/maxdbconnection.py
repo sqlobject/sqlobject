@@ -246,7 +246,7 @@ class MaxdbConnection(DBAPI):
                 pkmap[col_name]=True
 
         if len(pkmap) == 0:
-            raise PrimaryKeyNotFounded, tableName
+            raise PrimaryKeyNotFounded(tableName)
 
         for (field, nullAllowed, default, data_type, data_len,
              data_scale) in colData:

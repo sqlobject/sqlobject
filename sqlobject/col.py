@@ -288,9 +288,9 @@ class SOCol(object):
 
     def _sqlType(self):
         if self.customSQLType is None:
-            raise ValueError, ("Col %s (%s) cannot be used for automatic "
-                               "schema creation (too abstract)" %
-                               (self.name, self.__class__))
+            raise ValueError("Col %s (%s) cannot be used for automatic "
+                             "schema creation (too abstract)" %
+                             (self.name, self.__class__))
         else:
             return self.customSQLType
 
@@ -476,7 +476,7 @@ class SOStringLikeCol(SOCol):
 
     def _check_case_sensitive(self, db):
         if self.char_binary:
-            raise ValueError, "%s does not support binary character columns" % db
+            raise ValueError("%s does not support binary character columns" % db)
 
     def _mysqlType(self):
         type = self._sqlType()
