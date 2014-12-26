@@ -81,8 +81,6 @@ TODO
 
 * Deprecate, then remove connectionForOldURI.
 
-* Python 3.0+.
-
 * Switch from setuptools to distribute.
 
 * oursql MySQL bindings: https://launchpad.net/oursql
