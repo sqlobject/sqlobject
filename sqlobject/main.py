@@ -1097,7 +1097,7 @@ class SQLObject(object):
                         raise TypeError("%s.set() got an unexpected keyword argument %s" % (self.__class__.__name__, name))
                 try:
                     setattr(self, name, value)
-                except AttributeError, e:
+                except AttributeError as e:
                     raise AttributeError('%s (with attribute %r)' % (e, name))
 
             self.sqlmeta.dirty = True
@@ -1135,7 +1135,7 @@ class SQLObject(object):
                         raise TypeError("%s.set() got an unexpected keyword argument %s" % (self.__class__.__name__, name))
                 try:
                     setattr(self, name, value)
-                except AttributeError, e:
+                except AttributeError as e:
                     raise AttributeError('%s (with attribute %r)' % (e, name))
 
             if toUpdate:
