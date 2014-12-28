@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+
 from sqlobject import declarative
 from sqlobject import boundattributes
 import py.test

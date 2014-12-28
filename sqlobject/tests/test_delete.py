@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+
 from sqlobject import *
 from sqlobject.tests.dbtest import *
 from test_basic import TestSO1, setupGetters

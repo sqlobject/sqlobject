@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+
 """
 Exports a SQLObject class (possibly annotated) to a CSV file.
 """

@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+
 """
 This module is used by py.test to configure testing for this
 application.

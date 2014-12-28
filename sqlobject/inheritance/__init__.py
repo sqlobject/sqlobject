@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+
 from sqlobject import dbconnection
 from sqlobject import classregistry
 from sqlobject import events

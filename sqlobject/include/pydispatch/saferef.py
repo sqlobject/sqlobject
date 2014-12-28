@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+
 """Refactored "safe reference" from dispatcher.py"""
 import weakref, traceback, sys
 

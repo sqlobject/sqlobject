@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+
 from sqlobject import *
 from sqlobject.sqlbuilder import Select, func
 from sqlobject.tests.dbtest import *

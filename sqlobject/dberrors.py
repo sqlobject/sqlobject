@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+
 """dberrors: database exception classes for SQLObject.
 
    These classes are dictated by the DB API v2.0:

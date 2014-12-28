@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+
 """Multiple-producer-multiple-consumer signal-dispatching
 
 dispatcher is the core of the PyDispatcher system,

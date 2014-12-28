@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+
 from sqlobject import *
 from dbtest import *
 from sqlobject.cache import CacheSet

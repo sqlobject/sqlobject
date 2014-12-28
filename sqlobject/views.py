@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+
 from sqlbuilder import *
 from main import SQLObject, sqlmeta
 import types, threading

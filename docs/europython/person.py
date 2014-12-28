@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+
 from SQLObject import *
 conn = PostgresConnection(db = 'merchant_test', user = 'merchant_test', password = 'mtest')
 

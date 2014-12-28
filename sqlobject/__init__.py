@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+
 """SQLObject"""
 from __version__ import version, version_info
 

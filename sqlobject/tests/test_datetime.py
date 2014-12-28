@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+
 import py.test
 from sqlobject import *
 from sqlobject.tests.dbtest import *

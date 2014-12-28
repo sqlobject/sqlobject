@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+
 """
 Import from a CSV file or directory of files.
 

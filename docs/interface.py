@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+
 """
 This is a not-very-formal outline of the interface that SQLObject
 provides.  While its in the form of a formal interface, it doesn't

@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+
 """
 Test the default styles, to guarantee consistency.
 """

@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+
 """Multi-consumer multi-producer dispatching mechanism
 """
 __version__ = "2.0.3"

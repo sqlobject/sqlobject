@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+
 """
 Bound attributes are attributes that are bound to a specific class and
 a specific name.  In SQLObject a typical example is a column object,

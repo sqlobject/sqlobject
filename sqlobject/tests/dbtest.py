@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+
 """
 The framework for making database tests.
 """
