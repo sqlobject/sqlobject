@@ -3,7 +3,7 @@ from __future__ import absolute_import
 from __future__ import print_function
 
 from sqlobject import *
-from dbtest import *
+from sqlobject.tests.dbtest import *
 import csv
 from StringIO import StringIO
 from sqlobject.util.csvexport import export_csv, export_csv_zip

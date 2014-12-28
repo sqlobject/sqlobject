@@ -1,9 +1,8 @@
 from __future__ import absolute_import
 
-import dbconnection
-import joins
-import main
-import sqlbuilder
+from . import dbconnection
+from . import joins
+from . import sqlbuilder
 
 __all__ = ['SelectResults']
 
@@ -277,6 +276,10 @@ class SelectResults(object):
         ``SQLObjectIntegrityError`` will be raised.
         """
         results = list(self)
+
+        # Import main here, to avoid circular import.
+        from . import main
+
         if not results:
             if default is sqlbuilder.NoDefault:
                 raise main.SQLObjectNotFound(

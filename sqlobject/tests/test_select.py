@@ -3,8 +3,8 @@ from __future__ import absolute_import
 from sqlobject import *
 from sqlobject.sqlbuilder import func
 from sqlobject.main import SQLObjectIntegrityError
-from dbtest import *
-from dbtest import setSQLiteConnectionFactory
+from sqlobject.tests.dbtest import *
+from sqlobject.tests.dbtest import setSQLiteConnectionFactory
 
 class IterTest(SQLObject):
     name = StringCol(dbName='name_col', length=200)

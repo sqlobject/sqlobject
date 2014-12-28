@@ -5,9 +5,10 @@ from sqlobject import classregistry
 from sqlobject import events
 from sqlobject import sqlbuilder
 from sqlobject.col import StringCol, ForeignKey
-from sqlobject.main import sqlmeta, SQLObject, SelectResults, \
+from sqlobject.main import sqlmeta, SQLObject, \
    makeProperties, unmakeProperties, getterName, setterName
-import iteration
+from sqlobject.sresults import SelectResults
+from . import iteration
 
 def tablesUsedSet(obj, db):
     if hasattr(obj, "tablesUsedSet"):

@@ -1,11 +1,11 @@
 from __future__ import absolute_import
 
 from itertools import count
-import classregistry
-import events
-import styles
-import sqlbuilder
-from styles import capword
+from . import classregistry
+from . import events
+from . import styles
+from . import sqlbuilder
+from .styles import capword
 
 __all__ = ['MultipleJoin', 'SQLMultipleJoin', 'RelatedJoin', 'SQLRelatedJoin',
            'SingleJoin', 'ManyToMany', 'OneToMany']
@@ -334,7 +334,7 @@ class SingleJoin(Join):
 
 
 
-import boundattributes
+from . import boundattributes
 
 class SOManyToMany(object):
 

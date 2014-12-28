@@ -12,13 +12,12 @@ import urllib
 import warnings
 import weakref
 
-from cache import CacheSet
-import classregistry
-import col
-from converters import sqlrepr
-import main
-import sqlbuilder
-from util.threadinglocal import local as threading_local
+from .cache import CacheSet
+from . import classregistry
+from . import col
+from .converters import sqlrepr
+from . import sqlbuilder
+from .util.threadinglocal import local as threading_local
 
 warnings.filterwarnings("ignore", "DB-API extension cursor.lastrowid used")
 
@@ -654,6 +653,9 @@ class DBAPI(DBConnection):
                 data.append((soColumn.dbName, val))
             elif soColumn.foreignName in kw:
                 obj = kw.pop(soColumn.foreignName)
+                # Import main here, to avoid circular import.
+                from . import main
+
                 if isinstance(obj, main.SQLObject):
                     data.append((soColumn.dbName, obj.id))
                 else:
@@ -1034,11 +1036,11 @@ connectionForURI = TheURIOpener.connectionForURI
 dbConnectionForScheme = TheURIOpener.dbConnectionForScheme
 
 # Register DB URI schemas
-import firebird
-import maxdb
-import mssql
-import mysql
-import postgres
-import rdbhost
-import sqlite
-import sybase
+from . import firebird
+from . import maxdb
+from . import mssql
+from . import mysql
+from . import postgres
+from . import rdbhost
+from . import sqlite
+from . import sybase

@@ -1,7 +1,7 @@
 from __future__ import absolute_import
 
 from sqlobject import *
-from dbtest import *
+from sqlobject.tests.dbtest import *
 
 class ComplexGroup(SQLObject):
     name = StringCol()

@@ -14,7 +14,7 @@ created on demand.
 
 Use like::
 
-    >>> import classregistry
+    >>> from . import classregistry
     >>> registry = classregistry.registry('MyModules')
     >>> def afterMyClassExists(cls):
     ...    print('Class finally exists: %s' % cls)

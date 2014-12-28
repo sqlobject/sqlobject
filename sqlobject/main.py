@@ -30,19 +30,18 @@ USA.
 
 import threading
 import weakref
-import sqlbuilder
-import dbconnection
-import col
-import styles
+from . import sqlbuilder
+from . import dbconnection
+from . import col
+from . import styles
 import types
 import warnings
-import joins
-import index
-import classregistry
-import declarative
-import events
-from sresults import SelectResults
-from util.threadinglocal import local
+from . import joins
+from . import index
+from . import classregistry
+from . import declarative
+from . import events
+from .util.threadinglocal import local
 
 import sys
 if sys.version_info[:3] < (2, 6, 0):
@@ -720,10 +719,12 @@ class SQLObject(object):
     _parent = None # A reference to the parent instance
     childName = None # Children name (to be able to get a subclass)
 
-    # The law of Demeter: the class should not call another classes by name
-    SelectResultsClass = SelectResults
-
     def __classinit__(cls, new_attrs):
+        # Import this here, to avoid circular import.
+        from .sresults import SelectResults
+
+        # The law of Demeter: the class should not call another classes by name
+        cls.SelectResultsClass = SelectResults
 
         # This is true if we're initializing the SQLObject class,
         # instead of a subclass:
