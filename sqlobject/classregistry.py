@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+
 """
 classresolver.py
   2 February 2004, Ian Bicking <ianb@colorstudy.com>
@@ -12,7 +14,7 @@ created on demand.
 
 Use like::
 
-    >>> import classregistry
+    >>> from . import classregistry
     >>> registry = classregistry.registry('MyModules')
     >>> def afterMyClassExists(cls):
     ...    print('Class finally exists: %s' % cls)

@@ -1,8 +1,10 @@
+from __future__ import absolute_import
+
 import threading
 from sqlobject import *
 from sqlobject.tests.dbtest import *
 from sqlobject.tests.dbtest import setSQLiteConnectionFactory
-from test_basic import TestSO1
+from sqlobject.tests.test_basic import TestSO1
 
 class SQLiteFactoryTest(SQLObject):
     name = StringCol()

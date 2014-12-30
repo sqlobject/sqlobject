@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+
 """
 These Tests are not enabled yet, but here are some working examples of using createSQL so far.
 """

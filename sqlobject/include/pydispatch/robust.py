@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+
 """Module implementing error-catching version of send (sendRobust)"""
 from pydispatch.dispatcher import Any, Anonymous, liveReceivers, getAllReceivers
 from pydispatch.robustapply import robustApply

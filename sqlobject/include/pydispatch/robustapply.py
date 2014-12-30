@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+
 """Robust apply mechanism
 
 Provides a function "call", which can sort out

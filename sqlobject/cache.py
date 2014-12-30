@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+
 """
 This implements the instance caching in SQLObject.  Caching is
 relatively aggressive.  All objects are retained so long as they are

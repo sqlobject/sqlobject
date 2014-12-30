@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+
 from array import array
 import datetime
 from decimal import Decimal

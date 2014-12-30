@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+from __future__ import absolute_import
+
 """Bootstrap setuptools installation
 
 To use setuptools in your package's setup.py, include this

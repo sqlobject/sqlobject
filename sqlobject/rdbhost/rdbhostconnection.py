@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+
 """
 This module written by David Keeney, 2009, 2010
 

@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+
 from sqlobject.declarative import *
 
 class A1(Declarative):

@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+
 '''Test that selectResults handle NULL values
 from, for example, outer joins.'''
 from sqlobject import *

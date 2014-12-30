@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+
 """
 Declarative objects.
 
@@ -33,7 +35,7 @@ or an instance method depending on where it is called.
 """
 
 import copy
-import events
+from . import events
 
 import itertools
 counter = itertools.count()

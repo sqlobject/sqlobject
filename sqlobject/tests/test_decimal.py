@@ -1,5 +1,7 @@
 # -*- coding: koi8-r -*-
 
+from __future__ import absolute_import
+
 from decimal import Decimal
 from sqlobject import *
 from sqlobject.tests.dbtest import *

@@ -1,6 +1,8 @@
+from __future__ import absolute_import
+
 from itertools import count
 from types import *
-from converters import sqlrepr
+from .converters import sqlrepr
 
 creationOrder = count()
 

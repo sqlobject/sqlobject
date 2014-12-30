@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+
 """Multiple-producer-multiple-consumer signal-dispatching
 
 dispatcher is the core of the PyDispatcher system,
@@ -27,7 +29,7 @@ Internal attributes:
 """
 from __future__ import generators
 import weakref
-import saferef, robustapply, errors
+from . import saferef, robustapply, errors
 
 __author__ = "Patrick K. O'Brien <pobrien@orbtech.com>"
 __cvsid__ = "$Id: dispatcher.py,v 1.1 2010/03/30 15:45:55 mcfletch Exp $"

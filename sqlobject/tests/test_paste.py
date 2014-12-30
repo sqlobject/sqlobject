@@ -1,6 +1,8 @@
+from __future__ import absolute_import
+
 from __future__ import print_function
 
-from dbtest import *
+from sqlobject.tests.dbtest import *
 from sqlobject import sqlhub, SQLObject, StringCol
 import py.test
 try:

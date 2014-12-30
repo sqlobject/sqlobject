@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+
 from sqlobject.dbconnection import DBAPI
 import re
 from sqlobject import col

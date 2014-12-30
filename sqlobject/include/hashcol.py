@@ -1,5 +1,7 @@
 __all__ = ['HashCol']
 
+from __future__ import absolute_import
+
 import sqlobject.col
 
 class DbHash:

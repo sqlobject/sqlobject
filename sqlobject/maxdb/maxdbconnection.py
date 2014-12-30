@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+
 """
 Contributed by Edigram SAS, Paris France Tel:01 44 77 94 00
 Ahmed MOHAMED ALI <ahmedmoali@yahoo.com> 27 April 2004

@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+
 from paste.deploy.converters import asbool
 from paste.wsgilib import catch_errors
 from paste.util import import_string

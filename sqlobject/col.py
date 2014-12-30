@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+
 """
 Col -- SQLObject columns
 
@@ -29,12 +31,12 @@ except ImportError:
     import pickle
 import weakref
 from formencode import compound, validators
-from classregistry import findClass
+from .classregistry import findClass
 # Sadly the name "constraints" conflicts with many of the function
 # arguments in this module, so we rename it:
-import constraints as constrs
-import sqlbuilder
-from styles import capword
+from . import constraints as constrs
+from . import sqlbuilder
+from .styles import capword
 
 NoDefault = sqlbuilder.NoDefault
 

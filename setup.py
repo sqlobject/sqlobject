@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+from __future__ import absolute_import
+
 from imp import load_source
 from os.path import abspath, dirname, isfile, join
 

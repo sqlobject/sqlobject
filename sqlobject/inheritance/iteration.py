@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+
 from sqlobject import sqlbuilder
 from sqlobject.classregistry import findClass
 from sqlobject.dbconnection import Iteration

@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+
 """
 Bound attributes are attributes that are bound to a specific class and
 a specific name.  In SQLObject a typical example is a column object,
@@ -26,8 +28,8 @@ attributes.
 __all__ = ['BoundAttribute', 'BoundFactory', 'bind_attributes',
            'bind_attributes_local']
 
-import declarative
-import events
+from . import declarative
+from . import events
 
 class BoundAttribute(declarative.Declarative):
 
