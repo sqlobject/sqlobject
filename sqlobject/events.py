@@ -1,7 +1,7 @@
 from __future__ import print_function
 import sys
 import types
-from sqlobject.include.pydispatch import dispatcher
+from pydispatch import dispatcher
 from weakref import ref
 
 

@@ -16,7 +16,7 @@ versionpath = join(abspath(dirname(__file__)), "sqlobject", "__version__.py")
 load_source("sqlobject_version", versionpath)
 from sqlobject_version import version
 
-subpackages = ['firebird', 'include', 'include.pydispatch',
+subpackages = ['firebird', 'include',
                'inheritance', 'inheritance.tests',
                'manager', 'maxdb', 'mysql', 'mssql', 'postgres', 'rdbhost',
                'sqlite', 'sybase', 'tests', 'util',
@@ -28,7 +28,7 @@ if is_setuptools:
     [paste.filter_app_factory]
     main = sqlobject.wsgi_middleware:make_middleware
     """
-    kw['install_requires'] = ["FormEncode>=1.1.1"]
+    kw['install_requires'] = ["FormEncode>=1.1.1", "PyDispatcher>=2.0.4"]
     kw['extras_require'] = {
         'mysql': ['MySQLdb'],
         'postgresql': ['psycopg'], # or pgdb from PyGreSQL
@@ -102,7 +102,6 @@ and `GitHub <https://github.com/sqlobject>`_.
                         "../docs/html/sqlobject/util/*.html",
                         "../docs/html/sqlobject/versioning/*.html",
                     ],
-                    "sqlobject.include": ["pydispatch/*.txt"],
                     "sqlobject.maxdb": ["readme.txt"],
                    },
       **kw

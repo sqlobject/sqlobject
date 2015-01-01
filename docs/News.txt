@@ -10,6 +10,8 @@ News
 SQLObject 3.0.0 (master)
 ========================
 
+* PyDispatcher (>=2.0.4) was made an external dependency.
+
 SQLObject 2.1.0
 ===============
 
