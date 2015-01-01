@@ -16,7 +16,7 @@ versionpath = join(abspath(dirname(__file__)), "sqlobject", "__version__.py")
 load_source("sqlobject_version", versionpath)
 from sqlobject_version import version
 
-subpackages = ['firebird', 'include', 'include.pydispatch',
+subpackages = ['firebird', 'include',
                'inheritance', 'inheritance.tests',
                'manager', 'maxdb', 'mysql', 'mssql', 'postgres', 'rdbhost',
                'sqlite', 'sybase', 'tests', 'util',
@@ -102,7 +102,6 @@ and `GitHub <https://github.com/sqlobject>`_.
                         "../docs/html/sqlobject/util/*.html",
                         "../docs/html/sqlobject/versioning/*.html",
                     ],
-                    "sqlobject.include": ["pydispatch/*.txt"],
                     "sqlobject.maxdb": ["readme.txt"],
                    },
       **kw

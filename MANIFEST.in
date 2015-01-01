@@ -2,7 +2,6 @@ include .gitignore docs/.gitignore
 include MANIFEST.in ez_setup.py
 include .travis.yml tox.ini
 include *.txt docs/LICENSE docs/*.txt docs/rebuild
-include sqlobject/include/pydispatch/README.txt
 include sqlobject/maxdb/readme.txt
 recursive-include debian *
 recursive-include docs *.css *.html *.js *.gif *.py
