@@ -28,7 +28,7 @@ if is_setuptools:
     [paste.filter_app_factory]
     main = sqlobject.wsgi_middleware:make_middleware
     """
-    kw['install_requires'] = ["FormEncode>=1.1.1"]
+    kw['install_requires'] = ["FormEncode>=1.1.1", "PyDispatcher>=2.0.4"]
     kw['extras_require'] = {
         'mysql': ['MySQLdb'],
         'postgresql': ['psycopg'], # or pgdb from PyGreSQL
