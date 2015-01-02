@@ -485,7 +485,7 @@ class InheritableSQLObject(SQLObject):
                 try:
                     clause.append(getattr(currentClass.q, name) == value)
                     break
-                except AttributeError, err:
+                except AttributeError as err:
                     pass
                 currentClass = currentClass.sqlmeta.parentClass
             else:

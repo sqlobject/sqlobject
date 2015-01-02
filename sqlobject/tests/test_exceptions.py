@@ -25,7 +25,7 @@ def test_exceptions():
     TestExceptionWithNonexistingTable.setConnection(connection)
     try:
         list(TestExceptionWithNonexistingTable.select())
-    except ProgrammingError, e:
+    except ProgrammingError as e:
         assert e.args[0].code == '42P01'
     else:
         assert False, "DID NOT RAISE"

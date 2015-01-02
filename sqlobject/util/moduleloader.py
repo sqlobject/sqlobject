@@ -15,7 +15,7 @@ def load_module_from_name(filename, module_name):
     if not os.path.exists(init_filename):
         try:
             f = open(init_filename, 'w')
-        except (OSError, IOError), e:
+        except (OSError, IOError) as e:
             raise IOError(
                 'Cannot write __init__.py file into directory %s (%s)\n'
                 % (os.path.dirname(filename), e))
