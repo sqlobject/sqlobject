@@ -43,8 +43,9 @@ from sresults import SelectResults
 from util.threadinglocal import local
 
 import sys
-if sys.version_info[:3] < (2, 6, 0):
-    raise ImportError("SQLObject requires Python 2.6 or 2.7")
+if ((sys.version_info[0] == 2) and (sys.version_info[:3] < (2, 6, 0))) \
+or ((sys.version_info[0] == 3) and (sys.version_info[:3] < (3, 4, 0))):
+    raise ImportError("SQLObject requires Python 2.6, 2.7 or 3.4+")
 
 """
 This thread-local storage is needed for RowCreatedSignals. It gathers
