@@ -46,13 +46,13 @@ def getColumns(columns, cls):
         if column.endswith("ID") and isinstance(defi, ForeignKey):
             column = column[:-2]
 
-        #remove incompatible constraints
+        # remove incompatible constraints
         kwds = dict(defi._kw)
         for kw in ["alternateID", "unique"]:
             if kw in kwds: del kwds[kw]
         columns[column] = defi.__class__(**kwds)
 
-    #ascend heirarchy
+    # ascend heirarchy
     if cls.sqlmeta.parentClass:
         getColumns(columns, cls.sqlmeta.parentClass)
 
@@ -100,7 +100,7 @@ class Versioning(object):
 
     def rowUpdate(self, instance, kwargs):
         if instance.childName and instance.childName != self.soClass.__name__:
-            return #if you want your child class versioned, version it.
+            return # if you want your child class versioned, version it
 
         values = instance.sqlmeta.asDict()
         del values['id']

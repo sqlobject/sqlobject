@@ -60,7 +60,7 @@ def setup():
                 version.destroySelf()
 
 def test_versioning():
-    #the simple case
+    # the simple case
     setup()
     mc = MyClass(name='fleem')
     mc.set(name='morx')
@@ -72,7 +72,7 @@ def test_versioning():
 def test_inheritable_versioning():
     setup()
 
-    #base versioned, child unversioned
+    # base versioned, child unversioned
     base = Base(name='fleem')
     base.set(name='morx')
     assert len(list(base.versions)) == 1
@@ -84,7 +84,7 @@ def test_inheritable_versioning():
     assert len(list(child.versions)) == 0
 
 
-    #child versioned, base unversioned
+    # child versioned, base unversioned
     government = Government(name='canada')
     assert not hasattr(government, 'versions')
 
@@ -95,13 +95,13 @@ def test_inheritable_versioning():
     assert monarchy.versions[0].name == "UK"
     assert len(list(Monarchy.select())) == 1
 
-    #both parent and child versioned
+    # both parent and child versioned
     num_base_versions = len(list(base.versions))
     vchild = VChild(name='kid', weapon='slingshot')
     vchild.set(name='toon', weapon='dynamite')
     assert len(list(base.versions)) == num_base_versions
     assert len(list(vchild.versions)) == 1
-    vchild.name = "newname" #test setting using setattr directly rather than .set
+    vchild.name = "newname" # test setting using setattr directly rather than .set
     assert len(list(vchild.versions)) == 2
 
 def test_restore():
