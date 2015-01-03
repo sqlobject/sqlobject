@@ -296,7 +296,7 @@ class FirebirdConnection(DBAPI):
 
         colData = self.queryAll(fieldQuery % tableName.upper())
         results = []
-        for field, fieldType, fieldSubtype, fieldLength, fieldPrecision, fieldScale, fieldCharset, collationName, defaultSource, fieldNotNullConstraint, fieldDescription  in colData:
+        for field, fieldType, fieldSubtype, fieldLength, fieldPrecision, fieldScale, fieldCharset, collationName, defaultSource, fieldNotNullConstraint, fieldDescription in colData:
             field = field.strip().lower()
             fieldType = fieldType.strip()
             if fieldCharset:
