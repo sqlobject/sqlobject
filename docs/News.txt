@@ -21,6 +21,9 @@ Minor features
 
 * Tables in SELECT...FROM clause are sorted alphabetically.
 
+* SQLiteConnection has got a new method listDatabases() that list
+  databases in the connection and return a list of names.
+
 SQLObject 2.0.0
 ===============
 
