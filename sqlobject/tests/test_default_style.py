@@ -16,8 +16,8 @@ styles = {Style:columns,
 #hash of styles versus the database names resulting from a foreign key named 'FKey'
 fkey = ForeignKey("DefaultStyleTest", name="FKey")
 fkeys = {Style:"FKeyID",
-          MixedCaseUnderscoreStyle:"f_key_id",
-          MixedCaseStyle:"FKeyID",
+         MixedCaseUnderscoreStyle:"f_key_id",
+         MixedCaseStyle:"FKeyID",
         }
 
 

@@ -99,11 +99,12 @@ class ViewSQLObject(SQLObject):
                     agg_id = '%s_id'%agg_alias
                     if not last.q.alias.endswith('base'):
                         last = None
-                    new_alias = Alias(Select([ColumnAS(cls.sqlmeta.idName, agg_id)]+agg,
+                    new_alias = Alias(Select(
+                                             [ColumnAS(cls.sqlmeta.idName, agg_id)]+agg,
                                              groupBy=cls.sqlmeta.idName,
                                              join=metajoin,
                                              clause=restriction),
-                                       agg_alias)
+                                      agg_alias)
                     agg_join = LEFTJOINOn(last,
                                        new_alias,
                                        "%s.%s = %s.%s" % (last_alias, last_id, agg_alias, agg_id))

@@ -35,7 +35,7 @@ def testJoin():
 
 
     assert list(SBAddress.select(AND(SBPerson.q.id==SBAddress.q.personID, SBPerson.q.name=='Julia')).orderBy(SBAddress.q.city)) == \
-           list(SBPerson.selectBy(name='Julia').throughTo.addresses.orderBy(SBAddress.q.city))
+        list(SBPerson.selectBy(name='Julia').throughTo.addresses.orderBy(SBAddress.q.city))
 
 def testRelatedJoin():
     assert list(SBPerson.selectBy(name='Julia').throughTo.sharedAddresses) == \

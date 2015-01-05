@@ -444,7 +444,7 @@ class SQLObjectTableWithJoins(SQLObjectTable):
     def _getattrFromJoin(self, join, attr):
         if hasattr(join, 'otherColumn'):
             return AND(join.otherClass.q.id == Field(join.intermediateTable, join.otherColumn),
-                            Field(join.intermediateTable, join.joinColumn) == self.soClass.q.id)
+                       Field(join.intermediateTable, join.joinColumn) == self.soClass.q.id)
         else:
             return getattr(join.otherClass.q, join.joinColumn)==self.soClass.q.id
 

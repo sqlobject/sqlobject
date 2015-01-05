@@ -257,7 +257,7 @@ class MySQLConnection(DBAPI):
                 colType = col.UnicodeCol
             if t.endswith('binary'):
                 return colType, {'length': int(t[8:-8]),
-                                       'char_binary': True}
+                                 'char_binary': True}
             else:
                 return colType, {'length': int(t[8:-1])}
         elif t.startswith('char'):

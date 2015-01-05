@@ -191,7 +191,7 @@ class PostgresConnection(DBAPI):
         table = soInstance.sqlmeta.table
         idName = soInstance.sqlmeta.idName
         sequenceName = soInstance.sqlmeta.idSequence or \
-                               '%s_%s_seq' % (table, idName)
+            '%s_%s_seq' % (table, idName)
         c = conn.cursor()
         if id is not None:
             names = [idName] + names

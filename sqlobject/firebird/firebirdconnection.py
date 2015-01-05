@@ -99,12 +99,10 @@ class FirebirdConnection(DBAPI):
         for each table this method to work."""
         table = soInstance.sqlmeta.table
         idName = soInstance.sqlmeta.idName
-        sequenceName = soInstance.sqlmeta.idSequence or \
-                               'GEN_%s' % table
+        sequenceName = soInstance.sqlmeta.idSequence or 'GEN_%s' % table
         c = conn.cursor()
         if id is None:
-            c.execute('SELECT gen_id(%s,1) FROM rdb$database'
-                                % sequenceName)
+            c.execute('SELECT gen_id(%s,1) FROM rdb$database' % sequenceName)
             id = c.fetchone()[0]
         names = [idName] + names
         values = [id] + values
@@ -389,7 +387,7 @@ class FirebirdConnection(DBAPI):
 
     def createEmptyDatabase(self):
         self.module.create_database("CREATE DATABASE '%s' user '%s' password '%s'" % \
-                                            (self.db, self.user, self.password))
+                                    (self.db, self.user, self.password))
 
     def dropDatabase(self):
         self.module.drop_database()

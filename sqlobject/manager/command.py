@@ -253,10 +253,10 @@ class Command(object):
             # Failsafe: return the classes as-is if a circular reference
             # prevented the dependency levels to be calculated.
             print("Warning: a circular reference was detected in the "
-                   "model. Unable to sort the classes by dependency: they "
-                   "will be treated in alphabetic order. This may or may "
-                   "not work depending on your database backend. "
-                   "The error was:\n%s" % msg)
+                  "model. Unable to sort the classes by dependency: they "
+                  "will be treated in alphabetic order. This may or may "
+                  "not work depending on your database backend. "
+                  "The error was:\n%s" % msg)
             return classes
         return ordered_classes
 

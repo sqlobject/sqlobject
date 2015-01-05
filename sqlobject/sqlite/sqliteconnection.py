@@ -304,9 +304,9 @@ class SQLiteConnection(DBAPI):
     def recreateTableWithoutColumn(self, sqlmeta, column):
         new_name = sqlmeta.table + '_ORIGINAL'
         self.query('ALTER TABLE %s RENAME TO %s' % (sqlmeta.table, new_name))
-        cols = [self._createIDColumn(sqlmeta)] \
-                     + [self.createColumn(None, col)
-                        for col in sqlmeta.columnList if col.name != column.name]
+        cols = [self._createIDColumn(sqlmeta)] + \
+            [self.createColumn(None, col)
+                for col in sqlmeta.columnList if col.name != column.name]
         cols = ",\n".join(["    %s" % c for c in cols])
         self.query('CREATE TABLE %s (\n%s\n)' % (sqlmeta.table, cols))
         all_columns = ', '.join([sqlmeta.idName] + [col.dbName for col in sqlmeta.columnList])

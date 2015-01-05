@@ -1169,8 +1169,8 @@ class SQLObject(object):
         column = self.sqlmeta.columns[name]
         results = self._connection._SO_selectOne(self, [column.dbName])
         #self._SO_writeLock.release()
-        assert results != None, "%s with id %s is not in the database" \
-               % (self.__class__.__name__, self.id)
+        assert results != None, "%s with id %s is not in the database" % (
+            self.__class__.__name__, self.id)
         value = results[0]
         if column.to_python:
             value = column.to_python(value, self._SO_validatorState)

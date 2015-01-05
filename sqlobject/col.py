@@ -148,8 +148,8 @@ class SOCol(object):
         if notNull is not NoDefault:
             self.notNone = notNull
             assert notNone is NoDefault or \
-                   (not notNone) == (not notNull), \
-                   "The notNull and notNone arguments are aliases, and must not conflict.  You gave notNull=%r, notNone=%r" % (notNull, notNone)
+                (not notNone) == (not notNull), \
+                "The notNull and notNone arguments are aliases, and must not conflict.  You gave notNull=%r, notNone=%r" % (notNull, notNone)
         elif notNone is not NoDefault:
             self.notNone = notNone
         if self.notNone:
@@ -451,7 +451,7 @@ class SOStringLikeCol(SOCol):
         self.char_binary = kw.pop('char_binary', None) # A hack for MySQL
         if not self.length:
             assert self.varchar == 'auto' or not self.varchar, \
-                   "Without a length strings are treated as TEXT, not varchar"
+                "Without a length strings are treated as TEXT, not varchar"
             self.varchar = False
         elif self.varchar == 'auto':
             self.varchar = True
@@ -983,7 +983,7 @@ class SOEnumCol(SOCol):
     def __init__(self, **kw):
         self.enumValues = kw.pop('enumValues', None)
         assert self.enumValues is not None, \
-               'You must provide an enumValues keyword argument'
+            'You must provide an enumValues keyword argument'
         super(SOEnumCol, self).__init__(**kw)
 
     def autoConstraints(self):
@@ -1063,7 +1063,7 @@ class SOSetCol(SOCol):
     def __init__(self, **kw):
         self.setValues = kw.pop('setValues', None)
         assert self.setValues is not None, \
-                'You must provide a setValues keyword argument'
+            'You must provide a setValues keyword argument'
         super(SOSetCol, self).__init__(**kw)
 
     def autoConstraints(self):
@@ -1441,10 +1441,10 @@ class SODecimalCol(SOCol):
     def __init__(self, **kw):
         self.size = kw.pop('size', NoDefault)
         assert self.size is not NoDefault, \
-               "You must give a size argument"
+            "You must give a size argument"
         self.precision = kw.pop('precision', NoDefault)
         assert self.precision is not NoDefault, \
-               "You must give a precision argument"
+            "You must give a precision argument"
         super(SODecimalCol, self).__init__(**kw)
 
     def _sqlType(self):
@@ -1496,11 +1496,11 @@ class SODecimalStringCol(SOStringCol):
             "You must give a size argument as a positive integer"
         self.precision = kw.pop('precision', NoDefault)
         assert (self.precision is not NoDefault) and (self.precision >= 0), \
-               "You must give a precision argument as a positive integer"
+            "You must give a precision argument as a positive integer"
         kw['length'] = int(self.size) + int(self.precision)
         self.quantize = kw.pop('quantize', False)
         assert isinstance(self.quantize, bool), \
-                "quantize argument must be Boolean True/False"
+            "quantize argument must be Boolean True/False"
         super(SODecimalStringCol, self).__init__(**kw)
 
     def createValidators(self):
