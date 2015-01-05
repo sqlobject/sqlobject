@@ -16,8 +16,6 @@ TODO
 
 * SQLObject.fastInsert().
 
-* List databases in the connection.
-
 * List tables/indices in the DB. The query in MySQL is ``SHOW TABLES``;
   in SQLite it is
 

@@ -426,6 +426,9 @@ class PostgresConnection(DBAPI):
         cur.close()
         conn.close()
 
+    def listDatabases(self):
+        return [v[0] for v in self.queryAll("SELECT datname FROM pg_database")]
+
     def createEmptyDatabase(self):
         self._createOrDropDatabase()
 

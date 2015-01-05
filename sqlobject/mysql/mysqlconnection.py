@@ -297,6 +297,9 @@ class MySQLConnection(DBAPI):
         else:
             return col.Col, {}
 
+    def listDatabases(self):
+        return [v[0] for v in self.queryAll("SHOW DATABASES")]
+
     def _createOrDropDatabase(self, op="CREATE"):
         self.query('%s DATABASE %s' % (op, self.db))
 
