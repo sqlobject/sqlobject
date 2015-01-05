@@ -117,3 +117,9 @@ def test_memorydb():
     connection.close() # create a new connection to an in-memory database
     TestSO1.setConnection(connection)
     TestSO1.createTable()
+
+def test_list_databases():
+    connection = getConnection()
+    if connection.dbName != "sqlite":
+        return
+    assert connection.listDatabases() == ['main']

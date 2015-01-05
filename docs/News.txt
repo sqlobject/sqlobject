@@ -26,6 +26,10 @@ Minor features
 
 * Tables in SELECT...FROM clause are sorted alphabetically.
 
+* MySQLConnection, PostgresConnection and SQLiteConnection have got
+  a new method listDatabases() that lists databases in the connection
+  and returns a list of names.
+
 SQLObject 2.0.0
 ===============
 
