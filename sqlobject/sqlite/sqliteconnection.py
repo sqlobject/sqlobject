@@ -398,10 +398,8 @@ class SQLiteConnection(DBAPI):
             return col.Col, {}
 
     def listDatabases(self):
-        results = []
-        for index, name, filename in self.queryAll("PRAGMA database_list"):
-            results.append(name)
-        return results
+        # The pragma returns a list of (index, name, filename)
+        return [v[1] for v in self.queryAll("PRAGMA database_list")]
 
     def createEmptyDatabase(self):
         if self._memory:
