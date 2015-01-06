@@ -297,6 +297,9 @@ class MySQLConnection(DBAPI):
         else:
             return col.Col, {}
 
+    def listTables(self):
+        return [v[0] for v in self.queryAll("SHOW TABLES")]
+
     def listDatabases(self):
         return [v[0] for v in self.queryAll("SHOW DATABASES")]
 
