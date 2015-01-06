@@ -123,3 +123,10 @@ def test_list_databases():
     if connection.dbName != "sqlite":
         return
     assert connection.listDatabases() == ['main']
+
+def test_list_tables():
+    connection = getConnection()
+    if connection.dbName != "sqlite":
+        return
+    setupClass(TestSO1)
+    assert TestSO1.sqlmeta.table in connection.listTables()

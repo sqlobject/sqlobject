@@ -397,6 +397,10 @@ class SQLiteConnection(DBAPI):
         else:
             return col.Col, {}
 
+    def listTables(self):
+        return [v[0] for v in self.queryAll(
+            "SELECT name FROM sqlite_master WHERE type='table' ORDER BY name")]
+
     def listDatabases(self):
         # The pragma returns a list of (index, name, filename)
         return [v[1] for v in self.queryAll("PRAGMA database_list")]
