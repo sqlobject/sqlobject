@@ -426,6 +426,14 @@ class PostgresConnection(DBAPI):
         cur.close()
         conn.close()
 
+    def listTables(self):
+        return [v[0] for v in self.queryAll(
+            """SELECT c.relname FROM pg_catalog.pg_class c
+            LEFT JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace
+            WHERE c.relkind IN ('r','') AND
+            n.nspname NOT IN ('pg_catalog', 'pg_toast') AND
+            pg_catalog.pg_table_is_visible(c.oid)""")]
+
     def listDatabases(self):
         return [v[0] for v in self.queryAll("SELECT datname FROM pg_database")]
 
