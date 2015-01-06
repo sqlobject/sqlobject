@@ -1,6 +1,5 @@
 from sqlbuilder import *
-from main import SQLObject, sqlmeta
-import types, threading
+from main import SQLObject
 
 ####
 

@@ -3,7 +3,7 @@ import os
 import thread
 import urllib
 from sqlobject.dbconnection import DBAPI, Boolean
-from sqlobject import col, sqlbuilder
+from sqlobject import col
 from sqlobject.dberrors import *
 
 sqlite2_Binary = None

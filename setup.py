@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 from imp import load_source
-from os.path import abspath, dirname, isfile, join
+from os.path import abspath, dirname, join
 
 try:
     from ez_setup import use_setuptools

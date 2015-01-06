@@ -1031,12 +1031,13 @@ registerConnectionInstance = TheURIOpener.registerConnectionInstance
 connectionForURI = TheURIOpener.connectionForURI
 dbConnectionForScheme = TheURIOpener.dbConnectionForScheme
 
-# Register DB URI schemas
-import firebird
-import maxdb
-import mssql
-import mysql
-import postgres
-import rdbhost
-import sqlite
-import sybase
+# Register DB URI schemas -- do import for side effects
+# noqa is a directive for flake8 to ignore seemingly unused imports
+import firebird # noqa
+import maxdb # noqa
+import mssql # noqa
+import mysql # noqa
+import postgres # noqa
+import rdbhost # noqa
+import sqlite # noqa
+import sybase # noqa

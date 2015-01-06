@@ -20,8 +20,6 @@ are what gets used.
 
 from array import array
 from itertools import count
-import re
-import sys
 import time
 try:
     import cPickle as pickle

@@ -4,10 +4,6 @@ This module written by David Keeney, 2009, 2010
 Released under the LGPL for use with the SQLObject ORM library.
 """
 
-import re
-from sqlobject import col
-from sqlobject import sqlbuilder
-from sqlobject.converters import registerConverter
 from sqlobject.dbconnection import DBAPI
 from sqlobject.postgres.pgconnection import PostgresConnection
 

@@ -1,5 +1,4 @@
 from datetime import timedelta
-import sys
 
 from sqlobject.converters import registerConverter, sqlrepr, \
      quote_str, unquote_str

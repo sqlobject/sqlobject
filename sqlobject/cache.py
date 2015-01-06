@@ -8,7 +8,6 @@ objects in a cache that doesn't allow them to be garbage collected
 
 import threading
 from weakref import ref
-from time import time as now
 
 class CacheFactory(object):
 

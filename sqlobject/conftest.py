@@ -8,7 +8,6 @@ verbose = 0
 exitfirst = True
 
 import py
-import os
 import sqlobject
 
 try:

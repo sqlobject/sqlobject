@@ -2,7 +2,6 @@ from paste.deploy.converters import asbool
 from paste.wsgilib import catch_errors
 from paste.util import import_string
 import sqlobject
-import threading
 
 def make_middleware(app, global_conf, database=None, use_transaction=False,
                     hub=None):

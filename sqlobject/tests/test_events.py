@@ -4,7 +4,6 @@ from sqlobject import *
 from sqlobject.tests.dbtest import *
 from sqlobject import events
 from sqlobject.inheritance import InheritableSQLObject
-import sys
 
 class EventTester(SQLObject):
     name = StringCol()

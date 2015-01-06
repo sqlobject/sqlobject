@@ -1,7 +1,6 @@
 from array import array
 import datetime
 from decimal import Decimal
-import sys
 import time
 from types import ClassType, InstanceType, NoneType
 
