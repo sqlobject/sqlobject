@@ -16,16 +16,6 @@ TODO
 
 * SQLObject.fastInsert().
 
-* List tables/indices in the DB. The query in MySQL is ``SHOW TABLES``;
-  in SQLite it is
-
-    SELECT name FROM sqlite_master WHERE type='table' ORDER BY name;
-
-  and in Postgres it is something like
-
-    SELECT c.relname FROM pg_class c, pg_type t
-    WHERE c.reltype = t.oid AND t.typname = 'table'.
-
 * IntervalCol
 
 * TimedeltaCol
