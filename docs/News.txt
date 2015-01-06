@@ -25,7 +25,7 @@ Minor features
   a new method listDatabases() that lists databases in the connection
   and returns a list of names.
 
-* PostgresConnection and SQLiteConnection have got
+* MySQLConnection, PostgresConnection and SQLiteConnection have got
   a new method listTables() that returns a list of table names in the database.
 
 SQLObject 2.0.0
