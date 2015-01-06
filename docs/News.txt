@@ -15,6 +15,8 @@ SQLObject 3.0.0 (master)
 SQLObject 2.1.0
 ===============
 
+Released 6 Jan 2015.
+
 Minor features
 --------------
 
