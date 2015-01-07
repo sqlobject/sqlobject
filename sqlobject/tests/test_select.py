@@ -107,11 +107,7 @@ def test_selectBy():
 
 def test_selectBy_kwargs():
     setupClass(IterTest)
-    try:
-        b = IterTest(nonexistant='b')
-    except TypeError:
-        return
-    assert False, "IterTest(nonexistant='b') should raise TypeError"
+    raises(TypeError, IterTest, nonexistant='b')
 
 class UniqTest(SQLObject):
     name = StringCol(dbName='name_col', unique=True, length=100)
