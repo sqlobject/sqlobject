@@ -1,3 +1,4 @@
+import py.test
 from sqlobject import *
 from sqlobject.tests.dbtest import *
 
@@ -16,7 +17,7 @@ class PickleContainer(SQLObject):
 
 def test_pickleCol():
     if not supports('blobData'):
-        return
+        py.test.skip("blobData isn't supported")
     setupClass([PickleContainer], force=True)
     mypickledata = PickleData()
 

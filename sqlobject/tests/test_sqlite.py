@@ -1,4 +1,5 @@
 import threading
+import py.test
 from sqlobject import *
 from sqlobject.tests.dbtest import *
 from sqlobject.tests.dbtest import setSQLiteConnectionFactory
@@ -10,79 +11,82 @@ class SQLiteFactoryTest(SQLObject):
 def test_sqlite_factory():
     setupClass(SQLiteFactoryTest)
 
-    if SQLiteFactoryTest._connection.dbName == "sqlite":
-        if not SQLiteFactoryTest._connection.using_sqlite2:
-            return
+    if SQLiteFactoryTest._connection.dbName != "sqlite":
+        py.test.skip("These tests require SQLite")
+    if not SQLiteFactoryTest._connection.using_sqlite2:
+        py.test.skip("These tests require SQLite v2+")
 
-        factory = [None]
-        def SQLiteConnectionFactory(sqlite):
-            class MyConnection(sqlite.Connection):
-                pass
-            factory[0] = MyConnection
-            return MyConnection
+    factory = [None]
+    def SQLiteConnectionFactory(sqlite):
+        class MyConnection(sqlite.Connection):
+            pass
+        factory[0] = MyConnection
+        return MyConnection
 
-        setSQLiteConnectionFactory(SQLiteFactoryTest, SQLiteConnectionFactory)
+    setSQLiteConnectionFactory(SQLiteFactoryTest, SQLiteConnectionFactory)
 
-        conn = SQLiteFactoryTest._connection.makeConnection()
-        assert factory[0]
-        assert isinstance(conn, factory[0])
+    conn = SQLiteFactoryTest._connection.makeConnection()
+    assert factory[0]
+    assert isinstance(conn, factory[0])
 
 def test_sqlite_factory_str():
     setupClass(SQLiteFactoryTest)
 
-    if SQLiteFactoryTest._connection.dbName == "sqlite":
-        if not SQLiteFactoryTest._connection.using_sqlite2:
-            return
+    if SQLiteFactoryTest._connection.dbName != "sqlite":
+        py.test.skip("These tests require SQLite")
+    if not SQLiteFactoryTest._connection.using_sqlite2:
+        py.test.skip("These tests require SQLite v2+")
 
-        factory = [None]
-        def SQLiteConnectionFactory(sqlite):
-            class MyConnection(sqlite.Connection):
-                pass
-            factory[0] = MyConnection
-            return MyConnection
-        from sqlobject.sqlite import sqliteconnection
-        sqliteconnection.SQLiteConnectionFactory = SQLiteConnectionFactory
+    factory = [None]
+    def SQLiteConnectionFactory(sqlite):
+        class MyConnection(sqlite.Connection):
+            pass
+        factory[0] = MyConnection
+        return MyConnection
+    from sqlobject.sqlite import sqliteconnection
+    sqliteconnection.SQLiteConnectionFactory = SQLiteConnectionFactory
 
-        setSQLiteConnectionFactory(SQLiteFactoryTest, "SQLiteConnectionFactory")
+    setSQLiteConnectionFactory(SQLiteFactoryTest, "SQLiteConnectionFactory")
 
-        conn = SQLiteFactoryTest._connection.makeConnection()
-        assert factory[0]
-        assert isinstance(conn, factory[0])
-        del sqliteconnection.SQLiteConnectionFactory
+    conn = SQLiteFactoryTest._connection.makeConnection()
+    assert factory[0]
+    assert isinstance(conn, factory[0])
+    del sqliteconnection.SQLiteConnectionFactory
 
 def test_sqlite_aggregate():
     setupClass(SQLiteFactoryTest)
 
-    if SQLiteFactoryTest._connection.dbName == "sqlite":
-        if not SQLiteFactoryTest._connection.using_sqlite2:
-            return
+    if SQLiteFactoryTest._connection.dbName != "sqlite":
+        py.test.skip("These tests require SQLite")
+    if not SQLiteFactoryTest._connection.using_sqlite2:
+        py.test.skip("These tests require SQLite v2+")
 
-        def SQLiteConnectionFactory(sqlite):
-            class MyConnection(sqlite.Connection):
-                def __init__(self, *args, **kwargs):
-                    super(MyConnection, self).__init__(*args, **kwargs)
-                    self.create_aggregate("group_concat", 1, self.group_concat)
+    def SQLiteConnectionFactory(sqlite):
+        class MyConnection(sqlite.Connection):
+            def __init__(self, *args, **kwargs):
+                super(MyConnection, self).__init__(*args, **kwargs)
+                self.create_aggregate("group_concat", 1, self.group_concat)
 
-                class group_concat:
-                    def __init__(self):
-                        self.acc = []
-                    def step(self, value):
-                        if isinstance(value, basestring):
-                            self.acc.append(value)
-                        else:
-                            self.acc.append(str(value))
-                    def finalize(self):
-                        self.acc.sort()
-                        return ", ".join(self.acc)
+            class group_concat:
+                def __init__(self):
+                    self.acc = []
+                def step(self, value):
+                    if isinstance(value, basestring):
+                        self.acc.append(value)
+                    else:
+                        self.acc.append(str(value))
+                def finalize(self):
+                    self.acc.sort()
+                    return ", ".join(self.acc)
 
-            return MyConnection
+        return MyConnection
 
-        setSQLiteConnectionFactory(SQLiteFactoryTest, SQLiteConnectionFactory)
+    setSQLiteConnectionFactory(SQLiteFactoryTest, SQLiteConnectionFactory)
 
-        SQLiteFactoryTest(name='sqlobject')
-        SQLiteFactoryTest(name='sqlbuilder')
-        assert SQLiteFactoryTest.select(orderBy="name").accumulateOne("group_concat", "name") == \
-            "sqlbuilder, sqlobject"
+    SQLiteFactoryTest(name='sqlobject')
+    SQLiteFactoryTest(name='sqlbuilder')
+    assert SQLiteFactoryTest.select(orderBy="name").accumulateOne("group_concat", "name") == \
+        "sqlbuilder, sqlobject"
 
 
 def do_select():
@@ -107,12 +111,12 @@ def test_empty_string():
 
 def test_memorydb():
     if not supports("memorydb"):
-        return
+        py.test.skip("memorydb isn't supported")
     connection = getConnection()
     if connection.dbName != "sqlite":
-        return
+        py.test.skip("These tests require SQLite")
     if not connection._memory:
-        return
+        py.test.skip("The connection isn't memorydb")
     setupClass(TestSO1)
     connection.close() # create a new connection to an in-memory database
     TestSO1.setConnection(connection)
@@ -121,12 +125,12 @@ def test_memorydb():
 def test_list_databases():
     connection = getConnection()
     if connection.dbName != "sqlite":
-        return
+        py.test.skip("These tests require SQLite")
     assert connection.listDatabases() == ['main']
 
 def test_list_tables():
     connection = getConnection()
     if connection.dbName != "sqlite":
-        return
+        py.test.skip("These tests require SQLite")
     setupClass(TestSO1)
     assert TestSO1.sqlmeta.table in connection.listTables()

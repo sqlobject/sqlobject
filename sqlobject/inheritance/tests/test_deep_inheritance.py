@@ -1,4 +1,4 @@
-from py.test import raises
+from py.test import raises, skip
 from sqlobject import *
 from sqlobject.tests.dbtest import *
 from sqlobject.inheritance import InheritableSQLObject
@@ -52,7 +52,7 @@ def test_creation_fail2():
     assert persons.count() == 1
 
     if not supports('transactions'):
-        return
+        skip("Transactions aren't supported")
     transaction = DIPerson._connection.transaction()
     kwargs ={'firstName': 'John', 'lastName': 'Doe III', 'position': 'Project Manager'}
     raises(Exception, DIManager, connection=transaction, **kwargs)

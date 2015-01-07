@@ -1,5 +1,6 @@
 from __future__ import print_function
 
+import py.test
 from sqlobject import *
 from sqlobject.dberrors import *
 from sqlobject.tests.dbtest import *
@@ -40,7 +41,7 @@ def test_indexes_1():
 
 def test_indexes_2():
     if not supports('expressionIndex'):
-        return
+        py.test.skip("expressionIndex isn't supported")
     setupClass(SOIndex2)
     SOIndex2(name='')
 

@@ -1,3 +1,4 @@
+import py.test
 from sqlobject import *
 from sqlobject.sqlbuilder import func
 from sqlobject.main import SQLObjectIntegrityError
@@ -50,7 +51,7 @@ def test_03_ranged_indexed():
 
 def test_04_indexed_ended_by_exception():
     if not supports('limitSelect'):
-        return
+        py.test.skip("limitSelect isn't supported")
     all = IterTest.select()
     count = 0
     try:
@@ -162,7 +163,7 @@ def test_select_RLIKE():
 
     if IterTest._connection.dbName == "sqlite":
         if not IterTest._connection.using_sqlite2:
-            return
+            py.test.skip("These tests require SQLite v2+")
 
         # Implement regexp() function for SQLite; only works with PySQLite2
         import re

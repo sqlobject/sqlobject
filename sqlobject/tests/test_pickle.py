@@ -1,4 +1,5 @@
 import pickle
+import py.test
 from sqlobject import *
 from sqlobject.tests.dbtest import *
 
@@ -28,7 +29,7 @@ def test_pickleCol():
     assert test.answer == test_answer
 
     if (connection.dbName == 'sqlite') and connection._memory:
-        return # The following test requires a different connection
+        py.test.skip("The following test requires a different connection")
 
     test = TestPickle.get(test.id,
         connection=getConnection(registry='')) # to make a different DB URI
