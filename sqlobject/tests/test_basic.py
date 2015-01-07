@@ -1,3 +1,4 @@
+import py.test
 from sqlobject import *
 from sqlobject.tests.dbtest import *
 
@@ -188,7 +189,7 @@ def test_foreignKeyDestroySelfCascade():
 
 def testForeignKeyDropTableCascade():
     if not supports('dropTableCascade'):
-        return
+        py.test.skip("dropTableCascade isn't supported")
     setupClass(TestSO7)
     setupClass(TestSO6)
     setupClass(TestSO5)

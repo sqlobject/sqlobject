@@ -1,3 +1,4 @@
+import py.test
 from sqlobject import *
 from sqlobject.tests.dbtest import *
 
@@ -10,7 +11,7 @@ class ImageData(SQLObject):
 
 def test_BLOBCol():
     if not supports('blobData'):
-        return
+        py.test.skip("blobData isn't supported")
     setupClass(ImageData)
     data = ''.join([chr(x) for x in range(256)])
 

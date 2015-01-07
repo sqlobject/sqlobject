@@ -1,3 +1,4 @@
+import py.test
 from sqlobject import *
 from sqlobject.tests.dbtest import *
 
@@ -13,7 +14,7 @@ class TestSOTrans(SQLObject):
 
 def test_transaction():
     if not supports('transactions'):
-        return
+        py.test.skip("Transactions aren't supported")
     setupClass(TestSOTrans)
     TestSOTrans(name='bob')
     TestSOTrans(name='tim')
@@ -38,7 +39,7 @@ def test_transaction():
 
 def test_transaction_commit_sync():
     if not supports('transactions'):
-        return
+        py.test.skip("Transactions aren't supported")
     setupClass(TestSOTrans)
     trans = TestSOTrans._connection.transaction()
     try:
@@ -54,11 +55,11 @@ def test_transaction_commit_sync():
 
 def test_transaction_delete(close=False):
     if not supports('transactions'):
-        return
+        py.test.skip("Transactions aren't supported")
     setupClass(TestSOTrans)
     connection = TestSOTrans._connection
     if (connection.dbName == 'sqlite') and connection._memory:
-        return # The following test requires a different connection
+        py.test.skip("The following test requires a different connection")
     trans = connection.transaction()
     try:
         TestSOTrans(name='bob')

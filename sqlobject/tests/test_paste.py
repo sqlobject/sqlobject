@@ -74,7 +74,7 @@ def test_other():
     # @@: Dammit, I can't get these to pass because I can't get the
     # stupid table to clear itself.  setupClass() sucks.  When I
     # fix it I'll take this disabling out:
-    return
+    py.test.skip("Oops...")
     assert names() == []
     assert runapp(fail=False, begin=True, abort=True, use_transaction=True)
     assert names() == ['app1']

@@ -1,3 +1,4 @@
+import py.test
 from sqlobject import *
 from sqlobject.tests.dbtest import *
 
@@ -18,7 +19,7 @@ class TestSlice:
 
     def counterEqual(self, counters, value):
         if not supports('limitSelect'):
-            return
+            py.test.skip("limitSelect isn't supported")
         assert [c.number for c in counters] == value
 
     def test_slice(self):

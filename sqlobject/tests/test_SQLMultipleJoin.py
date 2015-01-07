@@ -1,3 +1,4 @@
+import py.test
 from sqlobject import *
 from sqlobject.tests.dbtest import *
 
@@ -44,7 +45,7 @@ def test_1():
 
 def test_multiple_join_transaction():
     if not supports('transactions'):
-        return
+        py.test.skip("Transactions aren't supported")
     createAllTables()
     trans = Race._connection.transaction()
     try:

@@ -1,3 +1,4 @@
+import py.test
 from sqlobject import *
 from sqlobject.dberrors import *
 from sqlobject.tests.dbtest import *
@@ -14,7 +15,7 @@ class TestExceptionWithNonexistingTable(SQLObject):
 
 def test_exceptions():
     if not supports("exceptions"):
-        return
+        py.test.skip("exceptions aren't supported")
     setupClass(TestException)
     TestException(name="test")
     raises(DuplicateEntryError, TestException, name="test")

@@ -1,3 +1,4 @@
+import py.test
 from sqlobject import *
 from sqlobject.tests.dbtest import *
 
@@ -10,7 +11,7 @@ class TestSchema(SQLObject):
 
 def test_connection_schema():
     if not supports('schema'):
-        return
+        py.test.skip("schemas aren't supported")
     conn = getConnection()
     conn.schema = None
     conn.query('CREATE SCHEMA test')

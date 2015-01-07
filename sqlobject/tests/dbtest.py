@@ -29,7 +29,7 @@ and you can use it like::
 
     def test_featureX():
         if not supports('featureX'):
-            return
+            py.test.skip("Doesn't support featureX")
 """
 supportsMatrix = {
     '+exceptions': 'mysql postgres sqlite',

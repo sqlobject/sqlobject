@@ -1,3 +1,4 @@
+import py.test
 from sqlobject import *
 from sqlobject.tests.dbtest import *
 
@@ -25,7 +26,7 @@ class TestCyclicReferenceB(SQLObject):
 
 def test_cyclic_reference():
     if not supports('dropTableCascade'):
-        return
+        py.test.skip("dropTableCascade isn't supported")
     conn = getConnection()
     TestCyclicReferenceA.setConnection(conn)
     TestCyclicReferenceB.setConnection(conn)

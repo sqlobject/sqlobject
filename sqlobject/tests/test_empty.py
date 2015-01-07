@@ -1,3 +1,4 @@
+import py.test
 from sqlobject import *
 from sqlobject.tests.dbtest import *
 
@@ -7,7 +8,7 @@ class EmptyClass(SQLObject):
 
 def test_empty():
     if not supports('emptyTable'):
-        return
+        py.test.skip("emptyTable isn't supported")
     setupClass(EmptyClass)
     e1 = EmptyClass()
     e2 = EmptyClass()
