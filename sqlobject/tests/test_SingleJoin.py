@@ -19,7 +19,7 @@ def test_1():
     assert not person.albumNone # I don't created an album, this way it returns None
     assert isinstance(person.albumInstance, PhotoAlbum)
 
-    album = PhotoAlbum(person=person)
+    PhotoAlbum(person=person)
     assert person.albumNone
     assert isinstance(person.albumNone, PhotoAlbum)
     assert isinstance(person.albumInstance, PhotoAlbum)

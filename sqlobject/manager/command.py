@@ -312,7 +312,6 @@ class Command(object):
     def classes(self, require_connection=True,
                 require_some=False):
         all = []
-        conf = self.config()
         for module_name in self.options.modules:
             all.extend(self.classes_from_module(
                 moduleloader.load_module(module_name)))

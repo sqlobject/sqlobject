@@ -19,7 +19,7 @@ def test1():
 
     c = TestComposer(name='Mahler, Gustav')
     w = TestWork(composer=c, title='Symphony No. 9')
-    c2 = TestComposer(name='Bruckner, Anton')
+    TestComposer(name='Bruckner, Anton')
     # but don't add any works for Bruckner
 
     # do a left join, a common use case that often involves NULL results

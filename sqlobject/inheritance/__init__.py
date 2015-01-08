@@ -112,7 +112,7 @@ class InheritableSQLMeta(sqlmeta):
                             if not self.sqlmeta._creating and not getattr(self.sqlmeta, "row_update_sig_suppress", False):
                                 self.sqlmeta.send(events.RowUpdateSignal, self, {cname : val})
 
-                            result = setattr(self._parent, cname, val)
+                            setattr(self._parent, cname, val)
                         return setfunc
 
                     setfunc = make_setfunc(cname)
@@ -485,7 +485,7 @@ class InheritableSQLObject(SQLObject):
                 try:
                     clause.append(getattr(currentClass.q, name) == value)
                     break
-                except AttributeError as err:
+                except AttributeError:
                     pass
                 currentClass = currentClass.sqlmeta.parentClass
             else:

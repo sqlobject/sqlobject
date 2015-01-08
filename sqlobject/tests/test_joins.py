@@ -83,8 +83,7 @@ class TestJoin2:
         p1 = PersonJoiner2(name='bob')
         p2 = PersonJoiner2(name='sally')
         for z in ['11111', '22222', '33333']:
-            a = AddressJoiner2(zip=z, personJoiner2=p1)
-            #p1.addAddressJoiner2(a)
+            AddressJoiner2(zip=z, personJoiner2=p1)
         AddressJoiner2(zip='00000', personJoiner2=p2)
 
     def test_basic(self):
@@ -136,7 +135,7 @@ class TestJoin3:
         p1 = PersonJoiner3(name='bob')
         p2 = PersonJoiner3(name='sally')
         for z in ['11111', '22222', '33333']:
-            a = AddressJoiner3(zip=z, personJoiner3=p1)
+            AddressJoiner3(zip=z, personJoiner3=p1)
         AddressJoiner3(zip='00000', personJoiner3=p2)
 
     def test_accessors(self):

@@ -69,8 +69,7 @@ def test_deep_inheritance():
     manager_id = manager.id
     employee_id = DIEmployee(firstName='Project', lastName='Leader',
         position='Project leader', manager=manager).id
-    person_id = DIPerson(firstName='Oneof', lastName='Authors',
-        manager=manager).id
+    DIPerson(firstName='Oneof', lastName='Authors', manager=manager)
 
     conn = getConnection()
     cache = conn.cache

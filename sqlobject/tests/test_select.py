@@ -45,7 +45,7 @@ def test_03_ranged_indexed():
     all = IterTest.select()
     count = 0
     for i in range(all.count()):
-        test = all[i]
+        all[i] # test it's there
         count += 1
     assert count == len(names)
 
@@ -56,7 +56,7 @@ def test_04_indexed_ended_by_exception():
     count = 0
     try:
         while 1:
-            test = all[count]
+            all[count]
             count = count+1
             # Stop the test if it's gone on too long
             if count > len(names):
@@ -95,14 +95,14 @@ def test_select_getOne():
     assert IterTest.select(IterTest.q.name=='b').getOne() == b
     assert IterTest.selectBy(name='c').getOne(None) is None
     raises(SQLObjectNotFound, 'IterTest.selectBy(name="c").getOne()')
-    b2 = IterTest(name='b')
+    IterTest(name='b')
     raises(SQLObjectIntegrityError, 'IterTest.selectBy(name="b").getOne()')
     raises(SQLObjectIntegrityError, 'IterTest.selectBy(name="b").getOne(None)')
 
 def test_selectBy():
     setupClass(IterTest)
-    a = IterTest(name='a')
-    b = IterTest(name='b')
+    IterTest(name='a')
+    IterTest(name='b')
     assert IterTest.selectBy().count() == 2
 
 def test_selectBy_kwargs():

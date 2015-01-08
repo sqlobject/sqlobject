@@ -65,28 +65,28 @@ def test_index_get_1():
 
     try:
         print(PersonIndexGet.nameIndex.get(firstName='Graham', lastName='Chapman'))
-    except Exception as e:
+    except Exception:
         pass
     else:
         raise AssertError
 
     try:
         print(PersonIndexGet.nameIndex.get('Terry', lastName='Gilliam'))
-    except Exception as e:
+    except Exception:
         pass
     else:
         raise AssertError
 
     try:
         print(PersonIndexGet.nameIndex.get('Terry', 'Gilliam', 65))
-    except Exception as e:
+    except Exception:
         pass
     else:
         raise AssertError
 
     try:
         print(PersonIndexGet.nameIndex.get('Terry'))
-    except Exception as e:
+    except Exception:
         pass
     else:
         raise AssertError

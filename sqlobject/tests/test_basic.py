@@ -125,7 +125,7 @@ def test_selectBy():
     setupClass([TestSO4, TestSO3])
     tc4 = TestSO4(me='another')
     tc3 = TestSO3(name='sel', other=tc4)
-    anothertc3 = TestSO3(name='not joined')
+    TestSO3(name='not joined')
     assert tc3.other == tc4
     assert list(TestSO3.selectBy(other=tc4)) == [tc3]
     assert list(TestSO3.selectBy(otherID=tc4.id)) == [tc3]

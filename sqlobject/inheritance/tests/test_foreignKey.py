@@ -82,4 +82,4 @@ def test_foreignKey2():
     setupClass([TestInheritableBase, TestInheritableForeignKey])
 
     test = TestInheritableBase()
-    object = TestInheritableForeignKey(base=test)
+    TestInheritableForeignKey(base=test)

@@ -98,7 +98,7 @@ class TestValidation:
         assert t.name5 == {}
 
     def test_validator2(self):
-        t = SOValidation(name9=1)
-        t = SOValidation(name9=2)
+        SOValidation(name9=1)
+        SOValidation(name9=2)
         assert validator1.save_value == [2, 2, 2, 2, 2, 2]
         assert validator2.save_value == [1, 1, 1, 2, 1, 1]

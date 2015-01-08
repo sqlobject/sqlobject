@@ -40,7 +40,7 @@ class TestPeople:
     def test_dynamicColumn(self):
         nickname = StringCol('nickname', length=10)
         Person.sqlmeta.addColumn(nickname, changeSchema=True)
-        n = Person(name='robert', nickname='bob')
+        Person(name='robert', nickname='bob')
         assert ([p.name for p in Person.select('all')]
                 == ['bob', 'jake', 'jane', 'robert', 'tim'])
         Person.sqlmeta.delColumn(nickname, changeSchema=True)

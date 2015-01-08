@@ -24,9 +24,9 @@ class Tree5(Tree2):
 def test_tree():
     setupClass([Tree1, Tree2, Tree3, Tree4, Tree5])
 
-    t1 = Tree1(aprop='t1')
+    Tree1(aprop='t1') # t1
     t2 = Tree2(aprop='t2', bprop='t2')
-    t3 = Tree3(aprop='t3', cprop='t3')
+    Tree3(aprop='t3', cprop='t3') # t3
     t4 = Tree4(aprop='t4', bprop='t4', dprop='t4')
     t5 = Tree5(aprop='t5', bprop='t5', eprop='t5')
 
