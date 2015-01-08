@@ -1,5 +1,3 @@
-from __future__ import print_function
-
 import py.test
 from sqlobject import *
 from sqlobject.dberrors import *
@@ -28,16 +26,11 @@ def test_indexes_1():
         n += 1
         SOIndex1(name=name, number=n)
     mod = SOIndex1._connection.module
-    try:
-        SOIndex1(name='blah', number=0)
-    except (
-            mod.ProgrammingError, mod.IntegrityError, mod.OperationalError, mod.DatabaseError,
-            ProgrammingError, IntegrityError, OperationalError, DatabaseError
-    ):
-        # expected
-        pass
-    else:
-        assert 0, "Exception expected."
+    raises(
+        (mod.ProgrammingError, mod.IntegrityError,
+         mod.OperationalError, mod.DatabaseError,
+         ProgrammingError, IntegrityError, OperationalError, DatabaseError),
+        SOIndex1, name='blah', number=0)
 
 def test_indexes_2():
     if not supports('expressionIndex'):
@@ -63,33 +56,13 @@ def test_index_get_1():
     PersonIndexGet.nameIndex.get('Terry', 'Gilliam')
     PersonIndexGet.nameIndex.get(firstName='John', lastName='Cleese')
 
-    try:
-        print(PersonIndexGet.nameIndex.get(firstName='Graham', lastName='Chapman'))
-    except Exception:
-        pass
-    else:
-        raise AssertError
+    raises(Exception, PersonIndexGet.nameIndex.get, firstName='Graham', lastName='Chapman')
 
-    try:
-        print(PersonIndexGet.nameIndex.get('Terry', lastName='Gilliam'))
-    except Exception:
-        pass
-    else:
-        raise AssertError
+    raises(Exception, PersonIndexGet.nameIndex.get, 'Terry', lastName='Gilliam')
 
-    try:
-        print(PersonIndexGet.nameIndex.get('Terry', 'Gilliam', 65))
-    except Exception:
-        pass
-    else:
-        raise AssertError
+    raises(Exception, PersonIndexGet.nameIndex.get, 'Terry', 'Gilliam', 65)
 
-    try:
-        print(PersonIndexGet.nameIndex.get('Terry'))
-    except Exception:
-        pass
-    else:
-        raise AssertError
+    raises(Exception, PersonIndexGet.nameIndex.get, 'Terry')
 
 
 class PersonIndexGet2(SQLObject):

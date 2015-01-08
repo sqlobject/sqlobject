@@ -285,12 +285,7 @@ def testAsDict():
 
 def test_nonexisting_attr():
     setupClass(Student)
-    try:
-        Student.select(Student.q.nonexisting)
-    except AttributeError:
-        pass
-    else:
-        assert 0, "Expected an AttributeError"
+    raises(AttributeError, getattr, Student.q, 'nonexisting')
 
 class TestSO12(SQLObject):
     name = StringCol()
