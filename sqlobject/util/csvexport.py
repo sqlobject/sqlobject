@@ -154,7 +154,7 @@ def export_csv_zip(soClasses, file=None, zip=None, filename_prefix='',
     return_when_finished = False
     if file:
         if isinstance(file, basestring):
-            close_when_finished = True
+            close_file_when_finished = True
             file = open(file, 'wb')
     elif zip:
         close_zip_when_finished = False
