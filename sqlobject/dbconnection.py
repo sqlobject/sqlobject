@@ -523,7 +523,7 @@ class DBAPI(DBConnection):
     def createSQL(self, soClass):
         tableCreateSQLs = getattr(soClass.sqlmeta, 'createSQL', None)
         if tableCreateSQLs:
-            assert isinstance(tableCreateSQLs,(str,list,dict,tuple)), (
+            assert isinstance(tableCreateSQLs, (str, list, dict, tuple)), (
                 '%s.sqlmeta.createSQL must be a str, list, dict or tuple.' %
                 (soClass.__name__))
             if isinstance(tableCreateSQLs, dict):
@@ -532,7 +532,7 @@ class DBAPI(DBConnection):
                 tableCreateSQLs = [tableCreateSQLs]
             if isinstance(tableCreateSQLs, tuple):
                 tableCreateSQLs = list(tableCreateSQLs)
-            assert isinstance(tableCreateSQLs,list), (
+            assert isinstance(tableCreateSQLs, list), (
                 'Unable to create a list from %s.sqlmeta.createSQL' %
                 (soClass.__name__))
         return tableCreateSQLs or []

@@ -1330,7 +1330,7 @@ class SQLObject(object):
             if from_python:
                 v = from_python(v, sqlbuilder.SQLObjectState(cls, connection=connection))
             new_value.append(v)
-        condition = sqlbuilder.AND(*[getattr(cls.q, n)==v for n,v in zip(name, new_value)])
+        condition = sqlbuilder.AND(*[getattr(cls.q, n)==v for n, v in zip(name, new_value)])
         return (connection or cls._connection)._SO_selectOneAlt(
             cls,
             [cls.sqlmeta.idName] +

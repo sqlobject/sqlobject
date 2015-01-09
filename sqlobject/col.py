@@ -914,8 +914,8 @@ class SOForeignKey(SOKeyCol):
         tName = other.sqlmeta.table
         idName = self.refColumn or other.sqlmeta.idName
         reference = ('REFERENCES %(tName)s(%(idName)s) ' %
-                     {'tName':tName,
-                      'idName':idName})
+                     {'tName': tName,
+                      'idName': idName})
         sql = ' '.join([sql, reference])
         return sql
 
@@ -929,8 +929,8 @@ class SOForeignKey(SOKeyCol):
         tName = other.sqlmeta.table
         idName = self.refColumn or other.sqlmeta.idName
         reference = ('REFERENCES %(tName)s(%(idName)s) ' %
-                     {'tName':tName,
-                      'idName':idName})
+                     {'tName': tName,
+                      'idName': idName})
         sql = ' '.join([sql, reference])
         return sql
 
@@ -946,7 +946,7 @@ class SOForeignKey(SOKeyCol):
         tName = other.sqlmeta.table
         idName  = self.refColumn or other.sqlmeta.idName
         sql=sql + ',' + '\n'
-        sql=sql + 'FOREIGN KEY (%s) REFERENCES %s(%s)'%(fidName,tName,idName)
+        sql=sql + 'FOREIGN KEY (%s) REFERENCES %s(%s)'%(fidName, tName, idName)
         return sql
 
     def maxdbCreateReferenceConstraint(self):

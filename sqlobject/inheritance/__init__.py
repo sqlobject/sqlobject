@@ -27,7 +27,7 @@ class InheritableSelectResults(SelectResults):
         if clause is None or isinstance(clause, str) and clause == 'all':
             clause = sqlbuilder.SQLTrueClause
 
-        dbName = (ops.get('connection',None) or sourceClass._connection).dbName
+        dbName = (ops.get('connection', None) or sourceClass._connection).dbName
 
         tablesSet = tablesUsedSet(clause, dbName)
         tablesSet.add(str(sourceClass.sqlmeta.table))

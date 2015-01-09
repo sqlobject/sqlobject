@@ -28,4 +28,4 @@ def test_distinct():
     sel = Distinct1.select(query)
     assert count(sel) == {0: 2, 1: 1}
     sel = Distinct1.select(query, distinct=True)
-    assert count(sel) == {0: 1, 1:1}
+    assert count(sel) == {0: 1, 1: 1}

@@ -31,7 +31,7 @@ class LowerBoundOfSliceIsNotSupported(maxdbException):
         maxdbException.__init__(self, '')
 
 class IncorrectIDStyleError(maxdbException) :
-    def __init__(self,value):
+    def __init__(self, value):
         maxdbException.__init__(
             self,
             'This primary key name is not in the expected style, '
@@ -82,7 +82,7 @@ class MaxdbConnection(DBAPI):
         return cls(host, port, user=auth, password=password,
             database=path, **args)
 
-    def _getConfigParams(self,sqlmode,auto):
+    def _getConfigParams(self, sqlmode, auto):
         autocommit='off'
         if auto:
             autocommit='on'
@@ -100,7 +100,7 @@ class MaxdbConnection(DBAPI):
         conn.__init__(self.user, self.password, self.db, self.host,
                       **self._getConfigParams(self.sqlmode, auto))
 
-    def createSequenceName(self,table):
+    def createSequenceName(self, table):
         """
         sequence name are builded with the concatenation of the table
         name with '_SEQ' word we truncate the name of the
@@ -134,9 +134,9 @@ class MaxdbConnection(DBAPI):
         return id
 
     @classmethod
-    def sqlAddLimit(cls,query,limit):
+    def sqlAddLimit(cls, query, limit):
         sql = query
-        sql = sql.replace("SELECT","SELECT ROWNO, ")
+        sql = sql.replace("SELECT", "SELECT ROWNO, ")
         if sql.find('WHERE') != -1:
             sql = sql + ' AND ' + limit
         else:
@@ -148,7 +148,7 @@ class MaxdbConnection(DBAPI):
         if start:
             raise LowerBoundOfSliceIsNotSupported
         limit = ' ROWNO   <= %d ' % (end)
-        return cls.sqlAddLimit(query,limit)
+        return cls.sqlAddLimit(query, limit)
 
     def createTable(self, soClass):
         #we create the table in a transaction because the addition of the
@@ -181,7 +181,7 @@ class MaxdbConnection(DBAPI):
     def createIndexSQL(self, soClass, index):
         return index.maxdbCreateIndexSQL(soClass)
 
-    def dropTable(self, tableName,cascade=False):
+    def dropTable(self, tableName, cascade=False):
         #we drop the table in a transaction because the removal of the
         #table and the sequence must be atomic
         #i tried to use the transaction class but i get a recursion limit error
@@ -256,7 +256,7 @@ class MaxdbConnection(DBAPI):
             if (field_name == soClass.sqlmeta.idName) and pkmap[field_name]:
                 continue
 
-            colClass, kw = self.guessClass(data_type,data_len,data_scale)
+            colClass, kw = self.guessClass(data_type, data_len, data_scale)
             kw['name'] = field_name
             kw['dbName'] = field
 
@@ -276,8 +276,8 @@ class MaxdbConnection(DBAPI):
 
         return results
 
-    _numericTypes=['INTEGER', 'INT','SMALLINT']
-    _dateTypes=['DATE','TIME','TIMESTAMP']
+    _numericTypes=['INTEGER', 'INT', 'SMALLINT']
+    _dateTypes=['DATE', 'TIME', 'TIMESTAMP']
 
     def guessClass(self, t, flength, fscale=None):
         """
@@ -297,7 +297,7 @@ class MaxdbConnection(DBAPI):
         elif t in self._dateTypes:
             return col.DateTimeCol, {}
         elif t == 'FIXED':
-            return CurrencyCol,{'size':flength,
-                                'precision':fscale}
+            return CurrencyCol, {'size': flength,
+                                'precision': fscale}
         else:
             return col.Col, {}

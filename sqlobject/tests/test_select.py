@@ -139,11 +139,11 @@ class TestSelect:
         assert func([c.n1 for c in counters]) == value
 
     def test_1(self):
-        self.accumulateEqual(sum,Counter2.select(orderBy='n1'),
+        self.accumulateEqual(sum, Counter2.select(orderBy='n1'),
                              sum(range(10)) * 10)
 
     def test_2(self):
-        self.accumulateEqual(len,Counter2.select('all'), 100)
+        self.accumulateEqual(len, Counter2.select('all'), 100)
 
 def test_select_LIKE():
     setupClass(IterTest)

@@ -4,4 +4,4 @@ def builder():
     import maxdbconnection
     return maxdbconnection.MaxdbConnection
 
-registerConnection(['maxdb','sapdb'],builder)
+registerConnection(['maxdb', 'sapdb'], builder)

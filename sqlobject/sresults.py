@@ -45,11 +45,11 @@ class SelectResults(object):
         query = sqlbuilder.Select(columns,
                                   where=self.clause,
                                   join=self.ops.get('join', sqlbuilder.NoDefault),
-                                  distinct=self.ops.get('distinct',False),
+                                  distinct=self.ops.get('distinct', False),
                                   lazyColumns=self.ops.get('lazyColumns', False),
                                   start=self.ops.get('start', 0),
                                   end=self.ops.get('end', None),
-                                  orderBy=self.ops.get('dbOrderBy',sqlbuilder.NoDefault),
+                                  orderBy=self.ops.get('dbOrderBy', sqlbuilder.NoDefault),
                                   reversed=self.ops.get('reversed', False),
                                   staticTables=self.tables,
                                   forUpdate=self.ops.get('forUpdate', False))

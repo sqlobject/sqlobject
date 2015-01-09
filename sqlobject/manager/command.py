@@ -459,7 +459,7 @@ class Command(object):
             for fname in filenames:
                 module_name = os.path.join(dir_name, fname)
                 module_name = module_name[module_name.find(package_name):]
-                module_name = module_name.replace(os.path.sep,'.')[:-3]
+                module_name = module_name.replace(os.path.sep, '.')[:-3]
                 try:
                     module = moduleloader.load_module(module_name)
                 except ImportError as err:

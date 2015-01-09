@@ -23,13 +23,13 @@ class SRThrough3(SQLObject):
 def setup_module(mod):
     setupClass([mod.SRThrough3, mod.SRThrough1, mod.SRThrough2])
     threes = inserts(mod.SRThrough3,
-                     [('a',),('b',),('c',)],
+                     [('a',), ('b',), ('c',)],
                      'name')
     ones = inserts(mod.SRThrough1,
-                   [(threes[0].id,),(threes[0].id,),(threes[2].id,)],
+                   [(threes[0].id,), (threes[0].id,), (threes[2].id,)],
                    'threeID')
     twos = inserts(mod.SRThrough2,
-                   [(ones[0].id,),(ones[1].id,),(ones[2].id,)],
+                   [(ones[0].id,), (ones[1].id,), (ones[2].id,)],
                    'oneID')
     twos[0].addThree(threes[0])
     twos[0].addThree(threes[1])

@@ -74,10 +74,10 @@ def test_none():
     assert sqlrepr(None) == "NULL"
 
 def test_list():
-    assert sqlrepr(['one','two','three'], 'postgres') == "('one', 'two', 'three')"
+    assert sqlrepr(['one', 'two', 'three'], 'postgres') == "('one', 'two', 'three')"
 
 def test_tuple():
-    assert sqlrepr(('one','two','three'), 'postgres') == "('one', 'two', 'three')"
+    assert sqlrepr(('one', 'two', 'three'), 'postgres') == "('one', 'two', 'three')"
 
 def test_bool():
     assert sqlrepr(True, 'postgres') == "'t'"
@@ -149,7 +149,7 @@ def test_insert():
     assert sqlrepr(instance8, 'mysql') == "INSERT INTO test (col1, col2) VALUES ('a1', 'b1'), ('a2', 'b2')"
 
 def test_update():
-    instance = Update('test', {'test':'test'})
+    instance = Update('test', {'test': 'test'})
     assert sqlrepr(instance, 'mysql') == "UPDATE test SET test='test'"
 
 def test_delete():
@@ -157,7 +157,7 @@ def test_delete():
     assert sqlrepr(instance, 'mysql') == "DELETE FROM test"
 
 def test_replace():
-    instance = Replace('test', {'test':'test'})
+    instance = Replace('test', {'test': 'test'})
     assert sqlrepr(instance, 'mysql') == "REPLACE test SET test='test'"
 
 def test_trueclause():
