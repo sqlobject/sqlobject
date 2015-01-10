@@ -18,7 +18,7 @@ def testSelect():
 
 def testDeleteMany():
     setupGetters(TestSO1)
-    TestSO1.deleteMany(OR(TestSO1.q.name=="bob", TestSO1.q.name=="fred"))
+    TestSO1.deleteMany(OR(TestSO1.q.name == "bob", TestSO1.q.name == "fred"))
     assert len(list(TestSO1.select('all'))) == 2
 
 def testDeleteBy():

@@ -51,7 +51,7 @@ class PrimaryKeyNotFounded(maxdbException):
             self,
             "No primary key was defined on table %r" % value)
 
-SAPDBMAX_ID_LENGTH=32
+SAPDBMAX_ID_LENGTH = 32
 
 class MaxdbConnection(DBAPI):
 
@@ -83,16 +83,16 @@ class MaxdbConnection(DBAPI):
             database=path, **args)
 
     def _getConfigParams(self, sqlmode, auto):
-        autocommit='off'
+        autocommit = 'off'
         if auto:
-            autocommit='on'
+            autocommit = 'on'
         opt = {}
         opt["autocommit"] = autocommit
         opt["sqlmode"] = sqlmode
         if self.isolation:
-            opt["isolation"]=self.isolation
+            opt["isolation"] = self.isolation
         if self.timeout :
-            opt["timeout"]=self.timeout
+            opt["timeout"] = self.timeout
         return opt
 
     def _setAutoCommit(self, conn, auto):
@@ -108,7 +108,7 @@ class MaxdbConnection(DBAPI):
         characters so that the name of the sequence does not exceed 32
         characters
         """
-        return '%s_SEQ'%(table[:SAPDBMAX_ID_LENGTH -4])
+        return '%s_SEQ' % (table[:SAPDBMAX_ID_LENGTH - 4])
 
     def makeConnection(self):
         conn = self.module.Connection(
@@ -234,16 +234,16 @@ class MaxdbConnection(DBAPI):
 
         results = []
         keymap = {}
-        pkmap={}
-        fkData = self.queryAll(self.GET_PK_AND_FK% tableName)
+        pkmap = {}
+        fkData = self.queryAll(self.GET_PK_AND_FK % tableName)
         for col, cons_type, refcol, reftable in fkData:
-            col_name= col.lower()
-            pkmap[col_name]=False
+            col_name = col.lower()
+            pkmap[col_name] = False
             if cons_type == 'R':
-                keymap[col_name]=reftable.lower()
+                keymap[col_name] = reftable.lower()
 
             elif cons_type == 'P':
-                pkmap[col_name]=True
+                pkmap[col_name] = True
 
         if len(pkmap) == 0:
             raise PrimaryKeyNotFounded(tableName)
@@ -261,9 +261,9 @@ class MaxdbConnection(DBAPI):
             kw['dbName'] = field
 
             if nullAllowed == 'Y' :
-                nullAllowed=False
+                nullAllowed = False
             else:
-                nullAllowed=True
+                nullAllowed = True
 
             kw['notNone'] = nullAllowed
             if default is not None:
@@ -276,8 +276,8 @@ class MaxdbConnection(DBAPI):
 
         return results
 
-    _numericTypes=['INTEGER', 'INT', 'SMALLINT']
-    _dateTypes=['DATE', 'TIME', 'TIMESTAMP']
+    _numericTypes = ['INTEGER', 'INT', 'SMALLINT']
+    _dateTypes = ['DATE', 'TIME', 'TIMESTAMP']
 
     def guessClass(self, t, flength, fscale=None):
         """

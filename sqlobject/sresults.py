@@ -303,7 +303,7 @@ class SelectResults(object):
         if ref and ref.foreignKey:
             otherClass, clause = self._throughToFK(ref)
         else:
-            join = [x for x in self.sourceClass.sqlmeta.joins if x.joinMethodName==attr]
+            join = [x for x in self.sourceClass.sqlmeta.joins if x.joinMethodName == attr]
             if join:
                 join = join[0]
                 orderBy = join.orderBy
@@ -324,7 +324,7 @@ class SelectResults(object):
         colName = col.name
         query = self.queryForSelect().newItems([sqlbuilder.ColumnAS(getattr(self.sourceClass.q, colName), colName)]).orderBy(None).distinct()
         query = sqlbuilder.Alias(query, "%s_%s" % (self.sourceClass.__name__, col.name))
-        return otherClass, otherClass.q.id==getattr(query.q, colName)
+        return otherClass, otherClass.q.id == getattr(query.q, colName)
 
     def _throughToMultipleJoin(self, join):
         otherClass = join.otherClass
@@ -332,7 +332,7 @@ class SelectResults(object):
         query = self.queryForSelect().newItems([sqlbuilder.ColumnAS(self.sourceClass.q.id, 'id')]).orderBy(None).distinct()
         query = sqlbuilder.Alias(query, "%s_%s" % (self.sourceClass.__name__, join.joinMethodName))
         joinColumn = getattr(otherClass.q, colName)
-        return otherClass, joinColumn==query.q.id
+        return otherClass, joinColumn == query.q.id
 
     def _throughToRelatedJoin(self, join):
         otherClass = join.otherClass

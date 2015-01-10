@@ -446,7 +446,7 @@ class SQLObjectTableWithJoins(SQLObjectTable):
             return AND(join.otherClass.q.id == Field(join.intermediateTable, join.otherColumn),
                        Field(join.intermediateTable, join.joinColumn) == self.soClass.q.id)
         else:
-            return getattr(join.otherClass.q, join.joinColumn)==self.soClass.q.id
+            return getattr(join.otherClass.q, join.joinColumn) == self.soClass.q.id
 
 class TableSpace:
     TableClass = Table

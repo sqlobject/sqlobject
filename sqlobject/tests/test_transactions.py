@@ -65,7 +65,7 @@ def test_transaction_delete(close=False):
         TestSOTrans(name='bob')
         bIn = TestSOTrans.byName('bob', connection=trans)
         bIn.destroySelf()
-        bOut = TestSOTrans.select(TestSOTrans.q.name=='bob')
+        bOut = TestSOTrans.select(TestSOTrans.q.name == 'bob')
         assert bOut.count() == 1
         bOutInst = bOut[0]
         bOutID = bOutInst.id # noqa: bOutID is used in the string code below

@@ -92,7 +92,7 @@ def test_select_getOne():
     a = IterTest(name='a')
     b = IterTest(name='b')
     assert IterTest.selectBy(name='a').getOne() == a
-    assert IterTest.select(IterTest.q.name=='b').getOne() == b
+    assert IterTest.select(IterTest.q.name == 'b').getOne() == b
     assert IterTest.selectBy(name='c').getOne(None) is None
     raises(SQLObjectNotFound, 'IterTest.selectBy(name="c").getOne()')
     IterTest(name='b')
@@ -185,7 +185,7 @@ def test_select_RLIKE():
 def test_select_sqlbuilder():
     setupClass(IterTest)
     IterTest(name='sqlobject')
-    IterTest.select(IterTest.q.name==u'sqlobject')
+    IterTest.select(IterTest.q.name == u'sqlobject')
 
 def test_select_perConnection():
     setupClass(IterTest)

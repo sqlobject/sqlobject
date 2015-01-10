@@ -588,7 +588,7 @@ class DBAPI(DBConnection):
                     self.sqlrepr(so.id)))
 
     def _SO_selectOne(self, so, columnNames):
-        return self._SO_selectOneAlt(so, columnNames, so.q.id==so.id)
+        return self._SO_selectOneAlt(so, columnNames, so.q.id == so.id)
 
 
     def _SO_selectOneAlt(self, so, columnNames, condition):

@@ -111,5 +111,5 @@ class Versioning(object):
         if obj is None:
             return self
         return self.versionClass.select(
-            self.versionClass.q.masterID==obj.id, connection=obj._connection)
+            self.versionClass.q.masterID == obj.id, connection=obj._connection)
 

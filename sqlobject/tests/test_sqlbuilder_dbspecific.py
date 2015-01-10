@@ -15,7 +15,7 @@ class SBButton(SQLObject):
     activated = BoolCol()
 
 def makeClause():
-    return SBButton.q.activated==True
+    return SBButton.q.activated == True
 
 def makeSelect():
     return Select(SBButton.q.id, clause=makeClause())
@@ -45,9 +45,9 @@ def testAliased():
     yield checkCount, JOIN(None, b), 1
     yield checkCount, JOIN(b, SBButton), 1
     yield checkCount, JOIN(SBButton, b), 1
-    yield checkCount, LEFTJOINOn(None, b, SBButton.q.id==b.q.id), 1
-    yield checkCount, LEFTJOINOn(b, SBButton, SBButton.q.id==b.q.id), 1
-    yield checkCount, LEFTJOINOn(SBButton, b, SBButton.q.id==b.q.id), 1
+    yield checkCount, LEFTJOINOn(None, b, SBButton.q.id == b.q.id), 1
+    yield checkCount, LEFTJOINOn(b, SBButton, SBButton.q.id == b.q.id), 1
+    yield checkCount, LEFTJOINOn(SBButton, b, SBButton.q.id == b.q.id), 1
     
 def testTablesUsedSResults():
     setupClass(SBButton)

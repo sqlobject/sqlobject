@@ -1186,7 +1186,7 @@ class SQLObject(object):
         if idName is None: # Get by id
             return joinClass.get(value, connection=connection)
         return joinClass.select(
-            getattr(joinClass.q, idName)==value, connection=connection).getOne()
+            getattr(joinClass.q, idName) == value, connection=connection).getOne()
 
     def __init__(self, **kw):
         # If we are the outmost constructor of a hiearchy of
@@ -1330,7 +1330,7 @@ class SQLObject(object):
             if from_python:
                 v = from_python(v, sqlbuilder.SQLObjectState(cls, connection=connection))
             new_value.append(v)
-        condition = sqlbuilder.AND(*[getattr(cls.q, n)==v for n, v in zip(name, new_value)])
+        condition = sqlbuilder.AND(*[getattr(cls.q, n) == v for n, v in zip(name, new_value)])
         return (connection or cls._connection)._SO_selectOneAlt(
             cls,
             [cls.sqlmeta.idName] +

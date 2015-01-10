@@ -74,7 +74,7 @@ class MSSQLConnection(DBAPI):
                 return keys_dict
             self.make_conn_str = _make_conn_str
 
-        self.autoCommit=int(autoCommit)
+        self.autoCommit = int(autoCommit)
         self.user = user
         self.password = password
         self.host = host
@@ -192,7 +192,7 @@ class MSSQLConnection(DBAPI):
     def joinSQLType(self, join):
         return 'INT NOT NULL'
 
-    SHOW_TABLES="SELECT name FROM sysobjects WHERE type='U'"
+    SHOW_TABLES = "SELECT name FROM sysobjects WHERE type='U'"
     def tableExists(self, tableName):
         for (table,) in self.queryAll(self.SHOW_TABLES):
             if table.lower() == tableName.lower():

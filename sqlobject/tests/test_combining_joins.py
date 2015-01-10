@@ -39,4 +39,4 @@ def test_join_sqlrepr():
     assert list(cg2.unit_models.distinct()) == [u1, u2]
     
     assert list(
-        cg2.unit_models.filter(UnitModel.q.name=='u1')) == [u1]
+        cg2.unit_models.filter(UnitModel.q.name == 'u1')) == [u1]

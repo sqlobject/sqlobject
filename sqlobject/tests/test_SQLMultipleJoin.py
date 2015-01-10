@@ -18,10 +18,10 @@ def createAllTables():
 def test_1():
     createAllTables()
     # create some races
-    human=Race(name='human')
-    saiyajin=Race(name='saiyajin')
-    hibrid=Race(name='hibrid (human with sayajin)')
-    namek=Race(name='namekuseijin')
+    human = Race(name='human')
+    saiyajin = Race(name='saiyajin')
+    hibrid = Race(name='hibrid (human with sayajin)')
+    namek = Race(name='namekuseijin')
     # create some fighters
     RFighter(name='Gokou (Kakaruto)', race=saiyajin, power=10)
     RFighter(name='Vegeta', race=saiyajin, power=9)
@@ -30,8 +30,8 @@ def test_1():
     RFighter(name='Jackie Chan', race=human, power=2)
     RFighter(name='Gohan', race=hibrid, power=8)
     RFighter(name='Goten', race=hibrid, power=7)
-    trunks=RFighter(name='Trunks', race=hibrid, power=8)
-    picollo=RFighter(name='Picollo', race=namek, power=6)
+    trunks = RFighter(name='Trunks', race=hibrid, power=8)
+    picollo = RFighter(name='Picollo', race=namek, power=6)
     RFighter(name='Neil', race=namek, power=5)
 
     # testing the SQLMultipleJoin stuff
@@ -49,7 +49,7 @@ def test_multiple_join_transaction():
     createAllTables()
     trans = Race._connection.transaction()
     try:
-        namek=Race(name='namekuseijin', connection=trans)
+        namek = Race(name='namekuseijin', connection=trans)
         RFighter(name='Gokou (Kakaruto)', race=namek, power=10, connection=trans)
         assert namek.fightersAsSResult.count() == 1
         assert namek.fightersAsSResult[0]._connection == trans

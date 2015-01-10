@@ -47,7 +47,7 @@ class FirebirdConnection(DBAPI):
         if not password:
             password = 'masterkey'
         if not auth:
-            auth='sysdba'
+            auth = 'sysdba'
         # check for alias using
         if (path[0] == '/') and path[-3:].lower() not in ('fdb', 'gdb'):
             path = path[1:]
@@ -205,7 +205,7 @@ class FirebirdConnection(DBAPI):
 
         self.readDefaultEncodingFromDB()
 
-        fieldQuery="""\
+        fieldQuery = """\
         SELECT r.RDB$FIELD_NAME AS field_name,
                 CASE f.RDB$FIELD_TYPE
                 when 7 then 'smallint'
@@ -302,7 +302,7 @@ class FirebirdConnection(DBAPI):
                 if fieldCharset.startswith('UNICODE_FSS'): # 'UNICODE_FSS' is less strict Firebird/Interbase UTF8 definition
                     fieldCharset = "UTF8"
             if fieldSubtype:
-                fieldSubtype=fieldSubtype.strip()
+                fieldSubtype = fieldSubtype.strip()
                 if fieldType == "int64":
                     fieldType = fieldSubtype
 
@@ -311,9 +311,9 @@ class FirebirdConnection(DBAPI):
                 if defaultSource.startswith ("'") and defaultSource.endswith ("'"):
                     defaultSource = str(defaultSource[1:-1])
                 elif fieldType in ("integer", "smallint", "bigint"):
-                    defaultSource=int(defaultSource)
+                    defaultSource = int(defaultSource)
                 elif fieldType in ("float", "double"):
-                    defaultSource=float(defaultSource)
+                    defaultSource = float(defaultSource)
             #TODO: other types for defaultSource
             #    elif fieldType == "datetime":
 

@@ -201,7 +201,7 @@ class SOCol(object):
         _vlen = len(_validators)
         if _vlen:
             for _validator in _validators:
-                _validator.soCol=weakref.proxy(self)
+                _validator.soCol = weakref.proxy(self)
         if _vlen == 0:
             self.validator = None # Set sef.{from,to}_python
         elif _vlen == 1:
@@ -945,8 +945,8 @@ class SOForeignKey(SOKeyCol):
         sql = ' '.join([fidName, self._maxdbType()])
         tName = other.sqlmeta.table
         idName  = self.refColumn or other.sqlmeta.idName
-        sql=sql + ',' + '\n'
-        sql=sql + 'FOREIGN KEY (%s) REFERENCES %s(%s)'%(fidName, tName, idName)
+        sql = sql + ',' + '\n'
+        sql = sql + 'FOREIGN KEY (%s) REFERENCES %s(%s)' % (fidName, tName, idName)
         return sql
 
     def maxdbCreateReferenceConstraint(self):

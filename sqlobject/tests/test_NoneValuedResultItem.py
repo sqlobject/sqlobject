@@ -24,5 +24,5 @@ def test1():
 
     # do a left join, a common use case that often involves NULL results
     s = TestWork.select(join=sqlbuilder.LEFTJOINOn(TestComposer, TestWork,
-                        TestComposer.q.id==TestWork.q.composerID))
-    assert tuple(s)==(w, None)
+                        TestComposer.q.id == TestWork.q.composerID))
+    assert tuple(s) == (w, None)

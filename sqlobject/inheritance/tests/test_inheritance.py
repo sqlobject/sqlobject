@@ -24,7 +24,7 @@ def setup():
 
 def test_creation_fail():
     setup()
-    kwargs ={'firstName': 'John', 'lastname': 'Doe'}
+    kwargs = {'firstName': 'John', 'lastname': 'Doe'}
     raises(TypeError, Employee, **kwargs)
     persons = InheritablePerson.select(InheritablePerson.q.firstName == 'John')
     assert persons.count() == 0
