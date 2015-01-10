@@ -36,7 +36,7 @@ def test_1():
 
     # testing the SQLMultipleJoin stuff
     for i, j in zip(human.fightersAsList, human.fightersAsSResult):
-        assert i is j # the 2 ways should give the same result
+        assert i is j  # the 2 ways should give the same result
     assert namek.fightersAsSResult.count() == len(namek.fightersAsList)
     assert saiyajin.fightersAsSResult.max('power') == 10
     assert trunks in hibrid.fightersAsSResult

@@ -101,7 +101,7 @@ def test_inheritable_versioning():
     vchild.set(name='toon', weapon='dynamite')
     assert len(list(base.versions)) == num_base_versions
     assert len(list(vchild.versions)) == 1
-    vchild.name = "newname" # test setting using setattr directly rather than .set
+    vchild.name = "newname"  # test setting using setattr directly rather than .set
     assert len(list(vchild.versions)) == 2
 
 def test_restore():

@@ -32,7 +32,7 @@ def test_creation_fail():
 def test_inheritance():
     setup()
 
-    persons = InheritablePerson.select() # all
+    persons = InheritablePerson.select()  # all
     for person in persons:
         assert isinstance(person, InheritablePerson)
         if isinstance(person, Employee):

@@ -323,7 +323,7 @@ class SOSingleJoin(SOMultipleJoin):
                 return None
             else:
                 kw = {self.soClass.sqlmeta.style.instanceIDAttrToAttr(pythonColumn): inst}
-                return self.otherClass(**kw) # instanciating the otherClass with all
+                return self.otherClass(**kw)  # instanciating the otherClass with all
         else:
             return results[0]
 

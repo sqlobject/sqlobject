@@ -18,7 +18,7 @@ def test_sslmode():
 
     connection = getConnection(sslmode='require')
     TestSSLMode._connection = connection
-    test = TestSSLMode(test='test') # Connect to the DB to test sslmode
+    test = TestSSLMode(test='test')  # Connect to the DB to test sslmode
 
     connection.cache.clear()
     test = TestSSLMode.select()[0]

@@ -56,7 +56,7 @@ class MSSQLConnection(DBAPI):
             kw.pop("sspi", None)
             kw.pop("ncli", None)
 
-        else: # pymssql
+        else:  # pymssql
             self.dbconnection = sqlmodule.connect
             sqlmodule.Binary = lambda st: str(st)
             # don't know whether pymssql uses unicode
@@ -293,7 +293,7 @@ class MSSQLConnection(DBAPI):
         elif t.startswith('datetime'):
             return col.DateTimeCol, {}
         elif t.startswith('decimal'):
-            return col.DecimalCol, {'size': precision, # be careful for awkward naming
+            return col.DecimalCol, {'size': precision,  # be careful for awkward naming
                                    'precision': scale}
         else:
             return col.Col, {}
@@ -306,7 +306,7 @@ class MSSQLConnection(DBAPI):
             server_version = server_version.split('.')[0]
             server_version = int(server_version)
         except:
-            server_version = None # unknown
+            server_version = None  # unknown
         self._server_version = server_version
         return server_version
 

@@ -70,7 +70,7 @@ class MySQLConnection(DBAPI):
             conn = self.module.connect(host=self.host, port=self.port,
                 db=self.db, user=self.user, passwd=self.password, **self.kw)
             if self.module.version_info[:3] >= (1, 2, 2):
-                conn.ping(True) # Attempt to reconnect. This setting is persistent.
+                conn.ping(True)  # Attempt to reconnect. This setting is persistent.
         except self.module.OperationalError as e:
             conninfo = "; used connection string: host=%(host)s, port=%(port)s, db=%(db)s, user=%(user)s" % self.__dict__
             raise OperationalError(ErrorMessage(e, conninfo))
@@ -79,9 +79,9 @@ class MySQLConnection(DBAPI):
             conn.autocommit(bool(self.autoCommit))
 
         if dbEncoding:
-            if hasattr(conn, 'set_character_set'): # MySQLdb 1.2.1 and later
+            if hasattr(conn, 'set_character_set'):  # MySQLdb 1.2.1 and later
                 conn.set_character_set(dbEncoding)
-            else: # pre MySQLdb 1.2.1
+            else:  # pre MySQLdb 1.2.1
                 # works along with monkeypatching code above
                 conn.query("SET NAMES %s" % dbEncoding)
 
@@ -197,7 +197,7 @@ class MySQLConnection(DBAPI):
             self.query('DESCRIBE %s' % (tableName))
             return True
         except ProgrammingError as e:
-            if e[0].code == 1146: # ER_NO_SUCH_TABLE
+            if e[0].code == 1146:  # ER_NO_SUCH_TABLE
                 return False
             raise
 
@@ -246,8 +246,8 @@ class MySQLConnection(DBAPI):
             return col.IntCol, {}
         elif t.startswith('enum'):
             values = []
-            for i in t[5:-1].split(','): # take the enum() off and split
-                values.append(i[1:-1]) # remove the surrounding \'
+            for i in t[5:-1].split(','):  # take the enum() off and split
+                values.append(i[1:-1])  # remove the surrounding \'
             return col.EnumCol, {'enumValues': values}
         elif t.startswith('double'):
             return col.FloatCol, {}
@@ -326,7 +326,7 @@ class MySQLConnection(DBAPI):
             server_version = tuple(int(v) for v in server_version.split('.'))
             server_version = (server_version, db_tag)
         except:
-            server_version = None # unknown
+            server_version = None  # unknown
         self._server_version = server_version
         return server_version
 
@@ -339,7 +339,7 @@ class MySQLConnection(DBAPI):
         server_version, db_tag = server_version
         if db_tag == "MariaDB":
             can_use_microseconds = (server_version >= (5, 3, 0))
-        else: # MySQL
+        else:  # MySQL
             can_use_microseconds = (server_version >= (5, 6, 4))
         self._can_use_microseconds = can_use_microseconds
         return can_use_microseconds

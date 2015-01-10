@@ -477,7 +477,7 @@ class InheritableSQLObject(SQLObject):
             currentClass = currentClass.sqlmeta.parentClass
         for name, value in kw.items():
             if name in foreignColumns:
-                name = foreignColumns[name] # translate "key" to "keyID"
+                name = foreignColumns[name]  # translate "key" to "keyID"
                 if isinstance(value, SQLObject):
                     value = value.id
             currentClass = cls
@@ -494,7 +494,7 @@ class InheritableSQLObject(SQLObject):
         if clause:
             clause = reduce(sqlbuilder.AND, clause)
         else:
-            clause = None # select all
+            clause = None  # select all
         conn = connection or cls._connection
         return cls.SelectResultsClass(cls, clause, connection=conn)
 

@@ -227,9 +227,9 @@ class sqlmeta(object):
     _perConnection = False
 
     # Inheritance definitions:
-    parentClass = None # A reference to the parent class
-    childClasses = {} # References to child classes, keyed by childName
-    childName = None # Class name for inheritance child object creation
+    parentClass = None  # A reference to the parent class
+    childClasses = {}  # References to child classes, keyed by childName
+    childName = None  # Class name for inheritance child object creation
 
     # Does the row require syncing?
     dirty = False
@@ -715,9 +715,9 @@ class SQLObject(object):
 
     #DSM: The _inheritable attribute controls wheter the class can by
     #DSM: inherited 'logically' with a foreignKey and a back reference.
-    _inheritable = False # Is this class inheritable?
-    _parent = None # A reference to the parent instance
-    childName = None # Children name (to be able to get a subclass)
+    _inheritable = False  # Is this class inheritable?
+    _parent = None  # A reference to the parent instance
+    childName = None  # Children name (to be able to get a subclass)
 
     # The law of Demeter: the class should not call another classes by name
     SelectResultsClass = SelectResults
@@ -857,7 +857,7 @@ class SQLObject(object):
                     del values[key]
             cls.sqlmeta = type('sqlmeta', (superclass,), values)
 
-        if not is_base: # Do not pollute the base sqlmeta class
+        if not is_base:  # Do not pollute the base sqlmeta class
             cls.sqlmeta.setClass(cls)
 
     @classmethod
@@ -1183,7 +1183,7 @@ class SQLObject(object):
             connection = self._connection
         else:
             connection = None
-        if idName is None: # Get by id
+        if idName is None:  # Get by id
             return joinClass.get(value, connection=connection)
         return joinClass.select(
             getattr(joinClass.q, idName) == value, connection=connection).getOne()

@@ -68,7 +68,7 @@ def test_transaction_delete(close=False):
         bOut = TestSOTrans.select(TestSOTrans.q.name == 'bob')
         assert bOut.count() == 1
         bOutInst = bOut[0]
-        bOutID = bOutInst.id # noqa: bOutID is used in the string code below
+        bOutID = bOutInst.id  # noqa: bOutID is used in the string code below
         trans.commit(close=close)
         assert bOut.count() == 0
         raises(SQLObjectNotFound, "TestSOTrans.get(bOutID)")

@@ -45,7 +45,7 @@ def test_03_ranged_indexed():
     all = IterTest.select()
     count = 0
     for i in range(all.count()):
-        all[i] # test it's there
+        all[i]  # test it's there
         count += 1
     assert count == len(names)
 

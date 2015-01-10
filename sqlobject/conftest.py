@@ -12,7 +12,7 @@ import sqlobject
 
 try:
     import pkg_resources
-except ImportError: # Python 2.2
+except ImportError:  # Python 2.2
     pass
 else:
     pkg_resources.require('SQLObject')

@@ -16,7 +16,7 @@ def test_1():
     setupClass([PersonWithAlbum, PhotoAlbum])
 
     person = PersonWithAlbum(name='Gokou (Kakarouto)')
-    assert not person.albumNone # I don't created an album, this way it returns None
+    assert not person.albumNone  # I don't created an album, this way it returns None
     assert isinstance(person.albumInstance, PhotoAlbum)
 
     PhotoAlbum(person=person)

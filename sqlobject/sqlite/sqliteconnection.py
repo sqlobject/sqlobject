@@ -191,7 +191,7 @@ class SQLiteConnection(DBAPI):
         if self._memory:
             return self._memoryConn
         conn = self.module.connect(self.filename, **self._connOptions)
-        conn.text_factory = str # Convert text data to str, not unicode
+        conn.text_factory = str  # Convert text data to str, not unicode
         return conn
 
     def close(self):

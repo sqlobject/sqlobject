@@ -38,7 +38,7 @@ class ConsoleWriter:
             try:
                 text = text.encode(self.dbEncoding)
             except UnicodeEncodeError:
-                text = repr(text)[2:-1] # Remove u'...' from the repr
+                text = repr(text)[2:-1]  # Remove u'...' from the repr
         logfile.write(text + '\n')
 
 class LogWriter:
@@ -683,7 +683,7 @@ class DBAPI(DBConnection):
             return
         self._poolLock.acquire()
         try:
-            if not self._pool: # _pool could be filled in a different thread
+            if not self._pool:  # _pool could be filled in a different thread
                 return
             conns = self._pool[:]
             self._pool[:] = []
@@ -1033,11 +1033,11 @@ dbConnectionForScheme = TheURIOpener.dbConnectionForScheme
 
 # Register DB URI schemas -- do import for side effects
 # noqa is a directive for flake8 to ignore seemingly unused imports
-import firebird # noqa
-import maxdb # noqa
-import mssql # noqa
-import mysql # noqa
-import postgres # noqa
-import rdbhost # noqa
-import sqlite # noqa
-import sybase # noqa
+import firebird  # noqa
+import maxdb  # noqa
+import mssql  # noqa
+import mysql  # noqa
+import postgres  # noqa
+import rdbhost  # noqa
+import sqlite  # noqa
+import sybase  # noqa

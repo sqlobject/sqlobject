@@ -31,11 +31,11 @@ if is_setuptools:
     kw['install_requires'] = ["FormEncode>=1.1.1", "PyDispatcher>=2.0.4"]
     kw['extras_require'] = {
         'mysql': ['MySQLdb'],
-        'postgresql': ['psycopg'], # or pgdb from PyGreSQL
+        'postgresql': ['psycopg'],  # or pgdb from PyGreSQL
         'sqlite': ['pysqlite'],
         'firebird': ['kinterbasdb'],
         'sybase': ['Sybase'],
-        'mssql': ['adodbapi'], # or pymssql
+        'mssql': ['adodbapi'],  # or pymssql
         'sapdb': ['sapdb'],
         }
 

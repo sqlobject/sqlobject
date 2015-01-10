@@ -56,7 +56,7 @@ if mxdatetime_available:
     col.default_datetime_implementation = MXDATETIME_IMPLEMENTATION
     from mx.DateTime import now, Time
 
-    dateFormat = None # use default
+    dateFormat = None  # use default
     connection = getConnection()
     if connection.dbName == "sqlite":
         if connection.using_sqlite2:

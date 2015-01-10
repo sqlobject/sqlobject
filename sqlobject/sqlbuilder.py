@@ -483,7 +483,7 @@ class AliasField(Field):
         return [self.aliasTable]
 
 class AliasTable(Table):
-    as_string = '' # set it to "AS" if your database requires it
+    as_string = ''  # set it to "AS" if your database requires it
     FieldClass = AliasField
 
     _alias_lock = threading.Lock()
@@ -679,7 +679,7 @@ class Select(SQLExpression):
         if self.ops['groupBy'] is not NoDefault:
             groupBy = _str_or_sqlrepr(self.ops['groupBy'], db)
             if isinstance(self.ops['groupBy'], (list, tuple)):
-                groupBy = groupBy[1:-1] # Remove parens
+                groupBy = groupBy[1:-1]  # Remove parens
             select += " GROUP BY %s" % groupBy
         if self.ops['having'] is not NoDefault:
             select += " HAVING %s" % _str_or_sqlrepr(self.ops['having'], db)
@@ -846,7 +846,7 @@ def _IN(item, list):
     return SQLOp("IN", item, list)
 
 def IN(item, list):
-    from sresults import SelectResults # Import here to avoid circular import
+    from sresults import SelectResults  # Import here to avoid circular import
     if isinstance(list, SelectResults):
         query = list.queryForSelect()
         query.ops['items'] = [list.sourceClass.q.id]

@@ -36,10 +36,10 @@ class FirebirdConnection(DBAPI):
             self.dialect = None
         self.role = role
         if charset:
-            self.dbEncoding = charset.replace('-', '') # encoding defined by user in the connection string
+            self.dbEncoding = charset.replace('-', '')  # encoding defined by user in the connection string
         else:
             self.dbEncoding = charset
-        self.defaultDbEncoding = '' # encoding defined during database creation and stored in the database
+        self.defaultDbEncoding = ''  # encoding defined during database creation and stored in the database
         DBAPI.__init__(self, **kw)
 
     @classmethod
@@ -174,8 +174,8 @@ class FirebirdConnection(DBAPI):
         self.query('ALTER TABLE %s DROP %s' % (sqlmeta.table, column.dbName))
 
     def readDefaultEncodingFromDB(self):
-        if self.defaultDbEncoding is "": # get out if encoding is known allready (can by None as well))
-            self.defaultDbEncoding =  str(self.queryOne("SELECT rdb$character_set_name FROM rdb$database")[0].strip().lower()) # encoding defined during db creation
+        if self.defaultDbEncoding is "":  # get out if encoding is known allready (can by None as well))
+            self.defaultDbEncoding =  str(self.queryOne("SELECT rdb$character_set_name FROM rdb$database")[0].strip().lower())  # encoding defined during db creation
             if self.defaultDbEncoding  == "none":
                 self.defaultDbEncoding = None
             if self.dbEncoding != self.defaultDbEncoding:
@@ -191,7 +191,7 @@ class FirebirdConnection(DBAPI):
                    So you must set the correct values on the server and on the client if everything is to work smoothely.\n"""
                 warnings.warn(warningText)
 
-            if not self.dbEncoding: # defined by user in the connection string
+            if not self.dbEncoding:  # defined by user in the connection string
                 self.dbEncoding = self.defaultDbEncoding
                 warningText = """\n
                     encoding: %s will be used as default for this connection\n""" % self.dbEncoding
@@ -299,14 +299,14 @@ class FirebirdConnection(DBAPI):
             fieldType = fieldType.strip()
             if fieldCharset:
                 fieldCharset = str(fieldCharset.strip())
-                if fieldCharset.startswith('UNICODE_FSS'): # 'UNICODE_FSS' is less strict Firebird/Interbase UTF8 definition
+                if fieldCharset.startswith('UNICODE_FSS'):  # 'UNICODE_FSS' is less strict Firebird/Interbase UTF8 definition
                     fieldCharset = "UTF8"
             if fieldSubtype:
                 fieldSubtype = fieldSubtype.strip()
                 if fieldType == "int64":
                     fieldType = fieldSubtype
 
-            if defaultSource: # can look like: "DEFAULT 0", "DEFAULT 'default text'", None
+            if defaultSource:  # can look like: "DEFAULT 0", "DEFAULT 'default text'", None
                 defaultSource = defaultSource.split(' ')[1]
                 if defaultSource.startswith ("'") and defaultSource.endswith ("'"):
                     defaultSource = str(defaultSource[1:-1])
@@ -353,26 +353,26 @@ class FirebirdConnection(DBAPI):
         elif t == 'double':        # 64 bits, 1.7x10^-308 to 1.7x10^308, 15 digit precision (15 significant decimals)
             return col.FloatCol, {}
         elif t == 'numeric':        # Numeric and Decimal are internally stored as smallint, integer or bigint depending on the size. They can handle up to 18 digits.
-            if (not flength or not fscale): # If neither PRECISION nor SCALE are specified, Firebird/InterBase defines the column as INTEGER instead of NUMERIC and stores only the integer portion of the value
+            if (not flength or not fscale):  # If neither PRECISION nor SCALE are specified, Firebird/InterBase defines the column as INTEGER instead of NUMERIC and stores only the integer portion of the value
                 return col.IntCol, {}
-            return col.DecimalCol, {'size': flength, 'precision': fscale} # check if negative values are allowed for fscale
+            return col.DecimalCol, {'size': flength, 'precision': fscale}  # check if negative values are allowed for fscale
 
-        elif t == 'decimal': # Numeric and Decimal are internally stored as smallint, integer or bigint depending on the size. They can handle up to 18 digits.
-            return col.DecimalCol, {'size': flength, 'precision': fscale} # check if negative values are allowed for fscale
-        elif t == 'date': # 32 bits, 1 Jan 100. to 29 Feb 32768.
+        elif t == 'decimal':  # Numeric and Decimal are internally stored as smallint, integer or bigint depending on the size. They can handle up to 18 digits.
+            return col.DecimalCol, {'size': flength, 'precision': fscale}  # check if negative values are allowed for fscale
+        elif t == 'date':  # 32 bits, 1 Jan 100. to 29 Feb 32768.
             return col.DateCol, {}
-        elif t == 'time': # 32 bits, 00:00 to 23:59.9999
+        elif t == 'time':  # 32 bits, 00:00 to 23:59.9999
             return col.TimeCol, {}
-        elif t == 'timestamp': # 64 bits, 1 Jan 100 to 28 Feb 32768.
+        elif t == 'timestamp':  # 64 bits, 1 Jan 100 to 28 Feb 32768.
             return col.DateTimeCol, {}
-        elif t == 'char': # 32767 bytes
+        elif t == 'char':  # 32767 bytes
             if fCharset and (fCharset != "NONE"):
                 return col.UnicodeCol, {'length': flength, 'varchar': False, 'dbEncoding': fCharset}
             elif self.dbEncoding:
                 return col.UnicodeCol, {'length': flength, 'varchar': False, 'dbEncoding': self.dbEncoding}
             else:
                 return col.StringCol, {'length': flength, 'varchar': False}
-        elif t == 'varchar': # 32767 bytes
+        elif t == 'varchar':  # 32767 bytes
             if fCharset and (fCharset != "NONE"):
                 return col.UnicodeCol, {'length': flength, 'varchar': True, 'dbEncoding': fCharset}
             elif self.dbEncoding:
@@ -380,7 +380,7 @@ class FirebirdConnection(DBAPI):
             else:
                 return col.StringCol, {'length': flength, 'varchar': True}
 
-        elif t == 'blob': # 32GB
+        elif t == 'blob':  # 32GB
             return col.BLOBCol, {}
         else:
             return col.Col, {}

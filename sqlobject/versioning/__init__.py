@@ -100,7 +100,7 @@ class Versioning(object):
 
     def rowUpdate(self, instance, kwargs):
         if instance.childName and instance.childName != self.soClass.__name__:
-            return # if you want your child class versioned, version it
+            return  # if you want your child class versioned, version it
 
         values = instance.sqlmeta.asDict()
         del values['id']

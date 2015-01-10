@@ -122,7 +122,7 @@ class PostgresConnection(DBAPI):
     @classmethod
     def _connectionFromParams(cls, user, password, host, port, path, args):
         path = path.strip('/')
-        if (host is None) and path.count('/'): # Non-default unix socket
+        if (host is None) and path.count('/'):  # Non-default unix socket
             path_parts = path.split('/')
             host = '/' + '/'.join(path_parts[:-1])
             path = path_parts[-1]
@@ -359,14 +359,14 @@ class PostgresConnection(DBAPI):
         return results
 
     def guessClass(self, t):
-        if t.count('point'): # poINT before INT
+        if t.count('point'):  # poINT before INT
             return col.StringCol, {}
         elif t.count('int'):
             return col.IntCol, {}
         elif t.count('varying') or t.count('varchar'):
             if '(' in t:
                 return col.StringCol, {'length': int(t[t.index('(')+1:-1])}
-            else: # varchar without length in Postgres means any length
+            else:  # varchar without length in Postgres means any length
                 return col.StringCol, {}
         elif t.startswith('character('):
             return col.StringCol, {'length': int(t[t.index('(')+1:-1]),

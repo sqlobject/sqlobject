@@ -43,7 +43,7 @@ try:
     from mx import DateTime
 except ImportError:
     try:
-        import DateTime # old version of mxDateTime, or Zope's Version if we're running with Zope
+        import DateTime  # old version of mxDateTime, or Zope's Version if we're running with Zope
     except ImportError:
         mxdatetime_available = False
     else:
@@ -58,7 +58,7 @@ if mxdatetime_available:
     if hasattr(DateTime, "Time"):
         DateTimeType = type(DateTime.now())
         TimeType = type(DateTime.Time())
-    else: # Zope
+    else:  # Zope
         DateTimeType = type(DateTime.DateTime())
         TimeType = type(DateTime.DateTime.Time(DateTime.DateTime()))
 
@@ -203,7 +203,7 @@ class SOCol(object):
             for _validator in _validators:
                 _validator.soCol = weakref.proxy(self)
         if _vlen == 0:
-            self.validator = None # Set sef.{from,to}_python
+            self.validator = None  # Set sef.{from,to}_python
         elif _vlen == 1:
             self.validator = _validators[0]
         elif _vlen > 1:
@@ -446,7 +446,7 @@ class SOStringLikeCol(SOCol):
     def __init__(self, **kw):
         self.length = kw.pop('length', None)
         self.varchar = kw.pop('varchar', 'auto')
-        self.char_binary = kw.pop('char_binary', None) # A hack for MySQL
+        self.char_binary = kw.pop('char_binary', None)  # A hack for MySQL
         if not self.length:
             assert self.varchar == 'auto' or not self.varchar, \
                 "Without a length strings are treated as TEXT, not varchar"
@@ -537,7 +537,7 @@ class StringValidator(SOValidator):
             connection = state.connection or state.soObject._connection
             binaryType = connection._binaryType
         except AttributeError:
-            binaryType = type(None) # Just a simple workaround
+            binaryType = type(None)  # Just a simple workaround
         dbEncoding = self.getDbEncoding(state, default='ascii')
         if isinstance(value, unicode):
             return value.encode(dbEncoding)
@@ -581,7 +581,7 @@ class UnicodeStringValidator(SOValidator):
             return value
         if isinstance(value, str):
             return unicode(value, self.getDbEncoding(state))
-        if isinstance(value, array): # MySQL
+        if isinstance(value, array):  # MySQL
             return unicode(value.tostring(), self.getDbEncoding(state))
         if hasattr(value, '__unicode__'):
             return unicode(value)
@@ -1532,7 +1532,7 @@ class BinaryValidator(SOValidator):
             connection = state.connection or state.soObject._connection
         except AttributeError:
             dbName = None
-            binaryType = type(None) # Just a simple workaround
+            binaryType = type(None)  # Just a simple workaround
         else:
             dbName = connection.dbName
             binaryType = connection._binaryType
@@ -1544,9 +1544,9 @@ class BinaryValidator(SOValidator):
             cachedValue = self._cachedValue
             if cachedValue and cachedValue[1] == value:
                 return cachedValue[0]
-            if isinstance(value, array): # MySQL
+            if isinstance(value, array):  # MySQL
                 return value.tostring()
-            return str(value) # buffer => string
+            return str(value)  # buffer => string
         raise validators.Invalid("expected a string in the BLOBCol '%s', got %s %r instead" % \
             (self.name, type(value), value), value, state)
 

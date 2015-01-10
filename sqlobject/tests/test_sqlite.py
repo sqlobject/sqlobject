@@ -118,7 +118,7 @@ def test_memorydb():
     if not connection._memory:
         py.test.skip("The connection isn't memorydb")
     setupClass(TestSO1)
-    connection.close() # create a new connection to an in-memory database
+    connection.close()  # create a new connection to an in-memory database
     TestSO1.setConnection(connection)
     TestSO1.createTable()
 

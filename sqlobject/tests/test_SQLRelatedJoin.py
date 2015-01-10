@@ -4,13 +4,13 @@ from sqlobject.tests.dbtest import *
 
 class Fighter(SQLObject):
     class sqlmeta:
-        idName = 'fighter_id' # test on a non-standard way
+        idName = 'fighter_id'  # test on a non-standard way
     name = StringCol()
     tourtments = RelatedJoin('Tourtment')
 
 class Tourtment(SQLObject):
     class sqlmeta:
-        table = 'competition' # test on a non-standard way
+        table = 'competition'  # test on a non-standard way
     name = StringCol()
     fightersAsList = RelatedJoin('Fighter')
     fightersAsSResult = SQLRelatedJoin('Fighter')
