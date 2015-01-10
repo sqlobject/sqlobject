@@ -108,48 +108,67 @@ def _str_or_sqlrepr(expr, db):
 class SQLExpression:
     def __add__(self, other):
         return SQLOp("+", self, other)
+
     def __radd__(self, other):
         return SQLOp("+", other, self)
+
     def __sub__(self, other):
         return SQLOp("-", self, other)
+
     def __rsub__(self, other):
         return SQLOp("-", other, self)
+
     def __mul__(self, other):
         return SQLOp("*", self, other)
+
     def __rmul__(self, other):
         return SQLOp("*", other, self)
+
     def __div__(self, other):
         return SQLOp("/", self, other)
+
     def __rdiv__(self, other):
         return SQLOp("/", other, self)
+
     def __pos__(self):
         return SQLPrefix("+", self)
+
     def __neg__(self):
         return SQLPrefix("-", self)
+
     def __pow__(self, other):
         return SQLConstant("POW")(self, other)
+
     def __rpow__(self, other):
         return SQLConstant("POW")(other, self)
+
     def __abs__(self):
         return SQLConstant("ABS")(self)
+
     def __mod__(self, other):
         return SQLModulo(self, other)
+
     def __rmod__(self, other):
         return SQLConstant("MOD")(other, self)
 
     def __lt__(self, other):
         return SQLOp("<", self, other)
+
     def __le__(self, other):
         return SQLOp("<=", self, other)
+
     def __gt__(self, other):
         return SQLOp(">", self, other)
+
     def __ge__(self, other):
         return SQLOp(">=", self, other)
+
     def __eq__(self, other):
         if other is None:
             return ISNULL(self)
         else:
             return SQLOp("=", self, other)
+
     def __ne__(self, other):
         if other is None:
             return ISNOTNULL(self)
@@ -158,12 +177,16 @@ class SQLExpression:
 
     def __and__(self, other):
         return SQLOp("AND", self, other)
+
     def __rand__(self, other):
         return SQLOp("AND", other, self)
+
     def __or__(self, other):
         return SQLOp("OR", self, other)
+
     def __ror__(self, other):
         return SQLOp("OR", other, self)
+
     def __invert__(self):
         return SQLPrefix("NOT", self)
 
@@ -182,13 +205,16 @@ class SQLExpression:
 
     def __cmp__(self, other):
         raise VersionError("Python 2.1+ required")
+
     def __rcmp__(self, other):
         raise VersionError("Python 2.1+ required")
 
     def startswith(self, s):
         return STARTSWITH(self, s)
+
     def endswith(self, s):
         return ENDSWITH(self, s)
+
     def contains(self, s):
         return CONTAINSSTRING(self, s)
 
@@ -197,6 +223,7 @@ class SQLExpression:
 
     def tablesUsed(self, db):
         return self.tablesUsedSet(db)
+
     def tablesUsedSet(self, db):
         tables = set()
         for table in self.tablesUsedImmediate():
@@ -206,6 +233,7 @@ class SQLExpression:
         for component in self.components():
             tables.update(tablesUsedSet(component, db))
         return tables
+
     def tablesUsedImmediate(self):
         return []
 
@@ -244,6 +272,7 @@ class SQLOp(SQLExpression):
         self.op = op.upper()
         self.expr1 = expr1
         self.expr2 = expr2
+
     def __sqlrepr__(self, db):
         s1 = sqlrepr(self.expr1, db)
         s2 = sqlrepr(self.expr2, db)
@@ -252,8 +281,10 @@ class SQLOp(SQLExpression):
         if s2[0] != '(' and s2 != 'NULL':
             s2 = '(' + s2 + ')'
         return "(%s %s %s)" % (s1, self.op, s2)
+
     def components(self):
         return [self.expr1, self.expr2]
+
     def execute(self, executor):
         if self.op == "AND":
             return execute(self.expr1, executor) \
@@ -268,6 +299,7 @@ class SQLOp(SQLExpression):
 class SQLModulo(SQLOp):
     def __init__(self, expr1, expr2):
         SQLOp.__init__(self, '%', expr1, expr2)
+
     def __sqlrepr__(self, db):
         if db == 'sqlite':
             return SQLOp.__sqlrepr__(self, db)
@@ -282,10 +314,13 @@ class SQLCall(SQLExpression):
     def __init__(self, expr, args):
         self.expr = expr
         self.args = args
+
     def __sqlrepr__(self, db):
         return "%s%s" % (sqlrepr(self.expr, db), sqlrepr(self.args, db))
+
     def components(self):
         return [self.expr] + list(self.args)
+
     def execute(self, executor):
         raise ValueError("I don't yet know how to locally execute functions")
 
@@ -295,10 +330,13 @@ class SQLPrefix(SQLExpression):
     def __init__(self, prefix, expr):
         self.prefix = prefix
         self.expr = expr
+
     def __sqlrepr__(self, db):
         return "%s %s" % (self.prefix, sqlrepr(self.expr, db))
+
     def components(self):
         return [self.expr]
+
     def execute(self, executor):
         expr = execute(self.expr, executor)
         if prefix == "+":
@@ -313,8 +351,10 @@ registerConverter(SQLPrefix, SQLExprConverter)
 class SQLConstant(SQLExpression):
     def __init__(self, const):
         self.const = const
+
     def __sqlrepr__(self, db):
         return self.const
+
     def execute(self, executor):
         raise ValueError("I don't yet know how to execute SQL constants")
 
@@ -323,6 +363,7 @@ registerConverter(SQLConstant, SQLExprConverter)
 class SQLTrueClauseClass(SQLExpression):
     def __sqlrepr__(self, db):
         return "1 = 1"
+
     def execute(self, executor):
         return 1
 
@@ -338,10 +379,13 @@ class Field(SQLExpression):
     def __init__(self, tableName, fieldName):
         self.tableName = tableName
         self.fieldName = fieldName
+
     def __sqlrepr__(self, db):
         return self.tableName + "." + self.fieldName
+
     def tablesUsedImmediate(self):
         return [self.tableName]
+
     def execute(self, executor):
         return executor.field(self.tableName, self.fieldName)
 
@@ -351,27 +395,33 @@ class SQLObjectField(Field):
         self.original = original
         self.soClass = soClass
         self.column = column
+
     def _from_python(self, value):
         column = self.column
         if not isinstance(value, SQLExpression) and column and column.from_python:
             value = column.from_python(value, SQLObjectState(self.soClass))
         return value
+
     def __eq__(self, other):
         if other is None:
             return ISNULL(self)
         other = self._from_python(other)
         return SQLOp('=', self, other)
+
     def __ne__(self, other):
         if other is None:
             return ISNOTNULL(self)
         other = self._from_python(other)
         return SQLOp('<>', self, other)
+
     def startswith(self, s):
         s = self._from_python(s)
         return STARTSWITH(self, s)
+
     def endswith(self, s):
         s = self._from_python(s)
         return ENDSWITH(self, s)
+
     def contains(self, s):
         s = self._from_python(s)
         return CONTAINSSTRING(self, s)
@@ -384,12 +434,15 @@ class Table(SQLExpression):
 
     def __init__(self, tableName):
         self.tableName = tableName
+
     def __getattr__(self, attr):
         if attr.startswith('__'):
             raise AttributeError
         return self.FieldClass(self.tableName, attr)
+
     def __sqlrepr__(self, db):
         return _str_or_sqlrepr(self.tableName, db)
+
     def execute(self, executor):
         raise ValueError("Tables don't have values")
 
@@ -715,6 +768,7 @@ class Insert(SQLExpression):
             self.valueList = valueList
         else:
             self.valueList = [values]
+
     def __sqlrepr__(self, db):
         if not self.valueList:
             return ''
@@ -756,6 +810,7 @@ class Update(SQLExpression):
         self.values = values
         self.template = template
         self.whereClause = where
+
     def __sqlrepr__(self, db):
         update = "%s %s" % (self.sqlName(), self.table)
         update += " SET"
@@ -777,6 +832,7 @@ class Update(SQLExpression):
         if self.whereClause is not NoDefault:
             update += " WHERE %s" % _str_or_sqlrepr(self.whereClause, db)
         return update
+
     def sqlName(self):
         return "UPDATE"
 
@@ -790,6 +846,7 @@ class Delete(SQLExpression):
         if where is NoDefault:
             raise TypeError("You must give a where clause or pass in None to indicate no where clause")
         self.whereClause = where
+
     def __sqlrepr__(self, db):
         whereClause = self.whereClause
         if whereClause is None:
@@ -883,6 +940,7 @@ class ColumnAS(SQLOp):
         if isinstance(name, basestring):
             name = SQLConstant(name)
         SQLOp.__init__(self, 'AS', expr, name)
+
     def __sqlrepr__(self, db):
         return "%s %s %s" % (sqlrepr(self.expr1, db), self.op, sqlrepr(self.expr2, db))
 
@@ -1154,6 +1212,7 @@ class LIKE(SQLExpression):
         self.expr = expr
         self.string = string
         self.escape = escape
+
     def __sqlrepr__(self, db):
         escape = self.escape
         like = "%s %s (%s)" % (sqlrepr(self.expr, db), self.op, sqlrepr(self.string, db))
@@ -1161,8 +1220,10 @@ class LIKE(SQLExpression):
             return "(%s)" % like
         else:
             return "(%s ESCAPE %s)" % (like, sqlrepr(escape, db))
+
     def components(self):
         return [self.expr, self.string]
+
     def execute(self, executor):
         if not hasattr(self, '_regex'):
             # @@: Crude, not entirely accurate
@@ -1189,10 +1250,12 @@ class RLIKE(LIKE):
 
     def _get_op(self, db):
         return self.op_db.get(db, 'LIKE')
+
     def __sqlrepr__(self, db):
         return "(%s %s (%s))" % (
             sqlrepr(self.expr, db), self._get_op(db), sqlrepr(self.string, db)
         )
+
     def execute(self, executor):
         self.op = self._get_op(self.db)
         return LIKE.execute(self, executor)
@@ -1204,8 +1267,10 @@ class INSubquery(SQLExpression):
     def __init__(self, item, subquery):
         self.item = item
         self.subquery = subquery
+
     def components(self):
         return [self.item]
+
     def __sqlrepr__(self, db):
         return "%s %s (%s)" % (sqlrepr(self.item, db), self.op, sqlrepr(self.subquery, db))
 
@@ -1247,6 +1312,7 @@ class ImportProxy(SQLExpression):
         not yet be in a classregistry.
     '''
     FieldClass = ImportProxyField
+
     def __init__(self, clsName, registry=None):
         self.tableName = _DelayClass(self, clsName)
         self.sqlmeta = _Delay_proxy(table=_DelayClass(self, clsName))
@@ -1289,6 +1355,7 @@ class _Delay(SQLExpression):
         class _aliasFieldName(SQLExpression):
             def __init__(self, proxy):
                 self.proxy = proxy
+
             def __sqlrepr__(self, db):
                 return self.proxy._resolve().fieldName
         return _aliasFieldName(self)

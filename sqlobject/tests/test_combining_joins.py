@@ -4,6 +4,7 @@ from dbtest import *
 class ComplexGroup(SQLObject):
     name = StringCol()
     complexes = OneToMany('Complex')
+
     def _get_unit_models(self):
         q = self.complexes.clause & Complex.unit_models.clause
         return UnitModel.select(q)

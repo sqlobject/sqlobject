@@ -61,6 +61,7 @@ class MSSQLConnection(DBAPI):
             sqlmodule.Binary = lambda st: str(st)
             # don't know whether pymssql uses unicode
             self.usingUnicodeStrings = False
+
             def _make_conn_str(keys):
                 keys_dict = {}
                 for attr, value in (
@@ -119,6 +120,7 @@ class MSSQLConnection(DBAPI):
        where TABLE_NAME = '%s'
        and COLUMNPROPERTY(object_id(TABLE_NAME), COLUMN_NAME, 'IsIdentity') = 1
     """
+
     def _hasIdentity(self, conn, table):
         query = self.HAS_IDENTITY % table
         c = conn.cursor()
@@ -193,6 +195,7 @@ class MSSQLConnection(DBAPI):
         return 'INT NOT NULL'
 
     SHOW_TABLES = "SELECT name FROM sysobjects WHERE type='U'"
+
     def tableExists(self, tableName):
         for (table,) in self.queryAll(self.SHOW_TABLES):
             if table.lower() == tableName.lower():

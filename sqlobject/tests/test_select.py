@@ -163,6 +163,7 @@ def test_select_RLIKE():
 
         # Implement regexp() function for SQLite; only works with PySQLite2
         import re
+
         def regexp(regexp, test):
             return bool(re.search(regexp, test))
 

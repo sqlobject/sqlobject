@@ -7,8 +7,10 @@ class ViewSQLObjectField(SQLObjectField):
     def __init__(self, alias, *arg):
         SQLObjectField.__init__(self, *arg)
         self.alias = alias
+
     def __sqlrepr__(self, db):
         return self.alias + "." + self.fieldName
+
     def tablesUsedImmediate(self):
         return [self.tableName]
 

@@ -566,8 +566,10 @@ class NQuoted(sqlbuilder.SQLExpression):
     def __init__(self, value):
         assert isinstance(value, unicode)
         self.value = value
+
     def __hash__(self):
         return hash(self.value)
+
     def __sqlrepr__(self, db):
         assert db == 'mssql'
         return "N" + sqlbuilder.sqlrepr(self.value, db)
@@ -1217,6 +1219,7 @@ class SODateTimeCol(SOCol):
 
 class DateTimeCol(Col):
     baseClass = SODateTimeCol
+
     @staticmethod
     def now():
         if default_datetime_implementation == DATETIME_IMPLEMENTATION:

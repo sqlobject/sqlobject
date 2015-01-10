@@ -27,6 +27,7 @@ class RdbhostConnection(PostgresConnection):
                     # monkey patch % escaping into Cursor._execute
                     old_execute = getattr(rdb.Cursor, '_execute')
                     setattr(rdb.Cursor, '_old_execute', old_execute)
+
                     def _execute(self, query, *args):
                         assert not any([a for a in args])
                         query = query.replace('%', '%%')

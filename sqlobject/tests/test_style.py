@@ -12,11 +12,13 @@ class AnotherStyle(styles.MixedCaseUnderscoreStyle):
 class SOStyleTest1(SQLObject):
     a = StringCol()
     st2 = ForeignKey('SOStyleTest2')
+
     class sqlmeta(sqlmeta):
         style = AnotherStyle()
 
 class SOStyleTest2(SQLObject):
     b = StringCol()
+
     class sqlmeta(sqlmeta):
         style = AnotherStyle()
 

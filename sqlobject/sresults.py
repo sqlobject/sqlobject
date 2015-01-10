@@ -290,6 +290,7 @@ class SelectResults(object):
         class _throughTo_getter(object):
             def __init__(self, inst):
                 self.sresult = inst
+
             def __getattr__(self, attr):
                 return self.sresult._throughTo(attr)
         return _throughTo_getter(self)

@@ -183,6 +183,7 @@ class TestAuto:
     def test_classCreate(self):
         class AutoTest(SQLObject):
             _connection = getConnection()
+
             class sqlmeta(sqlmeta):
                 idName = 'auto_id'
                 fromDatabase = True

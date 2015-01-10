@@ -435,6 +435,7 @@ class InheritableSQLObject(SQLObject):
                     #     to build a new one if we have to replace field
                     clsID = cls.q.id
                     parentID = parentClass.q.id
+
                     def _get_patched(clause):
                         if isinstance(clause, sqlbuilder.SQLOp):
                             _patch_id_clause(clause)
@@ -446,6 +447,7 @@ class InheritableSQLObject(SQLObject):
                             return parentID
                         else:
                             return None
+
                     def _patch_id_clause(clause):
                         if not isinstance(clause, sqlbuilder.SQLOp):
                             return

@@ -33,8 +33,10 @@ class ComplexCSV(SQLObject):
     extraCSVColumns = [('name', 'Full Name'), 'initials']
     # initials should end up at the end then:
     csvColumnOrder = ['name', 'fname', 'lname', 'age']
+
     def _get_name(self):
         return self.fname + ' ' + self.lname
+
     def _get_initials(self):
         return self.fname[0] + self.lname[0]
 

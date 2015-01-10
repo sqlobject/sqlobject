@@ -215,6 +215,7 @@ class Command(object):
 
         # Cache to save already calculated dependency levels.
         dependency_levels = {}
+
         def calculateDependencyLevel(cls, dependency_stack=[]):
             """
             Recursively calculate the dependency level of cls, while

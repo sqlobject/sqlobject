@@ -32,6 +32,7 @@ class ConsoleWriter:
         # loglevel: None or empty string for stdout; or 'stderr'
         self.loglevel = loglevel or "stdout"
         self.dbEncoding = getattr(connection, "dbEncoding", None) or "ascii"
+
     def write(self, text):
         logfile = getattr(sys, self.loglevel)
         if isinstance(text, unicode):
@@ -46,6 +47,7 @@ class LogWriter:
         self.logger = logger
         self.loglevel = loglevel
         self.logmethod = getattr(logger, loglevel)
+
     def write(self, text):
         self.logmethod(text)
 
@@ -60,6 +62,7 @@ class Boolean(object):
     """A bool class that also understands some special string keywords (yes/no, true/false, on/off, 1/0)"""
     _keywords = {'1': True, 'yes': True, 'true': True, 'on': True,
                  '0': False, 'no': False, 'false': False, 'off': False}
+
     def __new__(cls, value):
         try:
             return Boolean._keywords[value.lower()]
