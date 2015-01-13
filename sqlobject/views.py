@@ -106,9 +106,10 @@ class ViewSQLObject(SQLObject):
                                              join=metajoin,
                                              clause=restriction),
                                       agg_alias)
-                    agg_join = LEFTJOINOn(last,
-                                       new_alias,
-                                       "%s.%s = %s.%s" % (last_alias, last_id, agg_alias, agg_id))
+                    agg_join = LEFTJOINOn(last, new_alias,
+                                          "%s.%s = %s.%s" % (
+                                              last_alias, last_id,
+                                              agg_alias, agg_id))
 
                     join.append(agg_join)
                     for col in agg:

@@ -23,7 +23,7 @@ class InheritableSelectResults(SelectResults):
     IterationClass = iteration.InheritableIteration
 
     def __init__(self, sourceClass, clause, clauseTables=None,
-            inheritedTables=None, **ops):
+                 inheritedTables=None, **ops):
         if clause is None or isinstance(clause, str) and clause == 'all':
             clause = sqlbuilder.SQLTrueClause
 
@@ -78,8 +78,8 @@ class InheritableSelectResults(SelectResults):
                     tablesSet.add(str(currentClass.sqlmeta.table))
             clause = reduce(sqlbuilder.AND, parentClause, clause)
 
-        super(InheritableSelectResults, self).__init__(sourceClass,
-            clause, clauseTables, **ops)
+        super(InheritableSelectResults, self).__init__(
+            sourceClass, clause, clauseTables, **ops)
 
     def accumulateMany(self, *attributes, **kw):
         if kw.get("skipInherited"):
@@ -89,7 +89,8 @@ class InheritableSelectResults(SelectResults):
            if not isinstance(attribute, basestring):
                 tables.append(attribute.tableName)
         clone = self.__class__(self.sourceClass, self.clause,
-                          self.clauseTables, inheritedTables=tables, **self.ops)
+                               self.clauseTables, inheritedTables=tables,
+                               **self.ops)
         return clone.accumulateMany(skipInherited=True, *attributes)
 
 class InheritableSQLMeta(sqlmeta):
@@ -155,7 +156,7 @@ class InheritableSQLMeta(sqlmeta):
         #DSM: and delete properties for this column
         for c in sqlmeta.childClasses.values():
             c.sqlmeta.delColumn(column, changeSchema=changeSchema,
-                connection=connection, childUpdate=True)
+                                connection=connection, childUpdate=True)
 
     @classmethod
     def addJoin(sqlmeta, joinDef, childUpdate=False):
@@ -167,13 +168,16 @@ class InheritableSQLMeta(sqlmeta):
             for join in sqlmeta.parentClass.sqlmeta.joins:
                 jname = join.joinMethodName
                 jarn  = join.addRemoveName
-                setattr(soClass, getterName(jname),
+                setattr(
+                    soClass, getterName(jname),
                     eval('lambda self: self._parent.%s' % jname))
                 if hasattr(join, 'remove'):
-                    setattr(soClass, 'remove' + jarn,
+                    setattr(
+                        soClass, 'remove' + jarn,
                         eval('lambda self,o: self._parent.remove%s(o)' % jarn))
                 if hasattr(join, 'add'):
-                    setattr(soClass, 'add' + jarn,
+                    setattr(
+                        soClass, 'add' + jarn,
                         eval('lambda self,o: self._parent.add%s(o)' % jarn))
             if childUpdate:
                 makeProperties(soClass)
@@ -242,7 +246,7 @@ class InheritableSQLObject(SQLObject):
                 if isinstance(column, ForeignKey):
                     continue
                 setattr(cls.q, column.name,
-                    getattr(currentClass.q, column.name))
+                        getattr(currentClass.q, column.name))
             currentClass = currentClass.sqlmeta.parentClass
 
     @classmethod
@@ -302,13 +306,13 @@ class InheritableSQLObject(SQLObject):
                 if not (childResults or childClass.sqlmeta.columns):
                     childResults = (None,)
                 return childClass.get(id, connection=connection,
-                    selectResults=childResults)
+                                      selectResults=childResults)
         #DSM: Now, we know we are alone or the last child in a family...
         #DSM: It's time to find our parents
         inst = val
         while inst.sqlmeta.parentClass and not inst._parent:
-            inst._parent = inst.sqlmeta.parentClass.get(id,
-                connection=connection, childUpdate=True)
+            inst._parent = inst.sqlmeta.parentClass.get(
+                id, connection=connection, childUpdate=True)
             inst = inst._parent
         #DSM: We can now return ourself
         return val
@@ -325,14 +329,15 @@ class InheritableSQLObject(SQLObject):
                     raise AttributeError(
                         "The column name 'childName' is reserved")
                 if column.name in parentCols:
-                    raise AttributeError("The column '%s' is"
-                        " already defined in an inheritable parent"
-                        % column.name)
+                    raise AttributeError(
+                        "The column '%s' is already defined "
+                        "in an inheritable parent" % column.name)
         # if this class is inheritable, add column for children distinction
         if cls._inheritable and (cls.__name__ != 'InheritableSQLObject'):
-            sqlmeta.addColumn(StringCol(name='childName',
-                # limit string length to get VARCHAR and not CLOB
-                length=255, default=None))
+            sqlmeta.addColumn(
+                StringCol(name='childName',
+                          # limit string length to get VARCHAR and not CLOB
+                          length=255, default=None))
         if not sqlmeta.columnList:
             # There are no columns - call addColumn to propagate columns
             # from parent classes to children
@@ -374,7 +379,7 @@ class InheritableSQLObject(SQLObject):
 
             parent_kw['childName'] = self.sqlmeta.childName
             self._parent = parentClass(kw=parent_kw,
-                connection=self._connection)
+                                       connection=self._connection)
 
             id = self._parent.id
 
@@ -461,7 +466,7 @@ class InheritableSQLObject(SQLObject):
                     # add childName filter
                     clause = sqlbuilder.AND(clause, addClause)
             return parentClass.select(clause, childUpdate=False,
-                *args, **kwargs)
+                                      *args, **kwargs)
         else:
             return super(InheritableSQLObject, cls).select(
                 clause, *args, **kwargs)
@@ -472,9 +477,10 @@ class InheritableSQLObject(SQLObject):
         foreignColumns = {}
         currentClass = cls
         while currentClass:
-            foreignColumns.update(dict([(column.foreignName, name)
-                for (name, column) in currentClass.sqlmeta.columns.items()
-                    if column.foreignKey
+            foreignColumns.update(dict(
+                [(column.foreignName, name)
+                    for (name, column) in currentClass.sqlmeta.columns.items()
+                        if column.foreignKey
             ]))
             currentClass = currentClass.sqlmeta.parentClass
         for name, value in kw.items():
@@ -491,8 +497,9 @@ class InheritableSQLObject(SQLObject):
                     pass
                 currentClass = currentClass.sqlmeta.parentClass
             else:
-                raise AttributeError("'%s' instance has no attribute '%s'"
-                    % (cls.__name__, name))
+                raise AttributeError(
+                    "'%s' instance has no attribute '%s'" % (
+                        cls.__name__, name))
         if clause:
             clause = reduce(sqlbuilder.AND, clause)
         else:

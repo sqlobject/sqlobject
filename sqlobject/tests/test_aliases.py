@@ -29,7 +29,8 @@ def test_2perform_join():
 def test_3joins():
     setupClass(JoinAlias)
     alias = Alias(JoinAlias)
-    select = JoinAlias.select((JoinAlias.q.name == 'a') & (alias.q.name == 'b'),
+    select = JoinAlias.select(
+        (JoinAlias.q.name == 'a') & (alias.q.name == 'b'),
         join=LEFTJOINOn(None, alias, alias.q.name == 'c')
     )
     assert str(select) == \

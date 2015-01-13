@@ -145,7 +145,7 @@ def test_insert():
 
     # Multiple rows, Multiple columns, implicit template.
     instance8 = Insert('test', valueList=[{'col1': 'a1', 'col2': 'b1'},
-                                        {'col1': 'a2', 'col2': 'b2'}])
+                                          {'col1': 'a2', 'col2': 'b2'}])
     assert sqlrepr(instance8, 'mysql') == "INSERT INTO test (col1, col2) VALUES ('a1', 'b1'), ('a2', 'b2')"
 
 def test_update():

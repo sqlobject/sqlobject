@@ -65,7 +65,7 @@ def test_foreignKey():
     assert employee.count() == 1
 
     employee = EmployeeWithNotes.selectBy(note=save_employee.note,
-                                         paper=save_employee.paper)
+                                          paper=save_employee.paper)
     assert employee.count() == 1
 
     employee = EmployeeWithNotes.selectBy()

@@ -317,8 +317,8 @@ class SelectResults(object):
             raise AttributeError("throughTo argument (got %s) should be name of foreignKey or SQL*Join in %s" % (attr, self.sourceClass))
 
         return otherClass.select(clause,
-                                orderBy=orderBy,
-                                connection=self._getConnection())
+                                 orderBy=orderBy,
+                                 connection=self._getConnection())
 
     def _throughToFK(self, col):
         otherClass = getattr(self.sourceClass, "_SO_class_"+col.foreignKey)
@@ -341,6 +341,7 @@ class SelectResults(object):
         colName = join.joinColumn
         query = self.queryForSelect().newItems([sqlbuilder.ColumnAS(self.sourceClass.q.id, 'id')]).orderBy(None).distinct()
         query = sqlbuilder.Alias(query, "%s_%s" % (self.sourceClass.__name__, join.joinMethodName))
-        clause = sqlbuilder.AND(otherClass.q.id == getattr(intTable, join.otherColumn),
-                     getattr(intTable, colName) == query.q.id)
+        clause = sqlbuilder.AND(
+            otherClass.q.id == getattr(intTable, join.otherColumn),
+            getattr(intTable, colName) == query.q.id)
         return otherClass, clause

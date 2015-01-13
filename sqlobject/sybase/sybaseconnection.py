@@ -49,8 +49,9 @@ class SybaseConnection(DBAPI):
 
     def makeConnection(self):
         return self.module.connect(self.host, self.user, self.password,
-                              database=self.db, auto_commit=self.autoCommit,
-                              locking=self.locking)
+                                   database=self.db,
+                                   auto_commit=self.autoCommit,
+                                   locking=self.locking)
 
     HAS_IDENTITY = """
        SELECT col.name, col.status, obj.name
@@ -133,8 +134,10 @@ class SybaseConnection(DBAPI):
     def delColumn(self, sqlmeta, column):
         self.query('ALTER TABLE %s DROP COLUMN %s' % (sqlmeta.table, column.dbName))
 
-    SHOW_COLUMNS = ('SELECT COLUMN_NAME, DATA_TYPE, IS_NULLABLE, COLUMN_DEFAULT FROM INFORMATION_SCHEMA.COLUMNS '
-                  'WHERE TABLE_NAME = \'%s\'')
+    SHOW_COLUMNS = ('SELECT '
+                    'COLUMN_NAME, DATA_TYPE, IS_NULLABLE, COLUMN_DEFAULT '
+                    'FROM INFORMATION_SCHEMA.COLUMNS '
+                    'WHERE TABLE_NAME = \'%s\'')
 
     def columnsFromSchema(self, tableName, soClass):
         colData = self.queryAll(self.SHOW_COLUMNS

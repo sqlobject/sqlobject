@@ -472,7 +472,7 @@ class DBAPI(DBConnection):
 
     def iterSelect(self, select):
         return select.IterationClass(self, self.getConnection(),
-                         select, keepConnection=False)
+                                     select, keepConnection=False)
 
     def accumulateSelect(self, select, *expressions):
         """ Apply an accumulate function(s) (SUM, COUNT, MIN, AVG, MAX, etc...)
@@ -544,7 +544,7 @@ class DBAPI(DBConnection):
         constraints = self.createReferenceConstraints(soClass)
         extraSQL = self.createSQL(soClass)
         createSql = ('CREATE TABLE %s (\n%s\n)' %
-                (soClass.sqlmeta.table, self.createColumns(soClass)))
+                     (soClass.sqlmeta.table, self.createColumns(soClass)))
         return createSql, constraints + extraSQL
 
     def createColumns(self, soClass):
@@ -788,7 +788,7 @@ class Transaction(object):
         # @@: But would it be okay for psycopg, with threadsafety
         # level 2?
         return iter(list(select.IterationClass(self, self._connection,
-                                   select, keepConnection=True)))
+                                               select, keepConnection=True)))
 
     def _SO_delete(self, inst):
         cls = inst.__class__.__name__

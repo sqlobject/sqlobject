@@ -25,12 +25,12 @@ class SODatabaseIndex(object):
         connection = kw.pop('connection', None)
         if args and kw:
             raise TypeError("You cannot mix named and unnamed arguments")
-        columns = [d['column'] for d in self.descriptions
-            if 'column' in d]
+        columns = [d['column'] for d in self.descriptions if 'column' in d]
         if kw and len(kw) != len(columns) or args and len(args) != len(columns):
-            raise TypeError("get() takes exactly %d argument and an optional "
+            raise TypeError(
+                "get() takes exactly %d argument and an optional "
                 "named argument 'connection' (%d given)" % (
-                len(columns), len(args)+len(kw)))
+                    len(columns), len(args)+len(kw)))
         if args:
             kw = {}
             for i in range(len(args)):
@@ -170,7 +170,7 @@ class DatabaseIndex(object):
 
     def withClass(self, soClass):
         return self.baseClass(soClass=soClass,
-            creationOrder=self.creationOrder, **self.kw)
+                              creationOrder=self.creationOrder, **self.kw)
 
     def __repr__(self):
         return '<%s %s %s>' % (

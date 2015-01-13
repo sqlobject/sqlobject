@@ -65,10 +65,10 @@ def test_deep_inheritance():
     setupClass([DIManager, DIEmployee, DIPerson])
 
     manager = DIManager(firstName='Project', lastName='Manager',
-        position='Project Manager')
+                        position='Project Manager')
     manager_id = manager.id
     employee_id = DIEmployee(firstName='Project', lastName='Leader',
-        position='Project leader', manager=manager).id
+                             position='Project leader', manager=manager).id
     DIPerson(firstName='Oneof', lastName='Authors', manager=manager)
 
     conn = getConnection()

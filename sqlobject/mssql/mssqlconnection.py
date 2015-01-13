@@ -290,14 +290,14 @@ class MSSQLConnection(DBAPI):
         elif t.startswith('char'):
             if self.usingUnicodeStrings:
                 return col.UnicodeCol, {'length': size,
-                                       'varchar': False}
+                                        'varchar': False}
             return col.StringCol, {'length': size,
                                    'varchar': False}
         elif t.startswith('datetime'):
             return col.DateTimeCol, {}
         elif t.startswith('decimal'):
             return col.DecimalCol, {'size': precision,  # be careful for awkward naming
-                                   'precision': scale}
+                                    'precision': scale}
         else:
             return col.Col, {}
 

@@ -43,12 +43,12 @@ def test_modulo():
 
 def test_str_or_sqlrepr():
     select = Select(['id', 'name'], staticTables=['employees'],
-        where='value>0', orderBy='id')
+                    where='value>0', orderBy='id')
     assert sqlrepr(select, 'sqlite') == \
         'SELECT id, name FROM employees WHERE value>0 ORDER BY id'
 
     select = Select(['id', 'name'], staticTables=['employees'],
-        where='value>0', orderBy='id', lazyColumns=True)
+                    where='value>0', orderBy='id', lazyColumns=True)
     assert sqlrepr(select, 'sqlite') == \
         'SELECT id FROM employees WHERE value>0 ORDER BY id'
 

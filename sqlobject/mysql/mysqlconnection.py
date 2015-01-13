@@ -26,11 +26,11 @@ class MySQLConnection(DBAPI):
         self.password = password
         self.kw = {}
         for key in ("unix_socket", "init_command",
-                "read_default_file", "read_default_group", "conv"):
+                    "read_default_file", "read_default_group", "conv"):
             if key in kw:
                 self.kw[key] = kw.pop(key)
         for key in ("connect_timeout", "compress", "named_pipe", "use_unicode",
-                "client_flag", "local_infile"):
+                    "client_flag", "local_infile"):
             if key in kw:
                 self.kw[key] = int(kw.pop(key))
         for key in ("ssl_key", "ssl_cert", "ssl_ca", "ssl_capath"):
@@ -67,8 +67,9 @@ class MySQLConnection(DBAPI):
                     return dbEncoding + '_' + dbEncoding
                 Connection.character_set_name = character_set_name
         try:
-            conn = self.module.connect(host=self.host, port=self.port,
-                db=self.db, user=self.user, passwd=self.password, **self.kw)
+            conn = self.module.connect(
+                host=self.host, port=self.port, db=self.db,
+                user=self.user, passwd=self.password, **self.kw)
             if self.module.version_info[:3] >= (1, 2, 2):
                 conn.ping(True)  # Attempt to reconnect. This setting is persistent.
         except self.module.OperationalError as e:

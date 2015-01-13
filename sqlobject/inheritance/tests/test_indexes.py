@@ -22,10 +22,10 @@ class InheritedSalesManIndexGet(InheritedEmployeeIndexGet):
 def test_index_get_1():
     setupClass([InheritedPersonIndexGet, InheritedEmployeeIndexGet, InheritedSalesManIndexGet])
 
-    InheritedSalesManIndexGet(first_name='Michael', last_name='Pallin', age=65, security_number=2304,
-        experience=2, skill=10)
-    InheritedEmployeeIndexGet(first_name='Eric', last_name='Idle', age=63, security_number=3402,
-        experience=9)
+    InheritedSalesManIndexGet(first_name='Michael', last_name='Pallin', age=65,
+                              security_number=2304, experience=2, skill=10)
+    InheritedEmployeeIndexGet(first_name='Eric', last_name='Idle', age=63,
+                              security_number=3402, experience=9)
     InheritedPersonIndexGet(first_name='Terry', last_name='Guilliam', age=64)
 
     InheritedPersonIndexGet.pk.get('Michael', 'Pallin')

@@ -182,7 +182,7 @@ def sqlrepr(obj, db=None):
         converter = lookupConverter(obj)
         if converter is None:
             raise ValueError("Unknown SQL builtin type: %s for %s" % \
-                  (type(obj), repr(obj)))
+                             (type(obj), repr(obj)))
         return converter(obj, db)
     else:
         return reprFunc(db)

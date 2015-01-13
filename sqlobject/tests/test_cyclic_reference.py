@@ -39,7 +39,7 @@ def test_cyclic_reference():
                                                    applyConstraints=False)
     assert conn.tableExists(TestCyclicReferenceA.sqlmeta.table)
     constraints += TestCyclicReferenceB.createTable(ifNotExists=True,
-                                                   applyConstraints=False)
+                                                    applyConstraints=False)
     assert conn.tableExists(TestCyclicReferenceB.sqlmeta.table)
 
     for constraint in constraints:

@@ -39,7 +39,8 @@ class InheritableIteration(Iteration):
                 del self._childrenResults[id]
             else:
                 childResults = None
-            obj = self.select.sourceClass.get(id, selectResults=result[1:],
+            obj = self.select.sourceClass.get(
+                id, selectResults=result[1:],
                 childResults=childResults, connection=self.dbconn)
             return obj
 
@@ -69,10 +70,10 @@ class InheritableIteration(Iteration):
             klass = findClass(childName, registry)
             if len(ids) == 1:
                 select = klass.select(klass.q.id == ids[0],
-                    childUpdate=True, connection=dbconn)
+                                      childUpdate=True, connection=dbconn)
             else:
                 select = klass.select(sqlbuilder.IN(klass.q.id, ids),
-                    childUpdate=True, connection=dbconn)
+                                      childUpdate=True, connection=dbconn)
             query = dbconn.queryForSelect(select)
             if dbconn.debug:
                 dbconn.printDebug(rawconn, query, 'Select children of the class %s' % childName)

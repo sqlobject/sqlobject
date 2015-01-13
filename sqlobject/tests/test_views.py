@@ -60,14 +60,13 @@ def setup_module(mod):
     mod.ViewPhoneCall._connection = mod.PhoneNumber._connection
     mod.ViewPhone._connection = mod.PhoneNumber._connection
     mod.ViewPhoneMore._connection = mod.PhoneNumber._connection
-    phones = inserts(mod.PhoneNumber, [('1234567890',),
-                              ('1111111111',)],
-            'number')
+    phones = inserts(mod.PhoneNumber, [('1234567890',), ('1111111111',)],
+                     'number')
     calls = inserts(mod.PhoneCall, [(phones[0], phones[1], 5),
-                            (phones[0], phones[1], 20),
-                            (phones[1], phones[0], 10),
-                            (phones[1], phones[0], 25)],
-            'phoneNumber to minutes')
+                                    (phones[0], phones[1], 20),
+                                    (phones[1], phones[0], 10),
+                                    (phones[1], phones[0], 25)],
+                    'phoneNumber to minutes')
     mod.phones = phones
     mod.calls = calls
     mod.sqlrepr = mod.PhoneNumber._connection.sqlrepr

@@ -1369,21 +1369,21 @@ class SQLObject(object):
                distinct=False, connection=None,
                join=None, forUpdate=False):
         return cls.SelectResultsClass(cls, clause,
-                             clauseTables=clauseTables,
-                             orderBy=orderBy,
-                             limit=limit,
-                             lazyColumns=lazyColumns,
-                             reversed=reversed,
-                             distinct=distinct,
-                             connection=connection,
-                             join=join, forUpdate=forUpdate)
+                                      clauseTables=clauseTables,
+                                      orderBy=orderBy,
+                                      limit=limit,
+                                      lazyColumns=lazyColumns,
+                                      reversed=reversed,
+                                      distinct=distinct,
+                                      connection=connection,
+                                      join=join, forUpdate=forUpdate)
 
     @classmethod
     def selectBy(cls, connection=None, **kw):
         conn = connection or cls._connection
         return cls.SelectResultsClass(cls,
-                             conn._SO_columnClause(cls, kw),
-                             connection=conn)
+                                      conn._SO_columnClause(cls, kw),
+                                      connection=conn)
 
     @classmethod
     def tableExists(cls, connection=None):
@@ -1608,8 +1608,8 @@ class SQLObject(object):
     @classmethod
     def deleteBy(cls, connection=None, **kw):
         conn = connection or cls._connection
-        conn.query(conn.sqlrepr(sqlbuilder.Delete(cls.sqlmeta.table,
-            conn._SO_columnClause(cls, kw))))
+        conn.query(conn.sqlrepr(sqlbuilder.Delete(
+            cls.sqlmeta.table, conn._SO_columnClause(cls, kw))))
 
     def __repr__(self):
         if not hasattr(self, 'id'):

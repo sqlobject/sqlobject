@@ -79,8 +79,8 @@ class MaxdbConnection(DBAPI):
     @classmethod
     def _connectionFromParams(cls, auth, password, host, port, path, args):
         path = path.replace('/', os.path.sep)
-        return cls(host, port, user=auth, password=password,
-            database=path, **args)
+        return cls(host, port, user=auth, password=password, database=path,
+                   **args)
 
     def _getConfigParams(self, sqlmode, auto):
         autocommit = 'off'
@@ -298,6 +298,6 @@ class MaxdbConnection(DBAPI):
             return col.DateTimeCol, {}
         elif t == 'FIXED':
             return CurrencyCol, {'size': flength,
-                                'precision': fscale}
+                                 'precision': fscale}
         else:
             return col.Col, {}
