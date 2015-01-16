@@ -4,7 +4,7 @@ from sqlobject.dberrors import *
 from sqlobject.tests.dbtest import *
 
 ########################################
-## Indexes
+# Indexes
 ########################################
 
 class SOIndex1(SQLObject):

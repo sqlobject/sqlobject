@@ -3,7 +3,7 @@ from sqlobject import *
 from sqlobject.tests.dbtest import *
 
 ########################################
-## BLOB columns
+# BLOB columns
 ########################################
 
 class ImageData(SQLObject):

@@ -151,17 +151,17 @@ class MaxdbConnection(DBAPI):
         return cls.sqlAddLimit(query, limit)
 
     def createTable(self, soClass):
-        #we create the table in a transaction because the addition of the
-        #table and the sequence must be atomic
+        # we create the table in a transaction because the addition of the
+        # table and the sequence must be atomic
 
-        #i tried to use the transaction class but i get a recursion limit error
-        #t=self.transaction()
+        # i tried to use the transaction class but i get a recursion limit error
+        # t=self.transaction()
         # t.query('CREATE TABLE %s (\n%s\n)' % \
         #            (soClass.sqlmeta.table, self.createColumns(soClass)))
         #
         # t.query("CREATE SEQUENCE %s" % self.createSequenceName(soClass.sqlmeta.table))
         # t.commit()
-        #so use transaction when the problem will be solved
+        # so use transaction when the problem will be solved
         self.query('CREATE TABLE %s (\n%s\n)' % \
                    (soClass.sqlmeta.table, self.createColumns(soClass)))
         self.query("CREATE SEQUENCE %s"
@@ -182,9 +182,9 @@ class MaxdbConnection(DBAPI):
         return index.maxdbCreateIndexSQL(soClass)
 
     def dropTable(self, tableName, cascade=False):
-        #we drop the table in a transaction because the removal of the
-        #table and the sequence must be atomic
-        #i tried to use the transaction class but i get a recursion limit error
+        # we drop the table in a transaction because the removal of the
+        # table and the sequence must be atomic
+        # i tried to use the transaction class but i get a recursion limit error
         # try:
         #     t=self.transaction()
         #     t.query("DROP TABLE %s" % tableName)
@@ -192,7 +192,7 @@ class MaxdbConnection(DBAPI):
         #     t.commit()
         # except:
         #     t.rollback()
-        #so use transaction when the problem will be solved
+        # so use transaction when the problem will be solved
         self.query("DROP TABLE %s" % tableName)
         self.query("DROP SEQUENCE %s" % self.createSequenceName(tableName))
 

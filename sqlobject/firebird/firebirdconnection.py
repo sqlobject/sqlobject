@@ -182,7 +182,7 @@ class FirebirdConnection(DBAPI):
                 warningText = """\n
                    Database charset: %s is different from connection charset: %s.\n""" % (self.defaultDbEncoding, self.dbEncoding)
                 warnings.warn(warningText)
-                #TODO: ??? print out the uri string, so user can see what is going on
+                # TODO: ??? print out the uri string, so user can see what is going on
                 warningText = \
                 """\n
                    Every CHAR or VARCHAR field can (or, better: must) have a character set defined in Firebird.
@@ -314,15 +314,15 @@ class FirebirdConnection(DBAPI):
                     defaultSource = int(defaultSource)
                 elif fieldType in ("float", "double"):
                     defaultSource = float(defaultSource)
-            #TODO: other types for defaultSource
+            # TODO: other types for defaultSource
             #    elif fieldType == "datetime":
 
             idName = str(soClass.sqlmeta.idName or 'id').upper()
             if field.upper() == idName:
                 continue
             if fieldScale:
-                #PRECISION refers to the total number of digits, and SCALE refers to the number of digits to the right of the decimal point
-                #Both numbers can be from 1 to 18 (SQL dialect 1: 1-15), but SCALE mustbe less than or equal to PRECISION
+                # PRECISION refers to the total number of digits, and SCALE refers to the number of digits to the right of the decimal point
+                # Both numbers can be from 1 to 18 (SQL dialect 1: 1-15), but SCALE mustbe less than or equal to PRECISION
                 if fieldScale > fieldLength:
                     fieldScale = fieldLength
             colClass, kw = self.guessClass(fieldType, fieldLength, fieldCharset, fieldScale, )
@@ -340,7 +340,7 @@ class FirebirdConnection(DBAPI):
         available -- both very database-specific.
         """
 
-        ##TODO: check if negative values are allowed for fscale
+        # TODO: check if negative values are allowed for fscale
 
         if t == 'smallint':        # -32,768 to +32,767, 16 bits
             return col.IntCol, {}

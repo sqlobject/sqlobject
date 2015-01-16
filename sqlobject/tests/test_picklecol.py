@@ -3,7 +3,7 @@ from sqlobject import *
 from sqlobject.tests.dbtest import *
 
 ########################################
-## Pickle columns
+# Pickle columns
 ########################################
 
 class PickleData:

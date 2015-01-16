@@ -3,7 +3,7 @@ from sqlobject.sqlbuilder import *
 from sqlobject.tests.dbtest import *
 
 ########################################
-## Table aliases and self-joins
+# Table aliases and self-joins
 ########################################
 
 class JoinAlias(SQLObject):

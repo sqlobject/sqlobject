@@ -3,7 +3,7 @@ from sqlobject.col import validators
 from sqlobject.tests.dbtest import *
 
 ########################################
-## Enum test
+# Enum test
 ########################################
 
 class Enum1(SQLObject):

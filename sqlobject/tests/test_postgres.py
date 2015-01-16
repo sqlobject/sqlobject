@@ -3,7 +3,7 @@ from sqlobject import *
 from sqlobject.tests.dbtest import *
 
 ########################################
-## Test PosgreSQL sslmode
+# Test PosgreSQL sslmode
 ########################################
 
 class TestSSLMode(SQLObject):
@@ -25,7 +25,7 @@ def test_sslmode():
     assert test.test == 'test'
 
 ########################################
-## Test PosgreSQL list{Database,Tables}
+# Test PosgreSQL list{Database,Tables}
 ########################################
 
 class TestSOList(SQLObject):

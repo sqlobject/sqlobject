@@ -3,7 +3,7 @@ from sqlobject.inheritance import *
 from sqlobject.tests.dbtest import *
 
 ########################################
-## Inheritance Tree
+# Inheritance Tree
 ########################################
 
 class Tree1(InheritableSQLObject):

@@ -3,7 +3,7 @@ from sqlobject import *
 from sqlobject.tests.dbtest import *
 
 ########################################
-## Date/time columns
+# Date/time columns
 ########################################
 
 from sqlobject import col

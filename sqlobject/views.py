@@ -76,7 +76,7 @@ class ViewSQLObject(SQLObject):
                             distinct=True,
                             # @@ LDO check if this really mattered for performance
                             # @@ Postgres (and MySQL?) extension!
-                            #distinctOn=cls.sqlmeta.idName,
+                            # distinctOn=cls.sqlmeta.idName,
                             join=metajoin,
                             clause=clause)
 

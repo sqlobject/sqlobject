@@ -4,7 +4,7 @@ from sqlobject.dberrors import *
 from sqlobject.tests.dbtest import *
 
 ########################################
-## Table aliases and self-joins
+# Table aliases and self-joins
 ########################################
 
 class TestException(SQLObject):

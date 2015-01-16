@@ -35,7 +35,7 @@ def _sqlrepr(self, db):
 SQLExpression.__sqlrepr__ = _sqlrepr
 
 ############################################################
-## Tests
+# Tests
 ############################################################
 
 def test_simple_string():

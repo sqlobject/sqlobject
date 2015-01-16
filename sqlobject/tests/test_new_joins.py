@@ -4,7 +4,7 @@ from sqlobject import *
 from sqlobject.tests.dbtest import *
 
 ########################################
-## Joins
+# Joins
 ########################################
 
 class PersonJoinerNew(SQLObject):

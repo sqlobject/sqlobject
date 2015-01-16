@@ -292,11 +292,11 @@ class sqlmeta(object):
         cls.joinDefinitions = cls.joinDefinitions[:]
 
     ############################################################
-    ## Adding special values, like columns and indexes
+    # Adding special values, like columns and indexes
     ############################################################
 
     ########################################
-    ## Column handling
+    # Column handling
     ########################################
 
     @classmethod
@@ -499,7 +499,7 @@ class sqlmeta(object):
             func(soClass, column)
 
     ########################################
-    ## Join handling
+    # Join handling
     ########################################
 
     @classmethod
@@ -589,7 +589,7 @@ class sqlmeta(object):
             makeProperties(soClass)
 
     ########################################
-    ## Indexes
+    # Indexes
     ########################################
 
     @classmethod
@@ -600,7 +600,7 @@ class sqlmeta(object):
         setattr(cls.soClass, index.name, index)
 
     ########################################
-    ## Utility methods
+    # Utility methods
     ########################################
 
     @classmethod
@@ -649,8 +649,8 @@ def deprecated(message, level=1, stacklevel=2):
     if warnings_level is not None and warnings_level <= level:
         warnings.warn(message, DeprecationWarning, stacklevel=stacklevel)
 
-#if sys.version_info[:3] < (2, 5, 0):
-#    deprecated("Support for Python 2.4 has been declared obsolete and will be removed in the next release of SQLObject")
+# if sys.version_info[:3] < (2, 5, 0):
+#     deprecated("Support for Python 2.4 has been declared obsolete and will be removed in the next release of SQLObject")
 
 def setDeprecationLevel(warning=1, exception=None):
     """
@@ -713,8 +713,8 @@ class SQLObject(object):
 
     sqlmeta = sqlmeta
 
-    #DSM: The _inheritable attribute controls wheter the class can by
-    #DSM: inherited 'logically' with a foreignKey and a back reference.
+    # DSM: The _inheritable attribute controls wheter the class can by
+    # DSM: inherited 'logically' with a foreignKey and a back reference.
     _inheritable = False  # Is this class inheritable?
     _parent = None  # A reference to the parent instance
     childName = None  # Children name (to be able to get a subclass)
@@ -800,7 +800,7 @@ class SQLObject(object):
         sqlmeta.indexDefinitions.sort(key=order_getter)
         # Joins cannot be sorted because addJoin created accessors
         # that remember indexes.
-        #sqlmeta.joins.sort(key=order_getter)
+        # sqlmeta.joins.sort(key=order_getter)
         sqlmeta.joinDefinitions.sort(key=order_getter)
 
         # We don't setup the properties until we're finished with the
@@ -1165,10 +1165,10 @@ class SQLObject(object):
             "%s with id %s has become obsolete" \
             % (self.__class__.__name__, self.id))
         # @@: do we really need this lock?
-        #self._SO_writeLock.acquire()
+        # self._SO_writeLock.acquire()
         column = self.sqlmeta.columns[name]
         results = self._connection._SO_selectOne(self, [column.dbName])
-        #self._SO_writeLock.release()
+        # self._SO_writeLock.release()
         assert results != None, "%s with id %s is not in the database" % (
             self.__class__.__name__, self.id)
         value = results[0]
@@ -1720,7 +1720,7 @@ def instanceName(name):
 
 
 ########################################
-## Utility functions (for external consumption)
+# Utility functions (for external consumption)
 ########################################
 
 def getID(obj, refColumn=None):

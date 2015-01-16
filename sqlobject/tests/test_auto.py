@@ -7,7 +7,7 @@ from sqlobject import classregistry
 from py.test import raises
 
 ########################################
-## Dynamic column tests
+# Dynamic column tests
 ########################################
 
 class Person(SQLObject):
@@ -73,7 +73,7 @@ class TestPeople:
         raises(AssertionError, self._test_collidingName)
 
 ########################################
-## Auto class generation
+# Auto class generation
 ########################################
 
 class TestAuto:

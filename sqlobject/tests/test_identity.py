@@ -2,7 +2,7 @@ from sqlobject import *
 from sqlobject.tests.dbtest import *
 
 ########################################
-## Identity (MS SQL)
+# Identity (MS SQL)
 ########################################
 
 class TestIdentity(SQLObject):

@@ -37,19 +37,19 @@ class InheritableSelectResults(SelectResults):
                 tablesSet.add(str(tableName))
         if orderBy and not isinstance(orderBy, basestring):
             tablesSet.update(tablesUsedSet(orderBy, dbName))
-        #DSM: if this class has a parent, we need to link it
-        #DSM: and be sure the parent is in the table list.
-        #DSM: The following code is before clauseTables
-        #DSM: because if the user uses clauseTables
-        #DSM: (and normal string SELECT), he must know what he wants
-        #DSM: and will do himself the relationship between classes.
+        # DSM: if this class has a parent, we need to link it
+        # DSM: and be sure the parent is in the table list.
+        # DSM: The following code is before clauseTables
+        # DSM: because if the user uses clauseTables
+        # DSM: (and normal string SELECT), he must know what he wants
+        # DSM: and will do himself the relationship between classes.
         if not isinstance(clause, str):
             tableRegistry = {}
             allClasses = classregistry.registry(
                 sourceClass.sqlmeta.registry).allClasses()
             for registryClass in allClasses:
                 if str(registryClass.sqlmeta.table) in tablesSet:
-                    #DSM: By default, no parents are needed for the clauses
+                    # DSM: By default, no parents are needed for the clauses
                     tableRegistry[registryClass] = registryClass
             tableRegistryCopy = tableRegistry.copy()
             for childClass in tableRegistryCopy:
@@ -59,15 +59,15 @@ class InheritableSelectResults(SelectResults):
                 while currentClass:
                     if currentClass in tableRegistryCopy:
                         if currentClass in tableRegistry:
-                            #DSM: Remove this class as it is a parent one
-                            #DSM: of a needed children
+                            # DSM: Remove this class as it is a parent one
+                            # DSM: of a needed children
                             del tableRegistry[currentClass]
-                        #DSM: Must keep the last parent needed
-                        #DSM: (to limit the number of join needed)
+                        # DSM: Must keep the last parent needed
+                        # DSM: (to limit the number of join needed)
                         tableRegistry[childClass] = currentClass
                     currentClass = currentClass.sqlmeta.parentClass
-            #DSM: Table registry contains only the last children
-            #DSM: or standalone classes
+            # DSM: Table registry contains only the last children
+            # DSM: or standalone classes
             parentClause = []
             for (currentClass, minParentClass) in tableRegistry.items():
                 while (currentClass != minParentClass) \
@@ -97,9 +97,9 @@ class InheritableSQLMeta(sqlmeta):
     @classmethod
     def addColumn(sqlmeta, columnDef, changeSchema=False, connection=None, childUpdate=False):
         soClass = sqlmeta.soClass
-        #DSM: Try to add parent properties to the current class
-        #DSM: Only do this once if possible at object creation and once for
-        #DSM: each new dynamic column to refresh the current class
+        # DSM: Try to add parent properties to the current class
+        # DSM: Only do this once if possible at object creation and once for
+        # DSM: each new dynamic column to refresh the current class
         if sqlmeta.parentClass:
             for col in sqlmeta.parentClass.sqlmeta.columnList:
                 cname = col.name
@@ -125,8 +125,8 @@ class InheritableSQLMeta(sqlmeta):
         if columnDef:
             super(InheritableSQLMeta, sqlmeta).addColumn(columnDef, changeSchema, connection)
 
-        #DSM: Update each child class if needed and existing (only for new
-        #DSM: dynamic column as no child classes exists at object creation)
+        # DSM: Update each child class if needed and existing (only for new
+        # DSM: dynamic column as no child classes exists at object creation)
         if columnDef and hasattr(soClass, "q"):
             q = getattr(soClass.q, columnDef.name, None)
         else:
@@ -152,8 +152,8 @@ class InheritableSQLMeta(sqlmeta):
 
         super(InheritableSQLMeta, sqlmeta).delColumn(column, changeSchema, connection)
 
-        #DSM: Update each child class if needed
-        #DSM: and delete properties for this column
+        # DSM: Update each child class if needed
+        # DSM: and delete properties for this column
         for c in sqlmeta.childClasses.values():
             c.sqlmeta.delColumn(column, changeSchema=changeSchema,
                                 connection=connection, childUpdate=True)
@@ -161,9 +161,9 @@ class InheritableSQLMeta(sqlmeta):
     @classmethod
     def addJoin(sqlmeta, joinDef, childUpdate=False):
         soClass = sqlmeta.soClass
-        #DSM: Try to add parent properties to the current class
-        #DSM: Only do this once if possible at object creation and once for
-        #DSM: each new dynamic join to refresh the current class
+        # DSM: Try to add parent properties to the current class
+        # DSM: Only do this once if possible at object creation and once for
+        # DSM: each new dynamic join to refresh the current class
         if sqlmeta.parentClass:
             for join in sqlmeta.parentClass.sqlmeta.joins:
                 jname = join.joinMethodName
@@ -186,8 +186,8 @@ class InheritableSQLMeta(sqlmeta):
         if joinDef:
             super(InheritableSQLMeta, sqlmeta).addJoin(joinDef)
 
-        #DSM: Update each child class if needed and existing (only for new
-        #DSM: dynamic join as no child classes exists at object creation)
+        # DSM: Update each child class if needed and existing (only for new
+        # DSM: dynamic join as no child classes exists at object creation)
         for c in sqlmeta.childClasses.values():
             c.sqlmeta.addJoin(joinDef, childUpdate=True)
 
@@ -201,8 +201,8 @@ class InheritableSQLMeta(sqlmeta):
 
         super(InheritableSQLMeta, sqlmeta).delJoin(joinDef)
 
-        #DSM: Update each child class if needed
-        #DSM: and delete properties for this join
+        # DSM: Update each child class if needed
+        # DSM: and delete properties for this join
         for c in sqlmeta.childClasses.values():
             c.sqlmeta.delJoin(joinDef, childUpdate=True)
 
@@ -289,9 +289,9 @@ class InheritableSQLObject(SQLObject):
 
         val = super(InheritableSQLObject, cls).get(id, connection, selectResults)
 
-        #DSM: If we are updating a child, we should never return a child...
+        # DSM: If we are updating a child, we should never return a child...
         if childUpdate: return val
-        #DSM: If this class has a child, return the child
+        # DSM: If this class has a child, return the child
         if 'childName' in cls.sqlmeta.columns:
             childName = val.childName
             if childName is not None:
@@ -307,14 +307,14 @@ class InheritableSQLObject(SQLObject):
                     childResults = (None,)
                 return childClass.get(id, connection=connection,
                                       selectResults=childResults)
-        #DSM: Now, we know we are alone or the last child in a family...
-        #DSM: It's time to find our parents
+        # DSM: Now, we know we are alone or the last child in a family...
+        # DSM: It's time to find our parents
         inst = val
         while inst.sqlmeta.parentClass and not inst._parent:
             inst._parent = inst.sqlmeta.parentClass.get(
                 id, connection=connection, childUpdate=True)
             inst = inst._parent
-        #DSM: We can now return ourself
+        # DSM: We can now return ourself
         return val
 
     @classmethod
@@ -349,15 +349,15 @@ class InheritableSQLObject(SQLObject):
 
     def _create(self, id, **kw):
 
-        #DSM: If we were called by a children class,
-        #DSM: we must retreive the properties dictionary.
-        #DSM: Note: we can't use the ** call paremeter directly
-        #DSM: as we must be able to delete items from the dictionary
-        #DSM: (and our children must know that the items were removed!)
+        # DSM: If we were called by a children class,
+        # DSM: we must retreive the properties dictionary.
+        # DSM: Note: we can't use the ** call paremeter directly
+        # DSM: as we must be able to delete items from the dictionary
+        # DSM: (and our children must know that the items were removed!)
         if 'kw' in kw:
             kw = kw['kw']
-        #DSM: If we are the children of an inheritable class,
-        #DSM: we must first create our parent
+        # DSM: If we are the children of an inheritable class,
+        # DSM: we must first create our parent
         if self.sqlmeta.parentClass:
             parentClass = self.sqlmeta.parentClass
             new_kw = {}
@@ -393,7 +393,7 @@ class InheritableSQLObject(SQLObject):
             if (not isinstance(connection, dbconnection.Transaction) and
                     connection.autoCommit) and self.sqlmeta.parentClass:
                 self._parent.destroySelf()
-                #TC: Do we need to do this??
+                # TC: Do we need to do this??
                 self._parent = None
             # TC: Reraise the original exception
             raise
@@ -508,7 +508,7 @@ class InheritableSQLObject(SQLObject):
         return cls.SelectResultsClass(cls, clause, connection=conn)
 
     def destroySelf(self):
-        #DSM: If this object has parents, recursivly kill them
+        # DSM: If this object has parents, recursivly kill them
         if hasattr(self, '_parent') and self._parent:
             self._parent.destroySelf()
         super(InheritableSQLObject, self).destroySelf()

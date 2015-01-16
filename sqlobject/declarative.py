@@ -179,7 +179,7 @@ class Declarative(object):
             name = '%s %i' % (name, v['declarative_count'])
             del v['declarative_count']
         # @@: simplifying repr:
-        #v = {}
+        # v = {}
         names = v.keys()
         args = []
         for n in self._repr_vars(names):

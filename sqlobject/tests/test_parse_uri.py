@@ -3,7 +3,7 @@ from sqlobject.dbconnection import DBConnection
 from sqlobject.sqlite.sqliteconnection import SQLiteConnection
 
 ########################################
-## Test _parseURI
+# Test _parseURI
 ########################################
 
 def test_parse():

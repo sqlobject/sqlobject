@@ -57,7 +57,7 @@ See the bottom of this module for some examples, and run it (i.e.
 """
 
 ########################################
-## Constants
+# Constants
 ########################################
 
 import fnmatch
@@ -102,7 +102,7 @@ def _str_or_sqlrepr(expr, db):
     return sqlrepr(expr, db)
 
 ########################################
-## Expression generation
+# Expression generation
 ########################################
 
 class SQLExpression:
@@ -372,7 +372,7 @@ SQLTrueClause = SQLTrueClauseClass()
 registerConverter(SQLTrueClauseClass, SQLExprConverter)
 
 ########################################
-## Namespaces
+# Namespaces
 ########################################
 
 class Field(SQLExpression):
@@ -517,7 +517,7 @@ class ConstantSpace:
 
 
 ########################################
-## Table aliases
+# Table aliases
 ########################################
 
 class AliasField(Field):
@@ -603,7 +603,7 @@ class Union(SQLExpression):
         return " UNION ".join([str(sqlrepr(t, db)) for t in self.tables])
 
 ########################################
-## SQL Statements
+# SQL Statements
 ########################################
 
 class Select(SQLExpression):
@@ -863,7 +863,7 @@ class Replace(Update):
 registerConverter(Replace, SQLExprConverter)
 
 ########################################
-## SQL Builtins
+# SQL Builtins
 ########################################
 
 class DESC(SQLExpression):
@@ -992,7 +992,7 @@ def _quote_like_special(s, db):
     return s
 
 ########################################
-## SQL JOINs
+# SQL JOINs
 ########################################
 
 class SQLJoin(SQLExpression):
@@ -1190,7 +1190,7 @@ def FULLOUTERJOINUsing(table1, table2, using_columns):
 
 
 ########################################
-## Subqueries (subselects)
+# Subqueries (subselects)
 ########################################
 
 class OuterField(SQLObjectField):
@@ -1373,7 +1373,7 @@ class _Delay_proxy(object):
 
 
 ########################################
-## Global initializations
+# Global initializations
 ########################################
 
 table = TableSpace()
@@ -1381,7 +1381,7 @@ const = ConstantSpace()
 func = const
 
 ########################################
-## Testing
+# Testing
 ########################################
 
 if __name__ == "__main__":

@@ -4,7 +4,7 @@ from sqlobject.tests.dbtest import *
 from sqlobject.inheritance import InheritableSQLObject
 
 ########################################
-## Inheritance
+# Inheritance
 ########################################
 
 class InheritablePerson(InheritableSQLObject):

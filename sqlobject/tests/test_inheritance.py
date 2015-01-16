@@ -2,7 +2,7 @@ from sqlobject import *
 from sqlobject.tests.dbtest import *
 
 ########################################
-## Inheritance
+# Inheritance
 ########################################
 
 class Super(SQLObject):

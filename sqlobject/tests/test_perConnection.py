@@ -2,7 +2,7 @@ from sqlobject import *
 from sqlobject.tests.dbtest import *
 
 ########################################
-## Per-instance connection
+# Per-instance connection
 ########################################
 
 class TestPerConnection(SQLObject):

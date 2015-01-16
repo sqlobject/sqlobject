@@ -3,7 +3,7 @@ from sqlobject import *
 from sqlobject.tests.dbtest import *
 
 ########################################
-## Schema per connection
+# Schema per connection
 ########################################
 
 class TestSchema(SQLObject):

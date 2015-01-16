@@ -122,7 +122,7 @@ def getStyle(soClass, dbConnection=None):
         return defaultStyle
 
 ############################################################
-## Text utilities
+# Text utilities
 ############################################################
 _mixedToUnderRE = re.compile(r'[A-Z]+')
 def mixedToUnder(s):

@@ -3,7 +3,7 @@ from sqlobject.sqlbuilder import *
 from sqlobject.tests.dbtest import *
 
 ########################################
-## Condiotional joins
+# Condiotional joins
 ########################################
 
 class TestJoin1(SQLObject):

@@ -74,7 +74,7 @@ if mxdatetime_available:
 creationOrder = count()
 
 ########################################
-## Columns
+# Columns
 ########################################
 
 # Col is essentially a column definition, it doesn't have
@@ -850,7 +850,7 @@ class SOForeignKey(SOKeyCol):
         else:
             action = ''
         constraint = ('CONSTRAINT %(colName)s_exists '
-                      #'FOREIGN KEY(%(colName)s) '
+                      # 'FOREIGN KEY(%(colName)s) '
                       'REFERENCES %(tName)s(%(idName)s) '
                       '%(action)s' %
                       {'tName': tName,
@@ -952,7 +952,7 @@ class SOForeignKey(SOKeyCol):
     def maxdbCreateSQL(self):
         other = findClass(self.foreignKey, self.soClass.sqlmeta.registry)
         fidName = self.dbName
-        #I assume that foreign key name is identical to the id of the reference table
+        # I assume that foreign key name is identical to the id of the reference table
         sql = ' '.join([fidName, self._maxdbType()])
         tName = other.sqlmeta.table
         idName  = self.refColumn or other.sqlmeta.idName
@@ -1030,7 +1030,7 @@ class SOEnumCol(SOCol):
         length = max(map(self._getlength, self.enumValues))
         enumValues = ', '.join([sqlbuilder.sqlrepr(v, 'firebird') for v in self.enumValues])
         checkConstraint = "CHECK (%s in (%s))" % (self.dbName, enumValues)
-        #NB. Return a tuple, not a string here
+        # NB. Return a tuple, not a string here
         return "VARCHAR(%i)" % (length), checkConstraint
 
     def _maxdbType(self):

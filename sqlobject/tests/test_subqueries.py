@@ -3,7 +3,7 @@ from sqlobject.sqlbuilder import *
 from sqlobject.tests.dbtest import *
 
 ########################################
-## Subqueries (subselects)
+# Subqueries (subselects)
 ########################################
 
 class TestIn1(SQLObject):

@@ -2,7 +2,7 @@ from sqlobject import *
 from sqlobject.tests.dbtest import *
 
 ########################################
-## Lazy updates
+# Lazy updates
 ########################################
 
 class Lazy(SQLObject):

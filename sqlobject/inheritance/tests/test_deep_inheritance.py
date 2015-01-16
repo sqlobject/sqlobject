@@ -4,7 +4,7 @@ from sqlobject.tests.dbtest import *
 from sqlobject.inheritance import InheritableSQLObject
 
 ########################################
-## Deep Inheritance
+# Deep Inheritance
 ########################################
 
 class DIPerson(InheritableSQLObject):

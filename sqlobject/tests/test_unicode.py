@@ -2,7 +2,7 @@ from sqlobject import *
 from sqlobject.tests.dbtest import *
 
 ########################################
-## Unicode columns
+# Unicode columns
 ########################################
 
 class TestUnicode(SQLObject):

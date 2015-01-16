@@ -3,11 +3,10 @@ from sqlobject import *
 from sqlobject.tests.dbtest import *
 
 ########################################
-## Transaction test
+# Transaction test
 ########################################
 
 class TestSOTrans(SQLObject):
-    #_cacheValues = False
     class sqlmeta:
         defaultOrder = 'name'
     name = StringCol(length=10, alternateID=True, dbName='name_col')

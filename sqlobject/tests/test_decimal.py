@@ -3,7 +3,7 @@ from sqlobject import *
 from sqlobject.tests.dbtest import *
 
 ########################################
-## Decimal columns
+# Decimal columns
 ########################################
 
 if not supports('decimalColumn'):

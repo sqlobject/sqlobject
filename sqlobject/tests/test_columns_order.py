@@ -1,7 +1,7 @@
 from sqlobject import *
 
 ########################################
-## Columns order
+# Columns order
 ########################################
 
 class SOColumnsOrder(SQLObject):

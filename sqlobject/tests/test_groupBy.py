@@ -3,7 +3,7 @@ from sqlobject.sqlbuilder import Select, func
 from sqlobject.tests.dbtest import *
 
 ########################################
-## groupBy
+# groupBy
 ########################################
 
 class GroupbyTest(SQLObject):

@@ -3,7 +3,7 @@ from sqlobject.tests.dbtest import *
 from test_basic import TestSO1, setupGetters
 
 ########################################
-## Delete during select
+# Delete during select
 ########################################
 
 def testSelect():
@@ -13,7 +13,7 @@ def testSelect():
     assert list(TestSO1.select('all')) == []
 
 ########################################
-## Delete many rows at once
+# Delete many rows at once
 ########################################
 
 def testDeleteMany():
@@ -27,7 +27,7 @@ def testDeleteBy():
     assert len(list(TestSO1.select())) == 3
 
 ########################################
-## Delete without caching
+# Delete without caching
 ########################################
 
 class NoCache(SQLObject):
@@ -42,7 +42,7 @@ def testDestroySelf():
     NoCache._connection.cache = old
 
 ########################################
-## Delete from related joins
+# Delete from related joins
 ########################################
 
 class Service(SQLObject):

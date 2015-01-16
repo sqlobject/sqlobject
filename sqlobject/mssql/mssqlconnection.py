@@ -266,9 +266,9 @@ class MSSQLConnection(DBAPI):
         return results
 
     def _setAutoCommit(self, conn, auto):
-        #raise Exception(repr(auto))
+        # raise Exception(repr(auto))
         return
-        #conn.auto_commit = auto
+        # conn.auto_commit = auto
         option = "ON"
         if auto == 0:
             option = "OFF"

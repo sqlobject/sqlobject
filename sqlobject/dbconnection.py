@@ -198,7 +198,7 @@ class DBConnection:
 
         if host:
             # Python < 2.7 have a problem - splituser() calls unquote() too early
-            #user, host = urllib.splituser(host)
+            # user, host = urllib.splituser(host)
             if '@' in host:
                 user, host = host.split('@', 1)
             if user:

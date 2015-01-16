@@ -66,14 +66,14 @@ def setupClass(soClasses, force=False):
         soClasses = [soClasses]
     connection = getConnection()
     for soClass in soClasses:
-        ## This would be an alternate way to register connections...
-        #try:
+        # This would be an alternate way to register connections:
+        # try:
         #    hub
-        #except NameError:
+        # except NameError:
         #    hub = sqlobject.dbconnection.ConnectionHub()
-        #soClass._connection = hub
-        #hub.threadConnection = connection
-        #hub.processConnection = connection
+        # soClass._connection = hub
+        # hub.threadConnection = connection
+        # hub.processConnection = connection
         soClass._connection = connection
     installOrClear(soClasses, force=force)
     return soClasses

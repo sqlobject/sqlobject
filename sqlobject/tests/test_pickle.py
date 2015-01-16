@@ -4,7 +4,7 @@ from sqlobject import *
 from sqlobject.tests.dbtest import *
 
 ########################################
-## Pickle instances
+# Pickle instances
 ########################################
 
 class TestPickle(SQLObject):

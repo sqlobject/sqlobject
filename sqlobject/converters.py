@@ -22,7 +22,7 @@ except ImportError:
 
 
 ########################################
-## Quoting
+# Quoting
 ########################################
 
 sqlStringReplace = [

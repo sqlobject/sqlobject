@@ -3,7 +3,7 @@ from sqlobject.col import validators
 from sqlobject.tests.dbtest import *
 
 ########################################
-## Validation/conversion
+# Validation/conversion
 ########################################
 
 class SOTestValidator(validators.Validator):

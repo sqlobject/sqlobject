@@ -194,7 +194,7 @@ class DropTableSignal(Signal):
     """
 
 ############################################################
-## Event Debugging
+# Event Debugging
 ############################################################
 
 def summarize_events_by_sender(sender=None, output=None, indent=0):

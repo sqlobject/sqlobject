@@ -3,7 +3,7 @@ from sqlobject.inheritance import *
 from sqlobject.tests.dbtest import *
 
 ########################################
-## sqlmeta.asDict
+# sqlmeta.asDict
 ########################################
 
 class InheritablePersonAD(InheritableSQLObject):

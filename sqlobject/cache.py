@@ -187,7 +187,7 @@ class CacheFactory(object):
         """
         self.lock.acquire()
         try:
-            #remove dead references from the expired cache
+            # remove dead references from the expired cache
             keys = self.expiredCache.keys()
             for key in keys:
                 if self.expiredCache[key]() is None:
@@ -200,8 +200,8 @@ class CacheFactory(object):
                 obj = ref(self.cache[id])
                 del self.cache[id]
 
-                #the object may have been gc'd when removed from the cache
-                #above, no need to place in expiredCache
+                # the object may have been gc'd when removed from the cache
+                # above, no need to place in expiredCache
                 if obj() is not None:
                     self.expiredCache[id] = obj
             # This offset tries to balance out which objects we

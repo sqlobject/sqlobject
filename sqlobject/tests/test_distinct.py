@@ -2,7 +2,7 @@ from sqlobject import *
 from sqlobject.tests.dbtest import *
 
 ########################################
-## Distinct
+# Distinct
 ########################################
 
 class Distinct1(SQLObject):
