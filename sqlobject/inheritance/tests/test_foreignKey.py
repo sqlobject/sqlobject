@@ -32,7 +32,8 @@ def test_foreignKey():
 
 
     person = PersonWithNotes.get(1)
-    assert isinstance(person, PersonWithNotes) and not isinstance(person, EmployeeWithNotes)
+    assert isinstance(person, PersonWithNotes) and \
+        not isinstance(person, EmployeeWithNotes)
     assert person.note.text == "person"
 
     employee = EmployeeWithNotes.get(2)
@@ -65,7 +66,7 @@ def test_foreignKey():
     assert employee.count() == 1
 
     employee = EmployeeWithNotes.selectBy(note=save_employee.note,
-                                         paper=save_employee.paper)
+                                          paper=save_employee.paper)
     assert employee.count() == 1
 
     employee = EmployeeWithNotes.selectBy()
@@ -82,4 +83,4 @@ def test_foreignKey2():
     setupClass([TestInheritableBase, TestInheritableForeignKey])
 
     test = TestInheritableBase()
-    object = TestInheritableForeignKey(base=test)
+    TestInheritableForeignKey(base=test)

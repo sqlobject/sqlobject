@@ -23,13 +23,16 @@ class MSSQLConnection(DBAPI):
                 elif driver == 'pymssql':
                     import pymssql as sqlmodule
                 else:
-                    raise ValueError('Unknown MSSQL driver "%s", expected adodb or pymssql' % driver)
+                    raise ValueError(
+                        'Unknown MSSQL driver "%s", '
+                        'expected adodb or pymssql' % driver)
             except ImportError:
                 pass
             else:
                 break
         else:
-            raise ImportError('Cannot find an MSSQL driver, tried %s' % drivers)
+            raise ImportError(
+                'Cannot find an MSSQL driver, tried %s' % drivers)
         self.module = sqlmodule
 
         if sqlmodule.__name__ == 'adodbapi':
@@ -47,20 +50,24 @@ class MSSQLConnection(DBAPI):
 
             # MSDE does not allow SQL server login 
             if kw.get("sspi"):
-                conn_str += "Integrated Security=SSPI;Persist Security Info=False"
-                self.make_conn_str = lambda keys: conn_str % (keys.host, keys.db)
+                conn_str += \
+                    "Integrated Security=SSPI;Persist Security Info=False"
+                self.make_conn_str = lambda keys: conn_str % (
+                    keys.host, keys.db)
             else:
                 conn_str += "User Id=%s;Password=%s"
-                self.make_conn_str = lambda keys: conn_str % (keys.host, keys.db, keys.user, keys.password)
+                self.make_conn_str = lambda keys: conn_str % (
+                    keys.host, keys.db, keys.user, keys.password)
 
             kw.pop("sspi", None)
             kw.pop("ncli", None)
 
-        else: # pymssql
+        else:  # pymssql
             self.dbconnection = sqlmodule.connect
             sqlmodule.Binary = lambda st: str(st)
             # don't know whether pymssql uses unicode
             self.usingUnicodeStrings = False
+
             def _make_conn_str(keys):
                 keys_dict = {}
                 for attr, value in (
@@ -74,7 +81,7 @@ class MSSQLConnection(DBAPI):
                 return keys_dict
             self.make_conn_str = _make_conn_str
 
-        self.autoCommit=int(autoCommit)
+        self.autoCommit = int(autoCommit)
         self.user = user
         self.password = password
         self.host = host
@@ -119,6 +126,7 @@ class MSSQLConnection(DBAPI):
        where TABLE_NAME = '%s'
        and COLUMNPROPERTY(object_id(TABLE_NAME), COLUMN_NAME, 'IsIdentity') = 1
     """
+
     def _hasIdentity(self, conn, table):
         query = self.HAS_IDENTITY % table
         c = conn.cursor()
@@ -192,7 +200,8 @@ class MSSQLConnection(DBAPI):
     def joinSQLType(self, join):
         return 'INT NOT NULL'
 
-    SHOW_TABLES="SELECT name FROM sysobjects WHERE type='U'"
+    SHOW_TABLES = "SELECT name FROM sysobjects WHERE type='U'"
+
     def tableExists(self, tableName):
         for (table,) in self.queryAll(self.SHOW_TABLES):
             if table.lower() == tableName.lower():
@@ -205,7 +214,8 @@ class MSSQLConnection(DBAPI):
                     column.mssqlCreateSQL(self)))
 
     def delColumn(self, sqlmeta, column):
-        self.query('ALTER TABLE %s DROP COLUMN %s' % (tableName.table, column.dbName))
+        self.query('ALTER TABLE %s DROP COLUMN %s' % (tableName.table,
+                                                      column.dbName))
 
     # precision and scale is gotten from column table so that we can create 
     # decimal columns if needed
@@ -237,7 +247,8 @@ class MSSQLConnection(DBAPI):
         colData = self.queryAll(self.SHOW_COLUMNS
                                 % tableName)
         results = []
-        for field, size, t, precision, scale, nullAllowed, default, defaultText, is_identity in colData:
+        for (field, size, t, precision, scale, nullAllowed,
+                default, defaultText, is_identity) in colData:
             if field == soClass.sqlmeta.idName:
                 continue
             # precision is needed for decimal columns
@@ -254,7 +265,8 @@ class MSSQLConnection(DBAPI):
                     if t == "int"    : defaultText = int(defaultText)
                     if t == "float"  : defaultText = float(defaultText)
                     if t == "numeric": defaultText = float(defaultText)
-                    # TODO need to access the "column" to_python method here--but the object doesn't exists yet
+                    # TODO need to access the "column" to_python method here --
+                    # but the object doesn't exists yet.
 
             # @@ skip key...
             kw['default'] = defaultText
@@ -263,9 +275,9 @@ class MSSQLConnection(DBAPI):
         return results
 
     def _setAutoCommit(self, conn, auto):
-        #raise Exception(repr(auto))
+        # raise Exception(repr(auto))
         return
-        #conn.auto_commit = auto
+        # conn.auto_commit = auto
         option = "ON"
         if auto == 0:
             option = "OFF"
@@ -276,7 +288,9 @@ class MSSQLConnection(DBAPI):
     # precision and scale is needed for decimal columns
     def guessClass(self, t, size, precision, scale):
         """
-            Here we take raw values coming out of syscolumns and map to SQLObject class types.
+        Here we take raw values coming out of syscolumns
+        and map to SQLObject class types.
+
         """
         if t.startswith('int'):
             return col.IntCol, {}
@@ -287,14 +301,15 @@ class MSSQLConnection(DBAPI):
         elif t.startswith('char'):
             if self.usingUnicodeStrings:
                 return col.UnicodeCol, {'length': size,
-                                       'varchar': False}
+                                        'varchar': False}
             return col.StringCol, {'length': size,
                                    'varchar': False}
         elif t.startswith('datetime'):
             return col.DateTimeCol, {}
         elif t.startswith('decimal'):
-            return col.DecimalCol, {'size': precision, # be careful for awkward naming
-                                   'precision': scale}
+            # be careful for awkward naming
+            return col.DecimalCol, {'size': precision,
+                                    'precision': scale}
         else:
             return col.Col, {}
 
@@ -302,11 +317,12 @@ class MSSQLConnection(DBAPI):
         if self._server_version is not None:
             return self._server_version
         try:
-            server_version = self.queryOne("SELECT SERVERPROPERTY('productversion')")[0]
+            server_version = self.queryOne(
+                "SELECT SERVERPROPERTY('productversion')")[0]
             server_version = server_version.split('.')[0]
             server_version = int(server_version)
         except:
-            server_version = None # unknown
+            server_version = None  # unknown
         self._server_version = server_version
         return server_version
 

@@ -27,8 +27,7 @@ def load_module_from_name(filename, module_name):
     if '.' in module_name:
         parent_name = '.'.join(module_name.split('.')[:-1])
         base_name = module_name.split('.')[-1]
-        parent = load_module_from_name(os.path.dirname(filename),
-                                       parent_name)
+        load_module_from_name(os.path.dirname(filename), parent_name)
     else:
         base_name = module_name
     fp = None

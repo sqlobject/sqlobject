@@ -7,7 +7,7 @@ from sqlobject import classregistry
 from py.test import raises
 
 ########################################
-## Dynamic column tests
+# Dynamic column tests
 ########################################
 
 class Person(SQLObject):
@@ -34,13 +34,13 @@ class TestPeople:
             Phone(phone=p)
 
     def test_defaultOrder(self):
-        assert (list(Person.select('all')) ==
-                list(Person.select('all', orderBy=Person.sqlmeta.defaultOrder)))
+        assert list(Person.select('all')) == list(
+            Person.select('all', orderBy=Person.sqlmeta.defaultOrder))
 
     def test_dynamicColumn(self):
         nickname = StringCol('nickname', length=10)
         Person.sqlmeta.addColumn(nickname, changeSchema=True)
-        n = Person(name='robert', nickname='bob')
+        Person(name='robert', nickname='bob')
         assert ([p.name for p in Person.select('all')]
                 == ['bob', 'jake', 'jane', 'robert', 'tim'])
         Person.sqlmeta.delColumn(nickname, changeSchema=True)
@@ -66,14 +66,18 @@ class TestPeople:
             expire = StringCol()
 
     def test_collidingName(self):
-        raises(AssertionError, Person.sqlmeta.addColumn, StringCol(name="name"))
-        raises(AssertionError, Person.sqlmeta.addColumn, StringCol(name="_init"))
-        raises(AssertionError, Person.sqlmeta.addColumn, StringCol(name="expire"))
-        raises(AssertionError, Person.sqlmeta.addColumn, StringCol(name="set"))
+        raises(AssertionError, Person.sqlmeta.addColumn,
+            StringCol(name="name"))
+        raises(AssertionError, Person.sqlmeta.addColumn,
+            StringCol(name="_init"))
+        raises(AssertionError, Person.sqlmeta.addColumn,
+            StringCol(name="expire"))
+        raises(AssertionError, Person.sqlmeta.addColumn,
+            StringCol(name="set"))
         raises(AssertionError, self._test_collidingName)
 
 ########################################
-## Auto class generation
+# Auto class generation
 ########################################
 
 class TestAuto:
@@ -183,6 +187,7 @@ class TestAuto:
     def test_classCreate(self):
         class AutoTest(SQLObject):
             _connection = getConnection()
+
             class sqlmeta(sqlmeta):
                 idName = 'auto_id'
                 fromDatabase = True

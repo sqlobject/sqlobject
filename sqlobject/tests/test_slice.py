@@ -3,7 +3,7 @@ from sqlobject import *
 from sqlobject.tests.dbtest import *
 
 ########################################
-## Slicing tests
+# Slicing tests
 ########################################
 
 class Counter(SQLObject):

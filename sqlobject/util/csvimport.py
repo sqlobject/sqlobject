@@ -180,20 +180,20 @@ def load_csv(csvreader, allow_python=True, default_type=DEFAULT_TYPE,
         if row and row[0].strip() == 'CLASS:':
             if not allow_multiple_classes:
                 raise ValueError(
-                    "CLASS: line in CSV file, but multiple classes are not allowed in this file (line: %r)"
-                    % row)
+                    "CLASS: line in CSV file, but multiple classes "
+                    "are not allowed in this file (line: %r)" % row)
             if not row[1:]:
                 raise ValueError(
-                    "CLASS: in line in CSV file, with no class name in next column (line: %r)"
-                    % row)
+                    "CLASS: in line in CSV file, with no class name "
+                    "in next column (line: %r)" % row)
             current_class = row[1]
             current_headers = None
             continue
 
         if not current_class:
             raise ValueError(
-                "No CLASS: line given, and there is no default class for this file (line: %r"
-                % row)
+                "No CLASS: line given, and there is no default class "
+                "for this file (line: %r)" % row)
 
         if current_headers is None:
             current_headers = _parse_headers(row, default_type)
@@ -231,8 +231,8 @@ def _parse_headers(header_row, default_type):
             type = default_type
         if type == 'python' and not allow_python:
             raise ValueError(
-                ":python header given when python headers are not allowed (with header %r"
-                % original_name)
+                ":python header given when python headers are not allowed "
+                "(with header %r)" % original_name)
         name = name.strip()
         if name == '[comment]' or not name:
             headers.append((None, None, None))

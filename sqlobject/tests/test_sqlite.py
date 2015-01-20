@@ -17,6 +17,7 @@ def test_sqlite_factory():
         py.test.skip("These tests require SQLite v2+")
 
     factory = [None]
+
     def SQLiteConnectionFactory(sqlite):
         class MyConnection(sqlite.Connection):
             pass
@@ -38,11 +39,13 @@ def test_sqlite_factory_str():
         py.test.skip("These tests require SQLite v2+")
 
     factory = [None]
+
     def SQLiteConnectionFactory(sqlite):
         class MyConnection(sqlite.Connection):
             pass
         factory[0] = MyConnection
         return MyConnection
+
     from sqlobject.sqlite import sqliteconnection
     sqliteconnection.SQLiteConnectionFactory = SQLiteConnectionFactory
 
@@ -70,11 +73,13 @@ def test_sqlite_aggregate():
             class group_concat:
                 def __init__(self):
                     self.acc = []
+
                 def step(self, value):
                     if isinstance(value, basestring):
                         self.acc.append(value)
                     else:
                         self.acc.append(str(value))
+
                 def finalize(self):
                     self.acc.sort()
                     return ", ".join(self.acc)
@@ -118,7 +123,7 @@ def test_memorydb():
     if not connection._memory:
         py.test.skip("The connection isn't memorydb")
     setupClass(TestSO1)
-    connection.close() # create a new connection to an in-memory database
+    connection.close()  # create a new connection to an in-memory database
     TestSO1.setConnection(connection)
     TestSO1.createTable()
 

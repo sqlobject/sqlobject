@@ -37,8 +37,10 @@ def runapp(**kw):
     print('-' * 8)
     app = makestack(**kw)
     env = {}
+
     def start_response(*args):
         pass
+
     try:
         list(app(env, start_response))
         return True

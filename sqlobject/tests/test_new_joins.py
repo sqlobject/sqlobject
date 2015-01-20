@@ -4,7 +4,7 @@ from sqlobject import *
 from sqlobject.tests.dbtest import *
 
 ########################################
-## Joins
+# Joins
 ########################################
 
 class PersonJoinerNew(SQLObject):
@@ -87,8 +87,7 @@ class TestJoin2:
         p1 = PersonJoinerNew2(name='bob')
         p2 = PersonJoinerNew2(name='sally')
         for z in ['11111', '22222', '33333']:
-            a = AddressJoinerNew2(zip=z, personJoinerNew2=p1)
-            #p1.addAddressJoinerNew2(a)
+            AddressJoinerNew2(zip=z, personJoinerNew2=p1)
         AddressJoinerNew2(zip='00000', personJoinerNew2=p2)
 
     def test_basic(self):
@@ -142,7 +141,7 @@ class TestJoin3:
         p1 = PersonJoinerNew3(name='bob')
         p2 = PersonJoinerNew3(name='sally')
         for z in ['11111', '22222', '33333']:
-            a = AddressJoinerNew3(zip=z, personJoinerNew3=p1)
+            AddressJoinerNew3(zip=z, personJoinerNew3=p1)
         AddressJoinerNew3(zip='00000', personJoinerNew3=p2)
 
     def test_accessors(self):

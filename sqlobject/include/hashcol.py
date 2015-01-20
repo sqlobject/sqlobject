@@ -16,7 +16,8 @@ class DbHash:
                 return 0
             return True
         if not isinstance( other, basestring ):
-            raise TypeError( "A hash may only be compared with a string, or None." )
+            raise TypeError(
+                "A hash may only be compared with a string, or None.")
         return cmp( self.hashMethod( other ), self.hash )
 
     def __repr__( self ):

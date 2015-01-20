@@ -12,7 +12,9 @@ class Version(SQLObject):
         self.masterClass.get(self.masterID).set(**values)
 
     def nextVersion(self):
-        version = self.select(AND(self.q.masterID == self.masterID, self.q.id > self.id), orderBy=self.q.id)
+        version = self.select(
+            AND(self.q.masterID == self.masterID, self.q.id > self.id),
+            orderBy=self.q.id)
         if version.count():
             return version[0]
         else:
@@ -46,13 +48,13 @@ def getColumns(columns, cls):
         if column.endswith("ID") and isinstance(defi, ForeignKey):
             column = column[:-2]
 
-        #remove incompatible constraints
+        # remove incompatible constraints
         kwds = dict(defi._kw)
         for kw in ["alternateID", "unique"]:
             if kw in kwds: del kwds[kw]
         columns[column] = defi.__class__(**kwds)
 
-    #ascend heirarchy
+    # ascend heirarchy
     if cls.sqlmeta.parentClass:
         getColumns(columns, cls.sqlmeta.parentClass)
 
@@ -84,7 +86,8 @@ class Versioning(object):
                                  attrs)
 
         if  '_connection' in self.soClass.__dict__:
-            self.versionClass._connection = self.soClass.__dict__['_connection']
+            self.versionClass._connection = \
+                self.soClass.__dict__['_connection']
 
         events.listen(self.createTable,
                       soClass, events.CreateTableSignal)
@@ -100,7 +103,7 @@ class Versioning(object):
 
     def rowUpdate(self, instance, kwargs):
         if instance.childName and instance.childName != self.soClass.__name__:
-            return #if you want your child class versioned, version it.
+            return  # if you want your child class versioned, version it
 
         values = instance.sqlmeta.asDict()
         del values['id']
@@ -111,5 +114,5 @@ class Versioning(object):
         if obj is None:
             return self
         return self.versionClass.select(
-            self.versionClass.q.masterID==obj.id, connection=obj._connection)
+            self.versionClass.q.masterID == obj.id, connection=obj._connection)
 

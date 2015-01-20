@@ -4,7 +4,7 @@ from sqlobject.tests.dbtest import *
 from sqlobject.inheritance import InheritableSQLObject
 
 ########################################
-## Inheritance
+# Inheritance
 ########################################
 
 class InheritablePerson(InheritableSQLObject):
@@ -24,7 +24,7 @@ def setup():
 
 def test_creation_fail():
     setup()
-    kwargs ={'firstName':'John', 'lastname':'Doe'}
+    kwargs = {'firstName': 'John', 'lastname': 'Doe'}
     raises(TypeError, Employee, **kwargs)
     persons = InheritablePerson.select(InheritablePerson.q.firstName == 'John')
     assert persons.count() == 0
@@ -32,7 +32,7 @@ def test_creation_fail():
 def test_inheritance():
     setup()
 
-    persons = InheritablePerson.select() # all
+    persons = InheritablePerson.select()  # all
     for person in persons:
         assert isinstance(person, InheritablePerson)
         if isinstance(person, Employee):
@@ -79,22 +79,26 @@ def test_inheritance_select():
     person = Employee.byLastName("Leader")
     assert person.firstName == "Project"
 
-    persons = list(InheritablePerson.select(orderBy=InheritablePerson.q.lastName))
+    persons = list(InheritablePerson.select(
+        orderBy=InheritablePerson.q.lastName))
     assert len(persons) == 2
 
-    persons = list(InheritablePerson.select(orderBy=(InheritablePerson.q.lastName, InheritablePerson.q.firstName)))
+    persons = list(InheritablePerson.select(orderBy=(
+        InheritablePerson.q.lastName, InheritablePerson.q.firstName)))
     assert len(persons) == 2
 
     persons = list(Employee.select(orderBy=Employee.q.lastName))
     assert len(persons) == 1
 
-    persons = list(Employee.select(orderBy=(Employee.q.lastName, Employee.q.firstName)))
+    persons = list(Employee.select(orderBy=(Employee.q.lastName,
+                                            Employee.q.firstName)))
     assert len(persons) == 1
 
     persons = list(Employee.select(orderBy=Employee.q.position))
     assert len(persons) == 1
 
-    persons = list(Employee.select(orderBy=(Employee.q.position, Employee.q.lastName)))
+    persons = list(Employee.select(orderBy=(Employee.q.position,
+                                            Employee.q.lastName)))
     assert len(persons) == 1
 
 def test_addDelColumn():

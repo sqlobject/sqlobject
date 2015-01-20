@@ -15,7 +15,7 @@ class SBButton(SQLObject):
     activated = BoolCol()
 
 def makeClause():
-    return SBButton.q.activated==True
+    return SBButton.q.activated == True
 
 def makeSelect():
     return Select(SBButton.q.id, clause=makeClause())
@@ -23,7 +23,8 @@ def makeSelect():
 def checkCount(q, c, msg=''):
     print("STRING:", str(q))
     print("POSTGR:", sqlrepr(q, 'postgres'))
-    assert sqlrepr(q, 'postgres').count("'t'") == c and sqlrepr(q, 'postgres') != str(q), msg
+    assert sqlrepr(q, 'postgres').count("'t'") == c and \
+        sqlrepr(q, 'postgres') != str(q), msg
 
 def testSimple():
     setupClass(SBButton)
@@ -45,9 +46,9 @@ def testAliased():
     yield checkCount, JOIN(None, b), 1
     yield checkCount, JOIN(b, SBButton), 1
     yield checkCount, JOIN(SBButton, b), 1
-    yield checkCount, LEFTJOINOn(None, b, SBButton.q.id==b.q.id), 1
-    yield checkCount, LEFTJOINOn(b, SBButton, SBButton.q.id==b.q.id), 1
-    yield checkCount, LEFTJOINOn(SBButton, b, SBButton.q.id==b.q.id), 1
+    yield checkCount, LEFTJOINOn(None, b, SBButton.q.id == b.q.id), 1
+    yield checkCount, LEFTJOINOn(b, SBButton, SBButton.q.id == b.q.id), 1
+    yield checkCount, LEFTJOINOn(SBButton, b, SBButton.q.id == b.q.id), 1
     
 def testTablesUsedSResults():
     setupClass(SBButton)

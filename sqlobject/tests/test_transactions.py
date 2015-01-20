@@ -3,11 +3,10 @@ from sqlobject import *
 from sqlobject.tests.dbtest import *
 
 ########################################
-## Transaction test
+# Transaction test
 ########################################
 
 class TestSOTrans(SQLObject):
-    #_cacheValues = False
     class sqlmeta:
         defaultOrder = 'name'
     name = StringCol(length=10, alternateID=True, dbName='name_col')
@@ -65,10 +64,10 @@ def test_transaction_delete(close=False):
         TestSOTrans(name='bob')
         bIn = TestSOTrans.byName('bob', connection=trans)
         bIn.destroySelf()
-        bOut = TestSOTrans.select(TestSOTrans.q.name=='bob')
+        bOut = TestSOTrans.select(TestSOTrans.q.name == 'bob')
         assert bOut.count() == 1
         bOutInst = bOut[0]
-        bOutID = bOutInst.id
+        bOutID = bOutInst.id  # noqa: bOutID is used in the string code below
         trans.commit(close=close)
         assert bOut.count() == 0
         raises(SQLObjectNotFound, "TestSOTrans.get(bOutID)")

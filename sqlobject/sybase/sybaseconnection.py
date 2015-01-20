@@ -27,7 +27,7 @@ class SybaseConnection(DBAPI):
         self.password = password
         autoCommit = kw.get('autoCommit')
         if autoCommit:
-           autoCommmit = int(autoCommit)
+           autoCommit = int(autoCommit)
         else:
             autoCommit = None
         kw['autoCommit'] = autoCommit
@@ -49,8 +49,9 @@ class SybaseConnection(DBAPI):
 
     def makeConnection(self):
         return self.module.connect(self.host, self.user, self.password,
-                              database=self.db, auto_commit=self.autoCommit,
-                              locking=self.locking)
+                                   database=self.db,
+                                   auto_commit=self.autoCommit,
+                                   locking=self.locking)
 
     HAS_IDENTITY = """
        SELECT col.name, col.status, obj.name
@@ -60,6 +61,7 @@ class SybaseConnection(DBAPI):
        WHERE obj.name = '%s'
              AND (col.status & 0x80) = 0x80
     """
+
     def _hasIdentity(self, conn, table):
         query = self.HAS_IDENTITY % table
         c = conn.cursor()
@@ -116,7 +118,8 @@ class SybaseConnection(DBAPI):
     def joinSQLType(self, join):
         return 'NUMERIC(18,0) NOT NULL'
 
-    SHOW_TABLES="SELECT name FROM sysobjects WHERE type='U'"
+    SHOW_TABLES = "SELECT name FROM sysobjects WHERE type='U'"
+
     def tableExists(self, tableName):
         for (table,) in self.queryAll(self.SHOW_TABLES):
             if table.lower() == tableName.lower():
@@ -129,10 +132,14 @@ class SybaseConnection(DBAPI):
                     column.sybaseCreateSQL()))
 
     def delColumn(self, sqlmeta, column):
-        self.query('ALTER TABLE %s DROP COLUMN %s' % (sqlmeta.table, column.dbName))
+        self.query(
+            'ALTER TABLE %s DROP COLUMN %s' % (sqlmeta.table, column.dbName))
 
-    SHOW_COLUMNS=('SELECT COLUMN_NAME, DATA_TYPE, IS_NULLABLE, COLUMN_DEFAULT FROM INFORMATION_SCHEMA.COLUMNS '
-                  'WHERE TABLE_NAME = \'%s\'')
+    SHOW_COLUMNS = ('SELECT '
+                    'COLUMN_NAME, DATA_TYPE, IS_NULLABLE, COLUMN_DEFAULT '
+                    'FROM INFORMATION_SCHEMA.COLUMNS '
+                    'WHERE TABLE_NAME = \'%s\'')
+
     def columnsFromSchema(self, tableName, soClass):
         colData = self.queryAll(self.SHOW_COLUMNS
                                 % tableName)

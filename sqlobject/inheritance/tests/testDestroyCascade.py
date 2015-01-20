@@ -16,5 +16,5 @@ def test_destroySelf():
     setupClass([TestCascade1, TestCascade3, TestCascade2])
 
     c = TestCascade3(dummy=1)
-    b = TestCascade2(cID=c.id, dummy=1)
+    TestCascade2(cID=c.id, dummy=1)
     c.destroySelf()

@@ -9,17 +9,25 @@ class TestSQLBuilder(SQLObject):
 def test_Select():
     setupClass(TestSQLBuilder)
 
-    select1 = Select([const.id, func.MAX(const.salary)], staticTables=['employees'])
+    select1 = Select([const.id, func.MAX(const.salary)],
+                     staticTables=['employees'])
     assert sqlrepr(select1) == 'SELECT id, MAX(salary) FROM employees'
 
     select2 = Select([TestSQLBuilder.q.name, TestSQLBuilder.q.value])
-    assert sqlrepr(select2) == 'SELECT test_sql_builder.name, test_sql_builder.value FROM test_sql_builder'
+    assert sqlrepr(select2) == \
+        'SELECT test_sql_builder.name, test_sql_builder.value ' \
+        'FROM test_sql_builder'
 
     union = Union(select1, select2)
-    assert sqlrepr(union) == 'SELECT id, MAX(salary) FROM employees UNION SELECT test_sql_builder.name, test_sql_builder.value FROM test_sql_builder'
+    assert sqlrepr(union) == \
+        'SELECT id, MAX(salary) FROM employees ' \
+        'UNION SELECT test_sql_builder.name, test_sql_builder.value ' \
+        'FROM test_sql_builder'
 
     union = Union(TestSQLBuilder.select().queryForSelect())
-    assert sqlrepr(union) == 'SELECT test_sql_builder.id, test_sql_builder.name, test_sql_builder.value FROM test_sql_builder WHERE 1 = 1'
+    assert sqlrepr(union) == \
+        'SELECT test_sql_builder.id, test_sql_builder.name, ' \
+        'test_sql_builder.value FROM test_sql_builder WHERE 1 = 1'
 
 def test_empty_AND():
     assert AND() == None
@@ -43,12 +51,12 @@ def test_modulo():
 
 def test_str_or_sqlrepr():
     select = Select(['id', 'name'], staticTables=['employees'],
-        where='value>0', orderBy='id')
+                    where='value>0', orderBy='id')
     assert sqlrepr(select, 'sqlite') == \
         'SELECT id, name FROM employees WHERE value>0 ORDER BY id'
 
     select = Select(['id', 'name'], staticTables=['employees'],
-        where='value>0', orderBy='id', lazyColumns=True)
+                    where='value>0', orderBy='id', lazyColumns=True)
     assert sqlrepr(select, 'sqlite') == \
         'SELECT id FROM employees WHERE value>0 ORDER BY id'
 

@@ -3,7 +3,7 @@ from sqlobject.inheritance import *
 from sqlobject.tests.dbtest import *
 
 ########################################
-## sqlmeta.asDict
+# sqlmeta.asDict
 ########################################
 
 class InheritablePersonAD(InheritableSQLObject):
@@ -32,11 +32,13 @@ def test_asDict():
     setupClass([InheritablePersonAD, ManagerAD, EmployeeAD], force=True)
     InheritablePersonAD(firstName='Oneof', lastName='Authors')
     ManagerAD(firstName='ManagerAD', lastName='The', department='Dep')
-    EmployeeAD(firstName='Project', lastName='Leader', position='Project leader')
+    EmployeeAD(firstName='Project', lastName='Leader',
+               position='Project leader')
 
     assert InheritablePersonAD.get(1).sqlmeta.asDict() == \
         dict(firstName='Oneof', lastName='Authors', id=1)
     assert InheritablePersonAD.get(2).sqlmeta.asDict() == \
         dict(firstName='ManagerAD', lastName='The', department='Dep', id=2)
     assert InheritablePersonAD.get(3).sqlmeta.asDict() == \
-        dict(firstName='Project', lastName='Leader', position='Project leader', id=3)
+        dict(firstName='Project', lastName='Leader',
+             position='Project leader', id=3)

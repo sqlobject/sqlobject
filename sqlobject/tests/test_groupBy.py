@@ -3,7 +3,7 @@ from sqlobject.sqlbuilder import Select, func
 from sqlobject.tests.dbtest import *
 
 ########################################
-## groupBy
+# groupBy
 ########################################
 
 class GroupbyTest(SQLObject):
@@ -17,7 +17,8 @@ def test_groupBy():
     GroupbyTest(name='b', value=1)
 
     connection = getConnection()
-    select = Select([GroupbyTest.q.name, func.COUNT(GroupbyTest.q.value)],
+    select = Select(
+        [GroupbyTest.q.name, func.COUNT(GroupbyTest.q.value)],
         groupBy=GroupbyTest.q.name,
         orderBy=GroupbyTest.q.name)
     sql = connection.sqlrepr(select)
@@ -31,7 +32,8 @@ def test_groupBy_list():
     GroupbyTest(name='b', value=1)
 
     connection = getConnection()
-    select = Select([GroupbyTest.q.name, GroupbyTest.q.value],
+    select = Select(
+        [GroupbyTest.q.name, GroupbyTest.q.value],
         groupBy=[GroupbyTest.q.name, GroupbyTest.q.value],
         orderBy=[GroupbyTest.q.name, GroupbyTest.q.value])
     sql = connection.sqlrepr(select)

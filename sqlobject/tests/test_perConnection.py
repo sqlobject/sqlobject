@@ -2,7 +2,7 @@ from sqlobject import *
 from sqlobject.tests.dbtest import *
 
 ########################################
-## Per-instance connection
+# Per-instance connection
 ########################################
 
 class TestPerConnection(SQLObject):
@@ -13,4 +13,5 @@ def test_perConnection():
     TestPerConnection.dropTable(connection=connection, ifExists=True)
     TestPerConnection.createTable(connection=connection)
     TestPerConnection(test='test', connection=connection)
-    assert len(list(TestPerConnection.select(TestPerConnection.q.test=='test', connection=connection))) == 1
+    assert len(list(TestPerConnection.select(
+        TestPerConnection.q.test == 'test', connection=connection))) == 1

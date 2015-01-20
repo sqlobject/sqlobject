@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 from imp import load_source
-from os.path import abspath, dirname, isfile, join
+from os.path import abspath, dirname, join
 
 try:
     from ez_setup import use_setuptools
@@ -31,11 +31,11 @@ if is_setuptools:
     kw['install_requires'] = ["FormEncode>=1.1.1", "PyDispatcher>=2.0.4"]
     kw['extras_require'] = {
         'mysql': ['MySQLdb'],
-        'postgresql': ['psycopg'], # or pgdb from PyGreSQL
+        'postgresql': ['psycopg'],  # or pgdb from PyGreSQL
         'sqlite': ['pysqlite'],
         'firebird': ['kinterbasdb'],
         'sybase': ['Sybase'],
-        'mssql': ['adodbapi'], # or pymssql
+        'mssql': ['adodbapi'],  # or pymssql
         'sapdb': ['sapdb'],
         }
 
@@ -62,27 +62,30 @@ and `GitHub <https://github.com/sqlobject>`_.
   :target: https://travis-ci.org/sqlobject/sqlobject
 """,
       classifiers=[
-        "Development Status :: 2 - Pre-Alpha",
-        "Intended Audience :: Developers",
-        "License :: OSI Approved :: GNU Library or Lesser General Public License (LGPL)",
-        "Programming Language :: Python",
-        "Programming Language :: Python :: 2",
-        "Programming Language :: Python :: 2.6",
-        "Programming Language :: Python :: 2.7",
-        "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.4",
-        "Topic :: Database",
-        "Topic :: Database :: Front-Ends",
-        "Topic :: Software Development :: Libraries :: Python Modules",
-        ],
+            "Development Status :: 2 - Pre-Alpha",
+            "Intended Audience :: Developers",
+            "License :: OSI Approved :: "
+                  "GNU Library or Lesser General Public License (LGPL)",
+            "Programming Language :: Python",
+            "Programming Language :: Python :: 2",
+            "Programming Language :: Python :: 2.6",
+            "Programming Language :: Python :: 2.7",
+            "Programming Language :: Python :: 3",
+            "Programming Language :: Python :: 3.4",
+            "Topic :: Database",
+            "Topic :: Database :: Front-Ends",
+            "Topic :: Software Development :: Libraries :: Python Modules",
+      ],
       author="Ian Bicking",
       author_email="ianb@colorstudy.com",
       maintainer="Oleg Broytman",
       maintainer_email="phd@phdru.name",
       url="http://sqlobject.org/devel/",
-      download_url="https://pypi.python.org/pypi/SQLObject/%sdev-2014" % version,
+      download_url="https://pypi.python.org/pypi/SQLObject/"
+          "%sdev-2014" % version,
       license="LGPL",
-      packages=["sqlobject"] + ['sqlobject.%s' % package for package in subpackages],
+      packages=["sqlobject"] + \
+          ['sqlobject.%s' % package for package in subpackages],
       scripts=["scripts/sqlobject-admin", "scripts/sqlobject-convertOldURI"],
       package_data={"sqlobject": [
                         "../docs/LICENSE", "../docs/*.txt", "../docs/*.css",

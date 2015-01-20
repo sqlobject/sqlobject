@@ -125,7 +125,7 @@ def test_selectBy():
     setupClass([TestSO4, TestSO3])
     tc4 = TestSO4(me='another')
     tc3 = TestSO3(name='sel', other=tc4)
-    anothertc3 = TestSO3(name='not joined')
+    TestSO3(name='not joined')
     assert tc3.other == tc4
     assert list(TestSO3.selectBy(other=tc4)) == [tc3]
     assert list(TestSO3.selectBy(otherID=tc4.id)) == [tc3]
@@ -285,12 +285,7 @@ def testAsDict():
 
 def test_nonexisting_attr():
     setupClass(Student)
-    try:
-        Student.select(Student.q.nonexisting)
-    except AttributeError:
-        pass
-    else:
-        assert 0, "Expected an AttributeError"
+    raises(AttributeError, getattr, Student.q, 'nonexisting')
 
 class TestSO12(SQLObject):
     name = StringCol()
@@ -303,7 +298,9 @@ def test_defaultSQL():
 
 def test_connection_override():
     sqlhub.processConnection = connectionForURI('sqlite:///db1')
+
     class TestSO13(SQLObject):
         _connection = connectionForURI('sqlite:///db2')
+
     assert TestSO13._connection.uri() == 'sqlite:///db2'
     del sqlhub.processConnection

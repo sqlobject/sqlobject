@@ -6,18 +6,20 @@ from sqlobject import *
 from sqlobject.tests.dbtest import *
 from sqlobject.styles import Style, MixedCaseUnderscoreStyle, MixedCaseStyle
 
-#hash of styles versus the database names resulting from 'columns' below
+# Hash of styles versus the database names resulting from 'columns' below.
 columns = ["ABCUpper", "abc_lower", "ABCamelCaseColumn"]
-styles = {Style:columns,
-          MixedCaseUnderscoreStyle:["abc_upper", "abc_lower", "ab_camel_case_column"],
-          MixedCaseStyle:["ABCUpper", "Abc_lower", "ABCamelCaseColumn"],
+styles = {Style: columns,
+          MixedCaseUnderscoreStyle: ["abc_upper", "abc_lower",
+                                     "ab_camel_case_column"],
+          MixedCaseStyle: ["ABCUpper", "Abc_lower", "ABCamelCaseColumn"],
         }
 
-#hash of styles versus the database names resulting from a foreign key named 'FKey'
+# Hash of styles versus the database names
+# resulting from a foreign key named 'FKey'.
 fkey = ForeignKey("DefaultStyleTest", name="FKey")
-fkeys = {Style:"FKeyID",
-          MixedCaseUnderscoreStyle:"f_key_id",
-          MixedCaseStyle:"FKeyID",
+fkeys = {Style: "FKeyID",
+         MixedCaseUnderscoreStyle: "f_key_id",
+         MixedCaseStyle: "FKeyID",
         }
 
 

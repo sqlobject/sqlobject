@@ -2,7 +2,6 @@ from paste.deploy.converters import asbool
 from paste.wsgilib import catch_errors
 from paste.util import import_string
 import sqlobject
-import threading
 
 def make_middleware(app, global_conf, database=None, use_transaction=False,
                     hub=None):
@@ -60,10 +59,12 @@ class SQLObjectMiddleware(object):
         any_errors = []
         use_transaction = [self.use_transaction]
         self.hub.threadConnection = conn[0]
+
         def abort():
             assert use_transaction[0], (
                 "You cannot abort, because a transaction is not being used")
             any_errors.append(None)
+
         def begin():
             if use_transaction[0]:
                 if any_errors:
@@ -74,9 +75,11 @@ class SQLObjectMiddleware(object):
             use_transaction[0] = True
             conn[0] = self.conn.transaction()
             self.hub.threadConnection = conn[0]
+
         def error(exc_info=None):
             any_errors.append(None)
             ok()
+
         def ok():
             if use_transaction[0]:
                 if any_errors:
@@ -84,10 +87,13 @@ class SQLObjectMiddleware(object):
                 else:
                     conn[0].commit(close=True)
             self.hub.threadConnection = None
+
         def in_transaction():
             return use_transaction[0]
+
         def get_connection():
             return conn[0]
+
         environ['sqlobject.get_connection'] = get_connection
         environ['sqlobject.abort'] = abort
         environ['sqlobject.begin'] = begin

@@ -36,10 +36,12 @@ class FirebirdConnection(DBAPI):
             self.dialect = None
         self.role = role
         if charset:
-            self.dbEncoding = charset.replace('-', '') # encoding defined by user in the connection string
+            # Encoding defined by user in the connection string.
+            self.dbEncoding = charset.replace('-', '')
         else:
             self.dbEncoding = charset
-        self.defaultDbEncoding = '' # encoding defined during database creation and stored in the database
+        # Encoding defined during database creation and stored in the database.
+        self.defaultDbEncoding = ''
         DBAPI.__init__(self, **kw)
 
     @classmethod
@@ -47,12 +49,13 @@ class FirebirdConnection(DBAPI):
         if not password:
             password = 'masterkey'
         if not auth:
-            auth='sysdba'
+            auth = 'sysdba'
         # check for alias using
         if (path[0] == '/') and path[-3:].lower() not in ('fdb', 'gdb'):
             path = path[1:]
         path = path.replace('/', os.sep)
-        return cls(host, port=port, db=path, user=auth, password=password, **args)
+        return cls(host, port=port, db=path, user=auth, password=password,
+                   **args)
 
     def _runWithConnection(self, meth, *args):
         if not self.autoCommit:
@@ -99,12 +102,10 @@ class FirebirdConnection(DBAPI):
         for each table this method to work."""
         table = soInstance.sqlmeta.table
         idName = soInstance.sqlmeta.idName
-        sequenceName = soInstance.sqlmeta.idSequence or \
-                               'GEN_%s' % table
+        sequenceName = soInstance.sqlmeta.idSequence or 'GEN_%s' % table
         c = conn.cursor()
         if id is None:
-            c.execute('SELECT gen_id(%s,1) FROM rdb$database'
-                                % sequenceName)
+            c.execute('SELECT gen_id(%s,1) FROM rdb$database' % sequenceName)
             id = c.fetchone()[0]
         names = [idName] + names
         values = [id] + values
@@ -147,7 +148,8 @@ class FirebirdConnection(DBAPI):
 
     def createIDColumn(self, soClass):
         key_type = {int: "INT", str: "TEXT"}[soClass.sqlmeta.idType]
-        return '%s %s NOT NULL PRIMARY KEY' % (soClass.sqlmeta.idName, key_type)
+        return '%s %s NOT NULL PRIMARY KEY' % (soClass.sqlmeta.idName,
+                                               key_type)
 
     def createIndexSQL(self, soClass, index):
         return index.firebirdCreateIndexSQL(soClass)
@@ -159,8 +161,9 @@ class FirebirdConnection(DBAPI):
         # there's something in the database by this name...let's
         # assume it's a table.  By default, fb 1.0 stores EVERYTHING
         # it cares about in uppercase.
-        result = self.queryOne("SELECT COUNT(rdb$relation_name) FROM rdb$relations WHERE rdb$relation_name = '%s'"
-                               % tableName.upper())
+        result = self.queryOne(
+            "SELECT COUNT(rdb$relation_name) FROM rdb$relations "
+            "WHERE rdb$relation_name = '%s'" % tableName.upper())
         return result[0]
 
     def addColumn(self, tableName, column):
@@ -176,27 +179,36 @@ class FirebirdConnection(DBAPI):
         self.query('ALTER TABLE %s DROP %s' % (sqlmeta.table, column.dbName))
 
     def readDefaultEncodingFromDB(self):
-        if self.defaultDbEncoding is "": # get out if encoding is known allready (can by None as well))
-            self.defaultDbEncoding =  str(self.queryOne("SELECT rdb$character_set_name FROM rdb$database")[0].strip().lower()) # encoding defined during db creation
+        # Get out if encoding is known allready (can by None as well).
+        if self.defaultDbEncoding == "":
+            self.defaultDbEncoding =  str(self.queryOne(
+                "SELECT rdb$character_set_name FROM rdb$database")[0].\
+                    strip().lower())  # encoding defined during db creation
             if self.defaultDbEncoding  == "none":
                 self.defaultDbEncoding = None
             if self.dbEncoding != self.defaultDbEncoding:
                 warningText = """\n
-                   Database charset: %s is different from connection charset: %s.\n""" % (self.defaultDbEncoding, self.dbEncoding)
+                   Database charset: %s is different """ \
+                   """from connection charset: %s.\n""" % (
+                        self.defaultDbEncoding, self.dbEncoding)
                 warnings.warn(warningText)
-                #TODO: ??? print out the uri string, so user can see what is going on
-                warningText = \
-                """\n
-                   Every CHAR or VARCHAR field can (or, better: must) have a character set defined in Firebird.
-                   In the case, field charset is not defined, SQLObject try to use a db default encoding instead.
+                # TODO: ??? print out the uri string,
+                # so user can see what is going on
+                warningText = """\n
+                   Every CHAR or VARCHAR field can (or, better: must) """ \
+                   """have a character set defined in Firebird.
+                   In the case, field charset is not defined, """ \
+                   """SQLObject try to use a db default encoding instead.
                    Firebird is unable to transliterate between character sets.
-                   So you must set the correct values on the server and on the client if everything is to work smoothely.\n"""
+                   So you must set the correct values on the server """ \
+                   "and on the client if everything is to work smoothely.\n"
                 warnings.warn(warningText)
 
-            if not self.dbEncoding: # defined by user in the connection string
+            if not self.dbEncoding:  # defined by user in the connection string
                 self.dbEncoding = self.defaultDbEncoding
                 warningText = """\n
-                    encoding: %s will be used as default for this connection\n""" % self.dbEncoding
+                   encoding: %s will be used as default """ \
+                   """for this connection\n""" % self.dbEncoding
                 warnings.warn(warningText)
 
     def columnsFromSchema(self, tableName, soClass):
@@ -207,7 +219,7 @@ class FirebirdConnection(DBAPI):
 
         self.readDefaultEncodingFromDB()
 
-        fieldQuery="""\
+        fieldQuery = """\
         SELECT r.RDB$FIELD_NAME AS field_name,
                 CASE f.RDB$FIELD_TYPE
                 when 7 then 'smallint'
@@ -288,47 +300,60 @@ class FirebirdConnection(DBAPI):
                 r.RDB$DESCRIPTION AS field_description
            FROM RDB$RELATION_FIELDS r
            LEFT JOIN RDB$FIELDS f ON r.RDB$FIELD_SOURCE = f.RDB$FIELD_NAME
-           LEFT JOIN RDB$COLLATIONS coll ON f.RDB$COLLATION_ID = coll.RDB$COLLATION_ID
-           LEFT JOIN RDB$CHARACTER_SETS cset ON f.RDB$CHARACTER_SET_ID = cset.RDB$CHARACTER_SET_ID
+           LEFT JOIN RDB$COLLATIONS coll
+                ON f.RDB$COLLATION_ID = coll.RDB$COLLATION_ID
+           LEFT JOIN RDB$CHARACTER_SETS cset
+                ON f.RDB$CHARACTER_SET_ID = cset.RDB$CHARACTER_SET_ID
           WHERE r.RDB$RELATION_NAME='%s'  -- table name
         ORDER BY r.RDB$FIELD_POSITION
         """
 
         colData = self.queryAll(fieldQuery % tableName.upper())
         results = []
-        for field, fieldType, fieldSubtype, fieldLength, fieldPrecision, fieldScale, fieldCharset, collationName, defaultSource, fieldNotNullConstraint, fieldDescription  in colData:
+        for (field, fieldType, fieldSubtype, fieldLength, fieldPrecision,
+                fieldScale, fieldCharset, collationName, defaultSource,
+                fieldNotNullConstraint, fieldDescription) in colData:
             field = field.strip().lower()
             fieldType = fieldType.strip()
             if fieldCharset:
                 fieldCharset = str(fieldCharset.strip())
-                if fieldCharset.startswith('UNICODE_FSS'): # 'UNICODE_FSS' is less strict Firebird/Interbase UTF8 definition
+                # 'UNICODE_FSS' is less strict
+                # Firebird/Interbase UTF8 definition
+                if fieldCharset.startswith('UNICODE_FSS'):
                     fieldCharset = "UTF8"
             if fieldSubtype:
-                fieldSubtype=fieldSubtype.strip()
+                fieldSubtype = fieldSubtype.strip()
                 if fieldType == "int64":
                     fieldType = fieldSubtype
 
-            if defaultSource: # can look like: "DEFAULT 0", "DEFAULT 'default text'", None
+            # can look like: "DEFAULT 0", "DEFAULT 'default text'", None
+            if defaultSource:
                 defaultSource = defaultSource.split(' ')[1]
-                if defaultSource.startswith ("'") and defaultSource.endswith ("'"):
+                if defaultSource.startswith ("'") and \
+                        defaultSource.endswith ("'"):
                     defaultSource = str(defaultSource[1:-1])
                 elif fieldType in ("integer", "smallint", "bigint"):
-                    defaultSource=int(defaultSource)
+                    defaultSource = int(defaultSource)
                 elif fieldType in ("float", "double"):
-                    defaultSource=float(defaultSource)
-            #TODO: other types for defaultSource
+                    defaultSource = float(defaultSource)
+            # TODO: other types for defaultSource
             #    elif fieldType == "datetime":
 
             idName = str(soClass.sqlmeta.idName or 'id').upper()
             if field.upper() == idName:
                 continue
             if fieldScale:
-                #PRECISION refers to the total number of digits, and SCALE refers to the number of digits to the right of the decimal point
-                #Both numbers can be from 1 to 18 (SQL dialect 1: 1-15), but SCALE mustbe less than or equal to PRECISION
+                # PRECISION refers to the total number of digits,
+                # and SCALE refers to the number of digits
+                # to the right of the decimal point.
+                # Both numbers can be from 1 to 18 (SQL dialect 1: 1-15),
+                # but SCALE mustbe less than or equal to PRECISION.
                 if fieldScale > fieldLength:
                     fieldScale = fieldLength
-            colClass, kw = self.guessClass(fieldType, fieldLength, fieldCharset, fieldScale, )
-            kw['name'] = str(soClass.sqlmeta.style.dbColumnToPythonAttr(field).strip())
+            colClass, kw = self.guessClass(fieldType, fieldLength,
+                                           fieldCharset, fieldScale)
+            kw['name'] = str(
+                soClass.sqlmeta.style.dbColumnToPythonAttr(field).strip())
             kw['dbName'] = str(field)
             kw['notNone'] = not fieldNotNullConstraint
             kw['default'] = defaultSource
@@ -342,54 +367,73 @@ class FirebirdConnection(DBAPI):
         available -- both very database-specific.
         """
 
-        ##TODO: check if negative values are allowed for fscale
+        # TODO: check if negative values are allowed for fscale
 
         if t == 'smallint':        # -32,768 to +32,767, 16 bits
             return col.IntCol, {}
         elif t == 'integer':       # -2,147,483,648 to +2,147,483,647, 32 bits
             return col.IntCol, {}
-        elif t == 'bigint':        # -2^63 to 2^63-1 or -9,223,372,036,854,775,808 to 9,223,372,036,854,775,807, 64 bits
+        elif t == 'bigint':
+            # -2^63 to 2^63-1 or
+            # -9,223,372,036,854,775,808 to 9,223,372,036,854,775,807, 64 bits
             return col.IntCol, {}
-        elif t == 'float':         # 32 bits, 3.4x10^-38 to 3.4x10^38, 7 digit precision (7 significant decimals)
+        elif t == 'float':
+            # 32 bits, 3.4x10^-38 to 3.4x10^38, 7 digit precision
+            # (7 significant decimals)
             return col.FloatCol, {}
-        elif t == 'double':        # 64 bits, 1.7x10^-308 to 1.7x10^308, 15 digit precision (15 significant decimals)
+        elif t == 'double':
+            # 64 bits, 1.7x10^-308 to 1.7x10^308, 15 digit precision
+            # (15 significant decimals)
             return col.FloatCol, {}
-        elif t == 'numeric':        # Numeric and Decimal are internally stored as smallint, integer or bigint depending on the size. They can handle up to 18 digits.
-            if (not flength or not fscale): # If neither PRECISION nor SCALE are specified, Firebird/InterBase defines the column as INTEGER instead of NUMERIC and stores only the integer portion of the value
+        elif t == 'numeric':
+            # Numeric and Decimal are internally stored as smallint,
+            # integer or bigint depending on the size.
+            # They can handle up to 18 digits.
+            if (not flength or not fscale):
+                # If neither PRECISION nor SCALE are specified,
+                # Firebird/InterBase defines the column as INTEGER
+                # instead of NUMERIC and stores only the integer portion
+                # of the value
                 return col.IntCol, {}
-            return col.DecimalCol, {'size': flength, 'precision': fscale} # check if negative values are allowed for fscale
+            # check if negative values are allowed for fscale
+            return col.DecimalCol, {'size': flength, 'precision': fscale}
 
-        elif t == 'decimal': # Numeric and Decimal are internally stored as smallint, integer or bigint depending on the size. They can handle up to 18 digits.
-            return col.DecimalCol, {'size': flength, 'precision': fscale} # check if negative values are allowed for fscale
-        elif t == 'date': # 32 bits, 1 Jan 100. to 29 Feb 32768.
+        elif t == 'decimal':
+            # Check if negative values are allowed for fscale
+            return col.DecimalCol, {'size': flength, 'precision': fscale}
+        elif t == 'date':  # 32 bits, 1 Jan 100. to 29 Feb 32768.
             return col.DateCol, {}
-        elif t == 'time': # 32 bits, 00:00 to 23:59.9999
+        elif t == 'time':  # 32 bits, 00:00 to 23:59.9999
             return col.TimeCol, {}
-        elif t == 'timestamp': # 64 bits, 1 Jan 100 to 28 Feb 32768.
+        elif t == 'timestamp':  # 64 bits, 1 Jan 100 to 28 Feb 32768.
             return col.DateTimeCol, {}
-        elif t == 'char': # 32767 bytes
+        elif t == 'char':  # 32767 bytes
             if fCharset and (fCharset != "NONE"):
-                return col.UnicodeCol, {'length': flength, 'varchar': False, 'dbEncoding': fCharset}
+                return col.UnicodeCol, {'length': flength, 'varchar': False,
+                                        'dbEncoding': fCharset}
             elif self.dbEncoding:
-                return col.UnicodeCol, {'length': flength, 'varchar': False, 'dbEncoding': self.dbEncoding}
+                return col.UnicodeCol, {'length': flength, 'varchar': False,
+                                        'dbEncoding': self.dbEncoding}
             else:
                 return col.StringCol, {'length': flength, 'varchar': False}
-        elif t == 'varchar': # 32767 bytes
+        elif t == 'varchar':  # 32767 bytes
             if fCharset and (fCharset != "NONE"):
-                return col.UnicodeCol, {'length': flength, 'varchar': True, 'dbEncoding': fCharset}
+                return col.UnicodeCol, {'length': flength, 'varchar': True,
+                                        'dbEncoding': fCharset}
             elif self.dbEncoding:
-                return col.UnicodeCol, {'length': flength, 'varchar': True, 'dbEncoding': self.dbEncoding}
+                return col.UnicodeCol, {'length': flength, 'varchar': True,
+                                        'dbEncoding': self.dbEncoding}
             else:
                 return col.StringCol, {'length': flength, 'varchar': True}
 
-        elif t == 'blob': # 32GB
+        elif t == 'blob':  # 32GB
             return col.BLOBCol, {}
         else:
             return col.Col, {}
 
     def createEmptyDatabase(self):
         self.module.create_database("CREATE DATABASE '%s' user '%s' password '%s'" % \
-                                            (self.db, self.user, self.password))
+                                    (self.db, self.user, self.password))
 
     def dropDatabase(self):
         self.module.drop_database()

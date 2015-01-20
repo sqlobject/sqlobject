@@ -58,7 +58,8 @@ class ClassRegistry(object):
         if className in self.classes:
             callback(self.classes[className], *args, **kw)
         else:
-            self.callbacks.setdefault(className, []).append((callback, args, kw))
+            self.callbacks.setdefault(className, []).append(
+                (callback, args, kw))
 
     def addCallback(self, callback, *args, **kw):
         """

@@ -2,7 +2,7 @@ from sqlobject import *
 from sqlobject.tests.dbtest import *
 
 ########################################
-## sqlmeta.asDict()
+# sqlmeta.asDict()
 ########################################
 
 class TestAsDict(SQLObject):

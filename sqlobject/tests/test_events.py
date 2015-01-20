@@ -4,15 +4,16 @@ from sqlobject import *
 from sqlobject.tests.dbtest import *
 from sqlobject import events
 from sqlobject.inheritance import InheritableSQLObject
-import sys
 
 class EventTester(SQLObject):
     name = StringCol()
 
 def make_watcher():
     log = []
+
     def watch(*args):
         log.append(args)
+
     watch.log = log
     return watch
 
@@ -25,10 +26,13 @@ def make_listen(signal, cls=None):
 
 def test_create():
     watcher = make_listen(events.ClassCreateSignal)
+
     class EventTesterSub1(EventTester):
         pass
+
     class EventTesterSub2(EventTesterSub1):
         pass
+
     assert len(watcher.log) == 2
     assert len(watcher.log[0]) == 5
     assert watcher.log[0][0] == 'EventTesterSub1'
@@ -86,8 +90,10 @@ def test_add_column():
     setupClass(EventTester)
     watcher = make_listen(events.AddColumnSignal)
     events.summarize_events_by_sender()
+
     class NewEventTester(EventTester):
         name2 = StringCol()
+
     expect = (
         NewEventTester, None,
         'name2', NewEventTester.sqlmeta.columnDefinitions['name2'],
@@ -114,7 +120,8 @@ def _signal(instance, kwargs, postfuncs):
     postfuncs.append(_query)
 
 def test_inheritance_row_created():
-    setupClass([InheritableEventTestA, InheritableEventTestB, InheritableEventTestC])
+    setupClass([InheritableEventTestA, InheritableEventTestB,
+                InheritableEventTestC])
 
     events.listen(_signal, InheritableEventTestA, events.RowCreatedSignal)
 

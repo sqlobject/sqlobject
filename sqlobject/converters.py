@@ -1,7 +1,6 @@
 from array import array
 import datetime
 from decimal import Decimal
-import sys
 import time
 from types import ClassType, InstanceType, NoneType
 
@@ -17,13 +16,13 @@ except ImportError:
 
 try:
     import Sybase
-    NumericType=Sybase.NumericType
+    NumericType = Sybase.NumericType
 except ImportError:
     NumericType = None
 
 
 ########################################
-## Quoting
+# Quoting
 ########################################
 
 sqlStringReplace = [
@@ -159,7 +158,8 @@ def DateConverter(value, db):
 registerConverter(datetime.date, DateConverter)
 
 def TimeConverter(value, db):
-    return "'%02d:%02d:%02d.%06d'" % (value.hour, value.minute, value.second, value.microsecond)
+    return "'%02d:%02d:%02d.%06d'" % (value.hour, value.minute,
+                                      value.second, value.microsecond)
 
 registerConverter(datetime.time, TimeConverter)
 
@@ -183,7 +183,7 @@ def sqlrepr(obj, db=None):
         converter = lookupConverter(obj)
         if converter is None:
             raise ValueError("Unknown SQL builtin type: %s for %s" % \
-                  (type(obj), repr(obj)))
+                             (type(obj), repr(obj)))
         return converter(obj, db)
     else:
         return reprFunc(db)

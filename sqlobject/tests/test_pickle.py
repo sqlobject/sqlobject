@@ -4,7 +4,7 @@ from sqlobject import *
 from sqlobject.tests.dbtest import *
 
 ########################################
-## Pickle instances
+# Pickle instances
 ########################################
 
 class TestPickle(SQLObject):
@@ -31,7 +31,8 @@ def test_pickleCol():
     if (connection.dbName == 'sqlite') and connection._memory:
         py.test.skip("The following test requires a different connection")
 
-    test = TestPickle.get(test.id,
-        connection=getConnection(registry='')) # to make a different DB URI
-                                               # and open another connection
+    test = TestPickle.get(
+        test.id,
+        # make a different DB URI and open another connection
+        connection=getConnection(registry=''))
     raises(pickle.PicklingError, pickle.dumps, test, pickle.HIGHEST_PROTOCOL)

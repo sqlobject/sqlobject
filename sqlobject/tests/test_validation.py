@@ -3,7 +3,7 @@ from sqlobject.col import validators
 from sqlobject.tests.dbtest import *
 
 ########################################
-## Validation/conversion
+# Validation/conversion
 ########################################
 
 class SOTestValidator(validators.Validator):
@@ -26,7 +26,7 @@ validator2 = SOTestValidator(save_value=[])
 class SOValidation(SQLObject):
 
     name = StringCol(validator=validators.PlainText(),
-        default='x', dbName='name_col')
+                     default='x', dbName='name_col')
     name2 = StringCol(validator=validators.ConfirmType(type=str), default='y')
     name3 = IntCol(validator=validators.Wrapper(fromPython=int), default=100)
     name4 = FloatCol(default=2.718)
@@ -98,7 +98,7 @@ class TestValidation:
         assert t.name5 == {}
 
     def test_validator2(self):
-        t = SOValidation(name9=1)
-        t = SOValidation(name9=2)
+        SOValidation(name9=1)
+        SOValidation(name9=2)
         assert validator1.save_value == [2, 2, 2, 2, 2, 2]
         assert validator2.save_value == [1, 1, 1, 2, 1, 1]

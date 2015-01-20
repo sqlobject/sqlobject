@@ -125,7 +125,9 @@ class Declarative(object):
     def __init__(self, *args, **kw):
         if self.__unpackargs__ and self.__unpackargs__[0] == '*':
             assert len(self.__unpackargs__) == 2, \
-                   "When using __unpackargs__ = ('*', varname), you must only provide a single variable name (you gave %r)" % self.__unpackargs__
+                   "When using __unpackargs__ = ('*', varname), " \
+                   "you must only provide a single variable name " \
+                   "(you gave %r)" % self.__unpackargs__
             name = self.__unpackargs__[1]
             if name in kw:
                 raise TypeError(
@@ -179,7 +181,7 @@ class Declarative(object):
             name = '%s %i' % (name, v['declarative_count'])
             del v['declarative_count']
         # @@: simplifying repr:
-        #v = {}
+        # v = {}
         names = v.keys()
         args = []
         for n in self._repr_vars(names):

@@ -61,8 +61,8 @@ def export_csv(soClass, select=None, writer=None, connection=None,
 
     if isinstance(soClass, sqlobject.SQLObject.SelectResultsClass):
         assert select is None, (
-            "You cannot pass in a select argument (%r) and a SelectResult argument (%r) for soClass"
-            % (select, soClass))
+            "You cannot pass in a select argument (%r) "
+            "and a SelectResult argument (%r) for soClass" % (select, soClass))
         select = soClass
         soClass = select.sourceClass
     elif select is None:
@@ -118,8 +118,9 @@ def _find_columns(soClass):
         for attr in order:
             if attr not in oldOrder:
                 raise KeyError(
-                    "Attribute %r in csvColumnOrder (on class %r) does not exist as a column or in .extraCSVColumns (I have: %r)"
-                    % (attr, soClass, oldOrder))
+                    "Attribute %r in csvColumnOrder (on class %r) "
+                    "does not exist as a column or in .extraCSVColumns "
+                    "(I have: %r)" % (attr, soClass, oldOrder))
             oldOrder.remove(attr)
         order.extend(oldOrder)
 
@@ -154,7 +155,7 @@ def export_csv_zip(soClasses, file=None, zip=None, filename_prefix='',
     return_when_finished = False
     if file:
         if isinstance(file, basestring):
-            close_when_finished = True
+            close_file_when_finished = True
             file = open(file, 'wb')
     elif zip:
         close_zip_when_finished = False

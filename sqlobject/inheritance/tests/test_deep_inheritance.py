@@ -4,7 +4,7 @@ from sqlobject.tests.dbtest import *
 from sqlobject.inheritance import InheritableSQLObject
 
 ########################################
-## Deep Inheritance
+# Deep Inheritance
 ########################################
 
 class DIPerson(InheritableSQLObject):
@@ -27,7 +27,7 @@ def test_creation_fail():
     """
     setupClass([DIManager, DIEmployee, DIPerson])
 
-    kwargs ={'firstName': 'John', 'lastname': 'Doe'}
+    kwargs = {'firstName': 'John', 'lastname': 'Doe'}
     raises(TypeError, DIManager, **kwargs)
     persons = DIEmployee.select(DIPerson.q.firstName == 'John')
     assert persons.count() == 0
@@ -41,12 +41,14 @@ def test_creation_fail2():
     """
     setupClass([DIManager, DIEmployee, DIPerson])
 
-    kwargs ={'firstName': 'John', 'lastName': 'Doe', 'position': 'Project Manager'}
+    kwargs = {'firstName': 'John', 'lastName': 'Doe',
+              'position': 'Project Manager'}
     DIManager(**kwargs)
     persons = DIEmployee.select(DIPerson.q.firstName == 'John')
     assert persons.count() == 1
 
-    kwargs ={'firstName': 'John', 'lastName': 'Doe II', 'position': 'Project Manager'}
+    kwargs = {'firstName': 'John', 'lastName': 'Doe II',
+              'position': 'Project Manager'}
     raises(Exception, DIManager, **kwargs)
     persons = DIPerson.select(DIPerson.q.firstName == 'John')
     assert persons.count() == 1
@@ -54,23 +56,24 @@ def test_creation_fail2():
     if not supports('transactions'):
         skip("Transactions aren't supported")
     transaction = DIPerson._connection.transaction()
-    kwargs ={'firstName': 'John', 'lastName': 'Doe III', 'position': 'Project Manager'}
+    kwargs = {'firstName': 'John', 'lastName': 'Doe III',
+              'position': 'Project Manager'}
     raises(Exception, DIManager, connection=transaction, **kwargs)
     transaction.rollback()
     transaction.begin()
-    persons = DIPerson.select(DIPerson.q.firstName == 'John', connection=transaction)
+    persons = DIPerson.select(DIPerson.q.firstName == 'John',
+                              connection=transaction)
     assert persons.count() == 1
 
 def test_deep_inheritance():
     setupClass([DIManager, DIEmployee, DIPerson])
 
     manager = DIManager(firstName='Project', lastName='Manager',
-        position='Project Manager')
+                        position='Project Manager')
     manager_id = manager.id
     employee_id = DIEmployee(firstName='Project', lastName='Leader',
-        position='Project leader', manager=manager).id
-    person_id = DIPerson(firstName='Oneof', lastName='Authors',
-        manager=manager).id
+                             position='Project leader', manager=manager).id
+    DIPerson(firstName='Oneof', lastName='Authors', manager=manager)
 
     conn = getConnection()
     cache = conn.cache

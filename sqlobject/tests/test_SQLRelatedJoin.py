@@ -4,13 +4,13 @@ from sqlobject.tests.dbtest import *
 
 class Fighter(SQLObject):
     class sqlmeta:
-        idName='fighter_id' # test on a non-standard way
+        idName = 'fighter_id'  # test on a non-standard way
     name = StringCol()
     tourtments = RelatedJoin('Tourtment')
 
 class Tourtment(SQLObject):
     class sqlmeta:
-        table='competition' # test on a non-standard way
+        table = 'competition'  # test on a non-standard way
     name = StringCol()
     fightersAsList = RelatedJoin('Fighter')
     fightersAsSResult = SQLRelatedJoin('Fighter')
@@ -22,14 +22,14 @@ def createAllTables():
 def test_1():
     createAllTables()
     # create some tourtments
-    t1=Tourtment(name='Tourtment #1')
-    t2=Tourtment(name='Tourtment #2')
-    t3=Tourtment(name='Tourtment #3')
+    t1 = Tourtment(name='Tourtment #1')
+    t2 = Tourtment(name='Tourtment #2')
+    t3 = Tourtment(name='Tourtment #3')
     # create some fighters
-    gokou=Fighter(name='gokou')
-    vegeta=Fighter(name='vegeta')
-    gohan=Fighter(name='gohan')
-    trunks=Fighter(name='trunks')
+    gokou = Fighter(name='gokou')
+    vegeta = Fighter(name='vegeta')
+    gohan = Fighter(name='gohan')
+    trunks = Fighter(name='trunks')
     # relating them
     t1.addFighter(gokou)
     t1.addFighter(vegeta)
@@ -50,7 +50,7 @@ def test_related_join_transaction():
     createAllTables()
     trans = Tourtment._connection.transaction()
     try:
-        t1=Tourtment(name='Tourtment #1', connection=trans)
+        t1 = Tourtment(name='Tourtment #1', connection=trans)
         t1.addFighter(Fighter(name='Jim', connection=trans))
         assert t1.fightersAsSResult.count() == 1
         assert t1.fightersAsSResult[0]._connection == trans

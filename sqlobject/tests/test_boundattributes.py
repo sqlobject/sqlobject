@@ -6,8 +6,8 @@ pytestmark = py.test.mark.skipif('True')
 
 class TestMe(object):
 
-    #__metaclass__ = declarative.DeclarativeMeta
-    #__classinit__ = boundattributes.bind_attributes_local
+    # __metaclass__ = declarative.DeclarativeMeta
+    # __classinit__ = boundattributes.bind_attributes_local
     pass
 
 class AttrReplace(boundattributes.BoundAttribute):
@@ -31,6 +31,7 @@ class AttrReplace(boundattributes.BoundAttribute):
 class Holder:
     def __init__(self, name):
         self.holder_name = name
+
     def __repr__(self):
         return '<Holder %s>' % self.holder_name
 
@@ -38,12 +39,15 @@ def test_1():
     v1 = Holder('v1')
     v2 = Holder('v2')
     v3 = Holder('v3')
+
     class V2Class(AttrReplace):
         arg1 = 'nothing'
         arg2 = ['something']
+
     class A1(TestMe):
         a = AttrReplace(v1)
         v = V2Class(v2)
+
         class inline(AttrReplace):
             replace = v3
             arg3 = 'again'

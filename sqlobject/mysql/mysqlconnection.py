@@ -26,11 +26,11 @@ class MySQLConnection(DBAPI):
         self.password = password
         self.kw = {}
         for key in ("unix_socket", "init_command",
-                "read_default_file", "read_default_group", "conv"):
+                    "read_default_file", "read_default_group", "conv"):
             if key in kw:
                 self.kw[key] = kw.pop(key)
         for key in ("connect_timeout", "compress", "named_pipe", "use_unicode",
-                "client_flag", "local_infile"):
+                    "client_flag", "local_infile"):
             if key in kw:
                 self.kw[key] = int(kw.pop(key))
         for key in ("ssl_key", "ssl_cert", "ssl_ca", "ssl_capath"):
@@ -46,7 +46,9 @@ class MySQLConnection(DBAPI):
         # MySQLdb < 1.2.1: only ascii
         # MySQLdb = 1.2.1: only unicode
         # MySQLdb > 1.2.1: both ascii and unicode
-        self.need_unicode = (self.module.version_info[:3] >= (1, 2, 1)) and (self.module.version_info[:3] < (1, 2, 2))
+        self.need_unicode = (
+            (self.module.version_info[:3] >= (1, 2, 1)) and
+            (self.module.version_info[:3] < (1, 2, 2)))
 
         self._server_version = None
         self._can_use_microseconds = None
@@ -54,7 +56,8 @@ class MySQLConnection(DBAPI):
 
     @classmethod
     def _connectionFromParams(cls, user, password, host, port, path, args):
-        return cls(db=path.strip('/'), user=user or '', password=password or '',
+        return cls(db=path.strip('/'),
+                   user=user or '', password=password or '',
                    host=host or 'localhost', port=port or 0, **args)
 
     def makeConnection(self):
@@ -67,21 +70,25 @@ class MySQLConnection(DBAPI):
                     return dbEncoding + '_' + dbEncoding
                 Connection.character_set_name = character_set_name
         try:
-            conn = self.module.connect(host=self.host, port=self.port,
-                db=self.db, user=self.user, passwd=self.password, **self.kw)
+            conn = self.module.connect(
+                host=self.host, port=self.port, db=self.db,
+                user=self.user, passwd=self.password, **self.kw)
             if self.module.version_info[:3] >= (1, 2, 2):
-                conn.ping(True) # Attempt to reconnect. This setting is persistent.
+                # Attempt to reconnect. This setting is persistent.
+                conn.ping(True)
         except self.module.OperationalError as e:
-            conninfo = "; used connection string: host=%(host)s, port=%(port)s, db=%(db)s, user=%(user)s" % self.__dict__
+            conninfo = ("; used connection string: "
+                        "host=%(host)s, port=%(port)s, "
+                        "db=%(db)s, user=%(user)s" % self.__dict__)
             raise OperationalError(ErrorMessage(e, conninfo))
 
         if hasattr(conn, 'autocommit'):
             conn.autocommit(bool(self.autoCommit))
 
         if dbEncoding:
-            if hasattr(conn, 'set_character_set'): # MySQLdb 1.2.1 and later
+            if hasattr(conn, 'set_character_set'):  # MySQLdb 1.2.1 and later
                 conn.set_character_set(dbEncoding)
-            else: # pre MySQLdb 1.2.1
+            else:  # pre MySQLdb 1.2.1
                 # works along with monkeypatching code above
                 conn.query("SET NAMES %s" % dbEncoding)
 
@@ -114,7 +121,8 @@ class MySQLConnection(DBAPI):
             try:
                 return cursor.execute(query)
             except self.module.OperationalError as e:
-                if e.args[0] in (self.module.constants.CR.SERVER_GONE_ERROR, self.module.constants.CR.SERVER_LOST):
+                if e.args[0] in (self.module.constants.CR.SERVER_GONE_ERROR,
+                                 self.module.constants.CR.SERVER_LOST):
                     if count == 2:
                         raise OperationalError(ErrorMessage(e))
                     if self.debug:
@@ -197,7 +205,7 @@ class MySQLConnection(DBAPI):
             self.query('DESCRIBE %s' % (tableName))
             return True
         except ProgrammingError as e:
-            if e[0].code == 1146: # ER_NO_SUCH_TABLE
+            if e[0].code == 1146:  # ER_NO_SUCH_TABLE
                 return False
             raise
 
@@ -207,7 +215,8 @@ class MySQLConnection(DBAPI):
                     column.mysqlCreateSQL(self)))
 
     def delColumn(self, sqlmeta, column):
-        self.query('ALTER TABLE %s DROP COLUMN %s' % (sqlmeta.table, column.dbName))
+        self.query('ALTER TABLE %s DROP COLUMN %s' % (sqlmeta.table,
+                                                      column.dbName))
 
     def columnsFromSchema(self, tableName, soClass):
         colData = self.queryAll("SHOW COLUMNS FROM %s"
@@ -223,7 +232,8 @@ class MySQLConnection(DBAPI):
             kw['name'] = soClass.sqlmeta.style.dbColumnToPythonAttr(field)
             kw['dbName'] = field
 
-            # Since MySQL 5.0, 'NO' is returned in the NULL column (SQLObject expected '')
+            # Since MySQL 5.0, 'NO' is returned in the NULL column
+            # (SQLObject expected '')
             kw['notNone'] = (nullAllowed.upper() != 'YES' and True or False)
 
             if default and t.startswith('int'):
@@ -246,8 +256,8 @@ class MySQLConnection(DBAPI):
             return col.IntCol, {}
         elif t.startswith('enum'):
             values = []
-            for i in t[5:-1].split(','): # take the enum() off and split
-                values.append(i[1:-1]) # remove the surrounding \'
+            for i in t[5:-1].split(','):  # take the enum() off and split
+                values.append(i[1:-1])  # remove the surrounding \'
             return col.EnumCol, {'enumValues': values}
         elif t.startswith('double'):
             return col.FloatCol, {}
@@ -257,7 +267,7 @@ class MySQLConnection(DBAPI):
                 colType = col.UnicodeCol
             if t.endswith('binary'):
                 return colType, {'length': int(t[8:-8]),
-                                       'char_binary': True}
+                                 'char_binary': True}
             else:
                 return colType, {'length': int(t[8:-1])}
         elif t.startswith('char'):
@@ -326,7 +336,7 @@ class MySQLConnection(DBAPI):
             server_version = tuple(int(v) for v in server_version.split('.'))
             server_version = (server_version, db_tag)
         except:
-            server_version = None # unknown
+            server_version = None  # unknown
         self._server_version = server_version
         return server_version
 
@@ -339,7 +349,7 @@ class MySQLConnection(DBAPI):
         server_version, db_tag = server_version
         if db_tag == "MariaDB":
             can_use_microseconds = (server_version >= (5, 3, 0))
-        else: # MySQL
+        else:  # MySQL
             can_use_microseconds = (server_version >= (5, 6, 4))
         self._can_use_microseconds = can_use_microseconds
         return can_use_microseconds

@@ -5,7 +5,6 @@ from __future__ import print_function
 
 import logging
 import os
-import re
 import sys
 from py.test import raises
 import sqlobject
@@ -67,14 +66,14 @@ def setupClass(soClasses, force=False):
         soClasses = [soClasses]
     connection = getConnection()
     for soClass in soClasses:
-        ## This would be an alternate way to register connections...
-        #try:
+        # This would be an alternate way to register connections:
+        # try:
         #    hub
-        #except NameError:
+        # except NameError:
         #    hub = sqlobject.dbconnection.ConnectionHub()
-        #soClass._connection = hub
-        #hub.threadConnection = connection
-        #hub.processConnection = connection
+        # soClass._connection = hub
+        # hub.threadConnection = connection
+        # hub.processConnection = connection
         soClass._connection = connection
     installOrClear(soClasses, force=force)
     return soClasses
@@ -310,6 +309,8 @@ def setupLogging():
     logger = logging.getLogger()
     logger.addHandler(hdlr)
 
-__all__ = ['getConnection', 'getConnectionURI', 'setupClass', 'Dummy', 'raises',
-           'inserts', 'supports', 'deprecated_module',
-           'setup_module', 'teardown_module', 'setupLogging']
+__all__ = [
+            'Dummy', 'deprecated_module', 'getConnection', 'getConnectionURI',
+            'inserts', 'raises', 'setupClass', 'setupLogging', 'setup_module',
+            'supports', 'teardown_module',
+          ]

@@ -19,13 +19,17 @@ class Style(object):
                  idForTable=None,
                  longID=False):
         if pythonAttrToDBColumn:
-            self.pythonAttrToDBColumn = lambda a, s=self: pythonAttrToDBColumn(s, a)
+            self.pythonAttrToDBColumn = \
+                lambda a, s=self: pythonAttrToDBColumn(s, a)
         if dbColumnToPythonAttr:
-            self.dbColumnToPythonAttr = lambda a, s=self: dbColumnToPythonAttr(s, a)
+            self.dbColumnToPythonAttr = \
+                lambda a, s=self: dbColumnToPythonAttr(s, a)
         if pythonClassToDBTable:
-            self.pythonClassToDBTable = lambda a, s=self: pythonClassToDBTable(s, a)
+            self.pythonClassToDBTable = \
+                lambda a, s=self: pythonClassToDBTable(s, a)
         if dbTableToPythonClass:
-            self.dbTableToPythonClass = lambda a, s=self: dbTableToPythonClass(s, a)
+            self.dbTableToPythonClass = \
+                lambda a, s=self: dbTableToPythonClass(s, a)
         if idForTable:
             self.idForTable = lambda a, s=self: idForTable(s, a)
         self.longID = longID
@@ -122,7 +126,7 @@ def getStyle(soClass, dbConnection=None):
         return defaultStyle
 
 ############################################################
-## Text utilities
+# Text utilities
 ############################################################
 _mixedToUnderRE = re.compile(r'[A-Z]+')
 def mixedToUnder(s):

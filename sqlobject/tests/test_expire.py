@@ -2,7 +2,7 @@ from sqlobject import *
 from sqlobject.tests.dbtest import *
 
 ########################################
-## Expiring, syncing
+# Expiring, syncing
 ########################################
 
 class SyncTest(SQLObject):

@@ -7,7 +7,8 @@ class InheritableIteration(Iteration):
     defaultArraySize = 10000
 
     def __init__(self, dbconn, rawconn, select, keepConnection=False):
-        super(InheritableIteration, self).__init__(dbconn, rawconn, select, keepConnection)
+        super(InheritableIteration, self).__init__(dbconn, rawconn, select,
+                                                   keepConnection)
         self.lazyColumns = select.ops.get('lazyColumns', False)
         self.cursor.arraysize = self.defaultArraySize
         self._results = []
@@ -30,7 +31,8 @@ class InheritableIteration(Iteration):
         result = self._results[0]
         del self._results[0]
         if self.lazyColumns:
-            obj = self.select.sourceClass.get(result[0], connection=self.dbconn)
+            obj = self.select.sourceClass.get(result[0],
+                                              connection=self.dbconn)
             return obj
         else:
             id = result[0]
@@ -39,7 +41,8 @@ class InheritableIteration(Iteration):
                 del self._childrenResults[id]
             else:
                 childResults = None
-            obj = self.select.sourceClass.get(id, selectResults=result[1:],
+            obj = self.select.sourceClass.get(
+                id, selectResults=result[1:],
                 childResults=childResults, connection=self.dbconn)
             return obj
 
@@ -69,13 +72,15 @@ class InheritableIteration(Iteration):
             klass = findClass(childName, registry)
             if len(ids) == 1:
                 select = klass.select(klass.q.id == ids[0],
-                    childUpdate=True, connection=dbconn)
+                                      childUpdate=True, connection=dbconn)
             else:
                 select = klass.select(sqlbuilder.IN(klass.q.id, ids),
-                    childUpdate=True, connection=dbconn)
+                                      childUpdate=True, connection=dbconn)
             query = dbconn.queryForSelect(select)
             if dbconn.debug:
-                dbconn.printDebug(rawconn, query, 'Select children of the class %s' % childName)
+                dbconn.printDebug(rawconn, query,
+                                  'Select children of the class %s' %
+                                  childName)
             self.dbconn._executeRetry(rawconn, cursor, query)
             for result in cursor.fetchall():
                 # Inheritance child classes may have no own columns

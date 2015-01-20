@@ -5,18 +5,22 @@ from sqlobject import styles
 class AnotherStyle(styles.MixedCaseUnderscoreStyle):
     def pythonAttrToDBColumn(self, attr):
         if attr.lower().endswith('id'):
-            return 'id'+styles.MixedCaseUnderscoreStyle.pythonAttrToDBColumn(self, attr[:-2])
+            return 'id'+styles.MixedCaseUnderscoreStyle.\
+                pythonAttrToDBColumn(self, attr[:-2])
         else:
-            return styles.MixedCaseUnderscoreStyle.pythonAttrToDBColumn(self, attr)
+            return styles.MixedCaseUnderscoreStyle.\
+                pythonAttrToDBColumn(self, attr)
 
 class SOStyleTest1(SQLObject):
     a = StringCol()
     st2 = ForeignKey('SOStyleTest2')
+
     class sqlmeta(sqlmeta):
         style = AnotherStyle()
 
 class SOStyleTest2(SQLObject):
     b = StringCol()
+
     class sqlmeta(sqlmeta):
         style = AnotherStyle()
 

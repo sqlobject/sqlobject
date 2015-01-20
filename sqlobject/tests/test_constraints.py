@@ -8,7 +8,7 @@ def test_constraints():
     raises(BadValue, isString, obj, col, 1)
     # @@: Should this really be an error?
     raises(BadValue, isString, obj, col, u'test!')
-    #isString(obj, col, u'test!')
+    # isString(obj, col, u'test!')
 
     raises(BadValue, notNull, obj, col, None)
     raises(BadValue, isInt, obj, col, 1.1)

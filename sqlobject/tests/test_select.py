@@ -45,7 +45,7 @@ def test_03_ranged_indexed():
     all = IterTest.select()
     count = 0
     for i in range(all.count()):
-        test = all[i]
+        all[i]  # test it's there
         count += 1
     assert count == len(names)
 
@@ -56,7 +56,7 @@ def test_04_indexed_ended_by_exception():
     count = 0
     try:
         while 1:
-            test = all[count]
+            all[count]
             count = count+1
             # Stop the test if it's gone on too long
             if count > len(names):
@@ -74,7 +74,8 @@ def test_06_contains():
     setupIter()
     assert len(list(IterTest.select(IterTest.q.name.startswith('a')))) == 1
     assert len(list(IterTest.select(IterTest.q.name.contains('a')))) == 1
-    assert len(list(IterTest.select(IterTest.q.name.contains(func.lower('A'))))) == 1
+    assert len(list(IterTest.select(
+        IterTest.q.name.contains(func.lower('A'))))) == 1
     assert len(list(IterTest.select(IterTest.q.name.contains("a'b")))) == 0
     assert len(list(IterTest.select(IterTest.q.name.endswith('a')))) == 1
 
@@ -92,17 +93,17 @@ def test_select_getOne():
     a = IterTest(name='a')
     b = IterTest(name='b')
     assert IterTest.selectBy(name='a').getOne() == a
-    assert IterTest.select(IterTest.q.name=='b').getOne() == b
+    assert IterTest.select(IterTest.q.name == 'b').getOne() == b
     assert IterTest.selectBy(name='c').getOne(None) is None
     raises(SQLObjectNotFound, 'IterTest.selectBy(name="c").getOne()')
-    b2 = IterTest(name='b')
+    IterTest(name='b')
     raises(SQLObjectIntegrityError, 'IterTest.selectBy(name="b").getOne()')
     raises(SQLObjectIntegrityError, 'IterTest.selectBy(name="b").getOne(None)')
 
 def test_selectBy():
     setupClass(IterTest)
-    a = IterTest(name='a')
-    b = IterTest(name='b')
+    IterTest(name='a')
+    IterTest(name='b')
     assert IterTest.selectBy().count() == 2
 
 def test_selectBy_kwargs():
@@ -139,11 +140,11 @@ class TestSelect:
         assert func([c.n1 for c in counters]) == value
 
     def test_1(self):
-        self.accumulateEqual(sum,Counter2.select(orderBy='n1'),
+        self.accumulateEqual(sum, Counter2.select(orderBy='n1'),
                              sum(range(10)) * 10)
 
     def test_2(self):
-        self.accumulateEqual(len,Counter2.select('all'), 100)
+        self.accumulateEqual(len, Counter2.select('all'), 100)
 
 def test_select_LIKE():
     setupClass(IterTest)
@@ -163,6 +164,7 @@ def test_select_RLIKE():
 
         # Implement regexp() function for SQLite; only works with PySQLite2
         import re
+
         def regexp(regexp, test):
             return bool(re.search(regexp, test))
 
@@ -185,7 +187,7 @@ def test_select_RLIKE():
 def test_select_sqlbuilder():
     setupClass(IterTest)
     IterTest(name='sqlobject')
-    IterTest.select(IterTest.q.name==u'sqlobject')
+    IterTest.select(IterTest.q.name == u'sqlobject')
 
 def test_select_perConnection():
     setupClass(IterTest)

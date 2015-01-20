@@ -3,13 +3,15 @@ from sqlobject import *
 from sqlobject.tests.dbtest import *
 
 ########################################
-## Pickle columns
+# Pickle columns
 ########################################
 
 class PickleData:
     pi = 3.14156
+
     def __init__(self):
-        self.question = 'The Ulimate Question of Life, the Universe and Everything'
+        self.question = \
+            'The Ulimate Question of Life, the Universe and Everything'
         self.answer = 42
 
 class PickleContainer(SQLObject):

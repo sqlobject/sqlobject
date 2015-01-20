@@ -4,10 +4,6 @@ This module written by David Keeney, 2009, 2010
 Released under the LGPL for use with the SQLObject ORM library.
 """
 
-import re
-from sqlobject import col
-from sqlobject import sqlbuilder
-from sqlobject.converters import registerConverter
 from sqlobject.dbconnection import DBAPI
 from sqlobject.postgres.pgconnection import PostgresConnection
 
@@ -31,6 +27,7 @@ class RdbhostConnection(PostgresConnection):
                     # monkey patch % escaping into Cursor._execute
                     old_execute = getattr(rdb.Cursor, '_execute')
                     setattr(rdb.Cursor, '_old_execute', old_execute)
+
                     def _execute(self, query, *args):
                         assert not any([a for a in args])
                         query = query.replace('%', '%%')

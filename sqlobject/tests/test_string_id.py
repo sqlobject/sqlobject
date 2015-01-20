@@ -2,7 +2,7 @@ from sqlobject import *
 from sqlobject.tests.dbtest import *
 
 ########################################
-## String ID test
+# String ID test
 ########################################
 
 class SOStringID(SQLObject):
