@@ -32,7 +32,8 @@ def test_foreignKey():
 
 
     person = PersonWithNotes.get(1)
-    assert isinstance(person, PersonWithNotes) and not isinstance(person, EmployeeWithNotes)
+    assert isinstance(person, PersonWithNotes) and \
+        not isinstance(person, EmployeeWithNotes)
     assert person.note.text == "person"
 
     employee = EmployeeWithNotes.get(2)

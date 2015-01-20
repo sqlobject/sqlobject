@@ -120,7 +120,8 @@ def _signal(instance, kwargs, postfuncs):
     postfuncs.append(_query)
 
 def test_inheritance_row_created():
-    setupClass([InheritableEventTestA, InheritableEventTestB, InheritableEventTestC])
+    setupClass([InheritableEventTestA, InheritableEventTestB,
+                InheritableEventTestC])
 
     events.listen(_signal, InheritableEventTestA, events.RowCreatedSignal)
 

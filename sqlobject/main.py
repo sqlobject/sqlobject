@@ -130,7 +130,8 @@ def findDependencies(name, registry=None):
             depends.append(klass)
         else:
             for join in klass.sqlmeta.joins:
-                if isinstance(join, joins.SORelatedJoin) and join.otherClassName == name:
+                if isinstance(join, joins.SORelatedJoin) and \
+                        join.otherClassName == name:
                     depends.append(klass)
                     break
     return depends
@@ -325,9 +326,9 @@ class sqlmeta(object):
                 parent_columns.extend(base.sqlmeta.columns.keys())
         if hasattr(soClass, name):
             assert  (name in parent_columns) or (name == "childName"), (
-                "The class %s.%s already has a variable or method %r, you cannot "
-                "add the column %r"
-                % (soClass.__module__, soClass.__name__, name, name))
+                "The class %s.%s already has a variable or method %r, "
+                "you cannot add the column %r" % (
+                    soClass.__module__, soClass.__name__, name, name))
         sqlmeta.columnDefinitions[name] = columnDef
         sqlmeta.columns[name] = column
         # A stable-ordered version of the list...
@@ -343,7 +344,9 @@ class sqlmeta(object):
         if sqlmeta.cacheValues:
             # We create a method here, which is just a function
             # that takes "self" as the first argument.
-            getter = eval('lambda self: self._SO_loadValue(%s)' % repr(instanceName(name)))
+            getter = eval(
+                'lambda self: self._SO_loadValue(%s)' %
+                repr(instanceName(name)))
 
         else:
             # If we aren't caching values, we just call the
@@ -370,7 +373,11 @@ class sqlmeta(object):
         # making the table read-only
         if not column.immutable:
             # We start by just using the _SO_setValue method
-            setter = eval('lambda self, val: self._SO_setValue(%s, val, self.%s, self.%s)' % (repr(name), '_SO_from_python_%s' % name, '_SO_to_python_%s' % name))
+            setter = eval(
+                'lambda self, val: self._SO_setValue'
+                '(%s, val, self.%s, self.%s)' % (
+                    repr(name),
+                    '_SO_from_python_%s' % name, '_SO_to_python_%s' % name))
             setattr(soClass, '_SO_from_python_%s' % name, column.from_python)
             setattr(soClass, '_SO_to_python_%s' % name, column.to_python)
             setattr(soClass, rawSetterName(name), setter)
@@ -396,10 +403,18 @@ class sqlmeta(object):
             if sqlmeta.cacheValues:
                 # self._SO_class_className is a reference
                 # to the class in question.
-                getter = eval('lambda self: self._SO_foreignKey(self._SO_loadValue(%r), self._SO_class_%s, %s)' % (instanceName(name), column.foreignKey, column.refColumn and repr(column.refColumn)))
+                getter = eval(
+                    'lambda self: self._SO_foreignKey'
+                    '(self._SO_loadValue(%r), self._SO_class_%s, %s)' %
+                    (instanceName(name), column.foreignKey,
+                     column.refColumn and repr(column.refColumn)))
             else:
                 # Same non-caching version as above.
-                getter = eval('lambda self: self._SO_foreignKey(self._SO_getValue(%s), self._SO_class_%s, %s)' % (repr(name), column.foreignKey, column.refColumn and repr(column.refColumn)))
+                getter = eval(
+                    'lambda self: self._SO_foreignKey'
+                    '(self._SO_getValue(%s), self._SO_class_%s, %s)' %
+                    (repr(name), column.foreignKey,
+                     column.refColumn and repr(column.refColumn)))
             setattr(soClass, rawGetterName(origName), getter)
 
             # And we set the _get_columnName version
@@ -410,7 +425,10 @@ class sqlmeta(object):
             if not column.immutable:
                 # The setter just gets the ID of the object,
                 # and then sets the real column.
-                setter = eval('lambda self, val: setattr(self, %s, self._SO_getID(val, %s))' % (repr(name), column.refColumn and repr(column.refColumn)))
+                setter = eval(
+                    'lambda self, val: '
+                    'setattr(self, %s, self._SO_getID(val, %s))' %
+                    (repr(name), column.refColumn and repr(column.refColumn)))
                 setattr(soClass, rawSetterName(origName), setter)
                 if not hasattr(soClass, setterName(origName)):
                     setattr(soClass, setterName(origName), setter)
@@ -422,7 +440,10 @@ class sqlmeta(object):
                 soClass, '_SO_class_%s' % column.foreignKey)
 
         if column.alternateMethodName:
-            func = eval('lambda cls, val, connection=None: cls._SO_fetchAlternateID(%s, %s, val, connection=connection)' % (repr(column.name), repr(column.dbName)))
+            func = eval(
+                'lambda cls, val, connection=None: '
+                'cls._SO_fetchAlternateID(%s, %s, val, connection=connection)'
+                % (repr(column.name), repr(column.dbName)))
             setattr(soClass, column.alternateMethodName, classmethod(func))
 
         if changeSchema:
@@ -478,10 +499,14 @@ class sqlmeta(object):
         if name in sqlmeta._plainSetters:
             delattr(soClass, setterName(name))
         if column.foreignKey:
-            delattr(soClass, rawGetterName(soClass.sqlmeta.style.instanceIDAttrToAttr(name)))
+            delattr(soClass,
+                    rawGetterName(soClass.sqlmeta.style.
+                                  instanceIDAttrToAttr(name)))
             if name in sqlmeta._plainForeignGetters:
                 delattr(soClass, getterName(name))
-            delattr(soClass, rawSetterName(soClass.sqlmeta.style.instanceIDAttrToAttr(name)))
+            delattr(soClass,
+                    rawSetterName(soClass.sqlmeta.style.
+                                  instanceIDAttrToAttr(name)))
             if name in sqlmeta._plainForeignSetters:
                 delattr(soClass, setterName(name))
         if column.alternateMethodName:
@@ -520,7 +545,8 @@ class sqlmeta(object):
         # The function fetches the join by index, and
         # then lets the join object do the rest of the
         # work:
-        func = eval('lambda self: self.sqlmeta.joins[%i].performJoin(self)' % index)
+        func = eval(
+            'lambda self: self.sqlmeta.joins[%i].performJoin(self)' % index)
 
         # And we do the standard _SO_get_... _get_... deal
         setattr(soClass, rawGetterName(meth), func)
@@ -533,7 +559,9 @@ class sqlmeta(object):
         if hasattr(join, 'remove'):
             # Again, we let it do the remove, and we do the
             # standard naming trick.
-            func = eval('lambda self, obj: self.sqlmeta.joins[%i].remove(self, obj)' % index)
+            func = eval(
+                'lambda self, obj: self.sqlmeta.joins[%i].remove(self, obj)' %
+                index)
             setattr(soClass, '_SO_remove' + join.addRemoveName, func)
             if not hasattr(soClass, 'remove' + join.addRemoveName):
                 setattr(soClass, 'remove' + join.addRemoveName, func)
@@ -542,7 +570,9 @@ class sqlmeta(object):
         # Some joins allow you to add objects.
         if hasattr(join, 'add'):
             # And again...
-            func = eval('lambda self, obj: self.sqlmeta.joins[%i].add(self, obj)' % index)
+            func = eval(
+                'lambda self, obj: self.sqlmeta.joins[%i].add(self, obj)' %
+                index)
             setattr(soClass, '_SO_add' + join.addRemoveName, func)
             if not hasattr(soClass, 'add' + join.addRemoveName):
                 setattr(soClass, 'add' + join.addRemoveName, func)
@@ -650,7 +680,8 @@ def deprecated(message, level=1, stacklevel=2):
         warnings.warn(message, DeprecationWarning, stacklevel=stacklevel)
 
 # if sys.version_info[:3] < (2, 5, 0):
-#     deprecated("Support for Python 2.4 has been declared obsolete and will be removed in the next release of SQLObject")
+#     deprecated("Support for Python 2.4 has been declared obsolete "
+#     "and will be removed in the next release of SQLObject")
 
 def setDeprecationLevel(warning=1, exception=None):
     """
@@ -732,7 +763,8 @@ class SQLObject(object):
 
         implicitColumns = _collectAttributes(cls, new_attrs, col.Col)
         implicitJoins = _collectAttributes(cls, new_attrs, joins.Join)
-        implicitIndexes = _collectAttributes(cls, new_attrs, index.DatabaseIndex)
+        implicitIndexes = _collectAttributes(cls, new_attrs,
+                                             index.DatabaseIndex)
 
         if not is_base:
             cls._SO_cleanDeprecatedAttrs(new_attrs)
@@ -876,7 +908,8 @@ class SQLObject(object):
     @classmethod
     def get(cls, id, connection=None, selectResults=None):
 
-        assert id is not None, 'None is not a possible id for %s' % cls.__name__
+        assert id is not None, \
+            'None is not a possible id for %s' % cls.__name__
 
         id = cls.sqlmeta.idType(id)
 
@@ -932,7 +965,9 @@ class SQLObject(object):
             dbNames = [col.dbName for col in self.sqlmeta.columnList]
             selectResults = self._connection._SO_selectOne(self, dbNames)
             if not selectResults:
-                raise SQLObjectNotFound("The object %s by the ID %s does not exist" % (self.__class__.__name__, self.id))
+                raise SQLObjectNotFound(
+                    "The object %s by the ID %s does not exist" % (
+                        self.__class__.__name__, self.id))
         self._SO_selectInit(selectResults)
         self._SO_createValues = {}
         self.sqlmeta.dirty = False
@@ -959,7 +994,9 @@ class SQLObject(object):
                 dbNames = [col.dbName for col in self.sqlmeta.columnList]
                 selectResults = self._connection._SO_selectOne(self, dbNames)
                 if not selectResults:
-                    raise SQLObjectNotFound("The object %s by the ID %s has been deleted" % (self.__class__.__name__, self.id))
+                    raise SQLObjectNotFound(
+                        "The object %s by the ID %s has been deleted" % (
+                            self.__class__.__name__, self.id))
                 self._SO_selectInit(selectResults)
                 result = getattr(self, attrName)
                 return result
@@ -974,7 +1011,9 @@ class SQLObject(object):
             dbNames = [col.dbName for col in self.sqlmeta.columnList]
             selectResults = self._connection._SO_selectOne(self, dbNames)
             if not selectResults:
-                raise SQLObjectNotFound("The object %s by the ID %s has been deleted" % (self.__class__.__name__, self.id))
+                raise SQLObjectNotFound(
+                    "The object %s by the ID %s has been deleted" % (
+                        self.__class__.__name__, self.id))
             self._SO_selectInit(selectResults)
             self.sqlmeta.expired = False
         finally:
@@ -1026,7 +1065,8 @@ class SQLObject(object):
         # the parts are set.  So we just keep them in a
         # dictionary until later:
         d = {name: value}
-        if not self.sqlmeta._creating and not getattr(self.sqlmeta, "row_update_sig_suppress", False):
+        if not self.sqlmeta._creating and \
+                not getattr(self.sqlmeta, "row_update_sig_suppress", False):
             self.sqlmeta.send(events.RowUpdateSignal, self, d)
         if len(d) != 1 or name not in d:
             # Already called RowUpdateSignal, don't call it again
@@ -1060,7 +1100,9 @@ class SQLObject(object):
             func(self)
 
     def set(self, _suppress_set_sig=False, **kw):
-        if not self.sqlmeta._creating and not getattr(self.sqlmeta, "row_update_sig_suppress", False) and not _suppress_set_sig:
+        if not self.sqlmeta._creating and \
+                not getattr(self.sqlmeta, "row_update_sig_suppress", False) \
+                and not _suppress_set_sig:
             self.sqlmeta.send(events.RowUpdateSignal, self, kw)
         # set() is used to update multiple values at once,
         # potentially with one SQL statement if possible.
@@ -1080,7 +1122,8 @@ class SQLObject(object):
             for name, value in kw.items():
                 from_python = getattr(self, '_SO_from_python_%s' % name, None)
                 if from_python:
-                    kw[name] = dbValue = from_python(value, self._SO_validatorState)
+                    kw[name] = dbValue = from_python(value,
+                                                     self._SO_validatorState)
                 else:
                     dbValue = value
                 to_python = getattr(self, '_SO_to_python_%s' % name, None)
@@ -1095,7 +1138,9 @@ class SQLObject(object):
                     getattr(self.__class__, name)
                 except AttributeError:
                     if name not in self.sqlmeta.columns:
-                        raise TypeError("%s.set() got an unexpected keyword argument %s" % (self.__class__.__name__, name))
+                        raise TypeError(
+                            "%s.set() got an unexpected keyword argument "
+                            "%s" % (self.__class__.__name__, name))
                 try:
                     setattr(self, name, value)
                 except AttributeError as e:
@@ -1133,7 +1178,9 @@ class SQLObject(object):
                     getattr(self.__class__, name)
                 except AttributeError:
                     if name not in self.sqlmeta.columns:
-                        raise TypeError("%s.set() got an unexpected keyword argument %s" % (self.__class__.__name__, name))
+                        raise TypeError(
+                            "%s.set() got an unexpected keyword argument "
+                            "%s" % (self.__class__.__name__, name))
                 try:
                     setattr(self, name, value)
                 except AttributeError as e:
@@ -1141,7 +1188,8 @@ class SQLObject(object):
 
             if toUpdate:
                 toUpdate = toUpdate.items()
-                toUpdate.sort(key=lambda c: self.sqlmeta.columns[c[0]].creationOrder)
+                toUpdate.sort(
+                    key=lambda c: self.sqlmeta.columns[c[0]].creationOrder)
                 args = [(self.sqlmeta.columns[name].dbName, value)
                         for name, value in toUpdate]
                 self._connection._SO_update(self, args)
@@ -1186,7 +1234,8 @@ class SQLObject(object):
         if idName is None:  # Get by id
             return joinClass.get(value, connection=connection)
         return joinClass.select(
-            getattr(joinClass.q, idName) == value, connection=connection).getOne()
+            getattr(joinClass.q, idName) == value,
+            connection=connection).getOne()
 
     def __init__(self, **kw):
         # If we are the outmost constructor of a hiearchy of
@@ -1263,10 +1312,13 @@ class SQLObject(object):
                 # If we specified an SQL DEFAULT, then we should use that
                 if default is NoDefault:
                     if column.defaultSQL is None:
-                        raise TypeError("%s() did not get expected keyword argument '%s'" % (self.__class__.__name__, column.name))
+                        raise TypeError(
+                            "%s() did not get expected keyword argument "
+                            "'%s'" % (self.__class__.__name__, column.name))
                     else:
-                        # There is defaultSQL for the column - do not put
-                        # the column to kw so that the backend creates the value
+                        # There is defaultSQL for the column -
+                        # do not put the column to kw
+                        # so that the backend creates the value.
                         continue
 
                 # Otherwise we put it in as though they did pass
@@ -1324,14 +1376,17 @@ class SQLObject(object):
             name = (name,)
             value = (value,)
         if len(name) != len(value):
-            raise ValueError("'column' and 'value' tuples must be of the same size")
+            raise ValueError(
+                "'column' and 'value' tuples must be of the same size")
         new_value = []
         for n, v in zip(name, value):
             from_python = getattr(cls, '_SO_from_python_' + n)
             if from_python:
-                v = from_python(v, sqlbuilder.SQLObjectState(cls, connection=connection))
+                v = from_python(
+                    v, sqlbuilder.SQLObjectState(cls, connection=connection))
             new_value.append(v)
-        condition = sqlbuilder.AND(*[getattr(cls.q, n) == v for n, v in zip(name, new_value)])
+        condition = sqlbuilder.AND(
+            *[getattr(cls.q, n) == v for n, v in zip(name, new_value)])
         return (connection or cls._connection)._SO_selectOneAlt(
             cls,
             [cls.sqlmeta.idName] +
@@ -1339,21 +1394,27 @@ class SQLObject(object):
             condition), None
 
     @classmethod
-    def _SO_fetchAlternateID(cls, name, dbName, value, connection=None, idxName=None):
+    def _SO_fetchAlternateID(cls, name, dbName, value, connection=None,
+                             idxName=None):
         result, obj = cls._findAlternateID(name, dbName, value, connection)
         if not result:
             if idxName is None:
-                raise SQLObjectNotFound("The %s by alternateID %s = %s does not exist" % (cls.__name__, name, repr(value)))
+                raise SQLObjectNotFound(
+                    "The %s by alternateID %s = %s does not exist" % (
+                        cls.__name__, name, repr(value)))
             else:
                 names = []
                 for i in xrange(len(name)):
                     names.append("%s = %s" % (name[i], repr(value[i])))
                 names = ', '.join(names)
-                raise SQLObjectNotFound("The %s by unique index %s(%s) does not exist" % (cls.__name__, idxName, names))
+                raise SQLObjectNotFound(
+                    "The %s by unique index %s(%s) does not exist" % (
+                        cls.__name__, idxName, names))
         if obj:
             return obj
         if connection:
-            obj = cls.get(result[0], connection=connection, selectResults=result[1:])
+            obj = cls.get(result[0], connection=connection,
+                          selectResults=result[1:])
         else:
             obj = cls.get(result[0], selectResults=result[1:])
         return obj
@@ -1491,7 +1552,8 @@ class SQLObject(object):
         for join in cls.sqlmeta.joins:
             if not join:
                 continue
-            if not join.hasIntermediateTable() or not getattr(join, 'createRelatedTable', True):
+            if not join.hasIntermediateTable() or \
+                    not getattr(join, 'createRelatedTable', True):
                 continue
             if join.soClass.__name__ > join.otherClass.__name__:
                 continue
@@ -1504,7 +1566,8 @@ class SQLObject(object):
         for join in cls.sqlmeta.joins:
             if not join:
                 continue
-            if not join.hasIntermediateTable() or not getattr(join, 'createRelatedTable', True):
+            if not join.hasIntermediateTable() or \
+                    not getattr(join, 'createRelatedTable', True):
                 continue
             if join.soClass.__name__ > join.otherClass.__name__:
                 continue
@@ -1533,7 +1596,8 @@ class SQLObject(object):
         # Free related joins on the base class
         for join in klass.sqlmeta.joins:
             if isinstance(join, joins.SORelatedJoin):
-                q = "DELETE FROM %s WHERE %s=%d" % (join.intermediateTable, join.joinColumn, self.id)
+                q = "DELETE FROM %s WHERE %s=%d" % (join.intermediateTable,
+                                                    join.joinColumn, self.id)
                 self._connection.query(q)
 
         depends = []
@@ -1541,8 +1605,11 @@ class SQLObject(object):
         for k in depends:
             # Free related joins
             for join in k.sqlmeta.joins:
-                if isinstance(join, joins.SORelatedJoin) and join.otherClassName == klass.__name__:
-                    q = "DELETE FROM %s WHERE %s=%d" % (join.intermediateTable, join.otherColumn, self.id)
+                if isinstance(join, joins.SORelatedJoin) and \
+                        join.otherClassName == klass.__name__:
+                    q = "DELETE FROM %s WHERE %s=%d" % (join.intermediateTable,
+                                                        join.otherColumn,
+                                                        self.id)
                     self._connection.query(q)
 
             cols = findDependantColumns(klass.__name__, k)
@@ -1618,7 +1685,9 @@ class SQLObject(object):
         return '<%s %r %s>' \
                % (self.__class__.__name__,
                   self.id,
-                  ' '.join(['%s=%s' % (name, repr(value)) for name, value in self._reprItems()]))
+                  ' '.join(
+                      ['%s=%s' % (name, repr(value))
+                       for name, value in self._reprItems()]))
 
     def __sqlrepr__(self, db):
         return str(self.id)
@@ -1683,7 +1752,9 @@ class SQLObject(object):
     def __getstate__(self):
         if self.sqlmeta._perConnection:
             from pickle import PicklingError
-            raise PicklingError('Cannot pickle an SQLObject instance that has a per-instance connection')
+            raise PicklingError(
+                'Cannot pickle an SQLObject instance '
+                'that has a per-instance connection')
         if self.sqlmeta.lazyUpdate and self._SO_createValues:
             self.syncUpdate()
         d = self.__dict__.copy()
@@ -1703,7 +1774,9 @@ class SQLObject(object):
         cache = self._connection.cache
         if cache.tryGet(self.id, cls) is not None:
             raise ValueError(
-                "Cannot unpickle %s row with id=%s - a different instance with the id already exists in the cache" % (cls.__name__, self.id))
+                "Cannot unpickle %s row with id=%s - "
+                "a different instance with the id already exists "
+                "in the cache" % (cls.__name__, self.id))
         cache.created(self.id, cls, self)
 
 

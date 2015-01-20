@@ -56,9 +56,11 @@ def test_index_get_1():
     PersonIndexGet.nameIndex.get('Terry', 'Gilliam')
     PersonIndexGet.nameIndex.get(firstName='John', lastName='Cleese')
 
-    raises(Exception, PersonIndexGet.nameIndex.get, firstName='Graham', lastName='Chapman')
+    raises(Exception, PersonIndexGet.nameIndex.get,
+           firstName='Graham', lastName='Chapman')
 
-    raises(Exception, PersonIndexGet.nameIndex.get, 'Terry', lastName='Gilliam')
+    raises(Exception, PersonIndexGet.nameIndex.get,
+           'Terry', lastName='Gilliam')
 
     raises(Exception, PersonIndexGet.nameIndex.get, 'Terry', 'Gilliam', 65)
 

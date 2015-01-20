@@ -74,7 +74,8 @@ def test2():
     TestWorkKey._connection = getConnection()
     InstalledTestDatabase.drop(TestWorkKey)
     setupClass([TestComposerKey, TestWorkKey2], force=True)
-    TestWorkKey2.sqlmeta.addColumn(ForeignKey('TestComposerKey'), changeSchema=True)
+    TestWorkKey2.sqlmeta.addColumn(ForeignKey('TestComposerKey'),
+                                   changeSchema=True)
 
 def test_otherColumn():
     setupClass([TestComposerKey, TestOtherColumn])

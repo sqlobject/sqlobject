@@ -27,7 +27,8 @@ class InheritableSelectResults(SelectResults):
         if clause is None or isinstance(clause, str) and clause == 'all':
             clause = sqlbuilder.SQLTrueClause
 
-        dbName = (ops.get('connection', None) or sourceClass._connection).dbName
+        dbName = (ops.get('connection', None) or
+                  sourceClass._connection).dbName
 
         tablesSet = tablesUsedSet(clause, dbName)
         tablesSet.add(str(sourceClass.sqlmeta.table))
@@ -83,7 +84,8 @@ class InheritableSelectResults(SelectResults):
 
     def accumulateMany(self, *attributes, **kw):
         if kw.get("skipInherited"):
-            return super(InheritableSelectResults, self).accumulateMany(*attributes)
+            return super(InheritableSelectResults, self).\
+                accumulateMany(*attributes)
         tables = []
         for func_name, attribute in attributes:
            if not isinstance(attribute, basestring):
@@ -95,7 +97,8 @@ class InheritableSelectResults(SelectResults):
 
 class InheritableSQLMeta(sqlmeta):
     @classmethod
-    def addColumn(sqlmeta, columnDef, changeSchema=False, connection=None, childUpdate=False):
+    def addColumn(sqlmeta, columnDef, changeSchema=False, connection=None,
+                  childUpdate=False):
         soClass = sqlmeta.soClass
         # DSM: Try to add parent properties to the current class
         # DSM: Only do this once if possible at object creation and once for
@@ -110,8 +113,11 @@ class InheritableSQLMeta(sqlmeta):
                 if not col.immutable:
                     def make_setfunc(cname):
                         def setfunc(self, val):
-                            if not self.sqlmeta._creating and not getattr(self.sqlmeta, "row_update_sig_suppress", False):
-                                self.sqlmeta.send(events.RowUpdateSignal, self, {cname : val})
+                            if not self.sqlmeta._creating and \
+                               not getattr(self.sqlmeta,
+                                           "row_update_sig_suppress", False):
+                                self.sqlmeta.send(events.RowUpdateSignal, self,
+                                                  {cname : val})
 
                             setattr(self._parent, cname, val)
                         return setfunc
@@ -123,7 +129,9 @@ class InheritableSQLMeta(sqlmeta):
                 return
 
         if columnDef:
-            super(InheritableSQLMeta, sqlmeta).addColumn(columnDef, changeSchema, connection)
+            super(InheritableSQLMeta, sqlmeta).addColumn(columnDef,
+                                                         changeSchema,
+                                                         connection)
 
         # DSM: Update each child class if needed and existing (only for new
         # DSM: dynamic column as no child classes exists at object creation)
@@ -132,11 +140,13 @@ class InheritableSQLMeta(sqlmeta):
         else:
             q = None
         for c in sqlmeta.childClasses.values():
-            c.sqlmeta.addColumn(columnDef, connection=connection, childUpdate=True)
+            c.sqlmeta.addColumn(columnDef, connection=connection,
+                                childUpdate=True)
             if q: setattr(c.q, columnDef.name, q)
 
     @classmethod
-    def delColumn(sqlmeta, column, changeSchema=False, connection=None, childUpdate=False):
+    def delColumn(sqlmeta, column, changeSchema=False, connection=None,
+                  childUpdate=False):
         if childUpdate:
             soClass = sqlmeta.soClass
             unmakeProperties(soClass)
@@ -150,7 +160,8 @@ class InheritableSQLMeta(sqlmeta):
             delattr(soClass.q, name)
             return
 
-        super(InheritableSQLMeta, sqlmeta).delColumn(column, changeSchema, connection)
+        super(InheritableSQLMeta, sqlmeta).delColumn(column, changeSchema,
+                                                     connection)
 
         # DSM: Update each child class if needed
         # DSM: and delete properties for this column
@@ -285,9 +296,11 @@ class InheritableSQLObject(SQLObject):
                 sqlmeta.childName = cls.__name__
 
     @classmethod
-    def get(cls, id, connection=None, selectResults=None, childResults=None, childUpdate=False):
+    def get(cls, id, connection=None, selectResults=None,
+            childResults=None, childUpdate=False):
 
-        val = super(InheritableSQLObject, cls).get(id, connection, selectResults)
+        val = super(InheritableSQLObject, cls).get(id, connection,
+                                                   selectResults)
 
         # DSM: If we are updating a child, we should never return a child...
         if childUpdate: return val
@@ -375,7 +388,9 @@ class InheritableSQLObject(SQLObject):
             for col in self.sqlmeta.columnList:
                 if (col._default == sqlbuilder.NoDefault) and \
                         (col.name not in kw) and (col.foreignName not in kw):
-                    raise TypeError("%s() did not get expected keyword argument %s" % (self.__class__.__name__, col.name))
+                    raise TypeError(
+                        "%s() did not get expected keyword argument "
+                        "%s" % (self.__class__.__name__, col.name))
 
             parent_kw['childName'] = self.sqlmeta.childName
             self._parent = parentClass(kw=parent_kw,
@@ -388,7 +403,8 @@ class InheritableSQLObject(SQLObject):
         try:
             super(InheritableSQLObject, self)._create(id, **kw)
         except:
-            # If we are outside a transaction and this is a child, destroy the parent
+            # If we are outside a transaction and this is a child,
+            # destroy the parent
             connection = self._connection
             if (not isinstance(connection, dbconnection.Transaction) and
                     connection.autoCommit) and self.sqlmeta.parentClass:
@@ -480,7 +496,7 @@ class InheritableSQLObject(SQLObject):
             foreignColumns.update(dict(
                 [(column.foreignName, name)
                     for (name, column) in currentClass.sqlmeta.columns.items()
-                        if column.foreignKey
+                    if column.foreignKey
             ]))
             currentClass = currentClass.sqlmeta.parentClass
         for name, value in kw.items():

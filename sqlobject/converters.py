@@ -158,7 +158,8 @@ def DateConverter(value, db):
 registerConverter(datetime.date, DateConverter)
 
 def TimeConverter(value, db):
-    return "'%02d:%02d:%02d.%06d'" % (value.hour, value.minute, value.second, value.microsecond)
+    return "'%02d:%02d:%02d.%06d'" % (value.hour, value.minute,
+                                      value.second, value.microsecond)
 
 registerConverter(datetime.time, TimeConverter)
 

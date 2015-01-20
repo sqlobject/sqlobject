@@ -34,4 +34,5 @@ def test_tree():
     assert t5 == Tree1.select(Tree2.q.childName == 'Tree5')[0]
 
     # t2,t4,t5 are all subclasses of Tree1 with t1 childName of 'Tree2'
-    assert list(Tree1.select(Tree1.q.childName == 'Tree2', orderBy="aprop")) == [t2, t4, t5]
+    assert list(Tree1.select(
+        Tree1.q.childName == 'Tree2', orderBy="aprop")) == [t2, t4, t5]

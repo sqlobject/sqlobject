@@ -44,13 +44,16 @@ class PostgresConnection(DBAPI):
                     import pgdb
                     self.module = pgdb
                 else:
-                    raise ValueError('Unknown PostgreSQL driver "%s", expected psycopg2, psycopg1 or pygresql' % driver)
+                    raise ValueError(
+                        'Unknown PostgreSQL driver "%s", '
+                        'expected psycopg2, psycopg1 or pygresql' % driver)
             except ImportError:
                 pass
             else:
                 break
         else:
-            raise ImportError('Cannot find a PostgreSQL driver, tried %s' % drivers)
+            raise ImportError(
+                'Cannot find a PostgreSQL driver, tried %s' % drivers)
         if driver.startswith('psycopg'):
             self.module = psycopg
             # Register a converter for psycopg Binary type.
@@ -126,7 +129,8 @@ class PostgresConnection(DBAPI):
             path_parts = path.split('/')
             host = '/' + '/'.join(path_parts[:-1])
             path = path_parts[-1]
-        return cls(host=host, port=port, db=path, user=user, password=password, **args)
+        return cls(host=host, port=port, db=path,
+                   user=user, password=password, **args)
 
     def _setAutoCommit(self, conn, auto):
         # psycopg2 does not have an autocommit method.
@@ -143,7 +147,8 @@ class PostgresConnection(DBAPI):
             else:
                 conn = self.module.connect(**self.dsn_dict)
         except self.module.OperationalError as e:
-            raise OperationalError(ErrorMessage(e, "used connection string %r" % self.dsn))
+            raise OperationalError(
+                ErrorMessage(e, "used connection string %r" % self.dsn))
 
         # For printDebug in _executeRetry
         self._connectionNumbers[id(conn)] = self._connectionCount
@@ -154,7 +159,8 @@ class PostgresConnection(DBAPI):
             self._executeRetry(conn, c, "SET search_path TO " + self.schema)
         dbEncoding = self.dbEncoding
         if dbEncoding:
-            self._executeRetry(conn, c, "SET client_encoding TO '%s'" % dbEncoding)
+            self._executeRetry(conn, c,
+                               "SET client_encoding TO '%s'" % dbEncoding)
         return conn
 
     def _executeRetry(self, conn, cursor, query):
@@ -238,8 +244,9 @@ class PostgresConnection(DBAPI):
         return 'INT NOT NULL'
 
     def tableExists(self, tableName):
-        result = self.queryOne("SELECT COUNT(relname) FROM pg_class WHERE relname = %s"
-                               % self.sqlrepr(tableName))
+        result = self.queryOne(
+            "SELECT COUNT(relname) FROM pg_class WHERE relname = %s" %
+            self.sqlrepr(tableName))
         return result[0]
 
     def addColumn(self, tableName, column):
@@ -248,7 +255,8 @@ class PostgresConnection(DBAPI):
                     column.postgresCreateSQL()))
 
     def delColumn(self, sqlmeta, column):
-        self.query('ALTER TABLE %s DROP COLUMN %s' % (sqlmeta.table, column.dbName))
+        self.query('ALTER TABLE %s DROP COLUMN %s' % (sqlmeta.table,
+                                                      column.dbName))
 
     def columnsFromSchema(self, tableName, soClass):
 
@@ -305,7 +313,9 @@ class PostgresConnection(DBAPI):
         for isPrimary, indexDef in primaryData:
             match = primaryRE.search(indexDef)
             assert match, "Unparseable contraint definition: %r" % indexDef
-            assert primaryKey is None, "Already found primary key (%r), then found: %r" % (primaryKey, indexDef)
+            assert primaryKey is None, \
+                "Already found primary key (%r), " \
+                "then found: %r" % (primaryKey, indexDef)
             primaryKey = match.group(1)
         if primaryKey is None:
             # VIEWs don't have PRIMARY KEYs - accept help from user
@@ -336,7 +346,8 @@ class PostgresConnection(DBAPI):
                 continue
             if field in keymap:
                 colClass = col.ForeignKey
-                kw = {'foreignKey': soClass.sqlmeta.style.dbTableToPythonClass(keymap[field])}
+                kw = {'foreignKey': soClass.sqlmeta.style.
+                      dbTableToPythonClass(keymap[field])}
                 name = soClass.sqlmeta.style.dbColumnToPythonAttr(field)
                 if name.endswith('ID'):
                     name = name[:-2]

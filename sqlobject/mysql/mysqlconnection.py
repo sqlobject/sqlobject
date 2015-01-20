@@ -46,7 +46,9 @@ class MySQLConnection(DBAPI):
         # MySQLdb < 1.2.1: only ascii
         # MySQLdb = 1.2.1: only unicode
         # MySQLdb > 1.2.1: both ascii and unicode
-        self.need_unicode = (self.module.version_info[:3] >= (1, 2, 1)) and (self.module.version_info[:3] < (1, 2, 2))
+        self.need_unicode = (
+            (self.module.version_info[:3] >= (1, 2, 1)) and
+            (self.module.version_info[:3] < (1, 2, 2)))
 
         self._server_version = None
         self._can_use_microseconds = None
@@ -54,7 +56,8 @@ class MySQLConnection(DBAPI):
 
     @classmethod
     def _connectionFromParams(cls, user, password, host, port, path, args):
-        return cls(db=path.strip('/'), user=user or '', password=password or '',
+        return cls(db=path.strip('/'),
+                   user=user or '', password=password or '',
                    host=host or 'localhost', port=port or 0, **args)
 
     def makeConnection(self):
@@ -71,9 +74,12 @@ class MySQLConnection(DBAPI):
                 host=self.host, port=self.port, db=self.db,
                 user=self.user, passwd=self.password, **self.kw)
             if self.module.version_info[:3] >= (1, 2, 2):
-                conn.ping(True)  # Attempt to reconnect. This setting is persistent.
+                # Attempt to reconnect. This setting is persistent.
+                conn.ping(True)
         except self.module.OperationalError as e:
-            conninfo = "; used connection string: host=%(host)s, port=%(port)s, db=%(db)s, user=%(user)s" % self.__dict__
+            conninfo = ("; used connection string: "
+                        "host=%(host)s, port=%(port)s, "
+                        "db=%(db)s, user=%(user)s" % self.__dict__)
             raise OperationalError(ErrorMessage(e, conninfo))
 
         if hasattr(conn, 'autocommit'):
@@ -115,7 +121,8 @@ class MySQLConnection(DBAPI):
             try:
                 return cursor.execute(query)
             except self.module.OperationalError as e:
-                if e.args[0] in (self.module.constants.CR.SERVER_GONE_ERROR, self.module.constants.CR.SERVER_LOST):
+                if e.args[0] in (self.module.constants.CR.SERVER_GONE_ERROR,
+                                 self.module.constants.CR.SERVER_LOST):
                     if count == 2:
                         raise OperationalError(ErrorMessage(e))
                     if self.debug:
@@ -208,7 +215,8 @@ class MySQLConnection(DBAPI):
                     column.mysqlCreateSQL(self)))
 
     def delColumn(self, sqlmeta, column):
-        self.query('ALTER TABLE %s DROP COLUMN %s' % (sqlmeta.table, column.dbName))
+        self.query('ALTER TABLE %s DROP COLUMN %s' % (sqlmeta.table,
+                                                      column.dbName))
 
     def columnsFromSchema(self, tableName, soClass):
         colData = self.queryAll("SHOW COLUMNS FROM %s"
@@ -224,7 +232,8 @@ class MySQLConnection(DBAPI):
             kw['name'] = soClass.sqlmeta.style.dbColumnToPythonAttr(field)
             kw['dbName'] = field
 
-            # Since MySQL 5.0, 'NO' is returned in the NULL column (SQLObject expected '')
+            # Since MySQL 5.0, 'NO' is returned in the NULL column
+            # (SQLObject expected '')
             kw['notNone'] = (nullAllowed.upper() != 'YES' and True or False)
 
             if default and t.startswith('int'):

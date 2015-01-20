@@ -22,7 +22,8 @@ def testAddition():
     class NotYetImported2(SQLObject):
         name = StringCol(dbName='a_name')
 
-    assert str(x) == '((not_yet_imported2.a_name) + (not_yet_imported2.a_name))'
+    assert str(x) == \
+        '((not_yet_imported2.a_name) + (not_yet_imported2.a_name))'
 
 def testOnView():
     nyi = ImportProxy('NotYetImportedV')

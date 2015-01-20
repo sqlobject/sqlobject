@@ -26,7 +26,9 @@ class Join(object):
         self.creationOrder = creationOrder.next()
 
     def _set_joinMethodName(self, value):
-        assert self._joinMethodName == value or self._joinMethodName is None, "You have already given an explicit joinMethodName (%s), and you are now setting it to %s" % (self._joinMethodName, value)
+        assert self._joinMethodName == value or self._joinMethodName is None, \
+            "You have already given an explicit joinMethodName (%s), " \
+            "and you are now setting it to %s" % (self._joinMethodName, value)
         self._joinMethodName = value
 
     def _get_joinMethodName(self):
@@ -98,7 +100,8 @@ def sorter(orderBy):
         else:
             fhead = sorter(orderBy[0])
             frest = sorter(orderBy[1:])
-            return lambda a, b, fhead=fhead, frest=frest: fhead(a, b) or frest(a, b)
+            return lambda a, b, fhead=fhead, frest=frest: \
+                fhead(a, b) or frest(a, b)
     if isinstance(orderBy, sqlbuilder.DESC) \
        and isinstance(orderBy.expr, sqlbuilder.SQLObjectField):
         orderBy = '-' + orderBy.expr.original
@@ -154,7 +157,9 @@ class SOMultipleJoin(SOJoin):
             conn = inst._connection
         else:
             conn = None
-        return self._applyOrderBy([self.otherClass.get(id, conn) for (id,) in ids if id is not None], self.otherClass)
+        return self._applyOrderBy(
+            [self.otherClass.get(id, conn) for (id,) in ids if id is not None],
+            self.otherClass)
 
     def _dbNameToPythonName(self):
         for column in self.otherClass.sqlmeta.columns.values():
@@ -173,7 +178,9 @@ class SOSQLMultipleJoin(SOMultipleJoin):
         else:
             conn = None
         pythonColumn = self._dbNameToPythonName()
-        results = self.otherClass.select(getattr(self.otherClass.q, pythonColumn) == inst.id, connection=conn)
+        results = self.otherClass.select(
+            getattr(self.otherClass.q, pythonColumn) == inst.id,
+            connection=conn)
         return results.orderBy(self.orderBy)
 
 class SQLMultipleJoin(Join):
@@ -219,7 +226,9 @@ class SORelatedJoin(SOMultipleJoin):
             conn = inst._connection
         else:
             conn = None
-        return self._applyOrderBy([self.otherClass.get(id, conn) for (id,) in ids if id is not None], self.otherClass)
+        return self._applyOrderBy(
+            [self.otherClass.get(id, conn) for (id,) in ids if id is not None],
+            self.otherClass)
 
     def remove(self, inst, other):
         inst._connection._SO_intermediateDelete(
@@ -252,7 +261,8 @@ class OtherTableToJoin(sqlbuilder.SQLExpression):
         return [self.otherTable, self.interTable]
 
     def __sqlrepr__(self, db):
-        return '%s.%s = %s.%s' % (self.otherTable, self.otherIdName, self.interTable, self.joinColumn)
+        return '%s.%s = %s.%s' % (self.otherTable, self.otherIdName,
+                                  self.interTable, self.joinColumn)
 
 class JoinToTable(sqlbuilder.SQLExpression):
     def __init__(self, table, idName, interTable, joinColumn):
@@ -265,7 +275,8 @@ class JoinToTable(sqlbuilder.SQLExpression):
         return [self.table, self.interTable]
 
     def __sqlrepr__(self, db):
-        return '%s.%s = %s.%s' % (self.interTable, self.joinColumn, self.table, self.idName)
+        return '%s.%s = %s.%s' % (self.interTable, self.joinColumn, self.table,
+                                  self.idName)
 
 class TableToId(sqlbuilder.SQLExpression):
     def __init__(self, table, idName, idValue):
@@ -294,9 +305,12 @@ class SOSQLRelatedJoin(SORelatedJoin):
                 self.soClass.sqlmeta.table, self.soClass.sqlmeta.idName,
                 self.intermediateTable, self.joinColumn
             ),
-            TableToId(self.soClass.sqlmeta.table, self.soClass.sqlmeta.idName, inst.id),
-        ), clauseTables=(self.soClass.sqlmeta.table, self.otherClass.sqlmeta.table, self.intermediateTable),
-        connection=conn)
+            TableToId(self.soClass.sqlmeta.table, self.soClass.sqlmeta.idName,
+                      inst.id),
+            ), clauseTables=(self.soClass.sqlmeta.table,
+                             self.otherClass.sqlmeta.table,
+                             self.intermediateTable),
+            connection=conn)
         return results.orderBy(self.orderBy)
 
 class SQLRelatedJoin(RelatedJoin):
@@ -322,8 +336,10 @@ class SOSingleJoin(SOMultipleJoin):
             if not self.makeDefault:
                 return None
             else:
-                kw = {self.soClass.sqlmeta.style.instanceIDAttrToAttr(pythonColumn): inst}
-                return self.otherClass(**kw)  # instanciating the otherClass with all
+                kw = {self.soClass.sqlmeta.style.\
+                      instanceIDAttrToAttr(pythonColumn): inst}
+                # instanciating the otherClass with all
+                return self.otherClass(**kw)
         else:
             return results[0]
 

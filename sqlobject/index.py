@@ -21,12 +21,14 @@ class SODatabaseIndex(object):
     def get(self, *args, **kw):
         if not self.unique:
             raise AttributeError(
-                "'%s' object has no attribute 'get' (index is not unique)" % self.name)
+                "'%s' object has no attribute 'get' "
+                "(index is not unique)" % self.name)
         connection = kw.pop('connection', None)
         if args and kw:
             raise TypeError("You cannot mix named and unnamed arguments")
         columns = [d['column'] for d in self.descriptions if 'column' in d]
-        if kw and len(kw) != len(columns) or args and len(args) != len(columns):
+        if kw and len(kw) != len(columns) or \
+                args and len(args) != len(columns):
             raise TypeError(
                 "get() takes exactly %d argument and an optional "
                 "named argument 'connection' (%d given)" % (
@@ -71,7 +73,9 @@ class SODatabaseIndex(object):
                         break
                 else:
                     # None found
-                    raise ValueError("The column by the name %r was not found in the class %r" % (columnName, self.soClass))
+                    raise ValueError(
+                        "The column by the name %r was not found "
+                        "in the class %r" % (columnName, self.soClass))
             else:
                 column = colDict[columnName]
             desc['column'] = column
@@ -103,7 +107,8 @@ class SODatabaseIndex(object):
                ', '.join(spec))
         return ret
 
-    postgresCreateIndexSQL = maxdbCreateIndexSQL = mssqlCreateIndexSQL = sybaseCreateIndexSQL = firebirdCreateIndexSQL = sqliteCreateIndexSQL 
+    postgresCreateIndexSQL = maxdbCreateIndexSQL = mssqlCreateIndexSQL = \
+        sybaseCreateIndexSQL = firebirdCreateIndexSQL = sqliteCreateIndexSQL
 
     def mysqlCreateIndexSQL(self, soClass):
         if self.unique:
@@ -157,7 +162,9 @@ class DatabaseIndex(object):
         self.creationOrder = creationOrder.next()
 
     def setName(self, value):
-        assert self.kw.get('name') is None, "You cannot change a name after it has already been set (from %s to %s)" % (self.kw['name'], value)
+        assert self.kw.get('name') is None, \
+            "You cannot change a name after it has already been set " \
+            "(from %s to %s)" % (self.kw['name'], value)
         self.kw['name'] = value
 
     def _get_name(self):

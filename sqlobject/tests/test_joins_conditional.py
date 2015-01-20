@@ -32,7 +32,8 @@ def test_1syntax():
     join = LEFTJOIN("table1", "table2")
     assert str(join) == "table1 LEFT JOIN table2"
     join = LEFTJOINOn("table1", "table2", "tabl1.col1 = table2.col2")
-    assert getConnection().sqlrepr(join) == "table1 LEFT JOIN table2 ON tabl1.col1 = table2.col2"
+    assert getConnection().sqlrepr(join) == \
+        "table1 LEFT JOIN table2 ON tabl1.col1 = table2.col2"
 
 def test_2select_syntax():
     setup()
@@ -42,7 +43,10 @@ def test_2select_syntax():
                                      TestJoin1.q.col1 == TestJoin2.q.col2))
     )
     assert str(select) == \
-        "SELECT test_join1.id, test_join1.col1 FROM test_join1 LEFT JOIN test_join2 ON ((test_join1.col1) = (test_join2.col2)) WHERE 1 = 1"
+        "SELECT test_join1.id, test_join1.col1 " \
+        "FROM test_join1 " \
+        "LEFT JOIN test_join2 " \
+        "ON ((test_join1.col1) = (test_join2.col2)) WHERE 1 = 1"
 
 def test_3perform_join():
     setup()
@@ -53,7 +57,8 @@ def test_3perform_join():
     TestJoin2(col2="test2")
 
     select = TestJoin1.select(
-        join=LEFTJOINOn(TestJoin1, TestJoin2, TestJoin1.q.col1 == TestJoin2.q.col2)
+        join=LEFTJOINOn(TestJoin1, TestJoin2,
+                        TestJoin1.q.col1 == TestJoin2.q.col2)
     )
     assert select.count() == 3
 
@@ -65,7 +70,8 @@ def test_4join_3tables_syntax():
         join=LEFTJOIN(TestJoin2, TestJoin3)
     )
     assert str(select) == \
-        "SELECT test_join1.id, test_join1.col1 FROM test_join1, test_join2 LEFT JOIN test_join3 WHERE 1 = 1"
+        "SELECT test_join1.id, test_join1.col1 " \
+        "FROM test_join1, test_join2 LEFT JOIN test_join3 WHERE 1 = 1"
 
 def test_5join_3tables_syntax2():
     setup()
@@ -75,13 +81,17 @@ def test_5join_3tables_syntax2():
         join=(LEFTJOIN(None, TestJoin2), LEFTJOIN(None, TestJoin3))
     )
     assert str(select) == \
-        "SELECT test_join1.id, test_join1.col1 FROM test_join1  LEFT JOIN test_join2  LEFT JOIN test_join3 WHERE 1 = 1"
+        "SELECT test_join1.id, test_join1.col1 " \
+        "FROM test_join1  " \
+        "LEFT JOIN test_join2  LEFT JOIN test_join3 WHERE 1 = 1"
 
     select = TestJoin1.select(
         join=(LEFTJOIN(TestJoin1, TestJoin2), LEFTJOIN(TestJoin1, TestJoin3))
     )
     assert str(select) == \
-        "SELECT test_join1.id, test_join1.col1 FROM test_join1 LEFT JOIN test_join2, test_join1 LEFT JOIN test_join3 WHERE 1 = 1"
+        "SELECT test_join1.id, test_join1.col1 " \
+        "FROM test_join1 " \
+        "LEFT JOIN test_join2, test_join1 LEFT JOIN test_join3 WHERE 1 = 1"
 
 def test_6join_using():
     setup()
@@ -91,7 +101,9 @@ def test_6join_using():
         join=LEFTJOINUsing(None, TestJoin2, [TestJoin2.q.id])
     )
     assert str(select) == \
-        "SELECT test_join1.id, test_join1.col1 FROM test_join1 LEFT JOIN test_join2 USING (test_join2.id) WHERE 1 = 1"
+        "SELECT test_join1.id, test_join1.col1 " \
+        "FROM test_join1 " \
+        "LEFT JOIN test_join2 USING (test_join2.id) WHERE 1 = 1"
 
 def test_7join_on():
     setup()
@@ -104,4 +116,9 @@ def test_7join_on():
         LEFTJOINOn(TestJoin4, TestJoin5, TestJoin4.q.col4 == TestJoin5.q.col5)
     ))
     assert str(select) == \
-        "SELECT test_join1.id, test_join1.col1 FROM test_join1, test_join2 LEFT JOIN test_join3 ON ((test_join2.col2) = (test_join3.col3)), test_join4 LEFT JOIN test_join5 ON ((test_join4.col4) = (test_join5.col5)) WHERE 1 = 1"
+        "SELECT test_join1.id, test_join1.col1 " \
+        "FROM test_join1, test_join2 " \
+        "LEFT JOIN test_join3 " \
+        "ON ((test_join2.col2) = (test_join3.col3)), test_join4 " \
+        "LEFT JOIN test_join5 " \
+        "ON ((test_join4.col4) = (test_join5.col5)) WHERE 1 = 1"

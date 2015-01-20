@@ -79,22 +79,26 @@ def test_inheritance_select():
     person = Employee.byLastName("Leader")
     assert person.firstName == "Project"
 
-    persons = list(InheritablePerson.select(orderBy=InheritablePerson.q.lastName))
+    persons = list(InheritablePerson.select(
+        orderBy=InheritablePerson.q.lastName))
     assert len(persons) == 2
 
-    persons = list(InheritablePerson.select(orderBy=(InheritablePerson.q.lastName, InheritablePerson.q.firstName)))
+    persons = list(InheritablePerson.select(orderBy=(
+        InheritablePerson.q.lastName, InheritablePerson.q.firstName)))
     assert len(persons) == 2
 
     persons = list(Employee.select(orderBy=Employee.q.lastName))
     assert len(persons) == 1
 
-    persons = list(Employee.select(orderBy=(Employee.q.lastName, Employee.q.firstName)))
+    persons = list(Employee.select(orderBy=(Employee.q.lastName,
+                                            Employee.q.firstName)))
     assert len(persons) == 1
 
     persons = list(Employee.select(orderBy=Employee.q.position))
     assert len(persons) == 1
 
-    persons = list(Employee.select(orderBy=(Employee.q.position, Employee.q.lastName)))
+    persons = list(Employee.select(orderBy=(Employee.q.position,
+                                            Employee.q.lastName)))
     assert len(persons) == 1
 
 def test_addDelColumn():

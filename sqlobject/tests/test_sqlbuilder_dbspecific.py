@@ -23,7 +23,8 @@ def makeSelect():
 def checkCount(q, c, msg=''):
     print("STRING:", str(q))
     print("POSTGR:", sqlrepr(q, 'postgres'))
-    assert sqlrepr(q, 'postgres').count("'t'") == c and sqlrepr(q, 'postgres') != str(q), msg
+    assert sqlrepr(q, 'postgres').count("'t'") == c and \
+        sqlrepr(q, 'postgres') != str(q), msg
 
 def testSimple():
     setupClass(SBButton)

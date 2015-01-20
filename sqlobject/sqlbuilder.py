@@ -398,7 +398,8 @@ class SQLObjectField(Field):
 
     def _from_python(self, value):
         column = self.column
-        if not isinstance(value, SQLExpression) and column and column.from_python:
+        if not isinstance(value, SQLExpression) and \
+                column and column.from_python:
             value = column.from_python(value, SQLObjectState(self.soClass))
         return value
 
@@ -464,27 +465,36 @@ class SQLObjectTable(Table):
         elif attr in self.soClass.sqlmeta.columns:
             column = self.soClass.sqlmeta.columns[attr]
             return self._getattrFromColumn(column, attr)
-        elif attr+'ID' in [k for (k, v) in self.soClass.sqlmeta.columns.items() if v.foreignKey]:
+        elif attr+'ID' in \
+            [k for (k, v) in self.soClass.sqlmeta.columns.items()
+                if v.foreignKey]:
             attr += 'ID'
             column = self.soClass.sqlmeta.columns[attr]
             return self._getattrFromColumn(column, attr)
         else:
-            raise AttributeError("%s instance has no attribute '%s'" % (self.soClass.__name__, attr))
+            raise AttributeError(
+                "%s instance has no attribute '%s'" % (self.soClass.__name__,
+                                                       attr))
 
     def _getattrFromID(self, attr):
-        return self.FieldClass(self.tableName, self.soClass.sqlmeta.idName, attr, self.soClass, None)
+        return self.FieldClass(self.tableName, self.soClass.sqlmeta.idName,
+                               attr, self.soClass, None)
 
     def _getattrFromColumn(self, column, attr):
-        return self.FieldClass(self.tableName, column.dbName, attr, self.soClass, column)
+        return self.FieldClass(self.tableName, column.dbName, attr,
+                               self.soClass, column)
 
 class SQLObjectTableWithJoins(SQLObjectTable):
 
     def __getattr__(self, attr):
-        if attr+'ID' in [k for (k, v) in self.soClass.sqlmeta.columns.items() if v.foreignKey]:
+        if attr+'ID' in \
+            [k for (k, v) in self.soClass.sqlmeta.columns.items()
+                if v.foreignKey]:
             column = self.soClass.sqlmeta.columns[attr+'ID']
             return self._getattrFromForeignKey(column, attr)
         elif attr in [x.joinMethodName for x in self.soClass.sqlmeta.joins]:
-            join = [x for x in self.soClass.sqlmeta.joins if x.joinMethodName == attr][0]
+            join = [x for x in self.soClass.sqlmeta.joins
+                    if x.joinMethodName == attr][0]
             return self._getattrFromJoin(join, attr)
         else:
             return SQLObjectTable.__getattr__(self, attr)
@@ -496,10 +506,14 @@ class SQLObjectTableWithJoins(SQLObjectTable):
 
     def _getattrFromJoin(self, join, attr):
         if hasattr(join, 'otherColumn'):
-            return AND(join.otherClass.q.id == Field(join.intermediateTable, join.otherColumn),
-                       Field(join.intermediateTable, join.joinColumn) == self.soClass.q.id)
+            return AND(
+                join.otherClass.q.id == Field(join.intermediateTable,
+                                              join.otherColumn),
+                Field(join.intermediateTable,
+                      join.joinColumn) == self.soClass.q.id)
         else:
-            return getattr(join.otherClass.q, join.joinColumn) == self.soClass.q.id
+            return getattr(join.otherClass.q, join.joinColumn) == \
+                self.soClass.q.id
 
 class TableSpace:
     TableClass = Table
@@ -546,7 +560,9 @@ class AliasTable(Table):
         if hasattr(table, "sqlmeta"):
             tableName = SQLConstant(table.sqlmeta.table)
         elif isinstance(table, (Select, Union)):
-            assert alias is not None, "Alias name cannot be constructed from Select instances, please provide 'alias' kw."
+            assert alias is not None, \
+                "Alias name cannot be constructed from Select instances, " \
+                "please provide an 'alias' keyword."
             tableName = Subquery('', table)
             table = None
         else:
@@ -571,7 +587,8 @@ class AliasTable(Table):
         return self.FieldClass(self.tableName, attr, self.alias, self)
 
     def __sqlrepr__(self, db):
-        return "%s %s %s" % (sqlrepr(self.tableName, db), self.as_string, self.alias)
+        return "%s %s %s" % (sqlrepr(self.tableName, db), self.as_string,
+                             self.alias)
 
 class Alias(SQLExpression):
     def __init__(self, table, alias=None):
@@ -611,7 +628,8 @@ class Select(SQLExpression):
                  having=NoDefault, orderBy=NoDefault, limit=NoDefault,
                  join=NoDefault, lazyColumns=False, distinct=False,
                  start=0, end=None, reversed=False, forUpdate=False,
-                 clause=NoDefault, staticTables=NoDefault, distinctOn=NoDefault):
+                 clause=NoDefault, staticTables=NoDefault,
+                 distinctOn=NoDefault):
         self.ops = {}
         if not isinstance(items, (list, tuple, types.GeneratorType)):
             items = [items]
@@ -679,9 +697,11 @@ class Select(SQLExpression):
         if self.ops['distinct']:
             select += " DISTINCT"
             if self.ops['distinctOn'] is not NoDefault:
-                select += " ON(%s)" % _str_or_sqlrepr(self.ops['distinctOn'], db)
+                select += " ON(%s)" % _str_or_sqlrepr(
+                    self.ops['distinctOn'], db)
         if not self.ops['lazyColumns']:
-            select += " %s" % ", ".join([str(_str_or_sqlrepr(v, db)) for v in self.ops['items']])
+            select += " %s" % ", ".join(
+                [str(_str_or_sqlrepr(v, db)) for v in self.ops['items']])
         else:
             select += " %s" % _str_or_sqlrepr(self.ops['items'][0], db)
 
@@ -736,22 +756,26 @@ class Select(SQLExpression):
             select += " GROUP BY %s" % groupBy
         if self.ops['having'] is not NoDefault:
             select += " HAVING %s" % _str_or_sqlrepr(self.ops['having'], db)
-        if self.ops['orderBy'] is not NoDefault and self.ops['orderBy'] is not None:
+        if self.ops['orderBy'] is not NoDefault and \
+           self.ops['orderBy'] is not None:
             orderBy = self.ops['orderBy']
             if self.ops['reversed']:
                 reverser = DESC
             else:
                 reverser = lambda x: x
             if isinstance(orderBy, (list, tuple)):
-                select += " ORDER BY %s" % ", ".join([_str_or_sqlrepr(reverser(x), db) for x in orderBy])
+                select += " ORDER BY %s" % ", ".join(
+                    [_str_or_sqlrepr(reverser(x), db) for x in orderBy])
             else:
-                select += " ORDER BY %s" % _str_or_sqlrepr(reverser(orderBy), db)
+                select += " ORDER BY %s" % _str_or_sqlrepr(
+                    reverser(orderBy), db)
         start, end = self.ops['start'], self.ops['end']
         if self.ops['limit'] is not NoDefault:
             end = start + self.ops['limit']
         if start or end:
             from dbconnection import dbConnectionForScheme
-            select = dbConnectionForScheme(db)._queryAddLimitOffset(select, start, end)
+            select = dbConnectionForScheme(db)._queryAddLimitOffset(select,
+                                                                    start, end)
         if self.ops['forUpdate']:
             select += " FOR UPDATE"
         return select
@@ -786,10 +810,16 @@ class Insert(SQLExpression):
         for value in self.valueList:
             if isinstance(value, dict):
                 if template is NoDefault:
-                    raise TypeError("You can't mix non-dictionaries with dictionaries in an INSERT if you don't provide a template (%s)" % repr(value))
+                    raise TypeError(
+                        "You can't mix non-dictionaries with dictionaries "
+                        "in an INSERT if you don't provide a template (%s)" %
+                        repr(value))
                 value = dictToList(template, value)
             elif not allowNonDict:
-                raise TypeError("You can't mix non-dictionaries with dictionaries in an INSERT if you don't provide a template (%s)" % repr(value))
+                raise TypeError(
+                    "You can't mix non-dictionaries with dictionaries "
+                    "in an INSERT if you don't provide a template (%s)" %
+                    repr(value))
             listToJoin_app("(%s)" % ", ".join([sqlrepr(v, db) for v in value]))
         insert = "%s%s" % (insert, ", ".join(listToJoin))
         return insert
@@ -801,7 +831,9 @@ def dictToList(template, dict):
     for key in template:
         list.append(dict[key])
     if len(dict.keys()) > len(template):
-        raise TypeError("Extra entries in dictionary that aren't asked for in template (template=%s, dict=%s)" % (repr(template), repr(dict)))
+        raise TypeError(
+            "Extra entries in dictionary that aren't asked for in template "
+            "(template=%s, dict=%s)" % (repr(template), repr(dict)))
     return list
 
 class Update(SQLExpression):
@@ -821,7 +853,8 @@ class Update(SQLExpression):
                     first = False
                 else:
                     update += ","
-                update += " %s=%s" % (self.template[i], sqlrepr(self.values[i], db))
+                update += " %s=%s" % (self.template[i],
+                                      sqlrepr(self.values[i], db))
         else:
             for key, value in sorted(self.values.items()):
                 if first:
@@ -844,7 +877,9 @@ class Delete(SQLExpression):
     def __init__(self, table, where=NoDefault):
         self.table = table
         if where is NoDefault:
-            raise TypeError("You must give a where clause or pass in None to indicate no where clause")
+            raise TypeError(
+                "You must give a where clause or pass in None "
+                "to indicate no where clause")
         self.whereClause = where
 
     def __sqlrepr__(self, db):
@@ -942,7 +977,8 @@ class ColumnAS(SQLOp):
         SQLOp.__init__(self, 'AS', expr, name)
 
     def __sqlrepr__(self, db):
-        return "%s %s %s" % (sqlrepr(self.expr1, db), self.op, sqlrepr(self.expr2, db))
+        return "%s %s %s" % (sqlrepr(self.expr1, db), self.op,
+                             sqlrepr(self.expr2, db))
 
 class _LikeQuoted:
     # It assumes prefix and postfix are strings; usually just a percent sign.
@@ -981,14 +1017,17 @@ class _LikeQuoted:
             s = _quote_like_special(unquote_str(sqlrepr(s, db)), db)
             return quote_str("%s%s%s" % (self.prefix, s, self.postfix), db)
         else:
-           raise TypeError("expected str, unicode or SQLExpression, got %s" % type(s))
+           raise TypeError(
+                "expected str, unicode or SQLExpression, got %s" % type(s))
 
 def _quote_like_special(s, db):
     if db in ('postgres', 'rdbhost'):
         escape = r'\\'
     else:
         escape = '\\'
-    s = s.replace('\\', r'\\').replace('%', escape+'%').replace('_', escape+'_')
+    s = s.replace('\\', r'\\').\
+        replace('%', escape+'%').\
+        replace('_', escape+'_')
     return s
 
 ########################################
@@ -1011,7 +1050,8 @@ class SQLJoin(SQLExpression):
 
     def __sqlrepr__(self, db):
         if self.table1:
-            return "%s%s %s" % (sqlrepr(self.table1, db), self.op, sqlrepr(self.table2, db))
+            return "%s%s %s" % (sqlrepr(self.table1, db), self.op,
+                                sqlrepr(self.table2, db))
         else:
             return "%s %s" % (self.op, sqlrepr(self.table2, db))
 
@@ -1070,8 +1110,10 @@ def NATURALFULLOUTERJOIN(table1, table2):
 
 class SQLJoinConditional(SQLJoin):
     """Conditional JOIN"""
-    def __init__(self, table1, table2, op, on_condition=None, using_columns=None):
-        """For condition you must give on_condition or using_columns but not both
+    def __init__(self, table1, table2, op,
+                 on_condition=None, using_columns=None):
+        """For condition you must give on_condition or using_columns
+        but not both
 
             on_condition can be a string or SQLExpression, for example
                 Table1.q.col1 == Table2.q.col2
@@ -1081,7 +1123,8 @@ class SQLJoinConditional(SQLJoin):
         if not on_condition and not using_columns:
             raise TypeError("You must give ON condition or USING columns")
         if on_condition and using_columns:
-            raise TypeError("You must give ON condition or USING columns but not both")
+            raise TypeError(
+                "You must give ON condition or USING columns but not both")
         SQLJoin.__init__(self, table1, table2, op)
         self.on_condition = on_condition
         self.using_columns = using_columns
@@ -1091,7 +1134,8 @@ class SQLJoinConditional(SQLJoin):
             on_condition = self.on_condition
             if hasattr(on_condition, "__sqlrepr__"):
                 on_condition = sqlrepr(on_condition, db)
-            join = "%s %s ON %s" % (self.op, sqlrepr(self.table2, db), on_condition)
+            join = "%s %s ON %s" % (self.op, sqlrepr(self.table2, db),
+                                    on_condition)
             if self.table1:
                 join = "%s %s" % (sqlrepr(self.table1, db), join)
             return join
@@ -1102,7 +1146,8 @@ class SQLJoinConditional(SQLJoin):
                     col = sqlrepr(col, db)
                 using_columns.append(col)
             using_columns = ", ".join(using_columns)
-            join = "%s %s USING (%s)" % (self.op, sqlrepr(self.table2, db), using_columns)
+            join = "%s %s USING (%s)" % (self.op, sqlrepr(self.table2, db),
+                                         using_columns)
             if self.table1:
                 join = "%s %s" % (sqlrepr(self.table1, db), join)
             return join
@@ -1111,26 +1156,38 @@ class SQLJoinConditional(SQLJoin):
 
 registerConverter(SQLJoinConditional, SQLExprConverter)
 
-def INNERJOINConditional(table1, table2, on_condition=None, using_columns=None):
-    return SQLJoinConditional(table1, table2, "INNER JOIN", on_condition, using_columns)
+def INNERJOINConditional(table1, table2,
+                         on_condition=None, using_columns=None):
+    return SQLJoinConditional(table1, table2, "INNER JOIN",
+                              on_condition, using_columns)
 
 def LEFTJOINConditional(table1, table2, on_condition=None, using_columns=None):
-    return SQLJoinConditional(table1, table2, "LEFT JOIN", on_condition, using_columns)
+    return SQLJoinConditional(table1, table2, "LEFT JOIN",
+                              on_condition, using_columns)
 
-def LEFTOUTERJOINConditional(table1, table2, on_condition=None, using_columns=None):
-    return SQLJoinConditional(table1, table2, "LEFT OUTER JOIN", on_condition, using_columns)
+def LEFTOUTERJOINConditional(table1, table2,
+                             on_condition=None, using_columns=None):
+    return SQLJoinConditional(table1, table2, "LEFT OUTER JOIN",
+                              on_condition, using_columns)
 
-def RIGHTJOINConditional(table1, table2, on_condition=None, using_columns=None):
-    return SQLJoinConditional(table1, table2, "RIGHT JOIN", on_condition, using_columns)
+def RIGHTJOINConditional(table1, table2,
+                         on_condition=None, using_columns=None):
+    return SQLJoinConditional(table1, table2, "RIGHT JOIN",
+                              on_condition, using_columns)
 
-def RIGHTOUTERJOINConditional(table1, table2, on_condition=None, using_columns=None):
-    return SQLJoinConditional(table1, table2, "RIGHT OUTER JOIN", on_condition, using_columns)
+def RIGHTOUTERJOINConditional(table1, table2,
+                              on_condition=None, using_columns=None):
+    return SQLJoinConditional(table1, table2, "RIGHT OUTER JOIN",
+                              on_condition, using_columns)
 
 def FULLJOINConditional(table1, table2, on_condition=None, using_columns=None):
-    return SQLJoinConditional(table1, table2, "FULL JOIN", on_condition, using_columns)
+    return SQLJoinConditional(table1, table2, "FULL JOIN",
+                              on_condition, using_columns)
 
-def FULLOUTERJOINConditional(table1, table2, on_condition=None, using_columns=None):
-    return SQLJoinConditional(table1, table2, "FULL OUTER JOIN", on_condition, using_columns)
+def FULLOUTERJOINConditional(table1, table2,
+                             on_condition=None, using_columns=None):
+    return SQLJoinConditional(table1, table2, "FULL OUTER JOIN",
+                              on_condition, using_columns)
 
 class SQLJoinOn(SQLJoinConditional):
     """Conditional JOIN ON"""
@@ -1142,7 +1199,8 @@ registerConverter(SQLJoinOn, SQLExprConverter)
 class SQLJoinUsing(SQLJoinConditional):
     """Conditional JOIN USING"""
     def __init__(self, table1, table2, op, using_columns):
-        SQLJoinConditional.__init__(self, table1, table2, op, None, using_columns)
+        SQLJoinConditional.__init__(self, table1, table2,
+                                    op, None, using_columns)
 
 registerConverter(SQLJoinUsing, SQLExprConverter)
 
@@ -1215,7 +1273,8 @@ class LIKE(SQLExpression):
 
     def __sqlrepr__(self, db):
         escape = self.escape
-        like = "%s %s (%s)" % (sqlrepr(self.expr, db), self.op, sqlrepr(self.string, db))
+        like = "%s %s (%s)" % (sqlrepr(self.expr, db),
+                               self.op, sqlrepr(self.string, db))
         if escape is None:
             return "(%s)" % like
         else:
@@ -1272,7 +1331,8 @@ class INSubquery(SQLExpression):
         return [self.item]
 
     def __sqlrepr__(self, db):
-        return "%s %s (%s)" % (sqlrepr(self.item, db), self.op, sqlrepr(self.subquery, db))
+        return "%s %s (%s)" % (sqlrepr(self.item, db),
+                               self.op, sqlrepr(self.subquery, db))
 
 class NOTINSubquery(INSubquery):
     op = "NOT IN"
@@ -1318,7 +1378,8 @@ class ImportProxy(SQLExpression):
         self.sqlmeta = _Delay_proxy(table=_DelayClass(self, clsName))
         self.q = self
         self.soClass = None
-        classregistry.registry(registry).addClassCallback(clsName, lambda foreign, me: setattr(me, 'soClass', foreign), self)
+        classregistry.registry(registry).addClassCallback(
+            clsName, lambda foreign, me: setattr(me, 'soClass', foreign), self)
 
     def __nonzero__(self):
         return True
@@ -1396,7 +1457,7 @@ if __name__ == "__main__":
 >>> Delete(table.address, where="BOB"==table.address.name)
 >>> Update(table.address, {"lastModified": const.NOW()})
 >>> Replace(table.address, [("BOB", "3049 N. 18th St."), ("TIM", "409 S. 10th St.")], template=('name', 'address'))
-"""
+"""  # noqa: allow long (> 79) lines
     for expr in tests.split('\n'):
         if not expr.strip(): continue
         if expr.startswith('>>> '):

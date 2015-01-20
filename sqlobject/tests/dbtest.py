@@ -309,6 +309,8 @@ def setupLogging():
     logger = logging.getLogger()
     logger.addHandler(hdlr)
 
-__all__ = ['getConnection', 'getConnectionURI', 'setupClass', 'Dummy', 'raises',
-           'inserts', 'supports', 'deprecated_module',
-           'setup_module', 'teardown_module', 'setupLogging']
+__all__ = [
+            'Dummy', 'deprecated_module', 'getConnection', 'getConnectionURI',
+            'inserts', 'raises', 'setupClass', 'setupLogging', 'setup_module',
+            'supports', 'teardown_module',
+          ]

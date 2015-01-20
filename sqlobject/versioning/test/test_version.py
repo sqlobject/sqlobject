@@ -36,7 +36,8 @@ def _set_extra():
 
 class Extra(SQLObject):
     name = StringCol()
-    versions = Versioning(extraCols={'extra' : StringCol(default=_set_extra())})
+    versions = Versioning(
+        extraCols={'extra' : StringCol(default=_set_extra())})
 
 class HasAltId(SQLObject):
     name = StringCol()
@@ -44,7 +45,8 @@ class HasAltId(SQLObject):
     versions = Versioning()
 
 def setup():
-    classes = [MyClass, Base, Child, Government, Monarchy, VChild, Extra, HasAltId]
+    classes = [MyClass, Base, Child, Government,
+               Monarchy, VChild, Extra, HasAltId]
     if hasattr(HasForeign, "_connection"):
         classes.insert(0, HasForeign)
     else:
@@ -101,7 +103,8 @@ def test_inheritable_versioning():
     vchild.set(name='toon', weapon='dynamite')
     assert len(list(base.versions)) == num_base_versions
     assert len(list(vchild.versions)) == 1
-    vchild.name = "newname"  # test setting using setattr directly rather than .set
+    # test setting using setattr directly rather than .set
+    vchild.name = "newname"
     assert len(list(vchild.versions)) == 2
 
 def test_restore():

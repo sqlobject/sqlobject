@@ -59,7 +59,11 @@ def makeDebugWriter(connection, loggerName, loglevel):
     return LogWriter(connection, logger, loglevel)
 
 class Boolean(object):
-    """A bool class that also understands some special string keywords (yes/no, true/false, on/off, 1/0)"""
+    """A bool class that also understands some special string keywords
+
+    Understands: yes/no, true/false, on/off, 1/0, case ignored.
+
+    """
     _keywords = {'1': True, 'yes': True, 'true': True, 'on': True,
                  '0': False, 'no': False, 'false': False, 'off': False}
 
@@ -143,7 +147,9 @@ class DBConnection:
     @staticmethod
     def _parseOldURI(uri):
         schema, rest = uri.split(':', 1)
-        assert rest.startswith('/'), "URIs must start with scheme:/ -- you did not include a / (in %r)" % rest
+        assert rest.startswith('/'), \
+            "URIs must start with scheme:/ -- " \
+            "you did not include a / (in %r)" % rest
         if rest.startswith('/') and not rest.startswith('//'):
             host = None
             rest = rest[1:]
@@ -170,9 +176,11 @@ class DBConnection:
             try:
                 port = int(port)
             except ValueError:
-                raise ValueError("port must be integer, got '%s' instead" % port)
+                raise ValueError("port must be integer, "
+                                 "got '%s' instead" % port)
             if not (1 <= port <= 65535):
-                raise ValueError("port must be integer in the range 1-65535, got '%d' instead" % port)
+                raise ValueError("port must be integer in the range 1-65535, "
+                                 "got '%d' instead" % port)
             host = _host
         else:
             port = None
@@ -197,12 +205,14 @@ class DBConnection:
         host, path = urllib.splithost(request)
 
         if host:
-            # Python < 2.7 have a problem - splituser() calls unquote() too early
+            # Python < 2.7 have a problem -
+            # splituser() calls unquote() too early
             # user, host = urllib.splituser(host)
             if '@' in host:
                 user, host = host.split('@', 1)
             if user:
-                user, password = [x and urllib.unquote(x) or None for x in urllib.splitpasswd(user)]
+                user, password = [x and urllib.unquote(x) or None
+                                  for x in urllib.splitpasswd(user)]
             host, port = urllib.splitport(host)
             if port: port = int(port)
         elif host == '':
@@ -344,7 +354,9 @@ class DBAPI(DBConnection):
             if self.debug:
                 s = 'ACQUIRE'
                 if self._pool is not None:
-                    s += ' pool=[%s]' % ', '.join([str(self._connectionNumbers[id(v)]) for v in self._pool])
+                    s += ' pool=[%s]' % ', '.join(
+                        [str(self._connectionNumbers[id(v)])
+                            for v in self._pool])
                 self.printDebug(conn, s, 'Pool')
             return conn
         finally:
@@ -359,14 +371,16 @@ class DBAPI(DBConnection):
             if self._pool is None:
                 s += ' no pooling'
             else:
-                s += ' pool=[%s]' % ', '.join([str(self._connectionNumbers[id(v)]) for v in self._pool])
+                s += ' pool=[%s]' % ', '.join(
+                    [str(self._connectionNumbers[id(v)]) for v in self._pool])
             self.printDebug(conn, s, 'Pool')
         if self.supportTransactions and not explicit:
             if self.autoCommit == 'exception':
                 if self.debug:
                     self.printDebug(conn, 'auto/exception', 'ROLLBACK')
                 conn.rollback()
-                raise Exception('Object used outside of a transaction; implicit COMMIT or ROLLBACK not allowed')
+                raise Exception('Object used outside of a transaction; '
+                                'implicit COMMIT or ROLLBACK not allowed')
             elif self.autoCommit:
                 if self.debug:
                     self.printDebug(conn, 'auto', 'COMMIT')
@@ -468,7 +482,8 @@ class DBAPI(DBConnection):
         return Transaction(self)
 
     def queryInsertID(self, soInstance, id, names, values):
-        return self._runWithConnection(self._queryInsertID, soInstance, id, names, values)
+        return self._runWithConnection(self._queryInsertID, soInstance, id,
+                                       names, values)
 
     def iterSelect(self, select):
         return select.IterationClass(self, self.getConnection(),
@@ -478,7 +493,8 @@ class DBAPI(DBConnection):
         """ Apply an accumulate function(s) (SUM, COUNT, MIN, AVG, MAX, etc...)
             to the select object.
         """
-        q = select.queryForSelect().newItems(expressions).unlimited().orderBy(None)
+        q = select.queryForSelect().newItems(expressions).\
+            unlimited().orderBy(None)
         q = self.sqlrepr(q)
         val = self.queryOne(q)
         if len(expressions) == 1:
@@ -530,7 +546,8 @@ class DBAPI(DBConnection):
                 '%s.sqlmeta.createSQL must be a str, list, dict or tuple.' %
                 (soClass.__name__))
             if isinstance(tableCreateSQLs, dict):
-                tableCreateSQLs = tableCreateSQLs.get(soClass._connection.dbName, [])
+                tableCreateSQLs = tableCreateSQLs.get(
+                    soClass._connection.dbName, [])
             if isinstance(tableCreateSQLs, str):
                 tableCreateSQLs = [tableCreateSQLs]
             if isinstance(tableCreateSQLs, tuple):
@@ -596,12 +613,12 @@ class DBAPI(DBConnection):
 
     def _SO_selectOneAlt(self, so, columnNames, condition):
         if columnNames:
-            columns = [isinstance(x, basestring) and sqlbuilder.SQLConstant(x) or x for x in columnNames]
+            columns = [isinstance(x, basestring) and sqlbuilder.SQLConstant(x)
+                       or x for x in columnNames]
         else:
             columns = None
-        return self.queryOne(self.sqlrepr(sqlbuilder.Select(columns,
-                                                            staticTables=[so.sqlmeta.table],
-                                                            clause=condition)))
+        return self.queryOne(self.sqlrepr(sqlbuilder.Select(
+            columns, staticTables=[so.sqlmeta.table], clause=condition)))
 
     def _SO_delete(self, so):
         self.query("DELETE FROM %s WHERE %s = (%s)" %
@@ -651,7 +668,9 @@ class DBAPI(DBConnection):
             if key in kw:
                 val = kw.pop(key)
                 if soColumn.from_python:
-                    val = soColumn.from_python(val, sqlbuilder.SQLObjectState(soClass, connection=self))
+                    val = soColumn.from_python(
+                        val,
+                        sqlbuilder.SQLObjectState(soClass, connection=self))
                 data.append((soColumn.dbName, val))
             elif soColumn.foreignName in kw:
                 obj = kw.pop(soColumn.foreignName)
@@ -661,7 +680,8 @@ class DBAPI(DBConnection):
                     data.append((soColumn.dbName, obj))
         if kw:
             # pick the first key from kw to use to raise the error,
-            raise TypeError("got an unexpected keyword argument(s): %r" % kw.keys())
+            raise TypeError("got an unexpected keyword argument(s): "
+                            "%r" % kw.keys())
 
         if not data:
             return None
@@ -730,10 +750,13 @@ class Iteration(object):
         if result[0] is None:
             return None
         if self.select.ops.get('lazyColumns', 0):
-            obj = self.select.sourceClass.get(result[0], connection=self.dbconn)
+            obj = self.select.sourceClass.get(result[0],
+                                              connection=self.dbconn)
             return obj
         else:
-            obj = self.select.sourceClass.get(result[0], selectResults=result[1:], connection=self.dbconn)
+            obj = self.select.sourceClass.get(result[0],
+                                              selectResults=result[1:],
+                                              connection=self.dbconn)
             return obj
 
     def _cleanup(self):
@@ -761,7 +784,9 @@ class Transaction(object):
         self._obsolete = False
 
     def assertActive(self):
-        assert not self._obsolete, "This transaction has already gone through ROLLBACK; begin another transaction"
+        assert not self._obsolete, \
+            "This transaction has already gone through ROLLBACK; " \
+            "begin another transaction"
 
     def query(self, s):
         self.assertActive()
@@ -795,7 +820,8 @@ class Transaction(object):
         if not cls in self._deletedCache:
             self._deletedCache[cls] = []
         self._deletedCache[cls].append(inst.id)
-        meth = new.instancemethod(self._dbConnection._SO_delete.im_func, self, self.__class__)
+        meth = new.instancemethod(self._dbConnection._SO_delete.im_func,
+                                  self, self.__class__)
         return meth(inst)
 
     def commit(self, close=False):
@@ -805,7 +831,8 @@ class Transaction(object):
         if self._dbConnection.debug:
             self._dbConnection.printDebug(self._connection, '', 'COMMIT')
         self._connection.commit()
-        subCaches = [(sub[0], sub[1].allIDs()) for sub in self.cache.allSubCachesByClassNames().items()]
+        subCaches = [(sub[0], sub[1].allIDs())
+                     for sub in self.cache.allSubCachesByClassNames().items()]
         subCaches.extend([(x[0], x[1]) for x in self._deletedCache.items()])
         for cls, ids in subCaches:
             for id in ids:
@@ -862,7 +889,9 @@ class Transaction(object):
     def begin(self):
         # @@: Should we do this, or should begin() be a no-op when we're
         # not already obsolete?
-        assert self._obsolete, "You cannot begin a new transaction session without rolling back this one"
+        assert self._obsolete, \
+            "You cannot begin a new transaction session " \
+            "without rolling back this one"
         self._obsolete = False
         self._connection = self._dbConnection.getConnection()
         self._dbConnection._setAutoCommit(self._connection, 0)
@@ -873,7 +902,10 @@ class Transaction(object):
         self.rollback()
 
     def close(self):
-        raise TypeError('You cannot just close transaction - you should either call rollback(), commit() or commit(close=True) to close the underlying connection.')
+        raise TypeError('You cannot just close transaction - '
+                        'you should either call rollback(), commit() '
+                        'or commit(close=True) '
+                        'to close the underlying connection.')
 
 class ConnectionHub(object):
 
@@ -986,15 +1018,18 @@ class ConnectionURIOpener(object):
         for uriScheme in schemes:
             assert not uriScheme in self.schemeBuilders \
                    or self.schemeBuilders[uriScheme] is builder, \
-                   "A driver has already been registered for the URI scheme %s" % uriScheme
+                   "A driver has already been registered " \
+                   "for the URI scheme %s" % uriScheme
             self.schemeBuilders[uriScheme] = builder
 
     def registerConnectionInstance(self, inst):
         if inst.name:
             assert not inst.name in self.instanceNames \
                    or self.instanceNames[inst.name] is cls, \
-                   "A instance has already been registered with the name %s" % inst.name
-            assert inst.name.find(':') == -1, "You cannot include ':' in your class names (%r)" % cls.name
+                   "A instance has already been registered " \
+                   "with the name %s" % inst.name
+            assert inst.name.find(':') == -1, \
+                "You cannot include ':' in your class names (%r)" % cls.name
             self.instanceNames[inst.name] = inst
 
     def connectionForURI(self, uri, oldUri=False, **args):

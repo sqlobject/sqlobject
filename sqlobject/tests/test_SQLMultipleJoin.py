@@ -50,7 +50,8 @@ def test_multiple_join_transaction():
     trans = Race._connection.transaction()
     try:
         namek = Race(name='namekuseijin', connection=trans)
-        RFighter(name='Gokou (Kakaruto)', race=namek, power=10, connection=trans)
+        RFighter(name='Gokou (Kakaruto)', race=namek, power=10,
+                 connection=trans)
         assert namek.fightersAsSResult.count() == 1
         assert namek.fightersAsSResult[0]._connection == trans
     finally:

@@ -39,13 +39,16 @@ class SQLiteConnection(DBAPI):
                         import sqlite
                         self.using_sqlite2 = False
                 else:
-                    raise ValueError('Unknown SQLite driver "%s", expected pysqlite2, sqlite3 or sqlite' % driver)
+                    raise ValueError(
+                        'Unknown SQLite driver "%s", '
+                        'expected pysqlite2, sqlite3 or sqlite' % driver)
             except ImportError:
                 pass
             else:
                 break
         else:
-            raise ImportError('Cannot find an SQLite driver, tried %s' % drivers)
+            raise ImportError(
+                'Cannot find an SQLite driver, tried %s' % drivers)
         if self.using_sqlite2:
             sqlite.encode = base64.encodestring
             sqlite.decode = base64.decodestring
@@ -149,7 +152,8 @@ class SQLiteConnection(DBAPI):
         if self.debug:
             s = 'ACQUIRE'
             if self._pool is not None:
-                s += ' pool=[%s]' % ', '.join([str(self._connectionNumbers[id(v)]) for v in self._pool])
+                s += ' pool=[%s]' % ', '.join(
+                    [str(self._connectionNumbers[id(v)]) for v in self._pool])
             self.printDebug(conn, s, 'Pool')
         return conn
 
@@ -285,7 +289,9 @@ class SQLiteConnection(DBAPI):
         return 'INT NOT NULL'
 
     def tableExists(self, tableName):
-        result = self.queryOne("SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name = '%s'" % tableName)
+        result = self.queryOne(
+            "SELECT tbl_name FROM sqlite_master "
+            "WHERE type='table' AND tbl_name = '%s'" % tableName)
         # turn it into a boolean:
         return not not result
 
@@ -309,7 +315,8 @@ class SQLiteConnection(DBAPI):
                 for col in sqlmeta.columnList if col.name != column.name]
         cols = ",\n".join(["    %s" % c for c in cols])
         self.query('CREATE TABLE %s (\n%s\n)' % (sqlmeta.table, cols))
-        all_columns = ', '.join([sqlmeta.idName] + [col.dbName for col in sqlmeta.columnList])
+        all_columns = ', '.join(
+            [sqlmeta.idName] + [col.dbName for col in sqlmeta.columnList])
         self.query('INSERT INTO %s (%s) SELECT %s FROM %s' % (
             sqlmeta.table, all_columns, all_columns, new_name))
         self.query('DROP TABLE %s' % new_name)
@@ -340,10 +347,13 @@ class SQLiteConnection(DBAPI):
         return results
 
     def _columnsFromSchemaParse(self, tableName, soClass):
-        colData = self.queryOne("SELECT sql FROM sqlite_master WHERE type='table' AND name='%s'"
-                                % tableName)
+        colData = self.queryOne(
+            "SELECT sql FROM sqlite_master WHERE type='table' AND name='%s'" %
+            tableName)
         if not colData:
-            raise ValueError('The table %s was not found in the database. Load failed.' % tableName)
+            raise ValueError(
+                'The table %s was not found in the database. Load failed.' %
+                tableName)
         colData = colData[0].split('(', 1)[1].strip()[:-2]
         while True:
             start = colData.find('(')
@@ -372,7 +382,9 @@ class SQLiteConnection(DBAPI):
             kw['dbName'] = field
             import re
             nullble = re.search(r'(\b\S*)\sNULL', index_info)
-            default = re.search(r"DEFAULT\s((?:\d[\dA-FX.]*)|(?:'[^']*')|(?:#[^#]*#))", index_info)
+            default = re.search(
+                r"DEFAULT\s((?:\d[\dA-FX.]*)|(?:'[^']*')|(?:#[^#]*#))",
+                index_info)
             kw['notNone'] = nullble and nullble.group(1) == 'NOT'
             kw['default'] = default and default.group(1)
             # @@ skip key...

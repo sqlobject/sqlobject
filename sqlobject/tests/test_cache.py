@@ -49,4 +49,5 @@ def test_cache_cull():
     s = CacheTest(name='test_cache_create')
     for count in range(s._connection.cache.caches['CacheTest'].cullFrequency):
         CacheTest(name='test_cache_create %d' % count)
-    assert len(s._connection.cache.caches['CacheTest'].cache) < s._connection.cache.caches['CacheTest'].cullFrequency
+    assert len(s._connection.cache.caches['CacheTest'].cache) < \
+        s._connection.cache.caches['CacheTest'].cullFrequency

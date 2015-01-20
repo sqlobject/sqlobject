@@ -41,12 +41,14 @@ def test_creation_fail2():
     """
     setupClass([DIManager, DIEmployee, DIPerson])
 
-    kwargs = {'firstName': 'John', 'lastName': 'Doe', 'position': 'Project Manager'}
+    kwargs = {'firstName': 'John', 'lastName': 'Doe',
+              'position': 'Project Manager'}
     DIManager(**kwargs)
     persons = DIEmployee.select(DIPerson.q.firstName == 'John')
     assert persons.count() == 1
 
-    kwargs = {'firstName': 'John', 'lastName': 'Doe II', 'position': 'Project Manager'}
+    kwargs = {'firstName': 'John', 'lastName': 'Doe II',
+              'position': 'Project Manager'}
     raises(Exception, DIManager, **kwargs)
     persons = DIPerson.select(DIPerson.q.firstName == 'John')
     assert persons.count() == 1
@@ -54,11 +56,13 @@ def test_creation_fail2():
     if not supports('transactions'):
         skip("Transactions aren't supported")
     transaction = DIPerson._connection.transaction()
-    kwargs = {'firstName': 'John', 'lastName': 'Doe III', 'position': 'Project Manager'}
+    kwargs = {'firstName': 'John', 'lastName': 'Doe III',
+              'position': 'Project Manager'}
     raises(Exception, DIManager, connection=transaction, **kwargs)
     transaction.rollback()
     transaction.begin()
-    persons = DIPerson.select(DIPerson.q.firstName == 'John', connection=transaction)
+    persons = DIPerson.select(DIPerson.q.firstName == 'John',
+                              connection=transaction)
     assert persons.count() == 1
 
 def test_deep_inheritance():

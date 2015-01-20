@@ -20,7 +20,8 @@ class InheritedSalesManIndexGet(InheritedEmployeeIndexGet):
 
 
 def test_index_get_1():
-    setupClass([InheritedPersonIndexGet, InheritedEmployeeIndexGet, InheritedSalesManIndexGet])
+    setupClass([InheritedPersonIndexGet, InheritedEmployeeIndexGet,
+                InheritedSalesManIndexGet])
 
     InheritedSalesManIndexGet(first_name='Michael', last_name='Pallin', age=65,
                               security_number=2304, experience=2, skill=10)

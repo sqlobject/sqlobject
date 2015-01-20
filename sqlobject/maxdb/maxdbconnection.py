@@ -121,7 +121,9 @@ class MaxdbConnection(DBAPI):
         idName = soInstance.sqlmeta.idName
         c = conn.cursor()
         if id is None:
-            c.execute('SELECT %s.NEXTVAL FROM DUAL' % (self.createSequenceName(table)))
+            c.execute(
+                'SELECT %s.NEXTVAL FROM DUAL' % (
+                    self.createSequenceName(table)))
             id = c.fetchone()[0]
         names = [idName] + names
         values = [id] + values
@@ -151,15 +153,17 @@ class MaxdbConnection(DBAPI):
         return cls.sqlAddLimit(query, limit)
 
     def createTable(self, soClass):
-        # we create the table in a transaction because the addition of the
-        # table and the sequence must be atomic
+        # We create the table in a transaction because the addition of the
+        # table and the sequence must be atomic.
 
-        # i tried to use the transaction class but i get a recursion limit error
+        # I tried to use the transaction class
+        # but I get a recursion limit error.
         # t=self.transaction()
-        # t.query('CREATE TABLE %s (\n%s\n)' % \
+        # t.query('CREATE TABLE %s (\n%s\n)' %
         #            (soClass.sqlmeta.table, self.createColumns(soClass)))
         #
-        # t.query("CREATE SEQUENCE %s" % self.createSequenceName(soClass.sqlmeta.table))
+        # t.query("CREATE SEQUENCE %s" %
+        #         self.createSequenceName(soClass.sqlmeta.table))
         # t.commit()
         # so use transaction when the problem will be solved
         self.query('CREATE TABLE %s (\n%s\n)' % \
@@ -182,9 +186,10 @@ class MaxdbConnection(DBAPI):
         return index.maxdbCreateIndexSQL(soClass)
 
     def dropTable(self, tableName, cascade=False):
-        # we drop the table in a transaction because the removal of the
-        # table and the sequence must be atomic
-        # i tried to use the transaction class but i get a recursion limit error
+        # We drop the table in a transaction because the removal of the
+        # table and the sequence must be atomic.
+        # I tried to use the transaction class
+        # but I get a recursion limit error.
         # try:
         #     t=self.transaction()
         #     t.query("DROP TABLE %s" % tableName)
@@ -200,7 +205,9 @@ class MaxdbConnection(DBAPI):
         return 'INT NOT NULL'
 
     def tableExists(self, tableName):
-        for (table,) in self.queryAll("SELECT OBJECT_NAME FROM ALL_OBJECTS WHERE OBJECT_TYPE='TABLE'"):
+        for (table,) in self.queryAll(
+                "SELECT OBJECT_NAME FROM ALL_OBJECTS "
+                "WHERE OBJECT_TYPE='TABLE'"):
             if table.lower() == tableName.lower():
                 return True
         return False
@@ -211,7 +218,8 @@ class MaxdbConnection(DBAPI):
                     column.maxdbCreateSQL()))
 
     def delColumn(self, sqlmeta, column):
-        self.query('ALTER TABLE %s DROP COLUMN %s' % (sqlmeta.table, column.dbName))
+        self.query('ALTER TABLE %s DROP COLUMN %s' % (sqlmeta.table,
+                                                      column.dbName))
 
     GET_COLUMNS = """
     SELECT COLUMN_NAME, NULLABLE, DATA_DEFAULT, DATA_TYPE,
@@ -251,7 +259,8 @@ class MaxdbConnection(DBAPI):
         for (field, nullAllowed, default, data_type, data_len,
              data_scale) in colData:
             # id is defined as primary key --> ok
-            # We let sqlobject raise error if the 'id' is used for another column
+            # We let sqlobject raise error if the 'id' is used
+            # for another column.
             field_name = field.lower()
             if (field_name == soClass.sqlmeta.idName) and pkmap[field_name]:
                 continue

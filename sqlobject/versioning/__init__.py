@@ -12,7 +12,9 @@ class Version(SQLObject):
         self.masterClass.get(self.masterID).set(**values)
 
     def nextVersion(self):
-        version = self.select(AND(self.q.masterID == self.masterID, self.q.id > self.id), orderBy=self.q.id)
+        version = self.select(
+            AND(self.q.masterID == self.masterID, self.q.id > self.id),
+            orderBy=self.q.id)
         if version.count():
             return version[0]
         else:
@@ -84,7 +86,8 @@ class Versioning(object):
                                  attrs)
 
         if  '_connection' in self.soClass.__dict__:
-            self.versionClass._connection = self.soClass.__dict__['_connection']
+            self.versionClass._connection = \
+                self.soClass.__dict__['_connection']
 
         events.listen(self.createTable,
                       soClass, events.CreateTableSignal)

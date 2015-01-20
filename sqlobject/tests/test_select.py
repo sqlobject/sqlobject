@@ -74,7 +74,8 @@ def test_06_contains():
     setupIter()
     assert len(list(IterTest.select(IterTest.q.name.startswith('a')))) == 1
     assert len(list(IterTest.select(IterTest.q.name.contains('a')))) == 1
-    assert len(list(IterTest.select(IterTest.q.name.contains(func.lower('A'))))) == 1
+    assert len(list(IterTest.select(
+        IterTest.q.name.contains(func.lower('A'))))) == 1
     assert len(list(IterTest.select(IterTest.q.name.contains("a'b")))) == 0
     assert len(list(IterTest.select(IterTest.q.name.endswith('a')))) == 1
 

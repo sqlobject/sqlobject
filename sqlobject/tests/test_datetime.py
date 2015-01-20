@@ -43,7 +43,10 @@ def test_microseconds():
     connection = getConnection()
     if hasattr(connection, 'can_use_microseconds') and \
             not connection.can_use_microseconds():
-        py.test.skip("The database doesn't support microseconds; microseconds are supported by MariaDB since version 5.3.0 and by MySQL since version 5.6.4.")
+        py.test.skip(
+            "The database doesn't support microseconds; "
+            "microseconds are supported by MariaDB since version 5.3.0 "
+            "and by MySQL since version 5.6.4.")
 
     setupClass(DateTime1)
     _now = datetime.now()
@@ -71,7 +74,8 @@ if mxdatetime_available:
     def test_mxDateTime():
         setupClass(DateTime2)
         _now = now()
-        dt2 = DateTime2(col1=_now, col2=_now, col3=Time(_now.hour, _now.minute, _now.second))
+        dt2 = DateTime2(col1=_now, col2=_now,
+                        col3=Time(_now.hour, _now.minute, _now.second))
 
         assert isinstance(dt2.col1, col.DateTimeType)
         assert dt2.col1.year == _now.year

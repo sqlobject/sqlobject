@@ -135,7 +135,8 @@ def standard_parser(connection=True, simulate=True,
                           metavar='URI',
                           dest='connection_uri')
     parser.add_option('-f', '--config-file',
-                      help="The Paste config file that contains the database URI (in the database key)",
+                      help="The Paste config file "
+                      "that contains the database URI (in the database key)",
                       metavar="FILE",
                       dest="config_file")
     if find_modules:
@@ -159,12 +160,14 @@ def standard_parser(connection=True, simulate=True,
                           default=[])
     if interactive:
         parser.add_option('-i', '--interactive',
-                          help="Ask before doing anything (use twice to be more careful)",
+                          help="Ask before doing anything "
+                          "(use twice to be more careful)",
                           action="count",
                           dest="interactive",
                           default=0)
     parser.add_option('--egg',
-                      help="Select modules from the given Egg, using sqlobject.txt",
+                      help="Select modules from the given Egg, "
+                      "using sqlobject.txt",
                       action="append",
                       metavar="EGG_SPEC",
                       dest="eggs",
@@ -350,15 +353,18 @@ class Command(object):
         if require_some and not all:
             print('No classes found!')
             if self.options.modules:
-                print('Looked in modules: %s' % ', '.join(self.options.modules))
+                print('Looked in modules: %s' %
+                      ', '.join(self.options.modules))
             else:
                 print('No modules specified')
             if self.options.packages:
-                print('Looked in packages: %s' % ', '.join(self.options.packages))
+                print('Looked in packages: %s' %
+                      ', '.join(self.options.packages))
             else:
                 print('No packages specified')
             if self.options.class_matchers:
-                print('Matching class pattern: %s' % self.options.class_matches)
+                print('Matching class pattern: %s' %
+                      self.options.class_matches)
             if self.options.eggs:
                 print('Looked in eggs: %s' % ', '.join(self.options.eggs))
             else:
@@ -455,8 +461,9 @@ class Command(object):
         def find_classes_in_file(arg, dir_name, filenames):
             if dir_name.startswith('.svn'):
                 return
-            filenames = filter(lambda fname: fname.endswith('.py') and fname != '__init__.py',
-                               filenames)
+            filenames = filter(
+                lambda fname: fname.endswith('.py') and fname != '__init__.py',
+                filenames)
             for fname in filenames:
                 module_name = os.path.join(dir_name, fname)
                 module_name = module_name[module_name.find(package_name):]
@@ -465,11 +472,13 @@ class Command(object):
                     module = moduleloader.load_module(module_name)
                 except ImportError as err:
                     if self.options.verbose:
-                        print('Could not import module "%s". Error was : "%s"' % (module_name, err))
+                        print('Could not import module "%s". '
+                              'Error was : "%s"' % (module_name, err))
                     continue
                 except Exception as exc:
                     if self.options.verbose:
-                        print('Unknown exception while processing module "%s" : "%s"' % (module_name, exc))
+                        print('Unknown exception while processing module '
+                              '"%s" : "%s"' % (module_name, exc))
                     continue
                 classes = self.classes_from_module(module)
                 all.extend(classes)
@@ -514,7 +523,8 @@ class Command(object):
             name, value = line.split('=', 1)
             name = name.strip().lower()
             if name in result:
-                print('Warning: %s appears more than once in sqlobject.txt' % name)
+                print('Warning: %s appears more than once '
+                      'in sqlobject.txt' % name)
             result[name.strip().lower()] = value.strip()
         return dist, result
 
@@ -659,16 +669,20 @@ class CommandCreate(Command):
                 if self.options.interactive:
                     if self.ask('Create %s' % soClass.__name__):
                         created += 1
-                        tableConstraints = soClass.createTable(applyConstraints=False)
+                        tableConstraints = soClass.createTable(
+                            applyConstraints=False)
                         if tableConstraints:
-                            constraints[soClass._connection].append(tableConstraints)
+                            constraints[soClass._connection].append(
+                                tableConstraints)
                     else:
                         print('Cancelled')
                 else:
                     created += 1
-                    tableConstraints = soClass.createTable(applyConstraints=False)
+                    tableConstraints = soClass.createTable(
+                        applyConstraints=False)
                     if tableConstraints:
-                        constraints[soClass._connection].append(tableConstraints)
+                        constraints[soClass._connection].append(
+                            tableConstraints)
         for connection in constraints.keys():
             if v >= 2:
                 print('Creating constraints')
@@ -825,7 +839,8 @@ class CommandExecute(Command):
 
     parser = standard_parser(find_modules=False)
     parser.add_option('--stdin',
-                      help="Read SQL from stdin (normally takes SQL from the command line)",
+                      help="Read SQL from stdin "
+                      "(normally takes SQL from the command line)",
                       dest="use_stdin",
                       action="store_true")
 
@@ -835,7 +850,8 @@ class CommandExecute(Command):
         args = self.args
         if self.options.use_stdin:
             if self.options.verbose:
-                print("Reading additional SQL from stdin (Ctrl-D or Ctrl-Z to finish)...")
+                print("Reading additional SQL from stdin "
+                      "(Ctrl-D or Ctrl-Z to finish)...")
             args.append(sys.stdin.read())
         self.conn = self.connection().getConnection()
         self.cursor = self.conn.cursor()
@@ -861,7 +877,8 @@ class CommandExecute(Command):
             else:
                 print("%i rows accessed" % self.cursor.rowcount)
         if desc:
-            for name, type_code, display_size, internal_size, precision, scale, null_ok in desc:
+            for (name, type_code, display_size, internal_size,
+                    precision, scale, null_ok) in desc:
                 sys.stdout.write("%s\t" % name)
             sys.stdout.write("\n")
         for row in rows:
@@ -1074,7 +1091,8 @@ class CommandRecord(Command):
         if base is None:
             base = CONFIG.get('sqlobject_history_dir', '.')
         if not os.path.exists(base):
-            print('Creating history directory %s' % self.shorten_filename(base))
+            print('Creating history directory %s' %
+                  self.shorten_filename(base))
             if not self.options.simulate:
                 os.makedirs(base)
         return base
@@ -1144,7 +1162,8 @@ class CommandUpgrade(CommandRecord):
 
     parser = standard_parser(find_modules=False)
     parser.add_option('--upgrade-to',
-                      help="Upgrade to the given version (default: newest version)",
+                      help="Upgrade to the given version "
+                      "(default: newest version)",
                       dest="upgrade_to",
                       metavar="VERSION")
     parser.add_option('--output-dir',

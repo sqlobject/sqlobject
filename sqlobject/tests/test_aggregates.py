@@ -23,8 +23,10 @@ def test_integer():
     assert IntAccumulator.select().max(IntAccumulator.q.value) == 3
     assert IntAccumulator.select().sum(IntAccumulator.q.value) == 6
 
-    assert IntAccumulator.select(IntAccumulator.q.value > 1).max(IntAccumulator.q.value) == 3
-    assert IntAccumulator.select(IntAccumulator.q.value > 1).sum(IntAccumulator.q.value) == 5
+    assert IntAccumulator.select(IntAccumulator.q.value > 1).\
+        max(IntAccumulator.q.value) == 3
+    assert IntAccumulator.select(IntAccumulator.q.value > 1).\
+        sum(IntAccumulator.q.value) == 5
 
 
 def floatcmp(f1, f2):
@@ -40,10 +42,14 @@ def test_float():
     FloatAccumulator(value=2.4)
     FloatAccumulator(value=3.8)
 
-    assert floatcmp(FloatAccumulator.select().min(FloatAccumulator.q.value), 1.2) == 0
-    assert floatcmp(FloatAccumulator.select().avg(FloatAccumulator.q.value), 2.5) == 0
-    assert floatcmp(FloatAccumulator.select().max(FloatAccumulator.q.value), 3.8) == 0
-    assert floatcmp(FloatAccumulator.select().sum(FloatAccumulator.q.value), 7.4) == 0
+    assert floatcmp(
+        FloatAccumulator.select().min(FloatAccumulator.q.value), 1.2) == 0
+    assert floatcmp(
+        FloatAccumulator.select().avg(FloatAccumulator.q.value), 2.5) == 0
+    assert floatcmp(
+        FloatAccumulator.select().max(FloatAccumulator.q.value), 3.8) == 0
+    assert floatcmp(
+        FloatAccumulator.select().sum(FloatAccumulator.q.value), 7.4) == 0
 
 
 def test_many():

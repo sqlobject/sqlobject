@@ -34,8 +34,8 @@ class TestPeople:
             Phone(phone=p)
 
     def test_defaultOrder(self):
-        assert (list(Person.select('all')) ==
-                list(Person.select('all', orderBy=Person.sqlmeta.defaultOrder)))
+        assert list(Person.select('all')) == list(
+            Person.select('all', orderBy=Person.sqlmeta.defaultOrder))
 
     def test_dynamicColumn(self):
         nickname = StringCol('nickname', length=10)
@@ -66,10 +66,14 @@ class TestPeople:
             expire = StringCol()
 
     def test_collidingName(self):
-        raises(AssertionError, Person.sqlmeta.addColumn, StringCol(name="name"))
-        raises(AssertionError, Person.sqlmeta.addColumn, StringCol(name="_init"))
-        raises(AssertionError, Person.sqlmeta.addColumn, StringCol(name="expire"))
-        raises(AssertionError, Person.sqlmeta.addColumn, StringCol(name="set"))
+        raises(AssertionError, Person.sqlmeta.addColumn,
+            StringCol(name="name"))
+        raises(AssertionError, Person.sqlmeta.addColumn,
+            StringCol(name="_init"))
+        raises(AssertionError, Person.sqlmeta.addColumn,
+            StringCol(name="expire"))
+        raises(AssertionError, Person.sqlmeta.addColumn,
+            StringCol(name="set"))
         raises(AssertionError, self._test_collidingName)
 
 ########################################

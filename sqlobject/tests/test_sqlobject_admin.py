@@ -1,6 +1,5 @@
-"""
-These Tests are not enabled yet, but here are some working examples of using createSQL so far.
-"""
+# These tests are not enabled yet, but here are some working examples
+# of using createSQL so far.
 
 from sqlobject import *
 

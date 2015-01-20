@@ -55,7 +55,8 @@ def test_string_b():
     assert sqlrepr('A String\bAnother', 'postgres') == "E'A String\\bAnother'"
 
 def test_string_000():
-    assert sqlrepr('A String\000Another', 'postgres') == "E'A String\\0Another'"
+    assert sqlrepr('A String\000Another', 'postgres') == \
+        "E'A String\\0Another'"
 
 def test_string_():
     assert sqlrepr('A String\tAnother', 'postgres') == "E'A String\\tAnother'"
@@ -74,10 +75,12 @@ def test_none():
     assert sqlrepr(None) == "NULL"
 
 def test_list():
-    assert sqlrepr(['one', 'two', 'three'], 'postgres') == "('one', 'two', 'three')"
+    assert sqlrepr(['one', 'two', 'three'], 'postgres') == \
+        "('one', 'two', 'three')"
 
 def test_tuple():
-    assert sqlrepr(('one', 'two', 'three'), 'postgres') == "('one', 'two', 'three')"
+    assert sqlrepr(('one', 'two', 'three'), 'postgres') == \
+        "('one', 'two', 'three')"
 
 def test_bool():
     assert sqlrepr(True, 'postgres') == "'t'"
@@ -87,11 +90,13 @@ def test_bool():
 
 def test_datetime():
     from datetime import datetime, date, time
-    assert sqlrepr(datetime(2005, 7, 14, 13, 31, 2)) == "'2005-07-14 13:31:02.000000'"
+    assert sqlrepr(datetime(2005, 7, 14, 13, 31, 2)) == \
+        "'2005-07-14 13:31:02.000000'"
     assert sqlrepr(date(2005, 7, 14)) == "'2005-07-14'"
     assert sqlrepr(time(13, 31, 2)) == "'13:31:02.000000'"
     # now dates before 1900
-    assert sqlrepr(datetime(1428, 7, 14, 13, 31, 2)) == "'1428-07-14 13:31:02.000000'"
+    assert sqlrepr(datetime(1428, 7, 14, 13, 31, 2)) == \
+        "'1428-07-14 13:31:02.000000'"
     assert sqlrepr(date(1428, 7, 14)) == "'1428-07-14'"
 
 def test_instance():
@@ -121,32 +126,41 @@ def test_insert():
 
     # Multiple columns, no keyword arguments.
     instance2 = Insert('test', [('1st', '2nd', '3th', '4th')])
-    assert sqlrepr(instance2, 'postgres') == "INSERT INTO test VALUES ('1st', '2nd', '3th', '4th')"
+    assert sqlrepr(instance2, 'postgres') == \
+        "INSERT INTO test VALUES ('1st', '2nd', '3th', '4th')"
 
     # Multiple rows, multiple columns, "valueList" keyword argument.
-    instance3 = Insert('test', valueList=[('a1', 'b1'), ('a2', 'b2'), ('a3', 'b3')])
-    assert sqlrepr(instance3, 'sqlite') == "INSERT INTO test VALUES ('a1', 'b1'), ('a2', 'b2'), ('a3', 'b3')"
+    instance3 = Insert('test',
+                       valueList=[('a1', 'b1'), ('a2', 'b2'), ('a3', 'b3')])
+    assert sqlrepr(instance3, 'sqlite') == \
+        "INSERT INTO test VALUES ('a1', 'b1'), ('a2', 'b2'), ('a3', 'b3')"
 
     # Multiple columns, "values" keyword argument.
     instance4 = Insert('test', values=('v1', 'v2', 'v3'))
-    assert sqlrepr(instance4, 'mysql') == "INSERT INTO test VALUES ('v1', 'v2', 'v3')"
+    assert sqlrepr(instance4, 'mysql') == \
+        "INSERT INTO test VALUES ('v1', 'v2', 'v3')"
 
     # Single column, "valueList" keyword argument.
     instance5 = Insert('test', valueList=[('v1',)])
     assert sqlrepr(instance5, 'mysql') == "INSERT INTO test VALUES ('v1')"
 
     # Multiple rows, Multiple columns, template.
-    instance6 = Insert('test', valueList=[('a1', 'b1'), ('a2', 'b2')], template=['col1', 'col2'])
-    assert sqlrepr(instance6, 'mysql') == "INSERT INTO test (col1, col2) VALUES ('a1', 'b1'), ('a2', 'b2')"
+    instance6 = Insert('test',
+                       valueList=[('a1', 'b1'), ('a2', 'b2')],
+                       template=['col1', 'col2'])
+    assert sqlrepr(instance6, 'mysql') == \
+        "INSERT INTO test (col1, col2) VALUES ('a1', 'b1'), ('a2', 'b2')"
 
     # Multiple columns, implicit template (dictionary value).
     instance7 = Insert('test', valueList=[{'col1': 'a1', 'col2': 'b1'}])
-    assert sqlrepr(instance7, 'mysql') == "INSERT INTO test (col1, col2) VALUES ('a1', 'b1')"
+    assert sqlrepr(instance7, 'mysql') == \
+        "INSERT INTO test (col1, col2) VALUES ('a1', 'b1')"
 
     # Multiple rows, Multiple columns, implicit template.
     instance8 = Insert('test', valueList=[{'col1': 'a1', 'col2': 'b1'},
                                           {'col1': 'a2', 'col2': 'b2'}])
-    assert sqlrepr(instance8, 'mysql') == "INSERT INTO test (col1, col2) VALUES ('a1', 'b1'), ('a2', 'b2')"
+    assert sqlrepr(instance8, 'mysql') == \
+        "INSERT INTO test (col1, col2) VALUES ('a1', 'b1'), ('a2', 'b2')"
 
 def test_update():
     instance = Update('test', {'test': 'test'})
