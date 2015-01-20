@@ -25,7 +25,7 @@ def setup_module(mod):
     mod.adds = inserts(SBAddress, [('London', mod.ppl[0].id),
                                    ('Chicago', mod.ppl[1].id),
                                    ('Abu Dhabi', mod.ppl[1].id)],
-                                  'city personID')
+                       'city personID')
     mod.ppl[0].addSharedAddress(mod.adds[0])
     mod.ppl[0].addSharedAddress(mod.adds[1])
     mod.ppl[1].addSharedAddress(mod.adds[0])
