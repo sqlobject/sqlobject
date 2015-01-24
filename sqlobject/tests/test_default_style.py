@@ -41,6 +41,7 @@ def do_col_test(DefaultStyleTest, style, dbnames):
             if col.name in DefaultStyleTest.sqlmeta.columns:
                 DefaultStyleTest.sqlmeta.delColumn(col)
 
+
 def do_fkey_test(DefaultStyleTest, style, dbname):
     DefaultStyleTest.sqlmeta.style = style()
     DefaultStyleTest.sqlmeta.addColumn(fkey)
@@ -50,8 +51,10 @@ def do_fkey_test(DefaultStyleTest, style, dbname):
     finally:
         DefaultStyleTest.sqlmeta.delColumn(fkey)
 
+
 class DefaultStyleTest(SQLObject):
     pass
+
 
 def test_default_styles():
     make_columns()

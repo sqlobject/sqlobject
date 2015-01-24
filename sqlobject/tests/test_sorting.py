@@ -1,6 +1,7 @@
 from sqlobject import *
 from sqlobject.tests.dbtest import *
 
+
 class Names(SQLObject):
 
     class sqlmeta(sqlmeta):
@@ -18,14 +19,17 @@ def setupNames():
                     ('zoe', 'robbins')],
             schema='firstName lastName')
 
+
 def nameList(names):
     result = []
     for name in names:
         result.append('%s %s' % (name.firstName, name.lastName))
     return result
 
+
 def firstList(names):
     return [n.firstName for n in names]
+
 
 def test_defaultOrder():
     setupNames()
@@ -34,6 +38,7 @@ def test_defaultOrder():
          'tim jackson', 'joe robbins',
          'zoe robbins']
 
+
 def test_otherOrder():
     setupNames()
     assert nameList(Names.select().orderBy(['firstName', 'lastName'])) == \
@@ -41,12 +46,14 @@ def test_otherOrder():
          'joe robbins', 'tim jackson',
          'zoe robbins']
 
+
 def test_untranslatedColumnOrder():
     setupNames()
     assert nameList(Names.select().orderBy(['first_name', 'last_name'])) == \
         ['aj baker', 'joe baker',
          'joe robbins', 'tim jackson',
          'zoe robbins']
+
 
 def test_singleUntranslatedColumnOrder():
     setupNames()

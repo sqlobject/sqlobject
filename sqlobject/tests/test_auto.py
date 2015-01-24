@@ -6,9 +6,11 @@ from sqlobject.tests.dbtest import *
 from sqlobject import classregistry
 from py.test import raises
 
+
 ########################################
 # Dynamic column tests
 ########################################
+
 
 class Person(SQLObject):
 
@@ -16,11 +18,13 @@ class Person(SQLObject):
         defaultOrder = 'name'
     name = StringCol(length=100, dbName='name_col')
 
+
 class Phone(SQLObject):
 
     class sqlmeta:
         defaultOrder = 'phone'
     phone = StringCol(length=12)
+
 
 class TestPeople:
 
@@ -76,9 +80,11 @@ class TestPeople:
             StringCol(name="set"))
         raises(AssertionError, self._test_collidingName)
 
+
 ########################################
 # Auto class generation
 ########################################
+
 
 class TestAuto:
 

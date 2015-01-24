@@ -6,6 +6,7 @@ from sqlobject.dbconnection import DBAPI
 
 kinterbasdb = None
 
+
 class FirebirdConnection(DBAPI):
 
     supportTransactions = False

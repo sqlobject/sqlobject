@@ -1,8 +1,10 @@
 from sqlobject import *
 from sqlobject.tests.dbtest import *
 
+
 class TestComparison(SQLObject):
     pass
+
 
 def test_eq():
     setupClass(TestComparison, force=True)

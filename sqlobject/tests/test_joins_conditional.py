@@ -2,28 +2,36 @@ from sqlobject import *
 from sqlobject.sqlbuilder import *
 from sqlobject.tests.dbtest import *
 
+
 ########################################
 # Condiotional joins
 ########################################
 
+
 class TestJoin1(SQLObject):
     col1 = StringCol()
+
 
 class TestJoin2(SQLObject):
     col2 = StringCol()
 
+
 class TestJoin3(SQLObject):
     col3 = StringCol()
+
 
 class TestJoin4(SQLObject):
     col4 = StringCol()
 
+
 class TestJoin5(SQLObject):
     col5 = StringCol()
+
 
 def setup():
     setupClass(TestJoin1)
     setupClass(TestJoin2)
+
 
 def test_1syntax():
     setup()
@@ -34,6 +42,7 @@ def test_1syntax():
     join = LEFTJOINOn("table1", "table2", "tabl1.col1 = table2.col2")
     assert getConnection().sqlrepr(join) == \
         "table1 LEFT JOIN table2 ON tabl1.col1 = table2.col2"
+
 
 def test_2select_syntax():
     setup()
@@ -47,6 +56,7 @@ def test_2select_syntax():
         "FROM test_join1 " \
         "LEFT JOIN test_join2 " \
         "ON ((test_join1.col1) = (test_join2.col2)) WHERE 1 = 1"
+
 
 def test_3perform_join():
     setup()
@@ -62,6 +72,7 @@ def test_3perform_join():
     )
     assert select.count() == 3
 
+
 def test_4join_3tables_syntax():
     setup()
     setupClass(TestJoin3)
@@ -72,6 +83,7 @@ def test_4join_3tables_syntax():
     assert str(select) == \
         "SELECT test_join1.id, test_join1.col1 " \
         "FROM test_join1, test_join2 LEFT JOIN test_join3 WHERE 1 = 1"
+
 
 def test_5join_3tables_syntax2():
     setup()
@@ -93,6 +105,7 @@ def test_5join_3tables_syntax2():
         "FROM test_join1 " \
         "LEFT JOIN test_join2, test_join1 LEFT JOIN test_join3 WHERE 1 = 1"
 
+
 def test_6join_using():
     setup()
     setupClass(TestJoin3)
@@ -104,6 +117,7 @@ def test_6join_using():
         "SELECT test_join1.id, test_join1.col1 " \
         "FROM test_join1 " \
         "LEFT JOIN test_join2 USING (test_join2.id) WHERE 1 = 1"
+
 
 def test_7join_on():
     setup()

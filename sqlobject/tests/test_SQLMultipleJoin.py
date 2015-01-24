@@ -2,18 +2,22 @@ import py.test
 from sqlobject import *
 from sqlobject.tests.dbtest import *
 
+
 class Race(SQLObject):
     name = StringCol()
     fightersAsList = MultipleJoin('RFighter', joinColumn="rf_id")
     fightersAsSResult = SQLMultipleJoin('RFighter', joinColumn="rf_id")
+
 
 class RFighter(SQLObject):
     name = StringCol()
     race = ForeignKey('Race', dbName="rf_id")
     power = IntCol()
 
+
 def createAllTables():
     setupClass([Race, RFighter])
+
 
 def test_1():
     createAllTables()
@@ -42,6 +46,7 @@ def test_1():
     assert trunks in hibrid.fightersAsSResult
     assert picollo not in hibrid.fightersAsSResult
     assert str(hibrid.fightersAsSResult.sum('power')) == '23'
+
 
 def test_multiple_join_transaction():
     if not supports('transactions'):

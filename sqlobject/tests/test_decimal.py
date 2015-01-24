@@ -2,19 +2,23 @@ from decimal import Decimal
 from sqlobject import *
 from sqlobject.tests.dbtest import *
 
+
 ########################################
 # Decimal columns
 ########################################
 
+
 if not supports('decimalColumn'):
     import py.test
     pytestmark = py.test.mark.skipif('True')
+
 
 class DecimalTable(SQLObject):
     name = UnicodeCol(length=255)
     col1 = DecimalCol(size=6, precision=4)
     col2 = DecimalStringCol(size=6, precision=4)
     col3 = DecimalStringCol(size=6, precision=4, quantize=True)
+
 
 def test_1_decimal():
     setupClass(DecimalTable)
@@ -34,6 +38,7 @@ def test_1_decimal():
         '10.01', d._SO_validatorState) == Decimal("10.01")
     assert DecimalTable.sqlmeta.columns['col3'].from_python(
         '10.01', d._SO_validatorState) == "10.0100"
+
 
 def test_2_decimal():
     setupClass(DecimalTable)

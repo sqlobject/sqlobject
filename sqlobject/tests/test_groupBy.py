@@ -2,13 +2,16 @@ from sqlobject import *
 from sqlobject.sqlbuilder import Select, func
 from sqlobject.tests.dbtest import *
 
+
 ########################################
 # groupBy
 ########################################
 
+
 class GroupbyTest(SQLObject):
     name = StringCol()
     value = IntCol()
+
 
 def test_groupBy():
     setupClass(GroupbyTest)
@@ -24,6 +27,7 @@ def test_groupBy():
     sql = connection.sqlrepr(select)
     rows = connection.queryAll(sql)
     assert list(rows) == [('a', 2), ('b', 1)]
+
 
 def test_groupBy_list():
     setupClass(GroupbyTest)

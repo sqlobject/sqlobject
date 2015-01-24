@@ -1,7 +1,9 @@
 import re
 
+
 __all__ = ["Style", "MixedCaseUnderscoreStyle", "DefaultStyle",
            "MixedCaseStyle"]
+
 
 class Style(object):
 
@@ -64,6 +66,7 @@ class Style(object):
     def tableReference(self, table):
         return table + "_id"
 
+
 class MixedCaseUnderscoreStyle(Style):
 
     """
@@ -93,6 +96,7 @@ class MixedCaseUnderscoreStyle(Style):
 
 DefaultStyle = MixedCaseUnderscoreStyle
 
+
 class MixedCaseStyle(Style):
 
     """
@@ -114,6 +118,7 @@ class MixedCaseStyle(Style):
 
 defaultStyle = DefaultStyle()
 
+
 def getStyle(soClass, dbConnection=None):
     if dbConnection is None:
         if hasattr(soClass, '_connection'):
@@ -125,10 +130,15 @@ def getStyle(soClass, dbConnection=None):
     else:
         return defaultStyle
 
+
 ############################################################
 # Text utilities
 ############################################################
+
+
 _mixedToUnderRE = re.compile(r'[A-Z]+')
+
+
 def mixedToUnder(s):
     if s.endswith('ID'):
         return mixedToUnder(s[:-2] + "_id")
@@ -137,6 +147,7 @@ def mixedToUnder(s):
         trans = trans[1:]
     return trans
 
+
 def mixedToUnderSub(match):
     m = match.group(0).lower()
     if len(m) > 1:
@@ -144,13 +155,18 @@ def mixedToUnderSub(match):
     else:
         return '_%s' % m
 
+
 def capword(s):
     return s[0].upper() + s[1:]
+
 
 def lowerword(s):
     return s[0].lower() + s[1:]
 
+
 _underToMixedRE = re.compile('_.')
+
+
 def underToMixed(name):
     if name.endswith('_id'):
         return underToMixed(name[:-3] + "ID")

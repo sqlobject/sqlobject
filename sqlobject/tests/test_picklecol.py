@@ -2,9 +2,11 @@ import py.test
 from sqlobject import *
 from sqlobject.tests.dbtest import *
 
+
 ########################################
 # Pickle columns
 ########################################
+
 
 class PickleData:
     pi = 3.14156
@@ -14,8 +16,10 @@ class PickleData:
             'The Ulimate Question of Life, the Universe and Everything'
         self.answer = 42
 
+
 class PickleContainer(SQLObject):
     pickledata = PickleCol(default=None, length=65535)
+
 
 def test_pickleCol():
     if not supports('blobData'):

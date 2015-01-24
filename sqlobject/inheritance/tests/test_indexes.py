@@ -9,10 +9,12 @@ class InheritedPersonIndexGet(InheritableSQLObject):
     age         = IntCol()
     pk          = DatabaseIndex(first_name, last_name, unique=True)
 
+
 class InheritedEmployeeIndexGet(InheritedPersonIndexGet):
     security_number = IntCol()
     experience      = IntCol()
     sec_index       = DatabaseIndex(security_number, unique=True)
+
 
 class InheritedSalesManIndexGet(InheritedEmployeeIndexGet):
     _inheritable = False

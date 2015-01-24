@@ -22,10 +22,12 @@ warnings.filterwarnings("ignore", "DB-API extension cursor.lastrowid used")
 
 _connections = {}
 
+
 def _closeConnection(ref):
     conn = ref()
     if conn is not None:
         conn.close()
+
 
 class ConsoleWriter:
     def __init__(self, connection, loglevel):
@@ -42,6 +44,7 @@ class ConsoleWriter:
                 text = repr(text)[2:-1]  # Remove u'...' from the repr
         logfile.write(text + '\n')
 
+
 class LogWriter:
     def __init__(self, connection, logger, loglevel):
         self.logger = logger
@@ -51,12 +54,14 @@ class LogWriter:
     def write(self, text):
         self.logmethod(text)
 
+
 def makeDebugWriter(connection, loggerName, loglevel):
     if not loggerName:
         return ConsoleWriter(connection, loglevel)
     import logging
     logger = logging.getLogger(loggerName)
     return LogWriter(connection, logger, loglevel)
+
 
 class Boolean(object):
     """A bool class that also understands some special string keywords
@@ -72,6 +77,7 @@ class Boolean(object):
             return Boolean._keywords[value.lower()]
         except (AttributeError, KeyError):
             return bool(value)
+
 
 class DBConnection:
 
@@ -261,6 +267,7 @@ class DBConnection:
         for item in cache_set.getAll():
             item.expire()
 
+
 class ConnWrapper(object):
 
     """
@@ -300,6 +307,7 @@ class ConnWrapper(object):
             return meth
         return ConnMethodWrapper(meth, self._connection)
 
+
 class ConnMethodWrapper(object):
 
     def __init__(self, method, connection):
@@ -316,6 +324,7 @@ class ConnMethodWrapper(object):
     def __repr__(self):
         return '<Wrapped %r with connection %r>' % (
             self._method, self._connection)
+
 
 class DBAPI(DBConnection):
 
@@ -726,6 +735,7 @@ class DBAPI(DBConnection):
         """
         raise NotImplementedError
 
+
 class Iteration(object):
 
     def __init__(self, dbconn, rawconn, select, keepConnection=False):
@@ -770,6 +780,7 @@ class Iteration(object):
 
     def __del__(self):
         self._cleanup()
+
 
 class Transaction(object):
 
@@ -907,6 +918,7 @@ class Transaction(object):
                         'or commit(close=True) '
                         'to close the underlying connection.')
 
+
 class ConnectionHub(object):
 
     """
@@ -1006,6 +1018,7 @@ class ConnectionHub(object):
     threadConnection = property(_get_threadConnection,
                                 _set_threadConnection,
                                 _del_threadConnection)
+
 
 class ConnectionURIOpener(object):
 

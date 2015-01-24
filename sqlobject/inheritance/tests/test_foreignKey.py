@@ -6,17 +6,21 @@ from sqlobject.inheritance import InheritableSQLObject
 class Note(SQLObject):
     text = StringCol()
 
+
 class PersonWithNotes(InheritableSQLObject):
     firstName = StringCol()
     lastName = StringCol()
     note = ForeignKey("Note", default=None)
 
+
 class Paper(SQLObject):
     content = StringCol()
+
 
 class EmployeeWithNotes(PersonWithNotes):
     _inheritable = False
     paper = ForeignKey("Paper", default=None)
+
 
 def test_foreignKey():
     setupClass([Note, PersonWithNotes, Paper, EmployeeWithNotes], force=True)
@@ -76,8 +80,10 @@ def test_foreignKey():
 class TestInheritableBase(InheritableSQLObject):
     pass
 
+
 class TestInheritableForeignKey(TestInheritableBase):
     base = ForeignKey("TestInheritableBase")
+
 
 def test_foreignKey2():
     setupClass([TestInheritableBase, TestInheritableForeignKey])

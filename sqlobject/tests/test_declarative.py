@@ -1,15 +1,18 @@
 from sqlobject.declarative import *
 
+
 class A1(Declarative):
 
     a = 1
     b = []
+
 
 class A2(A1):
 
     a = 5
 
 A3 = A2(b=5)
+
 
 def test_a_classes():
     assert A1.a == 1
@@ -20,6 +23,7 @@ def test_a_classes():
     assert A1.declarative_count < A2.declarative_count
     assert A2.singleton() is not A1.singleton()
     assert A3.singleton().b == A3.b
+
 
 class B1(Declarative):
 
@@ -47,6 +51,7 @@ class B1(Declarative):
 
     c = 1
 
+
 class B2(B1):
 
     g = 3
@@ -58,6 +63,7 @@ class B2(B1):
 B3 = B2(c=5, d=3)
 B4 = B3(d=5)
 B5 = B1(a=1)
+
 
 def test_b_classes():
     assert B1.attrs == ['c']

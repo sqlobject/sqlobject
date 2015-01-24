@@ -7,6 +7,7 @@ from sqlobject.main import sqlmeta, SQLObject, SelectResults, \
    makeProperties, unmakeProperties, getterName, setterName
 import iteration
 
+
 def tablesUsedSet(obj, db):
     if hasattr(obj, "tablesUsedSet"):
         return obj.tablesUsedSet(db)
@@ -94,6 +95,7 @@ class InheritableSelectResults(SelectResults):
                                self.clauseTables, inheritedTables=tables,
                                **self.ops)
         return clone.accumulateMany(skipInherited=True, *attributes)
+
 
 class InheritableSQLMeta(sqlmeta):
     @classmethod

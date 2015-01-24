@@ -2,9 +2,11 @@ from sqlobject import *
 from sqlobject.tests.dbtest import *
 from sqlobject.tests.dbtest import InstalledTestDatabase
 
+
 class TestComposerKey(SQLObject):
     name = StringCol()
     id2 = IntCol(default=None, unique=True)
+
 
 class TestWorkKey(SQLObject):
     class sqlmeta:
@@ -13,12 +15,15 @@ class TestWorkKey(SQLObject):
     composer = ForeignKey('TestComposerKey', cascade=True)
     title = StringCol()
 
+
 class TestWorkKey2(SQLObject):
     title = StringCol()
+
 
 class TestOtherColumn(SQLObject):
     key1 = ForeignKey('TestComposerKey', default=None)
     key2 = ForeignKey('TestComposerKey', refColumn='id2', default=None)
+
 
 def test1():
     setupClass([TestComposerKey, TestWorkKey])
@@ -70,12 +75,14 @@ def test1():
     assert s.count() == 1
     assert s[0] == w1
 
+
 def test2():
     TestWorkKey._connection = getConnection()
     InstalledTestDatabase.drop(TestWorkKey)
     setupClass([TestComposerKey, TestWorkKey2], force=True)
     TestWorkKey2.sqlmeta.addColumn(ForeignKey('TestComposerKey'),
                                    changeSchema=True)
+
 
 def test_otherColumn():
     setupClass([TestComposerKey, TestOtherColumn])

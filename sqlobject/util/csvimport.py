@@ -64,7 +64,9 @@ __all__ = ['load_csv_from_directory',
            'load_csv',
            'create_data']
 
+
 DEFAULT_TYPE = 'escaped'
+
 
 def create_data(data, class_getter, keyorder=None):
     """
@@ -162,6 +164,7 @@ def load_csv_from_directory(directory,
             results.setdefault(classname, []).extend(items)
     return results
 
+
 def load_csv(csvreader, allow_python=True, default_type=DEFAULT_TYPE,
              default_class=None, allow_multiple_classes=True):
     """
@@ -221,6 +224,7 @@ def load_csv(csvreader, allow_python=True, default_type=DEFAULT_TYPE,
 
     return results
 
+
 def _parse_headers(header_row, default_type):
     headers = []
     for name in header_row:
@@ -253,7 +257,10 @@ def _parse_headers(header_row, default_type):
         headers.append((name, coercer, args))
     return headers
 
+
 _coercers = {}
+
+
 def get_coercer(type):
     if type not in _coercers:
         raise ValueError(
@@ -261,14 +268,17 @@ def get_coercer(type):
             % (type, ', '.join(_coercers.keys())))
     return _coercers[type]
 
+
 def register_coercer(type, coercer, *args):
     _coercers[type] = (coercer, args)
+
 
 def identity(v):
     return v
 
 register_coercer('str', identity)
 register_coercer('string', identity)
+
 
 def decode_string(v, encoding):
     return v.decode(encoding)
@@ -280,10 +290,12 @@ register_coercer('base64', decode_string, 'base64')
 register_coercer('int', int)
 register_coercer('float', float)
 
+
 def parse_python(v):
     return eval(v, {}, {})
 
 register_coercer('python', parse_python)
+
 
 def parse_date(v):
     v = v.strip()
@@ -298,6 +310,7 @@ def parse_date(v):
         return date.fromtimestamp(time.mktime(parsed))
 
 register_coercer('date', parse_date)
+
 
 def parse_datetime(v):
     v = v.strip()
@@ -324,9 +337,11 @@ def parse_datetime(v):
     
 register_coercer('datetime', parse_datetime)
 
+
 class Reference(object):
     def __init__(self, name):
         self.name = name
+
 
 def parse_ref(v):
     if not v.strip():
@@ -335,6 +350,7 @@ def parse_ref(v):
         return Reference(v)
 
 register_coercer('ref', parse_ref)
+
 
 def parse_bool(v):
     v = v.strip().lower()

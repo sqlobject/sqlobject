@@ -3,16 +3,20 @@ import py.test
 from sqlobject import *
 from sqlobject.tests.dbtest import *
 
+
 ########################################
 # Pickle instances
 ########################################
+
 
 class TestPickle(SQLObject):
     question = StringCol()
     answer = IntCol()
 
+
 test_question = 'The Ulimate Question of Life, the Universe and Everything'
 test_answer = 42
+
 
 def test_pickleCol():
     setupClass(TestPickle)

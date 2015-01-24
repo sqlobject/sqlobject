@@ -2,6 +2,7 @@ from sqlobject import col
 from sqlobject.dbconnection import DBAPI
 from sqlobject.dberrors import *
 
+
 class ErrorMessage(str):
     def __new__(cls, e, append_msg=''):
         obj = str.__new__(cls, e[1] + append_msg)
@@ -9,6 +10,7 @@ class ErrorMessage(str):
         obj.module = e.__module__
         obj.exception = e.__class__.__name__
         return obj
+
 
 class MySQLConnection(DBAPI):
 

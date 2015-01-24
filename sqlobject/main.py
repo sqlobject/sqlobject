@@ -55,8 +55,12 @@ is created. See SQLObject._create
 
 NoDefault = sqlbuilder.NoDefault
 
+
 class SQLObjectNotFound(LookupError): pass
+
+
 class SQLObjectIntegrityError(Exception): pass
+
 
 def makeProperties(obj):
     """
@@ -107,6 +111,7 @@ def makeProperties(obj):
                 property(setters.get('get'), setters.get('set'),
                          setters.get('del'), setters.get('doc')))
 
+
 def unmakeProperties(obj):
     if isinstance(obj, dict):
         def delFunc(obj, var):
@@ -123,6 +128,7 @@ def unmakeProperties(obj):
                     delFunc(obj, var)
                     break
 
+
 def findDependencies(name, registry=None):
     depends = []
     for klass in classregistry.registry(registry).allClasses():
@@ -136,12 +142,14 @@ def findDependencies(name, registry=None):
                     break
     return depends
 
+
 def findDependantColumns(name, klass):
     depends = []
     for col in klass.sqlmeta.columnList:
         if col.foreignKey == name and col.cascade is not None:
             depends.append(col)
     return depends
+
 
 def _collectAttributes(cls, new_attrs, look_for_class):
     """Finds all attributes in `new_attrs` that are instances of
@@ -157,12 +165,14 @@ def _collectAttributes(cls, new_attrs, look_for_class):
             result.append(value)
     return result
 
+
 class CreateNewSQLObject:
     """
     Dummy singleton to use in place of an ID, to signal we want
     a new object.
     """
     pass
+
 
 class sqlmeta(object):
 
@@ -673,6 +683,7 @@ exception_level = None
 #  2) Deprecated after 1
 #  3) Deprecated after 2
 
+
 def deprecated(message, level=1, stacklevel=2):
     if exception_level is not None and exception_level <= level:
         raise NotImplementedError(message)
@@ -682,6 +693,7 @@ def deprecated(message, level=1, stacklevel=2):
 # if sys.version_info[:3] < (2, 5, 0):
 #     deprecated("Support for Python 2.4 has been declared obsolete "
 #     "and will be removed in the next release of SQLObject")
+
 
 def setDeprecationLevel(warning=1, exception=None):
     """
@@ -730,12 +742,15 @@ class _sqlmeta_attr(object):
 
 _postponed_local = local()
 
+
 # SQLObject is the superclass for all SQLObject classes, of
 # course.  All the deeper magic is done in MetaSQLObject, and
 # only lesser magic is done here.  All the actual work is done
 # here, though -- just automatic method generation (like
 # methods and properties for each column) is done in
 # MetaSQLObject.
+
+
 class SQLObject(object):
 
     __metaclass__ = declarative.DeclarativeMeta
@@ -1782,12 +1797,20 @@ class SQLObject(object):
 
 def setterName(name):
     return '_set_%s' % name
+
+
 def rawSetterName(name):
     return '_SO_set_%s' % name
+
+
 def getterName(name):
     return '_get_%s' % name
+
+
 def rawGetterName(name):
     return '_SO_get_%s' % name
+
+
 def instanceName(name):
     return '_SO_val_%s' % name
 
@@ -1810,6 +1833,7 @@ def getID(obj, refColumn=None):
             return obj
     elif obj is None:
         return None
+
 
 def getObject(obj, klass):
     if isinstance(obj, int):

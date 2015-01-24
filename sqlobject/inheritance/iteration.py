@@ -2,6 +2,7 @@ from sqlobject import sqlbuilder
 from sqlobject.classregistry import findClass
 from sqlobject.dbconnection import Iteration
 
+
 class InheritableIteration(Iteration):
     # Default array size for cursor.fetchmany()
     defaultArraySize = 10000

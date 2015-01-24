@@ -7,6 +7,7 @@ Released under the LGPL for use with the SQLObject ORM library.
 from sqlobject.dbconnection import DBAPI
 from sqlobject.postgres.pgconnection import PostgresConnection
 
+
 class RdbhostConnection(PostgresConnection):
 
     supportTransactions = False

@@ -2,6 +2,7 @@ import py.test
 from sqlobject import *
 from sqlobject.tests.dbtest import *
 
+
 class TestSO1(SQLObject):
 
     name = StringCol(length=50, dbName='name_col')
@@ -15,11 +16,13 @@ class TestSO1(SQLObject):
     def _set_passwd(self, passwd):
         self._SO_set_passwd(passwd.encode('rot13'))
 
+
 def setupGetters(cls):
     setupClass(cls)
     inserts(cls, [('bob', 'god'), ('sally', 'sordid'),
                   ('dave', 'dremel'), ('fred', 'forgo')],
             'name passwd')
+
 
 def test_case1():
     setupGetters(TestSO1)
@@ -29,6 +32,7 @@ def test_case1():
     bobs = TestSO1.selectBy(name='bob')[:10]
     assert len(list(bobs)) == 1
 
+
 def test_newline():
     setupGetters(TestSO1)
     bob = TestSO1.selectBy(name='bob')[0]
@@ -37,12 +41,14 @@ def test_newline():
     bob.expire()
     assert bob.name == testString
 
+
 def test_count():
     setupGetters(TestSO1)
     assert TestSO1.selectBy(name=None).count() == 0
     assert TestSO1.selectBy(name='bob').count() == 1
     assert TestSO1.select(TestSO1.q.name == 'bob').count() == 1
     assert TestSO1.select().count() == len(list(TestSO1.select()))
+
 
 def test_getset():
     setupGetters(TestSO1)
@@ -53,12 +59,14 @@ def test_getset():
     bob.set(name='joebob', passwd='testtest')
     assert bob.name == 'joebob'
 
+
 def test_extra_vars():
     setupGetters(TestSO1)
     col = TestSO1.sqlmeta.columns['name']
     assert col.title == 'Your Name'
     assert col.foobar == 1
     assert getattr(TestSO1.sqlmeta.columns['passwd'], 'title', None) is None
+
 
 class TestSO2(SQLObject):
     name = StringCol(length=50, dbName='name_col')
@@ -67,14 +75,17 @@ class TestSO2(SQLObject):
     def _set_passwd(self, passwd):
         self._SO_set_passwd(passwd.encode('rot13'))
 
+
 def test_case2():
     setupGetters(TestSO2)
     bob = TestSO2.selectBy(name='bob')[0]
     assert bob.name == 'bob'
     assert bob.passwd == 'god'.encode('rot13')
 
+
 class Student(SQLObject):
     is_smart = BoolCol()
+
 
 def test_boolCol():
     setupClass(Student)
@@ -83,13 +94,16 @@ def test_boolCol():
     student2 = Student(is_smart=1)
     assert student2.is_smart == True
 
+
 class TestSO3(SQLObject):
     name = StringCol(length=10, dbName='name_col')
     other = ForeignKey('TestSO4', default=None)
     other2 = KeyCol(foreignKey='TestSO4', default=None)
 
+
 class TestSO4(SQLObject):
     me = StringCol(length=10)
+
 
 def test_foreignKey():
     setupClass([TestSO4, TestSO3])
@@ -121,6 +135,7 @@ def test_foreignKey():
     tcc2 = TestSO3(name='c', other=tc4a.id)
     assert tcc2.other == tc4a
 
+
 def test_selectBy():
     setupClass([TestSO4, TestSO3])
     tc4 = TestSO4(me='another')
@@ -133,17 +148,21 @@ def test_selectBy():
     assert list(TestSO3.selectBy(otherID=tc4.id)[:10]) == [tc3]
     assert list(TestSO3.selectBy(other=tc4)[:10]) == [tc3]
 
+
 class TestSO5(SQLObject):
     name = StringCol(length=10, dbName='name_col')
     other = ForeignKey('TestSO6', default=None, cascade=True)
     another = ForeignKey('TestSO7', default=None, cascade=True)
 
+
 class TestSO6(SQLObject):
     name = StringCol(length=10, dbName='name_col')
     other = ForeignKey('TestSO7', default=None, cascade=True)
 
+
 class TestSO7(SQLObject):
     name = StringCol(length=10, dbName='name_col')
+
 
 def test_foreignKeyDestroySelfCascade():
     setupClass([TestSO7, TestSO6, TestSO5])
@@ -187,6 +206,7 @@ def test_foreignKeyDestroySelfCascade():
     assert TestSO6.select().count() == 0
     assert TestSO7.select().count() == 0
 
+
 def testForeignKeyDropTableCascade():
     if not supports('dropTableCascade'):
         py.test.skip("dropTableCascade isn't supported")
@@ -225,12 +245,15 @@ def testForeignKeyDropTableCascade():
     assert TestSO5.select().count() == 0
     assert TestSO6.select().count() == 0
 
+
 class TestSO8(SQLObject):
     name = StringCol(length=10, dbName='name_col')
     other = ForeignKey('TestSO9', default=None, cascade=False)
 
+
 class TestSO9(SQLObject):
     name = StringCol(length=10, dbName='name_col')
+
 
 def testForeignKeyDestroySelfRestrict():
     setupClass([TestSO9, TestSO8])
@@ -254,12 +277,15 @@ def testForeignKeyDestroySelfRestrict():
     assert TestSO8.select().count() == 0
     assert TestSO9.select().count() == 0
 
+
 class TestSO10(SQLObject):
     name = StringCol()
+
 
 class TestSO11(SQLObject):
     name = StringCol()
     other = ForeignKey('TestSO10', default=None, cascade='null')
+
 
 def testForeignKeySetNull():
     setupClass([TestSO10, TestSO11])
@@ -277,24 +303,29 @@ def testForeignKeySetNull():
     assert dep2.other is None
     assert dep3.other is obj2
 
+
 def testAsDict():
     setupGetters(TestSO1)
     bob = TestSO1.selectBy(name='bob')[0]
     assert bob.sqlmeta.asDict() == {
         'passwd': 'tbq', 'name': 'bob', 'id': bob.id}
 
+
 def test_nonexisting_attr():
     setupClass(Student)
     raises(AttributeError, getattr, Student.q, 'nonexisting')
+
 
 class TestSO12(SQLObject):
     name = StringCol()
     value = IntCol(defaultSQL='1')
 
+
 def test_defaultSQL():
     setupClass(TestSO12)
     test = TestSO12(name="test")
     assert test.value == 1
+
 
 def test_connection_override():
     sqlhub.processConnection = connectionForURI('sqlite:///db1')

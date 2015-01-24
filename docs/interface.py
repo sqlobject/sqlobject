@@ -4,8 +4,10 @@ provides.  While its in the form of a formal interface, it doesn't
 use any interface system.
 """
 
+
 class Interface(object):
     pass
+
 
 class ISQLObject(Interface):
 
@@ -124,6 +126,7 @@ class ISQLObject(Interface):
         Returns the SQL representation of the given object, for the
         configured database connection.
         """
+
 
 class Isqlmeta(Interface):
 
@@ -286,6 +289,7 @@ class ICol(Interface):
     ``SQLObject`` will set this attribute from the variable name this
     object is assigned to.
     """
+
 
 class ISOCol(Interface):
 

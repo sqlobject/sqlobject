@@ -29,6 +29,7 @@ __all__ = ['BoundAttribute', 'BoundFactory', 'bind_attributes',
 import declarative
 import events
 
+
 class BoundAttribute(declarative.Declarative):
 
     """
@@ -113,6 +114,7 @@ class BoundAttribute(declarative.Declarative):
     def __setattr__(self, name, value):
         self.__dict__['_all_attrs'] = self._add_attrs(self, {name: value})
         self.__dict__[name] = value
+
 
 class BoundFactory(BoundAttribute):
 

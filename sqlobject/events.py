@@ -7,6 +7,7 @@ from weakref import ref
 
 subclassClones = {}
 
+
 def listen(receiver, soClass, signal, alsoSubclasses=True, weak=True):
     """
     Listen for the given ``signal`` on the SQLObject subclass
@@ -23,6 +24,7 @@ def listen(receiver, soClass, signal, alsoSubclasses=True, weak=True):
 # We export this function:
 send = dispatcher.send
 
+
 class Signal(object):
     """
     Base event for all SQLObject events.
@@ -30,6 +32,7 @@ class Signal(object):
     In general the sender for these methods is the class, not the
     instance.
     """
+
 
 class ClassCreateSignal(Signal):
     """
@@ -49,9 +52,11 @@ class ClassCreateSignal(Signal):
     called after the class's ``__classinit__``).
     """
 
+
 def _makeSubclassConnections(new_class_name, bases, new_attrs,
                              post_funcs, early_funcs):
     early_funcs.insert(0, _makeSubclassConnectionsPost)
+
 
 def _makeSubclassConnectionsPost(new_class):
     for cls in new_class.__bases__:
@@ -63,10 +68,12 @@ def _makeSubclassConnectionsPost(new_class):
 
 dispatcher.connect(_makeSubclassConnections, signal=ClassCreateSignal)
 
+
 # @@: Should there be a class reload event?  This would allow modules
 # to be reloaded, possibly.  Or it could even be folded into
 # ClassCreateSignal, since anything that listens to that needs to pay
 # attention to reloads (or else it is probably buggy).
+
 
 class RowCreateSignal(Signal):
     """
@@ -80,6 +87,8 @@ class RowCreateSignal(Signal):
     Note: this is not called when an instance is created from an
     existing database row.
     """
+
+
 class RowCreatedSignal(Signal):
     """
     Called after an instance is created, with the class as the
@@ -94,6 +103,7 @@ class RowCreatedSignal(Signal):
     """
 # @@: An event for getting a row?  But for each row, when doing a
 # select?  For .sync, .syncUpdate, .expire?
+
 
 class RowDestroySignal(Signal):
     """
@@ -116,6 +126,7 @@ class RowDestroySignal(Signal):
     row can be deleted without first fetching it?
     """
 
+
 class RowDestroyedSignal(Signal):
     """
     Called after an instance is deleted.  Sender is the instance's
@@ -127,6 +138,7 @@ class RowDestroyedSignal(Signal):
     garbage collection.
     """
 
+
 class RowUpdateSignal(Signal):
     """
     Called when an instance is updated through a call to ``.set()``
@@ -135,6 +147,7 @@ class RowUpdateSignal(Signal):
     *before* the instance is updated; if you want to look at the
     current values, simply look at ``instance``.
     """
+
 
 class RowUpdatedSignal(Signal):
     """
@@ -146,6 +159,7 @@ class RowUpdatedSignal(Signal):
     updated; Works better with lazyUpdate = True.
     """
 
+
 class AddColumnSignal(Signal):
     """
     Called when a column is added to a class, with arguments ``(cls,
@@ -155,6 +169,7 @@ class AddColumnSignal(Signal):
 
     post_funcs are called with ``(cls, so_column_obj)``
     """
+
 
 class DeleteColumnSignal(Signal):
     """
@@ -170,6 +185,7 @@ class DeleteColumnSignal(Signal):
 # @@: Signals for indexes and joins?  These are mostly event consumers,
 # though.
 
+
 class CreateTableSignal(Signal):
     """
     Called when a table is created.  If ``ifNotExists==True`` and the
@@ -182,6 +198,7 @@ class CreateTableSignal(Signal):
     has been created.  Those functions are *not* called simply when
     constructing the SQL.
     """
+
 
 class DropTableSignal(Signal):
     """
@@ -196,6 +213,7 @@ class DropTableSignal(Signal):
 ############################################################
 # Event Debugging
 ############################################################
+
 
 def summarize_events_by_sender(sender=None, output=None, indent=0):
     """
@@ -230,16 +248,19 @@ def summarize_events_by_sender(sender=None, output=None, indent=0):
             for receiver in sorted(receivers, key=sort_name):
                 print(leader + '  ' + nice_repr(receiver), file=output)
 
+
 def deref(value):
     if isinstance(value, dispatcher.WEAKREF_TYPES):
         return value()
     else:
         return value
 
+
 def sorted_items(a_dict):
     if isinstance(a_dict, dict):
         a_dict = a_dict.items()
     return sorted(a_dict, key=lambda t: sort_name(t[0]))
+
 
 def sort_name(value):
     if isinstance(value, type):
@@ -254,6 +275,8 @@ _real_dispatcher_sendExact = dispatcher.sendExact
 _real_dispatcher_disconnect = dispatcher.disconnect
 _real_dispatcher_connect = dispatcher.connect
 _debug_enabled = False
+
+
 def debug_events():
     global _debug_enabled, send
     if _debug_enabled:
@@ -264,6 +287,7 @@ def debug_events():
     dispatcher.disconnect = _debug_disconnect
     dispatcher.connect = _debug_connect
 
+
 def _debug_send(signal=dispatcher.Any, sender=dispatcher.Anonymous,
                 *arguments, **named):
     print("send %s from %s: %s" % (
@@ -271,11 +295,13 @@ def _debug_send(signal=dispatcher.Any, sender=dispatcher.Anonymous,
           fmt_args(*arguments, **named)))
     return _real_dispatcher_send(signal, sender, *arguments, **named)
 
+
 def _debug_sendExact(signal=dispatcher.Any, sender=dispatcher.Anonymous,
                      *arguments, **named):
     print("sendExact %s from %s: %s" % (
           nice_repr(signal), nice_repr(sender), fmt_args(*arguments, **name)))
     return _real_dispatcher_sendExact(signal, sender, *arguments, **named)
+
 
 def _debug_connect(receiver, signal=dispatcher.Any, sender=dispatcher.Any,
                    weak=True):
@@ -283,17 +309,20 @@ def _debug_connect(receiver, signal=dispatcher.Any, sender=dispatcher.Any,
           nice_repr(receiver), nice_repr(signal), nice_repr(sender)))
     return _real_dispatcher_connect(receiver, signal, sender, weak)
 
+
 def _debug_disconnect(receiver, signal=dispatcher.Any, sender=dispatcher.Any,
                       weak=True):
     print("disconnecting %s from %s signal %s" % (
           nice_repr(receiver), nice_repr(signal), nice_repr(sender)))
     return disconnect(receiver, signal, sender, weak)
 
+
 def fmt_args(*arguments, **name):
     args = [repr(a) for a in arguments]
     args.extend([
         '%s=%r' % (n, v) for n, v in sorted(name.items())])
     return ', '.join(args)
+
 
 def nice_repr(v):
     """

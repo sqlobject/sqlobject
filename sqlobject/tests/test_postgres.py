@@ -2,12 +2,15 @@ import py.test
 from sqlobject import *
 from sqlobject.tests.dbtest import *
 
+
 ########################################
 # Test PosgreSQL sslmode
 ########################################
 
+
 class TestSSLMode(SQLObject):
     test = StringCol()
+
 
 def test_sslmode():
     setupClass(TestSSLMode)
@@ -24,18 +27,22 @@ def test_sslmode():
     test = TestSSLMode.select()[0]
     assert test.test == 'test'
 
+
 ########################################
 # Test PosgreSQL list{Database,Tables}
 ########################################
 
+
 class TestSOList(SQLObject):
     pass
+
 
 def test_list_databases():
     connection = getConnection()
     if connection.dbName != "postgres":
         py.test.skip("These tests require PostgreSQL")
     assert connection.db in connection.listDatabases()
+
 
 def test_list_tables():
     connection = getConnection()

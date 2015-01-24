@@ -9,6 +9,7 @@ objects in a cache that doesn't allow them to be garbage collected
 import threading
 from weakref import ref
 
+
 class CacheFactory(object):
 
     """
@@ -276,6 +277,7 @@ class CacheFactory(object):
             if value():
                 all.append(value())
         return all
+
 
 class CacheSet(object):
 

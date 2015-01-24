@@ -1,13 +1,16 @@
 from sqlobject import *
 from sqlobject.tests.dbtest import *
 
+
 ########################################
 # sqlmeta.asDict()
 ########################################
 
+
 class TestAsDict(SQLObject):
     name = StringCol(length=10)
     name2 = StringCol(length=10)
+
 
 def test_asDict():
     setupClass(TestAsDict, force=True)

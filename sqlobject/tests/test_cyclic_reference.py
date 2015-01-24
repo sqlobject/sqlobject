@@ -2,6 +2,7 @@ import py.test
 from sqlobject import *
 from sqlobject.tests.dbtest import *
 
+
 class TestCyclicReferenceA(SQLObject):
     class sqlmeta(sqlmeta):
         idName = 'test_id_here'
@@ -13,6 +14,7 @@ class TestCyclicReferenceA(SQLObject):
     blobcol = BLOBCol()
     fkeyb = ForeignKey('TestCyclicReferenceB')
 
+
 class TestCyclicReferenceB(SQLObject):
     class sqlmeta(sqlmeta):
         idName = 'test_id_here'
@@ -23,6 +25,7 @@ class TestCyclicReferenceB(SQLObject):
     short = StringCol(length=10)
     blobcol = BLOBCol()
     fkeya = ForeignKey('TestCyclicReferenceA') 
+
 
 def test_cyclic_reference():
     if not supports('dropTableCascade'):

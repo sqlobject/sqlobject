@@ -1,12 +1,14 @@
 import sys
 import imp
 
+
 def load_module(module_name):
     mod = __import__(module_name)
     components = module_name.split('.')
     for comp in components[1:]:
         mod = getattr(mod, comp)
     return mod
+
 
 def load_module_from_name(filename, module_name):
     if module_name in sys.modules:

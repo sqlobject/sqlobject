@@ -55,6 +55,7 @@ class classinstancemethod(object):
     def __get__(self, obj, type=None):
         return _methodwrapper(self.func, obj=obj, type=type)
 
+
 class _methodwrapper(object):
 
     def __init__(self, func, obj, type):
@@ -76,6 +77,7 @@ class _methodwrapper(object):
             return ('<bound method %s.%s of %r>'
                     % (self.type.__name__, self.func.func_name, self.obj))
 
+
 class DeclarativeMeta(type):
 
     def __new__(meta, class_name, bases, new_attrs):
@@ -93,6 +95,7 @@ class DeclarativeMeta(type):
         for func in post_funcs:
             func(cls)
         return cls
+
 
 class Declarative(object):
 
@@ -198,6 +201,7 @@ class Declarative(object):
                  and n != 'declarative_count']
         names.sort()
         return names
+
 
 def setup_attributes(cls, new_attrs):
     for name, value in new_attrs.items():

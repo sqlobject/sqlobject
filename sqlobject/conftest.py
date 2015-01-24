@@ -31,6 +31,7 @@ connectionShortcuts = {
     'mssql': 'mssql://sa:@127.0.0.1/test'
     }
 
+
 def pytest_addoption(parser):
     """Add the SQLObject options"""
     parser.addoption(
@@ -57,10 +58,12 @@ def pytest_addoption(parser):
 
 option = None
 
+
 def pytest_configure(config):
     """Make cmdline arguments available to dbtest"""
     global option
     option = config.option
+
 
 class SQLObjectClass(py.test.collect.Class):
     def run(self):
@@ -70,6 +73,7 @@ class SQLObjectClass(py.test.collect.Class):
         return super(SQLObjectClass, self).run()
 
 Class = SQLObjectClass
+
 
 def setup_tests():
     if option.debug_events:

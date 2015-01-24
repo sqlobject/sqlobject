@@ -1,12 +1,15 @@
 from sqlobject import *
 from sqlobject.tests.dbtest import *
 
+
 ########################################
 # Identity (MS SQL)
 ########################################
 
+
 class TestIdentity(SQLObject):
     n = IntCol()
+
 
 def test_identity():
     # (re)create table

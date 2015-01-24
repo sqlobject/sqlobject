@@ -11,11 +11,13 @@ __all__ = ['MultipleJoin', 'SQLMultipleJoin', 'RelatedJoin', 'SQLRelatedJoin',
 creationOrder = count()
 NoDefault = sqlbuilder.NoDefault
 
+
 def getID(obj):
     try:
         return obj.id
     except AttributeError:
         return int(obj)
+
 
 class Join(object):
 
@@ -47,9 +49,12 @@ class Join(object):
                               joinMethodName=self._joinMethodName,
                               **self.kw)
 
+
 # A join is separate from a foreign key, i.e., it is
 # many-to-many, or one-to-many where the *other* class
 # has the foreign key.
+
+
 class SOJoin(object):
 
     def __init__(self,
@@ -93,6 +98,7 @@ class SOJoin(object):
             results.sort(sorter(self.orderBy))
         return results
 
+
 def sorter(orderBy):
     if isinstance(orderBy, (tuple, list)):
         if len(orderBy) == 1:
@@ -128,7 +134,10 @@ def sorter(orderBy):
         return cmp(a, b)
     return cmper
 
+
 # This is a one-to-many
+
+
 class SOMultipleJoin(SOJoin):
 
     def __init__(self, addRemoveName=None, **kw):
@@ -167,8 +176,10 @@ class SOMultipleJoin(SOJoin):
                 return column.name
         return self.soClass.sqlmeta.style.dbColumnToPythonAttr(self.joinColumn)
 
+
 class MultipleJoin(Join):
     baseClass = SOMultipleJoin
+
 
 class SOSQLMultipleJoin(SOMultipleJoin):
 
@@ -183,10 +194,14 @@ class SOSQLMultipleJoin(SOMultipleJoin):
             connection=conn)
         return results.orderBy(self.orderBy)
 
+
 class SQLMultipleJoin(Join):
     baseClass = SOSQLMultipleJoin
 
+
 # This is a many-to-many join, with an intermediary table
+
+
 class SORelatedJoin(SOMultipleJoin):
 
     def __init__(self,
@@ -246,10 +261,14 @@ class SORelatedJoin(SOMultipleJoin):
             self.otherColumn,
             getID(other))
 
+
 class RelatedJoin(MultipleJoin):
     baseClass = SORelatedJoin
 
+
 # helper classes to SQLRelatedJoin
+
+
 class OtherTableToJoin(sqlbuilder.SQLExpression):
     def __init__(self, otherTable, otherIdName, interTable, joinColumn):
         self.otherTable = otherTable
@@ -263,6 +282,7 @@ class OtherTableToJoin(sqlbuilder.SQLExpression):
     def __sqlrepr__(self, db):
         return '%s.%s = %s.%s' % (self.otherTable, self.otherIdName,
                                   self.interTable, self.joinColumn)
+
 
 class JoinToTable(sqlbuilder.SQLExpression):
     def __init__(self, table, idName, interTable, joinColumn):
@@ -278,6 +298,7 @@ class JoinToTable(sqlbuilder.SQLExpression):
         return '%s.%s = %s.%s' % (self.interTable, self.joinColumn, self.table,
                                   self.idName)
 
+
 class TableToId(sqlbuilder.SQLExpression):
     def __init__(self, table, idName, idValue):
         self.table = table
@@ -289,6 +310,7 @@ class TableToId(sqlbuilder.SQLExpression):
 
     def __sqlrepr__(self, db):
         return '%s.%s = %s' % (self.table, self.idName, self.idValue)
+
 
 class SOSQLRelatedJoin(SORelatedJoin):
     def performJoin(self, inst):
@@ -313,8 +335,10 @@ class SOSQLRelatedJoin(SORelatedJoin):
             connection=conn)
         return results.orderBy(self.orderBy)
 
+
 class SQLRelatedJoin(RelatedJoin):
     baseClass = SOSQLRelatedJoin
+
 
 class SOSingleJoin(SOMultipleJoin):
 
@@ -343,12 +367,14 @@ class SOSingleJoin(SOMultipleJoin):
         else:
             return results[0]
 
+
 class SingleJoin(Join):
     baseClass = SOSingleJoin
 
 
 
 import boundattributes
+
 
 class SOManyToMany(object):
 
@@ -423,6 +449,7 @@ class SOManyToMany(object):
             return
         connection._SO_createJoinTable(self)
 
+
 class ManyToMany(boundattributes.BoundFactory):
     factory_class = SOManyToMany
     __restrict_attributes__ = (
@@ -435,6 +462,7 @@ class ManyToMany(boundattributes.BoundFactory):
     joinColumn = None
     otherColumn = None
     createJoinTable = True
+
 
 class _ManyToManySelectWrapper(object):
 
@@ -481,6 +509,7 @@ class _ManyToManySelectWrapper(object):
         self.add(obj)
         return obj
 
+
 class SOOneToMany(object):
 
     def __init__(self, soClass, name, join, joinColumn, **attrs):
@@ -511,6 +540,7 @@ class SOOneToMany(object):
         select = self.otherClass.select(query)
         return _OneToManySelectWrapper(obj, self, select)
 
+
 class OneToMany(boundattributes.BoundFactory):
     factory_class = SOOneToMany
     __restrict_attributes__ = (
@@ -519,6 +549,7 @@ class OneToMany(boundattributes.BoundFactory):
 
     # Default values:
     joinColumn = None
+
 
 class _OneToManySelectWrapper(object):
 

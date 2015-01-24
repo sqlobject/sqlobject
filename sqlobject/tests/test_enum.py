@@ -2,13 +2,16 @@ from sqlobject import *
 from sqlobject.col import validators
 from sqlobject.tests.dbtest import *
 
+
 ########################################
 # Enum test
 ########################################
 
+
 class Enum1(SQLObject):
 
     l = EnumCol(enumValues=['a', 'bcd', 'e'])
+
 
 def testBad():
     setupClass(Enum1)
@@ -25,6 +28,7 @@ class EnumWithNone(SQLObject):
 
     l = EnumCol(enumValues=['a', 'bcd', 'e', None])
 
+
 def testNone():
     setupClass(EnumWithNone)
     for l in [None, 'a', 'bcd', 'a', 'e', None]:
@@ -35,6 +39,7 @@ def testNone():
 class EnumWithDefaultNone(SQLObject):
 
     l = EnumCol(enumValues=['a', 'bcd', 'e', None], default=None)
+
 
 def testDefaultNone():
     setupClass(EnumWithDefaultNone)
@@ -47,6 +52,7 @@ class EnumWithDefaultOther(SQLObject):
 
     l = EnumCol(enumValues=['a', 'bcd', 'e', None], default='a')
 
+
 def testDefaultOther():
     setupClass(EnumWithDefaultOther)
 
@@ -58,6 +64,7 @@ class EnumUnicode(SQLObject):
 
     n = UnicodeCol()
     l = EnumCol(enumValues=['a', 'b'])
+
 
 def testUnicode():
     setupClass(EnumUnicode)

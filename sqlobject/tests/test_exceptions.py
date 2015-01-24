@@ -3,15 +3,19 @@ from sqlobject import *
 from sqlobject.dberrors import *
 from sqlobject.tests.dbtest import *
 
+
 ########################################
 # Table aliases and self-joins
 ########################################
 
+
 class TestException(SQLObject):
     name = StringCol(unique=True, length=100)
 
+
 class TestExceptionWithNonexistingTable(SQLObject):
     pass
+
 
 def test_exceptions():
     if not supports("exceptions"):

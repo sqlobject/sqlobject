@@ -3,12 +3,14 @@ from sqlobject.tests.dbtest import *
 
 real_sqlmeta = sqlmeta
 
+
 class Reparented1(SQLObject):
 
     class sqlmeta:
         table = 'reparented1'
 
     dummy = StringCol()
+
 
 class Reparented2(SQLObject):
     class sqlmeta(object):
@@ -21,6 +23,7 @@ class Reparented2(SQLObject):
             cls.worked = True
 
     dummy = StringCol()
+
 
 def test_reparented():
     setupClass([Reparented1, Reparented2])

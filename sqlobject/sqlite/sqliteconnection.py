@@ -6,7 +6,9 @@ from sqlobject.dbconnection import DBAPI, Boolean
 from sqlobject import col
 from sqlobject.dberrors import *
 
+
 sqlite2_Binary = None
+
 
 class ErrorMessage(str):
     def __new__(cls, e):
@@ -15,6 +17,7 @@ class ErrorMessage(str):
         obj.module = e.__module__
         obj.exception = e.__class__.__name__
         return obj
+
 
 class SQLiteConnection(DBAPI):
 

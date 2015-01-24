@@ -2,6 +2,7 @@ from sqlobject.dbconnection import DBAPI
 from sqlobject import col
 import re
 
+
 class MSSQLConnection(DBAPI):
 
     supportTransactions = True

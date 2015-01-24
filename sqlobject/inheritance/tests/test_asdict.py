@@ -6,16 +6,20 @@ from sqlobject.tests.dbtest import *
 # sqlmeta.asDict
 ########################################
 
+
 class InheritablePersonAD(InheritableSQLObject):
     firstName = StringCol()
     lastName = StringCol(alternateID=True, length=255)
 
+
 class ManagerAD(InheritablePersonAD):
     department = StringCol()
+
 
 class EmployeeAD(InheritablePersonAD):
     _inheritable = False
     position = StringCol()
+
 
 def test_getColumns():
     setupClass([InheritablePersonAD, ManagerAD, EmployeeAD])
@@ -27,6 +31,7 @@ def test_getColumns():
         _columns = klass.sqlmeta.getColumns().keys()
         _columns.sort()
         assert _columns == columns
+
 
 def test_asDict():
     setupClass([InheritablePersonAD, ManagerAD, EmployeeAD], force=True)

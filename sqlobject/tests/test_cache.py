@@ -2,8 +2,10 @@ from sqlobject import *
 from dbtest import *
 from sqlobject.cache import CacheSet
 
+
 class Something(object):
     pass
+
 
 def test_purge1():
     x = CacheSet()
@@ -26,6 +28,7 @@ def test_purge1():
 class CacheTest(SQLObject):
     name = StringCol(alternateID=True, length=100)
 
+
 def test_cache():
     setupClass(CacheTest)
     s = CacheTest(name='foo')
@@ -43,6 +46,7 @@ def test_cache():
     CacheTest._connection.expireAll()
     s2 = CacheTest.get(s_id)
     assert id(s2) != obj_id and id(s2) != obj_id2
+
 
 def test_cache_cull():
     setupClass(CacheTest)

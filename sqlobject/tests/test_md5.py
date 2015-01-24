@@ -1,8 +1,10 @@
 from hashlib import md5
 
+
 ########################################
 # hashlib.md5
 ########################################
+
 
 def test_md5():
     assert md5('').hexdigest() == 'd41d8cd98f00b204e9800998ecf8427e'

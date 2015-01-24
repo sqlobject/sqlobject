@@ -2,6 +2,7 @@
 Constraints
 """
 
+
 class BadValue(ValueError):
 
     def __init__(self, desc, obj, col, value, *args):
@@ -16,25 +17,31 @@ class BadValue(ValueError):
                    % (obj, col.name, desc, value)
         ValueError.__init__(self, fullDesc, *args)
 
+
 def isString(obj, col, value):
     if not isinstance(value, str):
         raise BadValue("only allows strings", obj, col, value)
+
 
 def notNull(obj, col, value):
     if value is None:
         raise BadValue("is defined NOT NULL", obj, col, value)
 
+
 def isInt(obj, col, value):
     if not isinstance(value, (int, long)):
         raise BadValue("only allows integers", obj, col, value)
+
 
 def isFloat(obj, col, value):
     if not isinstance(value, (int, long, float)):
         raise BadValue("only allows floating point numbers", obj, col, value)
 
+
 def isBool(obj, col, value):
     if not isinstance(value, bool):
         raise BadValue("only allows booleans", obj, col, value)
+
 
 class InList:
 
@@ -45,6 +52,7 @@ class InList:
         if value not in self.list:
             raise BadValue("accepts only values in %s" % repr(self.list),
                            obj, col, value)
+
 
 class MaxLength:
 

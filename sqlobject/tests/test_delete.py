@@ -2,9 +2,11 @@ from sqlobject import *
 from sqlobject.tests.dbtest import *
 from test_basic import TestSO1, setupGetters
 
+
 ########################################
 # Delete during select
 ########################################
+
 
 def testSelect():
     setupGetters(TestSO1)
@@ -12,26 +14,32 @@ def testSelect():
         obj.destroySelf()
     assert list(TestSO1.select('all')) == []
 
+
 ########################################
 # Delete many rows at once
 ########################################
+
 
 def testDeleteMany():
     setupGetters(TestSO1)
     TestSO1.deleteMany(OR(TestSO1.q.name == "bob", TestSO1.q.name == "fred"))
     assert len(list(TestSO1.select('all'))) == 2
 
+
 def testDeleteBy():
     setupGetters(TestSO1)
     TestSO1.deleteBy(name="dave")
     assert len(list(TestSO1.select())) == 3
 
+
 ########################################
 # Delete without caching
 ########################################
 
+
 class NoCache(SQLObject):
     name = StringCol()
+
 
 def testDestroySelf():
     setupClass(NoCache)
@@ -41,15 +49,19 @@ def testDestroySelf():
     value.destroySelf()
     NoCache._connection.cache = old
 
+
 ########################################
 # Delete from related joins
 ########################################
 
+
 class Service(SQLObject):
     groups = RelatedJoin("ServiceGroup")
 
+
 class ServiceGroup(SQLObject):
     services = RelatedJoin("Service")
+
 
 def testDeleteRelatedJoins():
     setupClass([Service, ServiceGroup])

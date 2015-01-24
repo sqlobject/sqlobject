@@ -5,8 +5,10 @@ from sqlobject.tests.dbtest import *
 from sqlobject import events
 from sqlobject.inheritance import InheritableSQLObject
 
+
 class EventTester(SQLObject):
     name = StringCol()
+
 
 def make_watcher():
     log = []
@@ -17,12 +19,14 @@ def make_watcher():
     watch.log = log
     return watch
 
+
 def make_listen(signal, cls=None):
     if cls is None:
         cls = EventTester
     watcher = make_watcher()
     events.listen(watcher, cls, signal)
     return watcher
+
 
 def test_create():
     watcher = make_listen(events.ClassCreateSignal)
@@ -40,6 +44,7 @@ def test_create():
     assert isinstance(watcher.log[0][2], dict)
     assert isinstance(watcher.log[0][3], list)
 
+
 def test_row_create():
     setupClass(EventTester)
     watcher = make_listen(events.RowCreateSignal)
@@ -50,6 +55,7 @@ def test_row_create():
         (row1, {'name': 'foo'}, []),
         (row2, {'name': 'bar'}, [])]
 
+
 def test_row_destroy():
     setupClass(EventTester)
     watcher = make_listen(events.RowDestroySignal)
@@ -58,6 +64,7 @@ def test_row_destroy():
     f.destroySelf()
     assert watcher.log == [(f, [])]
 
+
 def test_row_destroyed():
     setupClass(EventTester)
     watcher = make_listen(events.RowDestroyedSignal)
@@ -65,6 +72,7 @@ def test_row_destroyed():
     assert not watcher.log
     f.destroySelf()
     assert watcher.log == [(f, [])]
+
 
 def test_row_update():
     setupClass(EventTester)
@@ -77,6 +85,7 @@ def test_row_update():
         (f, {'name': 'bar2'}),
         (f, {'name': 'bar3'})]
 
+
 def test_row_updated():
     setupClass(EventTester)
     watcher = make_listen(events.RowUpdatedSignal)
@@ -85,6 +94,7 @@ def test_row_updated():
     f.name = 'bar2'
     f.set(name='bar3')
     assert watcher.log == [(f, []), (f, [])]
+
 
 def test_add_column():
     setupClass(EventTester)
@@ -105,19 +115,24 @@ def test_add_column():
 class InheritableEventTestA(InheritableSQLObject):
     a = IntCol()
 
+
 class InheritableEventTestB(InheritableEventTestA):
     b = IntCol()
 
+
 class InheritableEventTestC(InheritableEventTestB):
     c = IntCol()
+
 
 def _query(instance):
     row = InheritableEventTestA.get(instance.id)
     assert isinstance(row, InheritableEventTestC)
     assert row.c == 3
 
+
 def _signal(instance, kwargs, postfuncs):
     postfuncs.append(_query)
+
 
 def test_inheritance_row_created():
     setupClass([InheritableEventTestA, InheritableEventTestB,

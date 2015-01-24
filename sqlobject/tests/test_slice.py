@@ -2,13 +2,16 @@ import py.test
 from sqlobject import *
 from sqlobject.tests.dbtest import *
 
+
 ########################################
 # Slicing tests
 ########################################
 
+
 class Counter(SQLObject):
 
     number = IntCol(notNull=True)
+
 
 class TestSlice:
 

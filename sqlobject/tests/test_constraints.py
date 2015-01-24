@@ -1,6 +1,7 @@
 from sqlobject.constraints import *
 from sqlobject.tests.dbtest import *
 
+
 def test_constraints():
     obj = 'Test object'
     col = Dummy(name='col')

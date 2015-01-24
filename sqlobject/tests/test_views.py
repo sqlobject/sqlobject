@@ -2,15 +2,18 @@ from sqlobject import *
 from sqlobject.tests.dbtest import *
 from sqlobject.views import *
 
+
 class PhoneNumber(SQLObject):
     number = StringCol()
     calls = SQLMultipleJoin('PhoneCall')
     incoming = SQLMultipleJoin('PhoneCall', joinColumn='toID')
 
+
 class PhoneCall(SQLObject):
     phoneNumber = ForeignKey('PhoneNumber')
     to = ForeignKey('PhoneNumber')
     minutes = IntCol()
+
 
 class ViewPhoneCall(ViewSQLObject):
     class sqlmeta:
@@ -21,6 +24,7 @@ class ViewPhoneCall(ViewSQLObject):
     number = StringCol(dbName=PhoneNumber.q.number)
     phoneNumber = ForeignKey('PhoneNumber', dbName=PhoneNumber.q.id)
     call = ForeignKey('PhoneCall', dbName=PhoneCall.q.id)
+
 
 class ViewPhone(ViewSQLObject):
     class sqlmeta:
@@ -35,6 +39,7 @@ class ViewPhone(ViewSQLObject):
     vCalls = SQLMultipleJoin('ViewPhoneCall', joinColumn='phoneNumberID',
                              orderBy='id')
 
+
 class ViewPhoneMore(ViewSQLObject):
     ''' View on top of view '''
     class sqlmeta:
@@ -47,6 +52,7 @@ class ViewPhoneMore(ViewSQLObject):
     timesCalledLong.aggregateClause = PhoneCall.q.minutes > 10
     minutesCalled = IntCol(dbName=func.SUM(PhoneCall.q.minutes))
 
+
 class ViewPhoneMore2(ViewPhoneMore):
     class sqlmeta:
         table = 'vpm'
@@ -54,6 +60,7 @@ class ViewPhoneMore2(ViewPhoneMore):
 
 class ViewPhoneInnerAggregate(ViewPhone):
     twiceMinutes = IntCol(dbName=func.SUM(PhoneCall.q.minutes)*2)
+
 
 def setup_module(mod):
     setupClass([mod.PhoneNumber, mod.PhoneCall])
@@ -71,10 +78,12 @@ def setup_module(mod):
     mod.calls = calls
     mod.sqlrepr = mod.PhoneNumber._connection.sqlrepr
 
+
 def testSimpleVPC():
     assert hasattr(ViewPhoneCall, 'minutes')
     assert hasattr(ViewPhoneCall, 'number')
     assert hasattr(ViewPhoneCall, 'phoneNumberID')
+
 
 def testColumnSQLVPC():
     assert str(sqlrepr(ViewPhoneCall.q.id)) == 'view_phone_call.id'
@@ -83,11 +92,14 @@ def testColumnSQLVPC():
     assert q.count('phone_call.minutes AS minutes')
     assert q.count('phone_number.number AS number')
 
+
 def testAliasOverride():
     assert str(sqlrepr(ViewPhoneMore2.q.id)) == 'vpm.id'
 
+
 def checkAttr(cls, id, attr, value):
         assert getattr(cls.get(id), attr) == value
+
 
 def testGetVPC():
     checkAttr(ViewPhoneCall, calls[0].id, 'number',
@@ -99,11 +111,13 @@ def testGetVPC():
     checkAttr(ViewPhoneCall, calls[2].id, 'minutes', calls[2].minutes)
     checkAttr(ViewPhoneCall, calls[2].id, 'phoneNumber', calls[2].phoneNumber)
 
+
 def testGetVP():
     checkAttr(ViewPhone, phones[0].id, 'number', phones[0].number)
     checkAttr(ViewPhone, phones[0].id, 'minutes',
               phones[0].calls.sum(PhoneCall.q.minutes))
     checkAttr(ViewPhone, phones[0].id, 'phoneNumber', phones[0])
+
 
 def testGetVPM():
     checkAttr(ViewPhoneMore, phones[0].id, 'number', phones[0].number)
@@ -114,15 +128,18 @@ def testGetVPM():
     checkAttr(ViewPhoneMore, phones[0].id, 'timesCalledLong',
               phones[0].incoming.filter(PhoneCall.q.minutes > 10).count())
 
+
 def testJoinView():
     p = ViewPhone.get(phones[0].id)
     assert p.calls.count() == 2
     assert p.vCalls.count() == 2
     assert p.vCalls[0] == ViewPhoneCall.get(calls[0].id)
 
+
 def testInnerAggregate():
     checkAttr(ViewPhoneInnerAggregate, phones[0].id, 'twiceMinutes',
               phones[0].calls.sum(PhoneCall.q.minutes)*2)
+
 
 def testSelect():
     s = ViewPhone.select()
@@ -130,9 +147,11 @@ def testSelect():
     s = ViewPhoneCall.select()
     assert s.count() == len(calls)
 
+
 def testSelect2():
     s = ViewPhone.select(ViewPhone.q.number == phones[0].number)
     assert s.getOne().phoneNumber == phones[0]
+
 
 def testDistinctCount():
     # This test is for SelectResults non-* based count when distinct

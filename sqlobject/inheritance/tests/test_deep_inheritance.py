@@ -7,16 +7,20 @@ from sqlobject.inheritance import InheritableSQLObject
 # Deep Inheritance
 ########################################
 
+
 class DIPerson(InheritableSQLObject):
     firstName = StringCol(length=100)
     lastName = StringCol(alternateID=True, length=255)
     manager = ForeignKey("DIManager", default=None)
 
+
 class DIEmployee(DIPerson):
     position = StringCol(unique=True, length=100)
 
+
 class DIManager(DIEmployee):
     subdudes = MultipleJoin("DIPerson", joinColumn="manager_id")
+
 
 def test_creation_fail():
     """
@@ -31,6 +35,7 @@ def test_creation_fail():
     raises(TypeError, DIManager, **kwargs)
     persons = DIEmployee.select(DIPerson.q.firstName == 'John')
     assert persons.count() == 0
+
 
 def test_creation_fail2():
     """
@@ -64,6 +69,7 @@ def test_creation_fail2():
     persons = DIPerson.select(DIPerson.q.firstName == 'John',
                               connection=transaction)
     assert persons.count() == 1
+
 
 def test_deep_inheritance():
     setupClass([DIManager, DIEmployee, DIPerson])

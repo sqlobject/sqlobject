@@ -2,9 +2,11 @@ from sqlobject import *
 from sqlobject.col import validators
 from sqlobject.tests.dbtest import *
 
+
 ########################################
 # Validation/conversion
 ########################################
+
 
 class SOTestValidator(validators.Validator):
     def to_python(self, value, state):
@@ -36,25 +38,31 @@ class SOValidation(SQLObject):
     name8 = IntCol(default=None)
     name9 = IntCol(validator=validator1, validator2=validator2, default=0)
 
+
 class SOValidationTest(object):
     def __init__(self, value):
         self.value = value
+
 
 class SOValidationTestUnicode(SOValidationTest):
     def __unicode__(self):
         return self.value
 
+
 class SOValidationTestInt(SOValidationTest):
     def __int__(self):
         return self.value
+
 
 class SOValidationTestBool(SOValidationTest):
     def __nonzero__(self):
         return self.value
 
+
 class SOValidationTestFloat(SOValidationTest):
     def __float__(self):
         return self.value
+
 
 class TestValidation:
 

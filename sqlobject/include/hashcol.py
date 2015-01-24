@@ -1,6 +1,8 @@
 __all__ = ['HashCol']
 
+
 import sqlobject.col
+
 
 class DbHash:
     """ Presents a comparison object for hashes, allowing plain text to be
@@ -23,6 +25,7 @@ class DbHash:
     def __repr__( self ):
         return "<DbHash>"
 
+
 class HashValidator( sqlobject.col.StringValidator ):
     """ Provides formal SQLObject validation services for the HashCol. """
 
@@ -37,6 +40,7 @@ class HashValidator( sqlobject.col.StringValidator ):
         if value is None:
             return None
         return self.hashMethod( value )
+
 
 class SOHashCol( sqlobject.col.SOStringCol ):
     """ The internal HashCol definition. By default, enforces a md5 digest. """
@@ -55,6 +59,7 @@ class SOHashCol( sqlobject.col.SOStringCol ):
     def createValidators( self ):
         return [HashValidator( name=self.name, hashMethod=self.hashMethod )] + \
             super( SOHashCol, self ).createValidators()
+
 
 class HashCol( sqlobject.col.StringCol ):
     """ End-user HashCol class. May be instantiated with 'hashMethod', a function

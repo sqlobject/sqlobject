@@ -1,7 +1,6 @@
 from sqlbuilder import *
 from main import SQLObject
 
-####
 
 class ViewSQLObjectField(SQLObjectField):
     def __init__(self, alias, *arg):
@@ -13,6 +12,7 @@ class ViewSQLObjectField(SQLObjectField):
 
     def tablesUsedImmediate(self):
         return [self.tableName]
+
 
 class ViewSQLObjectTable(SQLObjectTable):
     FieldClass = ViewSQLObjectField
@@ -140,11 +140,10 @@ class ViewSQLObject(SQLObject):
             for n, col in cls.sqlmeta.columns.iteritems():
                 col.dbName = n
 
+
 def isAggregate(expr):
     if isinstance(expr, SQLCall):
         return True
     if isinstance(expr, SQLOp):
         return isAggregate(expr.expr1) or isAggregate(expr.expr2)
     return False
-
-######

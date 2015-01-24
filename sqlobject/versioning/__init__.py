@@ -1,6 +1,7 @@
 from sqlobject import *
 from datetime import datetime
 
+
 class Version(SQLObject):
     def restore(self):
         values = self.sqlmeta.asDict()
@@ -42,6 +43,7 @@ class Version(SQLObject):
             return self.__dict__[attr]
         else:
             return getattr(self.master, attr)
+
 
 def getColumns(columns, cls):
     for column, defi in cls.sqlmeta.columnDefinitions.items():

@@ -3,10 +3,12 @@
 
 from sqlobject import *
 
+
 class Test1(SQLObject):
     class sqlmeta:
         createSQL = "CREATE SEQUENCE db_test1_seq;"
     test1 = StringCol()
+
 
 class Test2(SQLObject):
     class sqlmeta:

@@ -1,9 +1,11 @@
 from sqlobject import *
 from sqlobject.tests.dbtest import *
 
+
 ########################################
 # Lazy updates
 ########################################
+
 
 class Lazy(SQLObject):
 
@@ -12,6 +14,7 @@ class Lazy(SQLObject):
     name = StringCol()
     other = StringCol(default='nothing')
     third = StringCol(default='third')
+
 
 class TestLazyTest:
 
