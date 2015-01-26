@@ -206,8 +206,10 @@ class SOCol(object):
             self.alternateMethodName = alternateMethodName
 
         _validators = self.createValidators()
-        if validator: _validators.append(validator)
-        if validator2: _validators.insert(0, validator2)
+        if validator:
+            _validators.append(validator)
+        if validator2:
+            _validators.insert(0, validator2)
         _vlen = len(_validators)
         if _vlen:
             for _validator in _validators:
@@ -1342,7 +1344,8 @@ class SODateCol(SOCol):
 
     def __init__(self, **kw):
         dateFormat = kw.pop('dateFormat', None)
-        if dateFormat: self.dateFormat = dateFormat
+        if dateFormat:
+            self.dateFormat = dateFormat
         super(SODateCol, self).__init__(**kw)
 
     def createValidators(self):
@@ -1685,7 +1688,8 @@ class SOBLOBCol(SOStringCol):
     def __init__(self, **kw):
         # Change the default from 'auto' to False -
         # this is a (mostly) binary column
-        if 'varchar' not in kw: kw['varchar'] = False
+        if 'varchar' not in kw:
+            kw['varchar'] = False
         super(SOBLOBCol, self).__init__(**kw)
 
     def createValidators(self):

@@ -155,7 +155,8 @@ class PostgresConnection(DBAPI):
         # For printDebug in _executeRetry
         self._connectionNumbers[id(conn)] = self._connectionCount
 
-        if self.autoCommit: self._setAutoCommit(conn, 1)
+        if self.autoCommit:
+            self._setAutoCommit(conn, 1)
         c = conn.cursor()
         if self.schema:
             self._executeRetry(conn, c, "SET search_path TO " + self.schema)

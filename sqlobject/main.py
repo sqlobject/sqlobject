@@ -56,10 +56,12 @@ is created. See SQLObject._create
 NoDefault = sqlbuilder.NoDefault
 
 
-class SQLObjectNotFound(LookupError): pass
+class SQLObjectNotFound(LookupError):
+    pass
 
 
-class SQLObjectIntegrityError(Exception): pass
+class SQLObjectIntegrityError(Exception):
+    pass
 
 
 def makeProperties(obj):

@@ -360,9 +360,11 @@ class SQLiteConnection(DBAPI):
         colData = colData[0].split('(', 1)[1].strip()[:-2]
         while True:
             start = colData.find('(')
-            if start == -1: break
+            if start == -1:
+                break
             end = colData.find(')', start)
-            if end == -1: break
+            if end == -1:
+                break
             colData = colData[:start] + colData[end+1:]
         results = []
         for colDesc in colData.split(','):

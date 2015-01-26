@@ -53,7 +53,8 @@ def getColumns(columns, cls):
         # remove incompatible constraints
         kwds = dict(defi._kw)
         for kw in ["alternateID", "unique"]:
-            if kw in kwds: del kwds[kw]
+            if kw in kwds:
+                del kwds[kw]
         columns[column] = defi.__class__(**kwds)
 
     # ascend heirarchy

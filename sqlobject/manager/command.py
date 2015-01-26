@@ -206,7 +206,8 @@ class Command(object):
         # contamination.
         # yemartin - 2006-08-08
 
-        class SQLObjectCircularReferenceError(Exception): pass
+        class SQLObjectCircularReferenceError(Exception):
+            pass
 
         def findReverseDependencies(cls):
             """

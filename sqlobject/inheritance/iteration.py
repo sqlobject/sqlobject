@@ -25,7 +25,8 @@ class InheritableIteration(Iteration):
     def next(self):
         if not self._results:
             self._results = list(self.cursor.fetchmany())
-            if not self.lazyColumns: self.fetchChildren()
+            if not self.lazyColumns:
+                self.fetchChildren()
         if not self._results:
             self._cleanup()
             raise StopIteration

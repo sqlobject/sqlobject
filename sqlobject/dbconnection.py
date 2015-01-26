@@ -220,7 +220,8 @@ class DBConnection:
                 user, password = [x and urllib.unquote(x) or None
                                   for x in urllib.splitpasswd(user)]
             host, port = urllib.splitport(host)
-            if port: port = int(port)
+            if port:
+                port = int(port)
         elif host == '':
             host = None
 

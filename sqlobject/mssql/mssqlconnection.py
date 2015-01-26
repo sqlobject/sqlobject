@@ -78,7 +78,8 @@ class MSSQLConnection(DBAPI):
                     ('port', keys.port),
                     ('database', keys.db),
                 ):
-                    if value: keys_dict[attr] = value
+                    if value:
+                        keys_dict[attr] = value
                 return keys_dict
             self.make_conn_str = _make_conn_str
 
@@ -263,9 +264,12 @@ class MSSQLConnection(DBAPI):
                 if defaultText[0] == "'":
                     defaultText = defaultText[1:-1]
                 else:
-                    if t == "int"    : defaultText = int(defaultText)
-                    if t == "float"  : defaultText = float(defaultText)
-                    if t == "numeric": defaultText = float(defaultText)
+                    if t == "int"    :
+                        defaultText = int(defaultText)
+                    if t == "float"  :
+                        defaultText = float(defaultText)
+                    if t == "numeric":
+                        defaultText = float(defaultText)
                     # TODO need to access the "column" to_python method here --
                     # but the object doesn't exists yet.
 

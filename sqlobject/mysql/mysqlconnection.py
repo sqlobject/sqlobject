@@ -230,7 +230,8 @@ class MySQLConnection(DBAPI):
             colClass, kw = self.guessClass(t)
             if self.kw.get('use_unicode') and colClass is col.StringCol:
                 colClass = col.UnicodeCol
-                if self.dbEncoding: kw['dbEncoding'] = self.dbEncoding
+                if self.dbEncoding:
+                    kw['dbEncoding'] = self.dbEncoding
             kw['name'] = soClass.sqlmeta.style.dbColumnToPythonAttr(field)
             kw['dbName'] = field
 

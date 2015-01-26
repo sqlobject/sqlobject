@@ -754,9 +754,11 @@ class Select(SQLExpression):
                 tables.update(tablesUsedSet(thing, db))
         for j in join:
             t1 = _str_or_sqlrepr(j.table1, db)
-            if t1 in tables: tables.remove(t1)
+            if t1 in tables:
+                tables.remove(t1)
             t2 = _str_or_sqlrepr(j.table2, db)
-            if t2 in tables: tables.remove(t2)
+            if t2 in tables:
+                tables.remove(t2)
         if tables:
             select += " FROM %s" % ", ".join(sorted(tables))
         elif join:
@@ -1563,6 +1565,7 @@ if __name__ == "__main__":
 >>> Replace(table.address, [("BOB", "3049 N. 18th St."), ("TIM", "409 S. 10th St.")], template=('name', 'address'))
 """  # noqa: allow long (> 79) lines
     for expr in tests.split('\n'):
-        if not expr.strip(): continue
+        if not expr.strip():
+            continue
         if expr.startswith('>>> '):
             expr = expr[4:]
