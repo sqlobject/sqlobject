@@ -73,6 +73,8 @@ from converters import registerConverter, sqlrepr, quote_str, unquote_str
 
 class VersionError(Exception):
     pass
+
+
 class NoDefault:
     pass
 
@@ -84,6 +86,8 @@ class SQLObjectState(object):
 
 
 safeSQLRE = re.compile(r'^[a-zA-Z_][a-zA-Z0-9_\.]*$')
+
+
 def sqlIdentifier(obj):
     # some db drivers return unicode column names
     return isinstance(obj, basestring) and bool(safeSQLRE.search(obj.strip()))
@@ -101,9 +105,11 @@ def _str_or_sqlrepr(expr, db):
         return expr
     return sqlrepr(expr, db)
 
+
 ########################################
 # Expression generation
 ########################################
+
 
 class SQLExpression:
     def __add__(self, other):
@@ -237,20 +243,24 @@ class SQLExpression:
     def tablesUsedImmediate(self):
         return []
 
+
 #######################################
 # Converter for SQLExpression instances
 #######################################
+
 
 def SQLExprConverter(value, db):
     return value.__sqlrepr__()
 
 registerConverter(SQLExpression, SQLExprConverter)
 
+
 def tablesUsedSet(obj, db):
     if hasattr(obj, "tablesUsedSet"):
         return obj.tablesUsedSet(db)
     else:
         return {}
+
 
 operatorMap = {
     "+": operator.add,
@@ -266,6 +276,7 @@ operatorMap = {
     "IN": operator.contains,
     "IS": operator.eq,
     }
+
 
 class SQLOp(SQLExpression):
     def __init__(self, op, expr1, expr2):
@@ -296,6 +307,9 @@ class SQLOp(SQLExpression):
             return operatorMap[self.op.upper()](execute(self.expr1, executor),
                                                 execute(self.expr2, executor))
 
+registerConverter(SQLOp, SQLExprConverter)
+
+
 class SQLModulo(SQLOp):
     def __init__(self, expr1, expr2):
         SQLOp.__init__(self, '%', expr1, expr2)
@@ -307,8 +321,8 @@ class SQLModulo(SQLOp):
         s2 = sqlrepr(self.expr2, db)
         return "MOD(%s, %s)" % (s1, s2)
 
-registerConverter(SQLOp, SQLExprConverter)
 registerConverter(SQLModulo, SQLExprConverter)
+
 
 class SQLCall(SQLExpression):
     def __init__(self, expr, args):
@@ -325,6 +339,7 @@ class SQLCall(SQLExpression):
         raise ValueError("I don't yet know how to locally execute functions")
 
 registerConverter(SQLCall, SQLExprConverter)
+
 
 class SQLPrefix(SQLExpression):
     def __init__(self, prefix, expr):
@@ -348,6 +363,7 @@ class SQLPrefix(SQLExpression):
 
 registerConverter(SQLPrefix, SQLExprConverter)
 
+
 class SQLConstant(SQLExpression):
     def __init__(self, const):
         self.const = const
@@ -359,6 +375,7 @@ class SQLConstant(SQLExpression):
         raise ValueError("I don't yet know how to execute SQL constants")
 
 registerConverter(SQLConstant, SQLExprConverter)
+
 
 class SQLTrueClauseClass(SQLExpression):
     def __sqlrepr__(self, db):
@@ -375,6 +392,7 @@ registerConverter(SQLTrueClauseClass, SQLExprConverter)
 # Namespaces
 ########################################
 
+
 class Field(SQLExpression):
     def __init__(self, tableName, fieldName):
         self.tableName = tableName
@@ -388,6 +406,7 @@ class Field(SQLExpression):
 
     def execute(self, executor):
         return executor.field(self.tableName, self.fieldName)
+
 
 class SQLObjectField(Field):
     def __init__(self, tableName, fieldName, original, soClass, column):
@@ -447,6 +466,7 @@ class Table(SQLExpression):
     def execute(self, executor):
         raise ValueError("Tables don't have values")
 
+
 class SQLObjectTable(Table):
     FieldClass = SQLObjectField
 
@@ -484,6 +504,7 @@ class SQLObjectTable(Table):
         return self.FieldClass(self.tableName, column.dbName, attr,
                                self.soClass, column)
 
+
 class SQLObjectTableWithJoins(SQLObjectTable):
 
     def __getattr__(self, attr):
@@ -515,6 +536,7 @@ class SQLObjectTableWithJoins(SQLObjectTable):
             return getattr(join.otherClass.q, join.joinColumn) == \
                 self.soClass.q.id
 
+
 class TableSpace:
     TableClass = Table
 
@@ -522,6 +544,7 @@ class TableSpace:
         if attr.startswith('__'):
             raise AttributeError
         return self.TableClass(attr)
+
 
 class ConstantSpace:
     def __getattr__(self, attr):
@@ -548,6 +571,7 @@ class AliasField(Field):
 
     def tablesUsedImmediate(self):
         return [self.aliasTable]
+
 
 class AliasTable(Table):
     as_string = ''  # set it to "AS" if your database requires it
@@ -590,6 +614,7 @@ class AliasTable(Table):
         return "%s %s %s" % (sqlrepr(self.tableName, db), self.as_string,
                              self.alias)
 
+
 class Alias(SQLExpression):
     def __init__(self, table, alias=None):
         self.q = AliasTable(table, alias)
@@ -622,6 +647,7 @@ class Union(SQLExpression):
 ########################################
 # SQL Statements
 ########################################
+
 
 class Select(SQLExpression):
     def __init__(self, items=NoDefault, where=NoDefault, groupBy=NoDefault,
@@ -728,9 +754,11 @@ class Select(SQLExpression):
                 tables.update(tablesUsedSet(thing, db))
         for j in join:
             t1 = _str_or_sqlrepr(j.table1, db)
-            if t1 in tables: tables.remove(t1)
+            if t1 in tables:
+                tables.remove(t1)
             t2 = _str_or_sqlrepr(j.table2, db)
-            if t2 in tables: tables.remove(t2)
+            if t2 in tables:
+                tables.remove(t2)
         if tables:
             select += " FROM %s" % ", ".join(sorted(tables))
         elif join:
@@ -782,6 +810,7 @@ class Select(SQLExpression):
 
 registerConverter(Select, SQLExprConverter)
 
+
 class Insert(SQLExpression):
     def __init__(self, table, valueList=None, values=None, template=NoDefault):
         self.template = template
@@ -826,6 +855,7 @@ class Insert(SQLExpression):
 
 registerConverter(Insert, SQLExprConverter)
 
+
 def dictToList(template, dict):
     list = []
     for key in template:
@@ -835,6 +865,7 @@ def dictToList(template, dict):
             "Extra entries in dictionary that aren't asked for in template "
             "(template=%s, dict=%s)" % (repr(template), repr(dict)))
     return list
+
 
 class Update(SQLExpression):
     def __init__(self, table, values, template=NoDefault, where=NoDefault):
@@ -871,6 +902,7 @@ class Update(SQLExpression):
 
 registerConverter(Update, SQLExprConverter)
 
+
 class Delete(SQLExpression):
     """To be safe, this will signal an error if there is no where clause,
     unless you pass in where=None to the constructor."""
@@ -891,6 +923,7 @@ class Delete(SQLExpression):
 
 registerConverter(Delete, SQLExprConverter)
 
+
 class Replace(Update):
     def sqlName(self):
         return "REPLACE"
@@ -900,6 +933,7 @@ registerConverter(Replace, SQLExprConverter)
 ########################################
 # SQL Builtins
 ########################################
+
 
 class DESC(SQLExpression):
 
@@ -911,6 +945,7 @@ class DESC(SQLExpression):
             return sqlrepr(self.expr.expr, db)
         return '%s DESC' % sqlrepr(self.expr, db)
 
+
 def AND(*ops):
     if not ops:
         return None
@@ -920,6 +955,7 @@ def AND(*ops):
         return SQLOp("AND", op1, AND(*ops))
     else:
         return op1
+
 
 def OR(*ops):
     if not ops:
@@ -931,11 +967,14 @@ def OR(*ops):
     else:
         return op1
 
+
 def NOT(op):
     return SQLPrefix("NOT", op)
 
+
 def _IN(item, list):
     return SQLOp("IN", item, list)
+
 
 def IN(item, list):
     from sresults import SelectResults  # Import here to avoid circular import
@@ -948,26 +987,33 @@ def IN(item, list):
     else:
         return _IN(item, list)
 
+
 def NOTIN(item, list):
     if isinstance(list, Select):
         return NOTINSubquery(item, list)
     else:
         return NOT(_IN(item, list))
 
+
 def STARTSWITH(expr, pattern):
     return LIKE(expr, _LikeQuoted(pattern) + '%', escape='\\')
+
 
 def ENDSWITH(expr, pattern):
     return LIKE(expr, '%' + _LikeQuoted(pattern), escape='\\')
 
+
 def CONTAINSSTRING(expr, pattern):
     return LIKE(expr, '%' + _LikeQuoted(pattern) + '%', escape='\\')
+
 
 def ISNULL(expr):
     return SQLOp("IS", expr, None)
 
+
 def ISNOTNULL(expr):
     return SQLOp("IS NOT", expr, None)
+
 
 class ColumnAS(SQLOp):
     ''' Just like SQLOp('AS', expr, name) except without the parentheses '''
@@ -979,6 +1025,7 @@ class ColumnAS(SQLOp):
     def __sqlrepr__(self, db):
         return "%s %s %s" % (sqlrepr(self.expr1, db), self.op,
                              sqlrepr(self.expr2, db))
+
 
 class _LikeQuoted:
     # It assumes prefix and postfix are strings; usually just a percent sign.
@@ -1020,6 +1067,7 @@ class _LikeQuoted:
            raise TypeError(
                 "expected str, unicode or SQLExpression, got %s" % type(s))
 
+
 def _quote_like_special(s, db):
     if db in ('postgres', 'rdbhost'):
         escape = r'\\'
@@ -1030,9 +1078,11 @@ def _quote_like_special(s, db):
         replace('_', escape+'_')
     return s
 
+
 ########################################
 # SQL JOINs
 ########################################
+
 
 class SQLJoin(SQLExpression):
     def __init__(self, table1, table2, op=','):
@@ -1057,56 +1107,74 @@ class SQLJoin(SQLExpression):
 
 registerConverter(SQLJoin, SQLExprConverter)
 
+
 def JOIN(table1, table2):
     return SQLJoin(table1, table2, " JOIN")
+
 
 def INNERJOIN(table1, table2):
     return SQLJoin(table1, table2, " INNER JOIN")
 
+
 def CROSSJOIN(table1, table2):
     return SQLJoin(table1, table2, " CROSS JOIN")
+
 
 def STRAIGHTJOIN(table1, table2):
     return SQLJoin(table1, table2, " STRAIGHT JOIN")
 
+
 def LEFTJOIN(table1, table2):
     return SQLJoin(table1, table2, " LEFT JOIN")
+
 
 def LEFTOUTERJOIN(table1, table2):
     return SQLJoin(table1, table2, " LEFT OUTER JOIN")
 
+
 def NATURALJOIN(table1, table2):
     return SQLJoin(table1, table2, " NATURAL JOIN")
+
 
 def NATURALLEFTJOIN(table1, table2):
     return SQLJoin(table1, table2, " NATURAL LEFT JOIN")
 
+
 def NATURALLEFTOUTERJOIN(table1, table2):
     return SQLJoin(table1, table2, " NATURAL LEFT OUTER JOIN")
+
 
 def RIGHTJOIN(table1, table2):
     return SQLJoin(table1, table2, " RIGHT JOIN")
 
+
 def RIGHTOUTERJOIN(table1, table2):
     return SQLJoin(table1, table2, " RIGHT OUTER JOIN")
+
 
 def NATURALRIGHTJOIN(table1, table2):
     return SQLJoin(table1, table2, " NATURAL RIGHT JOIN")
 
+
 def NATURALRIGHTOUTERJOIN(table1, table2):
     return SQLJoin(table1, table2, " NATURAL RIGHT OUTER JOIN")
+
 
 def FULLJOIN(table1, table2):
     return SQLJoin(table1, table2, " FULL JOIN")
 
+
 def FULLOUTERJOIN(table1, table2):
     return SQLJoin(table1, table2, " FULL OUTER JOIN")
+
 
 def NATURALFULLJOIN(table1, table2):
     return SQLJoin(table1, table2, " NATURAL FULL JOIN")
 
+
 def NATURALFULLOUTERJOIN(table1, table2):
     return SQLJoin(table1, table2, " NATURAL FULL OUTER JOIN")
+
 
 class SQLJoinConditional(SQLJoin):
     """Conditional JOIN"""
@@ -1156,38 +1224,46 @@ class SQLJoinConditional(SQLJoin):
 
 registerConverter(SQLJoinConditional, SQLExprConverter)
 
+
 def INNERJOINConditional(table1, table2,
                          on_condition=None, using_columns=None):
     return SQLJoinConditional(table1, table2, "INNER JOIN",
                               on_condition, using_columns)
 
+
 def LEFTJOINConditional(table1, table2, on_condition=None, using_columns=None):
     return SQLJoinConditional(table1, table2, "LEFT JOIN",
                               on_condition, using_columns)
+
 
 def LEFTOUTERJOINConditional(table1, table2,
                              on_condition=None, using_columns=None):
     return SQLJoinConditional(table1, table2, "LEFT OUTER JOIN",
                               on_condition, using_columns)
 
+
 def RIGHTJOINConditional(table1, table2,
                          on_condition=None, using_columns=None):
     return SQLJoinConditional(table1, table2, "RIGHT JOIN",
                               on_condition, using_columns)
+
 
 def RIGHTOUTERJOINConditional(table1, table2,
                               on_condition=None, using_columns=None):
     return SQLJoinConditional(table1, table2, "RIGHT OUTER JOIN",
                               on_condition, using_columns)
 
+
 def FULLJOINConditional(table1, table2, on_condition=None, using_columns=None):
     return SQLJoinConditional(table1, table2, "FULL JOIN",
                               on_condition, using_columns)
+
 
 def FULLOUTERJOINConditional(table1, table2,
                              on_condition=None, using_columns=None):
     return SQLJoinConditional(table1, table2, "FULL OUTER JOIN",
                               on_condition, using_columns)
+
 
 class SQLJoinOn(SQLJoinConditional):
     """Conditional JOIN ON"""
@@ -1195,6 +1271,7 @@ class SQLJoinOn(SQLJoinConditional):
         SQLJoinConditional.__init__(self, table1, table2, op, on_condition)
 
 registerConverter(SQLJoinOn, SQLExprConverter)
+
 
 class SQLJoinUsing(SQLJoinConditional):
     """Conditional JOIN USING"""
@@ -1204,44 +1281,58 @@ class SQLJoinUsing(SQLJoinConditional):
 
 registerConverter(SQLJoinUsing, SQLExprConverter)
 
+
 def INNERJOINOn(table1, table2, on_condition):
     return SQLJoinOn(table1, table2, "INNER JOIN", on_condition)
+
 
 def LEFTJOINOn(table1, table2, on_condition):
     return SQLJoinOn(table1, table2, "LEFT JOIN", on_condition)
 
+
 def LEFTOUTERJOINOn(table1, table2, on_condition):
     return SQLJoinOn(table1, table2, "LEFT OUTER JOIN", on_condition)
+
 
 def RIGHTJOINOn(table1, table2, on_condition):
     return SQLJoinOn(table1, table2, "RIGHT JOIN", on_condition)
 
+
 def RIGHTOUTERJOINOn(table1, table2, on_condition):
     return SQLJoinOn(table1, table2, "RIGHT OUTER JOIN", on_condition)
+
 
 def FULLJOINOn(table1, table2, on_condition):
     return SQLJoinOn(table1, table2, "FULL JOIN", on_condition)
 
+
 def FULLOUTERJOINOn(table1, table2, on_condition):
     return SQLJoinOn(table1, table2, "FULL OUTER JOIN", on_condition)
+
 
 def INNERJOINUsing(table1, table2, using_columns):
     return SQLJoinUsing(table1, table2, "INNER JOIN", using_columns)
 
+
 def LEFTJOINUsing(table1, table2, using_columns):
     return SQLJoinUsing(table1, table2, "LEFT JOIN", using_columns)
+
 
 def LEFTOUTERJOINUsing(table1, table2, using_columns):
     return SQLJoinUsing(table1, table2, "LEFT OUTER JOIN", using_columns)
 
+
 def RIGHTJOINUsing(table1, table2, using_columns):
     return SQLJoinUsing(table1, table2, "RIGHT JOIN", using_columns)
+
 
 def RIGHTOUTERJOINUsing(table1, table2, using_columns):
     return SQLJoinUsing(table1, table2, "RIGHT OUTER JOIN", using_columns)
 
+
 def FULLJOINUsing(table1, table2, using_columns):
     return SQLJoinUsing(table1, table2, "FULL JOIN", using_columns)
+
 
 def FULLOUTERJOINUsing(table1, table2, using_columns):
     return SQLJoinUsing(table1, table2, "FULL OUTER JOIN", using_columns)
@@ -1255,8 +1346,10 @@ class OuterField(SQLObjectField):
     def tablesUsedImmediate(self):
         return []
 
+
 class OuterTable(SQLObjectTable):
     FieldClass = OuterField
+
 
 class Outer:
     def __init__(self, table):
@@ -1294,6 +1387,7 @@ class LIKE(SQLExpression):
             dest = dest.replace("\002", "[*]")
             self._regex = re.compile(fnmatch.translate(dest), re.I)
         return self._regex.search(execute(self.expr, executor))
+
 
 class RLIKE(LIKE):
     op = "RLIKE"
@@ -1334,6 +1428,7 @@ class INSubquery(SQLExpression):
         return "%s %s (%s)" % (sqlrepr(self.item, db),
                                self.op, sqlrepr(self.subquery, db))
 
+
 class NOTINSubquery(INSubquery):
     op = "NOT IN"
 
@@ -1346,26 +1441,34 @@ class Subquery(SQLExpression):
     def __sqlrepr__(self, db):
         return "%s (%s)" % (self.op, sqlrepr(self.subquery, db))
 
+
 def EXISTS(subquery):
     return Subquery("EXISTS", subquery)
+
 
 def NOTEXISTS(subquery):
     return Subquery("NOT EXISTS", subquery)
 
+
 def SOME(subquery):
     return Subquery("SOME", subquery)
+
 
 def ANY(subquery):
     return Subquery("ANY", subquery)
 
+
 def ALL(subquery):
     return Subquery("ALL", subquery)
 
+
 ####
+
 
 class ImportProxyField(SQLObjectField):
     def tablesUsedImmediate(self):
         return [str(self.tableName)]
+
 
 class ImportProxy(SQLExpression):
     '''Class to be used in column definitions that rely on other tables that might
@@ -1388,6 +1491,7 @@ class ImportProxy(SQLExpression):
         if self.soClass is None:
             return _Delay(self, attr)
         return getattr(self.soClass.q, attr)
+
 
 class _Delay(SQLExpression):
     def __init__(self, proxy, attr):
@@ -1422,9 +1526,11 @@ class _Delay(SQLExpression):
         return _aliasFieldName(self)
     fieldName = property(fieldName)
 
+
 class _DelayClass(_Delay):
     def _resolve(self):
         return self.proxy.soClass.sqlmeta.table
+
 
 class _Delay_proxy(object):
     def __init__(self, **kw):
@@ -1459,6 +1565,7 @@ if __name__ == "__main__":
 >>> Replace(table.address, [("BOB", "3049 N. 18th St."), ("TIM", "409 S. 10th St.")], template=('name', 'address'))
 """  # noqa: allow long (> 79) lines
     for expr in tests.split('\n'):
-        if not expr.strip(): continue
+        if not expr.strip():
+            continue
         if expr.startswith('>>> '):
             expr = expr[4:]

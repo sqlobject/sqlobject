@@ -3,6 +3,7 @@ from sqlobject.tests.dbtest import *
 from sqlobject.views import *
 from sqlobject.sqlbuilder import ImportProxy, Alias
 
+
 def testSimple():
     nyi = ImportProxy('NotYetImported')
     x = nyi.q.name
@@ -15,6 +16,7 @@ def testSimple():
     assert str(x) == 'not_yet_imported.a_name'
     assert str(y) == 'not_yet_imported.a_name'
 
+
 def testAddition():
     nyi = ImportProxy('NotYetImported2')
     x = nyi.q.name+nyi.q.name
@@ -24,6 +26,7 @@ def testAddition():
 
     assert str(x) == \
         '((not_yet_imported2.a_name) + (not_yet_imported2.a_name))'
+
 
 def testOnView():
     nyi = ImportProxy('NotYetImportedV')
@@ -38,6 +41,7 @@ def testOnView():
         name = StringCol(dbName=NotYetImported3.q.name)
 
     assert str(x) == 'not_yet_imported_v.name'
+
 
 def testAlias():
     nyi = ImportProxy('NotYetImported4')

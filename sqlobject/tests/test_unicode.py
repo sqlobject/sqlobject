@@ -1,17 +1,21 @@
 from sqlobject import *
 from sqlobject.tests.dbtest import *
 
+
 ########################################
 # Unicode columns
 ########################################
+
 
 class TestUnicode(SQLObject):
     count = IntCol(alternateID=True)
     col1 = UnicodeCol(alternateID=True, length=100)
     col2 = UnicodeCol(dbEncoding='latin1')
 
+
 data = [u'\u00f0', u'test', 'ascii test']
 items = []
+
 
 def setup():
     global items
@@ -21,6 +25,7 @@ def setup():
         TestUnicode._connection.query('SET client_encoding TO latin1')
     for i, s in enumerate(data):
         items.append(TestUnicode(count=i, col1=s, col2=s))
+
 
 def test_create():
     setup()
@@ -37,6 +42,7 @@ def test_create():
     for count, col1, col2 in rows:
         assert data[count].encode('utf-8') == col1
         assert data[count].encode('latin1') == col2
+
 
 def _test_select():
     for i, value in enumerate(data):
@@ -79,9 +85,11 @@ def _test_select():
     rows = list(TestUnicode.select(TestUnicode.q.col1.contains(u"\u00f0")))
     assert len(rows) == 1
 
+
 def test_select():
     setup()
     _test_select()
+
 
 def test_dbEncoding():
     setup()

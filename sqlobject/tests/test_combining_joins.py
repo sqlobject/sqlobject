@@ -1,6 +1,7 @@
 from sqlobject import *
 from dbtest import *
 
+
 class ComplexGroup(SQLObject):
     name = StringCol()
     complexes = OneToMany('Complex')
@@ -9,16 +10,19 @@ class ComplexGroup(SQLObject):
         q = self.complexes.clause & Complex.unit_models.clause
         return UnitModel.select(q)
 
+
 class Complex(SQLObject):
     name = StringCol()
     unit_models = ManyToMany('UnitModel')
     complex_group = ForeignKey('ComplexGroup')
+
 
 class UnitModel(SQLObject):
     class sqlmeta:
         defaultOrderBy = 'name'
     name = StringCol()
     complexes = ManyToMany('Complex')
+
 
 def test_join_sqlrepr():
     setupClass([ComplexGroup, UnitModel, Complex])

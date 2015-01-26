@@ -2,14 +2,17 @@ import py.test
 from sqlobject import *
 from sqlobject.tests.dbtest import *
 
+
 ########################################
 # Transaction test
 ########################################
+
 
 class TestSOTrans(SQLObject):
     class sqlmeta:
         defaultOrder = 'name'
     name = StringCol(length=10, alternateID=True, dbName='name_col')
+
 
 def test_transaction():
     if not supports('transactions'):
@@ -36,6 +39,7 @@ def test_transaction():
     finally:
         TestSOTrans._connection.autoCommit = True
 
+
 def test_transaction_commit_sync():
     if not supports('transactions'):
         py.test.skip("Transactions aren't supported")
@@ -51,6 +55,7 @@ def test_transaction_commit_sync():
         assert bOut.name == 'robert'
     finally:
         TestSOTrans._connection.autoCommit = True
+
 
 def test_transaction_delete(close=False):
     if not supports('transactions'):
@@ -76,6 +81,7 @@ def test_transaction_delete(close=False):
         trans.rollback()
         connection.autoCommit = True
         connection.close()
+
 
 def test_transaction_delete_with_close():
     test_transaction_delete(close=True)

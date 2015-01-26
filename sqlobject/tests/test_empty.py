@@ -2,9 +2,11 @@ import py.test
 from sqlobject import *
 from sqlobject.tests.dbtest import *
 
+
 class EmptyClass(SQLObject):
 
     pass
+
 
 def test_empty():
     if not supports('emptyTable'):

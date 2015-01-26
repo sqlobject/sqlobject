@@ -2,9 +2,11 @@ from sqlobject import *
 from sqlobject.sqlbuilder import *
 from sqlobject.tests.dbtest import *
 
+
 class TestSQLBuilder(SQLObject):
     name = StringCol()
     value = IntCol()
+
 
 def test_Select():
     setupClass(TestSQLBuilder)
@@ -29,6 +31,7 @@ def test_Select():
         'SELECT test_sql_builder.id, test_sql_builder.name, ' \
         'test_sql_builder.value FROM test_sql_builder WHERE 1 = 1'
 
+
 def test_empty_AND():
     assert AND() == None
     assert AND(True) == True
@@ -42,12 +45,14 @@ def test_empty_AND():
         sqlrepr(SQLOp("AND", 1, SQLOp("AND", 2, '3')), "sqlite") == \
         "((1) AND ((2) AND ('3')))"
 
+
 def test_modulo():
     setupClass(TestSQLBuilder)
     assert sqlrepr(TestSQLBuilder.q.value % 2 == 0, 'mysql') == \
         "((MOD(test_sql_builder.value, 2)) = (0))"
     assert sqlrepr(TestSQLBuilder.q.value % 2 == 0, 'sqlite') == \
         "(((test_sql_builder.value) % (2)) = (0))"
+
 
 def test_str_or_sqlrepr():
     select = Select(['id', 'name'], staticTables=['employees'],

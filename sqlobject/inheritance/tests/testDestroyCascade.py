@@ -2,11 +2,14 @@ from sqlobject import *
 from sqlobject.inheritance import *
 from sqlobject.tests.dbtest import *
 
+
 class TestCascade1(InheritableSQLObject):
     dummy = IntCol()
 
+
 class TestCascade2(TestCascade1):
     c = ForeignKey('TestCascade3', cascade='null')
+
 
 class TestCascade3(SQLObject):
     dummy = IntCol()

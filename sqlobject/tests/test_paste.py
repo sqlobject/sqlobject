@@ -12,6 +12,7 @@ except ImportError:
 class NameOnly(SQLObject):
     name = StringCol()
 
+
 def makeapp(abort=False, begin=False, fail=False):
     def app(environ, start_response):
         NameOnly(name='app1')
@@ -28,10 +29,12 @@ def makeapp(abort=False, begin=False, fail=False):
         return ['ok']
     return app
 
+
 def makestack(abort=False, begin=False, fail=False, **kw):
     app = makeapp(abort=abort, begin=begin, fail=fail)
     app = make_middleware(app, {}, database=getConnectionURI(), **kw)
     return app
+
 
 def runapp(**kw):
     print('-' * 8)
@@ -47,15 +50,18 @@ def runapp(**kw):
     except AssertionError:
         return False
 
+
 def setup():
     setupClass(NameOnly)
     getConnection().query('DELETE FROM name_only')
     NameOnly._connection = sqlhub
 
+
 def names():
     names = [n.name for n in NameOnly.select(connection=getConnection())]
     names.sort()
     return names
+
 
 def test_fail():
     setup()
@@ -67,6 +73,7 @@ def test_fail():
     setup()
     assert not runapp(fail=True, begin=True, use_transaction=True)
     assert names() == ['app1']
+
 
 def test_other():
     setup()

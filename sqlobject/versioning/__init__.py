@@ -1,6 +1,7 @@
 from sqlobject import *
 from datetime import datetime
 
+
 class Version(SQLObject):
     def restore(self):
         values = self.sqlmeta.asDict()
@@ -43,6 +44,7 @@ class Version(SQLObject):
         else:
             return getattr(self.master, attr)
 
+
 def getColumns(columns, cls):
     for column, defi in cls.sqlmeta.columnDefinitions.items():
         if column.endswith("ID") and isinstance(defi, ForeignKey):
@@ -51,7 +53,8 @@ def getColumns(columns, cls):
         # remove incompatible constraints
         kwds = dict(defi._kw)
         for kw in ["alternateID", "unique"]:
-            if kw in kwds: del kwds[kw]
+            if kw in kwds:
+                del kwds[kw]
         columns[column] = defi.__class__(**kwds)
 
     # ascend heirarchy

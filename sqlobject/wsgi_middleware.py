@@ -3,6 +3,7 @@ from paste.wsgilib import catch_errors
 from paste.util import import_string
 import sqlobject
 
+
 def make_middleware(app, global_conf, database=None, use_transaction=False,
                     hub=None):
     """
@@ -43,6 +44,7 @@ def make_middleware(app, global_conf, database=None, use_transaction=False,
     if isinstance(database, basestring):
         database = sqlobject.connectionForURI(database)
     return SQLObjectMiddleware(app, database, use_transaction, hub)
+
 
 class SQLObjectMiddleware(object):
 

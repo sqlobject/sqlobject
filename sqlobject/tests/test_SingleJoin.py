@@ -1,6 +1,7 @@
 from sqlobject import *
 from sqlobject.tests.dbtest import *
 
+
 class PersonWithAlbum(SQLObject):
     name = StringCol()
     # albumNone returns the album or none
@@ -9,9 +10,11 @@ class PersonWithAlbum(SQLObject):
     albumInstance = SingleJoin('PhotoAlbum', makeDefault=True,
                                joinColumn='test_person_id')
 
+
 class PhotoAlbum(SQLObject):
     color = StringCol(default='red')
     person = ForeignKey('PersonWithAlbum', dbName='test_person_id')
+
 
 def test_1():
     setupClass([PersonWithAlbum, PhotoAlbum])

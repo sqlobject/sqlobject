@@ -26,8 +26,10 @@ warnings.filterwarnings(
     'ignore', 'tempnam is a potential security risk.*',
     RuntimeWarning, '.*command', 28)
 
+
 def nowarning_tempnam(*args, **kw):
     return os.tempnam(*args, **kw)
+
 
 class SQLObjectVersionTable(sqlobject.SQLObject):
     """
@@ -38,6 +40,7 @@ class SQLObjectVersionTable(sqlobject.SQLObject):
         table = 'sqlobject_db_version'
     version = col.StringCol()
     updated = col.DateTimeCol(default=col.DateTimeCol.now)
+
 
 def db_differences(soClass, conn):
     """
@@ -77,6 +80,7 @@ def db_differences(soClass, conn):
                 diffs.append('Database missing column: %s' % col.dbName)
     return diffs
 
+
 class CommandRunner(object):
 
     def __init__(self):
@@ -115,6 +119,7 @@ class CommandRunner(object):
 
 the_runner = CommandRunner()
 register = the_runner.register
+
 
 def standard_parser(connection=True, simulate=True,
                     interactive=False, find_modules=True):
@@ -174,6 +179,7 @@ def standard_parser(connection=True, simulate=True,
                       default=[])
     return parser
 
+
 class Command(object):
 
     __metaclass__ = DeclarativeMeta
@@ -200,7 +206,8 @@ class Command(object):
         # contamination.
         # yemartin - 2006-08-08
 
-        class SQLObjectCircularReferenceError(Exception): pass
+        class SQLObjectCircularReferenceError(Exception):
+            pass
 
         def findReverseDependencies(cls):
             """
@@ -581,6 +588,7 @@ class Command(object):
             return None
         return content
 
+
 class CommandSQL(Command):
 
     name = 'sql'
@@ -620,6 +628,7 @@ class CommandList(Command):
             print('%s.%s' % (soClass.__module__, soClass.__name__))
             if self.options.verbose >= 1:
                 print('  Table: %s' % soClass.sqlmeta.table)
+
 
 class CommandCreate(Command):
 
@@ -729,6 +738,7 @@ class CommandDrop(Command):
             print('%i tables dropped (%i didn\'t exist)' % (
                   dropped, not_existing))
 
+
 class CommandStatus(Command):
 
     name = 'status'
@@ -801,6 +811,7 @@ class CommandStatus(Command):
             print('%i in sync; %i out of sync; %i not in database' % (
                   good, bad, missing_tables))
 
+
 class CommandHelp(Command):
 
     name = 'help'
@@ -828,6 +839,7 @@ class CommandHelp(Command):
                 if command.aliases:
                     print('%s (Aliases: %s)' % (
                         ' '*max_len, ', '.join(command.aliases)))
+
 
 class CommandExecute(Command):
 
@@ -886,6 +898,7 @@ class CommandExecute(Command):
                 sys.stdout.write("%r\t" % col)
             sys.stdout.write("\n")
         print()
+
 
 class CommandRecord(Command):
 
@@ -1148,6 +1161,7 @@ class CommandRecord(Command):
         if self.options.db_record:
             self.update_db(version, self.connection())
 
+
 class CommandUpgrade(CommandRecord):
 
     name = 'upgrade'
@@ -1276,6 +1290,7 @@ class CommandUpgrade(CommandRecord):
             return None, None
         upgraders.sort()
         return upgraders[-1]
+
 
 def update_sys_path(paths, verbose):
     if isinstance(paths, basestring):

@@ -7,6 +7,7 @@ from sqlobject.main import sqlmeta, SQLObject, SelectResults, \
    makeProperties, unmakeProperties, getterName, setterName
 import iteration
 
+
 def tablesUsedSet(obj, db):
     if hasattr(obj, "tablesUsedSet"):
         return obj.tablesUsedSet(db)
@@ -95,6 +96,7 @@ class InheritableSelectResults(SelectResults):
                                **self.ops)
         return clone.accumulateMany(skipInherited=True, *attributes)
 
+
 class InheritableSQLMeta(sqlmeta):
     @classmethod
     def addColumn(sqlmeta, columnDef, changeSchema=False, connection=None,
@@ -106,8 +108,10 @@ class InheritableSQLMeta(sqlmeta):
         if sqlmeta.parentClass:
             for col in sqlmeta.parentClass.sqlmeta.columnList:
                 cname = col.name
-                if cname == 'childName': continue
-                if cname.endswith("ID"): cname = cname[:-2]
+                if cname == 'childName':
+                    continue
+                if cname.endswith("ID"):
+                    cname = cname[:-2]
                 setattr(soClass, getterName(cname), eval(
                     'lambda self: self._parent.%s' % cname))
                 if not col.immutable:
@@ -142,7 +146,8 @@ class InheritableSQLMeta(sqlmeta):
         for c in sqlmeta.childClasses.values():
             c.sqlmeta.addColumn(columnDef, connection=connection,
                                 childUpdate=True)
-            if q: setattr(c.q, columnDef.name, q)
+            if q:
+                setattr(c.q, columnDef.name, q)
 
     @classmethod
     def delColumn(sqlmeta, column, changeSchema=False, connection=None,
@@ -303,7 +308,8 @@ class InheritableSQLObject(SQLObject):
                                                    selectResults)
 
         # DSM: If we are updating a child, we should never return a child...
-        if childUpdate: return val
+        if childUpdate:
+            return val
         # DSM: If this class has a child, return the child
         if 'childName' in cls.sqlmeta.columns:
             childName = val.childName

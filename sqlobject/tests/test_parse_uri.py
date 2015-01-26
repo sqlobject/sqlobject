@@ -2,9 +2,11 @@ import os
 from sqlobject.dbconnection import DBConnection
 from sqlobject.sqlite.sqliteconnection import SQLiteConnection
 
+
 ########################################
 # Test _parseURI
 ########################################
+
 
 def test_parse():
     _parseURI = DBConnection._parseURI
@@ -97,6 +99,7 @@ def test_parse():
         assert port is None
         assert path == "/C:/full/path/to/database"
         assert args == {}
+
 
 def test_uri():
     connection = DBConnection()

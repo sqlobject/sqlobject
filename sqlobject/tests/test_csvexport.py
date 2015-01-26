@@ -5,6 +5,7 @@ from dbtest import *
 from StringIO import StringIO
 from sqlobject.util.csvexport import export_csv, export_csv_zip
 
+
 def assert_export(result, *args, **kw):
     f = StringIO()
     kw['writer'] = f
@@ -17,6 +18,7 @@ def assert_export(result, *args, **kw):
         print(s)
         assert result.strip() == s.strip()
 
+
 class SimpleCSV(SQLObject):
 
     name = StringCol()
@@ -24,6 +26,7 @@ class SimpleCSV(SQLObject):
     address.csvTitle = 'Street Address'
     hidden = StringCol()
     hidden.noCSV = True
+
 
 class ComplexCSV(SQLObject):
 
@@ -39,6 +42,7 @@ class ComplexCSV(SQLObject):
 
     def _get_initials(self):
         return self.fname[0] + self.lname[0]
+
 
 def test_simple():
     setupClass(SimpleCSV)
@@ -59,6 +63,7 @@ name,Street Address
 Joe,123W
 """, SimpleCSV.selectBy(name='Joe'))
 
+
 def test_complex():
     setupClass(ComplexCSV)
     ComplexCSV(fname='John', lname='Doe', age=40)
@@ -75,6 +80,7 @@ Full Name,fname,lname,age,initials
 Bob Dylan,Bob,Dylan,60,BD
 John Doe,John,Doe,40,JD
 """, ComplexCSV.select(ComplexCSV.q.lname.startswith('D'), orderBy='fname'))
+
 
 def test_zip():
     # Just exercise tests, doesn't actually test results

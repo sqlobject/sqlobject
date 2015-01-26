@@ -79,8 +79,9 @@ creationOrder = count()
 # Columns
 ########################################
 
-# Col is essentially a column definition, it doesn't have
-# much logic to it.
+# Col is essentially a column definition, it doesn't have much logic to it.
+
+
 class SOCol(object):
 
     def __init__(self,
@@ -205,8 +206,10 @@ class SOCol(object):
             self.alternateMethodName = alternateMethodName
 
         _validators = self.createValidators()
-        if validator: _validators.append(validator)
-        if validator2: _validators.insert(0, validator2)
+        if validator:
+            _validators.append(validator)
+        if validator2:
+            _validators.insert(0, validator2)
         _vlen = len(_validators)
         if _vlen:
             for _validator in _validators:
@@ -568,11 +571,13 @@ class StringValidator(SOValidator):
 
     from_python = to_python
 
+
 class SOStringCol(SOStringLikeCol):
 
     def createValidators(self, dataType=None):
         return [StringValidator(name=self.name, dataType=dataType)] + \
             super(SOStringCol, self).createValidators()
+
 
 class StringCol(Col):
     baseClass = SOStringCol
@@ -589,6 +594,7 @@ class NQuoted(sqlbuilder.SQLExpression):
     def __sqlrepr__(self, db):
         assert db == 'mssql'
         return "N" + sqlbuilder.sqlrepr(self.value, db)
+
 
 class UnicodeStringValidator(SOValidator):
 
@@ -629,6 +635,7 @@ class UnicodeStringValidator(SOValidator):
             "got %s %r instead" % (
                 self.name, type(value), value), value, state)
 
+
 class SOUnicodeCol(SOStringLikeCol):
     def _mssqlType(self):
         if self.customSQLType is not None:
@@ -638,6 +645,7 @@ class SOUnicodeCol(SOStringLikeCol):
     def createValidators(self):
         return [UnicodeStringValidator(name=self.name)] + \
             super(SOUnicodeCol, self).createValidators()
+
 
 class UnicodeCol(Col):
     baseClass = SOUnicodeCol
@@ -661,6 +669,7 @@ class IntValidator(SOValidator):
                     self.name, type(value), value), value, state)
 
     from_python = to_python
+
 
 class SOIntCol(SOCol):
     # 3-03 @@: support precision, maybe max and min directly
@@ -693,33 +702,42 @@ class SOIntCol(SOCol):
     def _sqlType(self):
         return self.addSQLAttrs("INT")
 
+
 class IntCol(Col):
     baseClass = SOIntCol
+
 
 class SOTinyIntCol(SOIntCol):
     def _sqlType(self):
         return self.addSQLAttrs("TINYINT")
 
+
 class TinyIntCol(Col):
     baseClass = SOTinyIntCol
+
 
 class SOSmallIntCol(SOIntCol):
     def _sqlType(self):
         return self.addSQLAttrs("SMALLINT")
 
+
 class SmallIntCol(Col):
     baseClass = SOSmallIntCol
+
 
 class SOMediumIntCol(SOIntCol):
     def _sqlType(self):
         return self.addSQLAttrs("MEDIUMINT")
 
+
 class MediumIntCol(Col):
     baseClass = SOMediumIntCol
+
 
 class SOBigIntCol(SOIntCol):
     def _sqlType(self):
         return self.addSQLAttrs("BIGINT")
+
 
 class BigIntCol(Col):
     baseClass = SOBigIntCol
@@ -740,6 +758,7 @@ class BoolValidator(SOValidator):
                 self.name, type(value), value), value, state)
 
     from_python = to_python
+
 
 class SOBoolCol(SOCol):
     def autoConstraints(self):
@@ -770,6 +789,7 @@ class SOBoolCol(SOCol):
     def _sqliteType(self):
         return "BOOLEAN"
 
+
 class BoolCol(Col):
     baseClass = SOBoolCol
 
@@ -794,6 +814,7 @@ class FloatValidator(SOValidator):
 
     from_python = to_python
 
+
 class SOFloatCol(SOCol):
     # 3-03 @@: support precision (e.g., DECIMAL)
 
@@ -809,6 +830,7 @@ class SOFloatCol(SOCol):
 
     def _mysqlType(self):
         return "DOUBLE PRECISION"
+
 
 class FloatCol(Col):
     baseClass = SOFloatCol
@@ -835,9 +857,11 @@ class SOKeyCol(SOCol):
         key_type = {int: "INT NULL", str: "TEXT"}
         return key_type[self.soClass.sqlmeta.idType]
 
+
 class KeyCol(Col):
 
     baseClass = SOKeyCol
+
 
 class SOForeignKey(SOKeyCol):
 
@@ -985,6 +1009,7 @@ class SOForeignKey(SOKeyCol):
         # @@: Code from above should be moved here
         return None
 
+
 class ForeignKey(KeyCol):
 
     baseClass = SOForeignKey
@@ -1008,6 +1033,7 @@ class EnumValidator(SOValidator):
                 self.enumValues, self.name, value), value, state)
 
     from_python = to_python
+
 
 class SOEnumCol(SOCol):
 
@@ -1071,6 +1097,7 @@ class SOEnumCol(SOCol):
         else:
             return len(obj)
 
+
 class EnumCol(Col):
     baseClass = SOEnumCol
 
@@ -1098,6 +1125,7 @@ class SetValidator(SOValidator):
                 "in the SetCol '%s', got %s %r instead" % (
                     self.name, type(value), value), value, state)
 
+
 class SOSetCol(SOCol):
     def __init__(self, **kw):
         self.setValues = kw.pop('setValues', None)
@@ -1115,6 +1143,7 @@ class SOSetCol(SOCol):
     def _mysqlType(self):
         return "SET(%s)" % ', '.join(
             [sqlbuilder.sqlrepr(v, 'mysql') for v in self.setValues])
+
 
 class SetCol(Col):
     baseClass = SOSetCol
@@ -1235,6 +1264,7 @@ if mxdatetime_available:
                 "got %s %r instead" % (
                     self.name, type(value), value), value, state)
 
+
 class SODateTimeCol(SOCol):
     datetimeFormat = '%Y-%m-%d %H:%M:%S.%f'
 
@@ -1279,6 +1309,7 @@ class SODateTimeCol(SOCol):
     def _maxdbType(self):
         return 'TIMESTAMP'
 
+
 class DateTimeCol(Col):
     baseClass = SODateTimeCol
 
@@ -1307,12 +1338,14 @@ class DateValidator(DateTimeValidator):
 
     from_python = to_python
 
+
 class SODateCol(SOCol):
     dateFormat = '%Y-%m-%d'
 
     def __init__(self, **kw):
         dateFormat = kw.pop('dateFormat', None)
-        if dateFormat: self.dateFormat = dateFormat
+        if dateFormat:
+            self.dateFormat = dateFormat
         super(SODateCol, self).__init__(**kw)
 
     def createValidators(self):
@@ -1355,6 +1388,7 @@ class SODateCol(SOCol):
     def _sqliteType(self):
         return 'DATE'
 
+
 class DateCol(Col):
     baseClass = SODateCol
 
@@ -1375,6 +1409,7 @@ class TimeValidator(DateTimeValidator):
         return value
 
     from_python = to_python
+
 
 class SOTimeCol(SOCol):
     timeFormat = '%H:%M:%S.%f'
@@ -1417,6 +1452,7 @@ class SOTimeCol(SOCol):
     def _maxdbType(self):
         return 'TIME'
 
+
 class TimeCol(Col):
     baseClass = SOTimeCol
 
@@ -1437,6 +1473,7 @@ class SOTimestampCol(SODateTimeCol):
         else:
             return 'TIMESTAMP'
 
+
 class TimestampCol(Col):
     baseClass = SOTimestampCol
 
@@ -1447,6 +1484,7 @@ class TimedeltaValidator(SOValidator):
 
     from_python = to_python
 
+
 class SOTimedeltaCol(SOCol):
     def _postgresType(self):
         return 'INTERVAL'
@@ -1455,11 +1493,13 @@ class SOTimedeltaCol(SOCol):
         return [TimedeltaValidator(name=self.name)] + \
             super(SOTimedeltaCol, self).createValidators()
 
+
 class TimedeltaCol(Col):
     baseClass = SOTimedeltaCol
 
 
 from decimal import Decimal
+
 
 class DecimalValidator(SOValidator):
     def to_python(self, value, state):
@@ -1511,6 +1551,7 @@ class DecimalValidator(SOValidator):
             "expected a Decimal in the DecimalCol '%s', got %s %r instead" % (
                 self.name, type(value), value), value, state)
 
+
 class SODecimalCol(SOCol):
 
     def __init__(self, **kw):
@@ -1529,8 +1570,10 @@ class SODecimalCol(SOCol):
         return [DecimalValidator(name=self.name)] + \
             super(SODecimalCol, self).createValidators()
 
+
 class DecimalCol(Col):
     baseClass = SODecimalCol
+
 
 class SOCurrencyCol(SODecimalCol):
 
@@ -1538,6 +1581,7 @@ class SOCurrencyCol(SODecimalCol):
         pushKey(kw, 'size', 10)
         pushKey(kw, 'precision', 2)
         super(SOCurrencyCol, self).__init__(**kw)
+
 
 class CurrencyCol(DecimalCol):
     baseClass = SOCurrencyCol
@@ -1564,6 +1608,7 @@ class DecimalStringValidator(DecimalValidator):
             value = str(value)
         return value
 
+
 class SODecimalStringCol(SOStringCol):
     def __init__(self, **kw):
         self.size = kw.pop('size', NoDefault)
@@ -1588,6 +1633,7 @@ class SODecimalStringCol(SOStringCol):
             v = DecimalStringValidator(name=self.name, precision=0)
         return [v] + \
             super(SODecimalStringCol, self).createValidators(dataType=Decimal)
+
 
 class DecimalStringCol(StringCol):
     baseClass = SODecimalStringCol
@@ -1637,11 +1683,13 @@ class BinaryValidator(SOValidator):
         self._cachedValue = (value, binary)
         return binary
 
+
 class SOBLOBCol(SOStringCol):
     def __init__(self, **kw):
         # Change the default from 'auto' to False -
         # this is a (mostly) binary column
-        if 'varchar' not in kw: kw['varchar'] = False
+        if 'varchar' not in kw:
+            kw['varchar'] = False
         super(SOBLOBCol, self).__init__(**kw)
 
     def createValidators(self):
@@ -1667,6 +1715,7 @@ class SOBLOBCol(SOStringCol):
             return 'VARBINARY(MAX)'
         else:
             return "IMAGE"
+
 
 class BLOBCol(StringCol):
     baseClass = SOBLOBCol
@@ -1700,6 +1749,7 @@ class PickleValidator(BinaryValidator):
             return None
         return pickle.dumps(value, self.pickleProtocol)
 
+
 class SOPickleCol(SOBLOBCol):
 
     def __init__(self, **kw):
@@ -1718,6 +1768,7 @@ class SOPickleCol(SOBLOBCol):
         if length >= 2**16:
             return "MEDIUMBLOB"
         return "BLOB"
+
 
 class PickleCol(BLOBCol):
     baseClass = SOPickleCol

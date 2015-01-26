@@ -5,14 +5,19 @@ from sqlobject.main import SQLObjectIntegrityError
 from dbtest import *
 from dbtest import setSQLiteConnectionFactory
 
+
 class IterTest(SQLObject):
     name = StringCol(dbName='name_col', length=200)
 
+
 names = ('a', 'b', 'c')
+
+
 def setupIter():
     setupClass(IterTest)
     for n in names:
         IterTest(name=n)
+
 
 def test_00_normal():
     setupIter()
@@ -21,6 +26,7 @@ def test_00_normal():
         count += 1
     assert count == len(names)
 
+
 def test_00b_lazy():
     setupIter()
     count = 0
@@ -28,11 +34,13 @@ def test_00b_lazy():
         count += 1
     assert count == len(names)
 
+
 def test_01_turn_to_list():
     count = 0
     for test in list(IterTest.select()):
         count += 1
     assert count == len(names)
+
 
 def test_02_generator():
     all = IterTest.select()
@@ -41,6 +49,7 @@ def test_02_generator():
         count += 1
     assert count == len(names)
 
+
 def test_03_ranged_indexed():
     all = IterTest.select()
     count = 0
@@ -48,6 +57,7 @@ def test_03_ranged_indexed():
         all[i]  # test it's there
         count += 1
     assert count == len(names)
+
 
 def test_04_indexed_ended_by_exception():
     if not supports('limitSelect'):
@@ -65,10 +75,12 @@ def test_04_indexed_ended_by_exception():
         pass
     assert count == len(names)
 
+
 def test_05_select_limit():
     setupIter()
     assert len(list(IterTest.select(limit=2))) == 2
     raises(AssertionError, IterTest.select(limit=2).count)
+
 
 def test_06_contains():
     setupIter()
@@ -79,6 +91,7 @@ def test_06_contains():
     assert len(list(IterTest.select(IterTest.q.name.contains("a'b")))) == 0
     assert len(list(IterTest.select(IterTest.q.name.endswith('a')))) == 1
 
+
 def test_07_contains_special():
     setupClass(IterTest)
     a = IterTest(name='\\test')
@@ -87,6 +100,7 @@ def test_07_contains_special():
     assert list(IterTest.select(IterTest.q.name.startswith('\\'))) == [a]
     assert list(IterTest.select(IterTest.q.name.contains('%'))) == [b]
     assert list(IterTest.select(IterTest.q.name.endswith('_'))) == [c]
+
 
 def test_select_getOne():
     setupClass(IterTest)
@@ -100,18 +114,22 @@ def test_select_getOne():
     raises(SQLObjectIntegrityError, 'IterTest.selectBy(name="b").getOne()')
     raises(SQLObjectIntegrityError, 'IterTest.selectBy(name="b").getOne(None)')
 
+
 def test_selectBy():
     setupClass(IterTest)
     IterTest(name='a')
     IterTest(name='b')
     assert IterTest.selectBy().count() == 2
 
+
 def test_selectBy_kwargs():
     setupClass(IterTest)
     raises(TypeError, IterTest, nonexistant='b')
 
+
 class UniqTest(SQLObject):
     name = StringCol(dbName='name_col', unique=True, length=100)
+
 
 def test_by_uniq():
     setupClass(UniqTest)
@@ -120,10 +138,12 @@ def test_by_uniq():
     assert UniqTest.byName('a') is a
     assert UniqTest.byName('b') is b
 
+
 class Counter2(SQLObject):
 
     n1 = IntCol(notNull=True)
     n2 = IntCol(notNull=True)
+
 
 class TestSelect:
 
@@ -146,6 +166,7 @@ class TestSelect:
     def test_2(self):
         self.accumulateEqual(len, Counter2.select('all'), 100)
 
+
 def test_select_LIKE():
     setupClass(IterTest)
     IterTest(name='sqlobject')
@@ -154,6 +175,7 @@ def test_select_LIKE():
     assert IterTest.select(LIKE(IterTest.q.name, "sqlb%")).count() == 1
     assert IterTest.select(LIKE(IterTest.q.name, "sqlb%")).count() == 1
     assert IterTest.select(LIKE(IterTest.q.name, "sqlx%")).count() == 0
+
 
 def test_select_RLIKE():
     setupClass(IterTest)
@@ -184,10 +206,12 @@ def test_select_RLIKE():
     assert IterTest.select(RLIKE(IterTest.q.name, "^sqlb.*$")).count() == 1
     assert IterTest.select(RLIKE(IterTest.q.name, "^sqlx.*$")).count() == 0
 
+
 def test_select_sqlbuilder():
     setupClass(IterTest)
     IterTest(name='sqlobject')
     IterTest.select(IterTest.q.name == u'sqlobject')
+
 
 def test_select_perConnection():
     setupClass(IterTest)

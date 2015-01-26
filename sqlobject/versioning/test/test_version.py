@@ -8,41 +8,51 @@ class MyClass(SQLObject):
     name = StringCol()
     versions = Versioning()
 
+
 class Base(InheritableSQLObject):
     name = StringCol()
     value = IntCol(default=0)
     versions = Versioning()
 
+
 class Child(Base):
     toy = StringCol()
 
+
 class Government(InheritableSQLObject):
     name = StringCol()
+
 
 class Monarchy(Government):
     monarch = StringCol()
     versions = Versioning()
 
+
 class VChild(Base):
     weapon = StringCol()
     versions = Versioning()
+
 
 class HasForeign(SQLObject):
     foreign = ForeignKey("Base")
     versions = Versioning()
 
+
 def _set_extra():
     return "read all about it"
+
 
 class Extra(SQLObject):
     name = StringCol()
     versions = Versioning(
         extraCols={'extra' : StringCol(default=_set_extra())})
 
+
 class HasAltId(SQLObject):
     name = StringCol()
     altid = IntCol(alternateID=True)
     versions = Versioning()
+
 
 def setup():
     classes = [MyClass, Base, Child, Government,
@@ -61,6 +71,7 @@ def setup():
             for version in cls.versions.versionClass.select():
                 version.destroySelf()
 
+
 def test_versioning():
     # the simple case
     setup()
@@ -70,6 +81,7 @@ def test_versioning():
     assert mc.versions[0].name == "fleem"
 
     assert len(list(MyClass.select())) == 1
+
 
 def test_inheritable_versioning():
     setup()
@@ -107,6 +119,7 @@ def test_inheritable_versioning():
     vchild.name = "newname"
     assert len(list(vchild.versions)) == 2
 
+
 def test_restore():
     setup()
     base = Base(name='fleem')
@@ -128,6 +141,7 @@ def test_restore():
     extra.versions[0].restore()
     assert extra.name == "fleem"
 
+
 def test_next():
     setup()
     base = Base(name='first', value=1)
@@ -137,6 +151,7 @@ def test_next():
     assert version.nextVersion() == base.versions[1]
     assert version.nextVersion().nextVersion() == base
 
+
 def test_get_changed():
     setup()
     base = Base(name='first', value=1)
@@ -144,6 +159,7 @@ def test_get_changed():
     base.set(name='third', value=2)
     assert base.versions[0].getChangedFields() == ['Name']
     assert sorted(base.versions[1].getChangedFields()) == ['Name', 'Value']
+
 
 def test_foreign_keys():
     setup()
@@ -153,12 +169,14 @@ def test_foreign_keys():
     has_foreign.foreign = base2
     assert has_foreign.versions[0].foreign == base1
 
+
 def test_extra():
     setup()
     extra = Extra(name='title')
     extra.name = 'new'
     assert extra.versions[0].extra == 'read all about it'    
     assert sorted(extra.versions[0].getChangedFields()) == ['Name']
+
 
 def test_altid():
     setup()

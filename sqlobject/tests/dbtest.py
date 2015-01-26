@@ -83,6 +83,7 @@ installedDBFilename = os.path.join(getcwd(), 'dbs_data.tmp')
 installedDBTracker = sqlobject.connectionForURI(
     'sqlite:///' + installedDBFilename)
 
+
 def getConnection(**kw):
     name = getConnectionURI()
     conn = sqlobject.connectionForURI(name, **kw)
@@ -91,6 +92,7 @@ def getConnection(**kw):
     if conftest.option.show_sql_output:
         conn.debugOutput = True
     return conn
+
 
 def getConnectionURI():
     name = conftest.option.Database
@@ -206,6 +208,7 @@ class InstalledTestDatabase(sqlobject.SQLObject):
 
 installOrClear = InstalledTestDatabase.installOrClear
 
+
 class Dummy(object):
 
     """
@@ -215,6 +218,7 @@ class Dummy(object):
     def __init__(self, **kw):
         for name, value in kw.items():
             setattr(self, name, value)
+
 
 def inserts(cls, data, schema=None):
     """
@@ -247,6 +251,7 @@ def inserts(cls, data, schema=None):
         results.append(cls(**args))
     return results
 
+
 def supports(feature):
     dbName = connection.dbName
     support = supportsMatrix.get('+' + feature, None)
@@ -267,6 +272,7 @@ def supports(feature):
 # To avoid name clashes:
 _inserts = inserts
 
+
 def setSQLiteConnectionFactory(TableClass, factory):
     from sqlobject.sqlite.sqliteconnection import SQLiteConnection
     conn = TableClass._connection
@@ -279,9 +285,11 @@ def setSQLiteConnectionFactory(TableClass, factory):
     )
     installOrClear([TableClass])
 
+
 def deprecated_module():
     sqlobject.main.warnings_level = None
     sqlobject.main.exception_level = None
+
 
 def setup_module(mod):
     # modules with '_old' test backward compatible methods, so they
@@ -296,9 +304,11 @@ def setup_module(mod):
         sqlobject.main.warnings_level = None
         sqlobject.main.exception_level = 0
 
+
 def teardown_module(mod=None):
     sqlobject.main.warnings_level = None
     sqlobject.main.exception_level = 0
+
 
 def setupLogging():
     fmt = '[%(asctime)s] %(name)s %(levelname)s: %(message)s'

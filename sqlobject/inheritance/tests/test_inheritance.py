@@ -7,13 +7,16 @@ from sqlobject.inheritance import InheritableSQLObject
 # Inheritance
 ########################################
 
+
 class InheritablePerson(InheritableSQLObject):
     firstName = StringCol()
     lastName = StringCol(alternateID=True, length=255)
 
+
 class Employee(InheritablePerson):
     _inheritable = False
     position = StringCol()
+
 
 def setup():
     setupClass(InheritablePerson)
@@ -22,12 +25,14 @@ def setup():
     Employee(firstName='Project', lastName='Leader', position='Project leader')
     InheritablePerson(firstName='Oneof', lastName='Authors')
 
+
 def test_creation_fail():
     setup()
     kwargs = {'firstName': 'John', 'lastname': 'Doe'}
     raises(TypeError, Employee, **kwargs)
     persons = InheritablePerson.select(InheritablePerson.q.firstName == 'John')
     assert persons.count() == 0
+
 
 def test_inheritance():
     setup()
@@ -40,6 +45,7 @@ def test_inheritance():
         else:
             assert hasattr(person, "childName")
             assert not person.childName
+
 
 def test_inheritance_select():
     setup()
@@ -100,6 +106,7 @@ def test_inheritance_select():
     persons = list(Employee.select(orderBy=(Employee.q.position,
                                             Employee.q.lastName)))
     assert len(persons) == 1
+
 
 def test_addDelColumn():
     setup()

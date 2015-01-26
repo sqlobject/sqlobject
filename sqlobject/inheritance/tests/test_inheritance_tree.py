@@ -6,20 +6,26 @@ from sqlobject.tests.dbtest import *
 # Inheritance Tree
 ########################################
 
+
 class Tree1(InheritableSQLObject):
     aprop = StringCol(length=10)
+
 
 class Tree2(Tree1):
     bprop = StringCol(length=10)
 
+
 class Tree3(Tree1):
     cprop = StringCol(length=10)
+
 
 class Tree4(Tree2):
     dprop = StringCol(length=10)
 
+
 class Tree5(Tree2):
     eprop = StringCol(length=10)
+
 
 def test_tree():
     setupClass([Tree1, Tree2, Tree3, Tree4, Tree5])

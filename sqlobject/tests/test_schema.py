@@ -2,12 +2,15 @@ import py.test
 from sqlobject import *
 from sqlobject.tests.dbtest import *
 
+
 ########################################
 # Schema per connection
 ########################################
 
+
 class TestSchema(SQLObject):
     foo = UnicodeCol(length=200)
+
 
 def test_connection_schema():
     if not supports('schema'):

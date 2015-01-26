@@ -3,25 +3,31 @@ from __future__ import print_function
 from sqlobject import *
 from sqlobject.tests.dbtest import *
 
+
 ########################################
 # Joins
 ########################################
+
 
 class PersonJoinerNew(SQLObject):
 
     name = StringCol(length=40, alternateID=True)
     addressJoiners = ManyToMany('AddressJoinerNew')
 
+
 class AddressJoinerNew(SQLObject):
 
     zip = StringCol(length=5, alternateID=True)
     personJoiners = ManyToMany('PersonJoinerNew')
 
+
 class ImplicitJoiningSONew(SQLObject):
     foo = ManyToMany('Bar')
 
+
 class ExplicitJoiningSONew(SQLObject):
     foo = OneToMany('Bar')
+
 
 class TestJoin:
 
@@ -71,6 +77,7 @@ class PersonJoinerNew2(SQLObject):
     name = StringCol('name', length=40, alternateID=True)
     addressJoiner2s = OneToMany('AddressJoinerNew2')
 
+
 class AddressJoinerNew2(SQLObject):
 
     class sqlmeta:
@@ -79,6 +86,7 @@ class AddressJoinerNew2(SQLObject):
     zip = StringCol(length=5)
     plus4 = StringCol(length=4, default=None)
     personJoinerNew2 = ForeignKey('PersonJoinerNew2')
+
 
 class TestJoin2:
 
@@ -115,10 +123,12 @@ class TestJoin2:
 _personJoiner3_getters = []
 _personJoiner3_setters = []
 
+
 class PersonJoinerNew3(SQLObject):
 
     name = StringCol('name', length=40, alternateID=True)
     addressJoinerNew3s = OneToMany('AddressJoinerNew3')
+
 
 class AddressJoinerNew3(SQLObject):
 
@@ -133,6 +143,7 @@ class AddressJoinerNew3(SQLObject):
     def _set_personJoinerNew3(self, value):
         self._SO_set_personJoinerNew3(value)
         _personJoiner3_setters.append((self, value))
+
 
 class TestJoin3:
 

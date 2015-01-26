@@ -24,6 +24,7 @@ Use like::
 
 """
 
+
 class ClassRegistry(object):
     """
     We'll be dealing with classes that reference each other, so
@@ -112,6 +113,7 @@ class ClassRegistry(object):
     def allClasses(self):
         return self.classes.values()
 
+
 class _MasterRegistry(object):
     """
     This singleton holds all the class registries.  There can be
@@ -131,6 +133,7 @@ class _MasterRegistry(object):
 
 MasterRegistry = _MasterRegistry()
 registry = MasterRegistry.registry
+
 
 def findClass(name, class_registry=None):
     return registry(class_registry).getClass(name)

@@ -1,9 +1,11 @@
 from sqlobject import *
 from sqlobject.tests.dbtest import *
 
+
 ########################################
 # String ID test
 ########################################
+
 
 class SOStringID(SQLObject):
 
@@ -60,6 +62,7 @@ class SOStringID(SQLObject):
     sqliteDrop = postgresDrop
     firebirdDrop = postgresDrop
     mssqlDrop = postgresDrop
+
 
 def test_stringID():
     setupClass(SOStringID)

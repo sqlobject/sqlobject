@@ -2,11 +2,13 @@ import py.test
 from sqlobject import *
 from sqlobject.tests.dbtest import *
 
+
 class Fighter(SQLObject):
     class sqlmeta:
         idName = 'fighter_id'  # test on a non-standard way
     name = StringCol()
     tourtments = RelatedJoin('Tourtment')
+
 
 class Tourtment(SQLObject):
     class sqlmeta:
@@ -15,9 +17,11 @@ class Tourtment(SQLObject):
     fightersAsList = RelatedJoin('Fighter')
     fightersAsSResult = SQLRelatedJoin('Fighter')
 
+
 def createAllTables():
     setupClass(Fighter)
     setupClass(Tourtment)
+
 
 def test_1():
     createAllTables()
@@ -43,6 +47,7 @@ def test_1():
     for i, j in zip(t1.fightersAsList, t1.fightersAsSResult):
         assert i is j
     assert len(t2.fightersAsList) == t2.fightersAsSResult.count()
+
 
 def test_related_join_transaction():
     if not supports('transactions'):

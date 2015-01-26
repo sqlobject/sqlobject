@@ -11,6 +11,7 @@ import sqlobject
 
 __all__ = ['export_csv', 'export_csv_zip']
 
+
 def export_csv(soClass, select=None, writer=None, connection=None,
                orderBy=None):
     """
@@ -82,6 +83,7 @@ def export_csv(soClass, select=None, writer=None, connection=None,
         # the string result:
         return return_fileobj.getvalue()
 
+
 def _actually_export_csv(soClass, select, writer):
     attributes, titles = _find_columns(soClass)
     writer.writerow(titles)
@@ -89,6 +91,7 @@ def _actually_export_csv(soClass, select, writer):
         row = [getattr(soInstance, attr)
                for attr in attributes]
         writer.writerow(row)
+
 
 def _find_columns(soClass):
     order = []
@@ -177,6 +180,7 @@ def export_csv_zip(soClasses, file=None, zip=None, filename_prefix='',
 
     if return_when_finished:
         return file.getvalue()
+
 
 def _actually_export_classes(soClasses, zip, filename_prefix,
                              connection):

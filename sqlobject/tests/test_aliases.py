@@ -2,13 +2,16 @@ from sqlobject import *
 from sqlobject.sqlbuilder import *
 from sqlobject.tests.dbtest import *
 
+
 ########################################
 # Table aliases and self-joins
 ########################################
 
+
 class JoinAlias(SQLObject):
     name = StringCol()
     parent = StringCol()
+
 
 def test_1syntax():
     setupClass(JoinAlias)
@@ -19,6 +22,7 @@ def test_1syntax():
         "FROM join_alias, join_alias  join_alias_alias1 " \
         "WHERE ((join_alias.parent) = (join_alias_alias1.name))"
 
+
 def test_2perform_join():
     setupClass(JoinAlias)
     JoinAlias(name="grandparent", parent=None)
@@ -27,6 +31,7 @@ def test_2perform_join():
     alias = Alias(JoinAlias)
     select = JoinAlias.select(JoinAlias.q.parent == alias.q.name)
     assert select.count() == 2
+
 
 def test_3joins():
     setupClass(JoinAlias)

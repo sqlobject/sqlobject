@@ -2,7 +2,9 @@ from itertools import count
 from types import *
 from converters import sqlrepr
 
+
 creationOrder = count()
+
 
 class SODatabaseIndex(object):
 

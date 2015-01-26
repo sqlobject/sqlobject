@@ -1,6 +1,7 @@
 from sqlobject import *
 from sqlobject.tests.dbtest import *
 
+
 class TestCreateDrop(SQLObject):
     class sqlmeta(sqlmeta):
         idName = 'test_id_here'
@@ -10,6 +11,7 @@ class TestCreateDrop(SQLObject):
     time = DateTimeCol()
     short = StringCol(length=10)
     blobcol = BLOBCol()
+
 
 def test_create_drop():
     conn = getConnection()

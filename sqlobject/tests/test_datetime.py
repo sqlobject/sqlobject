@@ -2,18 +2,22 @@ import py.test
 from sqlobject import *
 from sqlobject.tests.dbtest import *
 
+
 ########################################
 # Date/time columns
 ########################################
+
 
 from sqlobject import col
 col.default_datetime_implementation = DATETIME_IMPLEMENTATION
 from datetime import datetime, date, time
 
+
 class DateTime1(SQLObject):
     col1 = DateTimeCol()
     col2 = DateCol()
     col3 = TimeCol()
+
 
 def test_dateTime():
     setupClass(DateTime1)
@@ -38,6 +42,7 @@ def test_dateTime():
     assert dt1.col3.hour == _now.hour
     assert dt1.col3.minute == _now.minute
     assert dt1.col3.second == _now.second
+
 
 def test_microseconds():
     connection = getConnection()

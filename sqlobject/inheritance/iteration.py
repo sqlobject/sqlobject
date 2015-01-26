@@ -2,6 +2,7 @@ from sqlobject import sqlbuilder
 from sqlobject.classregistry import findClass
 from sqlobject.dbconnection import Iteration
 
+
 class InheritableIteration(Iteration):
     # Default array size for cursor.fetchmany()
     defaultArraySize = 10000
@@ -24,7 +25,8 @@ class InheritableIteration(Iteration):
     def next(self):
         if not self._results:
             self._results = list(self.cursor.fetchmany())
-            if not self.lazyColumns: self.fetchChildren()
+            if not self.lazyColumns:
+                self.fetchChildren()
         if not self._results:
             self._cleanup()
             raise StopIteration

@@ -1,25 +1,31 @@
 from sqlobject import *
 from sqlobject.tests.dbtest import *
 
+
 ########################################
 # Joins
 ########################################
+
 
 class PersonJoiner(SQLObject):
 
     name = StringCol(length=40, alternateID=True)
     addressJoiners = RelatedJoin('AddressJoiner')
 
+
 class AddressJoiner(SQLObject):
 
     zip = StringCol(length=5, alternateID=True)
     personJoiners = RelatedJoin('PersonJoiner')
 
+
 class ImplicitJoiningSO(SQLObject):
     foo = RelatedJoin('Bar')
 
+
 class ExplicitJoiningSO(SQLObject):
     foo = MultipleJoin('Bar', joinMethodName='foo')
+
 
 class TestJoin:
 
@@ -67,6 +73,7 @@ class PersonJoiner2(SQLObject):
     name = StringCol('name', length=40, alternateID=True)
     addressJoiner2s = MultipleJoin('AddressJoiner2')
 
+
 class AddressJoiner2(SQLObject):
 
     class sqlmeta:
@@ -75,6 +82,7 @@ class AddressJoiner2(SQLObject):
     zip = StringCol(length=5)
     plus4 = StringCol(length=4, default=None)
     personJoiner2 = ForeignKey('PersonJoiner2')
+
 
 class TestJoin2:
 
@@ -109,10 +117,12 @@ class TestJoin2:
 _personJoiner3_getters = []
 _personJoiner3_setters = []
 
+
 class PersonJoiner3(SQLObject):
 
     name = StringCol('name', length=40, alternateID=True)
     addressJoiner3s = MultipleJoin('AddressJoiner3')
+
 
 class AddressJoiner3(SQLObject):
 
@@ -127,6 +137,7 @@ class AddressJoiner3(SQLObject):
     def _set_personJoiner3(self, value):
         self._SO_set_personJoiner3(value)
         _personJoiner3_setters.append((self, value))
+
 
 class TestJoin3:
 

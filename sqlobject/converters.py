@@ -35,6 +35,7 @@ sqlStringReplace = [
     ('\t', '\\t'),
 ]
 
+
 class ConverterRegistry:
 
     def __init__(self):
@@ -56,6 +57,7 @@ class ConverterRegistry:
 converters = ConverterRegistry()
 registerConverter = converters.registerConverter
 lookupConverter = converters.lookupConverter
+
 
 def StringLikeConverter(value, db):
     if isinstance(value, array):
@@ -82,10 +84,12 @@ registerConverter(unicode, StringLikeConverter)
 registerConverter(array, StringLikeConverter)
 registerConverter(buffer, StringLikeConverter)
 
+
 def IntConverter(value, db):
     return repr(int(value))
 
 registerConverter(int, IntConverter)
+
 
 def LongConverter(value, db):
     return str(value)
@@ -94,6 +98,7 @@ registerConverter(long, LongConverter)
 
 if NumericType:
     registerConverter(NumericType, IntConverter)
+
 
 def BoolConverter(value, db):
     if db in ('postgres', 'rdbhost'):
@@ -108,6 +113,7 @@ def BoolConverter(value, db):
             return '0'
 
 registerConverter(bool, BoolConverter)
+
 
 def FloatConverter(value, db):
     return repr(value)
@@ -125,10 +131,12 @@ if DateTimeType:
 
     registerConverter(DateTimeDeltaType, TimeConverter)
 
+
 def NoneConverter(value, db):
     return "NULL"
 
 registerConverter(NoneType, NoneConverter)
+
 
 def SequenceConverter(value, db):
     return "(%s)" % ", ".join([sqlrepr(v, db) for v in value])
@@ -145,6 +153,7 @@ if hasattr(time, 'struct_time'):
 
     registerConverter(time.struct_time, StructTimeConverter)
 
+
 def DateTimeConverter(value, db):
     return "'%04d-%02d-%02d %02d:%02d:%02d.%06d'" % (
         value.year, value.month, value.day,
@@ -152,10 +161,12 @@ def DateTimeConverter(value, db):
 
 registerConverter(datetime.datetime, DateTimeConverter)
 
+
 def DateConverter(value, db):
     return "'%04d-%02d-%02d'" % (value.year, value.month, value.day)
 
 registerConverter(datetime.date, DateConverter)
+
 
 def TimeConverter(value, db):
     return "'%02d:%02d:%02d.%06d'" % (value.hour, value.minute,
@@ -163,10 +174,12 @@ def TimeConverter(value, db):
 
 registerConverter(datetime.time, TimeConverter)
 
+
 def DecimalConverter(value, db):
     return value.to_eng_string()
 
 registerConverter(Decimal, DecimalConverter)
+
 
 def TimedeltaConverter(value, db):
 
@@ -193,6 +206,7 @@ def quote_str(s, db):
     if db in ('postgres', 'rdbhost') and ('\\' in s):
         return "E'%s'" % s
     return "'%s'" % s
+
 
 def unquote_str(s):
     if s[:2].upper().startswith("E'") and s.endswith("'"):

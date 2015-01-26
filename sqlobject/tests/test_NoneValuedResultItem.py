@@ -1,10 +1,12 @@
-'''Test that selectResults handle NULL values
-from, for example, outer joins.'''
+# Test that selectResults handle NULL values from, for example, outer joins.
+
 from sqlobject import *
 from sqlobject.tests.dbtest import *
 
+
 class TestComposer(SQLObject):
     name = StringCol()
+
 
 class TestWork(SQLObject):
     class sqlmeta:
@@ -12,6 +14,7 @@ class TestWork(SQLObject):
 
     composer = ForeignKey('TestComposer')
     title = StringCol()
+
 
 def test1():
     setupClass([TestComposer,

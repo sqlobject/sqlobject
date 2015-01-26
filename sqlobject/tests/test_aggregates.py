@@ -1,6 +1,7 @@
 from sqlobject import *
 from sqlobject.tests.dbtest import *
 
+
 # Test MIN, AVG, MAX, COUNT, SUM
 
 
@@ -35,6 +36,7 @@ def floatcmp(f1, f2):
     if f1 < f2:
         return 1
     return -1
+
 
 def test_float():
     setupClass(FloatAccumulator)

@@ -2,7 +2,9 @@ import dbconnection
 import main
 import sqlbuilder
 
+
 __all__ = ['SelectResults']
+
 
 class SelectResults(object):
     IterationClass = dbconnection.Iteration

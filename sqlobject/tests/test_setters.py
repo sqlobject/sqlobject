@@ -1,6 +1,7 @@
 from sqlobject import *
 from sqlobject.tests.dbtest import *
 
+
 class TestPlainAndNonPlainSetter(SQLObject):
     firstName = StringCol(length=50, dbName='fname_col', default=None)
     lastName = StringCol(length=50, dbName='lname_col', default=None)
@@ -12,6 +13,7 @@ class TestPlainAndNonPlainSetter(SQLObject):
 
     def _get_name(self):
         return "%s %s" % (self.firstName, self.lastName)
+
 
 def test_create():
     setupClass(TestPlainAndNonPlainSetter)

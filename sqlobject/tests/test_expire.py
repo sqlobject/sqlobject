@@ -1,12 +1,15 @@
 from sqlobject import *
 from sqlobject.tests.dbtest import *
 
+
 ########################################
 # Expiring, syncing
 ########################################
 
+
 class SyncTest(SQLObject):
     name = StringCol(length=50, alternateID=True, dbName='name_col')
+
 
 def test_expire():
     setupClass(SyncTest)

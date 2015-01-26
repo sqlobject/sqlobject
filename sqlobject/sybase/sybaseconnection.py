@@ -1,6 +1,7 @@
 from sqlobject.dbconnection import DBAPI
 from sqlobject import col
 
+
 class SybaseConnection(DBAPI):
 
     supportTransactions = False

@@ -1,12 +1,15 @@
 from sqlobject import *
 from sqlobject.tests.dbtest import *
 
+
 ########################################
 # Per-instance connection
 ########################################
 
+
 class TestPerConnection(SQLObject):
     test = StringCol()
+
 
 def test_perConnection():
     connection = getConnection()

@@ -5,6 +5,7 @@ from sqlobject import sqlbuilder
 from sqlobject.converters import registerConverter
 from sqlobject.dberrors import *
 
+
 class ErrorMessage(str):
     def __new__(cls, e, append_msg=''):
         obj = str.__new__(cls, e[0] + append_msg)
@@ -16,6 +17,7 @@ class ErrorMessage(str):
         obj.module = e.__module__
         obj.exception = e.__class__.__name__
         return obj
+
 
 class PostgresConnection(DBAPI):
 
@@ -153,7 +155,8 @@ class PostgresConnection(DBAPI):
         # For printDebug in _executeRetry
         self._connectionNumbers[id(conn)] = self._connectionCount
 
-        if self.autoCommit: self._setAutoCommit(conn, 1)
+        if self.autoCommit:
+            self._setAutoCommit(conn, 1)
         c = conn.cursor()
         if self.schema:
             self._executeRetry(conn, c, "SET search_path TO " + self.schema)

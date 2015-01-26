@@ -1,17 +1,21 @@
 from sqlobject import *
 from sqlobject.tests.dbtest import *
 
+
 ########################################
 # Inheritance
 ########################################
+
 
 class Super(SQLObject):
 
     name = StringCol(length=10)
 
+
 class Sub(Super):
 
     name2 = StringCol(length=10)
+
 
 def test_super():
     setupClass(Super)
@@ -20,6 +24,7 @@ def test_super():
     Super(name='two')  # s2
     s3 = Super.get(s1.id)
     assert s1 == s3
+
 
 def test_sub():
     setupClass(Super)

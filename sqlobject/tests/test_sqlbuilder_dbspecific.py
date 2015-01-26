@@ -11,14 +11,18 @@ from sqlobject.tests.dbtest import *
     the appropriate bool formatting throughout.
 '''
 
+
 class SBButton(SQLObject):
     activated = BoolCol()
+
 
 def makeClause():
     return SBButton.q.activated == True
 
+
 def makeSelect():
     return Select(SBButton.q.id, clause=makeClause())
+
 
 def checkCount(q, c, msg=''):
     print("STRING:", str(q))
@@ -26,15 +30,18 @@ def checkCount(q, c, msg=''):
     assert sqlrepr(q, 'postgres').count("'t'") == c and \
         sqlrepr(q, 'postgres') != str(q), msg
 
+
 def testSimple():
     setupClass(SBButton)
     yield checkCount, makeClause(), 1
     yield checkCount, makeSelect(), 1
 
+
 def testMiscOps():
     setupClass(SBButton)
     yield checkCount, AND(makeClause(), makeClause()), 2
     yield checkCount, AND(makeClause(), EXISTS(makeSelect())), 2
+    
     
 def testAliased():
     setupClass(SBButton)
@@ -49,6 +56,7 @@ def testAliased():
     yield checkCount, LEFTJOINOn(None, b, SBButton.q.id == b.q.id), 1
     yield checkCount, LEFTJOINOn(b, SBButton, SBButton.q.id == b.q.id), 1
     yield checkCount, LEFTJOINOn(SBButton, b, SBButton.q.id == b.q.id), 1
+    
     
 def testTablesUsedSResults():
     setupClass(SBButton)

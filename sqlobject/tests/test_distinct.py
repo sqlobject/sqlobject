@@ -1,21 +1,26 @@
 from sqlobject import *
 from sqlobject.tests.dbtest import *
 
+
 ########################################
 # Distinct
 ########################################
 
+
 class Distinct1(SQLObject):
     n = IntCol()
 
+
 class Distinct2(SQLObject):
     other = ForeignKey('Distinct1')
+
 
 def count(select):
     result = {}
     for ob in select:
         result[int(ob.n)] = result.get(int(ob.n), 0)+1
     return result
+
 
 def test_distinct():
     setupClass([Distinct1, Distinct2])

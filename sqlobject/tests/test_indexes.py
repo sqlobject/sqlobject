@@ -3,9 +3,11 @@ from sqlobject import *
 from sqlobject.dberrors import *
 from sqlobject.tests.dbtest import *
 
+
 ########################################
 # Indexes
 ########################################
+
 
 class SOIndex1(SQLObject):
     name = StringCol(length=100)
@@ -15,9 +17,12 @@ class SOIndex1(SQLObject):
     nameIndex2 = DatabaseIndex(name, number)
     nameIndex3 = DatabaseIndex({'column': name,
                                 'length': 3})
+
+
 class SOIndex2(SQLObject):
     name = StringCol(length=100)
     nameIndex = DatabaseIndex({'expression': 'lower(name)'})
+
 
 def test_indexes_1():
     setupClass(SOIndex1)
@@ -32,6 +37,7 @@ def test_indexes_1():
          ProgrammingError, IntegrityError, OperationalError, DatabaseError),
         SOIndex1, name='blah', number=0)
 
+
 def test_indexes_2():
     if not supports('expressionIndex'):
         py.test.skip("expressionIndex isn't supported")
@@ -44,6 +50,7 @@ class PersonIndexGet(SQLObject):
     lastName = StringCol(length=100)
     age = IntCol(alternateID=True)
     nameIndex = DatabaseIndex(firstName, lastName, unique=True)
+
 
 def test_index_get_1():
     setupClass(PersonIndexGet, force=True)
@@ -72,11 +79,13 @@ class PersonIndexGet2(SQLObject):
     age         = IntCol()
     addresses   = MultipleJoin('AddressIndexGet2')
 
+
 class AddressIndexGet2(SQLObject):
     person  = ForeignKey('PersonIndexGet2', notNone=True)
     type    = StringCol(notNone=True, length=100)
     street  = StringCol(notNone=True)
     pk      = DatabaseIndex(person, type, unique=True)
+
 
 def test_index_get_2():
     setupClass([PersonIndexGet2, AddressIndexGet2])

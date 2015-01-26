@@ -17,7 +17,6 @@ from sqlobject.dbconnection import DBAPI
 from sqlobject import col
 
 
-
 class maxdbException(Exception):
 
     def __init__(self, value):
@@ -26,9 +25,11 @@ class maxdbException(Exception):
     def __str__(self):
         return repr(self.value)
 
+
 class LowerBoundOfSliceIsNotSupported(maxdbException):
     def __init__(self, value):
         maxdbException.__init__(self, '')
+
 
 class IncorrectIDStyleError(maxdbException) :
     def __init__(self, value):
@@ -38,6 +39,7 @@ class IncorrectIDStyleError(maxdbException) :
             'please rename the column to %r or switch to another style'
             % value)
 
+
 class StyleMismatchError(maxdbException):
     def __init__(self, value):
         maxdbException.__init__(
@@ -45,13 +47,16 @@ class StyleMismatchError(maxdbException):
             'The name %r is only permitted for primary key, change the '
             'column name or switch to another style' % value)
 
+
 class PrimaryKeyNotFounded(maxdbException):
     def __init__(self, value):
         maxdbException.__init__(
             self,
             "No primary key was defined on table %r" % value)
 
+
 SAPDBMAX_ID_LENGTH = 32
+
 
 class MaxdbConnection(DBAPI):
 
