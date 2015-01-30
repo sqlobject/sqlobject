@@ -184,14 +184,14 @@ class FirebirdConnection(DBAPI):
         if self.defaultDbEncoding == "":
             self.defaultDbEncoding =  str(self.queryOne(
                 "SELECT rdb$character_set_name FROM rdb$database")[0].\
-                    strip().lower())  # encoding defined during db creation
+                strip().lower())  # encoding defined during db creation
             if self.defaultDbEncoding  == "none":
                 self.defaultDbEncoding = None
             if self.dbEncoding != self.defaultDbEncoding:
                 warningText = """\n
                    Database charset: %s is different """ \
                    """from connection charset: %s.\n""" % (
-                        self.defaultDbEncoding, self.dbEncoding)
+                   self.defaultDbEncoding, self.dbEncoding)
                 warnings.warn(warningText)
                 # TODO: ??? print out the uri string,
                 # so user can see what is going on

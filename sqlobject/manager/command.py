@@ -238,7 +238,7 @@ class Command(object):
             if cls in dependency_stack:
                 dependency_stack.append(cls)
                 raise SQLObjectCircularReferenceError(
-                        "Found a circular reference: %s " %
+                    "Found a circular reference: %s " %
                         (' --> '.join([x.__name__
                                        for x in dependency_stack])))
             dependency_stack.append(cls)
