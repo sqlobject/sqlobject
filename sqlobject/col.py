@@ -999,7 +999,7 @@ class SOForeignKey(SOKeyCol):
         # to the id of the reference table
         sql = ' '.join([fidName, self._maxdbType()])
         tName = other.sqlmeta.table
-        idName  = self.refColumn or other.sqlmeta.idName
+        idName = self.refColumn or other.sqlmeta.idName
         sql = sql + ',' + '\n'
         sql = sql + 'FOREIGN KEY (%s) REFERENCES %s(%s)' % (fidName, tName,
                                                             idName)

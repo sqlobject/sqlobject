@@ -183,7 +183,7 @@ class InheritableSQLMeta(sqlmeta):
         if sqlmeta.parentClass:
             for join in sqlmeta.parentClass.sqlmeta.joins:
                 jname = join.joinMethodName
-                jarn  = join.addRemoveName
+                jarn = join.addRemoveName
                 setattr(
                     soClass, getterName(jname),
                     eval('lambda self: self._parent.%s' % jname))

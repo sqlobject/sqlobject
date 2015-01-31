@@ -669,7 +669,7 @@ class Select(SQLExpression):
         self.ops['having'] = having
         self.ops['orderBy'] = orderBy
         self.ops['limit'] = limit
-        self.ops['join']  = join
+        self.ops['join'] = join
         self.ops['lazyColumns'] = lazyColumns
         self.ops['distinct'] = distinct
         self.ops['distinctOn'] = distinctOn

@@ -4,21 +4,21 @@ from sqlobject.inheritance import InheritableSQLObject
 
 
 class InheritedPersonIndexGet(InheritableSQLObject):
-    first_name  = StringCol(notNone=True, length=100)
-    last_name   = StringCol(notNone=True, length=100)
-    age         = IntCol()
-    pk          = DatabaseIndex(first_name, last_name, unique=True)
+    first_name = StringCol(notNone=True, length=100)
+    last_name = StringCol(notNone=True, length=100)
+    age = IntCol()
+    pk = DatabaseIndex(first_name, last_name, unique=True)
 
 
 class InheritedEmployeeIndexGet(InheritedPersonIndexGet):
     security_number = IntCol()
-    experience      = IntCol()
-    sec_index       = DatabaseIndex(security_number, unique=True)
+    experience = IntCol()
+    sec_index = DatabaseIndex(security_number, unique=True)
 
 
 class InheritedSalesManIndexGet(InheritedEmployeeIndexGet):
     _inheritable = False
-    skill        = IntCol()
+    skill = IntCol()
 
 
 def test_index_get_1():

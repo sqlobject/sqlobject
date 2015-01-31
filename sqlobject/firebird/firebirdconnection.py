@@ -185,7 +185,7 @@ class FirebirdConnection(DBAPI):
             self.defaultDbEncoding =  str(self.queryOne(
                 "SELECT rdb$character_set_name FROM rdb$database")[0].\
                 strip().lower())  # encoding defined during db creation
-            if self.defaultDbEncoding  == "none":
+            if self.defaultDbEncoding == "none":
                 self.defaultDbEncoding = None
             if self.dbEncoding != self.defaultDbEncoding:
                 warningText = """\n

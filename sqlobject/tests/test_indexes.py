@@ -75,16 +75,16 @@ def test_index_get_1():
 
 
 class PersonIndexGet2(SQLObject):
-    name        = StringCol(alternateID=True, length=100)
-    age         = IntCol()
-    addresses   = MultipleJoin('AddressIndexGet2')
+    name = StringCol(alternateID=True, length=100)
+    age = IntCol()
+    addresses = MultipleJoin('AddressIndexGet2')
 
 
 class AddressIndexGet2(SQLObject):
-    person  = ForeignKey('PersonIndexGet2', notNone=True)
-    type    = StringCol(notNone=True, length=100)
-    street  = StringCol(notNone=True)
-    pk      = DatabaseIndex(person, type, unique=True)
+    person = ForeignKey('PersonIndexGet2', notNone=True)
+    type = StringCol(notNone=True, length=100)
+    street = StringCol(notNone=True)
+    pk = DatabaseIndex(person, type, unique=True)
 
 
 def test_index_get_2():

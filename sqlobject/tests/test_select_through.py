@@ -9,7 +9,7 @@ import py
 
 class SRThrough1(SQLObject):
     three = ForeignKey('SRThrough3')
-    twos  = SQLMultipleJoin('SRThrough2', joinColumn='oneID')
+    twos = SQLMultipleJoin('SRThrough2', joinColumn='oneID')
 
 
 class SRThrough2(SQLObject):
@@ -37,8 +37,8 @@ def setup_module(mod):
     twos[0].addThree(threes[0])
     twos[0].addThree(threes[1])
     mod.threes = threes
-    mod.twos   = twos
-    mod.ones   = ones
+    mod.twos = twos
+    mod.ones = ones
 
 
 def testBadRef():
