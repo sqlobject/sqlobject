@@ -62,19 +62,19 @@ and `GitHub <https://github.com/sqlobject>`_.
   :target: https://travis-ci.org/sqlobject/sqlobject
 """,
       classifiers=[
-            "Development Status :: 2 - Pre-Alpha",
-            "Intended Audience :: Developers",
-            "License :: OSI Approved :: "
-                  "GNU Library or Lesser General Public License (LGPL)",
-            "Programming Language :: Python",
-            "Programming Language :: Python :: 2",
-            "Programming Language :: Python :: 2.6",
-            "Programming Language :: Python :: 2.7",
-            "Programming Language :: Python :: 3",
-            "Programming Language :: Python :: 3.4",
-            "Topic :: Database",
-            "Topic :: Database :: Front-Ends",
-            "Topic :: Software Development :: Libraries :: Python Modules",
+          "Development Status :: 2 - Pre-Alpha",
+          "Intended Audience :: Developers",
+          "License :: OSI Approved :: "
+          "GNU Library or Lesser General Public License (LGPL)",
+          "Programming Language :: Python",
+          "Programming Language :: Python :: 2",
+          "Programming Language :: Python :: 2.6",
+          "Programming Language :: Python :: 2.7",
+          "Programming Language :: Python :: 3",
+          "Programming Language :: Python :: 3.4",
+          "Topic :: Database",
+          "Topic :: Database :: Front-Ends",
+          "Topic :: Software Development :: Libraries :: Python Modules",
       ],
       author="Ian Bicking",
       author_email="ianb@colorstudy.com",
@@ -87,7 +87,8 @@ and `GitHub <https://github.com/sqlobject>`_.
       packages=["sqlobject"] + \
           ['sqlobject.%s' % package for package in subpackages],
       scripts=["scripts/sqlobject-admin", "scripts/sqlobject-convertOldURI"],
-      package_data={"sqlobject": [
+      package_data={"sqlobject":
+                    [
                         "../docs/LICENSE", "../docs/*.txt", "../docs/*.css",
                         "../docs/html/*.html", "../docs/html/*.css",
                         "../docs/html/sqlobject/*.html",

@@ -1,11 +1,11 @@
 from datetime import timedelta
 
 from sqlobject.converters import registerConverter, sqlrepr, \
-     quote_str, unquote_str
+    quote_str, unquote_str
 from sqlobject.sqlbuilder import SQLExpression, SQLObjectField, \
-     Select, Insert, Update, Delete, Replace, \
-     SQLTrueClauseClass, SQLConstant, SQLPrefix, SQLCall, SQLOp, \
-     _LikeQuoted
+    Select, Insert, Update, Delete, Replace, \
+    SQLTrueClauseClass, SQLConstant, SQLPrefix, SQLCall, SQLOp, \
+    _LikeQuoted
 
 
 class TestClass:

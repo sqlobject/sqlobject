@@ -576,8 +576,8 @@ class DBAPI(DBConnection):
 
     def createColumns(self, soClass):
         columnDefs = [self.createIDColumn(soClass)] \
-                     + [self.createColumn(soClass, col)
-                        for col in soClass.sqlmeta.columnList]
+            + [self.createColumn(soClass, col)
+               for col in soClass.sqlmeta.columnList]
         return ",\n".join(["    %s" % c for c in columnDefs])
 
     def createReferenceConstraint(self, soClass, col):
@@ -1031,17 +1031,17 @@ class ConnectionURIOpener(object):
     def registerConnection(self, schemes, builder):
         for uriScheme in schemes:
             assert not uriScheme in self.schemeBuilders \
-                   or self.schemeBuilders[uriScheme] is builder, \
-                   "A driver has already been registered " \
-                   "for the URI scheme %s" % uriScheme
+                or self.schemeBuilders[uriScheme] is builder, \
+                "A driver has already been registered " \
+                "for the URI scheme %s" % uriScheme
             self.schemeBuilders[uriScheme] = builder
 
     def registerConnectionInstance(self, inst):
         if inst.name:
             assert not inst.name in self.instanceNames \
-                   or self.instanceNames[inst.name] is cls, \
-                   "A instance has already been registered " \
-                   "with the name %s" % inst.name
+                or self.instanceNames[inst.name] is cls, \
+                "A instance has already been registered " \
+                "with the name %s" % inst.name
             assert inst.name.find(':') == -1, \
                 "You cannot include ':' in your class names (%r)" % cls.name
             self.instanceNames[inst.name] = inst
@@ -1064,7 +1064,7 @@ class ConnectionURIOpener(object):
         else:
             # We just have a name, not a URI
             assert uri in self.instanceNames, \
-                   "No SQLObject driver exists under the name %s" % uri
+                "No SQLObject driver exists under the name %s" % uri
             conn = self.instanceNames[uri]
         # @@: Do we care if we clobber another connection?
         self.cachedURIs[uri] = conn
@@ -1072,8 +1072,9 @@ class ConnectionURIOpener(object):
 
     def dbConnectionForScheme(self, scheme):
         assert scheme in self.schemeBuilders, (
-               "No SQLObject driver exists for %s (only %s)"
-               % (scheme, ', '.join(self.schemeBuilders.keys())))
+            "No SQLObject driver exists for %s (only %s)" % (
+                scheme,
+                ', '.join(self.schemeBuilders.keys())))
         return self.schemeBuilders[scheme]()
 
 TheURIOpener = ConnectionURIOpener()

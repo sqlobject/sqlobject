@@ -665,8 +665,8 @@ class IntValidator(SOValidator):
                 except:
                     break
         raise validators.Invalid(
-                "expected an int in the IntCol '%s', got %s %r instead" % (
-                    self.name, type(value), value), value, state)
+            "expected an int in the IntCol '%s', got %s %r instead" % (
+                self.name, type(value), value), value, state)
 
     from_python = to_python
 
@@ -999,7 +999,7 @@ class SOForeignKey(SOKeyCol):
         # to the id of the reference table
         sql = ' '.join([fidName, self._maxdbType()])
         tName = other.sqlmeta.table
-        idName  = self.refColumn or other.sqlmeta.idName
+        idName = self.refColumn or other.sqlmeta.idName
         sql = sql + ',' + '\n'
         sql = sql + 'FOREIGN KEY (%s) REFERENCES %s(%s)' % (fidName, tName,
                                                             idName)
@@ -1592,7 +1592,7 @@ class DecimalStringValidator(DecimalValidator):
         value = super(DecimalStringValidator, self).to_python(value, state)
         if self.precision and isinstance(value, Decimal):
             assert value < self.max, \
-                    "Value must be less than %s" % int(self.max)
+                "Value must be less than %s" % int(self.max)
             value = value.quantize(self.precision)
         return value
 
@@ -1601,7 +1601,7 @@ class DecimalStringValidator(DecimalValidator):
         if isinstance(value, Decimal):
             if self.precision:
                 assert value < self.max, \
-                        "Value must be less than %s" % int(self.max)
+                    "Value must be less than %s" % int(self.max)
                 value = value.quantize(self.precision)
             value = value.to_eng_string()
         elif isinstance(value, (int, long)):
@@ -1626,9 +1626,9 @@ class SODecimalStringCol(SOStringCol):
     def createValidators(self):
         if self.quantize:
             v = DecimalStringValidator(
-                    name=self.name,
-                    precision=Decimal(10) ** (-1 * int(self.precision)),
-                    max=Decimal(10) ** (int(self.size) - int(self.precision)))
+                name=self.name,
+                precision=Decimal(10) ** (-1 * int(self.precision)),
+                max=Decimal(10) ** (int(self.size) - int(self.precision)))
         else:
             v = DecimalStringValidator(name=self.name, precision=0)
         return [v] + \

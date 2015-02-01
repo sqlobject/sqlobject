@@ -299,10 +299,10 @@ class SQLOp(SQLExpression):
     def execute(self, executor):
         if self.op == "AND":
             return execute(self.expr1, executor) \
-                   and execute(self.expr2, executor)
+                and execute(self.expr2, executor)
         elif self.op == "OR":
             return execute(self.expr1, executor) \
-                   or execute(self.expr2, executor)
+                or execute(self.expr2, executor)
         else:
             return operatorMap[self.op.upper()](execute(self.expr1, executor),
                                                 execute(self.expr2, executor))
@@ -522,7 +522,7 @@ class SQLObjectTableWithJoins(SQLObjectTable):
 
     def _getattrFromForeignKey(self, column, attr):
         ret =  getattr(self, column.name) == \
-              getattr(self.soClass, '_SO_class_'+column.foreignKey).q.id
+            getattr(self.soClass, '_SO_class_'+column.foreignKey).q.id
         return ret
 
     def _getattrFromJoin(self, join, attr):
@@ -669,7 +669,7 @@ class Select(SQLExpression):
         self.ops['having'] = having
         self.ops['orderBy'] = orderBy
         self.ops['limit'] = limit
-        self.ops['join']  = join
+        self.ops['join'] = join
         self.ops['lazyColumns'] = lazyColumns
         self.ops['distinct'] = distinct
         self.ops['distinctOn'] = distinctOn
@@ -1064,7 +1064,7 @@ class _LikeQuoted:
             s = _quote_like_special(unquote_str(sqlrepr(s, db)), db)
             return quote_str("%s%s%s" % (self.prefix, s, self.postfix), db)
         else:
-           raise TypeError(
+            raise TypeError(
                 "expected str, unicode or SQLExpression, got %s" % type(s))
 
 

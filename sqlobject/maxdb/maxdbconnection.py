@@ -69,15 +69,15 @@ class MaxdbConnection(DBAPI):
                   isolation=None, timeout=None, **kw):
         from sapdb import dbapi
         self.module = dbapi
-        self.host      = host
-        self.port      = port
-        self.user      = user
-        self.password  = password
-        self.db        = database
+        self.host = host
+        self.port = port
+        self.user = user
+        self.password = password
+        self.db = database
         self.autoCommit = autoCommit
-        self.sqlmode   = sqlmode
+        self.sqlmode = sqlmode
         self.isolation = isolation
-        self.timeout   = timeout
+        self.timeout = timeout
 
         DBAPI.__init__(self, **kw)
 

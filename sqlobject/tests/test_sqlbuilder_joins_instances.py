@@ -34,8 +34,10 @@ def setup_module(mod):
 
 
 def testJoin():
-    assert list(SBPerson.select(AND(SBPerson.q.id == SBAddress.q.personID, SBAddress.q.city == 'London'))) == \
-           list(SBAddress.selectBy(city='London').throughTo.person)
+    assert list(SBPerson.select(
+        AND(SBPerson.q.id == SBAddress.q.personID,
+            SBAddress.q.city == 'London'))) == \
+        list(SBAddress.selectBy(city='London').throughTo.person)
 
 
     assert list(SBAddress.select(
@@ -47,12 +49,13 @@ def testJoin():
 
 def testRelatedJoin():
     assert list(SBPerson.selectBy(name='Julia').throughTo.sharedAddresses) == \
-           list(ppl[1].sharedAddresses)
+        list(ppl[1].sharedAddresses)
 
 
 def testInstance():
-    assert list(SBAddress.select(AND(SBPerson.q.id == SBAddress.q.personID, SBPerson.q.id == ppl[0].id))) == \
-           list(ppl[0].addresses)
+    assert list(SBAddress.select(
+        AND(SBPerson.q.id == SBAddress.q.personID, SBPerson.q.id == ppl[0].id)
+    )) == list(ppl[0].addresses)
 
 
 def testFK():

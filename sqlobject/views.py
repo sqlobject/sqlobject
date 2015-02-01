@@ -78,7 +78,7 @@ class ViewSQLObject(SQLObject):
                 else:
                     columns.append(ascol)
 
-            metajoin   = getattr(cls.sqlmeta, 'join', NoDefault)
+            metajoin = getattr(cls.sqlmeta, 'join', NoDefault)
             clause = getattr(cls.sqlmeta, 'clause', NoDefault)
             select = Select(columns,
                             distinct=True,
