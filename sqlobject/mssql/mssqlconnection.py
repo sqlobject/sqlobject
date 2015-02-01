@@ -149,7 +149,7 @@ class MSSQLConnection(DBAPI):
             values = [id] + values
         elif has_identity and idName in names:
             try:
-                i = names.index(idName )
+                i = names.index(idName)
                 if i:
                     del names[i]
                     del values[i]
