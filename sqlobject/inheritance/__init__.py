@@ -89,7 +89,7 @@ class InheritableSelectResults(SelectResults):
                 accumulateMany(*attributes)
         tables = []
         for func_name, attribute in attributes:
-           if not isinstance(attribute, basestring):
+            if not isinstance(attribute, basestring):
                 tables.append(attribute.tableName)
         clone = self.__class__(self.sourceClass, self.clause,
                                self.clauseTables, inheritedTables=tables,
