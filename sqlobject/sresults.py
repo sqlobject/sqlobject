@@ -1,5 +1,4 @@
 from . import dbconnection
-import main
 from . import sqlbuilder
 
 
@@ -285,6 +284,7 @@ class SelectResults(object):
         If more than one result is returned,
         ``SQLObjectIntegrityError`` will be raised.
         """
+        from . import main
         results = list(self)
         if not results:
             if default is sqlbuilder.NoDefault:

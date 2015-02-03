@@ -13,7 +13,6 @@ from .cache import CacheSet
 from . import classregistry
 from . import col
 from .converters import sqlrepr
-import main
 from . import sqlbuilder
 from .util.threadinglocal import local as threading_local
 
@@ -667,6 +666,7 @@ class DBAPI(DBConnection):
                     self.sqlrepr(secondValue)))
 
     def _SO_columnClause(self, soClass, kw):
+        from . import main
         ops = {None: "IS"}
         data = []
         if 'id' in kw:
