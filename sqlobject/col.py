@@ -1779,7 +1779,8 @@ def pushKey(kw, name, value):
         kw[name] = value
 
 all = []
-for key, value in globals().items():
+# Use copy() to avoid 'dictionary changed' issues on python 3
+for key, value in globals().copy().items():
     if isinstance(value, type) and (issubclass(value, (Col, SOCol))):
         all.append(key)
 __all__.extend(all)

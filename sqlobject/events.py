@@ -345,6 +345,7 @@ def nice_repr(v):
 
 
 __all__ = ['listen', 'send']
-for name, value in globals().items():
+# Use copy() to avoid 'dictionary changed' issues on python 3
+for name, value in globals().copy().items():
     if isinstance(value, type) and issubclass(value, Signal):
         __all__.append(name)
