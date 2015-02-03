@@ -1,6 +1,6 @@
 from __future__ import print_function
 
-from dbtest import *
+from .dbtest import *
 from sqlobject import sqlhub, SQLObject, StringCol
 import py.test
 try:

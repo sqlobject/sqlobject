@@ -1,5 +1,5 @@
 from sqlobject import *
-from dbtest import *
+from .dbtest import *
 from sqlobject.cache import CacheSet
 
 
