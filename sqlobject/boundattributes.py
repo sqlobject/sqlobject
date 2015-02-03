@@ -26,8 +26,8 @@ attributes.
 __all__ = ['BoundAttribute', 'BoundFactory', 'bind_attributes',
            'bind_attributes_local']
 
-import declarative
-import events
+from . import declarative
+from . import events
 
 
 class BoundAttribute(declarative.Declarative):
