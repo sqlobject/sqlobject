@@ -2,7 +2,15 @@ from array import array
 import datetime
 from decimal import Decimal
 import time
-from types import ClassType, InstanceType, NoneType
+import sys
+if sys.version_info[0] < 3:
+    from types import ClassType, InstanceType, NoneType
+else:
+    # Use suitable aliases for now
+    ClassType = type
+    NoneType = type(None)
+    # This is may not be what we want in all cases, but will do for now
+    InstanceType = object
 
 
 try:
@@ -80,9 +88,13 @@ def StringLikeConverter(value, db):
     return "'%s'" % value
 
 registerConverter(str, StringLikeConverter)
-registerConverter(unicode, StringLikeConverter)
+if sys.version_info[0] < 3:
+    registerConverter(unicode, StringLikeConverter)
 registerConverter(array, StringLikeConverter)
-registerConverter(buffer, StringLikeConverter)
+if sys.version_info[0] < 3:
+    registerConverter(buffer, StringLikeConverter)
+else:
+    registerConverter(memoryview, StringLikeConverter)
 
 
 def IntConverter(value, db):
@@ -94,7 +106,8 @@ registerConverter(int, IntConverter)
 def LongConverter(value, db):
     return str(value)
 
-registerConverter(long, LongConverter)
+if sys.version_info[0] < 3:
+    registerConverter(long, LongConverter)
 
 if NumericType:
     registerConverter(NumericType, IntConverter)
