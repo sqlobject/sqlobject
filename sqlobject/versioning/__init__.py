@@ -63,7 +63,7 @@ def getColumns(columns, cls):
 
 
 class Versioning(object):
-    def __init__(self, extraCols = None):
+    def __init__(self, extraCols=None):
         if extraCols:
             self.extraCols = extraCols
         else:
