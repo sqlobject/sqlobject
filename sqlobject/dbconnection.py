@@ -1,7 +1,11 @@
 import atexit
 from cgi import parse_qsl
 import inspect
-import new
+import sys
+if sys.version_info[0] < 3:
+    # Temporary workaround - will need more attention to fix
+    # usage of new in the code
+    import new
 import os
 import threading
 import types
