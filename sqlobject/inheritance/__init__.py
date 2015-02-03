@@ -5,7 +5,7 @@ from sqlobject import sqlbuilder
 from sqlobject.col import StringCol, ForeignKey
 from sqlobject.main import sqlmeta, SQLObject, SelectResults, \
    makeProperties, unmakeProperties, getterName, setterName
-import iteration
+from . import iteration
 
 
 def tablesUsedSet(obj, db):
