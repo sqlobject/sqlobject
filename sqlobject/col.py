@@ -27,12 +27,12 @@ except ImportError:
     import pickle
 import weakref
 from formencode import compound, validators
-from classregistry import findClass
+from .classregistry import findClass
 # Sadly the name "constraints" conflicts with many of the function
 # arguments in this module, so we rename it:
-import constraints as constrs
-import sqlbuilder
-from styles import capword
+from . import constraints as constrs
+from . import sqlbuilder
+from .styles import capword
 
 NoDefault = sqlbuilder.NoDefault
 
@@ -1779,7 +1779,8 @@ def pushKey(kw, name, value):
         kw[name] = value
 
 all = []
-for key, value in globals().items():
+# Use copy() to avoid 'dictionary changed' issues on python 3
+for key, value in globals().copy().items():
     if isinstance(value, type) and (issubclass(value, (Col, SOCol))):
         all.append(key)
 __all__.extend(all)

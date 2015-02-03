@@ -5,6 +5,9 @@
    http://www.python.org/topics/database/DatabaseAPI-2.0.html
 """
 
+import sys
+if sys.version_info[0] >= 3:
+    StandardError = Exception
 
 class Error(StandardError):
     pass

@@ -33,7 +33,7 @@ or an instance method depending on where it is called.
 """
 
 import copy
-import events
+from . import events
 
 import itertools
 counter = itertools.count()
