@@ -33,7 +33,7 @@ class HashValidator(sqlobject.col.StringValidator):
         """ Passes out a hash object. """
         if value is None:
             return None
-        return DbHash(hash = value, hashMethod = self.hashMethod)
+        return DbHash(hash=value, hashMethod=self.hashMethod)
 
     def from_python(self, value, state):
         """ Store the given value as a MD5 hash, or None if specified. """

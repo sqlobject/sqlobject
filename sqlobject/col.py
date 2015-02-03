@@ -361,7 +361,7 @@ class SOCol(object):
                 self._extraSQL() + [self._firebirdType()[1]])
 
     def maxdbCreateSQL(self):
-       return ' '.join([self.dbName, self._maxdbType()] + self._extraSQL())
+        return ' '.join([self.dbName, self._maxdbType()] + self._extraSQL())
 
     def __get__(self, obj, type=None):
         if obj is None:

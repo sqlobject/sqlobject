@@ -63,7 +63,7 @@ def getColumns(columns, cls):
 
 
 class Versioning(object):
-    def __init__(self, extraCols = None):
+    def __init__(self, extraCols=None):
         if extraCols:
             self.extraCols = extraCols
         else:
@@ -98,7 +98,7 @@ class Versioning(object):
                       events.RowUpdateSignal)
 
     def createVersionTable(self, cls, conn):
-         self.versionClass.createTable(ifNotExists=True, connection=conn)
+        self.versionClass.createTable(ifNotExists=True, connection=conn)
 
     def createTable(self, soClass, connection, extra_sql, post_funcs):
         assert soClass is self.soClass
