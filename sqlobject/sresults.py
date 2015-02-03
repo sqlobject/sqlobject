@@ -1,6 +1,6 @@
-import dbconnection
+from . import dbconnection
 import main
-import sqlbuilder
+from . import sqlbuilder
 
 
 __all__ = ['SelectResults']
