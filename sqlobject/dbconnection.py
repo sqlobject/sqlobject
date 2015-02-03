@@ -3,20 +3,19 @@ from cgi import parse_qsl
 import inspect
 import new
 import os
-import sys
 import threading
 import types
 import urllib
 import warnings
 import weakref
 
-from cache import CacheSet
-import classregistry
-import col
-from converters import sqlrepr
+from .cache import CacheSet
+from . import classregistry
+from . import col
+from .converters import sqlrepr
 import main
-import sqlbuilder
-from util.threadinglocal import local as threading_local
+from . import sqlbuilder
+from .util.threadinglocal import local as threading_local
 
 warnings.filterwarnings("ignore", "DB-API extension cursor.lastrowid used")
 
@@ -335,7 +334,6 @@ class DBAPI(DBConnection):
 
     ``queryInsertID`` must also be defined.
     """
-
     dbName = None
 
     def __init__(self, **kw):
@@ -1086,11 +1084,11 @@ dbConnectionForScheme = TheURIOpener.dbConnectionForScheme
 
 # Register DB URI schemas -- do import for side effects
 # noqa is a directive for flake8 to ignore seemingly unused imports
-import firebird  # noqa
-import maxdb  # noqa
-import mssql  # noqa
-import mysql  # noqa
-import postgres  # noqa
-import rdbhost  # noqa
-import sqlite  # noqa
-import sybase  # noqa
+from . import firebird  # noqa
+from . import maxdb  # noqa
+from . import mssql  # noqa
+from . import mysql  # noqa
+from . import postgres  # noqa
+from . import rdbhost  # noqa
+from . import sqlite  # noqa
+from . import sybase  # noqa
