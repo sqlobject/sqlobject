@@ -28,19 +28,19 @@ USA.
 
 import threading
 import weakref
-import sqlbuilder
-import dbconnection
-import col
-import styles
 import types
 import warnings
-import joins
-import index
-import classregistry
-import declarative
-import events
-from sresults import SelectResults
-from util.threadinglocal import local
+from . import sqlbuilder
+from . import dbconnection
+from . import col
+from . import styles
+from . import joins
+from . import index
+from . import classregistry
+from . import declarative
+from . import events
+from .sresults import SelectResults
+from .util.threadinglocal import local
 
 import sys
 if ((sys.version_info[0] == 2) and (sys.version_info[:3] < (2, 6, 0))) \
