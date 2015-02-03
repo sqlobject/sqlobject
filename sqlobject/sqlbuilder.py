@@ -66,6 +66,7 @@ import re
 import threading
 import types
 import weakref
+import sys
 
 from . import classregistry
 from .converters import registerConverter, sqlrepr, quote_str, unquote_str
@@ -262,9 +263,15 @@ def tablesUsedSet(obj, db):
         return {}
 
 
+if sys.version_info[0] < 3:
+    div = operator.div
+else:
+    div = operator.truediv
+
+
 operatorMap = {
     "+": operator.add,
-    "/": operator.div,
+    "/": div,
     "-": operator.sub,
     "*": operator.mul,
     "<": operator.lt,
