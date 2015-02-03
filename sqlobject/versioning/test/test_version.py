@@ -165,7 +165,7 @@ def test_foreign_keys():
     setup()
     base1 = Base(name='first', value=1)
     base2 = Base(name='first', value=1)
-    has_foreign = HasForeign(foreign = base1)
+    has_foreign = HasForeign(foreign=base1)
     has_foreign.foreign = base2
     assert has_foreign.versions[0].foreign == base1
 
