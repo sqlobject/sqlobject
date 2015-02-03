@@ -67,8 +67,8 @@ import threading
 import types
 import weakref
 
-import classregistry
-from converters import registerConverter, sqlrepr, quote_str, unquote_str
+from . import classregistry
+from .converters import registerConverter, sqlrepr, quote_str, unquote_str
 
 
 class VersionError(Exception):
