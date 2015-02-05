@@ -1,5 +1,5 @@
 from sqlobject import *
-from dbtest import *
+from .dbtest import *
 
 
 class ComplexGroup(SQLObject):

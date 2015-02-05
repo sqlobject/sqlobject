@@ -1,7 +1,7 @@
 from __future__ import print_function
 
 from sqlobject import *
-from dbtest import *
+from .dbtest import *
 from StringIO import StringIO
 from sqlobject.util.csvexport import export_csv, export_csv_zip
 

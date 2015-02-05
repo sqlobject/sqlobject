@@ -2,7 +2,7 @@ from sqlobject.dbconnection import registerConnection
 
 
 def builder():
-    import mssqlconnection
+    from . import mssqlconnection
     return mssqlconnection.MSSQLConnection
 
 registerConnection(['mssql'], builder)

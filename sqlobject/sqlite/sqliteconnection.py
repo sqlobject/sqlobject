@@ -1,6 +1,9 @@
 import base64
 import os
-import thread
+try:
+    from _thread import get_ident
+except ImportError:
+    from thread import get_ident
 import urllib
 from sqlobject.dbconnection import DBAPI, Boolean
 from sqlobject import col
@@ -139,7 +142,7 @@ class SQLiteConnection(DBAPI):
             self._connectionNumbers[id(conn)] = self._connectionCount
             self._connectionCount += 1
             return conn
-        threadid = thread.get_ident()
+        threadid = get_ident()
         if (self._pool is not None
             and threadid in self._threadPool):
             conn = self._threadPool[threadid]

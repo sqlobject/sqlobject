@@ -2,8 +2,8 @@ import py.test
 from sqlobject import *
 from sqlobject.sqlbuilder import func
 from sqlobject.main import SQLObjectIntegrityError
-from dbtest import *
-from dbtest import setSQLiteConnectionFactory
+from .dbtest import *
+from .dbtest import setSQLiteConnectionFactory
 
 
 class IterTest(SQLObject):

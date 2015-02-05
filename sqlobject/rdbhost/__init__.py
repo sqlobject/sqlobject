@@ -2,7 +2,7 @@ from sqlobject.dbconnection import registerConnection
 
 
 def builder():
-    import rdbhostconnection
+    from . import rdbhostconnection
     return rdbhostconnection.RdbhostConnection
 
 registerConnection(['rdbhost'], builder)
