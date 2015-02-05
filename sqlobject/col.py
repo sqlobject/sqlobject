@@ -375,7 +375,7 @@ class SOCol(object):
             if columns is None:
                 obj.sqlmeta.loadValues()
             try:
-                return columns[name]
+                return columns[name]  # noqa
             except KeyError:
                 return obj.sqlmeta.loadColumn(self)
         else:

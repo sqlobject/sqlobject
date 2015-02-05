@@ -13,6 +13,8 @@ connection creation sample::
         host=hostname, database=dbname,
         user=user_name, password=user_password, autoCommit=1, debug=1)
 """
+
+import os
 from sqlobject.dbconnection import DBAPI
 from sqlobject import col
 
@@ -311,7 +313,7 @@ class MaxdbConnection(DBAPI):
         elif t in self._dateTypes:
             return col.DateTimeCol, {}
         elif t == 'FIXED':
-            return CurrencyCol, {'size': flength,
-                                 'precision': fscale}
+            return col.CurrencyCol, {'size': flength,
+                                     'precision': fscale}
         else:
             return col.Col, {}

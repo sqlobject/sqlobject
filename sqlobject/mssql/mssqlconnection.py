@@ -216,7 +216,7 @@ class MSSQLConnection(DBAPI):
                     column.mssqlCreateSQL(self)))
 
     def delColumn(self, sqlmeta, column):
-        self.query('ALTER TABLE %s DROP COLUMN %s' % (tableName.table,
+        self.query('ALTER TABLE %s DROP COLUMN %s' % (sqlmeta.table,
                                                       column.dbName))
 
     # precision and scale is gotten from column table so that we can create 
@@ -288,7 +288,9 @@ class MSSQLConnection(DBAPI):
             option = "OFF"
         c = conn.cursor()
         c.execute("SET AUTOCOMMIT " + option)
-        conn.setconnectoption(SQL.AUTOCOMMIT, option)
+        # from mx.ODBC.Windows import SQL
+        # connection.setconnectoption(
+        # SQL.AUTOCOMMIT, SQL.AUTOCOMMIT_ON if auto else SQL.AUTOCOMMIT_OFF)
 
     # precision and scale is needed for decimal columns
     def guessClass(self, t, size, precision, scale):

@@ -1040,12 +1040,13 @@ class ConnectionURIOpener(object):
 
     def registerConnectionInstance(self, inst):
         if inst.name:
-            assert not inst.name in self.instanceNames \
-                or self.instanceNames[inst.name] is cls, \
-                "A instance has already been registered " \
-                "with the name %s" % inst.name
+            assert (not inst.name in self.instanceNames
+                or self.instanceNames[inst.name] is cls  # noqa
+                ), ("A instance has already been registered "
+                "with the name %s" % inst.name)
             assert inst.name.find(':') == -1, \
-                "You cannot include ':' in your class names (%r)" % cls.name
+                "You cannot include ':' " \
+                "in your class names (%r)" % cls.name  # noqa
             self.instanceNames[inst.name] = inst
 
     def connectionForURI(self, uri, oldUri=False, **args):
