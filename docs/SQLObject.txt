@@ -1219,13 +1219,13 @@ different types of columns, when SQLObject creates your tables.
     limitations on using UnicodeCol in queries:
 
     - only simple q-magic fields are supported; no expressions;
-    - only == and <> operators are supported;
+    - only == and != operators are supported;
 
     The following code works::
 
         MyTable.select(u'value' == MyTable.q.name)
-        MyTable.select(MyTable.q.name <> u'value')
-        MyTable.select(OR(MyTable.q.col1 == u'value1', MyTable.q.col2 <> u'value2'))
+        MyTable.select(MyTable.q.name != u'value')
+        MyTable.select(OR(MyTable.q.col1 == u'value1', MyTable.q.col2 != u'value2'))
         MyTable.selectBy(name = u'value')
         MyTable.selectBy(col1=u'value1', col2=u'value2')
         MyTable.byCol1(u'value1') # if col1 is an alternateID
