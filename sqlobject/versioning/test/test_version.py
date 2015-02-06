@@ -45,7 +45,7 @@ def _set_extra():
 class Extra(SQLObject):
     name = StringCol()
     versions = Versioning(
-        extraCols={'extra' : StringCol(default=_set_extra())})
+        extraCols={'extra': StringCol(default=_set_extra())})
 
 
 class HasAltId(SQLObject):

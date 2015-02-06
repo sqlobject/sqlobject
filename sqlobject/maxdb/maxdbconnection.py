@@ -31,7 +31,7 @@ class LowerBoundOfSliceIsNotSupported(maxdbException):
         maxdbException.__init__(self, '')
 
 
-class IncorrectIDStyleError(maxdbException) :
+class IncorrectIDStyleError(maxdbException):
     def __init__(self, value):
         maxdbException.__init__(
             self,
@@ -96,7 +96,7 @@ class MaxdbConnection(DBAPI):
         opt["sqlmode"] = sqlmode
         if self.isolation:
             opt["isolation"] = self.isolation
-        if self.timeout :
+        if self.timeout:
             opt["timeout"] = self.timeout
         return opt
 
@@ -274,7 +274,7 @@ class MaxdbConnection(DBAPI):
             kw['name'] = field_name
             kw['dbName'] = field
 
-            if nullAllowed == 'Y' :
+            if nullAllowed == 'Y':
                 nullAllowed = False
             else:
                 nullAllowed = True

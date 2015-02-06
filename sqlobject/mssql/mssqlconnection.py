@@ -264,9 +264,9 @@ class MSSQLConnection(DBAPI):
                 if defaultText[0] == "'":
                     defaultText = defaultText[1:-1]
                 else:
-                    if t == "int"    :
+                    if t == "int":
                         defaultText = int(defaultText)
-                    if t == "float"  :
+                    if t == "float":
                         defaultText = float(defaultText)
                     if t == "numeric":
                         defaultText = float(defaultText)

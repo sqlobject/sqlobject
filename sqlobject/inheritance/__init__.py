@@ -121,7 +121,7 @@ class InheritableSQLMeta(sqlmeta):
                                not getattr(self.sqlmeta,
                                            "row_update_sig_suppress", False):
                                 self.sqlmeta.send(events.RowUpdateSignal, self,
-                                                  {cname : val})
+                                                  {cname: val})
 
                             setattr(self._parent, cname, val)
                         return setfunc

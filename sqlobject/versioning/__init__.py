@@ -76,8 +76,8 @@ class Versioning(object):
 
         attrs = {'dateArchived': DateTimeCol(default=datetime.now),
                  'master': ForeignKey(self.soClass.__name__),
-                 'masterClass' : self.soClass,
-                 'extraCols' : self.extraCols
+                 'masterClass': self.soClass,
+                 'extraCols': self.extraCols
                  }
 
         getColumns (attrs, self.soClass)
