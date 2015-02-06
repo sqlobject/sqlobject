@@ -123,7 +123,7 @@ class FirebirdConnection(DBAPI):
         """Firebird slaps the limit and offset (actually 'first' and
         'skip', respectively) statement right after the select."""
         if not start:
-            limit_str =  "SELECT FIRST %i" % end
+            limit_str = "SELECT FIRST %i" % end
         if not end:
             limit_str = "SELECT SKIP %i" % start
         else:
@@ -182,7 +182,7 @@ class FirebirdConnection(DBAPI):
     def readDefaultEncodingFromDB(self):
         # Get out if encoding is known allready (can by None as well).
         if self.defaultDbEncoding == "":
-            self.defaultDbEncoding =  str(self.queryOne(
+            self.defaultDbEncoding = str(self.queryOne(
                 "SELECT rdb$character_set_name FROM rdb$database")[0].\
                 strip().lower())  # encoding defined during db creation
             if self.defaultDbEncoding == "none":
