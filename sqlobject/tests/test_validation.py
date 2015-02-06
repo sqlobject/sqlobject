@@ -2,6 +2,10 @@ from sqlobject import *
 from sqlobject.col import validators
 from sqlobject.tests.dbtest import *
 
+import sys
+if sys.version_info[0] > 2:
+    # alias for python 3 compatability
+    long = int
 
 ########################################
 # Validation/conversion
@@ -96,7 +100,7 @@ class TestValidation:
     def test_wrapType(self):
         t = SOValidation(name3=1)
         raises(validators.Invalid, setattr, t, 'name3', 'x')
-        t.name3 = 1L
+        t.name3 = long(1)
         assert t.name3 == 1
         t.name3 = 0
         assert t.name3 == 0

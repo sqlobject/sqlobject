@@ -47,6 +47,10 @@ if ((sys.version_info[0] == 2) and (sys.version_info[:3] < (2, 6, 0))) \
 or ((sys.version_info[0] == 3) and (sys.version_info[:3] < (3, 4, 0))):
     raise ImportError("SQLObject requires Python 2.6, 2.7 or 3.4+")
 
+if sys.version_info[0] > 2:
+    # alias for python 3 compatability
+    long = int
+
 """
 This thread-local storage is needed for RowCreatedSignals. It gathers
 code-blocks to execute _after_ the whole hierachy of inherited SQLObjects
