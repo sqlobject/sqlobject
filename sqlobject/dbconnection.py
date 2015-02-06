@@ -8,8 +8,12 @@ if sys.version_info[0] < 3:
 import os
 import threading
 import types
-import urlparse
-import urllib
+try:
+    from urlparse import urlparse, parse_qsl
+    from urllib import unquote, quote, urlencode
+except ImportError:
+    from urllib.parse import urlparse, parse_qsl, unquote, quote, urlencode
+
 import warnings
 import weakref
 
@@ -126,9 +130,9 @@ class DBConnection:
     def uri(self):
         auth = getattr(self, 'user', '') or ''
         if auth:
-            auth = urllib.quote(auth)
+            auth = quote(auth)
             if self.password:
-                auth = auth + ':' + urllib.quote(self.password)
+                auth = auth + ':' + quote(self.password)
             auth = auth + '@'
         else:
             assert not getattr(self, 'password', None), (
@@ -142,7 +146,7 @@ class DBConnection:
         db = self.db
         if db.startswith('/'):
             db = db[1:]
-        return uri + urllib.quote(db)
+        return uri + quote(db)
 
     @classmethod
     def connectionFromOldURI(cls, uri):
@@ -202,23 +206,23 @@ class DBConnection:
             arglist = arglist.split('&')
             for single in arglist:
                 argname, argvalue = single.split('=', 1)
-                argvalue = urllib.unquote(argvalue)
+                argvalue = unquote(argvalue)
                 args[argname] = argvalue
         return user, password, host, port, path, args
 
     @staticmethod
     def _parseURI(uri):
-        parsed = urlparse.urlparse(uri)
+        parsed = urlparse(uri)
         host, path = parsed.hostname, parsed.path
         user, password, port = None, None, None
         if parsed.username:
-            user = urllib.unquote(parsed.username)
+            user = unquote(parsed.username)
         if parsed.password:
-            password = urllib.unquote(parsed.password)
+            password = unquote(parsed.password)
         if parsed.port:
             port = int(parsed.port)
 
-        path = urllib.unquote(path)
+        path = unquote(path)
         if (os.name == 'nt') and (len(path) > 2):
             # Preserve backward compatibility with URIs like /C|/path;
             # replace '|' by ':'
@@ -233,7 +237,7 @@ class DBConnection:
 
         args = {}
         if query:
-            for name, value in urlparse.parse_qsl(query):
+            for name, value in parse_qsl(query):
                 args[name] = value
 
         return user, password, host, port, path, args
@@ -1041,9 +1045,9 @@ class ConnectionURIOpener(object):
     def connectionForURI(self, uri, oldUri=False, **args):
         if args:
             if '?' not in uri:
-                uri += '?' + urllib.urlencode(args)
+                uri += '?' + urlencode(args)
             else:
-                uri += '&' + urllib.urlencode(args)
+                uri += '&' + urlencode(args)
         if uri in self.cachedURIs:
             return self.cachedURIs[uri]
         if uri.find(':') != -1:
