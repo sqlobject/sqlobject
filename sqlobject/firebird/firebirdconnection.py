@@ -330,8 +330,8 @@ class FirebirdConnection(DBAPI):
             # can look like: "DEFAULT 0", "DEFAULT 'default text'", None
             if defaultSource:
                 defaultSource = defaultSource.split(' ')[1]
-                if defaultSource.startswith ("'") and \
-                        defaultSource.endswith ("'"):
+                if defaultSource.startswith("'") and \
+                        defaultSource.endswith("'"):
                     defaultSource = str(defaultSource[1:-1])
                 elif fieldType in ("integer", "smallint", "bigint"):
                     defaultSource = int(defaultSource)
