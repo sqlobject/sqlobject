@@ -1,6 +1,11 @@
 from sqlobject.constraints import *
 from sqlobject.tests.dbtest import *
 
+import sys
+if sys.version_info[0] > 2:
+    # alias for python 3 compatability
+    long = int
+
 
 def test_constraints():
     obj = 'Test object'
@@ -14,9 +19,9 @@ def test_constraints():
     raises(BadValue, notNull, obj, col, None)
     raises(BadValue, isInt, obj, col, 1.1)
     isInt(obj, col, 1)
-    isInt(obj, col, 1L)
+    isInt(obj, col, long(1))
     isFloat(obj, col, 1)
-    isFloat(obj, col, 1L)
+    isFloat(obj, col, long(1))
     isFloat(obj, col, 1.2)
     raises(BadValue, isFloat, obj, col, '1.0')
 
