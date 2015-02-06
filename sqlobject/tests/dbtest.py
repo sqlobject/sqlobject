@@ -39,8 +39,8 @@ supportsMatrix = {
     '-blobData': 'mssql rdbhost',
     '-decimalColumn': 'mssql',
     '-emptyTable': 'mssql',
-    '-limitSelect' : 'mssql',
-    '+schema' : 'postgres',
+    '-limitSelect': 'mssql',
+    '+schema': 'postgres',
     '+memorydb': 'sqlite',
     }
 
