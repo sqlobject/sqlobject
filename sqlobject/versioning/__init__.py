@@ -88,7 +88,7 @@ class Versioning(object):
                                  (Version,),
                                  attrs)
 
-        if  '_connection' in self.soClass.__dict__:
+        if '_connection' in self.soClass.__dict__:
             self.versionClass._connection = \
                 self.soClass.__dict__['_connection']
 

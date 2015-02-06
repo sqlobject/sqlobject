@@ -1388,7 +1388,7 @@ class SODateCol(SOCol):
         return 'DATE'
 
     def _maxdbType(self):
-        return  'DATE'
+        return 'DATE'
 
     def _sqliteType(self):
         return 'DATE'
