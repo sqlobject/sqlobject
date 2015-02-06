@@ -21,4 +21,4 @@ def test_eq():
     assert t2 is not t4
     assert t1 == t3
     assert t2 == t4
-    assert t1 <> t2
+    assert t1 != t2

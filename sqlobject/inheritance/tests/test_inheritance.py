@@ -50,19 +50,19 @@ def test_inheritance():
 def test_inheritance_select():
     setup()
 
-    persons = InheritablePerson.select(InheritablePerson.q.firstName <> None)
+    persons = InheritablePerson.select(InheritablePerson.q.firstName != None)
     assert persons.count() == 2
 
     persons = InheritablePerson.select(InheritablePerson.q.firstName == "phd")
     assert persons.count() == 0
 
-    employees = Employee.select(Employee.q.firstName <> None)
+    employees = Employee.select(Employee.q.firstName != None)
     assert employees.count() == 1
 
     employees = Employee.select(Employee.q.firstName == "phd")
     assert employees.count() == 0
 
-    employees = Employee.select(Employee.q.position <> None)
+    employees = Employee.select(Employee.q.position != None)
     assert employees.count() == 1
 
     persons = InheritablePerson.selectBy(firstName="Project")
