@@ -529,7 +529,7 @@ class SQLObjectTableWithJoins(SQLObjectTable):
             return SQLObjectTable.__getattr__(self, attr)
 
     def _getattrFromForeignKey(self, column, attr):
-        ret =  getattr(self, column.name) == \
+        ret = getattr(self, column.name) == \
             getattr(self.soClass, '_SO_class_'+column.foreignKey).q.id
         return ret
 
