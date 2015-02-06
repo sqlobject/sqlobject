@@ -341,7 +341,7 @@ class sqlmeta(object):
             if hasattr(base, "sqlmeta"):
                 parent_columns.extend(base.sqlmeta.columns.keys())
         if hasattr(soClass, name):
-            assert  (name in parent_columns) or (name == "childName"), (
+            assert (name in parent_columns) or (name == "childName"), (
                 "The class %s.%s already has a variable or method %r, "
                 "you cannot add the column %r" % (
                     soClass.__module__, soClass.__name__, name, name))
