@@ -80,7 +80,7 @@ class Versioning(object):
                  'extraCols': self.extraCols
                  }
 
-        getColumns (attrs, self.soClass)
+        getColumns(attrs, self.soClass)
 
         attrs.update(self.extraCols)
 
