@@ -29,7 +29,7 @@ class SelectResults(object):
             del ops['connection']
         if ops.get('limit', None):
             assert not ops.get('start', None) and not ops.get('end', None), \
-               "'limit' cannot be used with 'start' or 'end'"
+                "'limit' cannot be used with 'start' or 'end'"
             ops["start"] = 0
             ops["end"] = ops.pop("limit")
 
