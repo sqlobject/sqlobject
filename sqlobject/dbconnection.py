@@ -1,5 +1,4 @@
 import atexit
-from cgi import parse_qsl
 import inspect
 import sys
 if sys.version_info[0] < 3:
@@ -9,6 +8,7 @@ if sys.version_info[0] < 3:
 import os
 import threading
 import types
+import urlparse
 import urllib
 import warnings
 import weakref
@@ -208,28 +208,15 @@ class DBConnection:
 
     @staticmethod
     def _parseURI(uri):
-        protocol, request = urllib.splittype(uri)
+        parsed = urlparse.urlparse(uri)
+        host, path = parsed.hostname, parsed.path
         user, password, port = None, None, None
-        host, path = urllib.splithost(request)
-
-        if host:
-            # Python < 2.7 have a problem -
-            # splituser() calls unquote() too early
-            # user, host = urllib.splituser(host)
-            if '@' in host:
-                user, host = host.split('@', 1)
-            if user:
-                user, password = [x and urllib.unquote(x) or None
-                                  for x in urllib.splitpasswd(user)]
-            host, port = urllib.splitport(host)
-            if port:
-                port = int(port)
-        elif host == '':
-            host = None
-
-        # hash-tag is splitted but ignored
-        path, tag = urllib.splittag(path)
-        path, query = urllib.splitquery(path)
+        if parsed.username:
+            user = urllib.unquote(parsed.username)
+        if parsed.password:
+            password = urllib.unquote(parsed.password)
+        if parsed.port:
+            port = int(parsed.port)
 
         path = urllib.unquote(path)
         if (os.name == 'nt') and (len(path) > 2):
@@ -241,9 +228,12 @@ class DBConnection:
             if (path[0] == '/') and (path[2] == ':'):
                 path = path[1:]
 
+        query = parsed.query
+        # hash-tag / fragment is ignored
+
         args = {}
         if query:
-            for name, value in parse_qsl(query):
+            for name, value in urlparse.parse_qsl(query):
                 args[name] = value
 
         return user, password, host, port, path, args
