@@ -55,9 +55,10 @@ whatever default the class wants.  ``[null]`` will use NULL.
 Lines that begin with ``[comment]`` are ignored.
 """
 
+import csv
 from datetime import datetime, date, timedelta
 import os
-import csv
+import time
 import types
 
 __all__ = ['load_csv_from_directory',
@@ -199,7 +200,8 @@ def load_csv(csvreader, allow_python=True, default_type=DEFAULT_TYPE,
                 "for this file (line: %r)" % row)
 
         if current_headers is None:
-            current_headers = _parse_headers(row, default_type)
+            current_headers = _parse_headers(row, default_type,
+                                             allow_python=allow_python)
             continue
 
         if row[0] == '[comment]':
@@ -225,7 +227,7 @@ def load_csv(csvreader, allow_python=True, default_type=DEFAULT_TYPE,
     return results
 
 
-def _parse_headers(header_row, default_type):
+def _parse_headers(header_row, default_type, allow_python=True):
     headers = []
     for name in header_row:
         original_name = name
@@ -359,7 +361,7 @@ def parse_bool(v):
     elif v in ('n', 'no', 'f', 'false', 'off', '0'):
         return False
     raise ValueError(
-        "Value is not boolean-like: %r" % value)
+        "Value is not boolean-like: %r" % v)
 
 register_coercer('bool', parse_bool)
 register_coercer('boolean', parse_bool)

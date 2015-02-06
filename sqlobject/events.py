@@ -272,8 +272,8 @@ def sort_name(value):
 
 _real_dispatcher_send = dispatcher.send
 _real_dispatcher_sendExact = dispatcher.sendExact
-_real_dispatcher_disconnect = dispatcher.disconnect
 _real_dispatcher_connect = dispatcher.connect
+_real_dispatcher_disconnect = dispatcher.disconnect
 _debug_enabled = False
 
 
@@ -314,7 +314,7 @@ def _debug_disconnect(receiver, signal=dispatcher.Any, sender=dispatcher.Any,
                       weak=True):
     print("disconnecting %s from %s signal %s" % (
           nice_repr(receiver), nice_repr(signal), nice_repr(sender)))
-    return disconnect(receiver, signal, sender, weak)
+    return _real_dispatcher_disconnect(receiver, signal, sender, weak)
 
 
 def fmt_args(*arguments, **name):

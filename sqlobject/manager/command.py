@@ -293,7 +293,7 @@ class Command(object):
             os.path.basename(self.invoked_as),
             self.command_name)
         if self.description:
-            self.parser.description = description
+            self.parser.description = self.description
         self.options, self.args = self.parser.parse_args(self.raw_args)
         if (getattr(self.options, 'simulate', False)
             and not self.options.verbose):
@@ -1102,7 +1102,7 @@ class CommandRecord(Command):
     def base_dir(self):
         base = self.options.output_dir
         if base is None:
-            base = CONFIG.get('sqlobject_history_dir', '.')
+            base = CONFIG.get('sqlobject_history_dir', '.')  # noqa
         if not os.path.exists(base):
             print('Creating history directory %s' %
                   self.shorten_filename(base))

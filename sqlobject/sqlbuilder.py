@@ -360,6 +360,7 @@ class SQLPrefix(SQLExpression):
         return [self.expr]
 
     def execute(self, executor):
+        prefix = self.prefix
         expr = execute(self.expr, executor)
         if prefix == "+":
             return expr
