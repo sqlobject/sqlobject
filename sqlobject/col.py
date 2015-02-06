@@ -72,6 +72,11 @@ __all__ = ["datetime_available", "mxdatetime_available",
 if mxdatetime_available:
     __all__.append("MXDATETIME_IMPLEMENTATION")
 
+import sys
+if sys.version_info[0] > 2:
+    # alias for python 3 compatability
+    long = int
+
 
 creationOrder = count()
 

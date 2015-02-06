@@ -2,6 +2,11 @@
 Constraints
 """
 
+import sys
+if sys.version_info[0] > 2:
+    # alias for python 3 compatability
+    long = int
+
 
 class BadValue(ValueError):
 
