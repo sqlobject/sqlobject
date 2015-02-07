@@ -9,6 +9,7 @@ import sys
 if sys.version_info[0] >= 3:
     StandardError = Exception
 
+
 class Error(StandardError):
     pass
 
