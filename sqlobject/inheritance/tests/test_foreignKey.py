@@ -34,7 +34,6 @@ def test_foreignKey():
     EmployeeWithNotes(firstName='Senior', lastName='Clerk', paper=paper)
     PersonWithNotes(firstName='Some', lastName='Person')
 
-
     person = PersonWithNotes.get(1)
     assert isinstance(person, PersonWithNotes) and \
         not isinstance(person, EmployeeWithNotes)

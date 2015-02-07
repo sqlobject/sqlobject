@@ -621,7 +621,6 @@ class DBAPI(DBConnection):
     def _SO_selectOne(self, so, columnNames):
         return self._SO_selectOneAlt(so, columnNames, so.q.id == so.id)
 
-
     def _SO_selectOneAlt(self, so, columnNames, condition):
         if columnNames:
             columns = [isinstance(x, basestring) and sqlbuilder.SQLConstant(x)

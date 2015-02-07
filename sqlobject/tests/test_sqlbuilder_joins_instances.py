@@ -39,7 +39,6 @@ def testJoin():
             SBAddress.q.city == 'London'))) == \
         list(SBAddress.selectBy(city='London').throughTo.person)
 
-
     assert list(SBAddress.select(
         AND(SBPerson.q.id == SBAddress.q.personID,
             SBPerson.q.name == 'Julia')).orderBy(SBAddress.q.city)) == \

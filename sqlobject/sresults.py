@@ -151,7 +151,6 @@ class SelectResults(object):
                     return list(self)[value.start:]
                 return list(self)[:value.stop]
 
-
             if value.start:
                 assert value.start >= 0
                 start = self.ops.get('start', 0) + value.start

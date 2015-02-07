@@ -1743,7 +1743,6 @@ class SQLObject(object):
     def tablesUsedImmediate(self):
         return [self.__class__.q]
 
-
     # Comparison
 
     def __eq__(self, other):
@@ -1766,7 +1765,6 @@ class SQLObject(object):
 
     def __ge__(self, other):
         return NotImplemented
-
 
     # (De)serialization (pickle, etc.)
 
