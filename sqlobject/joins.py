@@ -227,7 +227,6 @@ class SORelatedJoin(SOMultipleJoin):
             self.otherColumn = self.soClass.sqlmeta.style.tableReference(
                 otherClass.sqlmeta.table)
 
-
     def hasIntermediateTable(self):
         return True
 
@@ -370,7 +369,6 @@ class SOSingleJoin(SOMultipleJoin):
 
 class SingleJoin(Join):
     baseClass = SOSingleJoin
-
 
 
 from . import boundattributes

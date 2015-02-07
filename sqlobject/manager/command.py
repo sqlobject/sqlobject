@@ -1229,7 +1229,6 @@ class CommandUpgrade(CommandRecord):
             self.update_db(next_version, conn)
         print('Done.')
 
-
     def current_version(self):
         conn = self.connection()
         if not conn.tableExists(SQLObjectVersionTable.sqlmeta.table):

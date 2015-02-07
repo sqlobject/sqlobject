@@ -97,7 +97,6 @@ def test_inheritable_versioning():
     child.set(name='teenager', toy='guitar')
     assert len(list(child.versions)) == 0
 
-
     # child versioned, base unversioned
     government = Government(name='canada')
     assert not hasattr(government, 'versions')
