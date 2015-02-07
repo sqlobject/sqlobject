@@ -49,7 +49,7 @@ class MSSQLConnection(DBAPI):
 
             conn_str += "Data Source=%s;Initial Catalog=%s;"
 
-            # MSDE does not allow SQL server login 
+            # MSDE does not allow SQL server login
             if kw.get("sspi"):
                 conn_str += \
                     "Integrated Security=SSPI;Persist Security Info=False"
@@ -219,8 +219,8 @@ class MSSQLConnection(DBAPI):
         self.query('ALTER TABLE %s DROP COLUMN %s' % (sqlmeta.table,
                                                       column.dbName))
 
-    # precision and scale is gotten from column table so that we can create 
-    # decimal columns if needed
+    # Precision and scale is gotten from column table
+    # so that we can create decimal columns if needed.
     SHOW_COLUMNS = """
         select
                 name,

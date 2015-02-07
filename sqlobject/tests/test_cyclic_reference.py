@@ -24,7 +24,7 @@ class TestCyclicReferenceB(SQLObject):
     time = DateTimeCol()
     short = StringCol(length=10)
     blobcol = BLOBCol()
-    fkeya = ForeignKey('TestCyclicReferenceA') 
+    fkeya = ForeignKey('TestCyclicReferenceA')
 
 
 def test_cyclic_reference():

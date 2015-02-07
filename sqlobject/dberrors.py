@@ -1,13 +1,14 @@
 """dberrors: database exception classes for SQLObject.
 
    These classes are dictated by the DB API v2.0:
-   
+
    http://www.python.org/topics/database/DatabaseAPI-2.0.html
 """
 
 import sys
 if sys.version_info[0] >= 3:
     StandardError = Exception
+
 
 class Error(StandardError):
     pass

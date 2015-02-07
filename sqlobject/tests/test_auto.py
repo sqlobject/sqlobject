@@ -71,13 +71,13 @@ class TestPeople:
 
     def test_collidingName(self):
         raises(AssertionError, Person.sqlmeta.addColumn,
-            StringCol(name="name"))
+               StringCol(name="name"))
         raises(AssertionError, Person.sqlmeta.addColumn,
-            StringCol(name="_init"))
+               StringCol(name="_init"))
         raises(AssertionError, Person.sqlmeta.addColumn,
-            StringCol(name="expire"))
+               StringCol(name="expire"))
         raises(AssertionError, Person.sqlmeta.addColumn,
-            StringCol(name="set"))
+               StringCol(name="set"))
         raises(AssertionError, self._test_collidingName)
 
 
