@@ -44,7 +44,7 @@ class ViewSQLObject(SQLObject):
 
     See test_views.py for simple examples.
     """
-    
+
     def __classinit__(cls, new_attrs):
         SQLObject.__classinit__(cls, new_attrs)
         # like is_base

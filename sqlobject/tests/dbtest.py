@@ -268,7 +268,7 @@ def supports(feature):
         "The supportMatrix does not list this feature: %r"
         % feature)
 
-    
+
 # To avoid name clashes:
 _inserts = inserts
 

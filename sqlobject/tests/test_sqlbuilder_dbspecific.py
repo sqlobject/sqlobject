@@ -41,14 +41,14 @@ def testMiscOps():
     setupClass(SBButton)
     yield checkCount, AND(makeClause(), makeClause()), 2
     yield checkCount, AND(makeClause(), EXISTS(makeSelect())), 2
-    
-    
+
+
 def testAliased():
     setupClass(SBButton)
     b = Alias(makeSelect(), 'b')
     yield checkCount, b, 1
     yield checkCount, Select(b.q.id), 1
-    
+
     # Table1 & Table2 are treated individually in joins
     yield checkCount, JOIN(None, b), 1
     yield checkCount, JOIN(b, SBButton), 1
@@ -56,10 +56,9 @@ def testAliased():
     yield checkCount, LEFTJOINOn(None, b, SBButton.q.id == b.q.id), 1
     yield checkCount, LEFTJOINOn(b, SBButton, SBButton.q.id == b.q.id), 1
     yield checkCount, LEFTJOINOn(SBButton, b, SBButton.q.id == b.q.id), 1
-    
-    
+
+
 def testTablesUsedSResults():
     setupClass(SBButton)
-    
+
     yield checkCount, SBButton.select(makeClause()).queryForSelect(), 1
-    

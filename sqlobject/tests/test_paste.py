@@ -90,4 +90,3 @@ def test_other():
     setup()
     assert runapp(use_transaction=True)
     assert names() == ['app1', 'app2']
-    
