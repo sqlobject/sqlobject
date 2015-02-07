@@ -174,11 +174,11 @@ def test_extra():
     setup()
     extra = Extra(name='title')
     extra.name = 'new'
-    assert extra.versions[0].extra == 'read all about it'    
+    assert extra.versions[0].extra == 'read all about it'
     assert sorted(extra.versions[0].getChangedFields()) == ['Name']
 
 
 def test_altid():
     setup()
-    extra = HasAltId(name="fleem", altid=5) 
+    extra = HasAltId(name="fleem", altid=5)
     extra.name = "morx"

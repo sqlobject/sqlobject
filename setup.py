@@ -163,4 +163,4 @@ http://sqlobject.org/docs/News.html
 
 -- 
 Ian Bicking  /  ianb@colorstudy.com  / http://blog.ianbicking.org
-"""
+"""  # noqa: preserve space after two dashes
