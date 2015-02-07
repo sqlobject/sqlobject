@@ -66,9 +66,9 @@ class MaxdbConnection(DBAPI):
     dbName = 'maxdb'
     schemes = [dbName]
 
-    def __init__ (self, host='', port=None, user=None, password=None,
-                  database=None, autoCommit=1, sqlmode='internal',
-                  isolation=None, timeout=None, **kw):
+    def __init__(self, host='', port=None, user=None, password=None,
+                 database=None, autoCommit=1, sqlmode='internal',
+                 isolation=None, timeout=None, **kw):
         from sapdb import dbapi
         self.module = dbapi
         self.host = host
