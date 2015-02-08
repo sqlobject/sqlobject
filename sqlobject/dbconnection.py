@@ -1,5 +1,4 @@
 import atexit
-from cgi import parse_qsl
 import inspect
 import sys
 if sys.version_info[0] < 3:
@@ -9,7 +8,12 @@ if sys.version_info[0] < 3:
 import os
 import threading
 import types
-import urllib
+try:
+    from urlparse import urlparse, parse_qsl
+    from urllib import unquote, quote, urlencode
+except ImportError:
+    from urllib.parse import urlparse, parse_qsl, unquote, quote, urlencode
+
 import warnings
 import weakref
 
@@ -126,9 +130,9 @@ class DBConnection:
     def uri(self):
         auth = getattr(self, 'user', '') or ''
         if auth:
-            auth = urllib.quote(auth)
+            auth = quote(auth)
             if self.password:
-                auth = auth + ':' + urllib.quote(self.password)
+                auth = auth + ':' + quote(self.password)
             auth = auth + '@'
         else:
             assert not getattr(self, 'password', None), (
@@ -142,7 +146,7 @@ class DBConnection:
         db = self.db
         if db.startswith('/'):
             db = db[1:]
-        return uri + urllib.quote(db)
+        return uri + quote(db)
 
     @classmethod
     def connectionFromOldURI(cls, uri):
@@ -202,36 +206,29 @@ class DBConnection:
             arglist = arglist.split('&')
             for single in arglist:
                 argname, argvalue = single.split('=', 1)
-                argvalue = urllib.unquote(argvalue)
+                argvalue = unquote(argvalue)
                 args[argname] = argvalue
         return user, password, host, port, path, args
 
     @staticmethod
     def _parseURI(uri):
-        protocol, request = urllib.splittype(uri)
+        parsed = urlparse(uri)
+        if sys.version_info[0] == 2 and sys.version_info[1] < 7:
+            # In python 2.6, urlparse only parses the uri completely
+            # for certain schemes, so we force the scheme to
+            # something that will be parsed correctly
+            scheme = parsed.scheme
+            parsed = urlparse(uri.replace(scheme, 'http', 1))
+        host, path = parsed.hostname, parsed.path
         user, password, port = None, None, None
-        host, path = urllib.splithost(request)
+        if parsed.username:
+            user = unquote(parsed.username)
+        if parsed.password:
+            password = unquote(parsed.password)
+        if parsed.port:
+            port = int(parsed.port)
 
-        if host:
-            # Python < 2.7 have a problem -
-            # splituser() calls unquote() too early
-            # user, host = urllib.splituser(host)
-            if '@' in host:
-                user, host = host.split('@', 1)
-            if user:
-                user, password = [x and urllib.unquote(x) or None
-                                  for x in urllib.splitpasswd(user)]
-            host, port = urllib.splitport(host)
-            if port:
-                port = int(port)
-        elif host == '':
-            host = None
-
-        # hash-tag is splitted but ignored
-        path, tag = urllib.splittag(path)
-        path, query = urllib.splitquery(path)
-
-        path = urllib.unquote(path)
+        path = unquote(path)
         if (os.name == 'nt') and (len(path) > 2):
             # Preserve backward compatibility with URIs like /C|/path;
             # replace '|' by ':'
@@ -240,6 +237,9 @@ class DBConnection:
             # Remove leading slash
             if (path[0] == '/') and (path[2] == ':'):
                 path = path[1:]
+
+        query = parsed.query
+        # hash-tag / fragment is ignored
 
         args = {}
         if query:
@@ -1051,9 +1051,9 @@ class ConnectionURIOpener(object):
     def connectionForURI(self, uri, oldUri=False, **args):
         if args:
             if '?' not in uri:
-                uri += '?' + urllib.urlencode(args)
+                uri += '?' + urlencode(args)
             else:
-                uri += '&' + urllib.urlencode(args)
+                uri += '&' + urlencode(args)
         if uri in self.cachedURIs:
             return self.cachedURIs[uri]
         if uri.find(':') != -1:
