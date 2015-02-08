@@ -295,8 +295,8 @@ class Command(object):
         if self.description:
             self.parser.description = self.description
         self.options, self.args = self.parser.parse_args(self.raw_args)
-        if (getattr(self.options, 'simulate', False)
-            and not self.options.verbose):
+        if (getattr(self.options, 'simulate', False) and
+                not self.options.verbose):
             self.options.verbose = 1
         if self.min_args is not None and len(self.args) < self.min_args:
             self.runner.invalid(
@@ -389,9 +389,9 @@ class Command(object):
         else:
             for name in dir(module):
                 value = getattr(module, name)
-                if (isinstance(value, type)
-                    and issubclass(value, sqlobject.SQLObject)
-                    and value.__module__ == module.__name__):
+                if (isinstance(value, type) and
+                        issubclass(value, sqlobject.SQLObject) and
+                        value.__module__ == module.__name__):
                     all.append(value)
         return all
 
@@ -412,8 +412,8 @@ class Command(object):
             return None
         config_file = self.options.config_file
         if appconfig:
-            if (not config_file.startswith('egg:')
-                and not config_file.startswith('config:')):
+            if (not config_file.startswith('egg:') and
+                    not config_file.startswith('config:')):
                 config_file = 'config:' + config_file
             return appconfig(config_file,
                              relative_to=os.getcwd())
@@ -508,9 +508,8 @@ class Command(object):
 
     def load_options_from_egg(self, egg_spec):
         dist, conf = self.config_from_egg(egg_spec)
-        if (hasattr(self.options, 'output_dir')
-            and not self.options.output_dir
-            and conf.get('history_dir')):
+        if (hasattr(self.options, 'output_dir') and
+                not self.options.output_dir and conf.get('history_dir')):
             dir = conf['history_dir']
             dir = dir.replace('$base', dist.location)
             self.options.output_dir = dir
@@ -648,8 +647,8 @@ class CommandCreate(Command):
         dbs_created = []
         constraints = {}
         for soClass in self.classes(require_some=True):
-            if (self.options.create_db
-                and soClass._connection not in dbs_created):
+            if (self.options.create_db and
+                    soClass._connection not in dbs_created):
                 if not self.options.simulate:
                     try:
                         soClass._connection.createEmptyDatabase()
@@ -673,8 +672,7 @@ class CommandCreate(Command):
             if v >= 2:
                 sql, extra = soClass.createTableSQL()
                 print(sql)
-            if (not self.options.simulate
-                and not exists):
+            if (not self.options.simulate and not exists):
                 if self.options.interactive:
                     if self.ask('Create %s' % soClass.__name__):
                         created += 1
@@ -723,8 +721,7 @@ class CommandDrop(Command):
                 else:
                     not_existing += 1
                     print('%s does not exist.' % soClass.__name__)
-            if (not self.options.simulate
-                and exists):
+            if (not self.options.simulate and exists):
                 if self.options.interactive:
                     if self.ask('Drop %s' % soClass.__name__):
                         dropped += 1
@@ -1006,8 +1003,8 @@ class CommandRecord(Command):
                 f = open(os.path.join(last_version_dir, fn), 'r')
                 content = f.read()
                 f.close()
-                if (self.strip_comments(files_copy[fn])
-                    != self.strip_comments(content)):
+                if (self.strip_comments(files_copy[fn]) !=
+                        self.strip_comments(content)):
                     if v > 1:
                         print("Content does not match: %s" % fn)
                     break

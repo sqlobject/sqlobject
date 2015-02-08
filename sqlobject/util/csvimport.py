@@ -89,7 +89,7 @@ def create_data(data, class_getter, keyorder=None):
     objects = {}
     classnames = data.keys()
     if (not keyorder and isinstance(class_getter, types.ModuleType)
-        and hasattr(class_getter, 'soClasses')):
+            and hasattr(class_getter, 'soClasses')):
         keyorder = [c.__name__ for c in class_getter.soClasses]
     if not keyorder:
         classnames.sort()
