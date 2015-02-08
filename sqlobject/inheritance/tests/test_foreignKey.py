@@ -44,13 +44,15 @@ def test_foreignKey():
     assert employee.note.text == "employee"
     save_employee = employee
 
-    persons = PersonWithNotes.select(PersonWithNotes.q.noteID != None)
+    # comparison to Non needed to build the right SQL expression
+    persons = PersonWithNotes.select(PersonWithNotes.q.noteID != None)  # noqa
     assert persons.count() == 2
 
     persons = PersonWithNotes.selectBy(noteID=person.note.id)
     assert persons.count() == 1
 
-    employee = EmployeeWithNotes.select(PersonWithNotes.q.noteID != None)
+    # comparison to Non needed to build the right SQL expression
+    employee = EmployeeWithNotes.select(PersonWithNotes.q.noteID != None) # noqa
     assert employee.count() == 1
 
     persons = PersonWithNotes.selectBy(noteID=person.note.id)

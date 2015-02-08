@@ -45,7 +45,7 @@ def testDefaultNone():
     setupClass(EnumWithDefaultNone)
 
     e = EnumWithDefaultNone()
-    assert e.l == None
+    assert e.l is None
 
 
 class EnumWithDefaultOther(SQLObject):

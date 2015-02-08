@@ -33,7 +33,7 @@ def test_Select():
 
 
 def test_empty_AND():
-    assert AND() == None
+    assert AND() is None
     assert AND(True) == True
 
     # sqlrepr() is needed because AND() returns an SQLExpression that overrides
