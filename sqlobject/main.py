@@ -825,8 +825,7 @@ class SQLObject(object):
         # class.  If so, then we need to remove that column from
         # _columns.
         for key in sqlmeta.columnDefinitions.keys():
-            if (key in new_attrs
-                and new_attrs[key] is None):
+            if (key in new_attrs and new_attrs[key] is None):
                 del sqlmeta.columnDefinitions[key]
 
         for column in sqlmeta.columnDefinitions.values():
@@ -880,8 +879,7 @@ class SQLObject(object):
         inheritance.  Lastly it calls sqlmeta.setClass, which handles
         much of the setup.
         """
-        if ('sqlmeta' not in new_attrs
-            and not is_base):
+        if ('sqlmeta' not in new_attrs and not is_base):
             # We have to create our own subclass, usually.
             # type(className, bases_tuple, attr_dict) creates a new subclass.
             cls.sqlmeta = type('sqlmeta', (cls.sqlmeta,), {})
@@ -1537,7 +1535,7 @@ class SQLObject(object):
         conn = connection or cls._connection
         for join in cls._getJoinsToCreate():
             if (ifNotExists and
-                conn.tableExists(join.intermediateTable)):
+                    conn.tableExists(join.intermediateTable)):
                 continue
             conn._SO_createJoinTable(join)
 

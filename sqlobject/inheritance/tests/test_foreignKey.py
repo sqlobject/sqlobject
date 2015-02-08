@@ -52,7 +52,8 @@ def test_foreignKey():
     assert persons.count() == 1
 
     # comparison to None needed to build the right SQL expression
-    employee = EmployeeWithNotes.select(PersonWithNotes.q.noteID != None) # noqa
+    employee = EmployeeWithNotes.select(
+        PersonWithNotes.q.noteID != None)  # noqa
     assert employee.count() == 1
 
     persons = PersonWithNotes.selectBy(noteID=person.note.id)

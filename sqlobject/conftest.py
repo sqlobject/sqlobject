@@ -67,8 +67,8 @@ def pytest_configure(config):
 
 class SQLObjectClass(py.test.collect.Class):
     def run(self):
-        if (isinstance(self.obj, type)
-            and issubclass(self.obj, sqlobject.SQLObject)):
+        if (isinstance(self.obj, type) and
+                issubclass(self.obj, sqlobject.SQLObject)):
             return []
         return super(SQLObjectClass, self).run()
 
