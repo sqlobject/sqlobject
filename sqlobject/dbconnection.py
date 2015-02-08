@@ -213,6 +213,12 @@ class DBConnection:
     @staticmethod
     def _parseURI(uri):
         parsed = urlparse(uri)
+        if sys.version_info[0] == 2 and sys.version_info[1] < 7:
+            # In python 2.6, urlparse only parses the uri completely
+            # for certain schemes, so we force the scheme to
+            # something that will be parsed correctly
+            scheme = parsed.scheme
+            parsed = urlparse(uri.replace(scheme, 'http', 1))
         host, path = parsed.hostname, parsed.path
         user, password, port = None, None, None
         if parsed.username:
