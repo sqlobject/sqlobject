@@ -18,10 +18,10 @@ def test_purge1():
     assert j == y
     x.expire(1, y.__class__)
     j = x.get(1, y.__class__)
-    assert j == None
+    assert j is None
     x.finishPut(y.__class__)
     j = x.get(1, y.__class__)
-    assert j == None
+    assert j is None
     x.finishPut(y.__class__)
 
 
