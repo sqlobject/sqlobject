@@ -251,8 +251,8 @@ class MaxdbConnection(DBAPI):
         keymap = {}
         pkmap = {}
         fkData = self.queryAll(self.GET_PK_AND_FK % tableName)
-        for col, cons_type, refcol, reftable in fkData:
-            col_name = col.lower()
+        for _col, cons_type, refcol, reftable in fkData:
+            col_name = _col.lower()
             pkmap[col_name] = False
             if cons_type == 'R':
                 keymap[col_name] = reftable.lower()

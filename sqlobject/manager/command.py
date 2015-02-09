@@ -64,20 +64,19 @@ def db_differences(soClass, conn):
             pass
         else:
             existing = {}
-            for col in columns:
-                col = col.withClass(soClass)
-                existing[col.dbName] = col
+            for _col in columns:
+                _col = _col.withClass(soClass)
+                existing[_col.dbName] = _col
             missing = {}
-            for col in soClass.sqlmeta.columnList:
-                if col.dbName in existing:
-                    del existing[col.dbName]
+            for _col in soClass.sqlmeta.columnList:
+                if _col.dbName in existing:
+                    del existing[_col.dbName]
                 else:
-                    missing[col.dbName] = col
-            for col in existing.values():
-                diffs.append('Database has extra column: %s'
-                             % col.dbName)
-            for col in missing.values():
-                diffs.append('Database missing column: %s' % col.dbName)
+                    missing[_col.dbName] = _col
+            for _col in existing.values():
+                diffs.append('Database has extra column: %s' % _col.dbName)
+            for _col in missing.values():
+                diffs.append('Database missing column: %s' % _col.dbName)
     return diffs
 
 
@@ -215,10 +214,10 @@ class Command(object):
             "depends on" here mean "has a foreign key pointing to".
             """
             depended = []
-            for col in cls.sqlmeta.columnList:
-                if col.foreignKey:
-                    other = findClass(col.foreignKey,
-                                      col.soClass.sqlmeta.registry)
+            for _col in cls.sqlmeta.columnList:
+                if _col.foreignKey:
+                    other = findClass(_col.foreignKey,
+                                      _col.soClass.sqlmeta.registry)
                     if (other is not cls) and (other not in depended):
                         depended.append(other)
             return depended
@@ -783,23 +782,23 @@ class CommandStatus(Command):
                     soClass.sqlmeta.table, e))
                 continue
             existing = {}
-            for col in columns:
-                col = col.withClass(soClass)
-                existing[col.dbName] = col
+            for _col in columns:
+                _col = _col.withClass(soClass)
+                existing[_col.dbName] = _col
             missing = {}
-            for col in soClass.sqlmeta.columnList:
-                if col.dbName in existing:
-                    del existing[col.dbName]
+            for _col in soClass.sqlmeta.columnList:
+                if _col.dbName in existing:
+                    del existing[_col.dbName]
                 else:
-                    missing[col.dbName] = col
+                    missing[_col.dbName] = _col
             if existing:
                 self.print_class(soClass)
-                for col in existing.values():
-                    print('  Database has extra column: %s' % col.dbName)
+                for _col in existing.values():
+                    print('  Database has extra column: %s' % _col.dbName)
             if missing:
                 self.print_class(soClass)
-                for col in missing.values():
-                    print('  Database missing column: %s' % col.dbName)
+                for _col in missing.values():
+                    print('  Database missing column: %s' % _col.dbName)
             if existing or missing:
                 bad += 1
             else:
@@ -891,8 +890,8 @@ class CommandExecute(Command):
                 sys.stdout.write("%s\t" % name)
             sys.stdout.write("\n")
         for row in rows:
-            for col in row:
-                sys.stdout.write("%r\t" % col)
+            for _col in row:
+                sys.stdout.write("%r\t" % _col)
             sys.stdout.write("\n")
         print()
 

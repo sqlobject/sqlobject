@@ -151,9 +151,9 @@ def findDependencies(name, registry=None):
 
 def findDependantColumns(name, klass):
     depends = []
-    for col in klass.sqlmeta.columnList:
-        if col.foreignKey == name and col.cascade is not None:
-            depends.append(col)
+    for _col in klass.sqlmeta.columnList:
+        if _col.foreignKey == name and _col.cascade is not None:
+            depends.append(_col)
     return depends
 
 
@@ -1221,10 +1221,10 @@ class SQLObject(object):
             func(self)
 
     def _SO_selectInit(self, row):
-        for col, colValue in zip(self.sqlmeta.columnList, row):
-            if col.to_python:
-                colValue = col.to_python(colValue, self._SO_validatorState)
-            setattr(self, instanceName(col.name), colValue)
+        for _col, colValue in zip(self.sqlmeta.columnList, row):
+            if _col.to_python:
+                colValue = _col.to_python(colValue, self._SO_validatorState)
+            setattr(self, instanceName(_col.name), colValue)
 
     def _SO_getValue(self, name):
         # Retrieves a single value from the database.  Simple.
@@ -1550,19 +1550,19 @@ class SQLObject(object):
     @classmethod
     def createIndexes(cls, ifNotExists=False, connection=None):
         conn = connection or cls._connection
-        for index in cls.sqlmeta.indexes:
-            if not index:
+        for _index in cls.sqlmeta.indexes:
+            if not _index:
                 continue
-            conn._SO_createIndex(cls, index)
+            conn._SO_createIndex(cls, _index)
 
     @classmethod
     def createIndexesSQL(cls, connection=None):
         conn = connection or cls._connection
         sql = []
-        for index in cls.sqlmeta.indexes:
-            if not index:
+        for _index in cls.sqlmeta.indexes:
+            if not _index:
                 continue
-            sql.append(conn.createIndexSQL(cls, index))
+            sql.append(conn.createIndexSQL(cls, _index))
         return ';\n'.join(sql)
 
     @classmethod
@@ -1639,14 +1639,14 @@ class SQLObject(object):
 
             query = []
             delete = setnull = restrict = False
-            for col in cols:
-                if col.cascade == False:
+            for _col in cols:
+                if _col.cascade == False:
                     # Found a restriction
                     restrict = True
-                query.append(getattr(k.q, col.name) == self.id)
-                if col.cascade == 'null':
-                    setnull = col.name
-                elif col.cascade:
+                query.append(getattr(k.q, _col.name) == self.id)
+                if _col.cascade == 'null':
+                    setnull = _col.name
+                elif _col.cascade:
                     delete = True
             assert delete or setnull or restrict, (
                 "Class %s depends on %s accoriding to "
@@ -1724,12 +1724,12 @@ class SQLObject(object):
 
     def _reprItems(self):
         items = []
-        for col in self.sqlmeta.columnList:
-            value = getattr(self, col.name)
+        for _col in self.sqlmeta.columnList:
+            value = getattr(self, _col.name)
             r = repr(value)
             if len(r) > 20:
                 value = r[:17] + "..." + r[-1]
-            items.append((col.name, value))
+            items.append((_col.name, value))
         return items
 
     @classmethod
