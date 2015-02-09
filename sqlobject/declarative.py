@@ -108,7 +108,7 @@ class Declarative(object):
     __restrict_attributes__ = None
 
     def __classinit__(cls, new_attrs):
-        cls.declarative_count = counter.next()
+        cls.declarative_count = next(counter)
         for name in cls.__mutableattributes__:
             if name not in new_attrs:
                 setattr(cls, copy.copy(getattr(cls, name)))
@@ -123,7 +123,7 @@ class Declarative(object):
         for name, value in new_attrs.items():
             setattr(self, name, value)
         if 'declarative_count' not in new_attrs:
-            self.declarative_count = counter.next()
+            self.declarative_count = next(counter)
 
     def __init__(self, *args, **kw):
         if self.__unpackargs__ and self.__unpackargs__[0] == '*':

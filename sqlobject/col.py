@@ -421,7 +421,7 @@ class Col(object):
         super(Col, self).__init__()
         self.__dict__['_name'] = name
         self.__dict__['_kw'] = kw
-        self.__dict__['creationOrder'] = creationOrder.next()
+        self.__dict__['creationOrder'] = next(creationOrder)
         self.__dict__['_extra_vars'] = {}
 
     def _set_name(self, value):
