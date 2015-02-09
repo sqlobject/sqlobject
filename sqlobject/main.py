@@ -1229,7 +1229,7 @@ class SQLObject(object):
     def _SO_getValue(self, name):
         # Retrieves a single value from the database.  Simple.
         assert not self.sqlmeta._obsolete, (
-            "%s with id %s has become obsolete" \
+            "%s with id %s has become obsolete"
             % (self.__class__.__name__, self.id))
         # @@: do we really need this lock?
         # self._SO_writeLock.acquire()

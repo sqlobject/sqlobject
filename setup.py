@@ -84,7 +84,7 @@ and `GitHub <https://github.com/sqlobject>`_.
       download_url="https://pypi.python.org/pypi/SQLObject/"
           "%sdev-2014" % version,
       license="LGPL",
-      packages=["sqlobject"] + \
+      packages=["sqlobject"] +
           ['sqlobject.%s' % package for package in subpackages],
       scripts=["scripts/sqlobject-admin", "scripts/sqlobject-convertOldURI"],
       package_data={"sqlobject":

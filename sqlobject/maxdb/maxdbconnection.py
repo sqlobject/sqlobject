@@ -173,7 +173,7 @@ class MaxdbConnection(DBAPI):
         #         self.createSequenceName(soClass.sqlmeta.table))
         # t.commit()
         # so use transaction when the problem will be solved
-        self.query('CREATE TABLE %s (\n%s\n)' % \
+        self.query('CREATE TABLE %s (\n%s\n)' %
                    (soClass.sqlmeta.table, self.createColumns(soClass)))
         self.query("CREATE SEQUENCE %s"
                    % self.createSequenceName(soClass.sqlmeta.table))

@@ -359,7 +359,7 @@ class SOSingleJoin(SOMultipleJoin):
             if not self.makeDefault:
                 return None
             else:
-                kw = {self.soClass.sqlmeta.style.\
+                kw = {self.soClass.sqlmeta.style.
                       instanceIDAttrToAttr(pythonColumn): inst}
                 # instanciating the otherClass with all
                 return self.otherClass(**kw)

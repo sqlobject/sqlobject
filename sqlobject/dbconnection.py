@@ -542,11 +542,10 @@ class DBAPI(DBConnection):
         return constraints
 
     def createReferenceConstraints(self, soClass):
-        refConstraints = [self.createReferenceConstraint(soClass, column) \
-                          for column in soClass.sqlmeta.columnList \
+        refConstraints = [self.createReferenceConstraint(soClass, column)
+                          for column in soClass.sqlmeta.columnList
                           if isinstance(column, col.SOForeignKey)]
-        refConstraintDefs = [constraint \
-                             for constraint in refConstraints \
+        refConstraintDefs = [constraint for constraint in refConstraints
                              if constraint]
         return refConstraintDefs
 

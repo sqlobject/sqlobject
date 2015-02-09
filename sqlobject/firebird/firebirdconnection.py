@@ -136,7 +136,7 @@ class FirebirdConnection(DBAPI):
             return query
 
     def createTable(self, soClass):
-        self.query('CREATE TABLE %s (\n%s\n)' % \
+        self.query('CREATE TABLE %s (\n%s\n)' %
                    (soClass.sqlmeta.table, self.createColumns(soClass)))
         self.query("CREATE GENERATOR GEN_%s" % soClass.sqlmeta.table)
         return []
@@ -183,7 +183,7 @@ class FirebirdConnection(DBAPI):
         # Get out if encoding is known allready (can by None as well).
         if self.defaultDbEncoding == "":
             self.defaultDbEncoding = str(self.queryOne(
-                "SELECT rdb$character_set_name FROM rdb$database")[0].\
+                "SELECT rdb$character_set_name FROM rdb$database")[0].
                 strip().lower())  # encoding defined during db creation
             if self.defaultDbEncoding == "none":
                 self.defaultDbEncoding = None
@@ -433,8 +433,9 @@ class FirebirdConnection(DBAPI):
             return col.Col, {}
 
     def createEmptyDatabase(self):
-        self.module.create_database("CREATE DATABASE '%s' user '%s' password '%s'" % \
-                                    (self.db, self.user, self.password))
+        self.module.create_database(
+            "CREATE DATABASE '%s' user '%s' password '%s'" %
+            (self.db, self.user, self.password))
 
     def dropDatabase(self):
         self.module.drop_database()

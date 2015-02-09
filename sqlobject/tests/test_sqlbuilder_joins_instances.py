@@ -79,7 +79,7 @@ def testJoin2():
         list(SBAddress.select(
             AND(SBPerson.q.id == SBAddress.q.personID,
                 SBPerson.q.name == 'Julia')).orderBy(SBAddress.q.city)) == \
-        list(SBPerson.selectBy(name='Julia').throughTo.\
+        list(SBPerson.selectBy(name='Julia').throughTo.
              addresses.orderBy(SBAddress.q.city))
 
 
