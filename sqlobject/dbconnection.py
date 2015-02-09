@@ -1,10 +1,6 @@
 import atexit
 import inspect
 import sys
-if sys.version_info[0] < 3:
-    # Temporary workaround - will need more attention to fix
-    # usage of new in the code
-    import new
 import os
 import threading
 import types
@@ -832,8 +828,8 @@ class Transaction(object):
         if not cls in self._deletedCache:
             self._deletedCache[cls] = []
         self._deletedCache[cls].append(inst.id)
-        meth = new.instancemethod(self._dbConnection._SO_delete.im_func,
-                                  self, self.__class__)
+        meth = types.MethodType(self._dbConnection._SO_delete.im_func,
+                                self, self.__class__)
         return meth(inst)
 
     def commit(self, close=False):
@@ -886,7 +882,7 @@ class Transaction(object):
             else:
                 return attr
         else:
-            meth = new.instancemethod(func, self, self.__class__)
+            meth = types.MethodType(func, self, self.__class__)
             return meth
 
     def _makeObsolete(self):
