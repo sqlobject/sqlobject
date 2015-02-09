@@ -4,7 +4,10 @@ try:
     from _thread import get_ident
 except ImportError:
     from thread import get_ident
-import urllib
+try:
+    from urllib import quote
+except ImportError:
+    from urllib.parse import quote
 from sqlobject.dbconnection import DBAPI, Boolean
 from sqlobject import col
 from sqlobject.dberrors import *
@@ -130,7 +133,7 @@ class SQLiteConnection(DBAPI):
                 path = "//" + path
             else:
                 path = "///" + path
-            path = urllib.quote(path)
+            path = quote(path)
         return 'sqlite:%s' % path
 
     def getConnection(self):
