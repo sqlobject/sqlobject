@@ -25,7 +25,7 @@ class Join(object):
         kw['otherClass'] = otherClass
         self.kw = kw
         self._joinMethodName = self.kw.pop('joinMethodName', None)
-        self.creationOrder = creationOrder.next()
+        self.creationOrder = next(creationOrder)
 
     def _set_joinMethodName(self, value):
         assert self._joinMethodName == value or self._joinMethodName is None, \

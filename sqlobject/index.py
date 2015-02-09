@@ -161,7 +161,7 @@ class DatabaseIndex(object):
     def __init__(self, *columns, **kw):
         kw['columns'] = columns
         self.kw = kw
-        self.creationOrder = creationOrder.next()
+        self.creationOrder = next(creationOrder)
 
     def setName(self, value):
         assert self.kw.get('name') is None, \
