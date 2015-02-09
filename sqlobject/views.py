@@ -1,5 +1,5 @@
-from sqlbuilder import *
-from main import SQLObject
+from .sqlbuilder import *
+from .main import SQLObject
 
 
 class ViewSQLObjectField(SQLObjectField):
