@@ -97,7 +97,7 @@ class ViewSQLObject(SQLObject):
                 last_id = "id"
                 last = Alias(select, last_alias)
                 columns = [
-                    ColumnAS(SQLConstant("%s.%s"%(last_alias, x.expr2)),
+                    ColumnAS(SQLConstant("%s.%s" % (last_alias, x.expr2)),
                              x.expr2) for x in columns]
 
                 for i, agg in enumerate(aggregates):
@@ -108,7 +108,7 @@ class ViewSQLObject(SQLObject):
                         restriction = AND(clause, restriction)
                     agg = agg[1:]
                     agg_alias = "%s_%s" % (alias, i)
-                    agg_id = '%s_id'%agg_alias
+                    agg_id = '%s_id' % agg_alias
                     if not last.q.alias.endswith('base'):
                         last = None
                     new_alias = Alias(Select(
@@ -126,7 +126,7 @@ class ViewSQLObject(SQLObject):
                     for col in agg:
                         columns.append(
                             ColumnAS(SQLConstant(
-                                "%s.%s"%(agg_alias, col.expr2)),
+                                "%s.%s" % (agg_alias, col.expr2)),
                                 col.expr2))
 
                     last = new_alias
