@@ -828,8 +828,11 @@ class Transaction(object):
         if not cls in self._deletedCache:
             self._deletedCache[cls] = []
         self._deletedCache[cls].append(inst.id)
-        meth = types.MethodType(self._dbConnection._SO_delete.im_func,
-                                self, self.__class__)
+        if sys.version_info[0] < 3:
+            meth = types.MethodType(self._dbConnection._SO_delete.im_func,
+                                    self, self.__class__)
+        else:
+            meth = types.MethodType(self._dbConnection._SO_delete.im_func)
         return meth(inst)
 
     def commit(self, close=False):
@@ -882,7 +885,10 @@ class Transaction(object):
             else:
                 return attr
         else:
-            meth = types.MethodType(func, self, self.__class__)
+            if sys.version_info[0] < 3:
+                meth = types.MethodType(func, self, self.__class__)
+            else:
+                meth = types.MethodType(func, self)
             return meth
 
     def _makeObsolete(self):
