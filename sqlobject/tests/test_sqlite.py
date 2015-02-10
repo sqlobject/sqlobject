@@ -3,7 +3,7 @@ import py.test
 from sqlobject import *
 from sqlobject.tests.dbtest import *
 from sqlobject.tests.dbtest import setSQLiteConnectionFactory
-from test_basic import TestSO1
+from .test_basic import TestSO1
 
 
 class SQLiteFactoryTest(SQLObject):

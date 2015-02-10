@@ -2,7 +2,10 @@ from __future__ import print_function
 
 from sqlobject import *
 from .dbtest import *
-from StringIO import StringIO
+try:
+    from StringIO import StringIO
+except ImportError:
+    from io import StringIO
 from sqlobject.util.csvexport import export_csv, export_csv_zip
 
 
