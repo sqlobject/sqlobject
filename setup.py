@@ -107,7 +107,7 @@ and `GitHub <https://github.com/sqlobject>`_.
                         "../docs/html/sqlobject/versioning/*.html",
                     ],
                     "sqlobject.maxdb": ["readme.txt"],
-                   },
+                    },
       **kw
       )
 

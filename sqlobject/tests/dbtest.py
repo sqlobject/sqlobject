@@ -322,4 +322,4 @@ def setupLogging():
 __all__ = ['Dummy', 'deprecated_module', 'getConnection', 'getConnectionURI',
            'inserts', 'raises', 'setupClass', 'setupLogging', 'setup_module',
            'supports', 'teardown_module',
-          ]
+           ]

@@ -13,8 +13,7 @@ class Test1(SQLObject):
 class Test2(SQLObject):
     class sqlmeta:
         createSQL = ["CREATE SEQUENCE db_test2_seq;",
-                     "ALTER TABLE test2 ADD CHECK(test2 != '');"
-                    ]
+                     "ALTER TABLE test2 ADD CHECK(test2 != '');"]
     test2 = StringCol()
 
 
@@ -28,8 +27,7 @@ class Test3(SQLObject):
 class Test4(SQLObject):
     class sqlmeta:
         createSQL = {'postgres': ['CREATE SEQUENCE db_test4_seq;',
-                                  "ALTER TABLE test4 ADD CHECK(test4 != '');"
-                                 ],
+                                  "ALTER TABLE test4 ADD CHECK(test4 != '');"],
                      'mysql': 'CREATE SEQUENCE db_test4_seq;'}
     test4 = StringCol()
 

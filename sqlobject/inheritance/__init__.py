@@ -503,7 +503,7 @@ class InheritableSQLObject(SQLObject):
                 [(column.foreignName, name)
                     for (name, column) in currentClass.sqlmeta.columns.items()
                     if column.foreignKey
-            ]))
+                 ]))
             currentClass = currentClass.sqlmeta.parentClass
         for name, value in kw.items():
             if name in foreignColumns:
