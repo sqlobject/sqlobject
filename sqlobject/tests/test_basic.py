@@ -1,6 +1,7 @@
 import py.test
 from sqlobject import *
 from sqlobject.tests.dbtest import *
+import codecs
 
 
 class TestSO1(SQLObject):
@@ -14,7 +15,7 @@ class TestSO1(SQLObject):
         cacheValues = False
 
     def _set_passwd(self, passwd):
-        self._SO_set_passwd(passwd.encode('rot13'))
+        self._SO_set_passwd(codecs.encode(passwd, 'rot13'))
 
 
 def setupGetters(cls):
@@ -28,7 +29,7 @@ def test_case1():
     setupGetters(TestSO1)
     bob = TestSO1.selectBy(name='bob')[0]
     assert bob.name == 'bob'
-    assert bob.passwd == 'god'.encode('rot13')
+    assert bob.passwd == codecs.encode('god', 'rot13')
     bobs = TestSO1.selectBy(name='bob')[:10]
     assert len(list(bobs)) == 1
 
@@ -73,14 +74,14 @@ class TestSO2(SQLObject):
     passwd = StringCol(length=10)
 
     def _set_passwd(self, passwd):
-        self._SO_set_passwd(passwd.encode('rot13'))
+        self._SO_set_passwd(codecs.encode(passwd, 'rot13'))
 
 
 def test_case2():
     setupGetters(TestSO2)
     bob = TestSO2.selectBy(name='bob')[0]
     assert bob.name == 'bob'
-    assert bob.passwd == 'god'.encode('rot13')
+    assert bob.passwd == codecs.encode('god', 'rot13')
 
 
 class Student(SQLObject):
