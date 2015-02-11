@@ -266,7 +266,7 @@ def sort_name(value):
     if isinstance(value, type):
         return value.__name__
     elif isinstance(value, types.FunctionType):
-        return value.func_name
+        return value.__name__
     else:
         return str(value)
 
@@ -331,15 +331,15 @@ def nice_repr(v):
     if isinstance(v, (types.ClassType, type)):
         return v.__module__ + '.' + v.__name__
     elif isinstance(v, types.FunctionType):
-        if '__name__' in v.func_globals:
-            if getattr(sys.modules[v.func_globals['__name__']],
-                       v.func_name, None) is v:
-                return '%s.%s' % (v.func_globals['__name__'], v.func_name)
+        if '__name__' in v.__globals__:
+            if getattr(sys.modules[v.__globals__['__name__']],
+                       v.__name__, None) is v:
+                return '%s.%s' % (v.__globals__['__name__'], v.__name__)
         return repr(v)
     elif isinstance(v, types.MethodType):
         return '%s.%s of %s' % (
-            nice_repr(v.im_class), v.im_func.func_name,
-            nice_repr(v.im_self))
+            nice_repr(v.__self__.__class__), v.__func__.__name__,
+            nice_repr(v.__self__))
     else:
         return repr(v)
 

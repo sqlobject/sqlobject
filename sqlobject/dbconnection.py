@@ -301,7 +301,7 @@ class ConnWrapper(object):
                 "because it takes **kw: %r"
                 % meth)
             takes_conn = 'connection' in args
-            meth.im_func.takes_connection = takes_conn
+            meth.__func__.takes_connection = takes_conn
         if not takes_conn:
             return meth
         return ConnMethodWrapper(meth, self._connection)
@@ -833,10 +833,10 @@ class Transaction(object):
             self._deletedCache[cls] = []
         self._deletedCache[cls].append(inst.id)
         if sys.version_info[0] < 3:
-            meth = types.MethodType(self._dbConnection._SO_delete.im_func,
+            meth = types.MethodType(self._dbConnection._SO_delete.__func__,
                                     self, self.__class__)
         else:
-            meth = types.MethodType(self._dbConnection._SO_delete.im_func)
+            meth = types.MethodType(self._dbConnection._SO_delete.__func__)
         return meth(inst)
 
     def commit(self, close=False):
@@ -882,7 +882,7 @@ class Transaction(object):
         self.assertActive()
         attr = getattr(self._dbConnection, attr)
         try:
-            func = attr.im_func
+            func = attr.__func__
         except AttributeError:
             if isinstance(attr, ConnWrapper):
                 return ConnWrapper(attr._soClass, self)

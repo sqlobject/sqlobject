@@ -73,10 +73,10 @@ class _methodwrapper(object):
     def __repr__(self):
         if self.obj is None:
             return ('<bound class method %s.%s>'
-                    % (self.type.__name__, self.func.func_name))
+                    % (self.type.__name__, self.func.__name__))
         else:
             return ('<bound method %s.%s of %r>'
-                    % (self.type.__name__, self.func.func_name, self.obj))
+                    % (self.type.__name__, self.func.__name__, self.obj))
 
 
 class DeclarativeMeta(type):
