@@ -237,7 +237,7 @@ def testForeignKeyDropTableCascade():
     tc6b.destroySelf()
     assert TestSO5.select().count() == 1
     assert TestSO6.select().count() == 0
-    assert iter(TestSO5.select()).next() == tc5b
+    assert next(iter(TestSO5.select())) == tc5b
     tc6c = TestSO6(name='3')
     tc5b.other = tc6c
     assert TestSO5.select().count() == 1
