@@ -1,3 +1,5 @@
+from functools import reduce
+
 from sqlobject import dbconnection
 from sqlobject import classregistry
 from sqlobject import events
