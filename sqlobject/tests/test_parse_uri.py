@@ -105,33 +105,33 @@ def test_uri():
     connection = DBConnection()
     connection.close = lambda: None
 
-    connection.dbName, connection.host,  connection.port,  \
-        connection.user,  connection.password, connection.db = \
+    connection.dbName, connection.host, connection.port, \
+        connection.user, connection.password, connection.db = \
         'mysql', 'host', None, None, None, 'database'
     assert connection.uri() == "mysql://host/database"
 
-    connection.dbName, connection.host,  connection.port,  \
-        connection.user,  connection.password, connection.db = \
+    connection.dbName, connection.host, connection.port, \
+        connection.user, connection.password, connection.db = \
         'mysql', 'host', None, 'user', 'pass word', 'database'
     assert connection.uri() == "mysql://user:pass%20word@host/database"
 
-    connection.dbName, connection.host,  connection.port,  \
-        connection.user,  connection.password, connection.db = \
+    connection.dbName, connection.host, connection.port, \
+        connection.user, connection.password, connection.db = \
         'postgres', 'host', None, 'user', None, 'database'
     assert connection.uri() == "postgres://user@host/database"
 
-    connection.dbName, connection.host,  connection.port,  \
-        connection.user,  connection.password, connection.db = \
+    connection.dbName, connection.host, connection.port, \
+        connection.user, connection.password, connection.db = \
         'postgres', 'host', 5432, None, None, 'database'
     assert connection.uri() == "postgres://host:5432/database"
 
-    connection.dbName, connection.host,  connection.port,  \
-        connection.user,  connection.password, connection.db = \
+    connection.dbName, connection.host, connection.port, \
+        connection.user, connection.password, connection.db = \
         'postgres', None, None, None, None, '/full/path/to/socket/database'
     assert connection.uri() == "postgres:///full/path/to/socket/database"
 
-    connection.dbName, connection.host,  connection.port,  \
-        connection.user,  connection.password, connection.db = \
+    connection.dbName, connection.host, connection.port, \
+        connection.user, connection.password, connection.db = \
         'postgres', 'host', None, 'us:er', 'p@ssword', 'database'
     assert connection.uri() == "postgres://us%3Aer:p%40ssword@host/database"
 
