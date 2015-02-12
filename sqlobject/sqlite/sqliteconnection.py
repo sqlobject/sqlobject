@@ -18,7 +18,7 @@ sqlite2_Binary = None
 
 class ErrorMessage(str):
     def __new__(cls, e):
-        obj = str.__new__(cls, e[0])
+        obj = str.__new__(cls, e.args[0])
         obj.code = None
         obj.module = e.__module__
         obj.exception = e.__class__.__name__
