@@ -754,6 +754,7 @@ class Select(SQLExpression):
             if isinstance(x, SQLExpression):
                 x = sqlrepr(x, db)
             tables.add(x)
+        del x
         things = list(self.ops['items']) + join
         if self.ops['clause'] is not NoDefault:
             things.append(self.ops['clause'])

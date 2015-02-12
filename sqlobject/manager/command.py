@@ -257,6 +257,7 @@ class Command(object):
             for cls in classes:
                 level = calculateDependencyLevel(cls)
                 sorter.append((level, cls))
+            del level
             sorter.sort()
             ordered_classes = [cls for level, cls in sorter]
         except SQLObjectCircularReferenceError as msg:
