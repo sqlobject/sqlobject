@@ -1780,7 +1780,7 @@ class PickleCol(BLOBCol):
 
 
 def pushKey(kw, name, value):
-    if not name in kw:
+    if name not in kw:
         kw[name] = value
 
 all = []

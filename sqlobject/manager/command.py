@@ -995,7 +995,7 @@ class CommandRecord(Command):
             for fn in os.listdir(last_version_dir):
                 if not fn.endswith('.sql'):
                     continue
-                if not fn in files_copy:
+                if fn not in files_copy:
                     if v > 1:
                         print("Missing file %s" % fn)
                     break

@@ -130,7 +130,7 @@ def unmakeProperties(obj):
     for var, value in d.items():
         if isinstance(value, property):
             for prop in [value.fget, value.fset, value.fdel]:
-                if prop and not prop.__name__ in d:
+                if prop and prop.__name__ not in d:
                     delFunc(obj, var)
                     break
 
