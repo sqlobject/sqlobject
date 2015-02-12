@@ -825,7 +825,7 @@ class Transaction(object):
 
     def _SO_delete(self, inst):
         cls = inst.__class__.__name__
-        if not cls in self._deletedCache:
+        if cls not in self._deletedCache:
             self._deletedCache[cls] = []
         self._deletedCache[cls].append(inst.id)
         if sys.version_info[0] < 3:
@@ -1032,7 +1032,7 @@ class ConnectionURIOpener(object):
 
     def registerConnection(self, schemes, builder):
         for uriScheme in schemes:
-            assert not uriScheme in self.schemeBuilders \
+            assert uriScheme not in self.schemeBuilders \
                 or self.schemeBuilders[uriScheme] is builder, \
                 "A driver has already been registered " \
                 "for the URI scheme %s" % uriScheme
@@ -1040,7 +1040,7 @@ class ConnectionURIOpener(object):
 
     def registerConnectionInstance(self, inst):
         if inst.name:
-            assert (not inst.name in self.instanceNames
+            assert (inst.name not in self.instanceNames
                 or self.instanceNames[inst.name] is cls  # noqa
                 ), ("A instance has already been registered "
                 "with the name %s" % inst.name)

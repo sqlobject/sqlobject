@@ -64,7 +64,7 @@ class _methodwrapper(object):
         self.type = type
 
     def __call__(self, *args, **kw):
-        assert not 'self' in kw and not 'cls' in kw, (
+        assert 'self' not in kw and 'cls' not in kw, (
             "You cannot use 'self' or 'cls' arguments to a "
             "classinstancemethod")
         return self.func(*((self.obj, self.type) + args), **kw)
