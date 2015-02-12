@@ -48,8 +48,9 @@ def do_fkey_test(DefaultStyleTest, style, dbname):
     DefaultStyleTest.sqlmeta.style = style()
     DefaultStyleTest.sqlmeta.addColumn(fkey)
     try:
-        assert DefaultStyleTest.sqlmeta.columns.keys()[0] == "FKeyID"
-        assert DefaultStyleTest.sqlmeta.columns.values()[0].dbName == dbname
+        assert list(DefaultStyleTest.sqlmeta.columns.keys())[0] == "FKeyID"
+        assert list(DefaultStyleTest.sqlmeta.columns.values())[0].dbName == \
+            dbname
     finally:
         DefaultStyleTest.sqlmeta.delColumn(fkey)
 
