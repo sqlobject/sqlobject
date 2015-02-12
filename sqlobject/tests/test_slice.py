@@ -8,6 +8,11 @@ from sqlobject.tests.dbtest import *
 ########################################
 
 
+def listrange(*args):
+    """Always return a list, for py3k compatibility"""
+    return list(range(*args))
+
+
 class Counter(SQLObject):
 
     number = IntCol(notNull=True)
@@ -27,28 +32,28 @@ class TestSlice:
 
     def test_slice(self):
         self.counterEqual(
-            Counter.select(None, orderBy='number'), range(100))
+            Counter.select(None, orderBy='number'), listrange(100))
 
         self.counterEqual(
             Counter.select(None, orderBy='number')[10:20],
-            range(10, 20))
+            listrange(10, 20))
 
         self.counterEqual(
             Counter.select(None, orderBy='number')[20:30][:5],
-            range(20, 25))
+            listrange(20, 25))
 
         self.counterEqual(
             Counter.select(None, orderBy='number')[20:30][1:5],
-            range(21, 25))
+            listrange(21, 25))
 
         self.counterEqual(
             Counter.select(None, orderBy='number')[:-10],
-            range(0, 90))
+            listrange(0, 90))
 
         self.counterEqual(
             Counter.select(None, orderBy='number', reversed=True),
-            range(99, -1, -1))
+            listrange(99, -1, -1))
 
         self.counterEqual(
             Counter.select(None, orderBy='-number'),
-            range(99, -1, -1))
+            listrange(99, -1, -1))
