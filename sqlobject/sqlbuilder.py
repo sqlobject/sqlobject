@@ -754,7 +754,6 @@ class Select(SQLExpression):
             if isinstance(x, SQLExpression):
                 x = sqlrepr(x, db)
             tables.add(x)
-        del x
         things = list(self.ops['items']) + join
         if self.ops['clause'] is not NoDefault:
             things.append(self.ops['clause'])
@@ -802,7 +801,7 @@ class Select(SQLExpression):
                 reverser = lambda x: x
             if isinstance(orderBy, (list, tuple)):
                 select += " ORDER BY %s" % ", ".join(
-                    [_str_or_sqlrepr(reverser(x), db) for x in orderBy])
+                    [_str_or_sqlrepr(reverser(_x), db) for _x in orderBy])
             else:
                 select += " ORDER BY %s" % _str_or_sqlrepr(
                     reverser(orderBy), db)
