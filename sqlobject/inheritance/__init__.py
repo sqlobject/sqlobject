@@ -73,7 +73,7 @@ class InheritableSelectResults(SelectResults):
             parentClause = []
             for (currentClass, minParentClass) in tableRegistry.items():
                 while (currentClass != minParentClass) \
-                and currentClass.sqlmeta.parentClass:
+                        and currentClass.sqlmeta.parentClass:
                     parentClass = currentClass.sqlmeta.parentClass
                     parentClause.append(currentClass.q.id == parentClass.q.id)
                     currentClass = parentClass
@@ -283,7 +283,7 @@ class InheritableSQLObject(SQLObject):
         sqlmeta.parentClass = None
         for superclass in cls.__bases__:
             if getattr(superclass, '_inheritable', False) \
-            and (superclass.__name__ != 'InheritableSQLObject'):
+                    and (superclass.__name__ != 'InheritableSQLObject'):
                 if sqlmeta.parentClass:
                     # already have a parent class;
                     # cannot inherit from more than one
@@ -453,7 +453,9 @@ class InheritableSQLObject(SQLObject):
                 addClause = parentClass.q.childName == cls.sqlmeta.childName
                 # if the clause was one of TRUE varians, replace it
                 if (clause is None) or (clause is sqlbuilder.SQLTrueClause) \
-                or (isinstance(clause, basestring) and (clause == 'all')):
+                        or (
+                            isinstance(clause, basestring) and
+                            (clause == 'all')):
                     clause = addClause
                 else:
                     # patch WHERE condition:
@@ -470,7 +472,7 @@ class InheritableSQLObject(SQLObject):
                         elif not isinstance(clause, sqlbuilder.Field):
                             return None
                         elif (clause.tableName == clsID.tableName) \
-                        and (clause.fieldName == clsID.fieldName):
+                                and (clause.fieldName == clsID.fieldName):
                             return parentID
                         else:
                             return None
