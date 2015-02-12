@@ -195,7 +195,7 @@ class CacheFactory(object):
                     self.expiredCache.pop(key, None)
 
             keys = self.cache.keys()
-            for i in xrange(self.cullOffset, len(keys), self.cullFraction):
+            for i in range(self.cullOffset, len(keys), self.cullFraction):
                 id = keys[i]
                 # create a weakref, then remove from the cache
                 obj = ref(self.cache[id])
