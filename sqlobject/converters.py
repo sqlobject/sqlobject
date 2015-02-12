@@ -57,10 +57,15 @@ class ConverterRegistry:
             self.basic[typ] = func
 
     def lookupConverter(self, value, default=None):
-        if type(value) is InstanceType:
-            # lookup on klasses dict
+        if sys.version_info[0] < 3:
+            if type(value) is InstanceType:
+                # lookup on klasses dict
+                return self.klass.get(value.__class__, default)
+            return self.basic.get(type(value), default)
+        else:
+            # python 3 doesn't have classic classes, so everything's
+            # in self.klass
             return self.klass.get(value.__class__, default)
-        return self.basic.get(type(value), default)
 
 converters = ConverterRegistry()
 registerConverter = converters.registerConverter
