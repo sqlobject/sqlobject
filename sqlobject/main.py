@@ -1640,7 +1640,7 @@ class SQLObject(object):
             query = []
             delete = setnull = restrict = False
             for _col in cols:
-                if _col.cascade == False:
+                if _col.cascade is False:
                     # Found a restriction
                     restrict = True
                 query.append(getattr(k.q, _col.name) == self.id)

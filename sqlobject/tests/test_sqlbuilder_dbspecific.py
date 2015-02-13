@@ -17,7 +17,8 @@ class SBButton(SQLObject):
 
 
 def makeClause():
-    return SBButton.q.activated == True
+    # It's not a comparison, it's an SQLExpression
+    return SBButton.q.activated == True  # noqa
 
 
 def makeSelect():

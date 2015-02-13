@@ -90,9 +90,9 @@ class Student(SQLObject):
 def test_boolCol():
     setupClass(Student)
     student = Student(is_smart=False)
-    assert student.is_smart == False
+    assert not student.is_smart
     student2 = Student(is_smart=1)
-    assert student2.is_smart == True
+    assert student2.is_smart
 
 
 class TestSO3(SQLObject):
