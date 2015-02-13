@@ -33,4 +33,3 @@ def test_sub():
     Sub(name='two', name2='2')  # s2
     s3 = Sub.get(s1.id)
     assert s1 == s3
-
