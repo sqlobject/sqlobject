@@ -286,7 +286,7 @@ class Command(object):
         self.parser.usage = "%%prog [options]\n%s" % self.summary
         if self.help:
             help = textwrap.fill(
-                self.help, int(os.environ.get('COLUMNS', 80))-4)
+                self.help, int(os.environ.get('COLUMNS', 80)) - 4)
             self.parser.usage += '\n' + help
         self.parser.prog = '%s %s' % (
             os.path.basename(self.invoked_as),
@@ -561,7 +561,7 @@ class Command(object):
         directory (if it can).  For display purposes.
         """
         if fn.startswith(os.getcwd() + '/'):
-            fn = fn[len(os.getcwd())+1:]
+            fn = fn[len(os.getcwd()) + 1:]
         return fn
 
     def open_editor(self, pretext, breaker=None, extension='.txt'):
@@ -830,11 +830,11 @@ class CommandHelp(Command):
             max_len = max([len(cn) for cn, c in items])
             for command_name, command in items:
                 print('%s:%s %s' % (command_name,
-                                    ' '*(max_len-len(command_name)),
+                                    ' ' * (max_len - len(command_name)),
                                     command.summary))
                 if command.aliases:
                     print('%s (Aliases: %s)' % (
-                        ' '*max_len, ', '.join(command.aliases)))
+                        ' ' * max_len, ', '.join(command.aliases)))
 
 
 class CommandExecute(Command):
@@ -1059,8 +1059,8 @@ class CommandRecord(Command):
                 print("Cannot edit upgrader because there is no "
                       "previous version")
             else:
-                breaker = ('-'*20 + ' lines below this will be ignored '
-                           + '-'*20)
+                breaker = ('-' * 20 + ' lines below this will be ignored '
+                           + '-' * 20)
                 pre_text = breaker + '\n' + '\n'.join(all_diffs)
                 text = self.open_editor('\n\n' + pre_text, breaker=breaker,
                                         extension='.sql')
@@ -1124,7 +1124,7 @@ class CommandRecord(Command):
             if not extra:
                 extra = 'a'
             else:
-                extra = chr(ord(extra)+1)
+                extra = chr(ord(extra) + 1)
 
     def find_last_version(self):
         names = []

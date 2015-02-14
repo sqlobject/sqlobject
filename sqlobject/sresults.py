@@ -179,7 +179,7 @@ class SelectResults(object):
                 return list(iter(self))[value]
             else:
                 start = self.ops.get('start', 0) + value
-                return list(self.clone(start=start, end=start+1))[0]
+                return list(self.clone(start=start, end=start + 1))[0]
 
     def __iter__(self):
         # @@: This could be optimized, using a simpler algorithm
@@ -312,7 +312,7 @@ class SelectResults(object):
         orderBy = sqlbuilder.NoDefault
 
         ref = self.sourceClass.sqlmeta.columns.get(
-            attr.endswith('ID') and attr or attr+'ID', None)
+            attr.endswith('ID') and attr or attr + 'ID', None)
         if ref and ref.foreignKey:
             otherClass, clause = self._throughToFK(ref)
         else:
@@ -337,7 +337,7 @@ class SelectResults(object):
                                  connection=self._getConnection())
 
     def _throughToFK(self, col):
-        otherClass = getattr(self.sourceClass, "_SO_class_"+col.foreignKey)
+        otherClass = getattr(self.sourceClass, "_SO_class_" + col.foreignKey)
         colName = col.name
         query = self.queryForSelect().newItems([
             sqlbuilder.ColumnAS(getattr(self.sourceClass.q, colName), colName)

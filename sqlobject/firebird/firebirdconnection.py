@@ -127,7 +127,7 @@ class FirebirdConnection(DBAPI):
         if not end:
             limit_str = "SELECT SKIP %i" % start
         else:
-            limit_str = "SELECT FIRST %i SKIP %i" % (end-start, start)
+            limit_str = "SELECT FIRST %i SKIP %i" % (end - start, start)
 
         match = cls.limit_re.match(query)
         if match and len(match.groups()) == 2:

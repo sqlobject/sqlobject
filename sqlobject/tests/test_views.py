@@ -59,7 +59,7 @@ class ViewPhoneMore2(ViewPhoneMore):
 
 
 class ViewPhoneInnerAggregate(ViewPhone):
-    twiceMinutes = IntCol(dbName=func.SUM(PhoneCall.q.minutes)*2)
+    twiceMinutes = IntCol(dbName=func.SUM(PhoneCall.q.minutes) * 2)
 
 
 def setup_module(mod):
@@ -138,7 +138,7 @@ def testJoinView():
 
 def testInnerAggregate():
     checkAttr(ViewPhoneInnerAggregate, phones[0].id, 'twiceMinutes',
-              phones[0].calls.sum(PhoneCall.q.minutes)*2)
+              phones[0].calls.sum(PhoneCall.q.minutes) * 2)
 
 
 def testSelect():

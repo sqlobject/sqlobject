@@ -112,7 +112,7 @@ class ViewSQLObject(SQLObject):
                     if not last.q.alias.endswith('base'):
                         last = None
                     new_alias = Alias(Select(
-                        [ColumnAS(cls.sqlmeta.idName, agg_id)]+agg,
+                        [ColumnAS(cls.sqlmeta.idName, agg_id)] + agg,
                         groupBy=cls.sqlmeta.idName,
                         join=metajoin,
                         clause=restriction),

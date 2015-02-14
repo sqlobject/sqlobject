@@ -489,8 +489,8 @@ class sqlmeta(object):
         if isinstance(column, str):
             if column in sqlmeta.columns:
                 column = sqlmeta.columns[column]
-            elif column+'ID' in sqlmeta.columns:
-                column = sqlmeta.columns[column+'ID']
+            elif column + 'ID' in sqlmeta.columns:
+                column = sqlmeta.columns[column + 'ID']
             else:
                 raise ValueError('Unknown column ' + column)
         if isinstance(column, col.Col):
@@ -554,7 +554,7 @@ class sqlmeta(object):
         meth = join.joinMethodName
 
         sqlmeta.joins.append(join)
-        index = len(sqlmeta.joins)-1
+        index = len(sqlmeta.joins) - 1
         if joinDef not in sqlmeta.joinDefinitions:
             sqlmeta.joinDefinitions.append(joinDef)
 

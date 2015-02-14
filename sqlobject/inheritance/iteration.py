@@ -60,7 +60,7 @@ class InheritableIteration(Iteration):
         childIdsNames = {}
         childNameIdx = self._childNameIdx
         for result in self._results:
-            childName = result[childNameIdx+1]
+            childName = result[childNameIdx + 1]
             if childName:
                 ids = childIdsNames.get(childName)
                 if ids is None:

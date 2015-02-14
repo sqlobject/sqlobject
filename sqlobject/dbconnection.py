@@ -415,10 +415,10 @@ class DBAPI(DBConnection):
             sep = '->'
             s = repr(s)
         n = self._connectionNumbers[id(conn)]
-        spaces = ' '*(8-len(name))
+        spaces = ' ' * (8 - len(name))
         if self.debugThreading:
             threadName = threading.currentThread().getName()
-            threadName = (':' + threadName + ' '*(8-len(threadName)))
+            threadName = (':' + threadName + ' ' * (8 - len(threadName)))
         else:
             threadName = ''
         msg = '%(n)2i%(threadName)s/%(name)s%(spaces)s%(sep)s %(s)s' % locals()

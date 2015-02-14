@@ -1187,7 +1187,7 @@ class DateTimeValidator(validators.DateValidator):
                     microseconds = _value[-1]
                     _l = len(microseconds)
                     if _l < 6:
-                        _value[-1] = microseconds + '0'*(6 - _l)
+                        _value[-1] = microseconds + '0' * (6 - _l)
                     elif _l > 6:
                         _value[-1] = microseconds[:6]
                     if _l != 6:
@@ -1238,7 +1238,7 @@ if mxdatetime_available:
                         microseconds = _value[-1]
                         _l = len(microseconds)
                         if _l < 6:
-                            _value[-1] = microseconds + '0'*(6 - _l)
+                            _value[-1] = microseconds + '0' * (6 - _l)
                         elif _l > 6:
                             _value[-1] = microseconds[:6]
                         if _l != 6:
@@ -1704,11 +1704,11 @@ class SOBLOBCol(SOStringCol):
     def _mysqlType(self):
         length = self.length
         varchar = self.varchar
-        if length >= 2**24:
+        if length >= 2 ** 24:
             return varchar and "LONGTEXT" or "LONGBLOB"
-        if length >= 2**16:
+        if length >= 2 ** 16:
             return varchar and "MEDIUMTEXT" or "MEDIUMBLOB"
-        if length >= 2**8:
+        if length >= 2 ** 8:
             return varchar and "TEXT" or "BLOB"
         return varchar and "TINYTEXT" or "TINYBLOB"
 
@@ -1768,9 +1768,9 @@ class SOPickleCol(SOBLOBCol):
 
     def _mysqlType(self):
         length = self.length
-        if length >= 2**24:
+        if length >= 2 ** 24:
             return "LONGBLOB"
-        if length >= 2**16:
+        if length >= 2 ** 16:
             return "MEDIUMBLOB"
         return "BLOB"
 

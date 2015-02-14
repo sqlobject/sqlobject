@@ -493,7 +493,7 @@ class SQLObjectTable(Table):
         elif attr in self.soClass.sqlmeta.columns:
             column = self.soClass.sqlmeta.columns[attr]
             return self._getattrFromColumn(column, attr)
-        elif attr+'ID' in \
+        elif attr + 'ID' in \
             [k for (k, v) in self.soClass.sqlmeta.columns.items()
                 if v.foreignKey]:
             attr += 'ID'
@@ -516,10 +516,10 @@ class SQLObjectTable(Table):
 class SQLObjectTableWithJoins(SQLObjectTable):
 
     def __getattr__(self, attr):
-        if attr+'ID' in \
+        if attr + 'ID' in \
             [k for (k, v) in self.soClass.sqlmeta.columns.items()
                 if v.foreignKey]:
-            column = self.soClass.sqlmeta.columns[attr+'ID']
+            column = self.soClass.sqlmeta.columns[attr + 'ID']
             return self._getattrFromForeignKey(column, attr)
         elif attr in [x.joinMethodName for x in self.soClass.sqlmeta.joins]:
             join = [x for x in self.soClass.sqlmeta.joins
@@ -530,7 +530,7 @@ class SQLObjectTableWithJoins(SQLObjectTable):
 
     def _getattrFromForeignKey(self, column, attr):
         ret = getattr(self, column.name) == \
-            getattr(self.soClass, '_SO_class_'+column.foreignKey).q.id
+            getattr(self.soClass, '_SO_class_' + column.foreignKey).q.id
         return ret
 
     def _getattrFromJoin(self, join, attr):
@@ -1082,8 +1082,8 @@ def _quote_like_special(s, db):
     else:
         escape = '\\'
     s = s.replace('\\', r'\\').\
-        replace('%', escape+'%').\
-        replace('_', escape+'_')
+        replace('%', escape + '%').\
+        replace('_', escape + '_')
     return s
 
 

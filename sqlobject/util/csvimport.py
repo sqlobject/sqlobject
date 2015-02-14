@@ -208,7 +208,7 @@ def load_csv(csvreader, allow_python=True, default_type=DEFAULT_TYPE,
             continue
 
         # Pad row with empty strings:
-        row += ['']*(len(current_headers) - len(row))
+        row += [''] * (len(current_headers) - len(row))
         row_converted = {}
         for value, (name, coercer, args) in zip(row, current_headers):
             if name is None:
@@ -306,7 +306,7 @@ def parse_date(v):
     if v.startswith('NOW-') or v.startswith('NOW+'):
         days = int(v[3:])
         now = date.today()
-        return now+timedelta(days)
+        return now + timedelta(days)
     else:
         parsed = time.strptime(v, '%Y-%m-%d')
         return date.fromtimestamp(time.mktime(parsed))
@@ -321,7 +321,7 @@ def parse_datetime(v):
     if v.startswith('NOW-') or v.startswith('NOW+'):
         seconds = int(v[3:])
         now = datetime.now()
-        return now+timedelta(0, seconds)
+        return now + timedelta(0, seconds)
     else:
         fmts = ['%Y-%m-%dT%H:%M:%S',
                 '%Y-%m-%d %H:%M:%S',

@@ -6,7 +6,7 @@ from sqlobject import styles
 class AnotherStyle(styles.MixedCaseUnderscoreStyle):
     def pythonAttrToDBColumn(self, attr):
         if attr.lower().endswith('id'):
-            return 'id'+styles.MixedCaseUnderscoreStyle.\
+            return 'id' + styles.MixedCaseUnderscoreStyle.\
                 pythonAttrToDBColumn(self, attr[:-2])
         else:
             return styles.MixedCaseUnderscoreStyle.\

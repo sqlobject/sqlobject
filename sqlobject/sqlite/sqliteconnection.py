@@ -277,7 +277,7 @@ class SQLiteConnection(DBAPI):
             return "%s LIMIT %i" % (query, end)
         if not end:
             return "%s LIMIT 0 OFFSET %i" % (query, start)
-        return "%s LIMIT %i OFFSET %i" % (query, end-start, start)
+        return "%s LIMIT %i OFFSET %i" % (query, end - start, start)
 
     def createColumn(self, soClass, col):
         return col.sqliteCreateSQL()
@@ -370,7 +370,7 @@ class SQLiteConnection(DBAPI):
             end = colData.find(')', start)
             if end == -1:
                 break
-            colData = colData[:start] + colData[end+1:]
+            colData = colData[:start] + colData[end + 1:]
         results = []
         for colDesc in colData.split(','):
             parts = colDesc.strip().split(' ', 2)
@@ -407,9 +407,9 @@ class SQLiteConnection(DBAPI):
         if t.find('INT') >= 0:
             return col.IntCol, {}
         elif t.find('TEXT') >= 0 or t.find('CHAR') >= 0 or t.find('CLOB') >= 0:
-            return col.StringCol, {'length': 2**32-1}
+            return col.StringCol, {'length': 2 ** 32 - 1}
         elif t.find('BLOB') >= 0:
-            return col.BLOBCol, {"length": 2**32-1}
+            return col.BLOBCol, {"length": 2 ** 32 - 1}
         elif t.find('REAL') >= 0 or t.find('FLOAT') >= 0:
             return col.FloatCol, {}
         elif t.find('DECIMAL') >= 0:

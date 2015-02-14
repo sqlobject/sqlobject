@@ -18,7 +18,7 @@ class Distinct2(SQLObject):
 def count(select):
     result = {}
     for ob in select:
-        result[int(ob.n)] = result.get(int(ob.n), 0)+1
+        result[int(ob.n)] = result.get(int(ob.n), 0) + 1
     return result
 
 

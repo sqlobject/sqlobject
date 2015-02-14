@@ -180,7 +180,7 @@ class MySQLConnection(DBAPI):
             return "%s LIMIT %i" % (query, end)
         if not end:
             return "%s LIMIT %i, -1" % (query, start)
-        return "%s LIMIT %i, %i" % (query, start, end-start)
+        return "%s LIMIT %i, %i" % (query, start, end - start)
 
     def createReferenceConstraint(self, soClass, col):
         return col.mysqlCreateReferenceConstraint()
@@ -292,21 +292,21 @@ class MySQLConnection(DBAPI):
         elif t.startswith('bool'):
             return col.BoolCol, {}
         elif t.startswith('tinyblob'):
-            return col.BLOBCol, {"length": 2**8-1}
+            return col.BLOBCol, {"length": 2 ** 8 - 1}
         elif t.startswith('tinytext'):
-            return col.StringCol, {"length": 2**8-1, "varchar": True}
+            return col.StringCol, {"length": 2 ** 8 - 1, "varchar": True}
         elif t.startswith('blob'):
-            return col.BLOBCol, {"length": 2**16-1}
+            return col.BLOBCol, {"length": 2 ** 16 - 1}
         elif t.startswith('text'):
-            return col.StringCol, {"length": 2**16-1, "varchar": True}
+            return col.StringCol, {"length": 2 ** 16 - 1, "varchar": True}
         elif t.startswith('mediumblob'):
-            return col.BLOBCol, {"length": 2**24-1}
+            return col.BLOBCol, {"length": 2 ** 24 - 1}
         elif t.startswith('mediumtext'):
-            return col.StringCol, {"length": 2**24-1, "varchar": True}
+            return col.StringCol, {"length": 2 ** 24 - 1, "varchar": True}
         elif t.startswith('longblob'):
-            return col.BLOBCol, {"length": 2**32}
+            return col.BLOBCol, {"length": 2 ** 32}
         elif t.startswith('longtext'):
-            return col.StringCol, {"length": 2**32, "varchar": True}
+            return col.StringCol, {"length": 2 ** 32, "varchar": True}
         else:
             return col.Col, {}
 

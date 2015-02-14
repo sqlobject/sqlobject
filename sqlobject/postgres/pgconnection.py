@@ -224,7 +224,7 @@ class PostgresConnection(DBAPI):
             return "%s LIMIT %i" % (query, end)
         if not end:
             return "%s OFFSET %i" % (query, start)
-        return "%s LIMIT %i OFFSET %i" % (query, end-start, start)
+        return "%s LIMIT %i OFFSET %i" % (query, end - start, start)
 
     def createColumn(self, soClass, col):
         return col.postgresCreateSQL()
@@ -379,11 +379,11 @@ class PostgresConnection(DBAPI):
             return col.IntCol, {}
         elif t.count('varying') or t.count('varchar'):
             if '(' in t:
-                return col.StringCol, {'length': int(t[t.index('(')+1:-1])}
+                return col.StringCol, {'length': int(t[t.index('(') + 1:-1])}
             else:  # varchar without length in Postgres means any length
                 return col.StringCol, {}
         elif t.startswith('character('):
-            return col.StringCol, {'length': int(t[t.index('(')+1:-1]),
+            return col.StringCol, {'length': int(t[t.index('(') + 1:-1]),
                                    'varchar': False}
         elif t.count('float') or t.count('real') or t.count('double'):
             return col.FloatCol, {}

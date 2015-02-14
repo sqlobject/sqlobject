@@ -19,7 +19,7 @@ def testSimple():
 
 def testAddition():
     nyi = ImportProxy('NotYetImported2')
-    x = nyi.q.name+nyi.q.name
+    x = nyi.q.name + nyi.q.name
 
     class NotYetImported2(SQLObject):
         name = StringCol(dbName='a_name')

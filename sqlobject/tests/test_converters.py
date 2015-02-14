@@ -243,7 +243,7 @@ def test_sets():
 
 
 def test_timedelta():
-    assert sqlrepr(timedelta(seconds=30*60)) == \
+    assert sqlrepr(timedelta(seconds=30 * 60)) == \
         "INTERVAL '0 days 1800 seconds'"
 
 

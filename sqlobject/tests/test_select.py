@@ -67,7 +67,7 @@ def test_04_indexed_ended_by_exception():
     try:
         while 1:
             all[count]
-            count = count+1
+            count = count + 1
             # Stop the test if it's gone on too long
             if count > len(names):
                 break

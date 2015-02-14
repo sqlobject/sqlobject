@@ -84,7 +84,7 @@ class Versioning(object):
 
         attrs.update(self.extraCols)
 
-        self.versionClass = type(self.soClass.__name__+'Versions',
+        self.versionClass = type(self.soClass.__name__ + 'Versions',
                                  (Version,),
                                  attrs)
 

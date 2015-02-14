@@ -34,7 +34,7 @@ class SODatabaseIndex(object):
             raise TypeError(
                 "get() takes exactly %d argument and an optional "
                 "named argument 'connection' (%d given)" % (
-                    len(columns), len(args)+len(kw)))
+                    len(columns), len(args) + len(kw)))
         if args:
             kw = {}
             for i in range(len(args)):
