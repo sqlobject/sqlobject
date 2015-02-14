@@ -42,7 +42,7 @@ supportsMatrix = {
     '-limitSelect': 'mssql',
     '+schema': 'postgres',
     '+memorydb': 'sqlite',
-    }
+}
 
 
 def setupClass(soClasses, force=False):

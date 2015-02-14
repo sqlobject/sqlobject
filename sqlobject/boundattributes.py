@@ -58,7 +58,7 @@ class BoundAttribute(declarative.Declarative):
         'set_object',
         'make_object',
         'clone_in_subclass',
-        )
+    )
 
     _all_attrs = ()
     clone_for_subclass = True

@@ -341,7 +341,7 @@ class SelectResults(object):
         colName = col.name
         query = self.queryForSelect().newItems([
             sqlbuilder.ColumnAS(getattr(self.sourceClass.q, colName), colName)
-            ]).orderBy(None).distinct()
+        ]).orderBy(None).distinct()
         query = sqlbuilder.Alias(query,
                                  "%s_%s" % (self.sourceClass.__name__,
                                             col.name))

@@ -95,7 +95,7 @@ class FirebirdConnection(DBAPI):
             role=self.role,
             charset=self.dbEncoding,
             **extra
-            )
+        )
 
     def _queryInsertID(self, conn, soInstance, id, names, values):
         """Firebird uses 'generators' to create new ids for a table.

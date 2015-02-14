@@ -282,7 +282,7 @@ operatorMap = {
     ">": operator.gt,
     "IN": operator.contains,
     "IS": operator.eq,
-    }
+}
 
 
 class SQLOp(SQLExpression):

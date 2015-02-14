@@ -29,7 +29,7 @@ connectionShortcuts = {
     'firebird':
         'firebird://sysdba:masterkey@localhost/var/lib/firebird/data/test.gdb',
     'mssql': 'mssql://sa:@127.0.0.1/test'
-    }
+}
 
 
 def pytest_addoption(parser):

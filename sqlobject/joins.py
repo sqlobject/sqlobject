@@ -329,9 +329,9 @@ class SOSQLRelatedJoin(SORelatedJoin):
             ),
             TableToId(self.soClass.sqlmeta.table, self.soClass.sqlmeta.idName,
                       inst.id),
-            ), clauseTables=(self.soClass.sqlmeta.table,
-                             self.otherClass.sqlmeta.table,
-                             self.intermediateTable),
+        ), clauseTables=(self.soClass.sqlmeta.table,
+                         self.otherClass.sqlmeta.table,
+                         self.intermediateTable),
             connection=conn)
         return results.orderBy(self.orderBy)
 

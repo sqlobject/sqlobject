@@ -37,7 +37,7 @@ if is_setuptools:
         'sybase': ['Sybase'],
         'mssql': ['adodbapi'],  # or pymssql
         'sapdb': ['sapdb'],
-        }
+    }
 
 setup(name="SQLObject",
       version=version,
