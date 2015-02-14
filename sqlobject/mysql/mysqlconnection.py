@@ -19,7 +19,7 @@ class MySQLConnection(DBAPI):
     schemes = [dbName]
 
     def __init__(self, db, user, password='', host='localhost', port=0, **kw):
-        import MySQLdb, MySQLdb.constants.CR, MySQLdb.constants.ER
+        import MySQLdb, MySQLdb.constants.CR, MySQLdb.constants.ER  # noqa
         self.module = MySQLdb
         self.host = host
         self.port = port
