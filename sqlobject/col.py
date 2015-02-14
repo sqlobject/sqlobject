@@ -19,13 +19,16 @@ are what gets used.
 """
 
 from array import array
+from decimal import Decimal
 from itertools import count
+import sys
 import time
 try:
     import cPickle as pickle
 except ImportError:
     import pickle
 import weakref
+
 from formencode import compound, validators
 from .classregistry import findClass
 # Sadly the name "constraints" conflicts with many of the function
@@ -33,8 +36,6 @@ from .classregistry import findClass
 from . import constraints as constrs
 from . import sqlbuilder
 from .styles import capword
-
-NoDefault = sqlbuilder.NoDefault
 
 import datetime
 datetime_available = True
@@ -64,19 +65,19 @@ if mxdatetime_available:
         DateTimeType = type(DateTime.DateTime())
         TimeType = type(DateTime.DateTime.Time(DateTime.DateTime()))
 
-default_datetime_implementation = DATETIME_IMPLEMENTATION
-
 __all__ = ["datetime_available", "mxdatetime_available",
            "default_datetime_implementation", "DATETIME_IMPLEMENTATION"]
 
 if mxdatetime_available:
     __all__.append("MXDATETIME_IMPLEMENTATION")
 
-import sys
+default_datetime_implementation = DATETIME_IMPLEMENTATION
+
 if sys.version_info[0] > 2:
     # alias for python 3 compatability
     long = int
 
+NoDefault = sqlbuilder.NoDefault
 
 creationOrder = count()
 
@@ -1501,9 +1502,6 @@ class SOTimedeltaCol(SOCol):
 
 class TimedeltaCol(Col):
     baseClass = SOTimedeltaCol
-
-
-from decimal import Decimal
 
 
 class DecimalValidator(SOValidator):

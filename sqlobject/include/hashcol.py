@@ -1,7 +1,7 @@
-__all__ = ['HashCol']
-
-
 import sqlobject.col
+
+
+__all__ = ['HashCol']
 
 
 class DbHash:

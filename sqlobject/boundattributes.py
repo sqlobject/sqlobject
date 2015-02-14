@@ -23,11 +23,13 @@ subclasses, use ``bind_attributes_local``, which adds a
 attributes.
 """
 
-__all__ = ['BoundAttribute', 'BoundFactory', 'bind_attributes',
-           'bind_attributes_local']
 
 from . import declarative
 from . import events
+
+
+__all__ = ['BoundAttribute', 'BoundFactory', 'bind_attributes',
+           'bind_attributes_local']
 
 
 class BoundAttribute(declarative.Declarative):

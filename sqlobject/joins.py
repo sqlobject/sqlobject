@@ -1,4 +1,5 @@
 from itertools import count
+from . import boundattributes
 from . import classregistry
 from . import events
 from . import styles
@@ -369,9 +370,6 @@ class SOSingleJoin(SOMultipleJoin):
 
 class SingleJoin(Join):
     baseClass = SOSingleJoin
-
-
-from . import boundattributes
 
 
 class SOManyToMany(object):

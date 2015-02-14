@@ -3,10 +3,6 @@ This module is used by py.test to configure testing for this
 application.
 """
 
-# Override some options (doesn't override command line):
-verbose = 0
-exitfirst = True
-
 import py
 import sqlobject
 
@@ -16,6 +12,10 @@ except ImportError:  # Python 2.2
     pass
 else:
     pkg_resources.require('SQLObject')
+
+# Override some options (doesn't override command line):
+verbose = 0
+exitfirst = True
 
 connectionShortcuts = {
     'mysql': 'mysql://test@localhost/test',

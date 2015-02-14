@@ -14,7 +14,7 @@ except ImportError:
 
 versionpath = join(abspath(dirname(__file__)), "sqlobject", "__version__.py")
 load_source("sqlobject_version", versionpath)
-from sqlobject_version import version
+from sqlobject_version import version  # noqa: ignore flake8 E402
 
 subpackages = ['firebird', 'include',
                'inheritance', 'inheritance.tests',

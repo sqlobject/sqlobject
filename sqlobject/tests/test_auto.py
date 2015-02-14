@@ -1,15 +1,17 @@
 from datetime import datetime
-now = datetime.now
+from py.test import raises
 
 from sqlobject import *
 from sqlobject.tests.dbtest import *
 from sqlobject import classregistry
-from py.test import raises
 
 
 ########################################
 # Dynamic column tests
 ########################################
+
+
+now = datetime.now
 
 
 class Person(SQLObject):

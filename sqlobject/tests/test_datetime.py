@@ -1,5 +1,8 @@
+from datetime import datetime, date, time
 import py.test
+
 from sqlobject import *
+from sqlobject import col
 from sqlobject.tests.dbtest import *
 
 
@@ -8,9 +11,7 @@ from sqlobject.tests.dbtest import *
 ########################################
 
 
-from sqlobject import col
 col.default_datetime_implementation = DATETIME_IMPLEMENTATION
-from datetime import datetime, date, time
 
 
 class DateTime1(SQLObject):
