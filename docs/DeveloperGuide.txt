@@ -39,6 +39,12 @@ Python Style Guide.  Some things to take particular note of:
 
 .. _PEP 8: http://www.python.org/peps/pep-0008.html
 
+* With a few exceptions sources must be `flake8`_-clean (and hence
+  pep8-clean). Please consider using pre-commit hook installed by
+  running ``flake8 --install-hook``.
+
+.. _flake8: https://gitlab.com/pycqa/flake8
+
 * **No tabs**.  Not anywhere.  Always indent with 4 spaces.
 
 * I don't stress too much on line length.  But try to break lines up
