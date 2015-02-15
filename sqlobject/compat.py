@@ -1,5 +1,5 @@
-# Credit to six authors http://pypi.python.org/pypi/
-# License http://opensource.org/licenses/MIT
+# Credit to six authors: http://pypi.python.org/pypi/six
+# License: MIT
 
 
 def with_metaclass(meta, *bases):
