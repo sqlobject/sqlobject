@@ -25,7 +25,7 @@ License along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301,
 USA.
 """
-
+import sys
 import threading
 import weakref
 import types
@@ -41,8 +41,8 @@ from . import declarative
 from . import events
 from .sresults import SelectResults
 from .util.threadinglocal import local
+from sqlobject.compat import with_metaclass
 
-import sys
 if ((sys.version_info[0] == 2) and (sys.version_info[:3] < (2, 6, 0))) or \
    ((sys.version_info[0] == 3) and (sys.version_info[:3] < (3, 4, 0))):
     raise ImportError("SQLObject requires Python 2.6, 2.7 or 3.4+")
@@ -50,6 +50,7 @@ if ((sys.version_info[0] == 2) and (sys.version_info[:3] < (2, 6, 0))) or \
 if sys.version_info[0] > 2:
     # alias for python 3 compatability
     long = int
+    unicode = str
 
 """
 This thread-local storage is needed for RowCreatedSignals. It gathers
@@ -180,8 +181,7 @@ class CreateNewSQLObject:
     pass
 
 
-class sqlmeta(object):
-
+class sqlmeta(with_metaclass(declarative.DeclarativeMeta, object)):
     """
     This object is the object we use to keep track of all sorts of
     information.  Subclasses are made for each SQLObject subclass
@@ -253,8 +253,6 @@ class sqlmeta(object):
 
     # Default encoding for UnicodeCol's
     dbEncoding = None
-
-    __metaclass__ = declarative.DeclarativeMeta
 
     def __classinit__(cls, new_attrs):
         for attr in cls._unshared_attributes:
@@ -757,9 +755,7 @@ _postponed_local = local()
 # MetaSQLObject.
 
 
-class SQLObject(object):
-
-    __metaclass__ = declarative.DeclarativeMeta
+class SQLObject(with_metaclass(declarative.DeclarativeMeta, object)):
 
     _connection = sqlhub
 
@@ -903,7 +899,7 @@ class SQLObject(object):
                     "(while fixing up sqlmeta %r inheritance)"
                     % cls.sqlmeta)
             values = dict(cls.sqlmeta.__dict__)
-            for key in values.keys():
+            for key in list(values.keys()):
                 if key.startswith('__') and key.endswith('__'):
                     # Magic values shouldn't be passed through:
                     del values[key]
@@ -1361,7 +1357,8 @@ class SQLObject(object):
         # These are all the column values that were supposed
         # to be set, but were delayed until now:
         setters = self._SO_createValues.items()
-        setters.sort(key=lambda c: self.sqlmeta.columns[c[0]].creationOrder)
+        setters = sorted(
+            setters, key=lambda c: self.sqlmeta.columns[c[0]].creationOrder)
         # Here's their database names:
         names = [self.sqlmeta.columns[v[0]].dbName for v in setters]
         values = [v[1] for v in setters]
@@ -1740,7 +1737,7 @@ class SQLObject(object):
 
     @classmethod
     def setConnection(cls, value):
-        if isinstance(value, basestring):
+        if isinstance(value, (str, unicode)):
             value = dbconnection.connectionForURI(value)
         cls._connection = value
 

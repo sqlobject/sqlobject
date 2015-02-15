@@ -19,7 +19,7 @@ class Reparented2(SQLObject):
             # Well, it's pretty hard to call the superclass method
             # when it's a classmethod and it's not actually your
             # *current* superclass.  Sigh
-            real_sqlmeta.setClass.im_func(cls, soClass)
+            real_sqlmeta.setClass.__func__(cls, soClass)
             cls.worked = True
 
     dummy = StringCol()

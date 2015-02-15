@@ -34,6 +34,7 @@ or an instance method depending on where it is called.
 
 import copy
 from . import events
+from sqlobject.compat import with_metaclass
 
 import itertools
 counter = itertools.count()
@@ -90,20 +91,21 @@ class DeclarativeMeta(type):
         for func in early_funcs:
             func(cls)
         if '__classinit__' in new_attrs:
-            cls.__classinit__ = staticmethod(cls.__classinit__.im_func)
+            if hasattr(cls.__classinit__, '__func__'):
+                cls.__classinit__ = staticmethod(cls.__classinit__.__func__)
+            else:
+                cls.__classinit__ = staticmethod(cls.__classinit__)
         cls.__classinit__(cls, new_attrs)
         for func in post_funcs:
             func(cls)
         return cls
 
 
-class Declarative(object):
+class Declarative(with_metaclass(DeclarativeMeta, object)):
 
     __unpackargs__ = ()
 
     __mutableattributes__ = ()
-
-    __metaclass__ = DeclarativeMeta
 
     __restrict_attributes__ = None
 
