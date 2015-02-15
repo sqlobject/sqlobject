@@ -1,5 +1,4 @@
 from datetime import datetime
-
 from sqlobject import col, events, SQLObject, AND
 
 
@@ -9,8 +8,8 @@ class Version(SQLObject):
         del values['id']
         del values['masterID']
         del values['dateArchived']
-        for col in self.extraCols:
-            del values[col]
+        for _col in self.extraCols:
+            del values[_col]
         self.masterClass.get(self.masterID).set(**values)
 
     def nextVersion(self):
