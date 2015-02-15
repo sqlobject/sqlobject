@@ -8,9 +8,9 @@ try:
     from urllib import quote
 except ImportError:
     from urllib.parse import quote
-from sqlobject.dbconnection import DBAPI, Boolean
 from sqlobject import col
-from sqlobject.dberrors import *
+from sqlobject import dberrors
+from sqlobject.dbconnection import DBAPI, Boolean
 
 
 sqlite2_Binary = None
@@ -219,30 +219,30 @@ class SQLiteConnection(DBAPI):
         try:
             return cursor.execute(query)
         except self.module.OperationalError as e:
-            raise OperationalError(ErrorMessage(e))
+            raise dberrors.OperationalError(ErrorMessage(e))
         except self.module.IntegrityError as e:
             msg = ErrorMessage(e)
             if msg.startswith('column') and msg.endswith('not unique') \
                     or msg.startswith('UNIQUE constraint failed:'):
-                raise DuplicateEntryError(msg)
+                raise dberrors.DuplicateEntryError(msg)
             else:
-                raise IntegrityError(msg)
+                raise dberrors.IntegrityError(msg)
         except self.module.InternalError as e:
-            raise InternalError(ErrorMessage(e))
+            raise dberrors.InternalError(ErrorMessage(e))
         except self.module.ProgrammingError as e:
-            raise ProgrammingError(ErrorMessage(e))
+            raise dberrors.ProgrammingError(ErrorMessage(e))
         except self.module.DataError as e:
-            raise DataError(ErrorMessage(e))
+            raise dberrors.DataError(ErrorMessage(e))
         except self.module.NotSupportedError as e:
-            raise NotSupportedError(ErrorMessage(e))
+            raise dberrors.NotSupportedError(ErrorMessage(e))
         except self.module.DatabaseError as e:
-            raise DatabaseError(ErrorMessage(e))
+            raise dberrors.DatabaseError(ErrorMessage(e))
         except self.module.InterfaceError as e:
-            raise InterfaceError(ErrorMessage(e))
+            raise dberrors.InterfaceError(ErrorMessage(e))
         except self.module.Warning as e:
             raise Warning(ErrorMessage(e))
         except self.module.Error as e:
-            raise Error(ErrorMessage(e))
+            raise dberrors.Error(ErrorMessage(e))
 
     def _queryInsertID(self, conn, soInstance, id, names, values):
         table = soInstance.sqlmeta.table

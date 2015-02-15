@@ -1,5 +1,6 @@
-from sqlobject import *
 from datetime import datetime
+
+from sqlobject import col, events, SQLObject, AND
 
 
 class Version(SQLObject):
@@ -47,7 +48,7 @@ class Version(SQLObject):
 
 def getColumns(columns, cls):
     for column, defi in cls.sqlmeta.columnDefinitions.items():
-        if column.endswith("ID") and isinstance(defi, ForeignKey):
+        if column.endswith("ID") and isinstance(defi, col.ForeignKey):
             column = column[:-2]
 
         # remove incompatible constraints
@@ -74,8 +75,8 @@ class Versioning(object):
         self.name = name
         self.soClass = soClass
 
-        attrs = {'dateArchived': DateTimeCol(default=datetime.now),
-                 'master': ForeignKey(self.soClass.__name__),
+        attrs = {'dateArchived': col.DateTimeCol(default=datetime.now),
+                 'master': col.ForeignKey(self.soClass.__name__),
                  'masterClass': self.soClass,
                  'extraCols': self.extraCols
                  }

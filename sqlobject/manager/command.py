@@ -238,8 +238,7 @@ class Command(object):
                 dependency_stack.append(cls)
                 raise SQLObjectCircularReferenceError(
                     "Found a circular reference: %s " %
-                        (' --> '.join([x.__name__
-                                       for x in dependency_stack])))
+                    (' --> '.join([x.__name__ for x in dependency_stack])))
             dependency_stack.append(cls)
             # Recursively inspect dependent classes.
             depended = findReverseDependencies(cls)
