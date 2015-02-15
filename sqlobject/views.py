@@ -1,4 +1,4 @@
-from .sqlbuilder import *
+from .sqlbuilder import *  # noqa
 from .main import SQLObject
 
 

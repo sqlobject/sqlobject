@@ -1,9 +1,9 @@
 from sqlobject.dbconnection import DBAPI
 import re
 from sqlobject import col
+from sqlobject import dberrors
 from sqlobject import sqlbuilder
 from sqlobject.converters import registerConverter
-from sqlobject.dberrors import *
 
 
 class ErrorMessage(str):
@@ -149,7 +149,7 @@ class PostgresConnection(DBAPI):
             else:
                 conn = self.module.connect(**self.dsn_dict)
         except self.module.OperationalError as e:
-            raise OperationalError(
+            raise dberrors.OperationalError(
                 ErrorMessage(e, "used connection string %r" % self.dsn))
 
         # For printDebug in _executeRetry
@@ -172,29 +172,29 @@ class PostgresConnection(DBAPI):
         try:
             return cursor.execute(query)
         except self.module.OperationalError as e:
-            raise OperationalError(ErrorMessage(e))
+            raise dberrors.OperationalError(ErrorMessage(e))
         except self.module.IntegrityError as e:
             msg = ErrorMessage(e)
             if e.pgcode == '23505':
-                raise DuplicateEntryError(msg)
+                raise dberrors.DuplicateEntryError(msg)
             else:
-                raise IntegrityError(msg)
+                raise dberrors.IntegrityError(msg)
         except self.module.InternalError as e:
-            raise InternalError(ErrorMessage(e))
+            raise dberrors.InternalError(ErrorMessage(e))
         except self.module.ProgrammingError as e:
-            raise ProgrammingError(ErrorMessage(e))
+            raise dberrors.ProgrammingError(ErrorMessage(e))
         except self.module.DataError as e:
-            raise DataError(ErrorMessage(e))
+            raise dberrors.DataError(ErrorMessage(e))
         except self.module.NotSupportedError as e:
-            raise NotSupportedError(ErrorMessage(e))
+            raise dberrors.NotSupportedError(ErrorMessage(e))
         except self.module.DatabaseError as e:
-            raise DatabaseError(ErrorMessage(e))
+            raise dberrors.DatabaseError(ErrorMessage(e))
         except self.module.InterfaceError as e:
-            raise InterfaceError(ErrorMessage(e))
+            raise dberrors.InterfaceError(ErrorMessage(e))
         except self.module.Warning as e:
             raise Warning(ErrorMessage(e))
         except self.module.Error as e:
-            raise Error(ErrorMessage(e))
+            raise dberrors.Error(ErrorMessage(e))
 
     def _queryInsertID(self, conn, soInstance, id, names, values):
         table = soInstance.sqlmeta.table
