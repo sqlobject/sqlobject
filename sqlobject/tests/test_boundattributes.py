@@ -1,14 +1,12 @@
-from sqlobject import declarative
-from sqlobject import boundattributes
 import py.test
+
+from sqlobject import boundattributes
+from sqlobject import declarative
 
 pytestmark = py.test.mark.skipif('True')
 
 
 class TestMe(object):
-
-    # __metaclass__ = declarative.DeclarativeMeta
-    # __classinit__ = boundattributes.bind_attributes_local
     pass
 
 
