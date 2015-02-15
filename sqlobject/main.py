@@ -846,7 +846,8 @@ class SQLObject(object):
         for i in implicitIndexes:
             sqlmeta.addIndex(i)
 
-        order_getter = lambda o: o.creationOrder
+        def order_getter(o):
+            return o.creationOrder
         sqlmeta.columnList.sort(key=order_getter)
         sqlmeta.indexes.sort(key=order_getter)
         sqlmeta.indexDefinitions.sort(key=order_getter)
@@ -1129,9 +1130,14 @@ class SQLObject(object):
         # Filter out items that don't map to column names.
         # Those will be set directly on the object using
         # setattr(obj, name, value).
-        is_column = lambda _c: _c in self.sqlmeta._plainSetters
-        f_is_column = lambda item: is_column(item[0])
-        f_not_column = lambda item: not is_column(item[0])
+        def is_column(_c):
+            return _c in self.sqlmeta._plainSetters
+
+        def f_is_column(item):
+            return is_column(item[0])
+
+        def f_not_column(item):
+            return not is_column(item[0])
         items = kw.items()
         extra = dict(filter(f_not_column, items))
         kw = dict(filter(f_is_column, items))

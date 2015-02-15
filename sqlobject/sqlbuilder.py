@@ -798,7 +798,8 @@ class Select(SQLExpression):
             if self.ops['reversed']:
                 reverser = DESC
             else:
-                reverser = lambda x: x
+                def reverser(x):
+                    return x
             if isinstance(orderBy, (list, tuple)):
                 select += " ORDER BY %s" % ", ".join(
                     [_str_or_sqlrepr(reverser(_x), db) for _x in orderBy])
