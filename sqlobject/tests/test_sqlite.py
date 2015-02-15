@@ -94,7 +94,8 @@ def test_sqlite_aggregate():
 
     SQLiteFactoryTest(name='sqlobject')
     SQLiteFactoryTest(name='sqlbuilder')
-    assert SQLiteFactoryTest.select(orderBy="name").accumulateOne("group_concat", "name") == \
+    assert SQLiteFactoryTest.select(orderBy="name").\
+        accumulateOne("group_concat", "name") == \
         "sqlbuilder, sqlobject"
 
 

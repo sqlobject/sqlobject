@@ -75,5 +75,6 @@ def test_singleUntranslatedColumnOrder():
         ['zoe', 'tim', 'joe', 'joe', 'aj']
     assert firstList(Names.select().orderBy(Names.q.firstName).reversed()) == \
         ['zoe', 'tim', 'joe', 'joe', 'aj']
-    assert firstList(Names.select().orderBy(DESC(Names.q.firstName)).reversed()) == \
+    assert firstList(
+        Names.select().orderBy(DESC(Names.q.firstName)).reversed()) == \
         ['aj', 'joe', 'joe', 'tim', 'zoe']
