@@ -47,8 +47,8 @@ class TestPeople:
         nickname = StringCol('nickname', length=10)
         Person.sqlmeta.addColumn(nickname, changeSchema=True)
         Person(name='robert', nickname='bob')
-        assert ([p.name for p in Person.select('all')]
-                == ['bob', 'jake', 'jane', 'robert', 'tim'])
+        assert ([p.name for p in Person.select('all')] ==
+                ['bob', 'jake', 'jane', 'robert', 'tim'])
         Person.sqlmeta.delColumn(nickname, changeSchema=True)
 
     def test_dynamicJoin(self):

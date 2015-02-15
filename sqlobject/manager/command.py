@@ -440,8 +440,8 @@ class Command(object):
         for section in p.sections():
             name = section.strip().lower()
             if (conf_section == name or
-                (conf_section == name.split(':')[-1]
-                 and name.split(':')[0] in ('app', 'application'))):
+                (conf_section == name.split(':')[-1] and
+                    name.split(':')[0] in ('app', 'application'))):
                 possible_sections.append(section)
 
         if not possible_sections:
@@ -966,8 +966,7 @@ class CommandRecord(Command):
             dbName = cls._connection.dbName
             if cls._connection not in conns:
                 conns.append(cls._connection)
-            fn = os.path.join(cls.__name__
-                              + '_' + dbName + '.sql')
+            fn = os.path.join(cls.__name__ + '_' + dbName + '.sql')
             if sim:
                 continue
             create, constraints = cls.createTableSQL()
@@ -1058,8 +1057,8 @@ class CommandRecord(Command):
                 print("Cannot edit upgrader because there is no "
                       "previous version")
             else:
-                breaker = ('-' * 20 + ' lines below this will be ignored '
-                           + '-' * 20)
+                breaker = ('-' * 20 + ' lines below this will be ignored ' +
+                           '-' * 20)
                 pre_text = breaker + '\n' + '\n'.join(all_diffs)
                 text = self.open_editor('\n\n' + pre_text, breaker=breaker,
                                         extension='.sql')

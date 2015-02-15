@@ -88,8 +88,8 @@ def create_data(data, class_getter, keyorder=None):
     """
     objects = {}
     classnames = data.keys()
-    if (not keyorder and isinstance(class_getter, types.ModuleType)
-            and hasattr(class_getter, 'soClasses')):
+    if (not keyorder and isinstance(class_getter, types.ModuleType) and
+            hasattr(class_getter, 'soClasses')):
         keyorder = [c.__name__ for c in class_getter.soClasses]
     if not keyorder:
         classnames.sort()
@@ -117,8 +117,7 @@ def create_data(data, class_getter, keyorder=None):
                         raise ValueError(
                             "Object reference to %r does not have target"
                             % value.name)
-                    elif (isinstance(resolved, list)
-                          and len(resolved) > 1):
+                    elif (isinstance(resolved, list) and len(resolved) > 1):
                         raise ValueError(
                             "Object reference to %r is ambiguous (got %r)"
                             % (value.name, resolved))

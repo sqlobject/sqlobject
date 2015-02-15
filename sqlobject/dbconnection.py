@@ -618,8 +618,9 @@ class DBAPI(DBConnection):
 
     def _SO_selectOneAlt(self, so, columnNames, condition):
         if columnNames:
-            columns = [isinstance(x, basestring) and sqlbuilder.SQLConstant(x)
-                       or x for x in columnNames]
+            columns = [isinstance(x, basestring) and
+                       sqlbuilder.SQLConstant(x) or
+                       x for x in columnNames]
         else:
             columns = None
         return self.queryOne(self.sqlrepr(sqlbuilder.Select(
@@ -1040,8 +1041,8 @@ class ConnectionURIOpener(object):
 
     def registerConnectionInstance(self, inst):
         if inst.name:
-            assert (inst.name not in self.instanceNames
-                or self.instanceNames[inst.name] is cls  # noqa
+            assert (inst.name not in self.instanceNames or
+                    self.instanceNames[inst.name] is cls  # noqa
                 ), ("A instance has already been registered "
                 "with the name %s" % inst.name)
             assert inst.name.find(':') == -1, \

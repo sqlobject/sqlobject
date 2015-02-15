@@ -26,8 +26,8 @@ def test_transaction():
         TestSOTrans(name='joe', connection=trans)
         trans.rollback()
         trans.begin()
-        assert ([n.name for n in TestSOTrans.select(connection=trans)]
-                == ['bob', 'tim'])
+        assert ([n.name for n in TestSOTrans.select(connection=trans)] ==
+                ['bob', 'tim'])
         b = TestSOTrans.byName('bob', connection=trans)
         b.name = 'robert'
         trans.commit()
