@@ -10,26 +10,13 @@ change the value in the class, it must call ``setattr(added_class,
 name, new_value)``.
 
 BoundAttribute is a class that facilitates lazy attribute creation.
-
-``bind_attributes(cls, new_attrs)`` is a function that looks for
-attributes with this special method.  ``new_attrs`` is a dictionary,
-as typically passed into ``__classinit__`` with declarative (calling
-``bind_attributes`` in ``__classinit__`` would be typical).
-
-Note if you do this that attributes defined in a superclass will not
-be rebound in subclasses.  If you want to rebind attributes in
-subclasses, use ``bind_attributes_local``, which adds a
-``__bound_attributes__`` variable to your class to track these active
-attributes.
 """
-
+from __future__ import absolute_import
 
 from . import declarative
 from . import events
 
-
-__all__ = ['BoundAttribute', 'BoundFactory', 'bind_attributes',
-           'bind_attributes_local']
+__all__ = ['BoundAttribute', 'BoundFactory']
 
 
 class BoundAttribute(declarative.Declarative):
