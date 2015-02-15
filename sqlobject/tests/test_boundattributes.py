@@ -6,9 +6,6 @@ pytestmark = py.test.mark.skipif('True')
 
 
 class TestMe(object):
-
-    # __metaclass__ = declarative.DeclarativeMeta
-    # __classinit__ = boundattributes.bind_attributes_local
     pass
 
 

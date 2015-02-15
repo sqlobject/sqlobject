@@ -20,6 +20,7 @@ from sqlobject import col
 from sqlobject.classregistry import findClass
 from sqlobject.declarative import DeclarativeMeta
 from sqlobject.util import moduleloader
+from sqlobject.compat import with_metaclass
 
 # It's not very unsafe to use tempnam like we are doing:
 warnings.filterwarnings(
@@ -179,9 +180,7 @@ def standard_parser(connection=True, simulate=True,
     return parser
 
 
-class Command(object):
-
-    __metaclass__ = DeclarativeMeta
+class Command(with_metaclass(DeclarativeMeta, object)):
 
     min_args = 0
     min_args_error = 'You must provide at least %(min_args)s arguments'
