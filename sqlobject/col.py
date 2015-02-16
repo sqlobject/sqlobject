@@ -697,7 +697,7 @@ class SOIntCol(SOCol):
         if str is None or len(str) < 1:
             return None
 
-        if self.length >= 1:
+        if self.length and self.length >= 1:
             _ret = "%s(%d)" % (_ret, self.length)
         if self.unsigned:
             _ret = _ret + " UNSIGNED"

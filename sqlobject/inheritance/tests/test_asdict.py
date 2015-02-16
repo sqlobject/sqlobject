@@ -28,8 +28,7 @@ def test_getColumns():
             (InheritablePersonAD, ['firstName', 'lastName']),
             (ManagerAD, ['department', 'firstName', 'lastName']),
             (EmployeeAD, ['firstName', 'lastName', 'position'])):
-        _columns = klass.sqlmeta.getColumns().keys()
-        _columns.sort()
+        _columns = sorted(klass.sqlmeta.getColumns().keys())
         assert _columns == columns
 
 

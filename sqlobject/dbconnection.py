@@ -750,6 +750,9 @@ class Iteration(object):
     def __iter__(self):
         return self
 
+    def __next__(self):
+        return self.next()
+
     def next(self):
         result = self.cursor.fetchone()
         if result is None:

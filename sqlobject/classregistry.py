@@ -103,8 +103,7 @@ class ClassRegistry(object):
         try:
             return self.classes[className]
         except KeyError:
-            all = self.classes.keys()
-            all.sort()
+            all = sorted(self.classes.keys())
             raise KeyError(
                 "No class %s found in the registry %s (these classes "
                 "exist: %s)"
