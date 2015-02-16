@@ -65,7 +65,7 @@ class ConverterRegistry:
     else:
         def lookupConverter(self, value, default=None):
             # python 3 doesn't have classic classes, so everything's
-            # in self.klass
+            # in self.klass due to comparison order in registerConvertor
             return self.klass.get(value.__class__, default)
 
 converters = ConverterRegistry()
