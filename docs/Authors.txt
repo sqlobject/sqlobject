@@ -30,6 +30,7 @@ Contributions have been made by:
 * Andrew Ziem <ahz001 at gmail.com>
 * Andrew Trusty <atrusty at gatech.edu>
 * Ian Cordasco <graffatcolmingov at gmail.com>
+* Lukasz Dobrzanski <lukasz.m.dobrzanski at gmail.com>
 * Oleg Broytman <phd@phdru.name>
 
 .. image:: http://sflogo.sourceforge.net/sflogo.php?group_id=74338&type=10
