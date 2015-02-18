@@ -36,7 +36,7 @@ from .classregistry import findClass
 from . import constraints as constrs
 from . import sqlbuilder
 from .styles import capword
-from .compat import string_type
+from .compat import string_type, unicode_type
 
 import datetime
 datetime_available = True
@@ -563,7 +563,7 @@ class StringValidator(SOValidator):
         except AttributeError:
             binaryType = type(None)  # Just a simple workaround
         dbEncoding = self.getDbEncoding(state, default='ascii')
-        if isinstance(value, unicode):
+        if isinstance(value, unicode_type):
             return value.encode(dbEncoding)
         if self.dataType and isinstance(value, self.dataType):
             return value
@@ -592,7 +592,7 @@ class StringCol(Col):
 
 class NQuoted(sqlbuilder.SQLExpression):
     def __init__(self, value):
-        assert isinstance(value, unicode)
+        assert isinstance(value, unicode_type)
         self.value = value
 
     def __hash__(self):
@@ -608,7 +608,7 @@ class UnicodeStringValidator(SOValidator):
     def to_python(self, value, state):
         if value is None:
             return None
-        if isinstance(value, (unicode, sqlbuilder.SQLExpression)):
+        if isinstance(value, (unicode_type, sqlbuilder.SQLExpression)):
             return value
         if isinstance(value, str):
             return unicode(value, self.getDbEncoding(state))
@@ -626,7 +626,7 @@ class UnicodeStringValidator(SOValidator):
             return None
         if isinstance(value, (str, sqlbuilder.SQLExpression)):
             return value
-        if isinstance(value, unicode):
+        if isinstance(value, unicode_type):
             try:
                 connection = state.connection or state.soObject._connection
             except AttributeError:
@@ -1029,7 +1029,7 @@ class EnumValidator(SOValidator):
 
     def to_python(self, value, state):
         if value in self.enumValues:
-            if isinstance(value, unicode):
+            if isinstance(value, unicode_type):
                 dbEncoding = self.getDbEncoding(state)
                 value = value.encode(dbEncoding)
             return value
@@ -1738,7 +1738,7 @@ class PickleValidator(BinaryValidator):
     def to_python(self, value, state):
         if value is None:
             return None
-        if isinstance(value, unicode):
+        if isinstance(value, unicode_type):
             dbEncoding = self.getDbEncoding(state, default='ascii')
             value = value.encode(dbEncoding)
         if isinstance(value, str):

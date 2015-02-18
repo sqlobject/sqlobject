@@ -19,7 +19,7 @@ from . import col
 from .converters import sqlrepr
 from . import sqlbuilder
 from .util.threadinglocal import local as threading_local
-from .compat import string_type
+from .compat import string_type, unicode_type
 
 warnings.filterwarnings("ignore", "DB-API extension cursor.lastrowid used")
 
@@ -40,7 +40,7 @@ class ConsoleWriter:
 
     def write(self, text):
         logfile = getattr(sys, self.loglevel)
-        if isinstance(text, unicode):
+        if isinstance(text, unicode_type):
             try:
                 text = text.encode(self.dbEncoding)
             except UnicodeEncodeError:
