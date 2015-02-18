@@ -19,6 +19,7 @@ from . import col
 from .converters import sqlrepr
 from . import sqlbuilder
 from .util.threadinglocal import local as threading_local
+from .compat import string_type
 
 warnings.filterwarnings("ignore", "DB-API extension cursor.lastrowid used")
 
@@ -618,7 +619,7 @@ class DBAPI(DBConnection):
 
     def _SO_selectOneAlt(self, so, columnNames, condition):
         if columnNames:
-            columns = [isinstance(x, basestring) and
+            columns = [isinstance(x, string_type) and
                        sqlbuilder.SQLConstant(x) or
                        x for x in columnNames]
         else:

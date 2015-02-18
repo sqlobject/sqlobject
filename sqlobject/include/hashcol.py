@@ -1,4 +1,5 @@
 import sqlobject.col
+from sqlobject.compat import string_type
 
 
 __all__ = ['HashCol']
@@ -17,7 +18,7 @@ class DbHash:
             if self.hash is None:
                 return 0
             return True
-        if not isinstance(other, basestring):
+        if not isinstance(other, string_type):
             raise TypeError(
                 "A hash may only be compared with a string, or None.")
         return cmp(self.hashMethod(other), self.hash)

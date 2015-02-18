@@ -36,6 +36,7 @@ from .classregistry import findClass
 from . import constraints as constrs
 from . import sqlbuilder
 from .styles import capword
+from .compat import string_type
 
 import datetime
 datetime_available = True
@@ -1121,7 +1122,7 @@ class SetValidator(SOValidator):
                 self.name, type(value), value), value, state)
 
     def from_python(self, value, state):
-        if isinstance(value, basestring):
+        if isinstance(value, string_type):
             value = (value,)
         try:
             return ",".join(value)
@@ -1532,7 +1533,7 @@ class DecimalValidator(SOValidator):
             return None
         if isinstance(value, float):
             value = str(value)
-        if isinstance(value, basestring):
+        if isinstance(value, string_type):
             try:
                 connection = state.connection or state.soObject._connection
             except AttributeError:
