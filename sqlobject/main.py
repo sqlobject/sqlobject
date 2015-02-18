@@ -41,7 +41,7 @@ from . import declarative
 from . import events
 from .sresults import SelectResults
 from .util.threadinglocal import local
-from sqlobject.compat import with_metaclass
+from sqlobject.compat import with_metaclass, string_type
 
 if ((sys.version_info[0] == 2) and (sys.version_info[:3] < (2, 6, 0))) or \
    ((sys.version_info[0] == 3) and (sys.version_info[:3] < (3, 4, 0))):
@@ -1737,7 +1737,7 @@ class SQLObject(with_metaclass(declarative.DeclarativeMeta, object)):
 
     @classmethod
     def setConnection(cls, value):
-        if isinstance(value, (str, unicode)):
+        if isinstance(value, string_type):
             value = dbconnection.connectionForURI(value)
         cls._connection = value
 
