@@ -3,6 +3,7 @@ import sys
 import types
 from pydispatch import dispatcher
 from weakref import ref
+from .compat import class_types
 
 
 subclassClones = {}
@@ -328,7 +329,7 @@ def nice_repr(v):
     """
     Like repr(), but nicer for debugging here.
     """
-    if isinstance(v, (types.ClassType, type)):
+    if isinstance(v, class_types):
         return v.__module__ + '.' + v.__name__
     elif isinstance(v, types.FunctionType):
         if '__name__' in v.func_globals:
