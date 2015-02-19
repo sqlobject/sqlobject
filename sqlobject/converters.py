@@ -3,6 +3,7 @@ import datetime
 from decimal import Decimal
 import time
 import sys
+from .compat import buffer_type
 if sys.version_info[0] < 3:
     from types import ClassType, InstanceType, NoneType
 else:
@@ -79,7 +80,7 @@ def StringLikeConverter(value, db):
             value = value.tounicode()
         except ValueError:
             value = value.tostring()
-    elif isinstance(value, buffer):
+    elif isinstance(value, buffer_type):
         value = str(value)
 
     if db in ('mysql', 'postgres', 'rdbhost'):
@@ -98,7 +99,7 @@ if sys.version_info[0] < 3:
     registerConverter(unicode, StringLikeConverter)
 registerConverter(array, StringLikeConverter)
 if sys.version_info[0] < 3:
-    registerConverter(buffer, StringLikeConverter)
+    registerConverter(buffer_type, StringLikeConverter)
 else:
     registerConverter(memoryview, StringLikeConverter)
 

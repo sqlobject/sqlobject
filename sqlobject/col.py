@@ -36,7 +36,7 @@ from .classregistry import findClass
 from . import constraints as constrs
 from . import sqlbuilder
 from .styles import capword
-from .compat import string_type, unicode_type
+from .compat import string_type, unicode_type, buffer_type
 
 import datetime
 datetime_available = True
@@ -568,7 +568,8 @@ class StringValidator(SOValidator):
         if self.dataType and isinstance(value, self.dataType):
             return value
         if isinstance(value,
-                      (str, buffer, binaryType, sqlbuilder.SQLExpression)):
+                      (str, buffer_type, binaryType,
+                       sqlbuilder.SQLExpression)):
             return value
         if hasattr(value, '__unicode__'):
             return unicode(value).encode(dbEncoding)
@@ -1668,7 +1669,7 @@ class BinaryValidator(SOValidator):
             if dbName == "sqlite":
                 value = connection.module.decode(value)
             return value
-        if isinstance(value, (buffer, binaryType)):
+        if isinstance(value, (buffer_type, binaryType)):
             cachedValue = self._cachedValue
             if cachedValue and cachedValue[1] == value:
                 return cachedValue[0]
