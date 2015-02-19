@@ -189,12 +189,12 @@ class CacheFactory(object):
         self.lock.acquire()
         try:
             # remove dead references from the expired cache
-            keys = self.expiredCache.keys()
+            keys = list(self.expiredCache.keys())
             for key in keys:
                 if self.expiredCache[key]() is None:
                     self.expiredCache.pop(key, None)
 
-            keys = self.cache.keys()
+            keys = list(self.cache.keys())
             for i in range(self.cullOffset, len(keys), self.cullFraction):
                 id = keys[i]
                 # create a weakref, then remove from the cache
@@ -257,7 +257,7 @@ class CacheFactory(object):
         Returns the IDs of all objects in the cache.
         """
         if self.doCache:
-            all = self.cache.keys()
+            all = list(self.cache.keys())
         else:
             all = []
         for id, value in self.expiredCache.items():
@@ -270,7 +270,7 @@ class CacheFactory(object):
         Return all the objects in the cache.
         """
         if self.doCache:
-            all = self.cache.values()
+            all = list(self.cache.values())
         else:
             all = []
         for value in self.expiredCache.values():

@@ -1208,8 +1208,8 @@ class SQLObject(with_metaclass(declarative.DeclarativeMeta, object)):
                     raise AttributeError('%s (with attribute %r)' % (e, name))
 
             if toUpdate:
-                toUpdate = toUpdate.items()
-                toUpdate.sort(
+                toUpdate = sorted(
+                    toUpdate.items(),
                     key=lambda c: self.sqlmeta.columns[c[0]].creationOrder)
                 args = [(self.sqlmeta.columns[name].dbName, value)
                         for name, value in toUpdate]

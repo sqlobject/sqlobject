@@ -810,7 +810,7 @@ class Select(SQLExpression):
         if self.ops['limit'] is not NoDefault:
             end = start + self.ops['limit']
         if start or end:
-            from dbconnection import dbConnectionForScheme
+            from .dbconnection import dbConnectionForScheme
             select = dbConnectionForScheme(db)._queryAddLimitOffset(select,
                                                                     start, end)
         if self.ops['forUpdate']:
@@ -986,7 +986,7 @@ def _IN(item, list):
 
 
 def IN(item, list):
-    from sresults import SelectResults  # Import here to avoid circular import
+    from .sresults import SelectResults  # Import here to avoid circular import
     if isinstance(list, SelectResults):
         query = list.queryForSelect()
         query.ops['items'] = [list.sourceClass.q.id]

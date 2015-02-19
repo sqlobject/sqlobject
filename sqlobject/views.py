@@ -62,7 +62,7 @@ class ViewSQLObject(SQLObject):
             # {sqlrepr-key: [restriction, *aggregate-column]}
             aggregates = {'': [None]}
             inverseColumns = dict(
-                [(y, x) for x, y in cls.sqlmeta.columns.iteritems()])
+                [(y, x) for x, y in cls.sqlmeta.columns.items()])
             for col in cls.sqlmeta.columnList:
                 n = inverseColumns[col]
                 ascol = ColumnAS(col.dbName, n)
@@ -137,7 +137,7 @@ class ViewSQLObject(SQLObject):
 
             cls.sqlmeta.table = Alias(select, alias)
             cls.q = ViewSQLObjectTable(cls)
-            for n, col in cls.sqlmeta.columns.iteritems():
+            for n, col in cls.sqlmeta.columns.items():
                 col.dbName = n
 
 
