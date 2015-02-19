@@ -7,6 +7,7 @@ from sqlobject import sqlbuilder
 from sqlobject.col import StringCol, ForeignKey
 from sqlobject.main import sqlmeta, SQLObject, SelectResults, \
     makeProperties, unmakeProperties, getterName, setterName
+from sqlobject.compat import string_type
 from . import iteration
 
 
@@ -39,7 +40,7 @@ class InheritableSelectResults(SelectResults):
         if inheritedTables:
             for tableName in inheritedTables:
                 tablesSet.add(str(tableName))
-        if orderBy and not isinstance(orderBy, basestring):
+        if orderBy and not isinstance(orderBy, string_type):
             tablesSet.update(tablesUsedSet(orderBy, dbName))
         # DSM: if this class has a parent, we need to link it
         # DSM: and be sure the parent is in the table list.
@@ -91,7 +92,7 @@ class InheritableSelectResults(SelectResults):
                 accumulateMany(*attributes)
         tables = []
         for func_name, attribute in attributes:
-            if not isinstance(attribute, basestring):
+            if not isinstance(attribute, string_type):
                 tables.append(attribute.tableName)
         clone = self.__class__(self.sourceClass, self.clause,
                                self.clauseTables, inheritedTables=tables,
@@ -456,7 +457,7 @@ class InheritableSQLObject(SQLObject):
                 # if the clause was one of TRUE varians, replace it
                 if (clause is None) or (clause is sqlbuilder.SQLTrueClause) \
                         or (
-                            isinstance(clause, basestring) and
+                            isinstance(clause, string_type) and
                             (clause == 'all')):
                     clause = addClause
                 else:

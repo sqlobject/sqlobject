@@ -2,6 +2,7 @@ from paste.deploy.converters import asbool
 from paste.wsgilib import catch_errors
 from paste.util import import_string
 import sqlobject
+from sqlobject.compat import string_type
 
 
 def make_middleware(app, global_conf, database=None, use_transaction=False,
@@ -37,11 +38,11 @@ def make_middleware(app, global_conf, database=None, use_transaction=False,
     if not database:
         raise ValueError(
             "You must provide a 'database' configuration value")
-    if isinstance(hub, basestring):
+    if isinstance(hub, string_type):
         hub = import_string.eval_import(hub)
     if not hub:
         hub = sqlobject.sqlhub
-    if isinstance(database, basestring):
+    if isinstance(database, string_type):
         database = sqlobject.connectionForURI(database)
     return SQLObjectMiddleware(app, database, use_transaction, hub)
 

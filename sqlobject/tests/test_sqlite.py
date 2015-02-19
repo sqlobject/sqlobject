@@ -1,6 +1,7 @@
 import threading
 import py.test
 from sqlobject import *
+from sqlobject.compat import string_type
 from sqlobject.tests.dbtest import *
 from sqlobject.tests.dbtest import setSQLiteConnectionFactory
 from .test_basic import TestSO1
@@ -79,7 +80,7 @@ def test_sqlite_aggregate():
                     self.acc = []
 
                 def step(self, value):
-                    if isinstance(value, basestring):
+                    if isinstance(value, string_type):
                         self.acc.append(value)
                     else:
                         self.acc.append(str(value))

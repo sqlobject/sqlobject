@@ -20,7 +20,7 @@ from sqlobject import col
 from sqlobject.classregistry import findClass
 from sqlobject.declarative import DeclarativeMeta
 from sqlobject.util import moduleloader
-from sqlobject.compat import with_metaclass
+from sqlobject.compat import with_metaclass, string_type
 
 # It's not very unsafe to use tempnam like we are doing:
 warnings.filterwarnings(
@@ -1285,7 +1285,7 @@ class CommandUpgrade(CommandRecord):
 
 
 def update_sys_path(paths, verbose):
-    if isinstance(paths, basestring):
+    if isinstance(paths, string_type):
         paths = [paths]
     for path in paths:
         path = os.path.abspath(path)

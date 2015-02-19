@@ -41,7 +41,7 @@ from . import declarative
 from . import events
 from .sresults import SelectResults
 from .util.threadinglocal import local
-from sqlobject.compat import with_metaclass
+from sqlobject.compat import with_metaclass, string_type, unicode_type
 
 if ((sys.version_info[0] == 2) and (sys.version_info[:3] < (2, 6, 0))) or \
    ((sys.version_info[0] == 3) and (sys.version_info[:3] < (3, 4, 0))):
@@ -50,7 +50,6 @@ if ((sys.version_info[0] == 2) and (sys.version_info[:3] < (2, 6, 0))) or \
 if sys.version_info[0] > 2:
     # alias for python 3 compatability
     long = int
-    unicode = str
 
 """
 This thread-local storage is needed for RowCreatedSignals. It gathers
@@ -476,7 +475,7 @@ class sqlmeta(with_metaclass(declarative.DeclarativeMeta, object)):
         conn = connection or soClass._connection
         for columnDef in conn.columnsFromSchema(sqlmeta.table, soClass):
             if columnDef.name not in sqlmeta.columnDefinitions:
-                if isinstance(columnDef.name, unicode):
+                if isinstance(columnDef.name, unicode_type):
                     columnDef.name = columnDef.name.encode('ascii')
                 sqlmeta.addColumn(columnDef)
 
@@ -1737,7 +1736,7 @@ class SQLObject(with_metaclass(declarative.DeclarativeMeta, object)):
 
     @classmethod
     def setConnection(cls, value):
-        if isinstance(value, (str, unicode)):
+        if isinstance(value, string_type):
             value = dbconnection.connectionForURI(value)
         cls._connection = value
 

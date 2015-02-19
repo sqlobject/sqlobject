@@ -1,5 +1,6 @@
 from . import dbconnection
 from . import sqlbuilder
+from .compat import string_type
 
 
 __all__ = ['SelectResults']
@@ -74,12 +75,12 @@ class SelectResults(object):
         return conn.queryForSelect(self)
 
     def _mungeOrderBy(self, orderBy):
-        if isinstance(orderBy, basestring) and orderBy.startswith('-'):
+        if isinstance(orderBy, string_type) and orderBy.startswith('-'):
             orderBy = orderBy[1:]
             desc = True
         else:
             desc = False
-        if isinstance(orderBy, basestring):
+        if isinstance(orderBy, string_type):
             if orderBy in self.sourceClass.sqlmeta.columns:
                 val = getattr(self.sourceClass.q,
                               self.sourceClass.sqlmeta.columns[orderBy].name)
@@ -129,7 +130,7 @@ class SelectResults(object):
             # None doesn't filter anything, it's just a no-op:
             return self
         clause = self.clause
-        if isinstance(clause, basestring):
+        if isinstance(clause, string_type):
             clause = sqlbuilder.SQLConstant('(%s)' % clause)
         return self.newClause(sqlbuilder.AND(clause, filter_clause))
 
