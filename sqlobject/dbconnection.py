@@ -40,7 +40,7 @@ class ConsoleWriter:
 
     def write(self, text):
         logfile = getattr(sys, self.loglevel)
-        if isinstance(text, unicode_type):
+        if isinstance(text, unicode_type) and sys.version_info[0] < 3:
             try:
                 text = text.encode(self.dbEncoding)
             except UnicodeEncodeError:
