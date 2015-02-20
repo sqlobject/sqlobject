@@ -8,7 +8,7 @@ from sqlobject.converters import registerConverter
 
 class ErrorMessage(str):
     def __new__(cls, e, append_msg=''):
-        obj = str.__new__(cls, e[0] + append_msg)
+        obj = str.__new__(cls, e.args[0] + append_msg)
         if e.__module__ == 'psycopg2':
             obj.code = getattr(e, 'pgcode', None)
             obj.error = getattr(e, 'pgerror', None)
