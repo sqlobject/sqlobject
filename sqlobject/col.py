@@ -564,7 +564,9 @@ class StringValidator(SOValidator):
             binaryType = type(None)  # Just a simple workaround
         dbEncoding = self.getDbEncoding(state, default='ascii')
         if isinstance(value, unicode_type):
-            return value.encode(dbEncoding)
+            if sys.version_info[0] < 3:
+                return value.encode(dbEncoding)
+            return value
         if self.dataType and isinstance(value, self.dataType):
             return value
         if isinstance(value,
