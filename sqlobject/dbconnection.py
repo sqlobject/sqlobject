@@ -837,7 +837,8 @@ class Transaction(object):
             meth = types.MethodType(self._dbConnection._SO_delete.__func__,
                                     self, self.__class__)
         else:
-            meth = types.MethodType(self._dbConnection._SO_delete.__func__)
+            meth = types.MethodType(self._dbConnection._SO_delete.__func__,
+                                    self)
         return meth(inst)
 
     def commit(self, close=False):
