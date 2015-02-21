@@ -127,7 +127,7 @@ def unmakeProperties(obj):
         delFunc = delattr
         d = obj.__dict__
 
-    for var, value in d.items():
+    for var, value in list(d.items()):
         if isinstance(value, property):
             for prop in [value.fget, value.fset, value.fdel]:
                 if prop and prop.__name__ not in d:

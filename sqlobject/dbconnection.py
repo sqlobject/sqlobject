@@ -40,7 +40,7 @@ class ConsoleWriter:
 
     def write(self, text):
         logfile = getattr(sys, self.loglevel)
-        if isinstance(text, unicode_type):
+        if isinstance(text, unicode_type) and sys.version_info[0] < 3:
             try:
                 text = text.encode(self.dbEncoding)
             except UnicodeEncodeError:
@@ -837,7 +837,8 @@ class Transaction(object):
             meth = types.MethodType(self._dbConnection._SO_delete.__func__,
                                     self, self.__class__)
         else:
-            meth = types.MethodType(self._dbConnection._SO_delete.__func__)
+            meth = types.MethodType(self._dbConnection._SO_delete.__func__,
+                                    self)
         return meth(inst)
 
     def commit(self, close=False):
@@ -851,7 +852,7 @@ class Transaction(object):
                      for sub in self.cache.allSubCachesByClassNames().items()]
         subCaches.extend([(x[0], x[1]) for x in self._deletedCache.items()])
         for cls, ids in subCaches:
-            for id in ids:
+            for id in list(ids):
                 inst = self._dbConnection.cache.tryGetByName(id, cls)
                 if inst is not None:
                     inst.expire()
@@ -868,7 +869,7 @@ class Transaction(object):
         self._connection.rollback()
 
         for subCache, ids in subCaches:
-            for id in ids:
+            for id in list(ids):
                 inst = subCache.tryGet(id)
                 if inst is not None:
                     inst.expire()
