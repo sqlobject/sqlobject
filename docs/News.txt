@@ -10,7 +10,15 @@ News
 SQLObject 3.0.0 (master)
 ========================
 
+Minor features
+--------------
+
 * PyDispatcher (>=2.0.4) was made an external dependency.
+
+Development
+-----------
+
+* Source code was made flake8-clean.
 
 SQLObject 2.1.0
 ===============
