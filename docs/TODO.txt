@@ -89,7 +89,7 @@ TODO
 * Or move column values access to a separate namespace, e.g. .c:
   row.c.column.
 
-* More documentation. Wiki. Trac.
+* More documentation.
 
 * RSS 2.0 and Atom news feeds.
 
