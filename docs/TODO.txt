@@ -89,11 +89,6 @@ TODO
 * Or move column values access to a separate namespace, e.g. .c:
   row.c.column.
 
-* Convert documentation to Sphinx_ format and publish it on
-  http://readthedocs.org/
-
-.. _Sphinx: http://sphinx.pocoo.org/index.html
-
 * More documentation. Wiki. Trac.
 
 * RSS 2.0 and Atom news feeds.

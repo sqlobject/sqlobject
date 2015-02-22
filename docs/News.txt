@@ -20,6 +20,12 @@ Development
 
 * Source code was made flake8-clean.
 
+Documentation
+-------------
+
+* Documentation is published at http://sqlobject.readthedocs.org/ in
+  Sphinx format.
+
 SQLObject 2.1.0
 ===============
 
