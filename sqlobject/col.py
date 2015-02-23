@@ -1032,7 +1032,9 @@ class EnumValidator(SOValidator):
 
     def to_python(self, value, state):
         if value in self.enumValues:
-            if isinstance(value, unicode_type):
+            # Only encode on python 2 - on python 3, the database driver
+            # will handle this
+            if isinstance(value, unicode_type) and sys.version_info[0] == 2:
                 dbEncoding = self.getDbEncoding(state)
                 value = value.encode(dbEncoding)
             return value
