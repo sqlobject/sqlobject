@@ -96,6 +96,6 @@ def test_zip():
     ComplexCSV(fname='Bob', lname='Dylan', age=60)
     ComplexCSV(fname='Harriet', lname='Tubman', age=160)
     s = export_csv_zip([SimpleCSV, ComplexCSV])
-    assert isinstance(s, str) and s
+    assert isinstance(s, bytes) and s
     s = export_csv_zip([SimpleCSV.selectBy(name='Bob'),
                         (ComplexCSV, list(ComplexCSV.selectBy(fname='John')))])
