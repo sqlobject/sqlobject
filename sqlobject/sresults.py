@@ -22,7 +22,7 @@ class SelectResults(object):
             ops['orderBy'] = sourceClass.sqlmeta.defaultOrder
         orderBy = ops['orderBy']
         if isinstance(orderBy, (tuple, list)):
-            orderBy = map(self._mungeOrderBy, orderBy)
+            orderBy = list(map(self._mungeOrderBy, orderBy))
         else:
             orderBy = self._mungeOrderBy(orderBy)
         ops['dbOrderBy'] = orderBy
