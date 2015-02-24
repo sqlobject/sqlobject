@@ -3,6 +3,7 @@ from sqlobject.tests.dbtest import *
 
 # Test more complex orderBy clauses
 
+
 class Names(SQLObject):
 
     class sqlmeta(sqlmeta):
