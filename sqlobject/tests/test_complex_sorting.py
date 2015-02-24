@@ -4,7 +4,7 @@ from sqlobject.tests.dbtest import *
 # Test more complex orderBy clauses
 
 
-class Names(SQLObject):
+class ComplexNames(SQLObject):
 
     class sqlmeta(sqlmeta):
         table = 'names_table'
@@ -16,13 +16,13 @@ class Names(SQLObject):
     age = IntCol()
 
 
-def setupNames():
-    setupClass(Names)
-    inserts(Names, [('aj', 'baker', '555-444-333', 34),
-                    ('joe', 'robbins', '444-555-333', 34),
-                    ('tim', 'jackson', '555-444-222', 32),
-                    ('joe', 'baker', '222-111-000', 24),
-                    ('zoe', 'robbins', '444-555-333', 46)],
+def setupComplexNames():
+    setupClass(ComplexNames)
+    inserts(ComplexNames, [('aj', 'baker', '555-444-333', 34),
+                           ('joe', 'robbins', '444-555-333', 34),
+                           ('tim', 'jackson', '555-444-222', 32),
+                           ('joe', 'baker', '222-111-000', 24),
+                           ('zoe', 'robbins', '444-555-333', 46)],
             schema='firstName lastName phone age')
 
 
@@ -37,38 +37,41 @@ def firstList(names):
     return [n.firstName for n in names]
 
 
-def test_defaultOrder():
-    setupNames()
-    assert nameList(Names.select()) == \
+def test_defaultComplexOrder():
+    setupComplexNames()
+    assert nameList(ComplexNames.select()) == \
         ['aj baker', 'joe baker',
          'tim jackson', 'joe robbins',
          'zoe robbins']
 
 
 def test_complexOrders():
-    setupNames()
-    assert nameList(Names.select().orderBy(['age', 'phone',
-                                            'firstName', 'lastName'])) == \
+    setupComplexNames()
+    assert nameList(ComplexNames.select().orderBy(['age', 'phone',
+                                                   'firstName',
+                                                   'lastName'])) == \
         ['joe baker', 'tim jackson',
          'joe robbins', 'aj baker',
          'zoe robbins']
-    assert nameList(Names.select().orderBy(['-age', 'phone',
-                                            'firstName', 'lastName'])) == \
+    assert nameList(ComplexNames.select().orderBy(['-age', 'phone',
+                                                   'firstName',
+                                                   'lastName'])) == \
         ['zoe robbins', 'joe robbins',
          'aj baker', 'tim jackson',
          'joe baker']
-    assert nameList(Names.select().orderBy(['age', '-phone',
-                                            'firstName', 'lastName'])) == \
+    assert nameList(ComplexNames.select().orderBy(['age', '-phone',
+                                                   'firstName',
+                                                   'lastName'])) == \
         ['joe baker', 'tim jackson',
          'aj baker', 'joe robbins',
          'zoe robbins']
-    assert nameList(Names.select().orderBy(['-firstName', 'phone',
-                                            'lastName', 'age'])) == \
+    assert nameList(ComplexNames.select().orderBy(['-firstName', 'phone',
+                                                   'lastName', 'age'])) == \
         ['zoe robbins', 'tim jackson',
          'joe baker', 'joe robbins',
          'aj baker']
-    assert nameList(Names.select().orderBy(['-firstName', '-phone',
-                                            'lastName', 'age'])) == \
+    assert nameList(ComplexNames.select().orderBy(['-firstName', '-phone',
+                                                   'lastName', 'age'])) == \
         ['zoe robbins', 'tim jackson',
          'joe robbins', 'joe baker',
          'aj baker']
