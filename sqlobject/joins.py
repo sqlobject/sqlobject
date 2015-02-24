@@ -96,19 +96,48 @@ class SOJoin(object):
 
     def _applyOrderBy(self, results, defaultSortClass):
         if self.orderBy is not None:
-            results.sort(sorter(self.orderBy))
+            doSort(results, self.orderBy)
         return results
 
 
-def sorter(orderBy):
+class MinType(object):
+    """Sort less than everything, for handling None's in the results"""
+    # functools.total_ordering would simplify this, but isn't available
+    # for python 2.6
+
+    def __lt__(self, other):
+        if self is other:
+            return False
+        return True
+
+    def __eq__(self, other):
+        return self is other
+
+    def __gt__(self, other):
+        return False
+
+    def __le__(self, other):
+        return True
+
+    def __ge__(self, other):
+        if self is other:
+            return True
+        return False
+
+
+Min = MinType()
+
+
+def doSort(results, orderBy):
     if isinstance(orderBy, (tuple, list)):
         if len(orderBy) == 1:
             orderBy = orderBy[0]
         else:
-            fhead = sorter(orderBy[0])
-            frest = sorter(orderBy[1:])
-            return lambda a, b, fhead=fhead, frest=frest: \
-                fhead(a, b) or frest(a, b)
+            # Rely on stable sort results, since this is simpler
+            # than trying to munge everything into a single sort key
+            doSort(results, orderBy[0])
+            doSort(results, orderBy[1:])
+            return
     if isinstance(orderBy, sqlbuilder.DESC) \
        and isinstance(orderBy.expr, sqlbuilder.SQLObjectField):
         orderBy = '-' + orderBy.expr.original
@@ -121,19 +150,12 @@ def sorter(orderBy):
     else:
         reverse = False
 
-    def cmper(a, b, attr=orderBy, rev=reverse):
-        a = getattr(a, attr)
-        b = getattr(b, attr)
-        if rev:
-            a, b = b, a
+    def sortkey(x, attr=orderBy):
+        a = getattr(x, attr)
         if a is None:
-            if b is None:
-                return 0
-            return -1
-        if b is None:
-            return 1
-        return cmp(a, b)
-    return cmper
+            return Min
+        return a
+    results.sort(key=sortkey, reverse=reverse)
 
 
 # This is a one-to-many
