@@ -1752,7 +1752,7 @@ class PickleValidator(BinaryValidator):
         if isinstance(value, unicode_type):
             dbEncoding = self.getDbEncoding(state, default='ascii')
             value = value.encode(dbEncoding)
-        if isinstance(value, str):
+        if isinstance(value, bytes):
             return pickle.loads(value)
         raise validators.Invalid(
             "expected a pickle string in the PickleCol '%s', "
