@@ -475,7 +475,8 @@ class sqlmeta(with_metaclass(declarative.DeclarativeMeta, object)):
         conn = connection or soClass._connection
         for columnDef in conn.columnsFromSchema(sqlmeta.table, soClass):
             if columnDef.name not in sqlmeta.columnDefinitions:
-                if isinstance(columnDef.name, unicode_type):
+                if isinstance(columnDef.name, unicode_type) and \
+                        sys.version_info[0] == 2:
                     columnDef.name = columnDef.name.encode('ascii')
                 sqlmeta.addColumn(columnDef)
 
