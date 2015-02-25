@@ -1,3 +1,4 @@
+import sys
 import py.test
 from sqlobject import *
 from sqlobject.tests.dbtest import *
@@ -9,14 +10,17 @@ from sqlobject.tests.dbtest import *
 
 
 class ImageData(SQLObject):
-    image = BLOBCol(default='emptydata', length=65535)
+    image = BLOBCol(default=b'emptydata', length=65535)
 
 
 def test_BLOBCol():
     if not supports('blobData'):
         py.test.skip("blobData isn't supported")
     setupClass(ImageData)
-    data = ''.join([chr(x) for x in range(256)])
+    if sys.version_info[0] == 2:
+        data = ''.join([chr(x) for x in range(256)])
+    else:
+        data = bytes(range(256))
 
     prof = ImageData()
     prof.image = data
