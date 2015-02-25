@@ -12,8 +12,11 @@ def test_constraints():
     col = Dummy(name='col')
     isString(obj, col, 'blah')
     raises(BadValue, isString, obj, col, 1)
-    # @@: Should this really be an error?
-    raises(BadValue, isString, obj, col, u'test!')
+    if sys.version_info[0] == 2:
+        # @@: Should this really be an error?
+        raises(BadValue, isString, obj, col, u'test!')
+    else:
+        raises(BadValue, isString, obj, col, b'test!')
     # isString(obj, col, u'test!')
 
     raises(BadValue, notNull, obj, col, None)
