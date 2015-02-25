@@ -1671,6 +1671,8 @@ class BinaryValidator(SOValidator):
             binaryType = connection._binaryType
         if isinstance(value, str):
             if dbName == "sqlite":
+                if sys.version_info[0] > 2:
+                    value = bytes(value, 'ascii')
                 value = connection.module.decode(value)
             return value
         if isinstance(value, (buffer_type, binaryType)):
@@ -1679,6 +1681,8 @@ class BinaryValidator(SOValidator):
                 return cachedValue[0]
             if isinstance(value, array):  # MySQL
                 return value.tostring()
+            if sys.version_info[0] > 2 and isinstance(value, memoryview):
+                return value.tobytes()
             return str(value)  # buffer => string
         raise validators.Invalid(
             "expected a string in the BLOBCol '%s', got %s %r instead" % (
@@ -1689,6 +1693,8 @@ class BinaryValidator(SOValidator):
             return None
         connection = state.connection or state.soObject._connection
         binary = connection.createBinary(value)
+        if sys.version_info[0] > 2 and isinstance(binary, memoryview):
+            binary = str(binary.tobytes(), 'ascii')
         self._cachedValue = (value, binary)
         return binary
 
