@@ -96,7 +96,8 @@ def StringLikeConverter(value, db):
 
 registerConverter(str, StringLikeConverter)
 if sys.version_info[0] < 3:
-    registerConverter(unicode, StringLikeConverter)
+    # noqa for flake8 & python3
+    registerConverter(unicode, StringLikeConverter)  # noqa
 registerConverter(array, StringLikeConverter)
 if sys.version_info[0] < 3:
     registerConverter(buffer_type, StringLikeConverter)
@@ -114,7 +115,8 @@ def LongConverter(value, db):
     return str(value)
 
 if sys.version_info[0] < 3:
-    registerConverter(long, LongConverter)
+    # noqa for flake8 & python3
+    registerConverter(long, LongConverter)  # noqa
 
 if NumericType:
     registerConverter(NumericType, IntConverter)
