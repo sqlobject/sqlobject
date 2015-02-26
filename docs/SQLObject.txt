@@ -301,8 +301,8 @@ same actions with the SQL that is sent, along with some commentary::
     >>> # This will make SQLObject print out the SQL it executes:
     >>> Person._connection.debug = True
     >>> p = Person(firstName='Bob', lastName='Hope')
-     1/QueryIns:  INSERT INTO person (last_name, middle_initial, first_name) VALUES ('Hope', NULL, 'Bob')
-     1/QueryR  :  INSERT INTO person (last_name, middle_initial, first_name) VALUES ('Hope', NULL, 'Bob')
+     1/QueryIns:  INSERT INTO person (first_name, middle_initial, last_name) VALUES ('Bob', NULL, 'Hope')
+     1/QueryR  :  INSERT INTO person (first_name, middle_initial, last_name) VALUES ('Bob', NULL, 'Hope')
      1/COMMIT  :  auto
      1/QueryOne:  SELECT first_name, middle_initial, last_name FROM person WHERE ((person.id) = (2))
      1/QueryR  :  SELECT first_name, middle_initial, last_name FROM person WHERE ((person.id) = (2))
