@@ -1,3 +1,4 @@
+import sys
 import sqlobject.col
 from sqlobject.compat import string_type
 
@@ -82,7 +83,10 @@ class SOHashCol(sqlobject.col.SOStringCol):
     def __init__(self, **kw):
         if 'hashMethod' not in kw:
             from hashlib import md5
-            self.hashMethod = lambda v: md5(v).hexdigest()
+            if sys.version_info[0] == 2:
+                self.hashMethod = lambda v: md5(v).hexdigest()
+            else:
+                self.hashMethod = lambda v: md5(v.encode('utf8')).hexdigest()
             if 'length' not in kw:
                 kw['length'] = 32
         else:

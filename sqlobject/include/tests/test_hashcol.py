@@ -1,3 +1,4 @@
+import sys
 from sqlobject import *
 from sqlobject.tests.dbtest import *
 from sqlobject.include import hashcol
@@ -7,7 +8,12 @@ from hashlib import sha256, md5
 # HashCol test
 ########################################
 
-sha256_str = lambda x: sha256(x).hexdigest()
+if sys.version_info[0] == 2:
+    sha256_str = lambda x: sha256(x).hexdigest()
+    md5_str = lambda x: md5(x).hexdigest()
+else:
+    sha256_str = lambda x: sha256(x.encode('utf8')).hexdigest()
+    md5_str = lambda x: md5(x.encode('utf8')).hexdigest()
 
 
 class HashTest(SQLObject):
@@ -41,7 +47,7 @@ def test_create():
     ORDER BY count
     """)
     for count, col1, col2 in rows:
-        assert md5(data[count]).hexdigest() == col1
+        assert md5_str(data[count]) == col1
         assert sha256_str(data[count]) == col2
 
 
