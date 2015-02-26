@@ -18,10 +18,11 @@ def with_metaclass(meta, *bases):
 
 # Compatability definitions (inspired by six)
 if sys.version_info[0] < 3:
-    string_type = basestring
-    unicode_type = unicode
+    # disable flake8 checks on python 3
+    string_type = basestring  # noqa
+    unicode_type = unicode  # noqa
     class_types = (type, types.ClassType)
-    buffer_type = buffer
+    buffer_type = buffer  # noqa
 else:
     string_type = str
     unicode_type = str
