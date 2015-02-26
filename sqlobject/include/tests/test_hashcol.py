@@ -9,11 +9,17 @@ from hashlib import sha256, md5
 ########################################
 
 if sys.version_info[0] == 2:
-    sha256_str = lambda x: sha256(x).hexdigest()
-    md5_str = lambda x: md5(x).hexdigest()
+    def sha256_str(x):
+        return sha256(x).hexdigest()
+
+    def md5_str(x):
+        return md5(x).hexdigest()
 else:
-    sha256_str = lambda x: sha256(x.encode('utf8')).hexdigest()
-    md5_str = lambda x: md5(x.encode('utf8')).hexdigest()
+    def sha256_str(x):
+        return sha256(x.encode('utf8')).hexdigest()
+
+    def md5_str(x):
+        return md5(x.encode('utf8')).hexdigest()
 
 
 class HashTest(SQLObject):
