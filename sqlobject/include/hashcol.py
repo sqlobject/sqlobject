@@ -13,15 +13,48 @@ class DbHash:
         self.hash = hash
         self.hashMethod = hashMethod
 
-    def __cmp__(self, other):
-        if other is None:
-            if self.hash is None:
-                return 0
-            return True
+    def _get_key(self, other):
+        """Create the hash of the other class"""
         if not isinstance(other, string_type):
             raise TypeError(
                 "A hash may only be compared with a string, or None.")
-        return cmp(self.hashMethod(other), self.hash)
+        return self.hashMethod(other)
+
+    def __eq__(self, other):
+        if other is None:
+            if self.hash is None:
+                return True
+            return False
+        other_key = self._get_key(other)
+        return other_key == self.hash
+
+    def __lt__(self, other):
+        if other is None:
+            return False
+        other_key = self._get_key(other)
+        return other_key < self.hash
+
+    def __gt__(self, other):
+        if other is None:
+            if self.hash is None:
+                return False
+            return True
+        other_key = self._get_key(other)
+        return other_key > self.hash
+
+    def __le__(self, other):
+        if other is None:
+            if self.hash is None:
+                return True
+            return False
+        other_key = self._get_key(other)
+        return other_key <= self.hash
+
+    def __ge__(self, other):
+        if other is None:
+            return True
+        other_key = self._get_key(other)
+        return other_key >= self.hash
 
     def __repr__(self):
         return "<DbHash>"
