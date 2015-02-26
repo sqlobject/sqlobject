@@ -1,3 +1,4 @@
+import sys
 import sqlobject.col
 from sqlobject.compat import string_type
 
@@ -13,15 +14,48 @@ class DbHash:
         self.hash = hash
         self.hashMethod = hashMethod
 
-    def __cmp__(self, other):
-        if other is None:
-            if self.hash is None:
-                return 0
-            return True
+    def _get_key(self, other):
+        """Create the hash of the other class"""
         if not isinstance(other, string_type):
             raise TypeError(
                 "A hash may only be compared with a string, or None.")
-        return cmp(self.hashMethod(other), self.hash)
+        return self.hashMethod(other)
+
+    def __eq__(self, other):
+        if other is None:
+            if self.hash is None:
+                return True
+            return False
+        other_key = self._get_key(other)
+        return other_key == self.hash
+
+    def __lt__(self, other):
+        if other is None:
+            return False
+        other_key = self._get_key(other)
+        return other_key < self.hash
+
+    def __gt__(self, other):
+        if other is None:
+            if self.hash is None:
+                return False
+            return True
+        other_key = self._get_key(other)
+        return other_key > self.hash
+
+    def __le__(self, other):
+        if other is None:
+            if self.hash is None:
+                return True
+            return False
+        other_key = self._get_key(other)
+        return other_key <= self.hash
+
+    def __ge__(self, other):
+        if other is None:
+            return True
+        other_key = self._get_key(other)
+        return other_key >= self.hash
 
     def __repr__(self):
         return "<DbHash>"
@@ -49,7 +83,10 @@ class SOHashCol(sqlobject.col.SOStringCol):
     def __init__(self, **kw):
         if 'hashMethod' not in kw:
             from hashlib import md5
-            self.hashMethod = lambda v: md5(v).hexdigest()
+            if sys.version_info[0] == 2:
+                self.hashMethod = lambda v: md5(v).hexdigest()
+            else:
+                self.hashMethod = lambda v: md5(v.encode('utf8')).hexdigest()
             if 'length' not in kw:
                 kw['length'] = 32
         else:
