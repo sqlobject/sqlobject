@@ -355,16 +355,19 @@ that's generated)::
      1/COMMIT  :  auto
     [<Person 1 firstName='John' middleInitial='Q' lastName='Doe'>]
 
-This example returns everyone with the first name John.  An expression
-could be more complicated as well, like::
+This example returns everyone with the first name John.
+
+Queries can be more complex::
 
     >>> peeps = Person.select(
-    ...         AND(Address.q.personID == Person.q.id,
-    ...             Address.q.zip.startswith('504')))
+    ...         OR(Person.q.firstName == "John",
+    ...            LIKE(Person.q.lastName, "%Hope%")))
     >>> list(peeps)
-     1/Select  :  SELECT person.id, person.first_name, person.middle_initial, person.last_name FROM person, address WHERE ((address.person_id = person.id) AND (address.zip LIKE '504%'))
+     1/Select  :  SELECT person.id, person.first_name, person.middle_initial, person.last_name FROM person WHERE (((person.first_name) = ('John')) OR (person.last_name LIKE ('%Hope%')))
+     1/QueryR  :  SELECT person.id, person.first_name, person.middle_initial, person.last_name FROM person WHERE (((person.first_name) = ('John')) OR (person.last_name LIKE ('%Hope%')))
      1/COMMIT  :  auto
-    []
+    [<Person 1 firstName='John' middleInitial='Q' lastName='Doe'>, <Person 2 firstName='Robert' middleInitial='Q' lastName='Hope Jr.'>]
+
 
 You'll note that classes have an attribute ``q``, which gives access
 to special objects for constructing query clauses.  All attributes
@@ -372,15 +375,10 @@ under ``q`` refer to column names and if you construct logical
 statements with these it'll give you the SQL for that statement.  You
 can also create your SQL more manually::
 
-    >>> Person._connection.debug = False  # Needed for doctests
-    >>> peeps = Person.select("""address.person_id = person.id AND
-    ...                          address.zip LIKE '504%'""",
-    ...                       clauseTables=['address'])
+    >>> Person._connection.debug = False  # Need for doctests
+    >>> peeps = Person.select("""person.first_name = 'John' AND
+    ...                          person.last_name LIKE 'D%'""")
 
-Note that you have to use ``clauseTables`` if you use tables besides
-the one you are selecting from.  If you use the ``q`` attributes
-SQLObject will automatically figure out what extra classes you might
-have used.
 
 You should use `MyClass.sqlrepr` to quote any values you use if you
 create SQL manually (quoting is automatic if you use ``q``).
@@ -695,6 +693,38 @@ keyword argument to override this).  Its use:
     <User 1 username='bob'>
     >>> Role.byName('admin')
     <Role 1 name='admin'>
+
+
+Selecting Objects Using Relationships
+-------------------------------------
+
+An select expression can refer to multiple classes, like::
+
+    >>> Person._connection.debug = False # Needed for doctests
+    >>> peeps = Person.select(
+    ...         AND(Address.q.personID == Person.q.id,
+    ...             Address.q.zip.startswith('504')))
+    >>> list(peeps)
+    []
+    >>> peeps = Person.select(
+    ...         AND(Address.q.personID == Person.q.id,
+    ...             Address.q.zip.startswith('554')))
+    >>> list(peeps)
+    [<Person 2 firstName='Robert' middleInitial='Q' lastName='Hope Jr.'>]
+
+
+It is also possible to use the ``q`` attribute when constructing complex
+queries, like::
+
+    >>> Person._connection.debug = False  # Needed for doctests
+    >>> peeps = Person.select("""address.person_id = person.id AND
+    ...                          address.zip LIKE '504%'""",
+    ...                       clauseTables=['address'])
+
+Note that you have to use ``clauseTables`` if you use tables besides
+the one you are selecting from.  If you use the ``q`` attributes
+SQLObject will automatically figure out what extra classes you might
+have used.
 
 Class sqlmeta
 -------------
