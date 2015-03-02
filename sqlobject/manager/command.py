@@ -260,7 +260,7 @@ class Command(with_metaclass(DeclarativeMeta, object)):
             for cls in classes:
                 level = calculateDependencyLevel(cls)
                 sorter.append((level, cls))
-            sorter.sort()
+            sorter.sort(key=lambda x: x[0])
             ordered_classes = [cls for _, cls in sorter]
         except SQLObjectCircularReferenceError as msg:
             # Failsafe: return the classes as-is if a circular reference
@@ -828,8 +828,7 @@ class CommandHelp(Command):
             print('  (use "%s help COMMAND" or "%s COMMAND -h" ' % (
                   self.prog_name, self.prog_name))
             print('  for more information)')
-            items = the_runner.commands.items()
-            items.sort()
+            items = sorted(the_runner.commands.items())
             max_len = max([len(cn) for cn, c in items])
             for command_name, command in items:
                 print('%s:%s %s' % (command_name,
@@ -1028,8 +1027,7 @@ class CommandRecord(Command):
             os.mkdir(output_dir)
         if v:
             print('Making directory %s' % self.shorten_filename(output_dir))
-        files = files.items()
-        files.sort()
+        files = sorted(files.items())
         for fn, content in files:
             if v:
                 print('  Writing %s' % self.shorten_filename(fn))
