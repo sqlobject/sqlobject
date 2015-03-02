@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+from __future__ import print_function
 import sys
 import os
 
@@ -22,8 +23,8 @@ except ImportError:
     if os.path.exists(updir):
         sys.path.insert(0, os.path.dirname(updir))
     else:
-        print 'I cannot find the sqlobject module'
-        print 'If SQLObject is installed, you may need to set $PYTHONPATH'
+        print('I cannot find the sqlobject module')
+        print('If SQLObject is installed, you may need to set $PYTHONPATH')
         sys.exit(3)
     # Now we have to get rid of possibly stale modules from that import
     # up there

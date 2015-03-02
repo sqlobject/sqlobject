@@ -28,6 +28,11 @@ warnings.filterwarnings(
     RuntimeWarning, '.*command', 28)
 
 
+if sys.version_info[0] == 2:
+    # noqa for flake8 and python 3
+    input = raw_input  # noqa
+
+
 def nowarning_tempnam(*args, **kw):
     return os.tempnam(*args, **kw)
 
@@ -255,7 +260,7 @@ class Command(with_metaclass(DeclarativeMeta, object)):
             for cls in classes:
                 level = calculateDependencyLevel(cls)
                 sorter.append((level, cls))
-            sorter.sort()
+            sorter.sort(key=lambda x: x[0])
             ordered_classes = [cls for _, cls in sorter]
         except SQLObjectCircularReferenceError as msg:
             # Failsafe: return the classes as-is if a circular reference
@@ -422,7 +427,10 @@ class Command(with_metaclass(DeclarativeMeta, object)):
         if '#' in conf_fn:
             conf_fn, conf_section = conf_fn.split('#', 1)
 
-        from ConfigParser import ConfigParser
+        try:
+            from ConfigParser import ConfigParser
+        except ImportError:
+            from configparser import ConfigParser
         p = ConfigParser()
         # Case-sensitive:
         p.optionxform = str
@@ -487,7 +495,8 @@ class Command(with_metaclass(DeclarativeMeta, object)):
                 classes = self.classes_from_module(module)
                 all.extend(classes)
 
-        os.path.walk(package_dir, find_classes_in_file, None)
+        for dirpath, dirnames, filenames in os.walk(package_dir):
+            find_classes_in_file(None, dirpath, dirnames + filenames)
         return all
 
     def classes_from_egg(self, egg_spec):
@@ -546,7 +555,7 @@ class Command(with_metaclass(DeclarativeMeta, object)):
         else:
             prompt += ' [y/N]? '
         while 1:
-            response = raw_input(prompt).strip()
+            response = input(prompt).strip()
             if not response.strip():
                 return default
             if response and response[0].lower() in ('y', 'n'):
@@ -823,8 +832,7 @@ class CommandHelp(Command):
             print('  (use "%s help COMMAND" or "%s COMMAND -h" ' % (
                   self.prog_name, self.prog_name))
             print('  for more information)')
-            items = the_runner.commands.items()
-            items.sort()
+            items = sorted(the_runner.commands.items())
             max_len = max([len(cn) for cn, c in items])
             for command_name, command in items:
                 print('%s:%s %s' % (command_name,
@@ -1023,8 +1031,7 @@ class CommandRecord(Command):
             os.mkdir(output_dir)
         if v:
             print('Making directory %s' % self.shorten_filename(output_dir))
-        files = files.items()
-        files.sort()
+        files = sorted(files.items())
         for fn, content in files:
             if v:
                 print('  Writing %s' % self.shorten_filename(fn))
@@ -1095,7 +1102,11 @@ class CommandRecord(Command):
     def base_dir(self):
         base = self.options.output_dir
         if base is None:
-            base = CONFIG.get('sqlobject_history_dir', '.')  # noqa
+            config = self.config()
+            if config is not None:
+                base = config.get('sqlobject_history_dir', '.')
+            else:
+                base = '.'
         if not os.path.exists(base):
             print('Creating history directory %s' %
                   self.shorten_filename(base))
