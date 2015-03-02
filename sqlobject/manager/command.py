@@ -427,7 +427,10 @@ class Command(with_metaclass(DeclarativeMeta, object)):
         if '#' in conf_fn:
             conf_fn, conf_section = conf_fn.split('#', 1)
 
-        from ConfigParser import ConfigParser
+        try:
+            from ConfigParser import ConfigParser
+        except ImportError:
+            from configparser import ConfigParser
         p = ConfigParser()
         # Case-sensitive:
         p.optionxform = str
