@@ -495,7 +495,8 @@ class Command(with_metaclass(DeclarativeMeta, object)):
                 classes = self.classes_from_module(module)
                 all.extend(classes)
 
-        os.path.walk(package_dir, find_classes_in_file, None)
+        for dirpath, dirnames, filenames in os.walk(package_dir):
+            find_classes_in_file(None, dirpath, dirnames + filenames)
         return all
 
     def classes_from_egg(self, egg_spec):
