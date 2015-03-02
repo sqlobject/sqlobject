@@ -1102,7 +1102,11 @@ class CommandRecord(Command):
     def base_dir(self):
         base = self.options.output_dir
         if base is None:
-            base = CONFIG.get('sqlobject_history_dir', '.')  # noqa
+            config = self.config()
+            if config is not None:
+                base = config.get('sqlobject_history_dir', '.')
+            else:
+                base = '.'
         if not os.path.exists(base):
             print('Creating history directory %s' %
                   self.shorten_filename(base))
