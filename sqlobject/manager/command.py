@@ -28,6 +28,11 @@ warnings.filterwarnings(
     RuntimeWarning, '.*command', 28)
 
 
+if sys.version_info[0] == 2:
+    # noqa for flake8 and python 3
+    input = raw_input  # noqa
+
+
 def nowarning_tempnam(*args, **kw):
     return os.tempnam(*args, **kw)
 
@@ -546,7 +551,7 @@ class Command(with_metaclass(DeclarativeMeta, object)):
         else:
             prompt += ' [y/N]? '
         while 1:
-            response = raw_input(prompt).strip()
+            response = input(prompt).strip()
             if not response.strip():
                 return default
             if response and response[0].lower() in ('y', 'n'):
