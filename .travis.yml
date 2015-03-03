@@ -9,6 +9,7 @@ env:
   - TOXENV=py27-sqlite
   - TOXENV=py34-sqlite
   - TOXENV=py34-postgres
+  - TOXENV=py34-mysqlclient
   - TOXENV=py27-flake8
   - TOXENV=py34-flake8
 
@@ -19,6 +20,7 @@ matrix:
   allow_failures:
     - env: TOXENV=py34-sqlite
     - env: TOXENV=py34-postgres
+    - env: TOXENV=py34-mysqlclient
     - env: TOXENV=py34-flake8
 
 script: tox -e ${TOXENV}
