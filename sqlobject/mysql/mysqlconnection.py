@@ -1,3 +1,4 @@
+import sys
 from sqlobject import col
 from sqlobject import dberrors
 from sqlobject.dbconnection import DBAPI
@@ -5,11 +6,13 @@ from sqlobject.dbconnection import DBAPI
 
 class ErrorMessage(str):
     def __new__(cls, e, append_msg=''):
-        obj = str.__new__(cls, e[1] + append_msg)
-        obj.code = int(e[0])
+        obj = str.__new__(cls, e.args[1] + append_msg)
+        obj.code = int(e.args[0])
         obj.module = e.__module__
         obj.exception = e.__class__.__name__
         return obj
+
+mysql_Bin = None
 
 
 class MySQLConnection(DBAPI):
@@ -44,6 +47,12 @@ class MySQLConnection(DBAPI):
             self.dbEncoding = self.kw["charset"] = kw.pop("charset")
         else:
             self.dbEncoding = None
+
+        global mysql_Bin
+        if sys.version_info[0] > 2 and mysql_Bin is None:
+            mysql_Bin = MySQLdb.Binary
+            MySQLdb.Binary = lambda x: mysql_Bin(x).decode(
+                'ascii', errors='surrogateescape')
 
         # MySQLdb < 1.2.1: only ascii
         # MySQLdb = 1.2.1: only unicode
@@ -207,7 +216,7 @@ class MySQLConnection(DBAPI):
             self.query('DESCRIBE %s' % (tableName))
             return True
         except dberrors.ProgrammingError as e:
-            if e[0].code == 1146:  # ER_NO_SUCH_TABLE
+            if e.args[0].code == 1146:  # ER_NO_SUCH_TABLE
                 return False
             raise
 
