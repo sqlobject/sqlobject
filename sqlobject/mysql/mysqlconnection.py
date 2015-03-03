@@ -5,8 +5,8 @@ from sqlobject.dbconnection import DBAPI
 
 class ErrorMessage(str):
     def __new__(cls, e, append_msg=''):
-        obj = str.__new__(cls, e[1] + append_msg)
-        obj.code = int(e[0])
+        obj = str.__new__(cls, e.args[1] + append_msg)
+        obj.code = int(e.args[0])
         obj.module = e.__module__
         obj.exception = e.__class__.__name__
         return obj
@@ -207,7 +207,7 @@ class MySQLConnection(DBAPI):
             self.query('DESCRIBE %s' % (tableName))
             return True
         except dberrors.ProgrammingError as e:
-            if e[0].code == 1146:  # ER_NO_SUCH_TABLE
+            if e.args[0].code == 1146:  # ER_NO_SUCH_TABLE
                 return False
             raise
 
