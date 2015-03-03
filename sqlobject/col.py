@@ -1714,12 +1714,13 @@ class SOBLOBCol(SOStringCol):
     def _mysqlType(self):
         length = self.length
         varchar = self.varchar
-        if length >= 2 ** 24:
-            return varchar and "LONGTEXT" or "LONGBLOB"
-        if length >= 2 ** 16:
-            return varchar and "MEDIUMTEXT" or "MEDIUMBLOB"
-        if length >= 2 ** 8:
-            return varchar and "TEXT" or "BLOB"
+        if length:
+            if length >= 2 ** 24:
+                return varchar and "LONGTEXT" or "LONGBLOB"
+            if length >= 2 ** 16:
+                return varchar and "MEDIUMTEXT" or "MEDIUMBLOB"
+            if length >= 2 ** 8:
+                return varchar and "TEXT" or "BLOB"
         return varchar and "TINYTEXT" or "TINYBLOB"
 
     def _postgresType(self):
@@ -1778,10 +1779,11 @@ class SOPickleCol(SOBLOBCol):
 
     def _mysqlType(self):
         length = self.length
-        if length >= 2 ** 24:
-            return "LONGBLOB"
-        if length >= 2 ** 16:
-            return "MEDIUMBLOB"
+        if length:
+            if length >= 2 ** 24:
+                return "LONGBLOB"
+            if length >= 2 ** 16:
+                return "MEDIUMBLOB"
         return "BLOB"
 
 
