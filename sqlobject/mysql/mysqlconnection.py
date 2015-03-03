@@ -1,3 +1,4 @@
+import sys
 from sqlobject import col
 from sqlobject import dberrors
 from sqlobject.dbconnection import DBAPI
@@ -10,6 +11,8 @@ class ErrorMessage(str):
         obj.module = e.__module__
         obj.exception = e.__class__.__name__
         return obj
+
+mysql_Bin = None
 
 
 class MySQLConnection(DBAPI):
@@ -44,6 +47,12 @@ class MySQLConnection(DBAPI):
             self.dbEncoding = self.kw["charset"] = kw.pop("charset")
         else:
             self.dbEncoding = None
+
+        global mysql_Bin
+        if sys.version_info[0] > 2 and mysql_Bin is None:
+            mysql_Bin = MySQLdb.Binary
+            MySQLdb.Binary = lambda x: mysql_Bin(x).decode(
+                'ascii', errors='surrogateescape')
 
         # MySQLdb < 1.2.1: only ascii
         # MySQLdb = 1.2.1: only unicode

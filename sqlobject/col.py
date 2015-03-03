@@ -560,6 +560,7 @@ class StringValidator(SOValidator):
         try:
             connection = state.connection or state.soObject._connection
             binaryType = connection._binaryType
+            dbName = connection.dbName
         except AttributeError:
             binaryType = type(None)  # Just a simple workaround
         dbEncoding = self.getDbEncoding(state, default='ascii')
@@ -575,6 +576,9 @@ class StringValidator(SOValidator):
             return value
         if hasattr(value, '__unicode__'):
             return unicode(value).encode(dbEncoding)
+        if dbName == 'mysql' and sys.version_info[0] > 2 and \
+                isinstance(value, bytes):
+            return value.decode('ascii', errors='surrogateescape')
         raise validators.Invalid(
             "expected a str in the StringCol '%s', got %s %r instead" % (
                 self.name, type(value), value), value, state)
@@ -1674,6 +1678,8 @@ class BinaryValidator(SOValidator):
                 if sys.version_info[0] > 2:
                     value = bytes(value, 'ascii')
                 value = connection.module.decode(value)
+            if dbName == "mysql" and sys.version_info[0] > 2:
+                value = value.encode('ascii', errors='surrogateescape')
             return value
         if isinstance(value, (buffer_type, binaryType)):
             cachedValue = self._cachedValue
