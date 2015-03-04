@@ -1,4 +1,5 @@
 import sys
+import py.test
 
 from sqlobject import *
 from sqlobject.tests.dbtest import *
@@ -100,6 +101,9 @@ def test_select():
 
 
 def test_dbEncoding():
+    if sys.version_info[0] > 2:
+        # Python 3 mostly ignores dbEncoding
+        py.test.skip("This test is for python 2")
     setup()
     TestUnicode.sqlmeta.dbEncoding = 'utf-8'
     _test_select()
