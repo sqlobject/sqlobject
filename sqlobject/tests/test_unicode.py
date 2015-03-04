@@ -1,3 +1,6 @@
+import sys
+import py.test
+
 from sqlobject import *
 from sqlobject.tests.dbtest import *
 
@@ -39,9 +42,15 @@ def test_create():
     FROM test_unicode
     ORDER BY count
     """)
-    for count, col1, col2 in rows:
-        assert data[count].encode('utf-8') == col1
-        assert data[count].encode('latin1') == col2
+    if sys.version_info[0] == 2:
+        for count, col1, col2 in rows:
+            assert data[count].encode('utf-8') == col1
+            assert data[count].encode('latin1') == col2
+    else:
+        # On python 3, everthings already decoded to unicode
+        for count, col1, col2 in rows:
+            assert data[count] == col1
+            assert data[count] == col2
 
 
 def _test_select():
@@ -92,6 +101,9 @@ def test_select():
 
 
 def test_dbEncoding():
+    if sys.version_info[0] > 2:
+        # Python 3 mostly ignores dbEncoding
+        py.test.skip("This test is for python 2")
     setup()
     TestUnicode.sqlmeta.dbEncoding = 'utf-8'
     _test_select()
