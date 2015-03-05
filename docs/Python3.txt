@@ -1,0 +1,83 @@
+++++++++++++++++++++++
+SQLObject and Python 3
+++++++++++++++++++++++
+
+
+.. contents::
+
+
+Changes between Python 2 and Python 3
+-------------------------------------
+
+There are a few changes in the behaviour of SQLObject on Python 3, due to
+the changed stings / bytes handling introduced in Python 3.0.
+
+BLOBCol
+~~~~~~~
+
+In Python 3, BLOBCol now accepts and returns bytes, rather than strings as it
+did in Python 2.
+
+StringCol
+~~~~~~~~~
+
+In Python 3, StringCol now accepts arbitrary Unicode strings.
+
+UnicodeCol
+~~~~~~~~~~
+
+The dbEncoding parameter to UnicodeCol has no effect in Python 3 code. This
+is now handled by the underlying database layer and is no longer exposed
+via SQLObject. The parameter is still available for those writing Python 2
+compatible code.
+
+
+Python 3 and MySQL
+------------------
+
+SQLObject is tested using mysqlclient_ as the database driver on Python 3.
+Note that the default encoding of MySQL databases is *latin1*, which can cause
+problems with general Unicode strings. We recommend specifying the character
+set as *utf8* when using MySQL to protect against these issues.
+
+.. _mysqlclient: https://pypi.python.org/pypi/mysqlclient
+
+
+Using databases created with SQLObject and Python 2 in Python 3
+---------------------------------------------------------------
+
+For most cases, things should just work as before. The only issues should
+around UnicodeCol, as how this is handled has changed.
+
+SQLite
+~~~~~~
+
+The Python 3 sqlite driver expects Unicode columns to be encoded using
+utf8. Columns created using the default encoding on Python 2 should work fine,
+but columns created with a different encoding set using the dbEncoding
+parameter may cause problems.
+
+Postgres
+~~~~~~~~
+
+Postgres' behaviour is similar to sqlite. Columns created using the
+default encoding on Python 2 should work fine, but columns created with a
+different encoding set using the dbEncoding may cause problems.
+
+MySQL
+~~~~~
+
+For MySQL, the results depend on whether the Python 2 database was using
+MySQLdb's Unicode mode or not.
+
+If a character set was specified for the database using the charset parameter,
+such as::
+
+   mysql:///localhost/test?charset=latin1
+   
+Things should work provided the same character set is specified when using
+Python 3.
+
+If a character set wasn't specified, then things may work if the character set
+is set to match the dbEncoding parameter used when defining the UnicodeCol.
+
