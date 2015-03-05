@@ -110,9 +110,11 @@ class MySQLConnection(DBAPI):
             conn.autocommit(auto)
 
     def _executeRetry(self, conn, cursor, query):
-        if self.need_unicode and not isinstance(query, unicode):
+        # noqa for flake8 and python3
+        # The MySQLdb version requirements ensure this is python 2 only code
+        if self.need_unicode and not isinstance(query, unicode):  # flake8: noqa
             try:
-                query = unicode(query, self.dbEncoding)
+                query = unicode(query, self.dbEncoding)  # flake8: noaq
             except UnicodeError:
                 pass
 
