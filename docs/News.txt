@@ -29,6 +29,8 @@ Documentation
 SQLObject 2.1.1
 ===============
 
+Released 10 Mar 2015.
+
 * Minor fix in PostgresConnection was ported from `SQLObject 1.6.5`_.
 
 SQLObject 2.1.0
@@ -98,6 +100,8 @@ Documentation
 SQLObject 1.7.4
 ===============
 
+Released 10 Mar 2015.
+
 * Minor fix in PostgresConnection was ported from `SQLObject 1.6.5`_.
 
 SQLObject 1.7.3
@@ -151,6 +155,8 @@ Bugfixes
 
 SQLObject 1.6.5
 ===============
+
+Released 10 Mar 2015.
 
 * Minor fix in PostgresConnection: close the cursor and connection
   in _createOrDropDatabase even after an error.
