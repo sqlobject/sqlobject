@@ -421,10 +421,12 @@ class PostgresConnection(DBAPI):
         cur = conn.cursor()
         # We must close the transaction with a commit so that
         # the CREATE DATABASE can work (which can't be in a transaction):
-        self._executeRetry(conn, cur, 'COMMIT')
-        self._executeRetry(conn, cur, '%s DATABASE %s' % (op, self.db))
-        cur.close()
-        conn.close()
+        try:
+            self._executeRetry(conn, cur, 'COMMIT')
+            self._executeRetry(conn, cur, '%s DATABASE %s' % (op, self.db))
+        finally:
+            cur.close()
+            conn.close()
 
     def listTables(self):
         return [v[0] for v in self.queryAll(
