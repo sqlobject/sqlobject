@@ -7,6 +7,12 @@ News
 
 .. _start:
 
+SQLObject 1.6.5
+===============
+
+* Minor fix in PostgresConnection: close the cursor and connection
+  in _createOrDropDatabase even after an error.
+
 SQLObject 1.6.4
 ===============
 
