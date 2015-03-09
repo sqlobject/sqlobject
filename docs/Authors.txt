@@ -29,6 +29,7 @@ Contributions have been made by:
 * Ken Lalonde
 * Andrew Ziem <ahz001 at gmail.com>
 * Andrew Trusty <atrusty at gatech.edu>
+* Gregor Horvath <gh at gregor-horvath.com>
 * Oleg Broytman <phd@phdru.name>
 
 .. image:: http://sflogo.sourceforge.net/sflogo.php?group_id=74338&type=10
