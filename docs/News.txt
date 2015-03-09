@@ -64,6 +64,8 @@ Bugfixes
 SQLObject 1.6.5
 ===============
 
+Released 10 Mar 2015.
+
 * Minor fix in PostgresConnection: close the cursor and connection
   in _createOrDropDatabase even after an error.
 
