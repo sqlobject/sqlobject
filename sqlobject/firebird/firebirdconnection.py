@@ -20,10 +20,15 @@ class FirebirdConnection(DBAPI):
                  dialect=None, role=None, charset=None, **kw):
         global kinterbasdb
         if kinterbasdb is None:
-            import kinterbasdb
-            # See http://kinterbasdb.sourceforge.net/dist_docs/usage.html
-            # for an explanation; in short: use datetime, decimal and unicode.
-            kinterbasdb.init(type_conv=200)
+            try:
+                import fdb
+                kinterbasdb = fdb
+            except ImportError:
+                import kinterbasdb
+                # See http://kinterbasdb.sourceforge.net/dist_docs/usage.html
+                # for an explanation; in short: use datetime, decimal and
+                # unicode.
+                kinterbasdb.init(type_conv=200)
         self.module = kinterbasdb
 
         self.host = host
