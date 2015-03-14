@@ -13,6 +13,8 @@ SQLObject 3.0.0 (master)
 Minor features
 --------------
 
+* Use fdb adapter for Firebird.
+
 * PyDispatcher (>=2.0.4) was made an external dependency.
 
 Development
