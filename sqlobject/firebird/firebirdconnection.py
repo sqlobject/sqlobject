@@ -4,6 +4,7 @@ import warnings
 from sqlobject import col
 from sqlobject.dbconnection import DBAPI
 
+
 class FirebirdConnection(DBAPI):
 
     supportTransactions = False
