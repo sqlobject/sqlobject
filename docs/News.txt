@@ -7,6 +7,13 @@ News
 
 .. _start:
 
+SQLObject 1.7.5
+===============
+
+Released 15 Mar 2015.
+
+* Using fdb adapter for Firebird was ported from `SQLObject 1.6.6`_.
+
 SQLObject 1.7.4
 ===============
 
