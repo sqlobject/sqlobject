@@ -47,7 +47,7 @@ Currently SQLObject supports MySQL_ via MySQLdb_ aka MySQL-python,
 PostgreSQL_ via psycopg1_ or psycopg2_, SQLite_ via PySQLite_, Firebird_
 via fdb_ or kinterbasdb_, `MAX DB`_ (also known as SAP DB) via sapdb_,
 Sybase via Sybase_, and `MSSQL Server`_ via pymssql_ (+ FreeTDS_) or
-ADODBAPI_ (Win32).
+adodbapi_ (Win32).
 
 .. _MySQL: http://mysql.com
 .. _MySQLdb: http://sourceforge.net/projects/mysql-python/
@@ -65,7 +65,7 @@ ADODBAPI_ (Win32).
 .. _`MSSQL Server`: http://www.microsoft.com/sql/
 .. _pymssql: http://pymssql.sourceforge.net/
 .. _FreeTDS: http://www.freetds.org/
-.. _ADODBAPI: http://adodbapi.sourceforge.net/
+.. _adodbapi: http://adodbapi.sourceforge.net/
 
 Python 2.6, 2.7 or 3.4+ is required.
 
@@ -1839,8 +1839,6 @@ pre-fetch all the results of a select).
 
 Firebird support uses fdb_ or kinterbasdb_ Python library.
 
-.. _kinterbasdb: http://kinterbasdb.sourceforge.net/
-
 There could be a problem if one tries to connect to a server running on w32
 from a program running on Unix; the problem is how to specify the database
 so that SQLObject correctly parses it. Vertical bar is replaces by
@@ -1881,8 +1879,6 @@ for a slight performance boost.
 
 It uses the Sybase_ module.
 
-.. _Sybase: http://www.object-craft.com.au/projects/sybase/
-
 MAX DB
 ------
 
@@ -1893,8 +1889,6 @@ and MySQL.  It takes the typical arguments: `host`, `database`,
 when creating the connection to the database.
 
 It uses the sapdb_ module.
-
-.. _sapdb: http://www.sapdb.org/sapdbPython.html
 
 MS SQL Server
 -------------
@@ -1909,9 +1903,6 @@ SQL Server on a "named" port, make sure to specify the port number in the
 URI.
 
 The two drivers currently supported are adodbapi_ and pymssql_.
-
-.. _adodbapi: http://adodbapi.sourceforge.net/
-.. _pymssql: http://pymssql.sourceforge.net/
 
 The user can choose a DB API driver for MSSQL by using a ``driver``
 parameter in DB URI or MSSQLConnection that can be a comma-separated list
