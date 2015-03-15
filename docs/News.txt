@@ -10,6 +10,8 @@ News
 SQLObject 1.6.6
 ===============
 
+Released 15 Mar 2015.
+
 * Use fdb adapter for Firebird.
 
 SQLObject 1.6.5
