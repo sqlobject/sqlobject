@@ -4,7 +4,6 @@ import warnings
 from sqlobject import col
 from sqlobject.dbconnection import DBAPI
 
-kinterbasdb = None
 
 class FirebirdConnection(DBAPI):
 
@@ -17,13 +16,16 @@ class FirebirdConnection(DBAPI):
     def __init__(self, host, db, port='3050', user='sysdba',
                  password='masterkey', autoCommit=1,
                  dialect=None, role=None, charset=None, **kw):
-        global kinterbasdb
-        if kinterbasdb is None:
+        try:
+            import fdb
+            self.module = fdb
+        except ImportError:
             import kinterbasdb
             # See http://kinterbasdb.sourceforge.net/dist_docs/usage.html
-            # for an explanation; in short: use datetime, decimal and unicode.
+            # for an explanation; in short: use datetime, decimal and
+            # unicode.
             kinterbasdb.init(type_conv=200)
-        self.module = kinterbasdb
+            self.module = kinterbasdb
 
         self.host = host
         self.port = port
