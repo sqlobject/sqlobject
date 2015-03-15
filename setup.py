@@ -33,7 +33,7 @@ if is_setuptools:
         'mysql': ['MySQLdb'],
         'postgresql': ['psycopg'], # or pgdb from PyGreSQL
         'sqlite': ['pysqlite'],
-        'firebird': ['kinterbasdb'],
+        'firebird': ['fdb'],  # or kinterbasdb
         'sybase': ['Sybase'],
         'mssql': ['adodbapi'], # or pymssql
         'sapdb': ['sapdb'],
