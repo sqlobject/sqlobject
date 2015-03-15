@@ -44,8 +44,8 @@ Requirements
 ============
 
 Currently SQLObject supports MySQL_ via MySQLdb_ aka MySQL-python,
-PostgreSQL_ via psycopg1_ or psycopg2_, SQLite_ via PySQLite_,
-Firebird_ via kinterbasdb_, `MAX DB`_ (also known as SAP DB) via sapdb_,
+PostgreSQL_ via psycopg1_ or psycopg2_, SQLite_ via PySQLite_, Firebird_
+via fdb_ or kinterbasdb_, `MAX DB`_ (also known as SAP DB) via sapdb_,
 Sybase via Sybase_, and `MSSQL Server`_ via pymssql_ (+ FreeTDS_) or
 ADODBAPI_ (Win32).
 
