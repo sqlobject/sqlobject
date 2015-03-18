@@ -3,14 +3,8 @@ Exports a SQLObject class (possibly annotated) to a CSV file.
 """
 import os
 import csv
-import sys
-try:
-    from cStringIO import StringIO
-except ImportError:
-    try:
-        from StringIO import StringIO
-    except ImportError:
-        from io import StringIO, BytesIO
+
+from io import BytesIO, StringIO
 import sqlobject
 from sqlobject.compat import string_type
 
@@ -169,11 +163,7 @@ def export_csv_zip(soClasses, file=None, zip=None, filename_prefix='',
         close_zip_when_finished = False
     else:
         return_when_finished = True
-        if sys.version_info[0] < 3:
-            file = StringIO()
-        else:
-            # zipfile on python3 requires BytesIO
-            file = BytesIO()
+        file = BytesIO()
 
     if not zip:
         zip = zipfile.ZipFile(file, mode='w')
