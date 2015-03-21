@@ -98,7 +98,7 @@ class TestValidation:
             assert getattr(t, name) == value
         if PY2:
             for name, cls, value in (
-                    ('name7', SOValidationTestUnicode, u'test')):
+                    ('name7', SOValidationTestUnicode, u'test'),):
                 setattr(t, name, cls(value))
                 assert getattr(t, name) == value
 
