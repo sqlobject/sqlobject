@@ -74,8 +74,10 @@ if mxdatetime_available:
 default_datetime_implementation = DATETIME_IMPLEMENTATION
 
 if not PY2:
-    # alias for python 3 compatability
+    # alias for python 3 compatibility
     long = int
+    # This is to satisfy flake8 under python 3
+    unicode = str
 
 NoDefault = sqlbuilder.NoDefault
 
