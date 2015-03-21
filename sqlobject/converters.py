@@ -3,8 +3,9 @@ import datetime
 from decimal import Decimal
 import time
 import sys
-from .compat import buffer_type
-if sys.version_info[0] < 3:
+from .compat import PY2, buffer_type
+
+if PY2:
     from types import ClassType, InstanceType, NoneType
 else:
     # Use suitable aliases for now
@@ -57,7 +58,7 @@ class ConverterRegistry:
         else:
             self.basic[typ] = func
 
-    if sys.version_info[0] < 3:
+    if PY2:
         def lookupConverter(self, value, default=None):
             if type(value) is InstanceType:
                 # lookup on klasses dict
@@ -95,11 +96,11 @@ def StringLikeConverter(value, db):
     return "'%s'" % value
 
 registerConverter(str, StringLikeConverter)
-if sys.version_info[0] < 3:
+if PY2:
     # noqa for flake8 & python3
     registerConverter(unicode, StringLikeConverter)  # noqa
 registerConverter(array, StringLikeConverter)
-if sys.version_info[0] < 3:
+if PY2:
     registerConverter(buffer_type, StringLikeConverter)
 else:
     registerConverter(memoryview, StringLikeConverter)

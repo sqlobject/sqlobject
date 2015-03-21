@@ -21,7 +21,6 @@ are what gets used.
 from array import array
 from decimal import Decimal
 from itertools import count
-import sys
 import time
 try:
     import cPickle as pickle
@@ -36,7 +35,7 @@ from .classregistry import findClass
 from . import constraints as constrs
 from . import sqlbuilder
 from .styles import capword
-from .compat import string_type, unicode_type, buffer_type
+from .compat import PY2, string_type, unicode_type, buffer_type
 
 import datetime
 datetime_available = True
@@ -74,7 +73,7 @@ if mxdatetime_available:
 
 default_datetime_implementation = DATETIME_IMPLEMENTATION
 
-if sys.version_info[0] > 2:
+if not PY2:
     # alias for python 3 compatability
     long = int
 
@@ -565,7 +564,7 @@ class StringValidator(SOValidator):
             binaryType = type(None)  # Just a simple workaround
         dbEncoding = self.getDbEncoding(state, default='ascii')
         if isinstance(value, unicode_type):
-            if sys.version_info[0] < 3:
+            if PY2:
                 return value.encode(dbEncoding)
             return value
         if self.dataType and isinstance(value, self.dataType):
@@ -576,8 +575,7 @@ class StringValidator(SOValidator):
             return value
         if hasattr(value, '__unicode__'):
             return unicode(value).encode(dbEncoding)
-        if dbName == 'mysql' and sys.version_info[0] > 2 and \
-                isinstance(value, bytes):
+        if dbName == 'mysql' and not PY2 and isinstance(value, bytes):
             return value.decode('ascii', errors='surrogateescape')
         raise validators.Invalid(
             "expected a str in the StringCol '%s', got %s %r instead" % (
@@ -1038,7 +1036,7 @@ class EnumValidator(SOValidator):
         if value in self.enumValues:
             # Only encode on python 2 - on python 3, the database driver
             # will handle this
-            if isinstance(value, unicode_type) and sys.version_info[0] == 2:
+            if isinstance(value, unicode_type) and PY2:
                 dbEncoding = self.getDbEncoding(state)
                 value = value.encode(dbEncoding)
             return value
@@ -1675,10 +1673,10 @@ class BinaryValidator(SOValidator):
             binaryType = connection._binaryType
         if isinstance(value, str):
             if dbName == "sqlite":
-                if sys.version_info[0] > 2:
+                if not PY2:
                     value = bytes(value, 'ascii')
                 value = connection.module.decode(value)
-            if dbName == "mysql" and sys.version_info[0] > 2:
+            if dbName == "mysql" and not PY2:
                 value = value.encode('ascii', errors='surrogateescape')
             return value
         if isinstance(value, (buffer_type, binaryType)):
@@ -1687,7 +1685,7 @@ class BinaryValidator(SOValidator):
                 return cachedValue[0]
             if isinstance(value, array):  # MySQL
                 return value.tostring()
-            if sys.version_info[0] > 2 and isinstance(value, memoryview):
+            if not PY2 and isinstance(value, memoryview):
                 return value.tobytes()
             return str(value)  # buffer => string
         raise validators.Invalid(
@@ -1699,7 +1697,7 @@ class BinaryValidator(SOValidator):
             return None
         connection = state.connection or state.soObject._connection
         binary = connection.createBinary(value)
-        if sys.version_info[0] > 2 and isinstance(binary, memoryview):
+        if not PY2 and isinstance(binary, memoryview):
             binary = str(binary.tobytes(), 'ascii')
         self._cachedValue = (value, binary)
         return binary

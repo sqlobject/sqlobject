@@ -41,13 +41,13 @@ from . import declarative
 from . import events
 from .sresults import SelectResults
 from .util.threadinglocal import local
-from sqlobject.compat import with_metaclass, string_type, unicode_type
+from sqlobject.compat import PY2, with_metaclass, string_type, unicode_type
 
-if ((sys.version_info[0] == 2) and (sys.version_info[:3] < (2, 6, 0))) or \
-   ((sys.version_info[0] == 3) and (sys.version_info[:3] < (3, 4, 0))):
+if ((sys.version_info[0] == 2) and (sys.version_info[:2] < (2, 6))) or \
+   ((sys.version_info[0] == 3) and (sys.version_info[:2] < (3, 4))):
     raise ImportError("SQLObject requires Python 2.6, 2.7 or 3.4+")
 
-if sys.version_info[0] > 2:
+if not PY2:
     # alias for python 3 compatability
     long = int
 
@@ -475,8 +475,7 @@ class sqlmeta(with_metaclass(declarative.DeclarativeMeta, object)):
         conn = connection or soClass._connection
         for columnDef in conn.columnsFromSchema(sqlmeta.table, soClass):
             if columnDef.name not in sqlmeta.columnDefinitions:
-                if isinstance(columnDef.name, unicode_type) and \
-                        sys.version_info[0] == 2:
+                if isinstance(columnDef.name, unicode_type) and PY2:
                     columnDef.name = columnDef.name.encode('ascii')
                 sqlmeta.addColumn(columnDef)
 
@@ -694,8 +693,8 @@ def deprecated(message, level=1, stacklevel=2):
     if warnings_level is not None and warnings_level <= level:
         warnings.warn(message, DeprecationWarning, stacklevel=stacklevel)
 
-# if sys.version_info[:3] < (2, 5, 0):
-#     deprecated("Support for Python 2.4 has been declared obsolete "
+# if sys.version_info[:2] < (2, 6):
+#     deprecated("Support for Python 2.5 has been declared obsolete "
 #     "and will be removed in the next release of SQLObject")
 
 

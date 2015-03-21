@@ -1,8 +1,8 @@
+from sqlobject.compat import PY2
 from sqlobject.constraints import *
 from sqlobject.tests.dbtest import *
 
-import sys
-if sys.version_info[0] > 2:
+if not PY2:
     # alias for python 3 compatability
     long = int
 
@@ -12,7 +12,7 @@ def test_constraints():
     col = Dummy(name='col')
     isString(obj, col, 'blah')
     raises(BadValue, isString, obj, col, 1)
-    if sys.version_info[0] == 2:
+    if PY2:
         # @@: Should this really be an error?
         raises(BadValue, isString, obj, col, u'test!')
     else:

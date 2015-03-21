@@ -1,9 +1,8 @@
 """
 Exports a SQLObject class (possibly annotated) to a CSV file.
 """
-import os
 import csv
-import sys
+import os
 try:
     from cStringIO import StringIO
 except ImportError:
@@ -12,7 +11,7 @@ except ImportError:
     except ImportError:
         from io import StringIO, BytesIO
 import sqlobject
-from sqlobject.compat import string_type
+from sqlobject.compat import PY2, string_type
 
 __all__ = ['export_csv', 'export_csv_zip']
 
@@ -169,7 +168,7 @@ def export_csv_zip(soClasses, file=None, zip=None, filename_prefix='',
         close_zip_when_finished = False
     else:
         return_when_finished = True
-        if sys.version_info[0] < 3:
+        if PY2:
             file = StringIO()
         else:
             # zipfile on python3 requires BytesIO

@@ -1,14 +1,14 @@
-import sys
-from sqlobject import *
-from sqlobject.tests.dbtest import *
-from sqlobject.include import hashcol
 from hashlib import sha256, md5
+from sqlobject import *
+from sqlobject.compat import PY2
+from sqlobject.include import hashcol
+from sqlobject.tests.dbtest import *
 
 ########################################
 # HashCol test
 ########################################
 
-if sys.version_info[0] == 2:
+if PY2:
     def sha256_str(x):
         return sha256(x).hexdigest()
 

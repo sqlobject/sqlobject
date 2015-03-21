@@ -1,6 +1,6 @@
-import sys
 import py.test
 from sqlobject import *
+from sqlobject.compat import PY2
 from sqlobject.tests.dbtest import *
 
 
@@ -17,7 +17,7 @@ def test_BLOBCol():
     if not supports('blobData'):
         py.test.skip("blobData isn't supported")
     setupClass(ImageData)
-    if sys.version_info[0] == 2:
+    if PY2:
         data = ''.join([chr(x) for x in range(256)])
     else:
         data = bytes(range(256))

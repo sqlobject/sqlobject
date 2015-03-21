@@ -20,7 +20,7 @@ from sqlobject import col
 from sqlobject.classregistry import findClass
 from sqlobject.declarative import DeclarativeMeta
 from sqlobject.util import moduleloader
-from sqlobject.compat import with_metaclass, string_type
+from sqlobject.compat import PY2, with_metaclass, string_type
 
 # It's not very unsafe to use tempnam like we are doing:
 warnings.filterwarnings(
@@ -28,7 +28,7 @@ warnings.filterwarnings(
     RuntimeWarning, '.*command', 28)
 
 
-if sys.version_info[0] == 2:
+if PY2:
     # noqa for flake8 and python 3
     input = raw_input  # noqa
 

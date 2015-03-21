@@ -17,7 +17,8 @@ def with_metaclass(meta, *bases):
     return type.__new__(metaclass, 'temporary_class', (), {})
 
 # Compatability definitions (inspired by six)
-if sys.version_info[0] < 3:
+PY2 = sys.version_info[0] < 3
+if PY2:
     # disable flake8 checks on python 3
     string_type = basestring  # noqa
     unicode_type = unicode  # noqa
@@ -26,5 +27,5 @@ if sys.version_info[0] < 3:
 else:
     string_type = str
     unicode_type = str
-    class_types = (type, )
+    class_types = (type,)
     buffer_type = memoryview

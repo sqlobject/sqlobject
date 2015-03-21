@@ -1,9 +1,9 @@
 from sqlobject import *
 from sqlobject.col import validators
+from sqlobject.compat import PY2
 from sqlobject.tests.dbtest import *
 
-import sys
-if sys.version_info[0] > 2:
+if not PY2:
     # alias for python 3 compatability
     long = int
 

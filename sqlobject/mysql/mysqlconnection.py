@@ -1,6 +1,5 @@
-import sys
-from sqlobject import col
-from sqlobject import dberrors
+from sqlobject import col, dberrors
+from sqlobject.compat import PY2
 from sqlobject.dbconnection import DBAPI
 
 
@@ -49,7 +48,7 @@ class MySQLConnection(DBAPI):
             self.dbEncoding = None
 
         global mysql_Bin
-        if sys.version_info[0] > 2 and mysql_Bin is None:
+        if not PY2 and mysql_Bin is None:
             mysql_Bin = MySQLdb.Binary
             MySQLdb.Binary = lambda x: mysql_Bin(x).decode(
                 'ascii', errors='surrogateescape')

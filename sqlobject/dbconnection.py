@@ -19,7 +19,7 @@ from . import col
 from .converters import sqlrepr
 from . import sqlbuilder
 from .util.threadinglocal import local as threading_local
-from .compat import string_type, unicode_type
+from .compat import PY2, string_type, unicode_type
 
 warnings.filterwarnings("ignore", "DB-API extension cursor.lastrowid used")
 
@@ -40,7 +40,7 @@ class ConsoleWriter:
 
     def write(self, text):
         logfile = getattr(sys, self.loglevel)
-        if isinstance(text, unicode_type) and sys.version_info[0] < 3:
+        if PY2 and isinstance(text, unicode_type):
             try:
                 text = text.encode(self.dbEncoding)
             except UnicodeEncodeError:
@@ -210,7 +210,7 @@ class DBConnection:
     @staticmethod
     def _parseURI(uri):
         parsed = urlparse(uri)
-        if sys.version_info[0] == 2 and sys.version_info[1] < 7:
+        if sys.version_info[0:2] == (2, 6):
             # In python 2.6, urlparse only parses the uri completely
             # for certain schemes, so we force the scheme to
             # something that will be parsed correctly
@@ -833,7 +833,7 @@ class Transaction(object):
         if cls not in self._deletedCache:
             self._deletedCache[cls] = []
         self._deletedCache[cls].append(inst.id)
-        if sys.version_info[0] < 3:
+        if PY2:
             meth = types.MethodType(self._dbConnection._SO_delete.__func__,
                                     self, self.__class__)
         else:
@@ -891,7 +891,7 @@ class Transaction(object):
             else:
                 return attr
         else:
-            if sys.version_info[0] < 3:
+            if PY2:
                 meth = types.MethodType(func, self, self.__class__)
             else:
                 meth = types.MethodType(func, self)

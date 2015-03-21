@@ -1,7 +1,6 @@
-import sys
 import py.test
-
 from sqlobject import *
+from sqlobject.compat import PY2
 from sqlobject.tests.dbtest import *
 
 
@@ -42,7 +41,7 @@ def test_create():
     FROM test_unicode
     ORDER BY count
     """)
-    if sys.version_info[0] == 2:
+    if PY2:
         for count, col1, col2 in rows:
             assert data[count].encode('utf-8') == col1
             assert data[count].encode('latin1') == col2
@@ -101,7 +100,7 @@ def test_select():
 
 
 def test_dbEncoding():
-    if sys.version_info[0] > 2:
+    if not PY2:
         # Python 3 mostly ignores dbEncoding
         py.test.skip("This test is for python 2")
     setup()

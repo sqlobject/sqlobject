@@ -5,8 +5,9 @@
    http://www.python.org/topics/database/DatabaseAPI-2.0.html
 """
 
-import sys
-if sys.version_info[0] >= 3:
+from sqlobject.compat import PY2
+
+if not PY2:
     StandardError = Exception
 
 

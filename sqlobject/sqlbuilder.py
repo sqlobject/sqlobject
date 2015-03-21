@@ -66,11 +66,10 @@ import re
 import threading
 import types
 import weakref
-import sys
 
 from . import classregistry
 from .converters import registerConverter, sqlrepr, quote_str, unquote_str
-from .compat import string_type
+from .compat import PY2, string_type
 
 
 class VersionError(Exception):
@@ -264,7 +263,7 @@ def tablesUsedSet(obj, db):
         return {}
 
 
-if sys.version_info[0] < 3:
+if PY2:
     div = operator.div
 else:
     div = operator.truediv

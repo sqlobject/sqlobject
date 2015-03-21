@@ -2,8 +2,9 @@
 Constraints
 """
 
-import sys
-if sys.version_info[0] > 2:
+from sqlobject.compat import PY2
+
+if not PY2:
     # alias for python 3 compatability
     long = int
 
