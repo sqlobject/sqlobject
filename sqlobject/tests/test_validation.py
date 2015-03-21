@@ -48,9 +48,10 @@ class SOValidationTest(object):
         self.value = value
 
 
-class SOValidationTestUnicode(SOValidationTest):
-    def __unicode__(self):
-        return self.value
+if PY2:
+    class SOValidationTestUnicode(SOValidationTest):
+        def __unicode__(self):
+            return self.value
 
 
 class SOValidationTestInt(SOValidationTest):
@@ -92,10 +93,14 @@ class TestValidation:
         for name, cls, value in (
                 ('name4', SOValidationTestFloat, 1.1),
                 ('name6', SOValidationTestBool, True),
-                ('name7', SOValidationTestUnicode, u'test'),
                 ('name8', SOValidationTestInt, 1)):
             setattr(t, name, cls(value))
             assert getattr(t, name) == value
+        if PY2:
+            for name, cls, value in (
+                    ('name7', SOValidationTestUnicode, u'test')):
+                setattr(t, name, cls(value))
+                assert getattr(t, name) == value
 
     def test_wrapType(self):
         t = SOValidation(name3=1)
