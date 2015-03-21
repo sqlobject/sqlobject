@@ -7,6 +7,12 @@ News
 
 .. _start:
 
+SQLObject 1.6.7
+===============
+
+* Minor refactoring to pave the way to Python 3: replace calls like
+  ``unicode(data, encoding)`` with ``data.decode(encoding)``.
+
 SQLObject 1.6.6
 ===============
 
