@@ -10,6 +10,12 @@ News
 SQLObject 3.0.0 (master)
 ========================
 
+Features
+--------
+
+* Support for Python 2 and Python 3 with one codebase!
+  (Python version >= 3.4 currently required.)
+
 Minor features
 --------------
 
