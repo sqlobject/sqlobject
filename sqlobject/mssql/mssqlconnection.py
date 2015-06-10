@@ -299,6 +299,12 @@ class MSSQLConnection(DBAPI):
             return col.Col, {}
 
     def server_version(self):
+        """Get server version:
+            8 - 2000
+            9 - 2005
+            10 - 2008
+            11 - 2012
+        """
         if self._server_version is not None:
             return self._server_version
         try:
