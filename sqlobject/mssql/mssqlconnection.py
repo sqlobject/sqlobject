@@ -82,6 +82,7 @@ class MSSQLConnection(DBAPI):
         self.db = db
         self._server_version = None
         self._can_use_max_types = None
+        self._can_use_microseconds = None
         DBAPI.__init__(self, **kw)
 
     @classmethod
@@ -323,3 +324,11 @@ class MSSQLConnection(DBAPI):
         self._can_use_max_types = can_use_max_types = \
             (server_version is not None) and (server_version >= 9)
         return can_use_max_types
+
+    def can_use_microseconds(self):
+        if self._can_use_microseconds is not None:
+            return self._can_use_microseconds
+        server_version = self.server_version()
+        self._can_use_microseconds = can_use_microseconds = \
+            (server_version is not None) and (server_version >= 10)
+        return can_use_microseconds

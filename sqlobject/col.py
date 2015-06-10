@@ -1206,7 +1206,10 @@ class SODateTimeCol(SOCol):
         return 'DATETIME'
 
     def _mssqlType(self):
-        return 'DATETIME'
+        if self.connection and self.connection.can_use_microseconds():
+            return 'DATETIME2(6)'
+        else:
+            return 'DATETIME'
 
     def _sqliteType(self):
         return 'TIMESTAMP'
@@ -1338,6 +1341,12 @@ class SOTimeCol(SOCol):
 
     def _sybaseType(self):
         return 'TIME'
+
+    def _mssqlType(self):
+        if self.connection and self.connection.can_use_microseconds():
+            return 'TIME(6)'
+        else:
+            return 'TIME'
 
     def _sqliteType(self):
         return 'TIME'
