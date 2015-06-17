@@ -144,15 +144,15 @@ def FloatConverter(value, db):
 registerConverter(float, FloatConverter)
 
 if DateTimeType:
-    def DateTimeConverter(value, db):
-        return "'%s'" % value.strftime("%Y-%m-%d %H:%M:%S.%s")
+    def mxDateTimeConverter(value, db):
+        return "'%s'" % value.strftime("%Y-%m-%d %H:%M:%S")
 
-    registerConverter(DateTimeType, DateTimeConverter)
+    registerConverter(DateTimeType, mxDateTimeConverter)
 
-    def TimeConverter(value, db):
+    def mxTimeConverter(value, db):
         return "'%s'" % value.strftime("%H:%M:%S")
 
-    registerConverter(DateTimeDeltaType, TimeConverter)
+    registerConverter(DateTimeDeltaType, mxTimeConverter)
 
 
 def NoneConverter(value, db):
@@ -178,11 +178,17 @@ if hasattr(time, 'struct_time'):
 
 
 def DateTimeConverter(value, db):
+    return "'%04d-%02d-%02d %02d:%02d:%02d'" % (
+        value.year, value.month, value.day,
+        value.hour, value.minute, value.second)
+
+
+def DateTimeConverterMS(value, db):
     return "'%04d-%02d-%02d %02d:%02d:%02d.%06d'" % (
         value.year, value.month, value.day,
         value.hour, value.minute, value.second, value.microsecond)
 
-registerConverter(datetime.datetime, DateTimeConverter)
+registerConverter(datetime.datetime, DateTimeConverterMS)
 
 
 def DateConverter(value, db):
@@ -192,10 +198,14 @@ registerConverter(datetime.date, DateConverter)
 
 
 def TimeConverter(value, db):
+    return "'%02d:%02d:%02d'" % (value.hour, value.minute, value.second)
+
+
+def TimeConverterMS(value, db):
     return "'%02d:%02d:%02d.%06d'" % (value.hour, value.minute,
                                       value.second, value.microsecond)
 
-registerConverter(datetime.time, TimeConverter)
+registerConverter(datetime.time, TimeConverterMS)
 
 
 def DecimalConverter(value, db):
