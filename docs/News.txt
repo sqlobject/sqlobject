@@ -10,16 +10,25 @@ News
 SQLObject 2.2.0
 ===============
 
-* Minor refactoring to pave the way to Python 3 was merged from
-  `SQLObject 1.6.7`_.
-
-* For MSSQL use datetime2(6) and time(6) columns.
-
-* Fix a bug: mxDateTime doesn't support microseconds; %s in mxDateTime
-  format means ticks.
+Features & Interface
+--------------------
 
 * Add function col.use_microseconds(True/False). Default is to use
   microseconds (True).
+
+* For MSSQL use datetime2(6) and time(6) columns.
+
+Minor features
+--------------
+
+* Minor refactoring to pave the way to Python 3 was merged from
+  `SQLObject 1.6.7`_.
+
+Bugfixes
+--------
+
+* Fix a bug: mxDateTime doesn't support microseconds; %s in mxDateTime
+  format means ticks.
 
 SQLObject 2.1.2
 ===============
