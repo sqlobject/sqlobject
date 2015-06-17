@@ -18,6 +18,9 @@ SQLObject 2.2.0
 * Fix a bug: mxDateTime doesn't support microseconds; %s in mxDateTime
   format means ticks.
 
+* Add function col.use_microseconds(True/False). Default is to use
+  microseconds (True).
+
 SQLObject 2.1.2
 ===============
 

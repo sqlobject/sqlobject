@@ -56,6 +56,22 @@ def test_microseconds():
     assert dt1.col1.microsecond == _now.microsecond
     assert dt1.col3.microsecond == _now.microsecond
 
+    use_microseconds(False)
+    setupClass(DateTime1)
+    _now = datetime.now()
+    dt1 = DateTime1(col1=_now, col2=_now, col3=_now.time())
+
+    assert dt1.col1.microsecond == 0
+    assert dt1.col3.microsecond == 0
+
+    use_microseconds(True)
+    setupClass(DateTime1)
+    _now = datetime.now()
+    dt1 = DateTime1(col1=_now, col2=_now, col3=_now.time())
+
+    assert dt1.col1.microsecond == _now.microsecond
+    assert dt1.col3.microsecond == _now.microsecond
+
 if mxdatetime_available:
     col.default_datetime_implementation = MXDATETIME_IMPLEMENTATION
     from mx.DateTime import now, Time

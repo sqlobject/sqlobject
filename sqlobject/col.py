@@ -33,6 +33,7 @@ from classregistry import findClass
 # Sadly the name "constraints" conflicts with many of the function
 # arguments in this module, so we rename it:
 import constraints as constrs
+import converters
 import sqlbuilder
 from styles import capword
 
@@ -71,6 +72,24 @@ __all__ = ["datetime_available", "mxdatetime_available",
 
 if mxdatetime_available:
     __all__.append("MXDATETIME_IMPLEMENTATION")
+
+
+def use_microseconds(use=True):
+    if use:
+        SODateTimeCol.datetimeFormat = '%Y-%m-%d %H:%M:%S.%f'
+        SOTimeCol.timeFormat = '%H:%M:%S.%f'
+        dt_types = [(datetime.datetime, converters.DateTimeConverterMS),
+                    (datetime.time, converters.TimeConverterMS)]
+    else:
+        SODateTimeCol.datetimeFormat = '%Y-%m-%d %H:%M:%S'
+        SOTimeCol.timeFormat = '%H:%M:%S'
+        dt_types = [(datetime.datetime, converters.DateTimeConverter),
+                    (datetime.time, converters.TimeConverter)]
+    for dt_type, converter in dt_types:
+        converters.registerConverter(dt_type, converter)
+
+
+__all__.append("use_microseconds")
 
 
 creationOrder = count()
