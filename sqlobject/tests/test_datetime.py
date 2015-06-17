@@ -43,7 +43,11 @@ def test_microseconds():
     connection = getConnection()
     if hasattr(connection, 'can_use_microseconds') and \
             not connection.can_use_microseconds():
-        py.test.skip("The database doesn't support microseconds; microseconds are supported by MariaDB since version 5.3.0 and by MySQL since version 5.6.4.")
+        py.test.skip(
+            "The database doesn't support microseconds; "
+            "microseconds are supported by MariaDB since version 5.3.0, "
+            "by MySQL since version 5.6.4, "
+            "by MSSQL since MS SQL Server 2008.")
 
     setupClass(DateTime1)
     _now = datetime.now()
