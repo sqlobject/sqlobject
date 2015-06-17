@@ -117,7 +117,7 @@ registerConverter(float, FloatConverter)
 
 if DateTimeType:
     def DateTimeConverter(value, db):
-        return "'%s'" % value.strftime("%Y-%m-%d %H:%M:%S.%s")
+        return "'%s'" % value.strftime("%Y-%m-%d %H:%M:%S")
 
     registerConverter(DateTimeType, DateTimeConverter)
 

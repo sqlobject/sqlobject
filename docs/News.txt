@@ -15,6 +15,9 @@ SQLObject 2.2.0
 
 * For MSSQL use datetime2(6) and time(6) columns.
 
+* Fix a bug: mxDateTime doesn't support microseconds; %s in mxDateTime
+  format means ticks.
+
 SQLObject 2.1.2
 ===============
 
