@@ -7,7 +7,7 @@ News
 
 .. _start:
 
-SQLObject 2.1.3
+SQLObject 2.2.0
 ===============
 
 * Minor refactoring to pave the way to Python 3 was merged from

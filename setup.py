@@ -58,7 +58,7 @@ For development see the projects at
 `SourceForge <http://sourceforge.net/projects/sqlobject/>`_
 and `GitHub <https://github.com/sqlobject>`_.
 
-.. image:: https://travis-ci.org/sqlobject/sqlobject.svg?branch=2.1
+.. image:: https://travis-ci.org/sqlobject/sqlobject.svg?branch=2.2
   :target: https://travis-ci.org/sqlobject/sqlobject
 """,
       classifiers=[
