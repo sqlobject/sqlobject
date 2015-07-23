@@ -23,6 +23,8 @@ Minor features
 
 * PyDispatcher (>=2.0.4) was made an external dependency.
 
+* Document MSSQL server versions -- merged from `SQLObject 2.2.0`_.
+
 Development
 -----------
 
@@ -33,6 +35,11 @@ Documentation
 
 * Documentation is published at http://sqlobject.readthedocs.org/ in
   Sphinx format.
+
+Tests
+-----
+
+* Speedup SQLite connections in tests -- merged from `SQLObject 2.2.0`_.
 
 SQLObject 2.2.0
 ===============
