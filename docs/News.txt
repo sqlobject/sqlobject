@@ -117,6 +117,10 @@ SQLObject 1.7.6
 * Minor refactoring to pave the way to Python 3 was merged from
   `SQLObject 1.6.7`_.
 
+* Document MSSQL server versions -- merged from `SQLObject 1.6.7`_.
+
+* Speedup SQLite connections in tests -- merged from `SQLObject 1.6.7`_.
+
 SQLObject 1.7.5
 ===============
 
@@ -187,6 +191,8 @@ SQLObject 1.6.7
   ``unicode(data, encoding)`` with ``data.decode(encoding)``.
 
 * Document MSSQL server versions.
+
+* Speedup SQLite connections in tests.
 
 SQLObject 1.6.6
 ===============

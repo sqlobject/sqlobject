@@ -78,10 +78,17 @@ def setupClass(soClasses, force=False):
     installOrClear(soClasses, force=force)
     return soClasses
 
+def speedupSQLiteConnection(connection):
+    connection.query("PRAGMA synchronous=OFF")
+    connection.query("PRAGMA count_changes=OFF")
+    connection.query("PRAGMA journal_mode=MEMORY")
+    connection.query("PRAGMA temp_store=MEMORY")
+
 installedDBFilename = os.path.join(getcwd(), 'dbs_data.tmp')
 
 installedDBTracker = sqlobject.connectionForURI(
     'sqlite:///' + installedDBFilename)
+speedupSQLiteConnection(installedDBTracker)
 
 def getConnection(**kw):
     name = getConnectionURI()
@@ -90,6 +97,8 @@ def getConnection(**kw):
         conn.debug = True
     if conftest.option.show_sql_output:
         conn.debugOutput = True
+    if conn.dbName == 'sqlite':
+        speedupSQLiteConnection(conn)
     return conn
 
 def getConnectionURI():
@@ -278,6 +287,7 @@ def setSQLiteConnectionFactory(TableClass, factory):
         debugThreading=conn.debugThreading, registry=conn.registry,
         factory=factory
     )
+    speedupSQLiteConnection(TableClass._connection)
     installOrClear([TableClass])
 
 def deprecated_module():
