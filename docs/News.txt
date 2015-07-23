@@ -15,6 +15,8 @@ SQLObject 1.6.7
 
 * Document MSSQL server versions.
 
+* Speedup SQLite connections in tests.
+
 SQLObject 1.6.6
 ===============
 
