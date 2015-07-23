@@ -78,6 +78,7 @@ def setupClass(soClasses, force=False):
     installOrClear(soClasses, force=force)
     return soClasses
 
+
 def speedupSQLiteConnection(connection):
     connection.query("PRAGMA synchronous=OFF")
     connection.query("PRAGMA count_changes=OFF")
