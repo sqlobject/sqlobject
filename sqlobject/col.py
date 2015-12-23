@@ -818,16 +818,19 @@ class SOKeyCol(SOCol):
         self.refColumn = kw.pop('refColumn', None)
         super(SOKeyCol, self).__init__(**kw)
 
+    def _idType(self):
+        return self.soClass.sqlmeta.idType
+
     def _sqlType(self):
-        return self.key_type[self.soClass.sqlmeta.idType]
+        return self.key_type[self._idType()]
 
     def _sybaseType(self):
         key_type = {int: "NUMERIC(18,0) NULL", str: "TEXT"}
-        return key_type[self.soClass.sqlmeta.idType]
+        return key_type[self._idType()]
 
     def _mssqlType(self):
         key_type = {int: "INT NULL", str: "TEXT"}
-        return key_type[self.soClass.sqlmeta.idType]
+        return key_type[self._idType()]
 
 class KeyCol(Col):
 
@@ -844,6 +847,10 @@ class SOForeignKey(SOKeyCol):
         else:
             kw['name'] = style.instanceAttrToIDAttr(style.pythonClassToAttr(foreignKey))
         super(SOForeignKey, self).__init__(**kw)
+
+    def _idType(self):
+        other = findClass(self.foreignKey, self.soClass.sqlmeta.registry)
+        return other.sqlmeta.idType
 
     def sqliteCreateSQL(self):
         sql = SOKeyCol.sqliteCreateSQL(self)
