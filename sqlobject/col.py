@@ -836,6 +836,33 @@ class KeyCol(Col):
 
     baseClass = SOKeyCol
 
+class ForeignKeyValidator(SOValidator):
+
+    def __init__(self, *args, **kw):
+        super(ForeignKeyValidator, self).__init__(*args, **kw)
+        self.fkIDType = None
+
+    def from_python(self, value, state):
+        if value is None:
+            return None
+        # Avoid importing the main module
+        # to get the SQLObject class for isinstance
+        if hasattr(value, 'sqlmeta'):
+            return value
+        if self.fkIDType is None:
+            otherTable = findClass(self.soCol.foreignKey,
+                                   self.soCol.soClass.sqlmeta.registry)
+            self.fkIDType = otherTable.sqlmeta.idType
+        try:
+            value = self.fkIDType(value)
+            return value
+        except (ValueError, TypeError):
+            pass
+        raise validators.Invalid("expected a %r for the ForeignKey '%s', "
+                                 "got %s %r instead" %
+                                 (self.fkIDType, self.name,
+                                  type(value), value), value, state)
+
 class SOForeignKey(SOKeyCol):
 
     def __init__(self, **kw):
@@ -847,6 +874,10 @@ class SOForeignKey(SOKeyCol):
         else:
             kw['name'] = style.instanceAttrToIDAttr(style.pythonClassToAttr(foreignKey))
         super(SOForeignKey, self).__init__(**kw)
+
+    def createValidators(self):
+        return [ForeignKeyValidator(name=self.name)] + \
+            super(SOForeignKey, self).createValidators()
 
     def _idType(self):
         other = findClass(self.foreignKey, self.soClass.sqlmeta.registry)
