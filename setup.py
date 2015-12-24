@@ -82,7 +82,7 @@ and `GitHub <https://github.com/sqlobject>`_.
       maintainer_email="phd@phdru.name",
       url="http://sqlobject.org/devel/",
       download_url="https://pypi.python.org/pypi/SQLObject/"
-          "%sdev-20150327" % version,
+          "%sdev-20151224" % version,
       license="LGPL",
       packages=["sqlobject"] +
           ['sqlobject.%s' % package for package in subpackages],
