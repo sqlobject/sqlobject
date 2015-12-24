@@ -16,6 +16,9 @@ Features
 * Support for Python 2 and Python 3 with one codebase!
   (Python version >= 3.4 currently required.)
 
+* Columns for ForeignKey are created using idType of the referenced
+  table -- merged from `SQLObject 2.2.0`_.
+
 Minor features
 --------------
 
@@ -40,6 +43,9 @@ Tests
 -----
 
 * Speedup SQLite connections in tests -- merged from `SQLObject 2.2.0`_.
+
+* Added new test helper setupCyclicClasses to setup classes with mutual
+  references -- merged from `SQLObject 2.2.0`_.
 
 SQLObject 2.2.0
 ===============
