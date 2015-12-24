@@ -18,6 +18,9 @@ Features & Interface
 
 * For MSSQL use datetime2(6) and time(6) columns.
 
+* Columns for ForeignKey are created using idType of the referenced
+  table.
+
 Minor features
 --------------
 
@@ -36,6 +39,9 @@ Tests
 -----
 
 * Speedup SQLite connections in tests -- merged from `SQLObject 1.7.6`_.
+
+* Added new test helper setupCyclicClasses to setup classes with mutual
+  references.
 
 SQLObject 2.1.2
 ===============
