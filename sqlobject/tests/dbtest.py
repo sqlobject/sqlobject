@@ -6,7 +6,7 @@ from __future__ import print_function
 import logging
 import os
 import sys
-from py.test import raises
+from py.test import raises, skip
 import sqlobject
 import sqlobject.conftest as conftest
 
@@ -330,7 +330,24 @@ def setupLogging():
     logger = logging.getLogger()
     logger.addHandler(hdlr)
 
+
+def setupCyclicClasses(*classes):
+    if not supports('dropTableCascade'):
+        skip("dropTableCascade isn't supported")
+    conn = getConnection()
+    for soClass in classes:
+        soClass.setConnection(conn)
+        soClass.dropTable(ifExists=True, cascade=True)
+
+    constraints = []
+    for soClass in classes:
+        constraints += soClass.createTable(ifNotExists=True,
+                                           applyConstraints=False)
+    for constraint in constraints:
+        conn.query(constraint)
+
+
 __all__ = ['Dummy', 'deprecated_module', 'getConnection', 'getConnectionURI',
-           'inserts', 'raises', 'setupClass', 'setupLogging', 'setup_module',
-           'supports', 'teardown_module',
+           'inserts', 'raises', 'setupClass', 'setupCyclicClasses',
+           'setupLogging', 'setup_module', 'supports', 'teardown_module',
            ]

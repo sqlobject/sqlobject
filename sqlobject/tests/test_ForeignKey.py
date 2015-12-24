@@ -1,3 +1,4 @@
+from formencode import validators
 from sqlobject import *
 from sqlobject.tests.dbtest import *
 from sqlobject.tests.dbtest import InstalledTestDatabase
@@ -93,3 +94,39 @@ def test_otherColumn():
     getConnection().cache.clear()
     assert test_fkey.key1 == test_composer1
     assert test_other.key2 == test_composer2
+
+
+class TestFKValidationA(SQLObject):
+    name = StringCol()
+    bfk = ForeignKey("TestFKValidationB")
+    cfk = ForeignKey("TestFKValidationC", default=None)
+
+
+class TestFKValidationB(SQLObject):
+    name = StringCol()
+    afk = ForeignKey("TestFKValidationA")
+
+
+class TestFKValidationC(SQLObject):
+    class sqlmeta:
+        idType = str
+    name = StringCol()
+
+
+def test_foreignkey_validation():
+    setupCyclicClasses(TestFKValidationA, TestFKValidationB, TestFKValidationC)
+    a = TestFKValidationA(name="testa", bfk=None)
+    b = TestFKValidationB(name="testb", afk=a)
+    c = TestFKValidationC(id='testc', name="testc")
+    a.bfk = b
+    a.cfk = c
+    assert a.bfk == b
+    assert a.cfk == c
+    assert b.afk == a
+
+    raises(validators.Invalid,
+           TestFKValidationA, name="testa", bfk='testb', cfk='testc')
+
+    a = TestFKValidationA(name="testa", bfk=1, cfk='testc')
+    assert a.bfkID == 1
+    assert a.cfkID == 'testc'

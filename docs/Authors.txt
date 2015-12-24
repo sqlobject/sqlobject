@@ -32,6 +32,7 @@ Contributions have been made by:
 * Ian Cordasco <graffatcolmingov at gmail.com>
 * Lukasz Dobrzanski <lukasz.m.dobrzanski at gmail.com>
 * Gregor Horvath <gh at gregor-horvath.com>
+* Nathan Edwards <nje5 at georgetown.edu>
 * Oleg Broytman <phd@phdru.name>
 
 .. image:: http://sflogo.sourceforge.net/sflogo.php?group_id=74338&type=10
