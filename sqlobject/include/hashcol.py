@@ -91,7 +91,7 @@ class SOHashCol(sqlobject.col.SOStringCol):
         else:
             self.hashMethod = kw['hashMethod']
             del kw['hashMethod']
-        super(sqlobject.col.SOStringCol, self).__init__(**kw)
+        super(SOHashCol, self).__init__(**kw)
 
     def createValidators(self):
         return [HashValidator(name=self.name, hashMethod=self.hashMethod)] + \
