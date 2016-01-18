@@ -1743,6 +1743,13 @@ class SQLObject(with_metaclass(declarative.DeclarativeMeta, object)):
     def tablesUsedImmediate(self):
         return [self.__class__.q]
 
+    # hash implementation
+
+    def __hash__(self):
+        # We hash on class name and id, since that should be
+        # unique
+        return hash((self.__class__.__name__, self.id))
+
     # Comparison
 
     def __eq__(self, other):
