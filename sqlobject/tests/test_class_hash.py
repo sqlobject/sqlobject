@@ -15,7 +15,6 @@ def test_class_hash():
     setupClass(ClassHashTest)
     ClassHashTest(name='bob')
 
-    conn = ClassHashTest._connection
     b = ClassHashTest.byName('bob')
     hashed = hash(b)
     b.expire()
