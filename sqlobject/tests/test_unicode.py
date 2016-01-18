@@ -12,7 +12,8 @@ from sqlobject.tests.dbtest import *
 class TestUnicode(SQLObject):
     count = IntCol(alternateID=True)
     col1 = UnicodeCol(alternateID=True, length=100)
-    col2 = UnicodeCol(dbEncoding='latin1')
+    if PY2:
+        col2 = UnicodeCol(dbEncoding='latin1')
 
 
 data = [u'\u00f0', u'test', 'ascii test']
@@ -24,60 +25,76 @@ def setup():
     items = []
     setupClass(TestUnicode)
     if TestUnicode._connection.dbName == 'postgres':
-        TestUnicode._connection.query('SET client_encoding TO latin1')
-    for i, s in enumerate(data):
-        items.append(TestUnicode(count=i, col1=s, col2=s))
+        if PY2:
+            dbEncoding = 'latin1'
+        else:
+            dbEncoding = 'utf8'
+        TestUnicode._connection.query('SET client_encoding TO %s' % dbEncoding)
+    if PY2:
+        for i, s in enumerate(data):
+            items.append(TestUnicode(count=i, col1=s, col2=s))
+    else:
+        for i, s in enumerate(data):
+            items.append(TestUnicode(count=i, col1=s))
 
 
 def test_create():
     setup()
     for s, item in zip(data, items):
         assert item.col1 == s
-        assert item.col2 == s
+        if PY2:
+            assert item.col2 == s
 
     conn = TestUnicode._connection
-    rows = conn.queryAll("""
-    SELECT count, col1, col2
-    FROM test_unicode
-    ORDER BY count
-    """)
     if PY2:
+        rows = conn.queryAll("""
+        SELECT count, col1, col2
+        FROM test_unicode
+        ORDER BY count
+        """)
         for count, col1, col2 in rows:
             assert data[count].encode('utf-8') == col1
             assert data[count].encode('latin1') == col2
     else:
+        rows = conn.queryAll("""
+        SELECT count, col1
+        FROM test_unicode
+        ORDER BY count
+        """)
         # On python 3, everthings already decoded to unicode
-        for count, col1, col2 in rows:
+        for count, col1 in rows:
             assert data[count] == col1
-            assert data[count] == col2
 
 
 def _test_select():
     for i, value in enumerate(data):
         rows = list(TestUnicode.select(TestUnicode.q.col1 == value))
         assert len(rows) == 1
-        rows = list(TestUnicode.select(TestUnicode.q.col2 == value))
-        assert len(rows) == 1
-        rows = list(TestUnicode.select(AND(
-            TestUnicode.q.col1 == value,
-            TestUnicode.q.col2 == value
-        )))
-        assert len(rows) == 1
+        if PY2:
+            rows = list(TestUnicode.select(TestUnicode.q.col2 == value))
+            assert len(rows) == 1
+            rows = list(TestUnicode.select(AND(
+                TestUnicode.q.col1 == value,
+                TestUnicode.q.col2 == value
+            )))
+            assert len(rows) == 1
         rows = list(TestUnicode.selectBy(col1=value))
         assert len(rows) == 1
-        rows = list(TestUnicode.selectBy(col2=value))
-        assert len(rows) == 1
-        rows = list(TestUnicode.selectBy(col1=value, col2=value))
-        assert len(rows) == 1
+        if PY2:
+            rows = list(TestUnicode.selectBy(col2=value))
+            assert len(rows) == 1
+            rows = list(TestUnicode.selectBy(col1=value, col2=value))
+            assert len(rows) == 1
         row = TestUnicode.byCol1(value)
         assert row.count == i
-    rows = list(TestUnicode.select(OR(
-        TestUnicode.q.col1 == u'\u00f0',
-        TestUnicode.q.col2 == u'test'
-    )))
-    assert len(rows) == 2
-    rows = list(TestUnicode.selectBy(col1=u'\u00f0', col2=u'test'))
-    assert len(rows) == 0
+    if PY2:
+        rows = list(TestUnicode.select(OR(
+            TestUnicode.q.col1 == u'\u00f0',
+            TestUnicode.q.col2 == u'test'
+        )))
+        assert len(rows) == 2
+        rows = list(TestUnicode.selectBy(col1=u'\u00f0', col2=u'test'))
+        assert len(rows) == 0
 
     # starts/endswith/contains
     rows = list(TestUnicode.select(TestUnicode.q.col1.startswith("test")))
