@@ -1748,7 +1748,7 @@ class SQLObject(with_metaclass(declarative.DeclarativeMeta, object)):
     def __hash__(self):
         # We hash on class name and id, since that should be
         # unique
-        return hash((self.__class__.name, self.id))
+        return hash((self.__class__.__name__, self.id))
 
     # Comparison
 
