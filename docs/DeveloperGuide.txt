@@ -191,8 +191,8 @@ directory.  Pudge converts documentation from Restructured Text to
 HTML.  It presently requires kid 0.9.3, which must be obtained
 separately (for instance, from http://pypi.python.org/pypi/kid/0.9.3)
 
-.. image:: http://sflogo.sourceforge.net/sflogo.php?group_id=74338&type=10
-   :target: http://sourceforge.net/projects/sqlobject
+.. image:: https://sourceforge.net/sflogo.php?group_id=74338&type=10
+   :target: https://sourceforge.net/projects/sqlobject
    :class: noborder
    :align: center
    :height: 15

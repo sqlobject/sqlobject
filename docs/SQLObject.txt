@@ -50,7 +50,7 @@ Sybase via Sybase_, and `MSSQL Server`_ via pymssql_ (+ FreeTDS_) or
 adodbapi_ (Win32).
 
 .. _MySQL: http://mysql.com
-.. _MySQLdb: http://sourceforge.net/projects/mysql-python/
+.. _MySQLdb: https://sourceforge.net/projects/mysql-python/
 .. _PostgreSQL: http://postgresql.org
 .. _psycopg1: http://initd.org/projects/psycopg1
 .. _psycopg2: http://initd.org/projects/psycopg2
@@ -2082,8 +2082,8 @@ Documentation`_.
 .. _SQLBuilder: SQLBuilder.html
 .. _`SQLBuilder Documentation`: SQLBuilder.html
 
-.. image:: http://sflogo.sourceforge.net/sflogo.php?group_id=74338&type=10
-   :target: http://sourceforge.net/projects/sqlobject
+.. image:: https://sourceforge.net/sflogo.php?group_id=74338&type=10
+   :target: https://sourceforge.net/projects/sqlobject
    :class: noborder
    :align: center
    :height: 15
