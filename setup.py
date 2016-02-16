@@ -55,7 +55,7 @@ Supports MySQL, PostgreSQL, SQLite, Firebird, Sybase, MSSQL and MaxDB (SAPDB).
 Python 2.5 or higher is required.
 
 For development see the projects at
-`SourceForge <http://sourceforge.net/projects/sqlobject/>`_
+`SourceForge <https://sourceforge.net/projects/sqlobject/>`_
 and `GitHub <https://github.com/sqlobject>`_.
 
 .. image:: https://travis-ci.org/sqlobject/sqlobject.svg?branch=1.6
