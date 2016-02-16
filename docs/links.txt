@@ -3,7 +3,7 @@ SQLObject Links
 
 If you have a link you'd like added to this page, please submit a bug
 report with the link and title at `bug tracker
-<http://sourceforge.net/p/sqlobject/bugs/>`_ or send pull requests at
+<https://sourceforge.net/p/sqlobject/bugs/>`_ or send pull requests at
 `GitHub <https://github.com/sqlobject/sqlobject>`_).
 
 Articles and Documentation
@@ -60,8 +60,8 @@ Open Source Projects
 
 * `Stoq <http://www.stoq.com.br/>`_, an open source retail system.
 
-.. image:: http://sflogo.sourceforge.net/sflogo.php?group_id=74338&type=10
-   :target: http://sourceforge.net/projects/sqlobject
+.. image:: https://sourceforge.net/sflogo.php?group_id=74338&type=10
+   :target: https://sourceforge.net/projects/sqlobject
    :class: noborder
    :align: center
    :height: 15

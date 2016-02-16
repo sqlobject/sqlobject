@@ -209,8 +209,8 @@ Future
 
 * A command to trim versions, by merging upgrade scripts.
 
-.. image:: http://sflogo.sourceforge.net/sflogo.php?group_id=74338&type=10
-   :target: http://sourceforge.net/projects/sqlobject
+.. image:: https://sourceforge.net/sflogo.php?group_id=74338&type=10
+   :target: https://sourceforge.net/projects/sqlobject
    :class: noborder
    :align: center
    :height: 15
