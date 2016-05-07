@@ -89,16 +89,19 @@ def test_str_or_sqlrepr():
 
 
 def test_CONCAT():
+    setupClass(TestSQLBuilder)
+    TestSQLBuilder(name='test', value=42)
+
     assert sqlrepr(CONCAT('a', 'b'), 'mysql') == "CONCAT('a', 'b')"
     assert sqlrepr(CONCAT('a', 'b'), 'sqlite') == "'a' || 'b'"
-    setupClass(TestSQLBuilder)
     assert sqlrepr(CONCAT('prefix', TestSQLBuilder.q.name), 'mysql') == \
         "CONCAT('prefix', test_sql_builder.name)"
     assert sqlrepr(CONCAT('prefix', TestSQLBuilder.q.name), 'sqlite') == \
         "'prefix' || test_sql_builder.name"
-    TestSQLBuilder(name='test', value=42)
+
     select = Select([CONCAT(TestSQLBuilder.q.name, '-suffix')],
                     staticTables=['test_sql_builder'])
     connection = getConnection()
-    assert connection.queryAll(connection.sqlrepr(select))[0][0] == \
-        "test-suffix"
+    rows = connection.queryAll(connection.sqlrepr(select))
+    result = rows[0][0]
+    assert result == "test-suffix"
