@@ -1088,6 +1088,17 @@ def _quote_like_special(s, db):
     return s
 
 
+class CONCAT:
+    def __init__(self, *expressions):
+        self.expressions = expressions
+
+    def __sqlrepr__(self, db):
+        values = [sqlrepr(expr, db) for expr in self.expressions]
+        if db == "mysql":
+            return "CONCAT(%s)" % ", ".join(values)
+        else:
+            return " || ".join(values)
+
 ########################################
 # SQL JOINs
 ########################################

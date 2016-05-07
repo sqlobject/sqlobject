@@ -64,6 +64,9 @@ Features & Interface
 Minor features
 --------------
 
+* Add sqlbuilder.CONCAT to generate concatenation command (either using
+  function CONCAT() or '||' operator).
+
 * Minor refactoring to pave the way to Python 3 was merged from
   `SQLObject 1.6.7`_.
 

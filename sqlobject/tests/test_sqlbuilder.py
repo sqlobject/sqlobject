@@ -86,3 +86,19 @@ def test_str_or_sqlrepr():
     delete = Delete('employees', where=None)
     assert sqlrepr(delete, 'sqlite') == \
         "DELETE FROM employees"
+
+
+def test_CONCAT():
+    assert sqlrepr(CONCAT('a', 'b'), 'mysql') == "CONCAT('a', 'b')"
+    assert sqlrepr(CONCAT('a', 'b'), 'sqlite') == "'a' || 'b'"
+    setupClass(TestSQLBuilder)
+    assert sqlrepr(CONCAT('prefix', TestSQLBuilder.q.name), 'mysql') == \
+        "CONCAT('prefix', test_sql_builder.name)"
+    assert sqlrepr(CONCAT('prefix', TestSQLBuilder.q.name), 'sqlite') == \
+        "'prefix' || test_sql_builder.name"
+    TestSQLBuilder(name='test', value=42)
+    select = Select([CONCAT(TestSQLBuilder.q.name, '-suffix')],
+                    staticTables=['test_sql_builder'])
+    connection = getConnection()
+    assert connection.queryAll(connection.sqlrepr(select))[0][0] == \
+        "test-suffix"
