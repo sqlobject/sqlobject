@@ -1,4 +1,5 @@
 from sqlobject import *
+from sqlobject.compat import PY2
 from sqlobject.sqlbuilder import *
 from sqlobject.tests.dbtest import *
 
@@ -104,4 +105,6 @@ def test_CONCAT():
     connection = getConnection()
     rows = connection.queryAll(connection.sqlrepr(select))
     result = rows[0][0]
+    if not PY2 and not isinstance(result, str):
+        result = result.decode('ascii')
     assert result == "test-suffix"
