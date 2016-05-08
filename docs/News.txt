@@ -7,6 +7,11 @@ News
 
 .. _start:
 
+SQLObject 2.2.1
+===============
+
+* Fix a bug in sqlbuilder.CONCAT.
+
 SQLObject 2.2.0
 ===============
 

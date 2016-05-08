@@ -933,7 +933,7 @@ def _quote_like_special(s, db):
     s = s.replace('\\', r'\\').replace('%', escape+'%').replace('_', escape+'_')
     return s
 
-class CONCAT:
+class CONCAT(SQLExpression):
     def __init__(self, *expressions):
         self.expressions = expressions
 
