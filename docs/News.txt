@@ -10,6 +10,8 @@ News
 SQLObject 2.2.0
 ===============
 
+Released 8 May 2016.
+
 Features & Interface
 --------------------
 
