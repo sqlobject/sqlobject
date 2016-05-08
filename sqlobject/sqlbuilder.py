@@ -1088,7 +1088,7 @@ def _quote_like_special(s, db):
     return s
 
 
-class CONCAT:
+class CONCAT(SQLExpression):
     def __init__(self, *expressions):
         self.expressions = expressions
 

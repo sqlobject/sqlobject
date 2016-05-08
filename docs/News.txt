@@ -47,6 +47,11 @@ Tests
 * Added new test helper setupCyclicClasses to setup classes with mutual
   references -- merged from `SQLObject 2.2.0`_.
 
+SQLObject 2.2.1
+===============
+
+* Fix a bug in sqlbuilder.CONCAT.
+
 SQLObject 2.2.0
 ===============
 
