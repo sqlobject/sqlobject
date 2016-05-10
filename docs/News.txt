@@ -10,7 +10,9 @@ News
 SQLObject 2.2.1
 ===============
 
-* Fix a bug in sqlbuilder.CONCAT.
+Released 10 May 2016.
+
+* Fix a bug in sqlbuilder.CONCAT (inherit from SQLExpression).
 
 SQLObject 2.2.0
 ===============
