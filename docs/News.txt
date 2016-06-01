@@ -10,6 +10,8 @@ News
 SQLObject 3.0.0 (master)
 ========================
 
+Released 1 Jun 2016.
+
 Features
 --------
 
