@@ -7,10 +7,7 @@ SQLObject Developer Guide
 
 .. _start:
 
-These are some notes on developing SQLObject.  I'll try to expand them
-as things come up.
-
-  -- Ian Bicking
+These are some notes on developing SQLObject.
 
 Development Installation
 ========================
