@@ -78,7 +78,7 @@ Python Style Guide.  Some things to take particular note of:
 
 * **No tabs**.  Not anywhere.  Always indent with 4 spaces.
 
-* I don't stress too much on line length.  But try to break lines up
+* We don't stress too much on line length.  But try to break lines up
   by grouping with parenthesis instead of with backslashes (if you
   can).  Do asserts like::
 
@@ -98,7 +98,7 @@ Python Style Guide.  Some things to take particular note of:
   sqlobject import *`` so names should be fairly distinct, or they
   shouldn't be exported in ``sqlobject.__init__``.
 
-* I'm very picky about whitespace.  There's one and only one right way
+* We're very picky about whitespace.  There's one and only one right way
   to do it.  Good examples::
 
     short = 3
@@ -122,9 +122,9 @@ Python Style Guide.  Some things to take particular note of:
     func( a, b )
     [ 1, 2, 3 ]
 
-  To me, the poor use of whitespace seems lazy.  I'll think less of
-  your code (justified or not) for this very trivial reason.  I will
-  fix all your code for you if you don't do it yourself, because I
+  To us, the poor use of whitespace seems lazy.  We'll think less of
+  your code (justified or not) for this very trivial reason.  We will
+  fix all your code for you if you don't do it yourself, because we
   can't bear to look at sloppy whitespace.
 
 * Use ``@@`` to mark something that is suboptimal, or where you have a
@@ -210,8 +210,8 @@ miscellaneous functions.
 
 .. _raises: http://pytest.org/latest/assert.html#assertions-about-expected-exceptions
 
-If you submit a patch or implement a feature without a test, I'll be
-forced to write the test.  That's no fun for me, to just be writing
+If you submit a patch or implement a feature without a test, we'll be
+forced to write the test.  That's no fun for us, to just be writing
 tests.  So please, write tests; everything at least needs to be
 exercised, even if the tests are absolutely complete.
 
