@@ -32,6 +32,36 @@ Voila!  The packages are globally installed, but the files from the
 checkout were not copied into ``site-packages``.  See `setuptools
 <http://pythonhosted.org/setuptools/>`_ for more.
 
+Architecture
+============
+
+There are four main kinds of objects in SQLObject: tables, columns,
+connections and converters.
+
+Tables-related objects are in sqlobject/main.py module. There are two
+main classes: SQLObject and sqlmeta; the latter is not a metaclass but a
+parent class for sqlmeta attribute in every class - the authors tried to
+move there all attributes and methods not directly related to columns to
+avoid cluttering table namespace.
+
+Columns are instances of classes from sqlobject/col.py. There are two
+classes for every column: one is for user to include into an instance of
+SQLObject, an instance of the other is automatically created by
+SQLObject metaclass. The two classes are names SOCol and Col; for
+example, SOBoolCol and BoolCol.
+
+Connections are instances of DBConnection class (from
+sqlobject/dbconnection.py ) and its concrete descendants. DBConnection
+contains generic code for generating SQL, working with transactions and
+so on. Concrete connection classes (like PostgresConnection and
+SQLiteConnection) provides backend-specific functionality.
+
+Converters from sqlobject/converters.py aren't visible to the user. They
+are used behind the scene to convert object to SQL strings. The most
+elaborated converter there is StringConverters. Yes, it converts strings
+to strings. It converts python strings to SQL strings using
+backend-specific quoting rules.
+
 Style Guide
 ===========
 
