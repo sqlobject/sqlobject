@@ -20,7 +20,7 @@ First install `FormEncode <http://www.formencode.org/en/latest/download.html>`_:
 
 Then do the same for SQLObject::
 
-    $ git clone git clone git://git.code.sf.net/p/sqlobject/sqlobject
+    $ git clone git clone git://github.com/sqlobject/sqlobject
     $ cd sqlobject
     $ sudo python setup.py develop
 
