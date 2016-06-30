@@ -225,8 +225,8 @@ Documentation
 
 Please write documentation.  Documentation should live in the docs/
 directory.  Pudge converts documentation from Restructured Text to
-HTML.  It presently requires kid 0.9.3, which must be obtained
-separately (for instance, from http://pypi.python.org/pypi/kid/0.9.3)
+HTML.  It presently requires kid 0.9.6, which must be obtained
+separately (for instance, from http://pypi.python.org/pypi/kid/0.9.6).
 
 .. image:: https://sourceforge.net/sflogo.php?group_id=74338&type=10
    :target: https://sourceforge.net/projects/sqlobject
