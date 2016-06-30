@@ -179,7 +179,7 @@ Tests are important.  Tests keep everything from falling apart.  All
 new additions should have tests.
 
 Testing uses py.test, an alternative to ``unittest``.  It is available at
-http://pytest.org/ and http://pypi.python.org/pypi/pytest.  Read its `getting
+http://pytest.org/ and https://pypi.python.org/pypi/pytest.  Read its `getting
 started`_ document for more.
 
 .. _getting started: http://pytest.org/latest/getting-started.html
@@ -226,7 +226,7 @@ Documentation
 Please write documentation.  Documentation should live in the docs/
 directory.  Pudge converts documentation from Restructured Text to
 HTML.  It presently requires kid 0.9.6, which must be obtained
-separately (for instance, from http://pypi.python.org/pypi/kid/0.9.6).
+separately (for instance, from https://pypi.python.org/pypi/kid/0.9.6).
 
 .. image:: https://sourceforge.net/sflogo.php?group_id=74338&type=10
    :target: https://sourceforge.net/projects/sqlobject
