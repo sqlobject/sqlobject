@@ -35,40 +35,74 @@ checkout were not copied into ``site-packages``.  See `setuptools
 Architecture
 ============
 
-There are four main kinds of objects in SQLObject: tables, columns,
-connections and converters.
+There are three main kinds of objects in SQLObject: tables, columns and
+connections.
 
 Tables-related objects are in `sqlobject/main.py`_ module. There are two
-main classes: SQLObject and sqlmeta; the latter is not a metaclass but a
-parent class for sqlmeta attribute in every class - the authors tried to
-move there all attributes and methods not directly related to columns to
-avoid cluttering table namespace.
+main classes: ``SQLObject`` and ``sqlmeta``; the latter is not a
+metaclass but a parent class for ``sqlmeta`` attribute in every class -
+the authors tried to move there all attributes and methods not directly
+related to columns to avoid cluttering table namespace.
 
 .. _`sqlobject/main.py`: sqlobject/main.py.html
+
+Connections are instances of ``DBConnection`` class (from
+`sqlobject/dbconnection.py`_) and its concrete descendants.
+``DBConnection`` contains generic code for generating SQL, working with
+transactions and so on. Concrete connection classes (like
+``PostgresConnection`` and ``SQLiteConnection``) provide
+backend-specific functionality.
+
+.. _`sqlobject/dbconnection.py`: sqlobject/dbconnection.py.html
+
+Columns, validators and converters
+----------------------------------
 
 Columns are instances of classes from `sqlobject/col.py`_. There are two
 classes for every column: one is for user to include into an instance of
 SQLObject, an instance of the other is automatically created by
-SQLObject metaclass. The two classes are names SOCol and Col; for
-example, SOBoolCol and BoolCol.
+SQLObject's metaclass. The two classes are usually named ``Col`` and
+``SOCol``; for example, ``BoolCol`` and ``SOBoolCol``. User-visible
+classes, descendants of ``Col``, seldom contain any code; the main code
+for a column is in ``SOCol`` descendants and in validators.
 
 .. _`sqlobject/col.py`: sqlobject/col.py.html
 
-Connections are instances of DBConnection class (from
-`sqlobject/dbconnection.py`_) and its concrete descendants. DBConnection
-contains generic code for generating SQL, working with transactions and
-so on. Concrete connection classes (like PostgresConnection and
-SQLiteConnection) provides backend-specific functionality.
+Every column has a list of validators. Validators validate input data
+and convert input data to python data and back. Every validator must
+have methods ``from_python`` and ``to_python``. The former converts data
+from python to internal representation that will be converted by
+converters to SQL strings. The latter converts data from SQL data to
+python. Also please bear in mind that validators can receive ``None``
+(for SQL ``NULL``) and ``SQLExpression`` (an object that represents
+SQLObject expressions); both objects must be passed unchanged by
+validators.
 
-.. _`sqlobject/dbconnection.py`: sqlobject/dbconnection.py.html
-
-Converters from `sqlobject/converters.py`_ aren't visible to the user. They
-are used behind the scene to convert object to SQL strings. The most
-elaborated converter there is StringConverters. Yes, it converts strings
-to strings. It converts python strings to SQL strings using
-backend-specific quoting rules.
+Converters from `sqlobject/converters.py`_ aren't visible to users. They
+are used behind the scene to convert objects returned by validators to
+backend-specific SQL strings. The most elaborated converter is
+``StringLikeConverter``. Yes, it converts strings to strings. It
+converts python strings to SQL strings using backend-specific quoting
+rules.
 
 .. _`sqlobject/converters.py`: sqlobject/converters.py.html
+
+Let look into ``BoolCol`` as an example. The very ``BoolCol`` doesn't
+have any code. ``SOBoolCol`` has a method to create ``BoolValidator``
+and methods to create backend-specific column type. ``BoolValidator``
+has identical methods ``from_python`` and ``to_python``; the method
+passes ``None``, ``SQLExpression`` and bool values unchanged; int and
+objects that have method ``__nonzero__`` are converted to bool; other
+objects trigger validation error. Bool values that are returned by call
+to ``from_python`` will be converted to SQL strings by
+``BoolConverter``; bool values from ``to_python`` (is is supposed they
+are originated from the backend via DB API driver) are passed to the
+application.
+
+Objects that are returned from ``from_python`` must be registered with
+converters. Another approach for ``from_python`` is to return an object
+that has ``__sqlrepr__`` method. Such objects convert to SQL strings
+themselves, converters are not used.
 
 Style Guide
 ===========
