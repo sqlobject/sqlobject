@@ -7,7 +7,7 @@ News
 
 .. _start:
 
-SQLObject 3.0.0 (master)
+SQLObject 3.1.0 (master)
 ========================
 
 Features
@@ -20,6 +20,9 @@ Documentation
 
 * Developer's Guide extended to explain SQLObject architecture and how
   to create a new column type.
+
+SQLObject 3.0.0
+===============
 
 Released 1 Jun 2016.
 
