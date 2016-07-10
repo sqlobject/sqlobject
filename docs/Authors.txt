@@ -33,6 +33,7 @@ Contributions have been made by:
 * Lukasz Dobrzanski <lukasz.m.dobrzanski at gmail.com>
 * Gregor Horvath <gh at gregor-horvath.com>
 * Nathan Edwards <nje5 at georgetown.edu>
+* Lutz Steinborn <l.steinborn at 4c-gmbh.de>
 * Oleg Broytman <phd@phdru.name>
 
 .. image:: https://sourceforge.net/sflogo.php?group_id=74338&type=10
