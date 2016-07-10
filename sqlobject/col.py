@@ -22,7 +22,7 @@ from array import array
 from decimal import Decimal
 from itertools import count
 import time
-import uuid
+from uuid import UUID
 try:
     import cPickle as pickle
 except ImportError:
@@ -692,7 +692,7 @@ class UuidValidator(SOValidator):
         if value is None:
             return None
         if isinstance(value, str):
-            return uuid.UUID(value)
+            return UUID(value)
         raise validators.Invalid(
             "expected string in the UuidCol '%s', "
             "got %s %r instead" % (
@@ -701,7 +701,7 @@ class UuidValidator(SOValidator):
     def from_python(self, value, state):
         if value is None:
             return None
-        if isinstance(value, (uuid.UUID)):
+        if isinstance(value, UUID):
             return str(value)
         raise validators.Invalid(
             "expected uuid in the UuidCol '%s', "
@@ -710,9 +710,6 @@ class UuidValidator(SOValidator):
 
 
 class SOUuidCol(SOCol):
-    # def autoConstraints(self):
-    #    return [constrs.isUuid]
-
     def createValidators(self):
         return [UuidValidator(name=self.name)] + \
             super(SOUuidCol, self).createValidators()
