@@ -1,5 +1,4 @@
-import uuid
-import py.test
+from uuid import UUID
 from sqlobject import *
 from sqlobject.tests.dbtest import *
 
@@ -9,7 +8,8 @@ from sqlobject.tests.dbtest import *
 ########################################
 
 
-testuuid = uuid.UUID('7e3b5c1e-3402-4b10-a3c6-8ee6dbac7d1a')
+testuuid = UUID('7e3b5c1e-3402-4b10-a3c6-8ee6dbac7d1a')
+
 
 class UuidContainer(SQLObject):
     uuiddata = UuidCol(default=None)
@@ -26,4 +26,3 @@ def test_uuidCol():
     my_uuid_2 = UuidContainer.get(iid)
 
     assert my_uuid_2.uuiddata == testuuid
-
