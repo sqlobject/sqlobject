@@ -22,6 +22,7 @@ from array import array
 from decimal import Decimal
 from itertools import count
 import time
+import uuid
 try:
     import cPickle as pickle
 except ImportError:
@@ -683,6 +684,48 @@ class SOUnicodeCol(SOStringLikeCol):
 
 class UnicodeCol(Col):
     baseClass = SOUnicodeCol
+
+
+class UuidValidator(SOValidator):
+
+    def to_python(self, value, state):
+        if value is None:
+            return None
+        if isinstance(value, str):
+            return uuid.UUID(value)
+        raise validators.Invalid(
+            "expected string in the UuidCol '%s', "
+            "got %s %r instead" % (
+                self.name, type(value), value), value, state)
+
+    def from_python(self, value, state):
+        if value is None:
+            return None
+        if isinstance(value, (uuid.UUID)):
+            return str(value)
+        raise validators.Invalid(
+            "expected uuid in the UuidCol '%s', "
+            "got %s %r instead" % (
+                self.name, type(value), value), value, state)
+
+
+class SOUuidCol(SOCol):
+    # def autoConstraints(self):
+    #    return [constrs.isUuid]
+
+    def createValidators(self):
+        return [UuidValidator(name=self.name)] + \
+            super(SOUuidCol, self).createValidators()
+
+    def _sqlType(self):
+        return 'VARCHAR(36)'
+
+    def _postgresType(self):
+        return 'UUID'
+
+
+class UuidCol(Col):
+    baseClass = SOUuidCol
 
 
 class IntValidator(SOValidator):
