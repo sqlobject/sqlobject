@@ -710,12 +710,15 @@ class UuidValidator(SOValidator):
 
 
 class SOUuidCol(SOCol):
-    #def autoConstraints(self):
+    # def autoConstraints(self):
     #    return [constrs.isUuid]
 
     def createValidators(self):
         return [UuidValidator(name=self.name)] + \
             super(SOUuidCol, self).createValidators()
+
+    def _sqlType(self):
+        return 'VARCHAR(36)'
 
     def _postgresType(self):
         return 'UUID'
