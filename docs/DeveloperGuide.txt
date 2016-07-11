@@ -262,6 +262,11 @@ We now use Travis CI to run tests. See the status:
 .. image:: https://travis-ci.org/sqlobject/sqlobject.svg?branch=master
   :target: https://travis-ci.org/sqlobject/sqlobject
 
+To avoid triggering unnecessary test run at Travis add text `[ci skip]
+<https://docs.travis-ci.com/user/customizing-the-build/#Skipping-a-build>`_
+anywhere in your commit messages for commits that don't change code
+(documentation updates and such).
+
 Documentation
 =============
 
