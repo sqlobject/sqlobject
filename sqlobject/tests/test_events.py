@@ -1,9 +1,8 @@
 from __future__ import print_function
 
-from sqlobject import *
-from sqlobject.tests.dbtest import *
-from sqlobject import events
+from sqlobject import IntCol, SQLObject, StringCol, events
 from sqlobject.inheritance import InheritableSQLObject
+from sqlobject.tests.dbtest import setupClass
 
 
 class EventTester(SQLObject):

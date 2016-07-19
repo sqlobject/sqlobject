@@ -2,9 +2,8 @@
 Test the default styles, to guarantee consistency.
 """
 
-from sqlobject import *
-from sqlobject.tests.dbtest import *
-from sqlobject.styles import Style, MixedCaseUnderscoreStyle, MixedCaseStyle
+from sqlobject import ForeignKey, MixedCaseStyle, MixedCaseUnderscoreStyle, \
+    SQLObject, StringCol, Style
 
 # Hash of styles versus the database names resulting from 'columns' below.
 columns = ["ABCUpper", "abc_lower", "ABCamelCaseColumn"]

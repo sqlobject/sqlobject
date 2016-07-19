@@ -1,6 +1,6 @@
 from decimal import Decimal
-from sqlobject import *
-from sqlobject.tests.dbtest import *
+from sqlobject import DecimalCol, DecimalStringCol, SQLObject, UnicodeCol
+from sqlobject.tests.dbtest import setupClass, supports
 
 
 ########################################

@@ -1,6 +1,6 @@
-from sqlobject import *
+from sqlobject import IntCol, SQLObject, StringCol
 from sqlobject.sqlbuilder import Select, func
-from sqlobject.tests.dbtest import *
+from sqlobject.tests.dbtest import getConnection, setupClass
 
 
 ########################################

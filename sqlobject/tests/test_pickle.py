@@ -1,7 +1,7 @@
 import pickle
 import py.test
-from sqlobject import *
-from sqlobject.tests.dbtest import *
+from sqlobject import IntCol, SQLObject, StringCol
+from sqlobject.tests.dbtest import getConnection, raises, setupClass
 
 
 ########################################

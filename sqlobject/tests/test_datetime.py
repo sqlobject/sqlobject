@@ -1,9 +1,11 @@
 from datetime import datetime, date, time
 import py.test
 
-from sqlobject import *
+from sqlobject import SQLObject
 from sqlobject import col
-from sqlobject.tests.dbtest import *
+from sqlobject.col import DATETIME_IMPLEMENTATION, DateCol, DateTimeCol, \
+    MXDATETIME_IMPLEMENTATION, TimeCol, mxdatetime_available, use_microseconds
+from sqlobject.tests.dbtest import getConnection, setupClass
 
 
 ########################################

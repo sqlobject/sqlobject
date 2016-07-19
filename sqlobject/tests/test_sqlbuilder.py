@@ -1,7 +1,8 @@
-from sqlobject import *
+from sqlobject import IntCol, SQLObject, StringCol
 from sqlobject.compat import PY2
-from sqlobject.sqlbuilder import *
-from sqlobject.tests.dbtest import *
+from sqlobject.sqlbuilder import AND, CONCAT, Delete, Insert, SQLOp, Select, \
+    Union, Update, const, func, sqlrepr
+from sqlobject.tests.dbtest import getConnection, raises, setupClass
 
 
 class TestSQLBuilder(SQLObject):

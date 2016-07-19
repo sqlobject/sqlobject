@@ -1,12 +1,12 @@
 from __future__ import print_function
-
-from .dbtest import *
-from sqlobject import sqlhub, SQLObject, StringCol
 import py.test
+
+from sqlobject import sqlhub, SQLObject, StringCol
 try:
     from sqlobject.wsgi_middleware import make_middleware
 except ImportError:
     pytestmark = py.test.mark.skipif('True')
+from .dbtest import getConnection, getConnectionURI, setupClass
 
 
 class NameOnly(SQLObject):

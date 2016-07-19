@@ -15,6 +15,11 @@ Features
 
 * Add UuidCol.
 
+Source code
+-----------
+
+* Fix all `import *` using https://github.com/zestyping/star-destroyer.
+
 Documentation
 -------------
 

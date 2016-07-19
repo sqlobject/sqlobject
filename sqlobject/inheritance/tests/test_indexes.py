@@ -1,5 +1,5 @@
-from sqlobject import *
-from sqlobject.tests.dbtest import *
+from sqlobject import DatabaseIndex, IntCol, StringCol
+from sqlobject.tests.dbtest import setupClass
 from sqlobject.inheritance import InheritableSQLObject
 
 

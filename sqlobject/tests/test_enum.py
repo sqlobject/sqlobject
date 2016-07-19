@@ -1,6 +1,6 @@
-from sqlobject import *
+from sqlobject import EnumCol, SQLObject, UnicodeCol
 from sqlobject.col import validators
-from sqlobject.tests.dbtest import *
+from sqlobject.tests.dbtest import raises, setupClass
 
 
 ########################################

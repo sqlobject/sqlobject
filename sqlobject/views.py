@@ -1,5 +1,7 @@
-from .sqlbuilder import *  # noqa
 from .main import SQLObject
+from .sqlbuilder import AND, Alias, ColumnAS, LEFTJOINOn, \
+    NoDefault, SQLCall, SQLConstant, SQLObjectField, SQLObjectTable, SQLOp, \
+    Select, sqlrepr
 
 
 class ViewSQLObjectField(SQLObjectField):

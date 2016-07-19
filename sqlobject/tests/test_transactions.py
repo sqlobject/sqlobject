@@ -1,6 +1,6 @@
 import py.test
-from sqlobject import *
-from sqlobject.tests.dbtest import *
+from sqlobject import SQLObject, SQLObjectNotFound, StringCol
+from sqlobject.tests.dbtest import raises, setupClass, supports
 
 
 ########################################

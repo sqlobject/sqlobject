@@ -1,5 +1,5 @@
-from sqlobject import *
-from sqlobject.tests.dbtest import *
+from sqlobject import OR, RelatedJoin, SQLObject, StringCol, cache
+from sqlobject.tests.dbtest import setupClass
 from .test_basic import TestSO1, setupGetters
 
 
