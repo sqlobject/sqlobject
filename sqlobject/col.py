@@ -1932,8 +1932,43 @@ class SOJsonbCol(SOCol):
         return 'JSONB'
 
 
+class JSONValidator(StringValidator):
+
+    def to_python(self, value, state):
+        if value is None:
+            return None
+        if isinstance(value, string_type):
+            return json.loads(value)
+        raise validators.Invalid(
+            "expected a JSON str in the JSONCol '%s', "
+            "got %s %r instead" % (
+                self.name, type(value), value), value, state)
+
+    def from_python(self, value, state):
+        if value is None:
+            return None
+        if isinstance(value,
+                      (bool, int, float, long, dict, list, string_type)):
+            return json.dumps(value)
+        raise validators.Invalid(
+            "expected an object suitable for JSON in the JSONCol '%s', "
+            "got %s %r instead" % (
+                self.name, type(value), value), value, state)
+
+
 class JsonbCol(Col):
     baseClass = SOJsonbCol
+
+
+class SOJSONCol(SOStringCol):
+
+    def createValidators(self):
+        return [JSONValidator(name=self.name)] + \
+            super(SOJSONCol, self).createValidators()
+
+
+class JSONCol(StringCol):
+    baseClass = SOJSONCol
 
 
 def pushKey(kw, name, value):
