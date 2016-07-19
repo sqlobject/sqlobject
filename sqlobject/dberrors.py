@@ -1,8 +1,7 @@
 """dberrors: database exception classes for SQLObject.
 
-   These classes are dictated by the DB API v2.0:
-
-   http://www.python.org/topics/database/DatabaseAPI-2.0.html
+   These classes are dictated by the DB API v2.0, see:
+   https://wiki.python.org/moin/DatabaseProgramming
 """
 
 from sqlobject.compat import PY2

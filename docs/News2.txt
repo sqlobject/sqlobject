@@ -464,9 +464,9 @@ Features & Interface
 * Date/time validators, converters, tests.
 
 * Both `mxDateTime
-  <http://www.egenix.com/files/python/mxDateTime.html>`_ and `datetime
-  <http://python.org/doc/current/lib/module-datetime.html>`_ supported
-  for ``DateTimeCol``.
+  <https://www.egenix.com/products/python/mxBase/mxDateTime/>`_ and
+  `datetime <http://docs.python.org/library/datetime.html>`_
+  supported for ``DateTimeCol``.
 
 * Added ``BLOBCol``, for binary data.
 
@@ -486,18 +486,18 @@ Features & Interface
 * ``ConnectionHub`` aka ``sqlhub`` (@@: Needs documentation)
 
 * Command-line client `sqlobject-admin
-  <http://sqlobject.org/docs/sqlobject-admin.html>`_.
+  <http://sqlobject.org/sqlobject-admin.html>`_.
 
 * ``StringCol`` has ``char_binary`` attribute, for explicit case
   handling in MySQL.
 
 * Various joins now supported (LEFT, RIGHT, STRAIGHT, INNER, OUTER,
   CROSS): see `documentation
-  <http://sqlobject.org/docs/SQLObject.html#left-join-and-other-joins>`_.
+  <http://sqlobject.org/SQLObject.html#left-join-and-other-joins>`_.
   Aliases for joining a table with itself.
 
 * Subqueries/subselects (`see docs
-  <http://sqlobject.org/docs/SQLObject.html#subqueries-subselects>`_).
+  <http://sqlobject.org/SQLObject.html#subqueries-subselects>`_).
 
 * Select results support ``.filter(extra_query)``
 
@@ -505,7 +505,7 @@ Features & Interface
   and ``RelatedJoin``, except return select results (@@: Document).
 
 * `SingleJoin
-  <http://sqlobject.org/docs/SQLObject.html#singlejoin-one-to-one>`_.
+  <http://sqlobject.org/SQLObject.html#singlejoin-one-to-one>`_.
 
 * Columns retain their order from the class definition to table
   creation.
@@ -528,7 +528,7 @@ Other Changes
   MyClass.select().lazyIter(): ...``.
 
 * Test framework now uses `py.test
-  <http://codespeak.net/py/current/doc/test.html>`_.
+  <http://pytest.org/>`_.
 
 * SQLObject now uses a simpler metaclass
   (``sqlobject.declarative.DeclarativeMeta``).
@@ -565,7 +565,7 @@ Small Features
 * Inherited classes fetched more efficiently (fewer queries).
 
 * Decimal converter to create `decimal objects
-  <http://python.org/doc/current/lib/module-decimal.html>`_.
+  <http://docs.python.org/library/decimal.html>`_.
 
 * Repository rearranged (now in
   ``http://svn.colorstudy.com/SQLObject/trunk``).
