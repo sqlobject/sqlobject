@@ -33,8 +33,7 @@ TODO
 
 * Cache columns in sqlmeta.getColumns(); reset the cache on add/del Column/Join.
 
-* Stop supporting Python 2.5:
-  make ConnectionHub a context manager instead of .doInTransaction().
+* Make ConnectionHub a context manager instead of .doInTransaction().
 
 * Make version_info a namedtuple.
 
