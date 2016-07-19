@@ -1223,6 +1223,10 @@ different types of columns, when SQLObject creates your tables.
 `IntCol`:
     Integers.
 
+`JSONCol`:
+    A column that converts simple Python objects (None, bool, int,
+    float, long, dict, list, str/unicode to/from JSON.
+
 `PickleCol`:
     An extension of BLOBCol; this column can store/retrieve any Python object;
     it actually (un)pickles the object from/to string and stores/retrieves the
