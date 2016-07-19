@@ -1270,7 +1270,7 @@ different types of columns, when SQLObject creates your tables.
 
 `UuidCol`:
     A column for UUID. On Postgres uses 'UUID' data type, on all other
-backends uses VARCHAR(36).
+    backends uses VARCHAR(36).
 
 
 Relationships Between Classes/Tables
