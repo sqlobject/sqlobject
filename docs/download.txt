@@ -3,10 +3,14 @@ Download SQLObject
 
 The latest releases are always available on the `Python Package Index
 <https://pypi.python.org/pypi/SQLObject>`_, and is installable
-with `easy_install
-<http://pythonhosted.org/setuptools/easy_install.html>`_.
+with `pip <https://pip.pypa.io/en/latest/>`_ or `easy_install
+<https://setuptools.readthedocs.io/en/latest/easy_install.html>`_.
 
 You can install the latest release with::
+
+  pip -U SQLObject
+
+or::
 
   easy_install -U SQLObject
 
@@ -21,7 +25,8 @@ You can install the latest bug fixing branch with::
 If you want to require a specific revision (because, for instance, you
 need a bugfix that hasn't appeared in a release), you can put this in
 your `setuptools
-<http://pythonhosted.org/setuptools/>`_ using ``setup.py`` file::
+<https://setuptools.readthedocs.io/en/latest/index.html>`_ using
+``setup.py`` file::
 
   setup(...
     install_requires=["SQLObject==bugfix,>=0.7.1dev-r1485"],
@@ -36,7 +41,7 @@ acquiring the version (it points to a branch in the repository).
 Repositories
 ------------
 
-The SQLObject `git <http://git-scm.com/>`_ repositories are located at
+The SQLObject `git <https://git-scm.com/>`_ repositories are located at
 https://sourceforge.net/p/sqlobject/_list/git and
 https://github.com/sqlobject
 
