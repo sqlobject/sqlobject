@@ -1,8 +1,9 @@
 from __future__ import print_function
 
-from sqlobject import *
-from sqlobject.sqlbuilder import *
-from sqlobject.tests.dbtest import *
+from sqlobject import BoolCol, SQLObject
+from sqlobject.sqlbuilder import AND, Alias, EXISTS, JOIN, LEFTJOINOn, \
+    Select, sqlrepr
+from sqlobject.tests.dbtest import setupClass
 
 ''' Going to test that complex sqlbuilder constructions are never
     prematurely stringified. A straight-forward approach is to use

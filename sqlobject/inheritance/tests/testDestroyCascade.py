@@ -1,6 +1,6 @@
-from sqlobject import *
-from sqlobject.inheritance import *
-from sqlobject.tests.dbtest import *
+from sqlobject import ForeignKey, IntCol, SQLObject
+from sqlobject.inheritance import InheritableSQLObject
+from sqlobject.tests.dbtest import setupClass
 
 
 class TestCascade1(InheritableSQLObject):

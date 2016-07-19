@@ -1,5 +1,5 @@
-from sqlobject import *
-from .dbtest import *
+from sqlobject import ForeignKey, ManyToMany, OneToMany, SQLObject, StringCol
+from .dbtest import setupClass
 
 
 class ComplexGroup(SQLObject):

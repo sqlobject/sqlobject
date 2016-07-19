@@ -1,8 +1,8 @@
 import threading
 import py.test
-from sqlobject import *
+from sqlobject import SQLObject, StringCol
 from sqlobject.compat import string_type
-from sqlobject.tests.dbtest import *
+from sqlobject.tests.dbtest import getConnection, setupClass, supports
 from sqlobject.tests.dbtest import setSQLiteConnectionFactory
 from .test_basic import TestSO1
 

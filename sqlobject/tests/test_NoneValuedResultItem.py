@@ -1,7 +1,7 @@
 # Test that selectResults handle NULL values from, for example, outer joins.
 
-from sqlobject import *
-from sqlobject.tests.dbtest import *
+from sqlobject import ForeignKey, SQLObject, StringCol, sqlbuilder
+from sqlobject.tests.dbtest import setupClass
 
 
 class TestComposer(SQLObject):

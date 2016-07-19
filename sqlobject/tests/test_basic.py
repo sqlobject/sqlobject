@@ -1,7 +1,8 @@
-import py.test
-from sqlobject import *
-from sqlobject.tests.dbtest import *
 import codecs
+import py.test
+from sqlobject import BoolCol, ForeignKey, IntCol, KeyCol, SQLObject, \
+    StringCol, connectionForURI, sqlhub
+from sqlobject.tests.dbtest import inserts, raises, setupClass, supports
 
 
 class TestSO1(SQLObject):

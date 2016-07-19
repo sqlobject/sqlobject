@@ -1,7 +1,9 @@
 import py.test
-from sqlobject import *
-from sqlobject.dberrors import *
-from sqlobject.tests.dbtest import *
+from sqlobject import DatabaseIndex, ForeignKey, IntCol, MultipleJoin, \
+    SQLObject, StringCol
+from sqlobject.dberrors import DatabaseError, IntegrityError, \
+    OperationalError, ProgrammingError
+from sqlobject.tests.dbtest import raises, setupClass, supports
 
 
 ########################################

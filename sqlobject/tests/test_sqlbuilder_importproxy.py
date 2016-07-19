@@ -1,7 +1,6 @@
-from sqlobject import *
-from sqlobject.tests.dbtest import *
-from sqlobject.views import *
-from sqlobject.sqlbuilder import ImportProxy, Alias
+from sqlobject import SQLObject, StringCol
+from sqlobject.sqlbuilder import Alias, ImportProxy, tablesUsedSet
+from sqlobject.views import ViewSQLObject
 
 
 def testSimple():

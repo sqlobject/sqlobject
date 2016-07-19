@@ -1,7 +1,7 @@
 from py.test import raises
-from sqlobject import *
-from sqlobject.tests.dbtest import *
+from sqlobject import IntCol, StringCol
 from sqlobject.inheritance import InheritableSQLObject
+from sqlobject.tests.dbtest import setupClass
 
 ########################################
 # Inheritance

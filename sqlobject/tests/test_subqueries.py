@@ -1,6 +1,7 @@
-from sqlobject import *
-from sqlobject.sqlbuilder import *
-from sqlobject.tests.dbtest import *
+from sqlobject import ForeignKey, SQLObject, StringCol
+from sqlobject.sqlbuilder import EXISTS, IN, LEFTOUTERJOINOn, NOTEXISTS, \
+    Outer, Select
+from sqlobject.tests.dbtest import setupClass
 
 
 ########################################
