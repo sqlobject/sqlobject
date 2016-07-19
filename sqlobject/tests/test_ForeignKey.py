@@ -1,7 +1,7 @@
 from formencode import validators
-from sqlobject import *
-from sqlobject.tests.dbtest import *
-from sqlobject.tests.dbtest import InstalledTestDatabase
+from sqlobject import ForeignKey, IntCol, SQLObject, StringCol
+from sqlobject.tests.dbtest import getConnection, InstalledTestDatabase, \
+    raises, setupClass, setupCyclicClasses
 
 
 class TestComposerKey(SQLObject):

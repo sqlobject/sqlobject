@@ -1,7 +1,7 @@
 import py.test
-from sqlobject import *
+from sqlobject import AND, IntCol, OR, SQLObject, UnicodeCol
 from sqlobject.compat import PY2
-from sqlobject.tests.dbtest import *
+from sqlobject.tests.dbtest import raises, setupClass
 
 
 ########################################

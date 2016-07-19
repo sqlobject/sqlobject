@@ -1,12 +1,12 @@
 from __future__ import print_function
-
-from sqlobject import *
-from .dbtest import *
 try:
     from StringIO import StringIO
 except ImportError:
     from io import StringIO
+
+from sqlobject import IntCol, SQLObject, StringCol
 from sqlobject.util.csvexport import export_csv, export_csv_zip
+from .dbtest import setupClass
 
 
 def assert_export(result, *args, **kw):

@@ -1,5 +1,5 @@
-from sqlobject import *
-from sqlobject.tests.dbtest import *
+from sqlobject import FloatCol, IntCol, SQLObject
+from sqlobject.tests.dbtest import setupClass
 
 
 # Test MIN, AVG, MAX, COUNT, SUM

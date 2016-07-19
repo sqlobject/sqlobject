@@ -1,7 +1,7 @@
 import py.test
-from sqlobject import *
-from sqlobject.dberrors import *
-from sqlobject.tests.dbtest import *
+from sqlobject import SQLObject, StringCol
+from sqlobject.dberrors import DuplicateEntryError, ProgrammingError
+from sqlobject.tests.dbtest import getConnection, raises, setupClass, supports
 
 
 ########################################

@@ -1,6 +1,7 @@
-from sqlobject import *
-from sqlobject.tests.dbtest import *
-from sqlobject.views import *
+from sqlobject import ForeignKey, IntCol, SQLMultipleJoin, SQLObject, \
+    StringCol, func
+from sqlobject.views import ViewSQLObject
+from sqlobject.tests.dbtest import inserts, setupClass
 
 
 class PhoneNumber(SQLObject):
@@ -63,20 +64,18 @@ class ViewPhoneInnerAggregate(ViewPhone):
 
 
 def setup_module(mod):
-    setupClass([mod.PhoneNumber, mod.PhoneCall])
-    mod.ViewPhoneCall._connection = mod.PhoneNumber._connection
-    mod.ViewPhone._connection = mod.PhoneNumber._connection
-    mod.ViewPhoneMore._connection = mod.PhoneNumber._connection
-    phones = inserts(mod.PhoneNumber, [('1234567890',), ('1111111111',)],
-                     'number')
-    calls = inserts(mod.PhoneCall, [(phones[0], phones[1], 5),
-                                    (phones[0], phones[1], 20),
-                                    (phones[1], phones[0], 10),
-                                    (phones[1], phones[0], 25)],
+    global calls, phones, sqlrepr
+    setupClass([PhoneNumber, PhoneCall])
+    ViewPhoneCall._connection = PhoneNumber._connection
+    ViewPhone._connection = PhoneNumber._connection
+    ViewPhoneMore._connection = PhoneNumber._connection
+    phones = inserts(PhoneNumber, [('1234567890',), ('1111111111',)], 'number')
+    calls = inserts(PhoneCall, [(phones[0], phones[1], 5),
+                                (phones[0], phones[1], 20),
+                                (phones[1], phones[0], 10),
+                                (phones[1], phones[0], 25)],
                     'phoneNumber to minutes')
-    mod.phones = phones
-    mod.calls = calls
-    mod.sqlrepr = mod.PhoneNumber._connection.sqlrepr
+    sqlrepr = PhoneNumber._connection.sqlrepr
 
 
 def testSimpleVPC():

@@ -1,6 +1,5 @@
-from sqlobject import *
-from sqlobject.tests.dbtest import *
-from sqlobject import styles
+from sqlobject import ForeignKey, SQLObject, StringCol, sqlmeta, styles
+from sqlobject.tests.dbtest import setupClass
 
 
 class AnotherStyle(styles.MixedCaseUnderscoreStyle):

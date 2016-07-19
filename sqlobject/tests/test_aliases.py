@@ -1,6 +1,6 @@
-from sqlobject import *
-from sqlobject.sqlbuilder import *
-from sqlobject.tests.dbtest import *
+from sqlobject import SQLObject, StringCol
+from sqlobject.sqlbuilder import Alias, LEFTJOINOn
+from sqlobject.tests.dbtest import setupClass
 
 
 ########################################

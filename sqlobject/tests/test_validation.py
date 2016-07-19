@@ -1,7 +1,8 @@
-from sqlobject import *
+from sqlobject import BoolCol, FloatCol, IntCol, PickleCol, SQLObject, \
+    StringCol, UnicodeCol
 from sqlobject.col import validators
 from sqlobject.compat import PY2
-from sqlobject.tests.dbtest import *
+from sqlobject.tests.dbtest import raises, setupClass
 
 if not PY2:
     # alias for python 3 compatability

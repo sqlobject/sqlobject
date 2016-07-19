@@ -1,7 +1,7 @@
 from __future__ import print_function
 
-from sqlobject import *
-from sqlobject.tests.dbtest import *
+from sqlobject import ForeignKey, ManyToMany, OneToMany, SQLObject, StringCol
+from sqlobject.tests.dbtest import setupClass
 
 
 ########################################
