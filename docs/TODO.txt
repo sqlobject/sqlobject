@@ -36,8 +36,6 @@ TODO
 * Stop supporting Python 2.5:
   make ConnectionHub a context manager instead of .doInTransaction().
 
-* Create JSONCol.
-
 * Make version_info a namedtuple.
 
 * Expression columns - in SELECT but not in INSERT/UPDATE. Something like this::
