@@ -1,7 +1,7 @@
 from py.test import raises, skip
-from sqlobject import *
-from sqlobject.tests.dbtest import *
+from sqlobject import ForeignKey, MultipleJoin, StringCol
 from sqlobject.inheritance import InheritableSQLObject
+from sqlobject.tests.dbtest import getConnection, setupClass, supports
 
 ########################################
 # Deep Inheritance

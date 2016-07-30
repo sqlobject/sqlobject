@@ -1,5 +1,6 @@
-from sqlobject import *
-from sqlobject.tests.dbtest import *
+from sqlobject import ForeignKey, MultipleJoin, RelatedJoin, SQLObject, \
+    StringCol
+from sqlobject.tests.dbtest import setupClass
 
 
 ########################################

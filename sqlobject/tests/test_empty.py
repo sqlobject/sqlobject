@@ -1,6 +1,6 @@
 import py.test
-from sqlobject import *
-from sqlobject.tests.dbtest import *
+from sqlobject import SQLObject
+from sqlobject.tests.dbtest import setupClass, supports
 
 
 class EmptyClass(SQLObject):

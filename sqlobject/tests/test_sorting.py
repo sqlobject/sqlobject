@@ -1,5 +1,5 @@
-from sqlobject import *
-from sqlobject.tests.dbtest import *
+from sqlobject import DESC, SQLObject, StringCol, sqlmeta
+from sqlobject.tests.dbtest import inserts, setupClass
 
 
 class Names(SQLObject):

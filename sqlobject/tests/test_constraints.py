@@ -1,6 +1,7 @@
 from sqlobject.compat import PY2
-from sqlobject.constraints import *
-from sqlobject.tests.dbtest import *
+from sqlobject.constraints import BadValue, InList, MaxLength, \
+    isFloat, isInt, isString, notNull
+from sqlobject.tests.dbtest import Dummy, raises
 
 if not PY2:
     # alias for python 3 compatability

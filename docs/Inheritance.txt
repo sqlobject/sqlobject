@@ -167,12 +167,12 @@ It prints::
 Who, What and How
 ~~~~~~~~~~~~~~~~~
 
-Daniel Savard has implemented inheritance for SQLObject. According to
-ObjectMatter_ this is a kind of vertical inheritance. The only difference
-is that objects reference their leaves, not parents. Links to parents are
+Daniel Savard has implemented inheritance for SQLObject. In `terms of
+ORM`_ this is a kind of vertical inheritance. The only difference is
+that objects reference their leaves, not parents. Links to parents are
 reconstructed at run-time using the hierarchy of Python classes.
 
-.. _ObjectMatter: http://www.objectmatter.com/vbsf/docs/maptool/ormapping.html
+.. _`terms of ORM`: https://cayenne.apache.org/docs/3.0/modeling-inheritance.html
 
 * As suggested by Ian Bicking, each child class now has the same
   ID as the parent class.  No more need for childID column and

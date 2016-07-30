@@ -33,10 +33,7 @@ TODO
 
 * Cache columns in sqlmeta.getColumns(); reset the cache on add/del Column/Join.
 
-* Stop supporting Python 2.5:
-  make ConnectionHub a context manager instead of .doInTransaction().
-
-* Create JSONCol.
+* Make ConnectionHub a context manager instead of .doInTransaction().
 
 * Make version_info a namedtuple.
 
@@ -68,9 +65,9 @@ TODO
 
 * Switch from setuptools to distribute.
 
-* oursql MySQL bindings: https://launchpad.net/oursql
+* oursql MySQL bindings: https://github.com/python-oursql/oursql
 
-* MySQL Connector/Python: https://launchpad.net/myconnpy
+* MySQL Connector/Python: https://dev.mysql.com/doc/connector-python/en/
 
 * Pure Python Mysql Interface: https://github.com/nasi/MyPy
 

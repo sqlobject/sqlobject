@@ -1,9 +1,8 @@
 import py.test
-from sqlobject import *
+from sqlobject import IntCol, LIKE, RLIKE, SQLObject, \
+    SQLObjectIntegrityError, SQLObjectNotFound, StringCol
 from sqlobject.sqlbuilder import func
-from sqlobject.main import SQLObjectIntegrityError
-from .dbtest import *
-from .dbtest import setSQLiteConnectionFactory
+from .dbtest import raises, setupClass, supports, setSQLiteConnectionFactory
 
 
 class IterTest(SQLObject):

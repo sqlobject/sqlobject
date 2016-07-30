@@ -1,6 +1,6 @@
-from sqlobject import *
-from sqlobject.sqlbuilder import *
-from sqlobject.tests.dbtest import *
+from sqlobject import AND, ForeignKey, SQLMultipleJoin, SQLObject, \
+    SQLRelatedJoin, StringCol
+from sqlobject.tests.dbtest import inserts, setupClass
 
 # Testing for expressing join, foreign keys,
 # and instance identity in SQLBuilder expressions.
@@ -20,17 +20,16 @@ class SBAddress(SQLObject):
 
 
 def setup_module(mod):
+    global ppl
     setupClass([SBPerson, SBAddress])
-    mod.ppl = inserts(SBPerson, [('James',),
-                                 ('Julia',)],
-                      'name')
-    mod.adds = inserts(SBAddress, [('London', mod.ppl[0].id),
-                                   ('Chicago', mod.ppl[1].id),
-                                   ('Abu Dhabi', mod.ppl[1].id)],
-                       'city personID')
-    mod.ppl[0].addSharedAddress(mod.adds[0])
-    mod.ppl[0].addSharedAddress(mod.adds[1])
-    mod.ppl[1].addSharedAddress(mod.adds[0])
+    ppl = inserts(SBPerson, [('James',), ('Julia',)], 'name')
+    adds = inserts(SBAddress, [('London', ppl[0].id),
+                               ('Chicago', ppl[1].id),
+                               ('Abu Dhabi', ppl[1].id)],
+                   'city personID')
+    ppl[0].addSharedAddress(adds[0])
+    ppl[0].addSharedAddress(adds[1])
+    ppl[1].addSharedAddress(adds[0])
 
 
 def testJoin():

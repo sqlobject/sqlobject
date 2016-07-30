@@ -14,7 +14,7 @@ SQLObject is by Ian Bicking (ianb@colorstudy.com) and `Contributors
 The code is licensed under the `Lesser General Public License`_
 (LGPL).
 
-.. _`Lesser General Public License`: http://www.gnu.org/copyleft/lesser.html
+.. _`Lesser General Public License`: https://www.gnu.org/copyleft/lesser.html
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -28,7 +28,7 @@ SQLObject is an *object-relational mapper* for Python_ programming
 language.  It allows you to translate RDBMS table rows into Python objects,
 and manipulate those objects to transparently manipulate the database.
 
-.. _Python: http://python.org
+.. _Python: https://www.python.org/
 
 In using SQLObject, you will create a class definition that will
 describe how the object translates to the database table.  SQLObject
@@ -44,26 +44,25 @@ Requirements
 ============
 
 Currently SQLObject supports MySQL_ via MySQLdb_ aka MySQL-python,
-PostgreSQL_ via psycopg1_ or psycopg2_, SQLite_ via PySQLite_, Firebird_
+PostgreSQL_ via psycopg2_ or psycopg1, SQLite_ via PySQLite_, Firebird_
 via fdb_ or kinterbasdb_, `MAX DB`_ (also known as SAP DB) via sapdb_,
 Sybase via Sybase_, and `MSSQL Server`_ via pymssql_ (+ FreeTDS_) or
 adodbapi_ (Win32).
 
-.. _MySQL: http://mysql.com
+.. _MySQL: https://www.mysql.com/
 .. _MySQLdb: https://sourceforge.net/projects/mysql-python/
-.. _PostgreSQL: http://postgresql.org
-.. _psycopg1: http://initd.org/projects/psycopg1
-.. _psycopg2: http://initd.org/projects/psycopg2
-.. _SQLite: http://sqlite.org
-.. _PySQLite: http://initd.org/projects/pysqlite
-.. _Firebird: http://firebird.sourceforge.net
+.. _PostgreSQL: https://postgresql.org
+.. _psycopg2: http://initd.org/psycopg/
+.. _SQLite: https://sqlite.org/
+.. _PySQLite: https://github.com/ghaering/pysqlite
+.. _Firebird: http://www.firebirdsql.org/en/python-driver/
 .. _fdb: http://www.firebirdsql.org/en/devel-python-driver/
 .. _kinterbasdb: http://kinterbasdb.sourceforge.net/
-.. _`MAX DB`: http://www.mysql.com/products/maxdb/
-.. _sapdb: http://www.sapdb.org/sapdbPython.html
+.. _`MAX DB`: http://maxdb.sap.com/
+.. _sapdb: http://maxdb.sap.com/doc/7_8/50/01923f25b842438a408805774f6989/frameset.htm
 .. _Sybase: http://www.object-craft.com.au/projects/sybase/
 .. _`MSSQL Server`: http://www.microsoft.com/sql/
-.. _pymssql: http://pymssql.sourceforge.net/
+.. _pymssql: http://www.pymssql.org/en/latest/index.html
 .. _FreeTDS: http://www.freetds.org/
 .. _adodbapi: http://adodbapi.sourceforge.net/
 
@@ -109,7 +108,7 @@ metaclasses you are able to comfortably define your schema in the
 Python source code.  No code generation, no weird tools, no
 compilation step.
 
-.. _Webware: http://webware.sourceforge.net
+.. _Webware: http://webware.sourceforge.net/
 
 SQLObject provides a strong database abstraction, allowing
 cross-database compatibility (so long as you don't sidestep
@@ -1135,7 +1134,7 @@ column.
     ``to_python()`` last.
 
 .. _formencode: http://formencode.org/
-.. _validator: http://formencode.org/Validator.html
+.. _validator: http://www.formencode.org/en/latest/Validator.html
 
 Column Types
 ~~~~~~~~~~~~
@@ -1224,6 +1223,10 @@ different types of columns, when SQLObject creates your tables.
 `IntCol`:
     Integers.
 
+`JSONCol`:
+    A column that converts simple Python objects (None, bool, int,
+    float, long, dict, list, str/unicode to/from JSON.
+
 `PickleCol`:
     An extension of BLOBCol; this column can store/retrieve any Python object;
     it actually (un)pickles the object from/to string and stores/retrieves the
@@ -1271,7 +1274,7 @@ different types of columns, when SQLObject creates your tables.
 
 `UuidCol`:
     A column for UUID. On Postgres uses 'UUID' data type, on all other
-backends uses VARCHAR(36).
+    backends uses VARCHAR(36).
 
 
 Relationships Between Classes/Tables
@@ -1804,7 +1807,7 @@ PostgresConnection supports transactions and all other features.
 
 The user can choose a DB API driver for PostgreSQL by using a ``driver``
 parameter in DB URI or PostgresConnection that can be a comma-separated
-list of driver names. Possible drivers are: ``psycopg2``, ``psycopg1``,
+list of driver names. Possible drivers are: ``psycopg2``, psycopg1,
 ``psycopg`` (tries psycopg2 and psycopg1), ``pygresql``. Default is
 ``psycopg``.
 
@@ -1857,7 +1860,7 @@ Example from `Firebird 2.0 Administrators Manual`_::
    # fbdb1 is on a Windows server:
    fbdb1 = c:\Firebird\sample\Employee.fdb
 
-.. _`Firebird 2.0 Administrators Manual`: http://www.janus-software.com/fbmanual/manual.php?book=admin&topic=4
+.. _`Firebird 2.0 Administrators Manual`: http://www.firebirdmanual.com/firebird/en/firebird-manual/2
 
 Now a program can connect to firebird://host:port/fbdb1.
 
@@ -2103,8 +2106,7 @@ Utilities
 Some useful utility functions are included with SQLObject.  For more
 information see their module docstrings.
 
-* `sqlobject.util.csvexport
-  <http://sqlobject.org/module-sqlobject.util.csvexport.html>`_
+* `sqlobject.util.csvexport <module-sqlobject.util.csvexport.html>`_
 
 SQLBuilder
 ----------

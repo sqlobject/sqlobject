@@ -1,7 +1,7 @@
-from sqlobject import *
+from sqlobject import ForeignKey, IntCol, SQLObject, StringCol
 from sqlobject.inheritance import InheritableSQLObject
 from sqlobject.versioning import Versioning
-from sqlobject.tests.dbtest import *
+from sqlobject.tests.dbtest import setupClass
 
 
 class MyClass(SQLObject):

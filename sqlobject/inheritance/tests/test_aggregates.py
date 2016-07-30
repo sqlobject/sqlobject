@@ -1,6 +1,6 @@
-from sqlobject import *
-from sqlobject.inheritance import *
-from sqlobject.tests.dbtest import *
+from sqlobject import IntCol
+from sqlobject.inheritance import InheritableSQLObject
+from sqlobject.tests.dbtest import raises, setupClass
 
 
 class TestAggregate1(InheritableSQLObject):

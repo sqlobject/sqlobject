@@ -1,4 +1,4 @@
-from sqlobject.declarative import *
+from sqlobject.declarative import Declarative
 
 
 class A1(Declarative):

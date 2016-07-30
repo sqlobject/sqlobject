@@ -30,7 +30,7 @@ to the original repo. That way CI will be triggered to test your code.
 
 Voila!  The packages are globally installed, but the files from the
 checkout were not copied into ``site-packages``.  See `setuptools
-<http://pythonhosted.org/setuptools/>`_ for more.
+<https://setuptools.readthedocs.io/en/latest/index.html>`_ for more.
 
 Architecture
 ============
@@ -110,7 +110,7 @@ Style Guide
 Generally you should follow the recommendations in `PEP 8`_, the
 Python Style Guide.  Some things to take particular note of:
 
-.. _PEP 8: http://www.python.org/peps/pep-0008.html
+.. _PEP 8: http://www.python.org/dev/peps/pep-0008/
 
 * With a few exceptions sources must be `flake8`_-clean (and hence
   pep8-clean). Please consider using pre-commit hook installed by
@@ -220,11 +220,11 @@ Testing
 Tests are important.  Tests keep everything from falling apart.  All
 new additions should have tests.
 
-Testing uses py.test, an alternative to ``unittest``.  It is available at
-http://pytest.org/ and https://pypi.python.org/pypi/pytest.  Read its `getting
-started`_ document for more.
+Testing uses py.test, an alternative to ``unittest``.  It is available
+at http://pytest.org/ and https://pypi.python.org/pypi/pytest.  Read its
+`getting started`_ document for more.
 
-.. _getting started: http://pytest.org/latest/getting-started.html
+.. _getting started: http://docs.pytest.org/en/latest/getting-started.html
 
 To actually run the test, you have to give it a database to connect to.
 You do so with the option ``-D``. You can either give a complete URI or
@@ -250,7 +250,7 @@ If you ``import *`` you'll also get py.test's version of raises_, an
 ``inserts`` function that can create instances for you, and a couple
 miscellaneous functions.
 
-.. _raises: http://pytest.org/latest/assert.html#assertions-about-expected-exceptions
+.. _raises: http://docs.pytest.org/en/latest/assert.html#assertions-about-expected-exceptions
 
 If you submit a patch or implement a feature without a test, we'll be
 forced to write the test.  That's no fun for us, to just be writing
@@ -263,7 +263,7 @@ We now use Travis CI to run tests. See the status:
   :target: https://travis-ci.org/sqlobject/sqlobject
 
 To avoid triggering unnecessary test run at Travis add text `[ci skip]
-<https://docs.travis-ci.com/user/customizing-the-build/#Skipping-a-build>`_
+<https://docs.travis-ci.com/user/customizing-the-build/#skipping-a-build>`_
 anywhere in your commit messages for commits that don't change code
 (documentation updates and such).
 

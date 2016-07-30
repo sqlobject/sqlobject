@@ -1,5 +1,6 @@
-from sqlobject import *
-from sqlobject.tests.dbtest import *
+from sqlobject import BLOBCol, DateTimeCol, IntCol, SQLObject, StringCol, \
+    sqlmeta
+from sqlobject.tests.dbtest import getConnection
 
 
 class TestCreateDrop(SQLObject):

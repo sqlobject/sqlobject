@@ -1,9 +1,9 @@
 from datetime import datetime
 from py.test import raises
 
-from sqlobject import *
-from sqlobject.tests.dbtest import *
-from sqlobject import classregistry
+from sqlobject import KeyCol, MultipleJoin, SQLObject, StringCol, \
+    classregistry, sqlmeta
+from sqlobject.tests.dbtest import getConnection, setupClass
 
 
 ########################################
