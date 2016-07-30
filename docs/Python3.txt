@@ -74,10 +74,17 @@ If a character set was specified for the database using the charset parameter,
 such as::
 
    mysql:///localhost/test?charset=latin1
-   
+
 Things should work provided the same character set is specified when using
 Python 3.
 
 If a character set wasn't specified, then things may work if the character set
 is set to match the dbEncoding parameter used when defining the UnicodeCol.
 
+.. image:: https://sourceforge.net/sflogo.php?group_id=74338&type=10
+   :target: https://sourceforge.net/projects/sqlobject
+   :class: noborder
+   :align: center
+   :height: 15
+   :width: 80
+   :alt: Get SQLObject at SourceForge.net. Fast, secure and Free Open Source software downloads

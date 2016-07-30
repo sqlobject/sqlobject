@@ -1,6 +1,7 @@
-from sqlobject import *
-from sqlobject.sqlbuilder import *
-from sqlobject.tests.dbtest import *
+from sqlobject import SQLObject, StringCol
+from sqlobject.sqlbuilder import JOIN, LEFTJOIN, LEFTJOINConditional, \
+    LEFTJOINOn, LEFTJOINUsing
+from sqlobject.tests.dbtest import getConnection, setupClass
 
 
 ########################################

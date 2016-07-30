@@ -1,4 +1,4 @@
-from sqlobject import *
+from sqlobject import IntCol, SQLObject, StringCol
 
 
 ########################################

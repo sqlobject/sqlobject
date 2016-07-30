@@ -15,11 +15,20 @@ Features
 
 * Add UuidCol.
 
+* Add JSONCol.
+
+Source code
+-----------
+
+* Fix all `import *` using https://github.com/zestyping/star-destroyer.
+
 Documentation
 -------------
 
 * Developer's Guide extended to explain SQLObject architecture and how
   to create a new column type.
+
+* Fix URLs that can be found; remove missing links.
 
 SQLObject 3.0.0
 ===============

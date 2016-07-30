@@ -1,6 +1,6 @@
-from sqlobject import *
-from sqlobject.inheritance import *
-from sqlobject.tests.dbtest import *
+from sqlobject import StringCol
+from sqlobject.inheritance import InheritableSQLObject
+from sqlobject.tests.dbtest import setupClass
 
 ########################################
 # Inheritance Tree

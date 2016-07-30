@@ -1,6 +1,7 @@
 import py.test
-from sqlobject import *
-from sqlobject.tests.dbtest import *
+from sqlobject import ForeignKey, IntCol, MultipleJoin, SQLMultipleJoin, \
+    SQLObject, StringCol
+from sqlobject.tests.dbtest import setupClass, supports
 
 
 class Race(SQLObject):

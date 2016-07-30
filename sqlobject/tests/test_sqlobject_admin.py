@@ -1,7 +1,7 @@
 # These tests are not enabled yet, but here are some working examples
 # of using createSQL so far.
 
-from sqlobject import *
+from sqlobject import SQLObject, StringCol
 
 
 class Test1(SQLObject):

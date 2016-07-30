@@ -1,6 +1,6 @@
 from uuid import UUID
-from sqlobject import *
-from sqlobject.tests.dbtest import *
+from sqlobject import SQLObject, UuidCol
+from sqlobject.tests.dbtest import setupClass
 
 
 ########################################

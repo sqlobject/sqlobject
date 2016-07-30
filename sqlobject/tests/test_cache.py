@@ -1,6 +1,6 @@
-from sqlobject import *
-from .dbtest import *
+from sqlobject import SQLObject, StringCol
 from sqlobject.cache import CacheSet
+from .dbtest import setupClass
 
 
 class Something(object):

@@ -1,6 +1,6 @@
-from sqlobject import *
-from sqlobject.sqlbuilder import *
-from sqlobject.tests.dbtest import *
+from sqlobject import ForeignKey, SQLMultipleJoin, SQLObject, SQLRelatedJoin, \
+    StringCol
+from sqlobject.tests.dbtest import inserts, setupClass
 import py
 
 
@@ -24,21 +24,19 @@ class SRThrough3(SQLObject):
 
 
 def setup_module(mod):
-    setupClass([mod.SRThrough3, mod.SRThrough1, mod.SRThrough2])
-    threes = inserts(mod.SRThrough3,
+    global ones, twos, threes
+    setupClass([SRThrough3, SRThrough1, SRThrough2])
+    threes = inserts(SRThrough3,
                      [('a',), ('b',), ('c',)],
                      'name')
-    ones = inserts(mod.SRThrough1,
+    ones = inserts(SRThrough1,
                    [(threes[0].id,), (threes[0].id,), (threes[2].id,)],
                    'threeID')
-    twos = inserts(mod.SRThrough2,
+    twos = inserts(SRThrough2,
                    [(ones[0].id,), (ones[1].id,), (ones[2].id,)],
                    'oneID')
     twos[0].addThree(threes[0])
     twos[0].addThree(threes[1])
-    mod.threes = threes
-    mod.twos = twos
-    mod.ones = ones
 
 
 def testBadRef():

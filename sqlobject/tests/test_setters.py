@@ -1,5 +1,5 @@
-from sqlobject import *
-from sqlobject.tests.dbtest import *
+from sqlobject import SQLObject, StringCol
+from sqlobject.tests.dbtest import setupClass
 
 
 class TestPlainAndNonPlainSetter(SQLObject):

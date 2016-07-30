@@ -1,5 +1,5 @@
-from sqlobject import *
-from sqlobject.tests.dbtest import *
+from sqlobject import ForeignKey, IntCol, SQLObject
+from sqlobject.tests.dbtest import setupClass
 
 
 ########################################

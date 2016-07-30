@@ -1,6 +1,7 @@
 import py.test
-from sqlobject import *
-from sqlobject.tests.dbtest import *
+from sqlobject import BLOBCol, DateTimeCol, ForeignKey, IntCol, SQLObject, \
+    StringCol, sqlmeta
+from sqlobject.tests.dbtest import getConnection, supports
 
 
 class TestCyclicReferenceA(SQLObject):

@@ -1,8 +1,8 @@
 from hashlib import sha256, md5
-from sqlobject import *
+from sqlobject import AND, IntCol, OR, SQLObject
 from sqlobject.compat import PY2
 from sqlobject.include import hashcol
-from sqlobject.tests.dbtest import *
+from sqlobject.tests.dbtest import setupClass
 
 ########################################
 # HashCol test

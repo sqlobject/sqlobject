@@ -1,5 +1,5 @@
-from sqlobject import *
-from sqlobject.tests.dbtest import *
+from sqlobject import MixedCaseStyle, SQLObject, sqlmeta
+from sqlobject.tests.dbtest import setupClass
 
 
 class myid_sqlmeta(sqlmeta):
