@@ -7,7 +7,7 @@ PYTHONPATH="$parent${PYTHONPATH:+:$PYTHONPATH}"
 export PYTHONPATH
 
 NORMAL="Authors DeveloperGuide FAQ Inheritance
-        News News1 News2 News3 News4 Python3
+        News News1 News2 News3 News4 News5 Python3
         SQLBuilder SQLObject SelectResults TODO Versioning Views
         community download index links sqlobject-admin"
 
