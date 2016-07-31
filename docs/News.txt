@@ -7,16 +7,6 @@ News
 
 .. _start:
 
-SQLObject 3.2.0 (master)
-========================
-
-Features
---------
-
-* Add JsonbCol.
-psycopg2 >= 2.5.4 and postgresql >= 9.2 is needed
-only postgresql is supported
-
 SQLObject 3.1.0 (master)
 ========================
 
@@ -24,6 +14,9 @@ Features
 --------
 
 * Add UuidCol.
+
+* Add JsonbCol. Only for PostgreSQL.
+  Requires psycopg2 >= 2.5.4 and PostgreSQL >= 9.2.
 
 Documentation
 -------------

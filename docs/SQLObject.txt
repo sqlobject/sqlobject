@@ -1224,6 +1224,10 @@ different types of columns, when SQLObject creates your tables.
 `IntCol`:
     Integers.
 
+`JsonbCol`:
+    A column for jsonb objects. Only supported on Postgres.
+    Any Python object that can be serialized with json.dumps can be stored.
+
 `PickleCol`:
     An extension of BLOBCol; this column can store/retrieve any Python object;
     it actually (un)pickles the object from/to string and stores/retrieves the
@@ -1271,11 +1275,7 @@ different types of columns, when SQLObject creates your tables.
 
 `UuidCol`:
     A column for UUID. On Postgres uses 'UUID' data type, on all other
-backends uses VARCHAR(36).
-
-`JsonbCol`:
-    A column for Jsonb objects. Only supported on Postgres. Any Python object that
-    can be serialized with json.dumps can be stored.
+    backends uses VARCHAR(36).
 
 
 Relationships Between Classes/Tables
