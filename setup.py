@@ -81,7 +81,8 @@ and `GitHub <https://github.com/sqlobject>`_.
       maintainer="Oleg Broytman",
       maintainer_email="phd@phdru.name",
       url="http://sqlobject.org/devel/",
-      download_url="https://pypi.python.org/pypi/SQLObject/%s" % version,
+      download_url="https://pypi.python.org/pypi/SQLObject/%sdev-20160731" %
+          version,
       license="LGPL",
       packages=["sqlobject"] +
           ['sqlobject.%s' % package for package in subpackages],
