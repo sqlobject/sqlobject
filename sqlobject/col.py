@@ -23,6 +23,7 @@ from decimal import Decimal
 from itertools import count
 import time
 from uuid import UUID
+import json
 try:
     import cPickle as pickle
 except ImportError:
@@ -723,6 +724,35 @@ class SOUuidCol(SOCol):
 
 class UuidCol(Col):
     baseClass = SOUuidCol
+
+
+class JsonbValidator(SOValidator):
+
+    def to_python(self, value, state):
+        return value
+
+    def from_python(self, value, state):
+        if value is None:
+            return json.dumps(None)
+        if isinstance(value, (dict, list, unicode, int, long, float, bool)):
+             return json.dumps(value)
+        raise validators.Invalid(
+            "expect one of the following types (dict, list, unicode, int, long, float, bool) for '%s', "
+            "got %s %r instead" % (
+                self.name, type(value), value), value, state)
+
+
+class SOJsonbCol(SOCol):
+    def createValidators(self):
+        return [JsonbValidator(name=self.name)] + \
+            super(SOJsonbCol, self).createValidators()
+
+    def _postgresType(self):
+        return 'JSONB'
+
+
+class JsonbCol(Col):
+    baseClass = SOJsonbCol
 
 
 class IntValidator(SOValidator):
