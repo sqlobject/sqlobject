@@ -1271,7 +1271,11 @@ different types of columns, when SQLObject creates your tables.
 
 `UuidCol`:
     A column for UUID. On Postgres uses 'UUID' data type, on all other
-backends uses VARCHAR(36).
+    backends uses VARCHAR(36).
+
+`JsonbCol`:
+    A column for Jsonb objects. Only supported on Postgres.
+    Any Python object that can be serialized with json.dumps can be stored.
 
 
 Relationships Between Classes/Tables
