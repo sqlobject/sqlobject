@@ -15,6 +15,9 @@ Features
 
 * Add UuidCol.
 
+* Add JsonbCol. Only for PostgreSQL.
+  Requires psycopg2 >= 2.5.4 and PostgreSQL >= 9.2.
+
 Documentation
 -------------
 
