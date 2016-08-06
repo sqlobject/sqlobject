@@ -268,6 +268,11 @@ To avoid triggering unnecessary test run at Travis add text
 anywhere in your commit messages for commits that don't change code
 (documentation updates and such).
 
+We use `coverage.py <https://pypi.python.org/pypi/coverage>`_
+to measures code coverage by tests and upload the result for analyzis to
+`Coveralls <https://coveralls.io/github/sqlobject/sqlobject>`_ and
+`Codecov <https://codecov.io/gh/sqlobject/sqlobject>`_.
+
 Documentation
 =============
 
