@@ -8,7 +8,7 @@ with `pip <https://pip.pypa.io/en/latest/>`_ or `easy_install
 
 You can install the latest release with::
 
-  pip -U SQLObject
+  pip install -U SQLObject
 
 or::
 
