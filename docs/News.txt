@@ -22,11 +22,6 @@ Features
 
 * Add JSONCol, a universal json column.
 
-Source code
------------
-
-* Fix all `import *` using https://github.com/zestyping/star-destroyer.
-
 Documentation
 -------------
 
@@ -34,6 +29,16 @@ Documentation
   to create a new column type.
 
 * Fix URLs that can be found; remove missing links.
+
+Source code
+-----------
+
+* Fix all `import *` using https://github.com/zestyping/star-destroyer.
+
+Tests
+-----
+
+* Use pytest-cov for test coverage.
 
 SQLObject 3.0.0
 ===============
