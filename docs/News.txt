@@ -38,7 +38,8 @@ Source code
 Tests
 -----
 
-* Use pytest-cov for test coverage.
+* Use pytest-cov for test coverage. Report test coverage
+  via coveralls.io.
 
 SQLObject 3.0.0
 ===============
