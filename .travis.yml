@@ -16,7 +16,7 @@ env:
   - TOXENV=py27-flake8
   - TOXENV=py34-flake8
 
-install: pip install tox coveralls
+install: pip install tox coveralls codecov
 
 matrix:
   fast_finish: true
@@ -26,3 +26,4 @@ script: tox -e ${TOXENV}
 after_success:
     - cd sqlobject
     - coveralls
+    - codecov

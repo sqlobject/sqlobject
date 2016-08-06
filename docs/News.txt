@@ -39,7 +39,7 @@ Tests
 -----
 
 * Use pytest-cov for test coverage. Report test coverage
-  via coveralls.io.
+  via coveralls.io and codecov.io.
 
 SQLObject 3.0.0
 ===============
