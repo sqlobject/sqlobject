@@ -1,0 +1,5 @@
+-r requirements.txt
+
+buildutils
+kid >= 0.9.6
+pudge
