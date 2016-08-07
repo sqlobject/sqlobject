@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import sys
 from imp import load_source
 from os.path import abspath, dirname, join
 
@@ -28,7 +29,15 @@ if is_setuptools:
     [paste.filter_app_factory]
     main = sqlobject.wsgi_middleware:make_middleware
     """
-    kw['install_requires'] = ["FormEncode>=1.1.1", "PyDispatcher>=2.0.4"]
+    install_requires = []
+    if (sys.version_info[0] == 2) and (sys.version_info[:2] >= (2, 6)):
+        install_requires.append("FormEncode>=1.1.1")
+    elif (sys.version_info[0] == 3) and (sys.version_info[:2] >= (3, 4)):
+        install_requires.append("FormEncode>=1.3.0")
+    else:
+        raise ImportError("SQLObject requires Python 2.6, 2.7 or 3.4+")
+    install_requires.append("PyDispatcher>=2.0.4")
+    kw['install_requires'] = install_requires
     kw['extras_require'] = {
         'mysql': ['MySQLdb'],
         'postgresql': ['psycopg'],  # or pgdb from PyGreSQL
