@@ -117,6 +117,7 @@ and `GitHub <https://github.com/sqlobject>`_.
                     ],
                     "sqlobject.maxdb": ["readme.txt"],
                     },
+      requires=['FormEncode', 'PyDispatcher'],
       **kw
       )
 
