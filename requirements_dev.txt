@@ -2,4 +2,4 @@
 
 pytest
 pytest-cov
-tox
+tox >= 1.8
