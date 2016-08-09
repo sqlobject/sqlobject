@@ -1,6 +1,0 @@
-#! /bin/sh
-
-# Remove broken FormEncode wheel
-rm -f "$HOME"/.cache/pip/wheels/89/df/07/2bb5e9f2c89f5dfa839a366f4148cfd1ee9bc9c661b7160cc6/FormEncode-1.3.0-py2.py3-none-any.whl
-
-exec pip install "$@"

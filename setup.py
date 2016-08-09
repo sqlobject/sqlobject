@@ -31,9 +31,9 @@ if is_setuptools:
     """
     install_requires = []
     if (sys.version_info[0] == 2) and (sys.version_info[:2] >= (2, 6)):
-        install_requires.append("FormEncode>=1.1.1")
+        install_requires.append("FormEncode>=1.1.1,!=1.3.0")
     elif (sys.version_info[0] == 3) and (sys.version_info[:2] >= (3, 4)):
-        install_requires.append("FormEncode>=1.3.0")
+        install_requires.append("FormEncode>=1.3.1")
     else:
         raise ImportError("SQLObject requires Python 2.6, 2.7 or 3.4+")
     install_requires.append("PyDispatcher>=2.0.4")
