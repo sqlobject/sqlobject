@@ -260,7 +260,7 @@ exercised, even if the tests are absolutely complete.
 We now use Travis CI to run tests. See the status:
 
 .. image:: https://travis-ci.org/sqlobject/sqlobject.svg?branch=master
-  :target: https://travis-ci.org/sqlobject/sqlobject
+   :target: https://travis-ci.org/sqlobject/sqlobject
 
 To avoid triggering unnecessary test run at Travis add text
 `[skip ci] or [ci skip]
@@ -272,6 +272,9 @@ We use `coverage.py <https://pypi.python.org/pypi/coverage>`_
 to measures code coverage by tests and upload the result for analyzis to
 `Coveralls <https://coveralls.io/github/sqlobject/sqlobject>`_ and
 `Codecov <https://codecov.io/gh/sqlobject/sqlobject>`_.
+
+.. image:: https://coveralls.io/repos/github/sqlobject/sqlobject/badge.svg?branch=master
+   :target: https://coveralls.io/github/sqlobject/sqlobject?branch=master
 
 Documentation
 =============
