@@ -32,6 +32,8 @@ Documentation
 
 * Fix URLs that can be found; remove missing links.
 
+* Rename reStructuredText file from \*.txt to \*.rst.
+
 Source code
 -----------
 

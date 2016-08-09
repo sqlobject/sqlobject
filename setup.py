@@ -98,7 +98,7 @@ and `GitHub <https://github.com/sqlobject>`_.
       scripts=["scripts/sqlobject-admin", "scripts/sqlobject-convertOldURI"],
       package_data={"sqlobject":
                     [
-                        "../docs/LICENSE", "../docs/*.txt", "../docs/*.css",
+                        "../docs/LICENSE", "../docs/*.rst", "../docs/*.css",
                         "../docs/html/*.html", "../docs/html/*.css",
                         "../docs/html/sqlobject/*.html",
                         "../docs/html/sqlobject/firebird/*.html",

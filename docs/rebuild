@@ -12,11 +12,11 @@ NORMAL="Authors DeveloperGuide FAQ Inheritance
         community download index links sqlobject-admin"
 
 for NAME in $NORMAL ; do
-    if [ -e "$NAME.html" -a ! "$NAME.html" -ot "$NAME.txt" ] ; then
+    if [ -e "$NAME.html" -a ! "$NAME.html" -ot "$NAME.rst" ] ; then
         echo "$NAME is up to date."
         continue
     fi
     echo "Building $NAME."
     rst2html.py --no-toc-backlinks --stylesheet=default.css --link-stylesheet \
-        -- "$NAME.txt" > "$NAME.html"
+        -- "$NAME.rst" > "$NAME.html"
 done

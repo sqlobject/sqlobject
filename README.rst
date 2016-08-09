@@ -10,4 +10,4 @@ through the `psycopg` package, SQLite, Firebird, MaxDB (SAP DB), MS SQL
 Sybase and Rdbhost.  Python 2.6, 2.7 or 3.4+ is required.
 
 For more information please see the documentation in
-docs/SQLObject.txt, or online at http://sqlobject.org/
+`<docs/SQLObject.rst>`_, or online at http://sqlobject.org/

@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import doctest
 import os
 import sys
@@ -7,7 +8,7 @@ sys.path.insert(
 
 
 def test():
-    for doc in ['SQLObject.txt']:
+    for doc in ['SQLObject.rst']:
         doctest.testfile(doc, optionflags=doctest.ELLIPSIS)
 
 if __name__ == '__main__':

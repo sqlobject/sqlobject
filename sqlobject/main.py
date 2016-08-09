@@ -5,10 +5,10 @@ SQLObject
 :author: Ian Bicking <ianb@colorstudy.com>
 
 SQLObject is a object-relational mapper.  See SQLObject.html or
-SQLObject.txt for more.
+SQLObject.rst for more.
 
 With the help by Oleg Broytman and many other contributors.
-See Authors.txt.
+See Authors.rst.
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU Lesser General Public License as
