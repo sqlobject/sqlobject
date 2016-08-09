@@ -47,6 +47,8 @@ Tests
 * Use pytest-cov for test coverage. Report test coverage
   via coveralls.io and codecov.io.
 
+* Install mxDateTime to run date/time tests with it.
+
 SQLObject 3.0.0
 ===============
 
