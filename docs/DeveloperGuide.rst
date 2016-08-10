@@ -265,7 +265,7 @@ We now use Travis CI and Circle CI to run tests. See the statuses:
 .. image:: https://circleci.com/gh/sqlobject/sqlobject.svg?style=shield
    :target: https://circleci.com/gh/sqlobject/sqlobject
 
-To avoid triggering unnecessary test run at Travis add text
+To avoid triggering unnecessary test run at CI services add text
 `[skip ci] or [ci skip]
 <https://docs.travis-ci.com/user/customizing-the-build/#skipping-a-build>`_
 anywhere in your commit messages for commits that don't change code
