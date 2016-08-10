@@ -1303,6 +1303,13 @@ if mxdatetime_available:
                 return DateTime.Date(value.year, value.month, value.day)
             elif isinstance(value, datetime.time):
                 return DateTime.Time(value.hour, value.minute, value.second)
+            elif isinstance(value, datetime.timedelta):
+                if value.days:
+                    raise validators.Invalid(
+                        "the value for the TimeCol '%s' must has days=0, "
+                        "it has days=%d" % (self.name, value.days),
+                        value, state)
+                return DateTime.Time(seconds=value.seconds)
             try:
                 if self.format.find(".%f") >= 0:
                     if '.' in value:

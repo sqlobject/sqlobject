@@ -24,6 +24,9 @@ Features
 
 * For Python >= 3.4 minimal FormEncode version is now 1.3.1.
 
+* If mxDateTime is in use, convert timedelta (returned by MySQL) to
+  mxDateTime.Time.
+
 Documentation
 -------------
 
