@@ -274,10 +274,13 @@ anywhere in your commit messages for commits that don't change code
 We use `coverage.py <https://pypi.python.org/pypi/coverage>`_
 to measures code coverage by tests and upload the result for analyzis to
 `Coveralls <https://coveralls.io/github/sqlobject/sqlobject>`_ and
-`Codecov <https://codecov.io/gh/sqlobject/sqlobject>`_.
+`Codecov <https://codecov.io/gh/sqlobject/sqlobject>`_:
 
 .. image:: https://coveralls.io/repos/github/sqlobject/sqlobject/badge.svg?branch=master
    :target: https://coveralls.io/github/sqlobject/sqlobject?branch=master
+
+.. image:: https://codecov.io/gh/sqlobject/sqlobject/branch/master/graph/badge.svg
+   :target: https://codecov.io/gh/sqlobject/sqlobject
 
 Documentation
 =============
