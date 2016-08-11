@@ -1,3 +1,6 @@
+# Prefer docker container with setuid/sudo
+sudo: required
+
 language: python
 
 cache: pip
