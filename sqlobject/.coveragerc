@@ -5,6 +5,7 @@ omit =
    mssql/*.py
    rdbhost/*.py
    sybase/*.py
+   tests/test_boundattributes.py
    tests/test_paste.py
    util/threadinglocal.py
    wsgi_middleware.py
