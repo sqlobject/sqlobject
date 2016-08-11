@@ -21,6 +21,10 @@ env:
   - TOXENV=py27-flake8
   - TOXENV=py34-flake8
 
+before_install:
+  - sudo apt-get -qq update
+  - sudo apt-get install -y python-egenix-mxdatetime python-mysqldb python-psycopg2
+
 install: pip install tox coveralls codecov
 
 matrix:

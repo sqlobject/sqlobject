@@ -2,7 +2,8 @@ dependencies:
   cache_directories:
     - ~/.cache/pip
   override:
-    - sudo apt-get update && sudo apt-get install python-mysqldb python-psycopg2
+    - sudo apt-get -qq update
+    - sudo apt-get install -y python-egenix-mxdatetime python-mysqldb python-psycopg2
     - pip install -U pip
     - pip install -U tox tox-pyenv
     - pyenv local 2.6.8 2.7.10 3.4.3
