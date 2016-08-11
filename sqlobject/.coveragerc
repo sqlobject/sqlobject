@@ -7,4 +7,4 @@ omit =
    sybase/*.py
    tests/test_paste.py
    util/threadinglocal.py
-   wsgi_middleare.py
+   wsgi_middleware.py
