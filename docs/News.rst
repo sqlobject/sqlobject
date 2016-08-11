@@ -43,7 +43,7 @@ Source code
 Tests
 -----
 
-* Test are now run at Circle CI.
+* Tests are now run at Circle CI.
 
 * Use pytest-cov for test coverage. Report test coverage
   via coveralls.io and codecov.io.
