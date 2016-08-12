@@ -1,4 +1,5 @@
 #! /bin/sh
 
 make html &&
-exec find . -name \*.tmp -type f -delete
+find . -name \*.tmp -type f -delete &&
+exec rsync -ahP --del --exclude=.buildinfo --exclude=objects.inv _build/html .
