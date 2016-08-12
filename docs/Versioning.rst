@@ -1,5 +1,7 @@
 :Author: David Turner, The Open Planning Project
 
+.. contents::
+
 Versioning
 -----------
 

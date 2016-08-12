@@ -1,6 +1,8 @@
 SQLObject Links
 ===============
 
+.. contents::
+
 If you have a link you'd like added to this page, please submit a bug
 report with the link and title at `bug tracker
 <https://sourceforge.net/p/sqlobject/bugs/>`_ or send pull requests at

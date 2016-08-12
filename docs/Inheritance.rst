@@ -1,5 +1,7 @@
 :Author: Daniel Savard, XSOLI Inc.
 
+.. contents::
+
 Inheritance
 -----------
 
