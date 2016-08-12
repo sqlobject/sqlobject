@@ -11,8 +11,6 @@ SQLObject is by Ian Bicking (ianb@colorstudy.com) and `Contributors
 <Authors.html>`_.  The website is `sqlobject.org
 <http://sqlobject.org>`_.
 
-.. _license:
-
 License
 =======
 
