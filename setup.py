@@ -17,7 +17,7 @@ versionpath = join(abspath(dirname(__file__)), "sqlobject", "__version__.py")
 load_source("sqlobject_version", versionpath)
 from sqlobject_version import version  # noqa: ignore flake8 E402
 
-subpackages = ['firebird', 'include',
+subpackages = ['firebird', 'include', 'include.tests',
                'inheritance', 'inheritance.tests',
                'manager', 'maxdb', 'mysql', 'mssql', 'postgres', 'rdbhost',
                'sqlite', 'sybase', 'tests', 'util',

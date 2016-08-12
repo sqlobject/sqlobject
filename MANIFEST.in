@@ -1,12 +1,14 @@
-include .gitignore docs/.gitignore
+global-include .gitignore
 include MANIFEST.in ez_setup.py
 include .travis.yml circle.yml tox.ini
-include *.rst *.txt docs/LICENSE docs/*.rst docs/rebuild
-include sqlobject/.coveragerc sqlobject/.gitignore
+include *.rst *.txt docs/LICENSE docs/*.rst
+include docs/rebuild
+include sqlobject/.coveragerc
 include sqlobject/maxdb/readme.txt
 recursive-include debian *
-recursive-include docs *.css *.html *.js *.gif *.py
+recursive-include docs *.css *.html *.js *.gif *.png *.py *.txt
 recursive-include sqlobject/tests *.py
+recursive-include sqlobject/include/tests *.py
 recursive-include sqlobject/inheritance/tests *.py
 recursive-include sqlobject/versioning/test *.py
-
+prune docs/_build
