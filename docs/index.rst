@@ -10,12 +10,12 @@ SQLObject includes a Python-object-based query language that makes SQL
 more abstract, and provides substantial database independence for
 applications.
 
+Documentation
+=============
+
 * `Download <download.html>`_
 * `Mailing list, bugs, etc. <community.html>`_
 * `Related projects and articles <links.html>`_
-
-Documentation
-=============
 
 * `News and updates <News.html>`_
 * `SQLObject and Python 3 <Python3.html>`_
