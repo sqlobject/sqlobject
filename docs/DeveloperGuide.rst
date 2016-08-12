@@ -265,11 +265,10 @@ We now use Travis CI and Circle CI to run tests. See the statuses:
 .. image:: https://circleci.com/gh/sqlobject/sqlobject.svg?style=shield
    :target: https://circleci.com/gh/sqlobject/sqlobject
 
-To avoid triggering unnecessary test run at CI services add text
-`[skip ci] or [ci skip]
-<https://docs.travis-ci.com/user/customizing-the-build/#skipping-a-build>`_
-anywhere in your commit messages for commits that don't change code
-(documentation updates and such).
+To avoid triggering unnecessary test run at CI services add text `[skip ci]
+<https://docs.travis-ci.com/user/customizing-the-build/#skipping-a-build>`_ or
+`[ci skip] <https://circleci.com/docs/skip-a-build/>`_ anywhere in your commit
+messages for commits that don't change code (documentation updates and such).
 
 We use `coverage.py <https://pypi.python.org/pypi/coverage>`_
 to measures code coverage by tests and upload the result for analyzis to
