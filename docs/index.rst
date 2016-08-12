@@ -13,23 +13,26 @@ applications.
 Documentation
 =============
 
-* `Download <download.html>`_
-* `Mailing list, bugs, etc. <community.html>`_
-* `Related projects and articles <links.html>`_
+.. toctree::
+   :maxdepth: 1
 
-* `News and updates <News.html>`_
-* `SQLObject and Python 3 <Python3.html>`_
-* `Main SQLObject documentation <SQLObject.html>`_
-* `Frequently Asked Questions <FAQ.html>`_
-* `sqlbuilder documentation <SQLBuilder.html>`_
-* `select() and SelectResults <SelectResults.html>`_
-* `sqlobject-admin documentation <sqlobject-admin.html>`_
-* `Inheritance <Inheritance.html>`_
-* `Versioning <Versioning.html>`_
-* `Views <Views.html>`_
-* `Developer Guide <DeveloperGuide.html>`_
-* `Contributors <Authors.html>`_
-* `TODO <TODO.html>`_
+   download
+   community
+   links
+
+   News
+   Python3
+   SQLObject
+   FAQ
+   SQLBuilder
+   SelectResults
+   sqlobject-admin
+   Inheritance
+   Versioning
+   Views
+   DeveloperGuide
+   Authors
+   TODO
 
 Example
 =======
@@ -64,6 +67,15 @@ Here's how you'd use the object::
   <Person 1 fname='John' mi='Q' lname='Doe'>
   >>> p is p2
   True
+
+
+Indices and tables
+==================
+
+* :ref:`genindex`
+* :ref:`modindex`
+* :ref:`search`
+
 
 .. image:: https://sourceforge.net/sflogo.php?group_id=74338&type=10
    :target: https://sourceforge.net/projects/sqlobject
