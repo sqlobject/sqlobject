@@ -1,0 +1,89 @@
+sqlobject.tests package
+=======================
+
+.. automodule:: sqlobject.tests
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+Submodules
+----------
+
+.. toctree::
+
+   sqlobject.tests.dbtest
+   sqlobject.tests.test_ForeignKey
+   sqlobject.tests.test_NoneValuedResultItem
+   sqlobject.tests.test_SQLMultipleJoin
+   sqlobject.tests.test_SQLRelatedJoin
+   sqlobject.tests.test_SingleJoin
+   sqlobject.tests.test_aggregates
+   sqlobject.tests.test_aliases
+   sqlobject.tests.test_asdict
+   sqlobject.tests.test_auto
+   sqlobject.tests.test_basic
+   sqlobject.tests.test_blob
+   sqlobject.tests.test_boundattributes
+   sqlobject.tests.test_cache
+   sqlobject.tests.test_class_hash
+   sqlobject.tests.test_columns_order
+   sqlobject.tests.test_combining_joins
+   sqlobject.tests.test_comparison
+   sqlobject.tests.test_complex_sorting
+   sqlobject.tests.test_constraints
+   sqlobject.tests.test_converters
+   sqlobject.tests.test_create_drop
+   sqlobject.tests.test_csvexport
+   sqlobject.tests.test_cyclic_reference
+   sqlobject.tests.test_datetime
+   sqlobject.tests.test_decimal
+   sqlobject.tests.test_declarative
+   sqlobject.tests.test_default_style
+   sqlobject.tests.test_delete
+   sqlobject.tests.test_distinct
+   sqlobject.tests.test_empty
+   sqlobject.tests.test_enum
+   sqlobject.tests.test_events
+   sqlobject.tests.test_exceptions
+   sqlobject.tests.test_expire
+   sqlobject.tests.test_groupBy
+   sqlobject.tests.test_identity
+   sqlobject.tests.test_indexes
+   sqlobject.tests.test_inheritance
+   sqlobject.tests.test_joins
+   sqlobject.tests.test_joins_conditional
+   sqlobject.tests.test_jsonbcol
+   sqlobject.tests.test_jsoncol
+   sqlobject.tests.test_lazy
+   sqlobject.tests.test_md5
+   sqlobject.tests.test_mysql
+   sqlobject.tests.test_new_joins
+   sqlobject.tests.test_parse_uri
+   sqlobject.tests.test_paste
+   sqlobject.tests.test_perConnection
+   sqlobject.tests.test_pickle
+   sqlobject.tests.test_picklecol
+   sqlobject.tests.test_postgres
+   sqlobject.tests.test_reparent_sqlmeta
+   sqlobject.tests.test_schema
+   sqlobject.tests.test_select
+   sqlobject.tests.test_select_through
+   sqlobject.tests.test_setters
+   sqlobject.tests.test_slice
+   sqlobject.tests.test_sorting
+   sqlobject.tests.test_sqlbuilder
+   sqlobject.tests.test_sqlbuilder_dbspecific
+   sqlobject.tests.test_sqlbuilder_importproxy
+   sqlobject.tests.test_sqlbuilder_joins_instances
+   sqlobject.tests.test_sqlite
+   sqlobject.tests.test_sqlmeta_idName
+   sqlobject.tests.test_sqlobject_admin
+   sqlobject.tests.test_string_id
+   sqlobject.tests.test_style
+   sqlobject.tests.test_subqueries
+   sqlobject.tests.test_transactions
+   sqlobject.tests.test_unicode
+   sqlobject.tests.test_uuidcol
+   sqlobject.tests.test_validation
+   sqlobject.tests.test_views
+

@@ -1,7 +1,7 @@
 include MANIFEST.in ez_setup.py
 include .travis.yml circle.yml tox.ini
 include *.rst *.txt docs/LICENSE docs/*.rst
-include docs/Makefile docs/rebuild
+include docs/Makefile docs/genapidocs docs/rebuild
 include sqlobject/.coveragerc
 include sqlobject/maxdb/readme.txt
 recursive-include debian *
