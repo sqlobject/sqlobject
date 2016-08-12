@@ -1,4 +1,5 @@
 from decimal import Decimal
+import py.test
 from sqlobject import DecimalCol, DecimalStringCol, SQLObject, UnicodeCol
 from sqlobject.tests.dbtest import setupClass, supports
 
@@ -8,9 +9,13 @@ from sqlobject.tests.dbtest import setupClass, supports
 ########################################
 
 
-if not supports('decimalColumn'):
-    import py.test
-    pytestmark = py.test.mark.skipif('True')
+try:
+    support_decimal_column = supports('decimalColumn')
+except NameError:
+    # The module was imported during documentation building
+    support_decimal_column = True
+if not support_decimal_column:
+    pytestmark = py.test.mark.skip('')
 
 
 class DecimalTable(SQLObject):

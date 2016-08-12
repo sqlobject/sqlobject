@@ -1,8 +1,12 @@
-from paste.deploy.converters import asbool
-from paste.wsgilib import catch_errors
-from paste.util import import_string
+import sys
 import sqlobject
 from sqlobject.compat import string_type
+
+# The module was imported during documentation building
+if 'pudge' not in sys.modules:
+    from paste.deploy.converters import asbool
+    from paste.wsgilib import catch_errors
+    from paste.util import import_string
 
 
 def make_middleware(app, global_conf, database=None, use_transaction=False,

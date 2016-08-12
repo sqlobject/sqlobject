@@ -114,7 +114,9 @@ try:
     connection = getConnection()
 except Exception as e:
     # At least this module should be importable...
-    print("Could not open database: %s" % e, file=sys.stderr)
+    # The module was imported during documentation building
+    if 'pudge' not in sys.modules:
+        print("Could not open database: %s" % e, file=sys.stderr)
 
 
 class InstalledTestDatabase(sqlobject.SQLObject):
