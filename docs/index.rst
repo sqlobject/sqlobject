@@ -34,9 +34,7 @@ Documentation
 Example
 =======
 
-Examples are good.  Examples give a feel for the aesthetic of the API,
-which matters to me a great deal.  This is just a snippet that creates
-a simple class that wraps a table::
+This is just a snippet that creates a simple class that wraps a table::
 
   >>> from sqlobject import *
   >>>
