@@ -3,7 +3,7 @@ import sqlobject
 from sqlobject.compat import string_type
 
 # The module was imported during documentation building
-if 'pudge' not in sys.modules:
+if 'sphinx' not in sys.modules:
     from paste.deploy.converters import asbool
     from paste.wsgilib import catch_errors
     from paste.util import import_string

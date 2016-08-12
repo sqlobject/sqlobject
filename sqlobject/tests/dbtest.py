@@ -115,7 +115,7 @@ try:
 except Exception as e:
     # At least this module should be importable...
     # The module was imported during documentation building
-    if 'pudge' not in sys.modules:
+    if 'sphinx' not in sys.modules:
         print("Could not open database: %s" % e, file=sys.stderr)
 
 
