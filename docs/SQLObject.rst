@@ -1,15 +1,20 @@
-```````````````
-SQLObject trunk
-```````````````
+`````````
+SQLObject
+`````````
 
 .. contents:: Contents:
 
-Author, Site, and License
-=========================
+Credits
+=======
 
 SQLObject is by Ian Bicking (ianb@colorstudy.com) and `Contributors
 <Authors.html>`_.  The website is `sqlobject.org
 <http://sqlobject.org>`_.
+
+.. _license:
+
+License
+=======
 
 The code is licensed under the `Lesser General Public License`_
 (LGPL).
