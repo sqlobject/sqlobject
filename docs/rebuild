@@ -1,22 +1,4 @@
 #! /bin/sh
 
-here=`pwd`
-parent=`dirname "$here"`
-echo "Adding $parent to \$PYTHONPATH"
-PYTHONPATH="$parent${PYTHONPATH:+:$PYTHONPATH}"
-export PYTHONPATH
-
-NORMAL="Authors DeveloperGuide FAQ Inheritance
-        News News1 News2 News3 News4 News5 Python3
-        SQLBuilder SQLObject SelectResults TODO Versioning Views
-        community download index links sqlobject-admin"
-
-for NAME in $NORMAL ; do
-    if [ -e "$NAME.html" -a ! "$NAME.html" -ot "$NAME.rst" ] ; then
-        echo "$NAME is up to date."
-        continue
-    fi
-    echo "Building $NAME."
-    rst2html.py --no-toc-backlinks --stylesheet=default.css --link-stylesheet \
-        -- "$NAME.rst" > "$NAME.html"
-done
+make html &&
+exec find . -name \*.tmp -type f -delete
