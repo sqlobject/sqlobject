@@ -1203,10 +1203,10 @@ class SQLJoinConditional(SQLJoin):
         """For condition you must give on_condition or using_columns
         but not both
 
-            on_condition can be a string or SQLExpression, for example
-                Table1.q.col1 == Table2.q.col2
-            using_columns can be a string or a list of columns, e.g.
-                (Table1.q.col1, Table2.q.col2)
+        on_condition can be a string or SQLExpression, for example
+            Table1.q.col1 == Table2.q.col2
+        using_columns can be a string or a list of columns, e.g.
+            (Table1.q.col1, Table2.q.col2)
         """
         if not on_condition and not using_columns:
             raise TypeError("You must give ON condition or USING columns")
