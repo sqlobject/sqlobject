@@ -12,6 +12,7 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
+from datetime import date
 import sys
 import os
 
@@ -48,7 +49,7 @@ master_doc = 'index'
 # General information about the project.
 project = u'SQLObject'
 authors = u'Ian Bicking and contributors'
-copyright = u'2004-2016, ' + authors
+copyright = u'2004-%d, %s' % (date.today().year, authors)
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
