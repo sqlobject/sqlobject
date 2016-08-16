@@ -10,6 +10,8 @@ News
 SQLObject 3.1.0
 ===============
 
+Released 16 Aug 2016.
+
 Features
 --------
 
