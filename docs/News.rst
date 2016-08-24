@@ -33,8 +33,8 @@ Features
 Documentation
 -------------
 
-* Developer's Guide extended to explain SQLObject architecture and how
-  to create a new column type.
+* Developer's Guide is extended to explain SQLObject architecture
+  and how to create a new column type.
 
 * Fix URLs that can be found; remove missing links.
 
