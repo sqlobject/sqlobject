@@ -15,6 +15,9 @@ Tests
 
 * Fix tests under Python 2.7.12 + tox + PostgreSQL.
 
+* Restore mxDateTime installation in tox.ini
+  (was removed while egenix.com was down).
+
 SQLObject 3.1.0
 ===============
 
