@@ -10,6 +10,11 @@ News
 SQLObject 3.2.0 (master)
 ========================
 
+Tests
+-----
+
+* Fix tests under Python 2.7.12 + tox + PostgreSQL.
+
 SQLObject 3.1.0
 ===============
 
