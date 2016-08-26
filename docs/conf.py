@@ -56,7 +56,7 @@ copyright = u'2004-%d, %s' % (date.today().year, authors)
 # built documents.
 #
 sys.path.insert(0, os.path.abspath('..'))
-from sqlobject.__version__ import version as __version__
+from sqlobject.__version__ import version as __version__  # noqa: E402
 # The short X.Y version.
 version = '.'.join(__version__.split('.')[:2])
 # The full version, including alpha/beta/rc tags.
