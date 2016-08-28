@@ -1,13 +1,6 @@
-include MANIFEST.in ez_setup.py
-include .travis.yml circle.yml tox.ini
-include *.rst *.txt docs/LICENSE docs/*.rst
+global-include *.py *.rst *.txt
+include docs/LICENSE MANIFEST.in .travis.yml circle.yml tox.ini
+include debian/* sqlobject/.coveragerc
 include docs/Makefile docs/genapidocs docs/rebuild
-include sqlobject/.coveragerc
-include sqlobject/maxdb/readme.txt
-recursive-include debian *
-recursive-include docs *.css *.html *.js *.gif *.png *.py *.txt
-recursive-include sqlobject/tests *.py
-recursive-include sqlobject/include/tests *.py
-recursive-include sqlobject/inheritance/tests *.py
-recursive-include sqlobject/versioning/test *.py
+recursive-include docs *.css *.html *.js *.gif *.png
 prune docs/_build
