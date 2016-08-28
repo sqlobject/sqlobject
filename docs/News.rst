@@ -10,6 +10,11 @@ News
 SQLObject 3.2.0 (master)
 ========================
 
+Documentation
+-------------
+
+* The docs are now generated with Sphinx.
+
 Tests
 -----
 
