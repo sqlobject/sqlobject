@@ -18,6 +18,8 @@ Documentation
 Tests
 -----
 
+* Tests are now run at CIs with python3.5.
+
 * Fix tests under Python 2.7.12 + tox + PostgreSQL.
 
 * Restore mxDateTime installation in tox.ini

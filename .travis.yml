@@ -10,14 +10,17 @@ addons:
 
 env:
   - TOXENV=py26-mysql
-  - TOXENV=py27-mysql
   - TOXENV=py26-postgres
-  - TOXENV=py27-postgres
   - TOXENV=py26-sqlite
+  - TOXENV=py27-mysql
+  - TOXENV=py27-postgres
   - TOXENV=py27-sqlite
-  - TOXENV=py34-sqlite
-  - TOXENV=py34-postgres
   - TOXENV=py34-mysqlclient
+  - TOXENV=py34-postgres
+  - TOXENV=py34-sqlite
+  - TOXENV=py35-mysqlclient
+  - TOXENV=py35-postgres
+  - TOXENV=py35-sqlite
   - TOXENV=py27-flake8
   - TOXENV=py34-flake8
 
