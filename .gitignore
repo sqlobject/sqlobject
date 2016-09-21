@@ -1,10 +1,10 @@
+/.cache/
+/.tox/
 *~
 *.tmp
-*.pyc
-*.pyo
+*.py[co]
 /MANIFEST
-/SQLObject.egg-info
-/build
-/data
-/dist
-/temp
+/SQLObject.egg-info/
+/build/
+/data/
+/dist/
