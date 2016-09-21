@@ -21,6 +21,9 @@ Tests
 * Great Renaming: fix py.test warnings by renaming TestXXX classes
   to SOTestXXX to prevent py.test to recognize them as test classes.
 
+* Fix py.test warnings by converting yield test to plain calls:
+  yield test were deprecated in py.test.
+
 * Tests are now run at CIs with python3.5.
 
 * Fix tests under Python 2.7.12 + tox + PostgreSQL.

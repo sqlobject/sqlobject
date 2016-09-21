@@ -61,5 +61,5 @@ class DefaultStyleTest(SQLObject):
 def test_default_styles():
     make_columns()
     for style in styles:
-        yield do_col_test, DefaultStyleTest, style, styles[style]
-        yield do_fkey_test, DefaultStyleTest, style, fkeys[style]
+        do_col_test(DefaultStyleTest, style, styles[style])
+        do_fkey_test(DefaultStyleTest, style, fkeys[style])
