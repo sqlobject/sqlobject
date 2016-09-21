@@ -3,7 +3,7 @@ from sqlobject import SQLObject
 from sqlobject.tests.dbtest import getConnection, setupClass
 
 
-class TestSOListMySQL(SQLObject):
+class SOTestSOListMySQL(SQLObject):
     pass
 
 
@@ -18,5 +18,5 @@ def test_list_tables():
     connection = getConnection()
     if connection.dbName != "mysql":
         py.test.skip("These tests require MySQL")
-    setupClass(TestSOListMySQL)
-    assert TestSOListMySQL.sqlmeta.table in connection.listTables()
+    setupClass(SOTestSOListMySQL)
+    assert SOTestSOListMySQL.sqlmeta.table in connection.listTables()

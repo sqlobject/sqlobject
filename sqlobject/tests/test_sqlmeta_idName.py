@@ -6,22 +6,22 @@ class myid_sqlmeta(sqlmeta):
     idName = "my_id"
 
 
-class TestSqlmeta1(SQLObject):
+class SOTestSqlmeta1(SQLObject):
     class sqlmeta(myid_sqlmeta):
         pass
 
 
-class TestSqlmeta2(SQLObject):
+class SOTestSqlmeta2(SQLObject):
     class sqlmeta(sqlmeta):
         style = MixedCaseStyle(longID=True)
 
 
-class TestSqlmeta3(SQLObject):
+class SOTestSqlmeta3(SQLObject):
     class sqlmeta(myid_sqlmeta):
         style = MixedCaseStyle(longID=True)
 
 
-class TestSqlmeta4(SQLObject):
+class SOTestSqlmeta4(SQLObject):
     class sqlmeta(myid_sqlmeta):
         idName = None
         style = MixedCaseStyle(longID=True)
@@ -32,21 +32,21 @@ class longid_sqlmeta(sqlmeta):
     style = MixedCaseStyle(longID=True)
 
 
-class TestSqlmeta5(SQLObject):
+class SOTestSqlmeta5(SQLObject):
     class sqlmeta(longid_sqlmeta):
         pass
 
 
-class TestSqlmeta6(SQLObject):
+class SOTestSqlmeta6(SQLObject):
     class sqlmeta(longid_sqlmeta):
         idName = None
 
 
 def test_sqlmeta_inherited_idName():
-    setupClass([TestSqlmeta1, TestSqlmeta2])
-    assert TestSqlmeta1.sqlmeta.idName == "my_id"
-    assert TestSqlmeta2.sqlmeta.idName == "TestSqlmeta2ID"
-    assert TestSqlmeta3.sqlmeta.idName == "my_id"
-    assert TestSqlmeta4.sqlmeta.idName == "TestSqlmeta4ID"
-    assert TestSqlmeta5.sqlmeta.idName == "my_id"
-    assert TestSqlmeta6.sqlmeta.idName == "TestSqlmeta6ID"
+    setupClass([SOTestSqlmeta1, SOTestSqlmeta2])
+    assert SOTestSqlmeta1.sqlmeta.idName == "my_id"
+    assert SOTestSqlmeta2.sqlmeta.idName == "SOTestSqlmeta2ID"
+    assert SOTestSqlmeta3.sqlmeta.idName == "my_id"
+    assert SOTestSqlmeta4.sqlmeta.idName == "SOTestSqlmeta4ID"
+    assert SOTestSqlmeta5.sqlmeta.idName == "my_id"
+    assert SOTestSqlmeta6.sqlmeta.idName == "SOTestSqlmeta6ID"

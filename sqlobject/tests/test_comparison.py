@@ -2,18 +2,18 @@ from sqlobject import SQLObject
 from sqlobject.tests.dbtest import setupClass
 
 
-class TestComparison(SQLObject):
+class SOTestComparison(SQLObject):
     pass
 
 
 def test_eq():
-    setupClass(TestComparison, force=True)
-    t1 = TestComparison()
-    t2 = TestComparison()
+    setupClass(SOTestComparison, force=True)
+    t1 = SOTestComparison()
+    t2 = SOTestComparison()
 
-    TestComparison._connection.cache.clear()
-    t3 = TestComparison.get(1)
-    t4 = TestComparison.get(2)
+    SOTestComparison._connection.cache.clear()
+    t3 = SOTestComparison.get(1)
+    t4 = SOTestComparison.get(2)
 
     assert t1.id == t3.id
     assert t2.id == t4.id

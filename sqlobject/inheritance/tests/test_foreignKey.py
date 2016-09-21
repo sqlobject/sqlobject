@@ -79,16 +79,16 @@ def test_foreignKey():
     assert employee.count() == 2
 
 
-class TestInheritableBase(InheritableSQLObject):
+class SOTestInheritableBase(InheritableSQLObject):
     pass
 
 
-class TestInheritableForeignKey(TestInheritableBase):
-    base = ForeignKey("TestInheritableBase")
+class SOTestInheritableForeignKey(SOTestInheritableBase):
+    base = ForeignKey("SOTestInheritableBase")
 
 
 def test_foreignKey2():
-    setupClass([TestInheritableBase, TestInheritableForeignKey])
+    setupClass([SOTestInheritableBase, SOTestInheritableForeignKey])
 
-    test = TestInheritableBase()
-    TestInheritableForeignKey(base=test)
+    test = SOTestInheritableBase()
+    SOTestInheritableForeignKey(base=test)

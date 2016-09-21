@@ -4,7 +4,7 @@ from sqlobject import BLOBCol, DateTimeCol, ForeignKey, IntCol, SQLObject, \
 from sqlobject.tests.dbtest import getConnection, supports
 
 
-class TestCyclicReferenceA(SQLObject):
+class SOTestCyclicReferenceA(SQLObject):
     class sqlmeta(sqlmeta):
         idName = 'test_id_here'
         table = 'test_cyclic_reference_a_table'
@@ -13,10 +13,10 @@ class TestCyclicReferenceA(SQLObject):
     time = DateTimeCol()
     short = StringCol(length=10)
     blobcol = BLOBCol()
-    fkeyb = ForeignKey('TestCyclicReferenceB')
+    fkeyb = ForeignKey('SOTestCyclicReferenceB')
 
 
-class TestCyclicReferenceB(SQLObject):
+class SOTestCyclicReferenceB(SQLObject):
     class sqlmeta(sqlmeta):
         idName = 'test_id_here'
         table = 'test_cyclic_reference_b_table'
@@ -25,31 +25,31 @@ class TestCyclicReferenceB(SQLObject):
     time = DateTimeCol()
     short = StringCol(length=10)
     blobcol = BLOBCol()
-    fkeya = ForeignKey('TestCyclicReferenceA')
+    fkeya = ForeignKey('SOTestCyclicReferenceA')
 
 
 def test_cyclic_reference():
     if not supports('dropTableCascade'):
         py.test.skip("dropTableCascade isn't supported")
     conn = getConnection()
-    TestCyclicReferenceA.setConnection(conn)
-    TestCyclicReferenceB.setConnection(conn)
-    TestCyclicReferenceA.dropTable(ifExists=True, cascade=True)
-    assert not conn.tableExists(TestCyclicReferenceA.sqlmeta.table)
-    TestCyclicReferenceB.dropTable(ifExists=True, cascade=True)
-    assert not conn.tableExists(TestCyclicReferenceB.sqlmeta.table)
+    SOTestCyclicReferenceA.setConnection(conn)
+    SOTestCyclicReferenceB.setConnection(conn)
+    SOTestCyclicReferenceA.dropTable(ifExists=True, cascade=True)
+    assert not conn.tableExists(SOTestCyclicReferenceA.sqlmeta.table)
+    SOTestCyclicReferenceB.dropTable(ifExists=True, cascade=True)
+    assert not conn.tableExists(SOTestCyclicReferenceB.sqlmeta.table)
 
-    constraints = TestCyclicReferenceA.createTable(ifNotExists=True,
-                                                   applyConstraints=False)
-    assert conn.tableExists(TestCyclicReferenceA.sqlmeta.table)
-    constraints += TestCyclicReferenceB.createTable(ifNotExists=True,
-                                                    applyConstraints=False)
-    assert conn.tableExists(TestCyclicReferenceB.sqlmeta.table)
+    constraints = SOTestCyclicReferenceA.createTable(ifNotExists=True,
+                                                     applyConstraints=False)
+    assert conn.tableExists(SOTestCyclicReferenceA.sqlmeta.table)
+    constraints += SOTestCyclicReferenceB.createTable(ifNotExists=True,
+                                                      applyConstraints=False)
+    assert conn.tableExists(SOTestCyclicReferenceB.sqlmeta.table)
 
     for constraint in constraints:
         conn.query(constraint)
 
-    TestCyclicReferenceA.dropTable(ifExists=True, cascade=True)
-    assert not conn.tableExists(TestCyclicReferenceA.sqlmeta.table)
-    TestCyclicReferenceB.dropTable(ifExists=True, cascade=True)
-    assert not conn.tableExists(TestCyclicReferenceB.sqlmeta.table)
+    SOTestCyclicReferenceA.dropTable(ifExists=True, cascade=True)
+    assert not conn.tableExists(SOTestCyclicReferenceA.sqlmeta.table)
+    SOTestCyclicReferenceB.dropTable(ifExists=True, cascade=True)
+    assert not conn.tableExists(SOTestCyclicReferenceB.sqlmeta.table)

@@ -1,6 +1,6 @@
 from sqlobject import OR, RelatedJoin, SQLObject, StringCol, cache
 from sqlobject.tests.dbtest import setupClass
-from .test_basic import TestSO1, setupGetters
+from .test_basic import SOTestSO1, setupGetters
 
 
 ########################################
@@ -9,10 +9,10 @@ from .test_basic import TestSO1, setupGetters
 
 
 def testSelect():
-    setupGetters(TestSO1)
-    for obj in TestSO1.select('all'):
+    setupGetters(SOTestSO1)
+    for obj in SOTestSO1.select('all'):
         obj.destroySelf()
-    assert list(TestSO1.select('all')) == []
+    assert list(SOTestSO1.select('all')) == []
 
 
 ########################################
@@ -21,15 +21,16 @@ def testSelect():
 
 
 def testDeleteMany():
-    setupGetters(TestSO1)
-    TestSO1.deleteMany(OR(TestSO1.q.name == "bob", TestSO1.q.name == "fred"))
-    assert len(list(TestSO1.select('all'))) == 2
+    setupGetters(SOTestSO1)
+    SOTestSO1.deleteMany(OR(SOTestSO1.q.name == "bob",
+                            SOTestSO1.q.name == "fred"))
+    assert len(list(SOTestSO1.select('all'))) == 2
 
 
 def testDeleteBy():
-    setupGetters(TestSO1)
-    TestSO1.deleteBy(name="dave")
-    assert len(list(TestSO1.select())) == 3
+    setupGetters(SOTestSO1)
+    SOTestSO1.deleteBy(name="dave")
+    assert len(list(SOTestSO1.select())) == 3
 
 
 ########################################

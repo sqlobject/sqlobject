@@ -8,30 +8,30 @@ from sqlobject.sqlbuilder import SQLExpression, SQLObjectField, \
     _LikeQuoted
 
 
-class TestClass:
+class SOTestClass:
 
     def __repr__(self):
-        return '<TestClass>'
+        return '<SOTestClass>'
 
 
-def TestClassConverter(value, db):
+def SOTestClassConverter(value, db):
     return repr(value)
 
-registerConverter(TestClass, TestClassConverter)
+registerConverter(SOTestClass, SOTestClassConverter)
 
 
-class NewTestClass:
+class NewSOTestClass:
 
     __metaclass__ = type
 
     def __repr__(self):
-        return '<NewTestClass>'
+        return '<NewSOTestClass>'
 
 
-def NewTestClassConverter(value, db):
+def NewSOTestClassConverter(value, db):
     return repr(value)
 
-registerConverter(NewTestClass, NewTestClassConverter)
+registerConverter(NewSOTestClass, NewSOTestClassConverter)
 
 
 def _sqlrepr(self, db):
@@ -121,12 +121,12 @@ def test_datetime():
 
 
 def test_instance():
-    instance = TestClass()
+    instance = SOTestClass()
     assert sqlrepr(instance) == repr(instance)
 
 
 def test_newstyle():
-    instance = NewTestClass()
+    instance = NewSOTestClass()
     assert sqlrepr(instance) == repr(instance)
 
 

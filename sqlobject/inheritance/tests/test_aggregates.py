@@ -3,21 +3,21 @@ from sqlobject.inheritance import InheritableSQLObject
 from sqlobject.tests.dbtest import raises, setupClass
 
 
-class TestAggregate1(InheritableSQLObject):
+class SOTestAggregate1(InheritableSQLObject):
     value1 = IntCol()
 
 
-class TestAggregate2(TestAggregate1):
+class SOTestAggregate2(SOTestAggregate1):
     value2 = IntCol()
 
 
 def test_aggregates():
-    setupClass([TestAggregate1, TestAggregate2])
+    setupClass([SOTestAggregate1, SOTestAggregate2])
 
-    TestAggregate1(value1=1)
-    TestAggregate2(value1=2, value2=12)
+    SOTestAggregate1(value1=1)
+    SOTestAggregate2(value1=2, value2=12)
 
-    assert TestAggregate1.select().max("value1") == 2
-    assert TestAggregate2.select().max("value1") == 2
-    raises(Exception, TestAggregate2.select().max, "value2")
-    assert TestAggregate2.select().max(TestAggregate2.q.value2) == 12
+    assert SOTestAggregate1.select().max("value1") == 2
+    assert SOTestAggregate2.select().max("value1") == 2
+    raises(Exception, SOTestAggregate2.select().max, "value2")
+    assert SOTestAggregate2.select().max(SOTestAggregate2.q.value2) == 12

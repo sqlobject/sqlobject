@@ -2,7 +2,7 @@ from sqlobject import SQLObject, StringCol
 from sqlobject.tests.dbtest import setupClass
 
 
-class TestPlainAndNonPlainSetter(SQLObject):
+class SOTestPlainAndNonPlainSetter(SQLObject):
     firstName = StringCol(length=50, dbName='fname_col', default=None)
     lastName = StringCol(length=50, dbName='lname_col', default=None)
 
@@ -16,8 +16,8 @@ class TestPlainAndNonPlainSetter(SQLObject):
 
 
 def test_create():
-    setupClass(TestPlainAndNonPlainSetter)
-    t = TestPlainAndNonPlainSetter(name='John Doe')
+    setupClass(SOTestPlainAndNonPlainSetter)
+    t = SOTestPlainAndNonPlainSetter(name='John Doe')
     assert t.firstName == 'John'
     assert t.lastName == 'Doe'
     assert t.name == 'John Doe'

@@ -6,7 +6,7 @@ from sqlobject import declarative
 pytestmark = py.test.mark.skipif('True')
 
 
-class TestMe(object):
+class SOTestMe(object):
     pass
 
 
@@ -46,7 +46,7 @@ def test_1():
         arg1 = 'nothing'
         arg2 = ['something']
 
-    class A1(TestMe):
+    class A1(SOTestMe):
         a = AttrReplace(v1)
         v = V2Class(v2)
 

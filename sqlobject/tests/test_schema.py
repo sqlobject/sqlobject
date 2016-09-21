@@ -8,7 +8,7 @@ from sqlobject.tests.dbtest import getConnection, setupClass, supports
 ########################################
 
 
-class TestSchema(SQLObject):
+class SOTestSchema(SQLObject):
     foo = UnicodeCol(length=200)
 
 
@@ -20,9 +20,9 @@ def test_connection_schema():
     conn.query('CREATE SCHEMA test')
     conn.schema = 'test'
     conn.query('SET search_path TO test')
-    setupClass(TestSchema)
-    assert TestSchema._connection is conn
-    TestSchema(foo='bar')
-    assert conn.queryAll("SELECT * FROM test.test_schema")
+    setupClass(SOTestSchema)
+    assert SOTestSchema._connection is conn
+    SOTestSchema(foo='bar')
+    assert conn.queryAll("SELECT * FROM test.so_test_schema")
     conn.schema = None
     conn.query('SET search_path TO public')

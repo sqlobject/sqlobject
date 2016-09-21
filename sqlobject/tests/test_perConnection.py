@@ -7,14 +7,14 @@ from sqlobject.tests.dbtest import getConnection
 ########################################
 
 
-class TestPerConnection(SQLObject):
+class SOTestPerConnection(SQLObject):
     test = StringCol()
 
 
 def test_perConnection():
     connection = getConnection()
-    TestPerConnection.dropTable(connection=connection, ifExists=True)
-    TestPerConnection.createTable(connection=connection)
-    TestPerConnection(test='test', connection=connection)
-    assert len(list(TestPerConnection.select(
-        TestPerConnection.q.test == 'test', connection=connection))) == 1
+    SOTestPerConnection.dropTable(connection=connection, ifExists=True)
+    SOTestPerConnection.createTable(connection=connection)
+    SOTestPerConnection(test='test', connection=connection)
+    assert len(list(SOTestPerConnection.select(
+        SOTestPerConnection.q.test == 'test', connection=connection))) == 1

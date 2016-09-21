@@ -9,27 +9,27 @@ from sqlobject.tests.dbtest import getConnection, raises, setupClass, supports
 ########################################
 
 
-class TestException(SQLObject):
+class SOTestException(SQLObject):
     name = StringCol(unique=True, length=100)
 
 
-class TestExceptionWithNonexistingTable(SQLObject):
+class SOTestExceptionWithNonexistingTable(SQLObject):
     pass
 
 
 def test_exceptions():
     if not supports("exceptions"):
         py.test.skip("exceptions aren't supported")
-    setupClass(TestException)
-    TestException(name="test")
-    raises(DuplicateEntryError, TestException, name="test")
+    setupClass(SOTestException)
+    SOTestException(name="test")
+    raises(DuplicateEntryError, SOTestException, name="test")
 
     connection = getConnection()
     if connection.module.__name__ != 'psycopg2':
         return
-    TestExceptionWithNonexistingTable.setConnection(connection)
+    SOTestExceptionWithNonexistingTable.setConnection(connection)
     try:
-        list(TestExceptionWithNonexistingTable.select())
+        list(SOTestExceptionWithNonexistingTable.select())
     except ProgrammingError as e:
         assert e.args[0].code == '42P01'
     else:

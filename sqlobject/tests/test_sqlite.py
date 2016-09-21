@@ -4,7 +4,7 @@ from sqlobject import SQLObject, StringCol
 from sqlobject.compat import string_type
 from sqlobject.tests.dbtest import getConnection, setupClass, supports
 from sqlobject.tests.dbtest import setSQLiteConnectionFactory
-from .test_basic import TestSO1
+from .test_basic import SOTestSO1
 
 
 class SQLiteFactoryTest(SQLObject):
@@ -101,11 +101,11 @@ def test_sqlite_aggregate():
 
 
 def do_select():
-    list(TestSO1.select())
+    list(SOTestSO1.select())
 
 
 def test_sqlite_threaded():
-    setupClass(TestSO1)
+    setupClass(SOTestSO1)
     t = threading.Thread(target=do_select)
     t.start()
     t.join()
@@ -116,8 +116,8 @@ def test_sqlite_threaded():
 
 
 def test_empty_string():
-    setupClass(TestSO1)
-    test = TestSO1(name=None, passwd='')
+    setupClass(SOTestSO1)
+    test = SOTestSO1(name=None, passwd='')
     assert test.name is None
     assert test.passwd == ''
 
@@ -130,10 +130,10 @@ def test_memorydb():
         py.test.skip("These tests require SQLite")
     if not connection._memory:
         py.test.skip("The connection isn't memorydb")
-    setupClass(TestSO1)
+    setupClass(SOTestSO1)
     connection.close()  # create a new connection to an in-memory database
-    TestSO1.setConnection(connection)
-    TestSO1.createTable()
+    SOTestSO1.setConnection(connection)
+    SOTestSO1.createTable()
 
 
 def test_list_databases():
@@ -147,5 +147,5 @@ def test_list_tables():
     connection = getConnection()
     if connection.dbName != "sqlite":
         py.test.skip("These tests require SQLite")
-    setupClass(TestSO1)
-    assert TestSO1.sqlmeta.table in connection.listTables()
+    setupClass(SOTestSO1)
+    assert SOTestSO1.sqlmeta.table in connection.listTables()

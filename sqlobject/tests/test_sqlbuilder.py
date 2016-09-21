@@ -5,33 +5,33 @@ from sqlobject.sqlbuilder import AND, CONCAT, Delete, Insert, SQLOp, Select, \
 from sqlobject.tests.dbtest import getConnection, raises, setupClass
 
 
-class TestSQLBuilder(SQLObject):
+class SOTestSQLBuilder(SQLObject):
     name = StringCol()
     value = IntCol()
 
 
 def test_Select():
-    setupClass(TestSQLBuilder)
+    setupClass(SOTestSQLBuilder)
 
     select1 = Select([const.id, func.MAX(const.salary)],
                      staticTables=['employees'])
     assert sqlrepr(select1) == 'SELECT id, MAX(salary) FROM employees'
 
-    select2 = Select([TestSQLBuilder.q.name, TestSQLBuilder.q.value])
+    select2 = Select([SOTestSQLBuilder.q.name, SOTestSQLBuilder.q.value])
     assert sqlrepr(select2) == \
-        'SELECT test_sql_builder.name, test_sql_builder.value ' \
-        'FROM test_sql_builder'
+        'SELECT so_test_sql_builder.name, so_test_sql_builder.value ' \
+        'FROM so_test_sql_builder'
 
     union = Union(select1, select2)
     assert sqlrepr(union) == \
         'SELECT id, MAX(salary) FROM employees ' \
-        'UNION SELECT test_sql_builder.name, test_sql_builder.value ' \
-        'FROM test_sql_builder'
+        'UNION SELECT so_test_sql_builder.name, so_test_sql_builder.value ' \
+        'FROM so_test_sql_builder'
 
-    union = Union(TestSQLBuilder.select().queryForSelect())
+    union = Union(SOTestSQLBuilder.select().queryForSelect())
     assert sqlrepr(union) == \
-        'SELECT test_sql_builder.id, test_sql_builder.name, ' \
-        'test_sql_builder.value FROM test_sql_builder WHERE 1 = 1'
+        'SELECT so_test_sql_builder.id, so_test_sql_builder.name, ' \
+        'so_test_sql_builder.value FROM so_test_sql_builder WHERE 1 = 1'
 
 
 def test_empty_AND():
@@ -49,11 +49,11 @@ def test_empty_AND():
 
 
 def test_modulo():
-    setupClass(TestSQLBuilder)
-    assert sqlrepr(TestSQLBuilder.q.value % 2 == 0, 'mysql') == \
-        "((MOD(test_sql_builder.value, 2)) = (0))"
-    assert sqlrepr(TestSQLBuilder.q.value % 2 == 0, 'sqlite') == \
-        "(((test_sql_builder.value) % (2)) = (0))"
+    setupClass(SOTestSQLBuilder)
+    assert sqlrepr(SOTestSQLBuilder.q.value % 2 == 0, 'mysql') == \
+        "((MOD(so_test_sql_builder.value, 2)) = (0))"
+    assert sqlrepr(SOTestSQLBuilder.q.value % 2 == 0, 'sqlite') == \
+        "(((so_test_sql_builder.value) % (2)) = (0))"
 
 
 def test_str_or_sqlrepr():
@@ -91,18 +91,18 @@ def test_str_or_sqlrepr():
 
 
 def test_CONCAT():
-    setupClass(TestSQLBuilder)
-    TestSQLBuilder(name='test', value=42)
+    setupClass(SOTestSQLBuilder)
+    SOTestSQLBuilder(name='test', value=42)
 
     assert sqlrepr(CONCAT('a', 'b'), 'mysql') == "CONCAT('a', 'b')"
     assert sqlrepr(CONCAT('a', 'b'), 'sqlite') == "'a' || 'b'"
-    assert sqlrepr(CONCAT('prefix', TestSQLBuilder.q.name), 'mysql') == \
-        "CONCAT('prefix', test_sql_builder.name)"
-    assert sqlrepr(CONCAT('prefix', TestSQLBuilder.q.name), 'sqlite') == \
-        "'prefix' || test_sql_builder.name"
+    assert sqlrepr(CONCAT('prefix', SOTestSQLBuilder.q.name), 'mysql') == \
+        "CONCAT('prefix', so_test_sql_builder.name)"
+    assert sqlrepr(CONCAT('prefix', SOTestSQLBuilder.q.name), 'sqlite') == \
+        "'prefix' || so_test_sql_builder.name"
 
-    select = Select([CONCAT(TestSQLBuilder.q.name, '-suffix')],
-                    staticTables=['test_sql_builder'])
+    select = Select([CONCAT(SOTestSQLBuilder.q.name, '-suffix')],
+                    staticTables=['so_test_sql_builder'])
     connection = getConnection()
     rows = connection.queryAll(connection.sqlrepr(select))
     result = rows[0][0]

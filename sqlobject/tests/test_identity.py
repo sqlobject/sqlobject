@@ -7,23 +7,23 @@ from sqlobject.tests.dbtest import getConnection, setupClass
 ########################################
 
 
-class TestIdentity(SQLObject):
+class SOTestIdentity(SQLObject):
     n = IntCol()
 
 
 def test_identity():
     # (re)create table
-    TestIdentity.dropTable(connection=getConnection(), ifExists=True)
-    setupClass(TestIdentity)
+    SOTestIdentity.dropTable(connection=getConnection(), ifExists=True)
+    setupClass(SOTestIdentity)
 
     # insert without giving identity
-    TestIdentity(n=100)  # i1
+    SOTestIdentity(n=100)  # i1
     # verify result
-    i1get = TestIdentity.get(1)
+    i1get = SOTestIdentity.get(1)
     assert(i1get.n == 100)
 
     # insert while giving identity
-    TestIdentity(id=2, n=200)  # i2
+    SOTestIdentity(id=2, n=200)  # i2
     # verify result
-    i2get = TestIdentity.get(2)
+    i2get = SOTestIdentity.get(2)
     assert(i2get.n == 200)

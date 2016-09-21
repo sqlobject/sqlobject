@@ -9,7 +9,7 @@ from sqlobject.tests.dbtest import raises, setupClass
 ########################################
 
 
-class TestUnicode(SQLObject):
+class SOTestUnicode(SQLObject):
     count = IntCol(alternateID=True)
     col1 = UnicodeCol(alternateID=True, length=100)
     if PY2:
@@ -23,19 +23,20 @@ items = []
 def setup():
     global items
     items = []
-    setupClass(TestUnicode)
-    if TestUnicode._connection.dbName == 'postgres':
+    setupClass(SOTestUnicode)
+    if SOTestUnicode._connection.dbName == 'postgres':
         if PY2:
             dbEncoding = 'latin1'
         else:
             dbEncoding = 'utf8'
-        TestUnicode._connection.query('SET client_encoding TO %s' % dbEncoding)
+        SOTestUnicode._connection.query(
+            'SET client_encoding TO %s' % dbEncoding)
     if PY2:
         for i, s in enumerate(data):
-            items.append(TestUnicode(count=i, col1=s, col2=s))
+            items.append(SOTestUnicode(count=i, col1=s, col2=s))
     else:
         for i, s in enumerate(data):
-            items.append(TestUnicode(count=i, col1=s))
+            items.append(SOTestUnicode(count=i, col1=s))
 
 
 def test_create():
@@ -45,11 +46,11 @@ def test_create():
         if PY2:
             assert item.col2 == s
 
-    conn = TestUnicode._connection
+    conn = SOTestUnicode._connection
     if PY2:
         rows = conn.queryAll("""
         SELECT count, col1, col2
-        FROM test_unicode
+        FROM so_test_unicode
         ORDER BY count
         """)
         for count, col1, col2 in rows:
@@ -58,7 +59,7 @@ def test_create():
     else:
         rows = conn.queryAll("""
         SELECT count, col1
-        FROM test_unicode
+        FROM so_test_unicode
         ORDER BY count
         """)
         # On python 3, everthings already decoded to unicode
@@ -68,46 +69,47 @@ def test_create():
 
 def _test_select():
     for i, value in enumerate(data):
-        rows = list(TestUnicode.select(TestUnicode.q.col1 == value))
+        rows = list(SOTestUnicode.select(SOTestUnicode.q.col1 == value))
         assert len(rows) == 1
         if PY2:
-            rows = list(TestUnicode.select(TestUnicode.q.col2 == value))
+            rows = list(SOTestUnicode.select(SOTestUnicode.q.col2 == value))
             assert len(rows) == 1
-            rows = list(TestUnicode.select(AND(
-                TestUnicode.q.col1 == value,
-                TestUnicode.q.col2 == value
+            rows = list(SOTestUnicode.select(AND(
+                SOTestUnicode.q.col1 == value,
+                SOTestUnicode.q.col2 == value
             )))
             assert len(rows) == 1
-        rows = list(TestUnicode.selectBy(col1=value))
+        rows = list(SOTestUnicode.selectBy(col1=value))
         assert len(rows) == 1
         if PY2:
-            rows = list(TestUnicode.selectBy(col2=value))
+            rows = list(SOTestUnicode.selectBy(col2=value))
             assert len(rows) == 1
-            rows = list(TestUnicode.selectBy(col1=value, col2=value))
+            rows = list(SOTestUnicode.selectBy(col1=value, col2=value))
             assert len(rows) == 1
-        row = TestUnicode.byCol1(value)
+        row = SOTestUnicode.byCol1(value)
         assert row.count == i
     if PY2:
-        rows = list(TestUnicode.select(OR(
-            TestUnicode.q.col1 == u'\u00f0',
-            TestUnicode.q.col2 == u'test'
+        rows = list(SOTestUnicode.select(OR(
+            SOTestUnicode.q.col1 == u'\u00f0',
+            SOTestUnicode.q.col2 == u'test'
         )))
         assert len(rows) == 2
-        rows = list(TestUnicode.selectBy(col1=u'\u00f0', col2=u'test'))
+        rows = list(SOTestUnicode.selectBy(col1=u'\u00f0', col2=u'test'))
         assert len(rows) == 0
 
     # starts/endswith/contains
-    rows = list(TestUnicode.select(TestUnicode.q.col1.startswith("test")))
+    rows = list(SOTestUnicode.select(SOTestUnicode.q.col1.startswith("test")))
     assert len(rows) == 1
-    rows = list(TestUnicode.select(TestUnicode.q.col1.endswith("test")))
+    rows = list(SOTestUnicode.select(SOTestUnicode.q.col1.endswith("test")))
     assert len(rows) == 2
-    rows = list(TestUnicode.select(TestUnicode.q.col1.contains("test")))
+    rows = list(SOTestUnicode.select(SOTestUnicode.q.col1.contains("test")))
     assert len(rows) == 2
-    rows = list(TestUnicode.select(TestUnicode.q.col1.startswith(u"\u00f0")))
+    rows = list(SOTestUnicode.select(
+        SOTestUnicode.q.col1.startswith(u"\u00f0")))
     assert len(rows) == 1
-    rows = list(TestUnicode.select(TestUnicode.q.col1.endswith(u"\u00f0")))
+    rows = list(SOTestUnicode.select(SOTestUnicode.q.col1.endswith(u"\u00f0")))
     assert len(rows) == 1
-    rows = list(TestUnicode.select(TestUnicode.q.col1.contains(u"\u00f0")))
+    rows = list(SOTestUnicode.select(SOTestUnicode.q.col1.contains(u"\u00f0")))
     assert len(rows) == 1
 
 
@@ -121,19 +123,19 @@ def test_dbEncoding():
         # Python 3 mostly ignores dbEncoding
         py.test.skip("This test is for python 2")
     setup()
-    TestUnicode.sqlmeta.dbEncoding = 'utf-8'
+    SOTestUnicode.sqlmeta.dbEncoding = 'utf-8'
     _test_select()
-    TestUnicode.sqlmeta.dbEncoding = 'latin-1'
+    SOTestUnicode.sqlmeta.dbEncoding = 'latin-1'
     raises(AssertionError, _test_select)
-    TestUnicode.sqlmeta.dbEncoding = 'ascii'
+    SOTestUnicode.sqlmeta.dbEncoding = 'ascii'
     raises(UnicodeEncodeError, _test_select)
-    TestUnicode.sqlmeta.dbEncoding = None
+    SOTestUnicode.sqlmeta.dbEncoding = None
 
-    TestUnicode._connection.dbEncoding = 'utf-8'
+    SOTestUnicode._connection.dbEncoding = 'utf-8'
     _test_select()
-    TestUnicode._connection.dbEncoding = 'latin-1'
+    SOTestUnicode._connection.dbEncoding = 'latin-1'
     raises(AssertionError, _test_select)
-    TestUnicode._connection.dbEncoding = 'ascii'
+    SOTestUnicode._connection.dbEncoding = 'ascii'
     raises(UnicodeEncodeError, _test_select)
-    del TestUnicode.sqlmeta.dbEncoding
-    TestUnicode._connection.dbEncoding = 'utf-8'
+    del SOTestUnicode.sqlmeta.dbEncoding
+    SOTestUnicode._connection.dbEncoding = 'utf-8'

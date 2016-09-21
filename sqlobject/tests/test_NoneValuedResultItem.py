@@ -4,28 +4,30 @@ from sqlobject import ForeignKey, SQLObject, StringCol, sqlbuilder
 from sqlobject.tests.dbtest import setupClass
 
 
-class TestComposer(SQLObject):
+class SOTestComposer(SQLObject):
     name = StringCol()
 
 
-class TestWork(SQLObject):
+class SOTestWork(SQLObject):
     class sqlmeta:
         idName = "work_id"
 
-    composer = ForeignKey('TestComposer')
+    composer = ForeignKey('SOTestComposer')
     title = StringCol()
 
 
 def test1():
-    setupClass([TestComposer,
-                TestWork])
+    setupClass([SOTestComposer,
+                SOTestWork])
 
-    c = TestComposer(name='Mahler, Gustav')
-    w = TestWork(composer=c, title='Symphony No. 9')
-    TestComposer(name='Bruckner, Anton')
+    c = SOTestComposer(name='Mahler, Gustav')
+    w = SOTestWork(composer=c, title='Symphony No. 9')
+    SOTestComposer(name='Bruckner, Anton')
     # but don't add any works for Bruckner
 
     # do a left join, a common use case that often involves NULL results
-    s = TestWork.select(join=sqlbuilder.LEFTJOINOn(TestComposer, TestWork,
-                        TestComposer.q.id == TestWork.q.composerID))
+    s = SOTestWork.select(
+        join=sqlbuilder.LEFTJOINOn(
+            SOTestComposer, SOTestWork,
+            SOTestComposer.q.id == SOTestWork.q.composerID))
     assert tuple(s) == (w, None)

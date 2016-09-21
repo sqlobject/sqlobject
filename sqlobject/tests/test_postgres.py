@@ -8,23 +8,23 @@ from sqlobject.tests.dbtest import getConnection, setupClass
 ########################################
 
 
-class TestSSLMode(SQLObject):
+class SOTestSSLMode(SQLObject):
     test = StringCol()
 
 
 def test_sslmode():
-    setupClass(TestSSLMode)
-    connection = TestSSLMode._connection
+    setupClass(SOTestSSLMode)
+    connection = SOTestSSLMode._connection
     if (connection.dbName != 'postgres') or \
             (not connection.module.__name__.startswith('psycopg')):
         py.test.skip("The test requires PostgreSQL, psycopg and ssl mode")
 
     connection = getConnection(sslmode='require')
-    TestSSLMode._connection = connection
-    test = TestSSLMode(test='test')  # Connect to the DB to test sslmode
+    SOTestSSLMode._connection = connection
+    test = SOTestSSLMode(test='test')  # Connect to the DB to test sslmode
 
     connection.cache.clear()
-    test = TestSSLMode.select()[0]
+    test = SOTestSSLMode.select()[0]
     assert test.test == 'test'
 
 
@@ -33,7 +33,7 @@ def test_sslmode():
 ########################################
 
 
-class TestSOList(SQLObject):
+class SOTestSOList(SQLObject):
     pass
 
 
@@ -48,5 +48,5 @@ def test_list_tables():
     connection = getConnection()
     if connection.dbName != "postgres":
         py.test.skip("These tests require PostgreSQL")
-    setupClass(TestSOList)
-    assert TestSOList.sqlmeta.table in connection.listTables()
+    setupClass(SOTestSOList)
+    assert SOTestSOList.sqlmeta.table in connection.listTables()
