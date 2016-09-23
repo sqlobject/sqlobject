@@ -26,7 +26,7 @@ Tests
 
 * Tests are now run at CIs with python3.5.
 
-* Fix tests under Python 2.7.12 + tox + PostgreSQL.
+* Fix a problem in tests related to test order when running on PostgreSQL.
 
 * Restore mxDateTime installation in tox.ini
   (was removed while egenix.com was down).
