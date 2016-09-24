@@ -26,6 +26,8 @@ Tests
 
 * Tests are now run at CIs with python3.5.
 
+* Tests are split at Circle CI in 4 parallel containers.
+
 * Fix a problem in tests related to test order when running on PostgreSQL.
 
 * Restore mxDateTime installation in tox.ini

@@ -9,3 +9,8 @@ dependencies:
     - pip install -U pip
     - pip install -U tox tox-pyenv
     - pyenv local 2.6.8 2.7.10 3.4.3 3.5.0
+
+test:
+  override:
+     - case $CIRCLE_NODE_INDEX in 0) tox -e '{py26,py27}-mysql,{py34,py35}-mysqlclient' ;; 1) tox -e '{py26,py27,py34,py35}-postgres' ;; 2) tox -e '{py26,py27,py34,py35}-sqlite' ;; 3) tox -e '{py27,py34}-flake8' ;; esac:
+        parallel: true
