@@ -2,6 +2,8 @@ dependencies:
   cache_directories:
     - ~/.cache/pip
   override:
+    - sudo apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D
+    - sudo apt-key update
     - sudo apt-get -qq update
     - sudo apt-get install -y python-egenix-mxdatetime python-mysqldb python-psycopg2 python3-psycopg2
     - pip install -U pip
