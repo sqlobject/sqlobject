@@ -100,7 +100,7 @@ and `GitHub <https://github.com/sqlobject>`_.
       package_data={"sqlobject":
                     [
                         "../LICENSE",
-                        "../docs/*.rst", "../docs/*.css",
+                        "../docs/*.rst",
                         "../docs/html/*",
                         "../docs/html/_sources/*",
                         "../docs/html/_sources/api/*",
