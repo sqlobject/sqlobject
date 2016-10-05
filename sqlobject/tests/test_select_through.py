@@ -1,7 +1,7 @@
+import pytest
 from sqlobject import ForeignKey, SQLMultipleJoin, SQLObject, SQLRelatedJoin, \
     StringCol
 from sqlobject.tests.dbtest import inserts, setupClass
-import py
 
 
 # Tests retrieving objects through a join/fk on a selectResults
@@ -40,7 +40,7 @@ def setup_module(mod):
 
 
 def testBadRef():
-    py.test.raises(AttributeError, 'threes[0].throughTo.four')
+    pytest.raises(AttributeError, 'threes[0].throughTo.four')
 
 
 def testThroughFK():

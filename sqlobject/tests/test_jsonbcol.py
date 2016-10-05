@@ -1,4 +1,4 @@
-import py.test
+import pytest
 from sqlobject import SQLObject, JsonbCol
 from sqlobject.tests.dbtest import getConnection, setupClass
 
@@ -32,7 +32,7 @@ listofdictsdata = [dict(Erath=7390000000),
 def test_jsonbCol():
     connection = getConnection()
     if connection.dbName != "postgres":
-        py.test.skip("These tests require PostgreSQL")
+        pytest.skip("These tests require PostgreSQL")
 
     setupClass([JsonbContainer], force=True)
 

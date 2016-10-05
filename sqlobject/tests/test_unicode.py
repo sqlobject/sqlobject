@@ -1,4 +1,4 @@
-import py.test
+import pytest
 from sqlobject import AND, IntCol, OR, SQLObject, UnicodeCol
 from sqlobject.compat import PY2
 from sqlobject.tests.dbtest import raises, setupClass
@@ -121,7 +121,7 @@ def test_select():
 def test_dbEncoding():
     if not PY2:
         # Python 3 mostly ignores dbEncoding
-        py.test.skip("This test is for python 2")
+        pytest.skip("This test is for python 2")
     setup()
     SOTestUnicode.sqlmeta.dbEncoding = 'utf-8'
     _test_select()

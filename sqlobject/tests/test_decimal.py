@@ -1,5 +1,5 @@
 from decimal import Decimal
-import py.test
+import pytest
 from sqlobject import DecimalCol, DecimalStringCol, SQLObject, UnicodeCol
 from sqlobject.tests.dbtest import setupClass, supports
 
@@ -15,7 +15,7 @@ except NameError:
     # The module was imported during documentation building
     support_decimal_column = True
 if not support_decimal_column:
-    pytestmark = py.test.mark.skip('')
+    pytestmark = pytest.mark.skip('')
 
 
 class DecimalTable(SQLObject):

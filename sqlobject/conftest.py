@@ -1,7 +1,4 @@
-"""
-This module is used by py.test to configure testing for this
-application.
-"""
+"""This module is used by pytest to configure testing"""
 
 try:
     import pkg_resources

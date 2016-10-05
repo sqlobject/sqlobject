@@ -220,7 +220,7 @@ Testing
 Tests are important.  Tests keep everything from falling apart.  All
 new additions should have tests.
 
-Testing uses py.test, an alternative to ``unittest``.  It is available
+Testing uses pytest, an alternative to ``unittest``.  It is available
 at http://pytest.org/ and https://pypi.python.org/pypi/pytest.  Read its
 `getting started`_ document for more.
 
@@ -234,7 +234,7 @@ the top of ``tests/dbtest.py``).
 All the tests are modules in ``sqlobject/tests``.  Each module tests
 one kind of feature, more or less.  If you are testing a module, call
 the test module ``tests/test_modulename.py`` -- only modules that
-start with ``test_`` will be picked up by py.test.
+start with ``test_`` will be picked up by pytest.
 
 The "framework" for testing is in ``tests/dbtest``.  There's a couple of
 important functions:
@@ -246,7 +246,7 @@ avoid recreating tables if not necessary.
 named feature.  What backends support what is defined at the top of
 ``dbtest``.
 
-If you ``import *`` you'll also get py.test's version of raises_, an
+If you ``import *`` you'll also get pytest's version of raises_, an
 ``inserts`` function that can create instances for you, and a couple
 miscellaneous functions.
 

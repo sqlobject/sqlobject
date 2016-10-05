@@ -1,4 +1,4 @@
-import py.test
+import pytest
 from sqlobject import DatabaseIndex, ForeignKey, IntCol, MultipleJoin, \
     SQLObject, StringCol
 from sqlobject.dberrors import DatabaseError, IntegrityError, \
@@ -42,7 +42,7 @@ def test_indexes_1():
 
 def test_indexes_2():
     if not supports('expressionIndex'):
-        py.test.skip("expressionIndex isn't supported")
+        pytest.skip("expressionIndex isn't supported")
     setupClass(SOIndex2)
     SOIndex2(name='')
 

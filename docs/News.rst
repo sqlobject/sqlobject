@@ -20,11 +20,13 @@ Documentation
 Tests
 -----
 
-* Great Renaming: fix py.test warnings by renaming TestXXX classes
-  to SOTestXXX to prevent py.test to recognize them as test classes.
+* Rename py.test -> pytest in tests and docs.
 
-* Fix py.test warnings by converting yield test to plain calls:
-  yield test were deprecated in py.test.
+* Great Renaming: fix pytest warnings by renaming TestXXX classes
+  to SOTestXXX to prevent pytest to recognize them as test classes.
+
+* Fix pytest warnings by converting yield test to plain calls:
+  yield test were deprecated in pytest.
 
 * Tests are now run at CIs with python3.5.
 

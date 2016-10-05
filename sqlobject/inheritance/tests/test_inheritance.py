@@ -1,4 +1,4 @@
-from py.test import raises
+from pytest import raises
 from sqlobject import IntCol, StringCol
 from sqlobject.inheritance import InheritableSQLObject
 from sqlobject.tests.dbtest import setupClass

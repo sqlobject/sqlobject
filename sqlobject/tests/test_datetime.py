@@ -1,5 +1,5 @@
 from datetime import datetime, date, time
-import py.test
+import pytest
 
 from sqlobject import SQLObject
 from sqlobject import col
@@ -51,7 +51,7 @@ def test_microseconds():
     connection = getConnection()
     if hasattr(connection, 'can_use_microseconds') and \
             not connection.can_use_microseconds():
-        py.test.skip(
+        pytest.skip(
             "The database doesn't support microseconds; "
             "microseconds are supported by MariaDB since version 5.3.0, "
             "by MySQL since version 5.6.4, "

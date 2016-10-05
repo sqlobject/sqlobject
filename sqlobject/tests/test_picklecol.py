@@ -1,4 +1,4 @@
-import py.test
+import pytest
 from sqlobject import PickleCol, SQLObject
 from sqlobject.tests.dbtest import setupClass, supports
 
@@ -23,7 +23,7 @@ class PickleContainer(SQLObject):
 
 def test_pickleCol():
     if not supports('blobData'):
-        py.test.skip("blobData isn't supported")
+        pytest.skip("blobData isn't supported")
     setupClass([PickleContainer], force=True)
     mypickledata = PickleData()
 

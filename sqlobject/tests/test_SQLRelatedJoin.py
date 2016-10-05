@@ -1,4 +1,4 @@
-import py.test
+import pytest
 from sqlobject import RelatedJoin, SQLObject, SQLRelatedJoin, StringCol
 from sqlobject.tests.dbtest import setupClass, supports
 
@@ -51,7 +51,7 @@ def test_1():
 
 def test_related_join_transaction():
     if not supports('transactions'):
-        py.test.skip("Transactions aren't supported")
+        pytest.skip("Transactions aren't supported")
     createAllTables()
     trans = Tourtment._connection.transaction()
     try:

@@ -1,4 +1,4 @@
-import py.test
+import pytest
 from sqlobject import ForeignKey, IntCol, MultipleJoin, SQLMultipleJoin, \
     SQLObject, StringCol
 from sqlobject.tests.dbtest import setupClass, supports
@@ -51,7 +51,7 @@ def test_1():
 
 def test_multiple_join_transaction():
     if not supports('transactions'):
-        py.test.skip("Transactions aren't supported")
+        pytest.skip("Transactions aren't supported")
     createAllTables()
     trans = Race._connection.transaction()
     try:

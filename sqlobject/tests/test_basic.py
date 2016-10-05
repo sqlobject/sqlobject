@@ -1,5 +1,5 @@
 import codecs
-import py.test
+import pytest
 from sqlobject import BoolCol, ForeignKey, IntCol, KeyCol, SQLObject, \
     StringCol, connectionForURI, sqlhub
 from sqlobject.tests.dbtest import inserts, raises, setupClass, supports
@@ -211,7 +211,7 @@ def test_foreignKeyDestroySelfCascade():
 
 def testForeignKeyDropTableCascade():
     if not supports('dropTableCascade'):
-        py.test.skip("dropTableCascade isn't supported")
+        pytest.skip("dropTableCascade isn't supported")
     setupClass(SOTestSO7)
     setupClass(SOTestSO6)
     setupClass(SOTestSO5)

@@ -1,5 +1,5 @@
 from datetime import datetime
-from py.test import raises
+from pytest import raises
 
 from sqlobject import KeyCol, MultipleJoin, SQLObject, StringCol, \
     classregistry, sqlmeta

@@ -1,4 +1,4 @@
-import py.test
+import pytest
 from sqlobject import SQLObject, UnicodeCol
 from sqlobject.tests.dbtest import getConnection, setupClass, supports
 
@@ -14,7 +14,7 @@ class SOTestSchema(SQLObject):
 
 def test_connection_schema():
     if not supports('schema'):
-        py.test.skip("schemas aren't supported")
+        pytest.skip("schemas aren't supported")
     conn = getConnection()
     conn.schema = None
     conn.query('CREATE SCHEMA test')

@@ -1,11 +1,11 @@
 from __future__ import print_function
-import py.test
+import pytest
 
 from sqlobject import sqlhub, SQLObject, StringCol
 try:
     from sqlobject.wsgi_middleware import make_middleware
 except ImportError:
-    pytestmark = py.test.mark.skipif('True')
+    pytestmark = pytest.mark.skipif('True')
 from .dbtest import getConnection, getConnectionURI, setupClass
 
 
@@ -83,7 +83,7 @@ def test_other():
     # @@: Dammit, I can't get these to pass because I can't get the
     # stupid table to clear itself.  setupClass() sucks.  When I
     # fix it I'll take this disabling out:
-    py.test.skip("Oops...")
+    pytest.skip("Oops...")
     assert names() == []
     assert runapp(fail=False, begin=True, abort=True, use_transaction=True)
     assert names() == ['app1']

@@ -1,4 +1,4 @@
-import py.test
+import pytest
 from sqlobject import BLOBCol, DateTimeCol, ForeignKey, IntCol, SQLObject, \
     StringCol, sqlmeta
 from sqlobject.tests.dbtest import getConnection, supports
@@ -30,7 +30,7 @@ class SOTestCyclicReferenceB(SQLObject):
 
 def test_cyclic_reference():
     if not supports('dropTableCascade'):
-        py.test.skip("dropTableCascade isn't supported")
+        pytest.skip("dropTableCascade isn't supported")
     conn = getConnection()
     SOTestCyclicReferenceA.setConnection(conn)
     SOTestCyclicReferenceB.setConnection(conn)

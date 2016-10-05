@@ -1,9 +1,9 @@
-import py.test
+import pytest
 
 from sqlobject import boundattributes
 from sqlobject import declarative
 
-pytestmark = py.test.mark.skipif('True')
+pytestmark = pytest.mark.skipif('True')
 
 
 class SOTestMe(object):

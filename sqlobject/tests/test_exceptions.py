@@ -1,4 +1,4 @@
-import py.test
+import pytest
 from sqlobject import SQLObject, StringCol
 from sqlobject.dberrors import DuplicateEntryError, ProgrammingError
 from sqlobject.tests.dbtest import getConnection, raises, setupClass, supports
@@ -19,7 +19,7 @@ class SOTestExceptionWithNonexistingTable(SQLObject):
 
 def test_exceptions():
     if not supports("exceptions"):
-        py.test.skip("exceptions aren't supported")
+        pytest.skip("exceptions aren't supported")
     setupClass(SOTestException)
     SOTestException(name="test")
     raises(DuplicateEntryError, SOTestException, name="test")
