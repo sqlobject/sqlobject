@@ -1,6 +1,9 @@
 TODO
 ----
 
+* Quote table/column names that are reserved keywords (order => "order",
+  values => `values` for MySQL).
+
 * RelatedJoin.hasOther(otherObject[.id])
 
 * createParamsPre/Post::
