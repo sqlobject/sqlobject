@@ -1,5 +1,5 @@
 global-include *.py *.rst *.txt
-include docs/LICENSE MANIFEST.in .travis.yml circle.yml tox.ini
+include LICENSE MANIFEST.in .travis.yml circle.yml tox.ini
 include debian/* sqlobject/.coveragerc
 include docs/Makefile docs/genapidocs docs/rebuild
 recursive-include docs *.css *.html *.js *.gif *.png

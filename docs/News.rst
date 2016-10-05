@@ -15,6 +15,8 @@ Documentation
 
 * The docs are now generated with Sphinx.
 
+* Move docs/LICENSE to the top-level directory so that Github recognizes it.
+
 Tests
 -----
 
