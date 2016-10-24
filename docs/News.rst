@@ -10,6 +10,13 @@ News
 SQLObject 3.2.0 (master)
 ========================
 
+Minor features
+--------------
+
+* Dropped table name from ``VACUUM`` command in SQLiteConnection:
+  SQLite doesn't vacuum a single table and SQLite 3.15 uses the supplied name
+  as the name of the attached database to vacuum.
+
 Documentation
 -------------
 
