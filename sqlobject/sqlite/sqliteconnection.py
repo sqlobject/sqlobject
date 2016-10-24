@@ -310,7 +310,7 @@ class SQLiteConnection(DBAPI):
         self.query('ALTER TABLE %s ADD COLUMN %s' %
                    (tableName,
                     column.sqliteCreateSQL()))
-        self.query('VACUUM %s' % tableName)
+        self.query('VACUUM')
 
     def delColumn(self, sqlmeta, column):
         self.recreateTableWithoutColumn(sqlmeta, column)
