@@ -124,6 +124,8 @@ TODO
 * Allow to override ConsoleWriter/LogWriter classes and makeDebugWriter
   function.
 
+* Type annotations and mypy tests.
+
 .. image:: https://sourceforge.net/sflogo.php?group_id=74338&type=10
    :target: https://sourceforge.net/projects/sqlobject
    :class: noborder
