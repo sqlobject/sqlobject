@@ -6,6 +6,12 @@ language: python
 cache: pip
 
 addons:
+  apt:
+    packages:
+      - python-egenix-mxdatetime
+      - python-mysqldb
+      - python-psycopg2
+      - python3-psycopg2
   postgresql: "9.4"
 
 env:
@@ -23,10 +29,6 @@ env:
   - TOXENV=py35-sqlite
   - TOXENV=py27-flake8
   - TOXENV=py34-flake8
-
-before_install:
-  - sudo apt-get -qq update
-  - sudo apt-get install -y python-egenix-mxdatetime python-mysqldb python-psycopg2 python3-psycopg2
 
 install: pip install tox coveralls codecov
 
