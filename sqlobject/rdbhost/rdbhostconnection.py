@@ -15,34 +15,19 @@ class RdbhostConnection(PostgresConnection):
     schemes = [dbName]
 
     def __init__(self, dsn=None, host=None, port=None, db=None,
-                 user=None, password=None, unicodeCols=False, driver='rdbhost',
-                 **kw):
-        drivers = driver
-        for driver in drivers.split(','):
-            driver = driver.strip()
-            if not driver:
-                continue
-            try:
-                if driver == 'rdbhost':
-                    from rdbhdb import rdbhdb as rdb
-                    # monkey patch % escaping into Cursor._execute
-                    old_execute = getattr(rdb.Cursor, '_execute')
-                    setattr(rdb.Cursor, '_old_execute', old_execute)
+                 user=None, password=None, unicodeCols=False, **kw):
+        from rdbhdb import rdbhdb as rdb
+        # monkey patch % escaping into Cursor._execute
+        old_execute = getattr(rdb.Cursor, '_execute')
+        setattr(rdb.Cursor, '_old_execute', old_execute)
 
-                    def _execute(self, query, *args):
-                        assert not any([a for a in args])
-                        query = query.replace('%', '%%')
-                        self._old_execute(query, (), (), ())
-                    setattr(rdb.Cursor, '_execute', _execute)
-                    self.module = rdb
-                else:
-                    raise ValueError('Unknown Rdbhost driver %s' % driver)
-            except ImportError:
-                pass
-            else:
-                break
-        else:
-            raise ImportError('Cannot find the Rdbhost driver')
+        def _execute(self, query, *args):
+            assert not any([a for a in args])
+            query = query.replace('%', '%%')
+            self._old_execute(query, (), (), ())
+        setattr(rdb.Cursor, '_execute', _execute)
+
+        self.module = rdb
         self.user = user
         self.host = host
         self.port = port
