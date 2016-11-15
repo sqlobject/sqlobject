@@ -23,6 +23,8 @@ Minor features
 * Add ``driver`` keyword for FirebirdConnection. Allowed values are 'fdb' or
   'kinterbasdb'. Default is to test 'fdb' and 'kinterbasdb' in that order.
 
+* Add ``driver`` keyword for MySQLConnection. Allowed value is 'mysqldb'.
+
 Documentation
 -------------
 

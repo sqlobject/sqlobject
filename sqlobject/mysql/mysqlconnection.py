@@ -21,8 +21,28 @@ class MySQLConnection(DBAPI):
     schemes = [dbName]
 
     def __init__(self, db, user, password='', host='localhost', port=0, **kw):
-        import MySQLdb, MySQLdb.constants.CR, MySQLdb.constants.ER  # noqa
-        self.module = MySQLdb
+        drivers = kw.pop('driver', None) or 'mysqldb'
+        for driver in drivers.split(','):
+            driver = driver.strip()
+            if not driver:
+                continue
+            try:
+                if driver.lower() == 'mysqldb':
+                    import MySQLdb
+                    import MySQLdb.constants.CR
+                    import MySQLdb.constants.ER
+                    self.module = MySQLdb
+                else:
+                    raise ValueError(
+                        'Unknown MySQL driver "%s", '
+                        'expected mysqldb' % driver)
+            except ImportError:
+                pass
+            else:
+                break
+        else:
+            raise ImportError(
+                'Cannot find a MySQL driver, tried %s' % drivers)
         self.host = host
         self.port = port
         self.db = db
