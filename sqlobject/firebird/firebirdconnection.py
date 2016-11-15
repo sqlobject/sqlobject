@@ -16,17 +16,34 @@ class FirebirdConnection(DBAPI):
     def __init__(self, host, db, port='3050', user='sysdba',
                  password='masterkey', autoCommit=1,
                  dialect=None, role=None, charset=None, **kw):
-        try:
-            import fdb
-            self.module = fdb
-        except ImportError:
-            import kinterbasdb
-            # See http://kinterbasdb.sourceforge.net/dist_docs/usage.html
-            # for an explanation; in short: use datetime, decimal and
-            # unicode.
-            kinterbasdb.init(type_conv=200)
-            self.module = kinterbasdb
-
+        drivers = kw.pop('driver', None) or 'fdb,kinterbasdb'
+        for driver in drivers.split(','):
+            driver = driver.strip()
+            if not driver:
+                continue
+            try:
+                if driver == 'fdb':
+                    import fdb
+                    self.module = fdb
+                elif driver == 'kinterbasdb':
+                    import kinterbasdb
+                    # See
+                    # http://kinterbasdb.sourceforge.net/dist_docs/usage.html
+                    # for an explanation; in short: use datetime, decimal and
+                    # unicode.
+                    kinterbasdb.init(type_conv=200)
+                    self.module = kinterbasdb
+                else:
+                    raise ValueError(
+                        'Unknown FireBird driver "%s", '
+                        'expected fdb or kinterbasdb' % driver)
+            except ImportError:
+                pass
+            else:
+                break
+        else:
+            raise ImportError(
+                'Cannot find an FireBird driver, tried %s' % drivers)
         self.host = host
         self.port = port
         self.db = db

@@ -20,6 +20,9 @@ Minor features
 * Remove ``driver`` keyword from RdbhostConnection as it allows one driver
   ``rdbhdb``.
 
+* Add ``driver`` keyword for FirebirdConnection. Allowed values are 'fdb' or
+  'kinterbasdb'. Default is to test 'fdb' and 'kinterbasdb' in that order.
+
 Documentation
 -------------
 
