@@ -25,27 +25,23 @@ Documentation
 
 * The docs are now generated with Sphinx.
 
-* Move docs/LICENSE to the top-level directory so that Github recognizes it.
+* Move ``docs/LICENSE`` to the top-level directory so that Github recognizes
+  it.
 
 Tests
 -----
 
-* Rename py.test -> pytest in tests and docs.
+* Rename ``py.test`` -> ``pytest`` in tests and docs.
 
-* Great Renaming: fix pytest warnings by renaming TestXXX classes
-  to SOTestXXX to prevent pytest to recognize them as test classes.
+* Great Renaming: fix ``pytest`` warnings by renaming ``TestXXX`` classes
+  to ``SOTestXXX`` to prevent ``pytest`` to recognize them as test classes.
 
-* Fix pytest warnings by converting yield test to plain calls:
-  yield test were deprecated in pytest.
+* Fix ``pytest`` warnings by converting yield tests to plain calls:
+  yield tests were deprecated in ``pytest``.
 
-* Tests are now run at CIs with python3.5.
+* Tests are now run at CIs with ``python3.5``.
 
-* Tests are split at Circle CI in 4 parallel containers.
-
-* Fix a problem in tests related to test order when running on PostgreSQL.
-
-* Restore mxDateTime installation in tox.ini
-  (was removed while egenix.com was down).
+* Tests are split at ``Circle CI`` in 4 parallel containers.
 
 SQLObject 3.1.0
 ===============
