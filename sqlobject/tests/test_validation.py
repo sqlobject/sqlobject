@@ -34,7 +34,7 @@ class SOValidation(SQLObject):
 
     name = StringCol(validator=validators.PlainText(),
                      default='x', dbName='name_col')
-    name2 = StringCol(validator=validators.ConfirmType(type=str), default='y')
+    name2 = StringCol(validator2=validators.ConfirmType(type=str), default='y')
     name3 = IntCol(validator=validators.Wrapper(fromPython=int), default=100)
     name4 = FloatCol(default=2.718)
     name5 = PickleCol(default=None)

@@ -68,8 +68,6 @@ TODO
 
 * Switch from setuptools to distribute.
 
-* oursql MySQL bindings: https://github.com/python-oursql/oursql
-
 * MySQL Connector/Python: https://dev.mysql.com/doc/connector-python/en/
 
 * Pure Python Mysql Interface: https://github.com/nasi/MyPy

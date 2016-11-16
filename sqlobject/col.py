@@ -1879,6 +1879,8 @@ class UuidValidator(SOValidator):
     def to_python(self, value, state):
         if value is None:
             return None
+        if PY2 and isinstance(value, unicode):
+            value = value.encode('ascii')
         if isinstance(value, str):
             return UUID(value)
         raise validators.Invalid(

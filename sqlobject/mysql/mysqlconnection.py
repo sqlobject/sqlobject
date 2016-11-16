@@ -39,10 +39,17 @@ class MySQLConnection(DBAPI):
                         MySQLdb.constants.CR.SERVER_GONE_ERROR
                     self.CR_SERVER_LOST = MySQLdb.constants.CR.SERVER_LOST
                     self.ER_DUP_ENTRY = MySQLdb.constants.ER.DUP_ENTRY
+                elif driver == 'oursql':
+                    import oursql
+                    self.module = oursql
+                    self.CR_SERVER_GONE_ERROR = \
+                        oursql.errnos['CR_SERVER_GONE_ERROR']
+                    self.CR_SERVER_LOST = oursql.errnos['CR_SERVER_LOST']
+                    self.ER_DUP_ENTRY = oursql.errnos['ER_DUP_ENTRY']
                 else:
                     raise ValueError(
                         'Unknown MySQL driver "%s", '
-                        'expected mysqldb' % driver)
+                        'expected mysqldb or oursql' % driver)
             except ImportError:
                 pass
             else:
@@ -163,7 +170,8 @@ class MySQLConnection(DBAPI):
             except self.module.InternalError as e:
                 raise dberrors.InternalError(ErrorMessage(e))
             except self.module.ProgrammingError as e:
-                raise dberrors.ProgrammingError(ErrorMessage(e))
+                if e.args[0] is not None:
+                    raise dberrors.ProgrammingError(ErrorMessage(e))
             except self.module.DataError as e:
                 raise dberrors.DataError(ErrorMessage(e))
             except self.module.NotSupportedError as e:

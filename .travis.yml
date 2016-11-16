@@ -15,24 +15,29 @@ addons:
   postgresql: "9.4"
 
 env:
-  - TOXENV=py26-mysql
-  - TOXENV=py26-postgres
-  - TOXENV=py26-sqlite
-  - TOXENV=py27-mysql
-  - TOXENV=py27-postgres
-  - TOXENV=py27-sqlite
+  - TOXENV=py26-mysqldb
+  - TOXENV=py27-mysqldb
   - TOXENV=py34-mysqlclient
-  - TOXENV=py34-postgres
-  - TOXENV=py34-sqlite
   - TOXENV=py35-mysqlclient
+  - TOXENV=py26-postgres
+  - TOXENV=py27-postgres
+  - TOXENV=py34-postgres
   - TOXENV=py35-postgres
+  - TOXENV=py26-sqlite
+  - TOXENV=py27-sqlite
+  - TOXENV=py34-sqlite
   - TOXENV=py35-sqlite
+  - TOXENV=py26-oursql
+  - TOXENV=py27-oursql
   - TOXENV=py27-flake8
   - TOXENV=py34-flake8
 
 install: pip install tox coveralls codecov
 
 matrix:
+  allow_failures:
+    - env: TOXENV=py26-oursql
+    - env: TOXENV=py27-oursql
   fast_finish: true
 
 script: tox -e ${TOXENV}

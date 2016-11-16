@@ -46,14 +46,16 @@ used with the same query syntax.
 Requirements
 ============
 
-Currently SQLObject supports MySQL_ via MySQLdb_ aka MySQL-python,
-PostgreSQL_ via psycopg2_ or psycopg1, SQLite_ via PySQLite_, Firebird_
-via fdb_ or kinterbasdb_, `MAX DB`_ (also known as SAP DB) via sapdb_,
-Sybase via Sybase_, and `MSSQL Server`_ via pymssql_ (+ FreeTDS_) or
-adodbapi_ (Win32).
+Currently SQLObject supports MySQL_ via MySQLdb_ aka MySQL-python (called
+mysqlclient_ for Python 3) or oursql_, PostgreSQL_ via psycopg2_ or
+psycopg1, SQLite_ via PySQLite_, Firebird_ via fdb_ or kinterbasdb_, `MAX
+DB`_ (also known as SAP DB) via sapdb_, Sybase via Sybase_, and `MSSQL
+Server`_ via pymssql_ (+ FreeTDS_) or adodbapi_ (Win32).
 
 .. _MySQL: https://www.mysql.com/
 .. _MySQLdb: https://sourceforge.net/projects/mysql-python/
+.. _mysqlclient: https://pypi.python.org/pypi/mysqlclient
+.. _oursql: https://github.com/python-oursql/oursql
 .. _PostgreSQL: https://postgresql.org
 .. _psycopg2: http://initd.org/psycopg/
 .. _SQLite: https://sqlite.org/
