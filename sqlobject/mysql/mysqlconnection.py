@@ -29,9 +29,16 @@ class MySQLConnection(DBAPI):
             try:
                 if driver.lower() == 'mysqldb':
                     import MySQLdb
+                    if MySQLdb.version_info[:3] < (1, 2, 2):
+                        raise ValueError(
+                            'SQLObject requires MySQLdb 1.2.2 or later')
                     import MySQLdb.constants.CR
                     import MySQLdb.constants.ER
                     self.module = MySQLdb
+                    self.CR_SERVER_GONE_ERROR = \
+                        MySQLdb.constants.CR.SERVER_GONE_ERROR
+                    self.CR_SERVER_LOST = MySQLdb.constants.CR.SERVER_LOST
+                    self.ER_DUP_ENTRY = MySQLdb.constants.ER.DUP_ENTRY
                 else:
                     raise ValueError(
                         'Unknown MySQL driver "%s", '
@@ -69,12 +76,9 @@ class MySQLConnection(DBAPI):
 
         global mysql_Bin
         if not PY2 and mysql_Bin is None:
-            mysql_Bin = MySQLdb.Binary
-            MySQLdb.Binary = lambda x: mysql_Bin(x).decode(
+            mysql_Bin = self.module.Binary
+            self.module.Binary = lambda x: mysql_Bin(x).decode(
                 'ascii', errors='surrogateescape')
-
-        if self.module.version_info[:3] < (1, 2, 2):
-            raise ValueError('SQLObject requires MySQLdb 1.2.2 or later')
 
         self._server_version = None
         self._can_use_microseconds = None
@@ -89,17 +93,18 @@ class MySQLConnection(DBAPI):
     def makeConnection(self):
         dbEncoding = self.dbEncoding
         if dbEncoding:
-            from MySQLdb.connections import Connection
-            if not hasattr(Connection, 'set_character_set'):
-                # monkeypatch pre MySQLdb 1.2.1
-                def character_set_name(self):
-                    return dbEncoding + '_' + dbEncoding
-                Connection.character_set_name = character_set_name
+            if self.module.__name__ == 'MySQLdb':
+                from MySQLdb.connections import Connection
+                if not hasattr(Connection, 'set_character_set'):
+                    # monkeypatch pre MySQLdb 1.2.1
+                    def character_set_name(self):
+                        return dbEncoding + '_' + dbEncoding
+                    Connection.character_set_name = character_set_name
         try:
             conn = self.module.connect(
                 host=self.host, port=self.port, db=self.db,
                 user=self.user, passwd=self.password, **self.kw)
-            if self.module.version_info[:3] >= (1, 2, 2):
+            if self.module.__name__ == 'MySQLdb':
                 # Attempt to reconnect. This setting is persistent.
                 conn.ping(True)
         except self.module.OperationalError as e:
@@ -111,7 +116,7 @@ class MySQLConnection(DBAPI):
         if hasattr(conn, 'autocommit'):
             conn.autocommit(bool(self.autoCommit))
 
-        if dbEncoding:
+        if dbEncoding and self.module.__name__ == 'MySQLdb':
             if hasattr(conn, 'set_character_set'):  # MySQLdb 1.2.1 and later
                 conn.set_character_set(dbEncoding)
             else:  # pre MySQLdb 1.2.1
@@ -141,8 +146,8 @@ class MySQLConnection(DBAPI):
             try:
                 return cursor.execute(query)
             except self.module.OperationalError as e:
-                if e.args[0] in (self.module.constants.CR.SERVER_GONE_ERROR,
-                                 self.module.constants.CR.SERVER_LOST):
+                if e.args[0] in (self.CR_SERVER_GONE_ERROR,
+                                 self.CR_SERVER_LOST):
                     if count == 2:
                         raise dberrors.OperationalError(ErrorMessage(e))
                     if self.debug:
@@ -151,7 +156,7 @@ class MySQLConnection(DBAPI):
                     raise dberrors.OperationalError(ErrorMessage(e))
             except self.module.IntegrityError as e:
                 msg = ErrorMessage(e)
-                if e.args[0] == self.module.constants.ER.DUP_ENTRY:
+                if e.args[0] == self.ER_DUP_ENTRY:
                     raise dberrors.DuplicateEntryError(msg)
                 else:
                     raise dberrors.IntegrityError(msg)
