@@ -68,8 +68,6 @@ TODO
 
 * Switch from setuptools to distribute.
 
-* MySQL Connector/Python: https://dev.mysql.com/doc/connector-python/en/
-
 * Pure Python Mysql Interface: https://github.com/nasi/MyPy
 
 * Ultramysql `for Python2 <https://github.com/esnme/ultramysql>`_ and

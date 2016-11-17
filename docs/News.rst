@@ -13,30 +13,38 @@ SQLObject 3.2.0 (master)
 Minor features
 --------------
 
-* Drop table name from ``VACUUM`` command in SQLiteConnection:
-  SQLite doesn't vacuum a single table and SQLite 3.15 uses the supplied name
-  as the name of the attached database to vacuum.
+* Drop table name from ``VACUUM`` command in SQLiteConnection: SQLite
+  doesn't vacuum a single table and SQLite 3.15 uses the supplied name as
+  the name of the attached database to vacuum.
 
 * Remove ``driver`` keyword from RdbhostConnection as it allows one driver
   ``rdbhdb``.
 
-* Add ``driver`` keyword for FirebirdConnection. Allowed values are 'fdb' or
-  'kinterbasdb'. Default is to test 'fdb' and 'kinterbasdb' in that order.
+* Add ``driver`` keyword for FirebirdConnection. Allowed values are 'fdb'
+  or 'kinterbasdb'. Default is to test 'fdb' and 'kinterbasdb' in that
+  order.
+
+* Add support for `MySQL Connector
+  <https://pypi.python.org/pypi/mysql-connector>`_ (pure python; `binary
+  packages <https://dev.mysql.com/doc/connector-python/en/>`_ are not at
+  PyPI and hence are hard to install and test; most tests are passed, but
+  there are still problems).
 
 * Add support for `oursql <https://github.com/python-oursql/oursql>`_ MySQL
   driver (Python 2.6 and 2.7; most tests are passed, but there are still
   problems).
 
-* Add ``driver`` keyword for MySQLConnection. Allowed values are 'mysqldb' and
-  'oursql'. Default is to test for mysqldb only (oursql still causes problems).
+* Add ``driver`` keyword for MySQLConnection. Allowed value are 'mysqldb',
+  'connector' and 'oursql'. Default is to test for mysqldb only;
+  (connector and oursql drivers still cause problems).
 
 Documentation
 -------------
 
 * The docs are now generated with Sphinx.
 
-* Move ``docs/LICENSE`` to the top-level directory so that Github recognizes
-  it.
+* Move ``docs/LICENSE`` to the top-level directory so that Github
+  recognizes it.
 
 Tests
 -----
@@ -46,8 +54,8 @@ Tests
 * Great Renaming: fix ``pytest`` warnings by renaming ``TestXXX`` classes
   to ``SOTestXXX`` to prevent ``pytest`` to recognize them as test classes.
 
-* Fix ``pytest`` warnings by converting yield tests to plain calls:
-  yield tests were deprecated in ``pytest``.
+* Fix ``pytest`` warnings by converting yield tests to plain calls: yield
+  tests were deprecated in ``pytest``.
 
 * Tests are now run at CIs with ``python3.5``.
 

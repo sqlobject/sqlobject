@@ -599,8 +599,15 @@ class StringValidator(SOValidator):
             return value
         if hasattr(value, '__unicode__'):
             return unicode(value).encode(dbEncoding)
-        if dbName == 'mysql' and not PY2 and isinstance(value, bytes):
-            return value.decode('ascii', errors='surrogateescape')
+        if dbName == 'mysql':
+            if isinstance(value, bytearray):
+                if PY2:
+                    value = value.decode(dbEncoding)
+                    return value.encode(dbEncoding)  # convrt to bytes
+                else:
+                    return value.decode(dbEncoding, errors='surrogateescape')
+            if not PY2 and isinstance(value, bytes):
+                return value.decode('ascii', errors='surrogateescape')
         raise validators.Invalid(
             "expected a str in the StringCol '%s', got %s %r instead" % (
                 self.name, type(value), value), value, state)
