@@ -24,6 +24,13 @@ Minor features
   or 'kinterbasdb'. Default is to test 'fdb' and 'kinterbasdb' in that
   order.
 
+* Add ``driver`` keyword for MySQLConnection. Allowed value are 'mysqldb',
+  'connector' and 'oursql'. Default is to test for mysqldb only;
+  (connector and oursql drivers still cause problems).
+
+Work in progress
+----------------
+
 * Add support for `MySQL Connector
   <https://pypi.python.org/pypi/mysql-connector>`_ (pure python; `binary
   packages <https://dev.mysql.com/doc/connector-python/en/>`_ are not at
@@ -31,12 +38,8 @@ Minor features
   there are still problems).
 
 * Add support for `oursql <https://github.com/python-oursql/oursql>`_ MySQL
-  driver (Python 2.6 and 2.7; most tests are passed, but there are still
-  problems).
-
-* Add ``driver`` keyword for MySQLConnection. Allowed value are 'mysqldb',
-  'connector' and 'oursql'. Default is to test for mysqldb only;
-  (connector and oursql drivers still cause problems).
+  driver (Python 2.6 and 2.7 until oursql fixes python 3 compatibility; most
+  tests are passed, but there are still problems).
 
 Documentation
 -------------
