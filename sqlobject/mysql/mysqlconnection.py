@@ -121,8 +121,9 @@ class MySQLConnection(DBAPI):
             conn = self.module.connect(
                 host=self.host, port=self.port, db=self.db,
                 user=self.user, passwd=self.password, **self.kw)
-            # Attempt to reconnect. This setting is persistent.
-            conn.ping(True)
+            if self.module.__name__ != 'oursql':
+                # Attempt to reconnect. This setting is persistent.
+                conn.ping(True)
         except self.module.OperationalError as e:
             conninfo = ("; used connection string: "
                         "host=%(host)s, port=%(port)s, "
