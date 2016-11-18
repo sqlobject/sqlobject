@@ -70,8 +70,11 @@ TODO
 
 * Pure Python Mysql Interface: https://github.com/nasi/MyPy
 
+* Yet another pure python mysql interface: https://github.com/PyMySQL/PyMySQL/
+
 * Ultramysql `for Python2 <https://github.com/esnme/ultramysql>`_ and
-  `Python3 <https://github.com/arpitbbhayani/umysql3>`_.
+  `Python3 <https://github.com/arpitbbhayani/umysql3>`_. See also `umysqldb
+  <https://github.com/hongqn/umysqldb>`_.
 
 * pg8000 driver: http://code.google.com/p/pg8000/
 
