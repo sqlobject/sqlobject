@@ -25,8 +25,8 @@ Minor features
   order.
 
 * Add ``driver`` keyword for MySQLConnection. Allowed value are 'mysqldb',
-  'connector' and 'oursql'. Default is to test for mysqldb only;
-  (connector and oursql drivers still cause problems).
+  'connector', 'oursql' and 'pymysql'. Default is to test for mysqldb only;
+  (connector, oursql and pymysql drivers still cause problems).
 
 Work in progress
 ----------------
@@ -38,8 +38,12 @@ Work in progress
   there are still problems).
 
 * Add support for `oursql <https://github.com/python-oursql/oursql>`_ MySQL
-  driver (Python 2.6 and 2.7 until oursql fixes python 3 compatibility; most
-  tests are passed, but there are still problems).
+  driver (Python 2.6 and 2.7 until oursql fixes python 3 compatibility;
+  most tests are passed, but there are still problems).
+
+* Add support for `PyMySQL <https://github.com/PyMySQL/PyMySQL/>`_ - pure
+  python mysql interface; most tests are passed, but there are still
+  problems).
 
 Documentation
 -------------

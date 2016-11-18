@@ -27,17 +27,28 @@ class MySQLConnection(DBAPI):
             if not driver:
                 continue
             try:
-                if driver.lower() == 'mysqldb':
+                if driver.lower() in ('mysqldb', 'pymysql'):
+                    if driver.lower() == 'pymysql':
+                        import pymysql
+                        pymysql.install_as_MySQLdb()
                     import MySQLdb
-                    if MySQLdb.version_info[:3] < (1, 2, 2):
-                        raise ValueError(
-                            'SQLObject requires MySQLdb 1.2.2 or later')
+                    if driver.lower() == 'mysqldb':
+                        if MySQLdb.version_info[:3] < (1, 2, 2):
+                            raise ValueError(
+                                'SQLObject requires MySQLdb 1.2.2 or later')
                     import MySQLdb.constants.CR
                     import MySQLdb.constants.ER
                     self.module = MySQLdb
-                    self.CR_SERVER_GONE_ERROR = \
-                        MySQLdb.constants.CR.SERVER_GONE_ERROR
-                    self.CR_SERVER_LOST = MySQLdb.constants.CR.SERVER_LOST
+                    if driver.lower() == 'mysqldb':
+                        self.CR_SERVER_GONE_ERROR = \
+                            MySQLdb.constants.CR.SERVER_GONE_ERROR
+                        self.CR_SERVER_LOST = \
+                            MySQLdb.constants.CR.SERVER_LOST
+                    else:
+                        self.CR_SERVER_GONE_ERROR = \
+                            MySQLdb.constants.CR.CR_SERVER_GONE_ERROR
+                        self.CR_SERVER_LOST = \
+                            MySQLdb.constants.CR.CR_SERVER_LOST
                     self.ER_DUP_ENTRY = MySQLdb.constants.ER.DUP_ENTRY
                 elif driver == 'connector':
                     import mysql.connector
@@ -57,7 +68,8 @@ class MySQLConnection(DBAPI):
                 else:
                     raise ValueError(
                         'Unknown MySQL driver "%s", '
-                        'expected mysqldb, connector or oursql' % driver)
+                        'expected mysqldb, connector, '
+                        'oursql or pymysql' % driver)
             except ImportError:
                 pass
             else:

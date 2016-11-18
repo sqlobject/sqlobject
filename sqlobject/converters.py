@@ -81,7 +81,7 @@ def StringLikeConverter(value, db):
             value = value.tounicode()
         except ValueError:
             value = value.tostring()
-    elif isinstance(value, buffer_type):
+    elif isinstance(value, (bytearray, buffer_type)):
         value = str(value)
 
     if db in ('mysql', 'postgres', 'rdbhost'):
@@ -101,6 +101,7 @@ if PY2:
     registerConverter(unicode, StringLikeConverter)  # noqa
 registerConverter(array, StringLikeConverter)
 if PY2:
+    registerConverter(bytearray, StringLikeConverter)
     registerConverter(buffer_type, StringLikeConverter)
 else:
     registerConverter(memoryview, StringLikeConverter)

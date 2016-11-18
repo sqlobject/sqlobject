@@ -23,6 +23,12 @@ env:
   - TOXENV=py27-mysql-connector
   - TOXENV=py34-mysql-connector
   - TOXENV=py35-mysql-connector
+  - TOXENV=py26-oursql
+  - TOXENV=py27-oursql
+  - TOXENV=py26-pymysql
+  - TOXENV=py27-pymysql
+  - TOXENV=py34-pymysql
+  - TOXENV=py35-pymysql
   - TOXENV=py26-postgres
   - TOXENV=py27-postgres
   - TOXENV=py34-postgres
@@ -31,8 +37,6 @@ env:
   - TOXENV=py27-sqlite
   - TOXENV=py34-sqlite
   - TOXENV=py35-sqlite
-  - TOXENV=py26-oursql
-  - TOXENV=py27-oursql
   - TOXENV=py27-flake8
   - TOXENV=py34-flake8
 
@@ -46,6 +50,10 @@ matrix:
     - env: TOXENV=py35-mysql-connector
     - env: TOXENV=py26-oursql
     - env: TOXENV=py27-oursql
+    - env: TOXENV=py26-pymysql
+    - env: TOXENV=py27-pymysql
+    - env: TOXENV=py34-pymysql
+    - env: TOXENV=py35-pymysql
   fast_finish: true
 
 script: tox -e ${TOXENV}
