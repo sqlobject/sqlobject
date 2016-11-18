@@ -68,8 +68,6 @@ TODO
 
 * Switch from setuptools to distribute.
 
-* Pure Python Mysql Interface: https://github.com/nasi/MyPy
-
 * Yet another pure python mysql interface: https://github.com/PyMySQL/PyMySQL/
 
 * Ultramysql `for Python2 <https://github.com/esnme/ultramysql>`_ and
