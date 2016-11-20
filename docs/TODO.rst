@@ -25,8 +25,8 @@ TODO
 
 * Cached join results.
 
-* Invert tests isinstance(obj, (tuple, list)) to not isinstance(obj, basestr)
-  to allow any iterable.
+* Invert tests isinstance(obj, (tuple, list)) to not isinstance(obj,
+  basestr) to allow any iterable.
 
 * Always use .lazyIter().
 
@@ -34,13 +34,15 @@ TODO
 
 * Generators instead of loops (fetchall => fetchone).
 
-* Cache columns in sqlmeta.getColumns(); reset the cache on add/del Column/Join.
+* Cache columns in sqlmeta.getColumns(); reset the cache on add/del
+  Column/Join.
 
 * Make ConnectionHub a context manager instead of .doInTransaction().
 
 * Make version_info a namedtuple.
 
-* Expression columns - in SELECT but not in INSERT/UPDATE. Something like this::
+* Expression columns - in SELECT but not in INSERT/UPDATE. Something like
+  this::
 
     class MyClass(SQLObject):
         function1 = ExpressionCol(func.my_function(MyClass.q.col1))
@@ -56,13 +58,14 @@ TODO
 
 * PREPARE/EXECUTE.
 
-* Protect all .encode(), catch UnicodeEncode exceptions and reraise Invalid.
+* Protect all .encode(), catch UnicodeEncode exceptions and reraise
+  Invalid.
 
 * More kinds of joins, and more powerful join results (closer to how
   `select` works).
 
-* Better joins - automatic joins in .select()
-  based on ForeignKey/MultipleJoin/RelatedJoin.
+* Better joins - automatic joins in .select() based on
+  ForeignKey/MultipleJoin/RelatedJoin.
 
 * Deprecate, then remove connectionForOldURI.
 
@@ -74,9 +77,9 @@ TODO
 
 * `pyfirebirdsql <https://pypi.python.org/pypi/firebirdsql>`_.
 
-* dict API: use getitem interface for column access instead of getattr; reserve
-  getattr for internal attributes only; this helps to avoid collisions with
-  internal attributes.
+* dict API: use getitem interface for column access instead of getattr;
+  reserve getattr for internal attributes only; this helps to avoid
+  collisions with internal attributes.
 
 * Or move column values access to a separate namespace, e.g. .c:
   row.c.column.
@@ -89,16 +92,16 @@ TODO
 
 .. _DBUtils: https://pypi.python.org/pypi/DBUtils
 
-* ``_fromDatabase`` currently doesn't support IDs that don't fit into
-  the normal naming scheme.  It should do so.  You can still use
-  ``_idName`` with ``_fromDatabase``.
+* ``_fromDatabase`` currently doesn't support IDs that don't fit into the
+  normal naming scheme.  It should do so.  You can still use ``_idName``
+  with ``_fromDatabase``.
 
-* More databases supported.  There has been interest and some work in
-  the progress for Oracle. IWBN to have Informix and DB2 drivers.
+* More databases supported.  There has been interest and some work in the
+  progress for Oracle. IWBN to have Informix and DB2 drivers.
 
-* Better transaction support -- right now you can use transactions
-  for the database, but objects aren't transaction-aware, so
-  non-database persistence won't be able to be rolled back.
+* Better transaction support -- right now you can use transactions for the
+  database, but objects aren't transaction-aware, so non-database
+  persistence won't be able to be rolled back.
 
 * Optimistic locking and other techniques to handle concurrency.
 
