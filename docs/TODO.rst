@@ -68,10 +68,6 @@ TODO
 
 * Switch from setuptools to distribute.
 
-* Ultramysql `for Python2 <https://github.com/esnme/ultramysql>`_ and
-  `Python3 <https://github.com/arpitbbhayani/umysql3>`_. See also `umysqldb
-  <https://github.com/hongqn/umysqldb>`_.
-
 * pg8000 driver: http://code.google.com/p/pg8000/
 
 * py-postgresql driver: http://python.projects.postgresql.org/
