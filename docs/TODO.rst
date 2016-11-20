@@ -68,11 +68,11 @@ TODO
 
 * Switch from setuptools to distribute.
 
-* pg8000 driver: http://code.google.com/p/pg8000/
+* `pg8000 driver <https://pypi.python.org/pypi/pg8000>`_.
 
-* py-postgresql driver: http://python.projects.postgresql.org/
+* `py-postgresql driver <https://pypi.python.org/pypi/py-postgresql>`_.
 
-* pyfirebirdsql: https://github.com/nakagami/pyfirebirdsql
+* `pyfirebirdsql <https://pypi.python.org/pypi/firebirdsql>`_.
 
 * dict API: use getitem interface for column access instead of getattr; reserve
   getattr for internal attributes only; this helps to avoid collisions with
@@ -87,7 +87,7 @@ TODO
 
 * Use DBUtils_, especially SolidConnection.
 
-.. _DBUtils: http://www.webwareforpython.org/DBUtils
+.. _DBUtils: https://pypi.python.org/pypi/DBUtils
 
 * ``_fromDatabase`` currently doesn't support IDs that don't fit into
   the normal naming scheme.  It should do so.  You can still use
