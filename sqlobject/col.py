@@ -602,8 +602,7 @@ class StringValidator(SOValidator):
         if dbName == 'mysql':
             if isinstance(value, bytearray):
                 if PY2:
-                    value = value.decode(dbEncoding)
-                    return value.encode(dbEncoding)  # convrt to bytes
+                    return bytes(value)
                 else:
                     return value.decode(dbEncoding, errors='surrogateescape')
             if not PY2 and isinstance(value, bytes):
@@ -1842,7 +1841,10 @@ class PickleValidator(BinaryValidator):
             return None
         if isinstance(value, unicode_type):
             dbEncoding = self.getDbEncoding(state, default='ascii')
-            value = value.encode(dbEncoding)
+            if PY2:
+                value = value.encode(dbEncoding)
+            else:
+                value = value.encode(dbEncoding, errors='surrogateescape')
         if isinstance(value, bytes):
             return pickle.loads(value)
         raise validators.Invalid(

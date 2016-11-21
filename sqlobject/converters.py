@@ -81,7 +81,7 @@ def StringLikeConverter(value, db):
             value = value.tounicode()
         except ValueError:
             value = value.tostring()
-    elif isinstance(value, (bytearray, buffer_type)):
+    elif isinstance(value, buffer_type):
         value = str(value)
 
     if db in ('mysql', 'postgres', 'rdbhost'):
