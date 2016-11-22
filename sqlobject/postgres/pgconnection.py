@@ -49,10 +49,14 @@ class PostgresConnection(DBAPI):
                 elif driver == 'pygresql':
                     import pgdb
                     self.module = pgdb
+                elif driver == 'pg8000':
+                    import pg8000
+                    self.module = pg8000
                 else:
                     raise ValueError(
                         'Unknown PostgreSQL driver "%s", '
-                        'expected psycopg2, psycopg1 or pygresql' % driver)
+                        'expected psycopg2, psycopg1, '
+                        'pygresql or pg8000' % driver)
             except ImportError:
                 pass
             else:
@@ -125,6 +129,14 @@ class PostgresConnection(DBAPI):
                 if sslmode:
                     dsn.append('sslmode=%s' % sslmode)
                 dsn = ' '.join(dsn)
+        if driver == 'pg8000':
+            if host.startswith('/'):
+                dsn_dict["host"] = None
+                dsn_dict["unix_sock"] = host
+            if user is None:
+                dsn_dict["user"] = ''
+            if password is None:
+                dsn_dict["password"] = ''
         self.driver = driver
         self.dsn = dsn
         self.unicodeCols = kw.pop('unicodeCols', False)

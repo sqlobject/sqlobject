@@ -71,8 +71,6 @@ TODO
 
 * Switch from setuptools to distribute.
 
-* `pg8000 driver <https://pypi.python.org/pypi/pg8000>`_.
-
 * `py-postgresql driver <https://pypi.python.org/pypi/py-postgresql>`_.
 
 * `pyfirebirdsql <https://pypi.python.org/pypi/firebirdsql>`_.

@@ -37,6 +37,10 @@ env:
   - TOXENV=py27-pygresql
   - TOXENV=py34-pygresql
   - TOXENV=py35-pygresql
+  - TOXENV=py26-pg8000
+  - TOXENV=py27-pg8000
+  - TOXENV=py34-pg8000
+  - TOXENV=py35-pg8000
   - TOXENV=py26-sqlite
   - TOXENV=py27-sqlite
   - TOXENV=py34-sqlite
@@ -62,6 +66,10 @@ matrix:
     - env: TOXENV=py27-pygresql
     - env: TOXENV=py34-pygresql
     - env: TOXENV=py35-pygresql
+    - env: TOXENV=py26-pg8000
+    - env: TOXENV=py27-pg8000
+    - env: TOXENV=py34-pg8000
+    - env: TOXENV=py35-pg8000
   fast_finish: true
 
 script: tox -e ${TOXENV}

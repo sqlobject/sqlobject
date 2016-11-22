@@ -47,6 +47,9 @@ Work in progress
 
 * Extend support for PyGreSQL driver. There are still some problems.
 
+* Add support for `pg8000 <https://pypi.python.org/pypi/pg8000>`_
+  PostgreSQL driver. There are still some problems.
+
 Documentation
 -------------
 
