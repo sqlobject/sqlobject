@@ -29,10 +29,10 @@ env:
   - TOXENV=py27-pymysql
   - TOXENV=py34-pymysql
   - TOXENV=py35-pymysql
-  - TOXENV=py26-postgres
-  - TOXENV=py27-postgres
-  - TOXENV=py34-postgres
-  - TOXENV=py35-postgres
+  - TOXENV=py26-psycopg
+  - TOXENV=py27-psycopg
+  - TOXENV=py34-psycopg
+  - TOXENV=py35-psycopg
   - TOXENV=py26-sqlite
   - TOXENV=py27-sqlite
   - TOXENV=py34-sqlite

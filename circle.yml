@@ -12,5 +12,5 @@ dependencies:
 
 test:
   override:
-    - case $CIRCLE_NODE_INDEX in 0) tox -e '{py26,py27}-mysqldb,{py34,py35}-mysqlclient' ;; 1) tox -e '{py26,py27,py34,py35}-postgres' ;; 2) tox -e '{py26,py27,py34,py35}-sqlite' ;; 3) tox -e '{py27,py34}-flake8' ;; esac:
+    - case $CIRCLE_NODE_INDEX in 0) tox -e '{py26,py27}-mysqldb,{py34,py35}-mysqlclient' ;; 1) tox -e '{py26,py27,py34,py35}-psycopg' ;; 2) tox -e '{py26,py27,py34,py35}-sqlite' ;; 3) tox -e '{py27,py34}-flake8' ;; esac:
         parallel: true
