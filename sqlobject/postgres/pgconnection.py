@@ -49,6 +49,9 @@ class PostgresConnection(DBAPI):
                 elif driver == 'pygresql':
                     import pgdb
                     self.module = pgdb
+                elif driver in ('py-postgresql', 'pypostgresql'):
+                    from postgresql.driver import dbapi20
+                    self.module = dbapi20
                 elif driver == 'pg8000':
                     import pg8000
                     self.module = pg8000
@@ -56,7 +59,7 @@ class PostgresConnection(DBAPI):
                     raise ValueError(
                         'Unknown PostgreSQL driver "%s", '
                         'expected psycopg2, psycopg1, '
-                        'pygresql or pg8000' % driver)
+                        'pygresql, pg8000 or pypostgresql' % driver)
             except ImportError:
                 pass
             else:
@@ -129,6 +132,12 @@ class PostgresConnection(DBAPI):
                 if sslmode:
                     dsn.append('sslmode=%s' % sslmode)
                 dsn = ' '.join(dsn)
+        if driver == 'pypostgresql':
+            if host.startswith('/'):
+                dsn_dict["host"] = dsn_dict["port"] = None
+                dsn_dict["unix"] = host
+            else:
+                dsn_dict["unix"] = None
         if driver == 'pg8000':
             if host.startswith('/'):
                 dsn_dict["host"] = None

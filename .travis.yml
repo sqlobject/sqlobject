@@ -37,6 +37,8 @@ env:
   - TOXENV=py27-pygresql
   - TOXENV=py34-pygresql
   - TOXENV=py35-pygresql
+  - TOXENV=py34-pypostgresql
+  - TOXENV=py35-pypostgresql
   - TOXENV=py26-pg8000
   - TOXENV=py27-pg8000
   - TOXENV=py34-pg8000
@@ -66,6 +68,8 @@ matrix:
     - env: TOXENV=py27-pygresql
     - env: TOXENV=py34-pygresql
     - env: TOXENV=py35-pygresql
+    - env: TOXENV=py34-pypostgresql
+    - env: TOXENV=py35-pypostgresql
     - env: TOXENV=py26-pg8000
     - env: TOXENV=py27-pg8000
     - env: TOXENV=py34-pg8000

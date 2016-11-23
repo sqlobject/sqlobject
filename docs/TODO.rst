@@ -71,8 +71,6 @@ TODO
 
 * Switch from setuptools to distribute.
 
-* `py-postgresql driver <https://pypi.python.org/pypi/py-postgresql>`_.
-
 * `pyfirebirdsql <https://pypi.python.org/pypi/firebirdsql>`_.
 
 * `dbms <https://pypi.python.org/pypi/dbms>`_ is a DB API wrapper for DB
