@@ -33,10 +33,13 @@ class FirebirdConnection(DBAPI):
                     # unicode.
                     kinterbasdb.init(type_conv=200)
                     self.module = kinterbasdb
+                elif driver in ('firebirdsql', 'pyfirebirdsql'):
+                    import firebirdsql
+                    self.module = firebirdsql
                 else:
                     raise ValueError(
                         'Unknown FireBird driver "%s", '
-                        'expected fdb or kinterbasdb' % driver)
+                        'expected fdb, kinterbasdb or firebirdsql' % driver)
             except ImportError:
                 pass
             else:

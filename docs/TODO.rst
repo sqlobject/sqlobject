@@ -71,8 +71,6 @@ TODO
 
 * Switch from setuptools to distribute.
 
-* `pyfirebirdsql <https://pypi.python.org/pypi/firebirdsql>`_.
-
 * `dbms <https://pypi.python.org/pypi/dbms>`_ is a DB API wrapper for DB
   API drivers for IBM DB2, Firebird, MSSQL Server, MySQL, Oracle,
   PostgreSQL, SQLite and ODBC.

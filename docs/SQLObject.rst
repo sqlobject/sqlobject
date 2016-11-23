@@ -47,10 +47,13 @@ Requirements
 ============
 
 Currently SQLObject supports MySQL_ via MySQLdb_ aka MySQL-python (called
-mysqlclient_ for Python 3) or `MySQL Connector`_ or oursql_ or PyMySQL_,
-PostgreSQL_ via psycopg2_ or psycopg1 or PyGreSQL_ or py-postgresql_ or
-pg8000_, SQLite_ via PySQLite_, Firebird_ via fdb_ or kinterbasdb_, `MAX
-DB`_ (also known as SAP DB) via sapdb_, Sybase via Sybase_, and `MSSQL
+mysqlclient_ for Python 3); `MySQL Connector`_, oursql_ and PyMySQL_ are
+supported but have problems (not all tests passed). For PostgreSQL_
+psycopg2_ or psycopg1 are recommended; PyGreSQL_, py-postgresql_ and
+pg8000_ are supported but have problems (not all tests passed). SQLite_ has
+a built-in driver or PySQLite_. Firebird_ is supported via fdb_ or
+kinterbasdb_; pyfirebirdsql_ is supported but untested. `MAX DB`_ (also
+known as SAP DB) is supported via sapdb_. Sybase via Sybase_. `MSSQL
 Server`_ via pymssql_ (+ FreeTDS_) or adodbapi_ (Win32).
 
 .. _MySQL: https://www.mysql.com/
@@ -69,6 +72,7 @@ Server`_ via pymssql_ (+ FreeTDS_) or adodbapi_ (Win32).
 .. _Firebird: http://www.firebirdsql.org/en/python-driver/
 .. _fdb: http://www.firebirdsql.org/en/devel-python-driver/
 .. _kinterbasdb: http://kinterbasdb.sourceforge.net/
+.. _pyfirebirdsql: https://pypi.python.org/pypi/firebirdsql
 .. _`MAX DB`: http://maxdb.sap.com/
 .. _sapdb: http://maxdb.sap.com/doc/7_8/50/01923f25b842438a408805774f6989/frameset.htm
 .. _Sybase: http://www.object-craft.com.au/projects/sybase/

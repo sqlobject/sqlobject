@@ -22,14 +22,14 @@ Minor features
 
 * Add ``driver`` keyword for FirebirdConnection. Allowed values are 'fdb'
   or 'kinterbasdb'. Default is to test 'fdb' and 'kinterbasdb' in that
-  order.
+  order. pyfirebirdsql is supported but untested.
 
 * Add ``driver`` keyword for MySQLConnection. Allowed value are 'mysqldb',
   'connector', 'oursql' and 'pymysql'. Default is to test for mysqldb only;
   (connector, oursql and pymysql drivers still cause problems).
 
-Work in progress
-----------------
+Drivers (work in progress)
+--------------------------
 
 * Add support for `MySQL Connector
   <https://pypi.python.org/pypi/mysql-connector>`_ (pure python; `binary
@@ -53,6 +53,9 @@ Work in progress
 
 * Add support for `pg8000 <https://pypi.python.org/pypi/pg8000>`_
   PostgreSQL driver. There are still some problems.
+
+* Add support for `pyfirebirdsql
+  <https://pypi.python.org/pypi/firebirdsql>`_ (untested).
 
 Documentation
 -------------
