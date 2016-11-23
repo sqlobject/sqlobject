@@ -45,6 +45,8 @@ Work in progress
   python mysql interface; most tests are passed, but there are still
   problems).
 
+* Extend support for PyGreSQL driver. There are still some problems.
+
 Documentation
 -------------
 

@@ -1892,6 +1892,8 @@ class UuidValidator(SOValidator):
             value = value.encode('ascii')
         if isinstance(value, str):
             return UUID(value)
+        if isinstance(value, UUID):
+            return value
         raise validators.Invalid(
             "expected string in the UuidCol '%s', "
             "got %s %r instead" % (

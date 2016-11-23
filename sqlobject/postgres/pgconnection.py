@@ -1,9 +1,10 @@
-from sqlobject.dbconnection import DBAPI
 import re
 from sqlobject import col
 from sqlobject import dberrors
 from sqlobject import sqlbuilder
-from sqlobject.converters import registerConverter
+from sqlobject.compat import PY2
+from sqlobject.converters import registerConverter, sqlrepr
+from sqlobject.dbconnection import DBAPI
 
 
 class ErrorMessage(str):
@@ -35,13 +36,16 @@ class PostgresConnection(DBAPI):
             try:
                 if driver == 'psycopg2':
                     import psycopg2 as psycopg
+                    self.module = psycopg
                 elif driver == 'psycopg1':
                     import psycopg
+                    self.module = psycopg
                 elif driver == 'psycopg':
                     try:
                         import psycopg2 as psycopg
                     except ImportError:
                         import psycopg
+                    self.module = psycopg
                 elif driver == 'pygresql':
                     import pgdb
                     self.module = pgdb
@@ -56,11 +60,15 @@ class PostgresConnection(DBAPI):
         else:
             raise ImportError(
                 'Cannot find a PostgreSQL driver, tried %s' % drivers)
+
         if driver.startswith('psycopg'):
-            self.module = psycopg
             # Register a converter for psycopg Binary type.
-            registerConverter(type(psycopg.Binary('')),
+            registerConverter(type(self.module.Binary('')),
                               PsycoBinaryConverter)
+        if driver == 'pygresql' and type(self.module.Binary) is type:
+            # Register a converter for pygresql Binary type.
+            registerConverter(type(self.module.Binary(b'')),
+                              PygresBinaryConverter)
 
         self.user = user
         self.host = host
@@ -175,7 +183,8 @@ class PostgresConnection(DBAPI):
             raise dberrors.OperationalError(ErrorMessage(e))
         except self.module.IntegrityError as e:
             msg = ErrorMessage(e)
-            if e.pgcode == '23505':
+            if getattr(e, 'pgcode', -1) == '23505' or \
+                    getattr(e, 'sqlstate', -1) == '23505':
                 raise dberrors.DuplicateEntryError(msg)
             else:
                 raise dberrors.IntegrityError(msg)
@@ -188,7 +197,11 @@ class PostgresConnection(DBAPI):
         except self.module.NotSupportedError as e:
             raise dberrors.NotSupportedError(ErrorMessage(e))
         except self.module.DatabaseError as e:
-            raise dberrors.DatabaseError(ErrorMessage(e))
+            msg = ErrorMessage(e)
+            if 'duplicate key value violates unique constraint' in msg:
+                raise dberrors.DuplicateEntryError(msg)
+            else:
+                raise dberrors.DatabaseError(msg)
         except self.module.InterfaceError as e:
             raise dberrors.InterfaceError(ErrorMessage(e))
         except self.module.Warning as e:
@@ -458,7 +471,17 @@ class PostgresConnection(DBAPI):
         self._createOrDropDatabase(op="DROP")
 
 
-# Converter for psycopg Binary type.
+# Converter for Binary types
 def PsycoBinaryConverter(value, db):
     assert db == 'postgres'
     return str(value)
+
+
+if PY2:
+    def PygresBinaryConverter(value, db):
+        assert db == 'postgres'
+        return sqlrepr(bytes(value), db)
+else:
+    def PygresBinaryConverter(value, db):
+        assert db == 'postgres'
+        return sqlrepr(value.decode('latin1'), db)

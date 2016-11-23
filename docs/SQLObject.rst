@@ -47,11 +47,11 @@ Requirements
 ============
 
 Currently SQLObject supports MySQL_ via MySQLdb_ aka MySQL-python (called
-mysqlclient_ for Python 3) or `MySQL Connector`_ or oursql_ or PyMySQL_, PostgreSQL_
-via psycopg2_ or psycopg1, SQLite_ via PySQLite_, Firebird_ via fdb_ or
-kinterbasdb_, `MAX DB`_ (also known as SAP DB) via sapdb_, Sybase via
-Sybase_, and `MSSQL Server`_ via pymssql_ (+ FreeTDS_) or adodbapi_
-(Win32).
+mysqlclient_ for Python 3) or `MySQL Connector`_ or oursql_ or PyMySQL_,
+PostgreSQL_ via psycopg2_ or psycopg1 or PyGreSQL_, SQLite_ via PySQLite_,
+Firebird_ via fdb_ or kinterbasdb_, `MAX DB`_ (also known as SAP DB) via
+sapdb_, Sybase via Sybase_, and `MSSQL Server`_ via pymssql_ (+ FreeTDS_)
+or adodbapi_ (Win32).
 
 .. _MySQL: https://www.mysql.com/
 .. _MySQLdb: https://sourceforge.net/projects/mysql-python/
@@ -61,6 +61,7 @@ Sybase_, and `MSSQL Server`_ via pymssql_ (+ FreeTDS_) or adodbapi_
 .. _PyMySQL: https://github.com/PyMySQL/PyMySQL/
 .. _PostgreSQL: https://postgresql.org
 .. _psycopg2: http://initd.org/psycopg/
+.. _PyGreSQL: http://www.pygresql.org/
 .. _SQLite: https://sqlite.org/
 .. _PySQLite: https://github.com/ghaering/pysqlite
 .. _Firebird: http://www.firebirdsql.org/en/python-driver/
