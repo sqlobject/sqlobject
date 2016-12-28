@@ -132,12 +132,13 @@ class PostgresConnection(DBAPI):
                 if sslmode:
                     dsn.append('sslmode=%s' % sslmode)
                 dsn = ' '.join(dsn)
-        if driver == 'pypostgresql':
-            if host.startswith('/'):
+        if driver in ('py-postgresql', 'pypostgresql'):
+            if host and host.startswith('/'):
                 dsn_dict["host"] = dsn_dict["port"] = None
                 dsn_dict["unix"] = host
             else:
-                dsn_dict["unix"] = None
+                if "unix" in dsn_dict:
+                    del dsn_dict["unix"]
         if driver == 'pg8000':
             if host.startswith('/'):
                 dsn_dict["host"] = None
@@ -234,6 +235,11 @@ class PostgresConnection(DBAPI):
         table = soInstance.sqlmeta.table
         idName = soInstance.sqlmeta.idName
         c = conn.cursor()
+        if id is None and self.driver in ('py-postgresql', 'pypostgresql'):
+            sequenceName = soInstance.sqlmeta.idSequence or \
+                '%s_%s_seq' % (table, idName)
+            self._executeRetry(conn, c, "SELECT NEXTVAL('%s')" % sequenceName)
+            id = c.fetchone()[0]
         if id is not None:
             names = [idName] + names
             values = [id] + values
