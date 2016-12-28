@@ -1,3 +1,4 @@
+from getpass import getuser
 import re
 from sqlobject import col
 from sqlobject import dberrors
@@ -140,11 +141,11 @@ class PostgresConnection(DBAPI):
                 if "unix" in dsn_dict:
                     del dsn_dict["unix"]
         if driver == 'pg8000':
-            if host.startswith('/'):
+            if host and host.startswith('/'):
                 dsn_dict["host"] = None
                 dsn_dict["unix_sock"] = host
             if user is None:
-                dsn_dict["user"] = ''
+                dsn_dict["user"] = getuser()
             if password is None:
                 dsn_dict["password"] = ''
         self.driver = driver
