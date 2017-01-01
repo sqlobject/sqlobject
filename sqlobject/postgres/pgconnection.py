@@ -76,7 +76,7 @@ class PostgresConnection(DBAPI):
         if driver == 'pygresql' and type(self.module.Binary) is type:
             # Register a converter for pygresql Binary type.
             registerConverter(type(self.module.Binary(b'')),
-                              PygresBinaryConverter)
+                              PostgresBinaryConverter)
 
         self.user = user
         self.host = host
@@ -146,6 +146,9 @@ class PostgresConnection(DBAPI):
                 dsn_dict["unix_sock"] = host
             if user is None:
                 dsn_dict["user"] = getuser()
+            # Register a converter for pg8000 Bytea type.
+            registerConverter(type(self.module.Binary(b'')),
+                              PostgresBinaryConverter)
         self.driver = driver
         self.dsn = dsn
         self.unicodeCols = kw.pop('unicodeCols', False)
@@ -504,10 +507,10 @@ def PsycoBinaryConverter(value, db):
 
 
 if PY2:
-    def PygresBinaryConverter(value, db):
+    def PostgresBinaryConverter(value, db):
         assert db == 'postgres'
         return sqlrepr(bytes(value), db)
 else:
-    def PygresBinaryConverter(value, db):
+    def PostgresBinaryConverter(value, db):
         assert db == 'postgres'
         return sqlrepr(value.decode('latin1'), db)
