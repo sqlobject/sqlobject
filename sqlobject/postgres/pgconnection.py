@@ -215,7 +215,11 @@ class PostgresConnection(DBAPI):
         except self.module.InternalError as e:
             raise dberrors.InternalError(ErrorMessage(e))
         except self.module.ProgrammingError as e:
-            raise dberrors.ProgrammingError(ErrorMessage(e))
+            msg = ErrorMessage(e)
+            if (len(e.args) >= 2) and e.args[1] == '23505':
+                raise dberrors.DuplicateEntryError(msg)
+            else:
+                raise dberrors.ProgrammingError(msg)
         except self.module.DataError as e:
             raise dberrors.DataError(ErrorMessage(e))
         except self.module.NotSupportedError as e:
