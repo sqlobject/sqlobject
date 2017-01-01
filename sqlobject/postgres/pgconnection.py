@@ -146,8 +146,6 @@ class PostgresConnection(DBAPI):
                 dsn_dict["unix_sock"] = host
             if user is None:
                 dsn_dict["user"] = getuser()
-            if password is None:
-                dsn_dict["password"] = ''
         self.driver = driver
         self.dsn = dsn
         self.unicodeCols = kw.pop('unicodeCols', False)
