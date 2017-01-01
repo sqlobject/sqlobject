@@ -25,8 +25,8 @@ def test_groupBy():
         groupBy=GroupbyTest.q.name,
         orderBy=GroupbyTest.q.name)
     sql = connection.sqlrepr(select)
-    rows = connection.queryAll(sql)
-    assert list(rows) == [('a', 2), ('b', 1)]
+    rows = list(connection.queryAll(sql))
+    assert [tuple(t) for t in rows] == [('a', 2), ('b', 1)]
 
 
 def test_groupBy_list():
@@ -41,5 +41,5 @@ def test_groupBy_list():
         groupBy=[GroupbyTest.q.name, GroupbyTest.q.value],
         orderBy=[GroupbyTest.q.name, GroupbyTest.q.value])
     sql = connection.sqlrepr(select)
-    rows = connection.queryAll(sql)
-    assert list(rows) == [('a', 1), ('a', 2), ('b', 1)]
+    rows = list(connection.queryAll(sql))
+    assert [tuple(t) for t in rows] == [('a', 1), ('a', 2), ('b', 1)]

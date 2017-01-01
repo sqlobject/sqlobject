@@ -64,12 +64,12 @@ def test_many():
     IntAccumulator(value=3)
 
     attribute = IntAccumulator.q.value
-    assert IntAccumulator.select().accumulateMany(
+    assert list(IntAccumulator.select().accumulateMany(
         ("MIN", attribute), ("AVG", attribute), ("MAX", attribute),
         ("COUNT", attribute), ("SUM", attribute)
-    ) == (1, 2, 3, 6, 12)
+    )) == [1, 2, 3, 6, 12]
 
-    assert IntAccumulator.select(distinct=True).accumulateMany(
+    assert list(IntAccumulator.select(distinct=True).accumulateMany(
         ("MIN", attribute), ("AVG", attribute), ("MAX", attribute),
         ("COUNT", attribute), ("SUM", attribute)
-    ) == (1, 2, 3, 3, 6)
+    )) == [1, 2, 3, 3, 6]
