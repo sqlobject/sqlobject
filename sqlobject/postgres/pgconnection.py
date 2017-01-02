@@ -15,7 +15,8 @@ class ErrorMessage(str):
             obj.code = getattr(e, 'pgcode', None)
             obj.error = getattr(e, 'pgerror', None)
         else:
-            obj.code = obj.error = None
+            obj.code = getattr(e, 'code', None)
+            obj.error = getattr(e, 'error', None)
         obj.module = e.__module__
         obj.exception = e.__class__.__name__
         return obj
@@ -210,7 +211,8 @@ class PostgresConnection(DBAPI):
             raise dberrors.OperationalError(ErrorMessage(e))
         except self.module.IntegrityError as e:
             msg = ErrorMessage(e)
-            if getattr(e, 'pgcode', -1) == '23505' or \
+            if getattr(e, 'code', -1) == '23505' or \
+                    getattr(e, 'pgcode', -1) == '23505' or \
                     getattr(e, 'sqlstate', -1) == '23505':
                 raise dberrors.DuplicateEntryError(msg)
             else:
