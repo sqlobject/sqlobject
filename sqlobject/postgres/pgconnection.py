@@ -140,6 +140,9 @@ class PostgresConnection(DBAPI):
             else:
                 if "unix" in dsn_dict:
                     del dsn_dict["unix"]
+            # Register a converter for bytes
+            registerConverter(type(self.module.Binary(b'')),
+                              PostgresBinaryConverter)
         if driver == 'pg8000':
             if host and host.startswith('/'):
                 dsn_dict["host"] = None
