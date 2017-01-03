@@ -100,6 +100,7 @@ class MySQLConnection(DBAPI):
             self.dbEncoding = self.kw["charset"] = kw.pop("charset")
         else:
             self.dbEncoding = None
+        self.driver = driver
 
         global mysql_Bin
         if not PY2 and mysql_Bin is None:
@@ -120,20 +121,20 @@ class MySQLConnection(DBAPI):
     def makeConnection(self):
         dbEncoding = self.dbEncoding
         if dbEncoding:
-            if self.module.__name__ == 'MySQLdb':
+            if self.driver.lower() == 'mysqldb':
                 from MySQLdb.connections import Connection
                 if not hasattr(Connection, 'set_character_set'):
                     # monkeypatch pre MySQLdb 1.2.1
                     def character_set_name(self):
                         return dbEncoding + '_' + dbEncoding
                     Connection.character_set_name = character_set_name
-        if self.module.__name__ == 'mysql.connector':
+        if self.driver == 'connector':
             self.kw['consume_results'] = True
         try:
             conn = self.module.connect(
                 host=self.host, port=self.port, db=self.db,
                 user=self.user, passwd=self.password, **self.kw)
-            if self.module.__name__ != 'oursql':
+            if self.driver != 'oursql':
                 # Attempt to reconnect. This setting is persistent.
                 conn.ping(True)
         except self.module.OperationalError as e:
@@ -144,7 +145,7 @@ class MySQLConnection(DBAPI):
 
         self._setAutoCommit(conn, bool(self.autoCommit))
 
-        if dbEncoding and self.module.__name__ == 'MySQLdb':
+        if dbEncoding and self.driver.lower() == 'mysqldb':
             if hasattr(conn, 'set_character_set'):  # MySQLdb 1.2.1 and later
                 conn.set_character_set(dbEncoding)
             else:  # pre MySQLdb 1.2.1
