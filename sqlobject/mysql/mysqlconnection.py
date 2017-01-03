@@ -121,7 +121,7 @@ class MySQLConnection(DBAPI):
     def makeConnection(self):
         dbEncoding = self.dbEncoding
         if dbEncoding:
-            if self.driver.lower() == 'mysqldb':
+            if self.driver.lower() in ('mysqldb', 'pymysql'):
                 from MySQLdb.connections import Connection
                 if not hasattr(Connection, 'set_character_set'):
                     # monkeypatch pre MySQLdb 1.2.1
@@ -145,10 +145,12 @@ class MySQLConnection(DBAPI):
 
         self._setAutoCommit(conn, bool(self.autoCommit))
 
-        if dbEncoding and self.driver.lower() == 'mysqldb':
-            if hasattr(conn, 'set_character_set'):  # MySQLdb 1.2.1 and later
+        if dbEncoding:
+            if hasattr(conn, 'set_character_set'):
                 conn.set_character_set(dbEncoding)
-            else:  # pre MySQLdb 1.2.1
+            elif self.driver == 'oursql':
+                conn.charset = dbEncoding
+            elif hasattr(conn, 'query'):
                 # works along with monkeypatching code above
                 conn.query("SET NAMES %s" % dbEncoding)
 
