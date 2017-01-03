@@ -78,7 +78,7 @@ Tests
 
 * Tests are now run at CIs with ``python3.5``.
 
-* Tests are split at ``Circle CI`` in 4 parallel containers.
+* Drop ``Circle CI``.
 
 SQLObject 3.1.0
 ===============
