@@ -52,7 +52,7 @@ Drivers (work in progress)
   are still problems with the driver.
 
 * Add support for `pg8000 <https://pypi.python.org/pypi/pg8000>`_
-  PostgreSQL driver. There are still some problems.
+  PostgreSQL driver. There are major problems with the driver.
 
 * Add support for `pyfirebirdsql
   <https://pypi.python.org/pypi/firebirdsql>`_ (untested).
