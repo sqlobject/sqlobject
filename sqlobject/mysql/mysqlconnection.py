@@ -165,6 +165,10 @@ class MySQLConnection(DBAPI):
                 conn.autocommit = auto
 
     def _executeRetry(self, conn, cursor, query):
+        dbEncoding = self.dbEncoding
+        if dbEncoding and not isinstance(query, bytes) and (
+                self.driver == 'connector'):
+            query = query.encode(dbEncoding, 'surrogateescape')
         # When a server connection is lost and a query is attempted, most of
         # the time the query will raise a SERVER_LOST exception, then at the
         # second attempt to execute it, the mysql lib will reconnect and
