@@ -54,16 +54,6 @@ install: pip install tox coveralls codecov
 
 matrix:
   allow_failures:
-    - env: TOXENV=py26-mysql-connector
-    - env: TOXENV=py27-mysql-connector
-    - env: TOXENV=py34-mysql-connector
-    - env: TOXENV=py35-mysql-connector
-    - env: TOXENV=py26-oursql
-    - env: TOXENV=py27-oursql
-    - env: TOXENV=py26-pymysql
-    - env: TOXENV=py27-pymysql
-    - env: TOXENV=py34-pymysql
-    - env: TOXENV=py35-pymysql
     - env: TOXENV=py26-pygresql
     - env: TOXENV=py27-pygresql
     - env: TOXENV=py34-pygresql

@@ -28,22 +28,19 @@ Minor features
   'connector', 'oursql' and 'pymysql'. Default is to test for mysqldb only;
   (connector, oursql and pymysql drivers still cause problems).
 
-Drivers (work in progress)
---------------------------
-
 * Add support for `MySQL Connector
   <https://pypi.python.org/pypi/mysql-connector>`_ (pure python; `binary
   packages <https://dev.mysql.com/doc/connector-python/en/>`_ are not at
-  PyPI and hence are hard to install and test; most tests are passed, but
-  there are still problems).
+  PyPI and hence are hard to install and test).
 
 * Add support for `oursql <https://github.com/python-oursql/oursql>`_ MySQL
-  driver (Python 2.6 and 2.7 until oursql fixes python 3 compatibility;
-  most tests are passed, but there are still problems).
+  driver (Python 2.6 and 2.7 until oursql fixes python 3 compatibility).
 
 * Add support for `PyMySQL <https://github.com/PyMySQL/PyMySQL/>`_ - pure
-  python mysql interface; most tests are passed, but there are still
-  problems).
+  python mysql interface).
+
+Drivers (work in progress)
+--------------------------
 
 * Extend support for PyGreSQL driver. There are still some problems.
 
