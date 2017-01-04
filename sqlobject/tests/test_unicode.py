@@ -38,6 +38,8 @@ def test_create():
         ORDER BY count
         """)
         for count, col in rows:
+            if not isinstance(col, bytes):
+                col = col.encode('utf-8')
             assert data[count].encode('utf-8') == col
     else:
         rows = conn.queryAll("""
