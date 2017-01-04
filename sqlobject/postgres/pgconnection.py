@@ -90,11 +90,11 @@ class PostgresConnection(DBAPI):
         if port:
             if driver == 'pygresql':
                 dsn_dict["host"] = "%s:%d" % (host, port)
+            elif driver.startswith('psycopg') and \
+                    psycopg.__version__.split('.')[0] == '1':
+                dsn_dict["port"] = str(port)
             else:
-                if psycopg.__version__.split('.')[0] == '1':
-                    dsn_dict["port"] = str(port)
-                else:
-                    dsn_dict["port"] = port
+                dsn_dict["port"] = port
         if db:
             dsn_dict["database"] = db
         if user:
