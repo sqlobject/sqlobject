@@ -594,7 +594,7 @@ class StringValidator(SOValidator):
         if self.dataType and isinstance(value, self.dataType):
             return value
         if isinstance(value,
-                      (str, buffer_type, binaryType,
+                      (str, bytes, buffer_type, binaryType,
                        sqlbuilder.SQLExpression)):
             return value
         if hasattr(value, '__unicode__'):
@@ -1763,6 +1763,8 @@ class BinaryValidator(SOValidator):
                 value = connection.module.decode(value)
             if dbName == "mysql" and not PY2:
                 value = value.encode('ascii', errors='surrogateescape')
+            return value
+        if isinstance(value, bytes):
             return value
         if isinstance(value, (buffer_type, binaryType)):
             cachedValue = self._cachedValue
