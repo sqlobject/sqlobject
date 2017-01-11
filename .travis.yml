@@ -12,13 +12,16 @@ addons:
       - python-mysqldb
       - python-psycopg2
       - python3-psycopg2
-      - firebird2.5-classic
+      - firebird2.5-super
   postgresql: "9.4"
 
+# Start the firebird database server
+# We use firebird-super, so there's none of the inetd configuration required by firebird-classic
+# We also create a test user for the firebird test and create a script that can be fed into isql-fb to create the test database
 before_install:
-   # Create a test user for firebird
-   SYS_PASS=$(grep ISC_PASSWORD /etc/firebird/2.5/SYSDBA.password | cut -d '"' -f 2)
-   sudo gsec -user sysdba -pass $SYS_PASS -add test -pw test
+   - sudo sed -i /etc/default/firebird2.5 -e 's/=no/=yes/' && sudo /etc/init.d/firebird2.5-super start
+   - sudo touch /var/lib/firebird/create_test_db && sudo chmod 666 /var/lib/firebird/create_test_db && echo "CREATE DATABASE 'localhost:/tmp/test.fdb';" > /var/lib/firebird/create_test_db && sudo chmod 644 /var/lib/firebird/create_test_db
+   - sudo gsec -user sysdba -pass masterkey -add test -pw test
 
 env:
   - TOXENV=py26-mysqldb
