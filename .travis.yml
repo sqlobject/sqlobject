@@ -82,6 +82,9 @@ matrix:
     - env: TOXENV=py27-fdb
     - env: TOXENV=py34-fdb
     - env: TOXENV=py35-fdb
+    - env: TOXENV=py27-firebirdsql
+    - env: TOXENV=py34-firebirdsql
+    - env: TOXENV=py35-firebirdsql
   fast_finish: true
 
 script: tox -e ${TOXENV}
