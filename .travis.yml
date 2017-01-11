@@ -58,9 +58,9 @@ env:
   - TOXENV=py35-sqlite
   - TOXENV=py27-flake8
   - TOXENV=py34-flake8
-  - TOXENV=py27-firebird
-  - TOXENV=py34-firebird
-  - TOXENV=py35-firebird
+  - TOXENV=py27-fdb
+  - TOXENV=py34-fdb
+  - TOXENV=py35-fdb
   - TOXENV=py27-firebirdsql
   - TOXENV=py34-firebirdsql
   - TOXENV=py35-firebirdsql
@@ -79,6 +79,9 @@ matrix:
     - env: TOXENV=py27-pg8000
     - env: TOXENV=py34-pg8000
     - env: TOXENV=py35-pg8000
+    - env: TOXENV=py27-fdb
+    - env: TOXENV=py34-fdb
+    - env: TOXENV=py35-fdb
   fast_finish: true
 
 script: tox -e ${TOXENV}
