@@ -12,7 +12,16 @@ addons:
       - python-mysqldb
       - python-psycopg2
       - python3-psycopg2
+      - firebird2.5-super
   postgresql: "9.4"
+
+# Start the firebird database server
+# We use firebird-super, so there's none of the inetd configuration required by firebird-classic
+# We also create a test user for the firebird test and create a script that can be fed into isql-fb to create the test database
+before_install:
+   - sudo sed -i /etc/default/firebird2.5 -e 's/=no/=yes/' && sudo /etc/init.d/firebird2.5-super start
+   - sudo touch /var/lib/firebird/create_test_db && sudo chmod 666 /var/lib/firebird/create_test_db && echo "CREATE DATABASE 'localhost:/tmp/test.fdb';" > /var/lib/firebird/create_test_db && sudo chmod 644 /var/lib/firebird/create_test_db
+   - sudo gsec -user sysdba -pass masterkey -add test -pw test
 
 env:
   - TOXENV=py26-mysqldb
@@ -49,6 +58,12 @@ env:
   - TOXENV=py35-sqlite
   - TOXENV=py27-flake8
   - TOXENV=py34-flake8
+  - TOXENV=py27-fdb
+  - TOXENV=py34-fdb
+  - TOXENV=py35-fdb
+  - TOXENV=py27-firebirdsql
+  - TOXENV=py34-firebirdsql
+  - TOXENV=py35-firebirdsql
 
 install: pip install tox coveralls codecov
 
@@ -64,6 +79,12 @@ matrix:
     - env: TOXENV=py27-pg8000
     - env: TOXENV=py34-pg8000
     - env: TOXENV=py35-pg8000
+    - env: TOXENV=py27-fdb
+    - env: TOXENV=py34-fdb
+    - env: TOXENV=py35-fdb
+    - env: TOXENV=py27-firebirdsql
+    - env: TOXENV=py34-firebirdsql
+    - env: TOXENV=py35-firebirdsql
   fast_finish: true
 
 script: tox -e ${TOXENV}
