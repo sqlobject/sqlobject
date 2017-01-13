@@ -7,7 +7,7 @@ version: 3.2.{build}
 clone_depth: 50
 
 services:
-   - postgresql
+  - postgresql
 
 environment:
   PGUSER: "postgres"
@@ -52,16 +52,15 @@ environment:
     #- PYTHON: "C:\\Python36-x64"
     #  db: postgresql
 
-
 install:
-   # Ensure we use the right python version
-   - "SET PATH=%PYTHON%;%PYTHON%\\Scripts;C:\\Program Files\\PostgreSQL\\9.5\\bin\\;%PATH%"
-   - "python --version"
-   - "pip install -r requirements.txt"
-   - "pip install tox"
-   # Enable TCP for mssql
-   # (from appveyor documentation)
-   - ps: |
+  # Ensure we use the right python version
+  - "SET PATH=%PYTHON%;%PYTHON%\\Scripts;C:\\Program Files\\PostgreSQL\\9.5\\bin\\;%PATH%"
+  - "python --version"
+  - "pip install -r requirements.txt"
+  - "pip install tox"
+  # Enable TCP for mssql
+  # (from appveyor documentation)
+  - ps: |
       [reflection.assembly]::LoadWithPartialName("Microsoft.SqlServer.Smo") | Out-Null
       [reflection.assembly]::LoadWithPartialName("Microsoft.SqlServer.SqlWmiManagement") | Out-Null
       $serverName = $env:COMPUTERNAME
@@ -80,4 +79,4 @@ install:
 build: false
 
 test_script:
-   - "tox -e %TOX_ENV%"
+  - "tox -e %TOX_ENV%"
