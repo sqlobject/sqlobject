@@ -77,6 +77,10 @@ Tests
 
 * Drop ``Circle CI``.
 
+* Run at Travis CI tests with Firebird backend (server version 2.5; drivers fdb
+  and firebirdsql). There are major problems due to SQLObject tests use
+  table/column names that are reserver words in FB.
+
 SQLObject 3.1.0
 ===============
 
