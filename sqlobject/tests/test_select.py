@@ -177,6 +177,9 @@ def test_select_LIKE():
 
 
 def test_select_RLIKE():
+    if not supports('rlike'):
+        pytest.skip("rlike isn't supported")
+
     setupClass(IterTest)
 
     if IterTest._connection.dbName == "sqlite":

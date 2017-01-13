@@ -32,16 +32,17 @@ and you can use it like::
             pytest.skip("Doesn't support featureX")
 """
 supportsMatrix = {
-    '+exceptions': 'mysql postgres sqlite',
-    '-transactions': 'mysql rdbhost',
-    '-dropTableCascade': 'sybase mssql mysql',
-    '-expressionIndex': 'mysql sqlite firebird mssql',
     '-blobData': 'mssql rdbhost',
     '-decimalColumn': 'mssql',
+    '-dropTableCascade': 'sybase mssql mysql',
     '-emptyTable': 'mssql',
+    '+exceptions': 'mysql postgres sqlite',
+    '-expressionIndex': 'mysql sqlite firebird mssql',
     '-limitSelect': 'mssql',
-    '+schema': 'postgres',
     '+memorydb': 'sqlite',
+    '+rlike': 'mysql postgres sqlite',
+    '+schema': 'postgres',
+    '-transactions': 'mysql rdbhost',
 }
 
 
