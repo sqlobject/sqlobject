@@ -51,6 +51,10 @@ environment:
     #  db: mssql2014
     #- PYTHON: "C:\\Python36-x64"
     #  db: postgresql
+    - PYTHON: "C:\\Python27"
+      TOX_ENV: "pywin27-sqlite"
+    - PYTHON: "C:\\Python34"
+      TOX_ENV: "pywin34-sqlite"
 
 install:
   # Ensure we use the right python version
