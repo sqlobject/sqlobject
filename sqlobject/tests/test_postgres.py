@@ -1,3 +1,4 @@
+import os
 import pytest
 from sqlobject import SQLObject, StringCol
 from sqlobject.tests.dbtest import getConnection, setupClass
@@ -16,8 +17,10 @@ def test_sslmode():
     setupClass(SOTestSSLMode)
     connection = SOTestSSLMode._connection
     if (connection.dbName != 'postgres') or \
-            (not connection.module.__name__.startswith('psycopg')):
-        pytest.skip("The test requires PostgreSQL, psycopg and ssl mode")
+            (not connection.module.__name__.startswith('psycopg')) or \
+            (os.name == 'nt'):
+        pytest.skip("The test requires PostgreSQL, psycopg and ssl mode; "
+                    "also it doesn't work on w32")
 
     connection = getConnection(sslmode='require')
     SOTestSSLMode._connection = connection
