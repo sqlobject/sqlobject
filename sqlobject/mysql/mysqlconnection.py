@@ -165,6 +165,8 @@ class MySQLConnection(DBAPI):
                 conn.autocommit = auto
 
     def _executeRetry(self, conn, cursor, query):
+        if self.debug:
+            self.printDebug(conn, query, 'QueryR')
         dbEncoding = self.dbEncoding
         if dbEncoding and not isinstance(query, bytes) and (
                 self.driver == 'connector'):
