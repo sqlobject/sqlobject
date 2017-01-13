@@ -6,28 +6,28 @@ from sqlobject.tests.dbtest import setupClass
 
 
 class IntAccumulator(SQLObject):
-    value = IntCol()
+    so_value = IntCol()
 
 
 class FloatAccumulator(SQLObject):
-    value = FloatCol()
+    so_value = FloatCol()
 
 
 def test_integer():
     setupClass(IntAccumulator)
-    IntAccumulator(value=1)
-    IntAccumulator(value=2)
-    IntAccumulator(value=3)
+    IntAccumulator(so_value=1)
+    IntAccumulator(so_value=2)
+    IntAccumulator(so_value=3)
 
-    assert IntAccumulator.select().min(IntAccumulator.q.value) == 1
-    assert IntAccumulator.select().avg(IntAccumulator.q.value) == 2
-    assert IntAccumulator.select().max(IntAccumulator.q.value) == 3
-    assert IntAccumulator.select().sum(IntAccumulator.q.value) == 6
+    assert IntAccumulator.select().min(IntAccumulator.q.so_value) == 1
+    assert IntAccumulator.select().avg(IntAccumulator.q.so_value) == 2
+    assert IntAccumulator.select().max(IntAccumulator.q.so_value) == 3
+    assert IntAccumulator.select().sum(IntAccumulator.q.so_value) == 6
 
-    assert IntAccumulator.select(IntAccumulator.q.value > 1).\
-        max(IntAccumulator.q.value) == 3
-    assert IntAccumulator.select(IntAccumulator.q.value > 1).\
-        sum(IntAccumulator.q.value) == 5
+    assert IntAccumulator.select(IntAccumulator.q.so_value > 1).\
+        max(IntAccumulator.q.so_value) == 3
+    assert IntAccumulator.select(IntAccumulator.q.so_value > 1).\
+        sum(IntAccumulator.q.so_value) == 5
 
 
 def floatcmp(f1, f2):
@@ -40,30 +40,30 @@ def floatcmp(f1, f2):
 
 def test_float():
     setupClass(FloatAccumulator)
-    FloatAccumulator(value=1.2)
-    FloatAccumulator(value=2.4)
-    FloatAccumulator(value=3.8)
+    FloatAccumulator(so_value=1.2)
+    FloatAccumulator(so_value=2.4)
+    FloatAccumulator(so_value=3.8)
 
     assert floatcmp(
-        FloatAccumulator.select().min(FloatAccumulator.q.value), 1.2) == 0
+        FloatAccumulator.select().min(FloatAccumulator.q.so_value), 1.2) == 0
     assert floatcmp(
-        FloatAccumulator.select().avg(FloatAccumulator.q.value), 2.5) == 0
+        FloatAccumulator.select().avg(FloatAccumulator.q.so_value), 2.5) == 0
     assert floatcmp(
-        FloatAccumulator.select().max(FloatAccumulator.q.value), 3.8) == 0
+        FloatAccumulator.select().max(FloatAccumulator.q.so_value), 3.8) == 0
     assert floatcmp(
-        FloatAccumulator.select().sum(FloatAccumulator.q.value), 7.4) == 0
+        FloatAccumulator.select().sum(FloatAccumulator.q.so_value), 7.4) == 0
 
 
 def test_many():
     setupClass(IntAccumulator)
-    IntAccumulator(value=1)
-    IntAccumulator(value=1)
-    IntAccumulator(value=2)
-    IntAccumulator(value=2)
-    IntAccumulator(value=3)
-    IntAccumulator(value=3)
+    IntAccumulator(so_value=1)
+    IntAccumulator(so_value=1)
+    IntAccumulator(so_value=2)
+    IntAccumulator(so_value=2)
+    IntAccumulator(so_value=3)
+    IntAccumulator(so_value=3)
 
-    attribute = IntAccumulator.q.value
+    attribute = IntAccumulator.q.so_value
     assert list(IntAccumulator.select().accumulateMany(
         ("MIN", attribute), ("AVG", attribute), ("MAX", attribute),
         ("COUNT", attribute), ("SUM", attribute)

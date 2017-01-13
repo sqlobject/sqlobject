@@ -9,7 +9,7 @@ class SOTestCreateDrop(SQLObject):
         table = 'test_create_drop_table'
     name = StringCol()
     number = IntCol()
-    time = DateTimeCol()
+    so_time = DateTimeCol()
     short = StringCol(length=10)
     blobcol = BLOBCol()
 

@@ -11,7 +11,7 @@ class MyClass(SQLObject):
 
 class Base(InheritableSQLObject):
     name = StringCol()
-    value = IntCol(default=0)
+    so_value = IntCol(default=0)
     versions = Versioning()
 
 
@@ -143,9 +143,9 @@ def test_restore():
 
 def test_next():
     setup()
-    base = Base(name='first', value=1)
+    base = Base(name='first', so_value=1)
     base.set(name='second')
-    base.set(name='third', value=2)
+    base.set(name='third', so_value=2)
     version = base.versions[0]
     assert version.nextVersion() == base.versions[1]
     assert version.nextVersion().nextVersion() == base
@@ -153,17 +153,17 @@ def test_next():
 
 def test_get_changed():
     setup()
-    base = Base(name='first', value=1)
+    base = Base(name='first', so_value=1)
     base.set(name='second')
-    base.set(name='third', value=2)
+    base.set(name='third', so_value=2)
     assert base.versions[0].getChangedFields() == ['Name']
-    assert sorted(base.versions[1].getChangedFields()) == ['Name', 'Value']
+    assert sorted(base.versions[1].getChangedFields()) == ['Name', 'So_Value']
 
 
 def test_foreign_keys():
     setup()
-    base1 = Base(name='first', value=1)
-    base2 = Base(name='first', value=1)
+    base1 = Base(name='first', so_value=1)
+    base2 = Base(name='first', so_value=1)
     has_foreign = HasForeign(foreign=base1)
     has_foreign.foreign = base2
     assert has_foreign.versions[0].foreign == base1

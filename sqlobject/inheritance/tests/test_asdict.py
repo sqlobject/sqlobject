@@ -18,7 +18,7 @@ class ManagerAD(InheritablePersonAD):
 
 class EmployeeAD(InheritablePersonAD):
     _inheritable = False
-    position = StringCol()
+    so_position = StringCol()
 
 
 def test_getColumns():
@@ -27,7 +27,7 @@ def test_getColumns():
     for klass, columns in (
             (InheritablePersonAD, ['firstName', 'lastName']),
             (ManagerAD, ['department', 'firstName', 'lastName']),
-            (EmployeeAD, ['firstName', 'lastName', 'position'])):
+            (EmployeeAD, ['firstName', 'lastName', 'so_position'])):
         _columns = sorted(klass.sqlmeta.getColumns().keys())
         assert _columns == columns
 
@@ -37,7 +37,7 @@ def test_asDict():
     InheritablePersonAD(firstName='Oneof', lastName='Authors')
     ManagerAD(firstName='ManagerAD', lastName='The', department='Dep')
     EmployeeAD(firstName='Project', lastName='Leader',
-               position='Project leader')
+               so_position='Project leader')
 
     assert InheritablePersonAD.get(1).sqlmeta.asDict() == \
         dict(firstName='Oneof', lastName='Authors', id=1)
@@ -45,4 +45,4 @@ def test_asDict():
         dict(firstName='ManagerAD', lastName='The', department='Dep', id=2)
     assert InheritablePersonAD.get(3).sqlmeta.asDict() == \
         dict(firstName='Project', lastName='Leader',
-             position='Project leader', id=3)
+             so_position='Project leader', id=3)

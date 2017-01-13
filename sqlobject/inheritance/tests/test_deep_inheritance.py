@@ -15,7 +15,7 @@ class DIPerson(InheritableSQLObject):
 
 
 class DIEmployee(DIPerson):
-    position = StringCol(unique=True, length=100)
+    so_position = StringCol(unique=True, length=100)
 
 
 class DIManager(DIEmployee):
@@ -47,13 +47,13 @@ def test_creation_fail2():
     setupClass([DIManager, DIEmployee, DIPerson])
 
     kwargs = {'firstName': 'John', 'lastName': 'Doe',
-              'position': 'Project Manager'}
+              'so_position': 'Project Manager'}
     DIManager(**kwargs)
     persons = DIEmployee.select(DIPerson.q.firstName == 'John')
     assert persons.count() == 1
 
     kwargs = {'firstName': 'John', 'lastName': 'Doe II',
-              'position': 'Project Manager'}
+              'so_position': 'Project Manager'}
     raises(Exception, DIManager, **kwargs)
     persons = DIPerson.select(DIPerson.q.firstName == 'John')
     assert persons.count() == 1
@@ -62,7 +62,7 @@ def test_creation_fail2():
         skip("Transactions aren't supported")
     transaction = DIPerson._connection.transaction()
     kwargs = {'firstName': 'John', 'lastName': 'Doe III',
-              'position': 'Project Manager'}
+              'so_position': 'Project Manager'}
     raises(Exception, DIManager, connection=transaction, **kwargs)
     transaction.rollback()
     transaction.begin()
@@ -75,10 +75,10 @@ def test_deep_inheritance():
     setupClass([DIManager, DIEmployee, DIPerson])
 
     manager = DIManager(firstName='Project', lastName='Manager',
-                        position='Project Manager')
+                        so_position='Project Manager')
     manager_id = manager.id
     employee_id = DIEmployee(firstName='Project', lastName='Leader',
-                             position='Project leader', manager=manager).id
+                             so_position='Project leader', manager=manager).id
     DIPerson(firstName='Oneof', lastName='Authors', manager=manager)
 
     conn = getConnection()

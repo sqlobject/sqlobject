@@ -320,13 +320,13 @@ def test_nonexisting_attr():
 
 class SOTestSO12(SQLObject):
     name = StringCol()
-    value = IntCol(defaultSQL='1')
+    so_value = IntCol(defaultSQL='1')
 
 
 def test_defaultSQL():
     setupClass(SOTestSO12)
     test = SOTestSO12(name="test")
-    assert test.value == 1
+    assert test.so_value == 1
 
 
 def test_connection_override():

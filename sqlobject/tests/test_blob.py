@@ -10,7 +10,7 @@ from sqlobject.tests.dbtest import setupClass, supports
 
 
 class ImageData(SQLObject):
-    image = BLOBCol(default=b'emptydata', length=65535)
+    image = BLOBCol(default=b'emptydata', length=256)
 
 
 def test_BLOBCol():

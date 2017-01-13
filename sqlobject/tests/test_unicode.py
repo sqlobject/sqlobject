@@ -9,7 +9,7 @@ from sqlobject.tests.dbtest import setupClass
 
 
 class SOTestUnicode(SQLObject):
-    count = IntCol(alternateID=True)
+    so_count = IntCol(alternateID=True)
     col = UnicodeCol(alternateID=True, length=100)
 
 
@@ -22,7 +22,7 @@ def setup():
     items = []
     setupClass(SOTestUnicode)
     for i, s in enumerate(data):
-        items.append(SOTestUnicode(count=i, col=s))
+        items.append(SOTestUnicode(so_count=i, col=s))
 
 
 def test_create():
@@ -33,23 +33,23 @@ def test_create():
     conn = SOTestUnicode._connection
     if PY2:
         rows = conn.queryAll("""
-        SELECT count, col
+        SELECT so_count, col
         FROM so_test_unicode
-        ORDER BY count
+        ORDER BY so_count
         """)
-        for count, col in rows:
+        for so_count, col in rows:
             if not isinstance(col, bytes):
                 col = col.encode('utf-8')
-            assert data[count].encode('utf-8') == col
+            assert data[so_count].encode('utf-8') == col
     else:
         rows = conn.queryAll("""
-        SELECT count, col
+        SELECT so_count, col
         FROM so_test_unicode
-        ORDER BY count
+        ORDER BY so_count
         """)
         # On python 3, everthings already decoded to unicode
-        for count, col in rows:
-            assert data[count] == col
+        for so_count, col in rows:
+            assert data[so_count] == col
 
 
 def test_select():
@@ -66,7 +66,7 @@ def test_select():
             rows = list(SOTestUnicode.selectBy(col=value))
             assert len(rows) == 1
         row = SOTestUnicode.byCol(value)
-        assert row.count == i
+        assert row.so_count == i
 
     # starts/endswith/contains
     rows = list(SOTestUnicode.select(SOTestUnicode.q.col.startswith("test")))

@@ -18,7 +18,7 @@ class PickleData:
 
 
 class PickleContainer(SQLObject):
-    pickledata = PickleCol(default=None, length=65535)
+    pickledata = PickleCol(default=None, length=256)
 
 
 def test_pickleCol():

@@ -23,7 +23,7 @@ else:
 
 
 class HashTest(SQLObject):
-    count = IntCol(alternateID=True)
+    so_count = IntCol(alternateID=True)
     col1 = hashcol.HashCol()
     col2 = hashcol.HashCol(hashMethod=sha256_str)
 
@@ -37,7 +37,7 @@ def setup():
     items = []
     setupClass(HashTest)
     for i, s in enumerate(data):
-        items.append(HashTest(count=i, col1=s, col2=s))
+        items.append(HashTest(so_count=i, col1=s, col2=s))
 
 
 def test_create():
@@ -48,13 +48,13 @@ def test_create():
 
     conn = HashTest._connection
     rows = conn.queryAll("""
-    SELECT count, col1, col2
+    SELECT so_count, col1, col2
     FROM hash_test
-    ORDER BY count
+    ORDER BY so_count
     """)
-    for count, col1, col2 in rows:
-        assert md5_str(data[count]) == col1
-        assert sha256_str(data[count]) == col2
+    for so_count, col1, col2 in rows:
+        assert md5_str(data[so_count]) == col1
+        assert sha256_str(data[so_count]) == col2
 
 
 def test_select():

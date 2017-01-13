@@ -15,14 +15,15 @@ class InheritablePerson(InheritableSQLObject):
 
 class Employee(InheritablePerson):
     _inheritable = False
-    position = StringCol()
+    so_position = StringCol()
 
 
 def setup():
     setupClass(InheritablePerson)
     setupClass(Employee)
 
-    Employee(firstName='Project', lastName='Leader', position='Project leader')
+    Employee(firstName='Project', lastName='Leader',
+             so_position='Project leader')
     InheritablePerson(firstName='Oneof', lastName='Authors')
 
 
@@ -66,7 +67,7 @@ def test_inheritance_select():
     assert employees.count() == 0
 
     # comparison to None needed to build the right SQL expression
-    employees = Employee.select(Employee.q.position != None)  # noqa
+    employees = Employee.select(Employee.q.so_position != None)  # noqa
     assert employees.count() == 1
 
     persons = InheritablePerson.selectBy(firstName="Project")
@@ -104,10 +105,10 @@ def test_inheritance_select():
                                             Employee.q.firstName)))
     assert len(persons) == 1
 
-    persons = list(Employee.select(orderBy=Employee.q.position))
+    persons = list(Employee.select(orderBy=Employee.q.so_position))
     assert len(persons) == 1
 
-    persons = list(Employee.select(orderBy=(Employee.q.position,
+    persons = list(Employee.select(orderBy=(Employee.q.so_position,
                                             Employee.q.lastName)))
     assert len(persons) == 1
 

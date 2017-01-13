@@ -10,7 +10,7 @@ class SOTestCyclicReferenceA(SQLObject):
         table = 'test_cyclic_reference_a_table'
     name = StringCol()
     number = IntCol()
-    time = DateTimeCol()
+    so_time = DateTimeCol()
     short = StringCol(length=10)
     blobcol = BLOBCol()
     fkeyb = ForeignKey('SOTestCyclicReferenceB')
@@ -22,7 +22,7 @@ class SOTestCyclicReferenceB(SQLObject):
         table = 'test_cyclic_reference_b_table'
     name = StringCol()
     number = IntCol()
-    time = DateTimeCol()
+    so_time = DateTimeCol()
     short = StringCol(length=10)
     blobcol = BLOBCol()
     fkeya = ForeignKey('SOTestCyclicReferenceA')

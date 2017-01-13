@@ -10,18 +10,18 @@ from sqlobject.tests.dbtest import getConnection, setupClass
 
 class GroupbyTest(SQLObject):
     name = StringCol()
-    value = IntCol()
+    so_value = IntCol()
 
 
 def test_groupBy():
     setupClass(GroupbyTest)
-    GroupbyTest(name='a', value=1)
-    GroupbyTest(name='a', value=2)
-    GroupbyTest(name='b', value=1)
+    GroupbyTest(name='a', so_value=1)
+    GroupbyTest(name='a', so_value=2)
+    GroupbyTest(name='b', so_value=1)
 
     connection = getConnection()
     select = Select(
-        [GroupbyTest.q.name, func.COUNT(GroupbyTest.q.value)],
+        [GroupbyTest.q.name, func.COUNT(GroupbyTest.q.so_value)],
         groupBy=GroupbyTest.q.name,
         orderBy=GroupbyTest.q.name)
     sql = connection.sqlrepr(select)
@@ -31,15 +31,15 @@ def test_groupBy():
 
 def test_groupBy_list():
     setupClass(GroupbyTest)
-    GroupbyTest(name='a', value=1)
-    GroupbyTest(name='a', value=2)
-    GroupbyTest(name='b', value=1)
+    GroupbyTest(name='a', so_value=1)
+    GroupbyTest(name='a', so_value=2)
+    GroupbyTest(name='b', so_value=1)
 
     connection = getConnection()
     select = Select(
-        [GroupbyTest.q.name, GroupbyTest.q.value],
-        groupBy=[GroupbyTest.q.name, GroupbyTest.q.value],
-        orderBy=[GroupbyTest.q.name, GroupbyTest.q.value])
+        [GroupbyTest.q.name, GroupbyTest.q.so_value],
+        groupBy=[GroupbyTest.q.name, GroupbyTest.q.so_value],
+        orderBy=[GroupbyTest.q.name, GroupbyTest.q.so_value])
     sql = connection.sqlrepr(select)
     rows = list(connection.queryAll(sql))
     assert [tuple(t) for t in rows] == [('a', 1), ('a', 2), ('b', 1)]

@@ -7,7 +7,7 @@ from sqlobject.tests.dbtest import getConnection, raises, setupClass
 
 class SOTestSQLBuilder(SQLObject):
     name = StringCol()
-    value = IntCol()
+    so_value = IntCol()
 
 
 def test_Select():
@@ -17,21 +17,22 @@ def test_Select():
                      staticTables=['employees'])
     assert sqlrepr(select1) == 'SELECT id, MAX(salary) FROM employees'
 
-    select2 = Select([SOTestSQLBuilder.q.name, SOTestSQLBuilder.q.value])
+    select2 = Select([SOTestSQLBuilder.q.name, SOTestSQLBuilder.q.so_value])
     assert sqlrepr(select2) == \
-        'SELECT so_test_sql_builder.name, so_test_sql_builder.value ' \
+        'SELECT so_test_sql_builder.name, so_test_sql_builder.so_value ' \
         'FROM so_test_sql_builder'
 
     union = Union(select1, select2)
     assert sqlrepr(union) == \
         'SELECT id, MAX(salary) FROM employees ' \
-        'UNION SELECT so_test_sql_builder.name, so_test_sql_builder.value ' \
+        'UNION SELECT so_test_sql_builder.name, ' \
+        'so_test_sql_builder.so_value ' \
         'FROM so_test_sql_builder'
 
     union = Union(SOTestSQLBuilder.select().queryForSelect())
     assert sqlrepr(union) == \
         'SELECT so_test_sql_builder.id, so_test_sql_builder.name, ' \
-        'so_test_sql_builder.value FROM so_test_sql_builder WHERE 1 = 1'
+        'so_test_sql_builder.so_value FROM so_test_sql_builder WHERE 1 = 1'
 
 
 def test_empty_AND():
@@ -50,10 +51,10 @@ def test_empty_AND():
 
 def test_modulo():
     setupClass(SOTestSQLBuilder)
-    assert sqlrepr(SOTestSQLBuilder.q.value % 2 == 0, 'mysql') == \
-        "((MOD(so_test_sql_builder.value, 2)) = (0))"
-    assert sqlrepr(SOTestSQLBuilder.q.value % 2 == 0, 'sqlite') == \
-        "(((so_test_sql_builder.value) % (2)) = (0))"
+    assert sqlrepr(SOTestSQLBuilder.q.so_value % 2 == 0, 'mysql') == \
+        "((MOD(so_test_sql_builder.so_value, 2)) = (0))"
+    assert sqlrepr(SOTestSQLBuilder.q.so_value % 2 == 0, 'sqlite') == \
+        "(((so_test_sql_builder.so_value) % (2)) = (0))"
 
 
 def test_str_or_sqlrepr():
@@ -92,7 +93,7 @@ def test_str_or_sqlrepr():
 
 def test_CONCAT():
     setupClass(SOTestSQLBuilder)
-    SOTestSQLBuilder(name='test', value=42)
+    SOTestSQLBuilder(name='test', so_value=42)
 
     assert sqlrepr(CONCAT('a', 'b'), 'mysql') == "CONCAT('a', 'b')"
     assert sqlrepr(CONCAT('a', 'b'), 'sqlite') == "'a' || 'b'"
