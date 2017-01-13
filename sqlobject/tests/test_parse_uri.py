@@ -88,7 +88,7 @@ def test_parse():
         assert password is None
         assert host is None
         assert port is None
-        assert path == "/C:/full/path/to/database"
+        assert path == "C:/full/path/to/database"
         assert args == {}
 
         user, password, host, port, path, args = \
@@ -97,7 +97,7 @@ def test_parse():
         assert password is None
         assert host is None
         assert port is None
-        assert path == "/C:/full/path/to/database"
+        assert path == "C:/full/path/to/database"
         assert args == {}
 
 
@@ -144,4 +144,4 @@ def test_uri():
 
     if os.name == 'nt':
         connection.filename = 'C:/full/path/to/database'
-        assert connection.uri() == "sqlite:///C:/full/path/to/database"
+        assert connection.uri() == "sqlite:///C%3A/full/path/to/database"
