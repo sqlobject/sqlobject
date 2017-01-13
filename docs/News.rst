@@ -25,8 +25,7 @@ Minor features
   order. pyfirebirdsql is supported but untested.
 
 * Add ``driver`` keyword for MySQLConnection. Allowed value are 'mysqldb',
-  'connector', 'oursql' and 'pymysql'. Default is to test for mysqldb only;
-  (connector, oursql and pymysql drivers still cause problems).
+  'connector', 'oursql' and 'pymysql'. Default is to test for mysqldb only.
 
 * Add support for `MySQL Connector
   <https://pypi.python.org/pypi/mysql-connector>`_ (pure python; `binary
@@ -49,10 +48,10 @@ Drivers (work in progress)
   are still problems with the driver.
 
 * Add support for `pg8000 <https://pypi.python.org/pypi/pg8000>`_
-  PostgreSQL driver. There are major problems with the driver.
+  PostgreSQL driver. There are major problems with the driver caused by both
+  the driver and SQLObject.
 
-* Add support for `pyfirebirdsql
-  <https://pypi.python.org/pypi/firebirdsql>`_ (untested).
+* Add support for `pyfirebirdsql <https://pypi.python.org/pypi/firebirdsql>`_.
 
 Documentation
 -------------
@@ -79,6 +78,9 @@ Tests
 
 * Run at Travis CI tests with Firebird backend (server version 2.5; drivers fdb
   and firebirdsql). There are problems with tests.
+
+* Add appveyor for windows testing. Run tests with Postgres and MS SQL. There
+  are problems.
 
 SQLObject 3.1.0
 ===============
