@@ -257,10 +257,13 @@ forced to write the test.  That's no fun for us, to just be writing
 tests.  So please, write tests; everything at least needs to be
 exercised, even if the tests are absolutely complete.
 
-We now use Travis CI to run tests. See the statuses:
+We now use Travis CI and AppVeyor to run tests. See the statuses:
 
 .. image:: https://travis-ci.org/sqlobject/sqlobject.svg?branch=master
    :target: https://travis-ci.org/sqlobject/sqlobject
+
+.. image:: https://ci.appveyor.com/api/projects/status/github/sqlobject/sqlobject?branch=master
+   :target: https://ci.appveyor.com/project/phdru/sqlobject
 
 To avoid triggering unnecessary test run at CI services add text `[skip ci]
 <https://docs.travis-ci.com/user/customizing-the-build/#skipping-a-build>`_ or

@@ -80,7 +80,7 @@ Tests
   and firebirdsql). There are problems with tests.
 
 * Add AppVeyor for windows testing. Run tests with Postgres and MS SQL. There
-  are problems.
+  are problems with MS SQL.
 
 * Run sqlite tests at AppVeyor.
 
