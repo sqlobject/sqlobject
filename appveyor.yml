@@ -55,6 +55,10 @@ environment:
       TOX_ENV: "pywin27-sqlite"
     - PYTHON: "C:\\Python34"
       TOX_ENV: "pywin34-sqlite"
+    - PYTHON: "C:\\Python27"
+      TOX_ENV: "pywin27-sqlite-memory"
+    - PYTHON: "C:\\Python34"
+      TOX_ENV: "pywin34-sqlite-memory"
 
 install:
   # Ensure we use the right python version

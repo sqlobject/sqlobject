@@ -56,6 +56,10 @@ env:
   - TOXENV=py27-sqlite
   - TOXENV=py34-sqlite
   - TOXENV=py35-sqlite
+  - TOXENV=py26-sqlite-memory
+  - TOXENV=py27-sqlite-memory
+  - TOXENV=py34-sqlite-memory
+  - TOXENV=py35-sqlite-memory
   - TOXENV=py27-flake8
   - TOXENV=py34-flake8
   - TOXENV=py27-firebird-fdb
