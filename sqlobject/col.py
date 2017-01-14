@@ -902,6 +902,10 @@ class SOKeyCol(SOCol):
         key_type = {int: "INT NULL", str: "TEXT"}
         return key_type[self._idType()]
 
+    def _firebirdType(self):
+        key_type = {int: "INT", str: "VARCHAR(255)"}
+        return key_type[self._idType()]
+
 
 class KeyCol(Col):
 

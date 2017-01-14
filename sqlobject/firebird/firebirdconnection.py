@@ -169,7 +169,7 @@ class FirebirdConnection(DBAPI):
         return col.firebirdCreateSQL()
 
     def createIDColumn(self, soClass):
-        key_type = {int: "INT", str: "TEXT"}[soClass.sqlmeta.idType]
+        key_type = {int: "INT", str: "VARCHAR(255)"}[soClass.sqlmeta.idType]
         return '%s %s NOT NULL PRIMARY KEY' % (soClass.sqlmeta.idName,
                                                key_type)
 
