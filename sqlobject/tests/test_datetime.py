@@ -49,7 +49,7 @@ def test_dateTime():
 
 def test_microseconds():
     connection = getConnection()
-    if hasattr(connection, 'can_use_microseconds') and \
+    if not hasattr(connection, 'can_use_microseconds') or \
             not connection.can_use_microseconds():
         pytest.skip(
             "The database doesn't support microseconds; "

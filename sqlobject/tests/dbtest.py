@@ -8,6 +8,7 @@ import os
 import sys
 from pytest import raises, skip
 import sqlobject
+from sqlobject.col import use_microseconds
 import sqlobject.conftest as conftest
 
 if sys.platform[:3] == "win":
@@ -118,6 +119,9 @@ except Exception as e:
     # The module was imported during documentation building
     if 'sphinx' not in sys.modules:
         print("Could not open database: %s" % e, file=sys.stderr)
+else:
+    if connection.dbName == 'firebird':
+        use_microseconds(False)
 
 
 class InstalledTestDatabase(sqlobject.SQLObject):

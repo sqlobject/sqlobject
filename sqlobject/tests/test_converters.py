@@ -1,5 +1,6 @@
 from datetime import timedelta
 
+from sqlobject.col import SODateTimeCol, SOTimeCol
 from sqlobject.converters import registerConverter, sqlrepr, \
     quote_str, unquote_str
 from sqlobject.sqlbuilder import SQLExpression, SQLObjectField, \
@@ -110,13 +111,24 @@ def test_bool():
 
 def test_datetime():
     from datetime import datetime, date, time
-    assert sqlrepr(datetime(2005, 7, 14, 13, 31, 2)) == \
-        "'2005-07-14 13:31:02.000000'"
+    if SODateTimeCol.datetimeFormat.find('.%f'):
+        assert sqlrepr(datetime(2005, 7, 14, 13, 31, 2)) == \
+            "'2005-07-14 13:31:02.000000'"
+    else:
+        assert sqlrepr(datetime(2005, 7, 14, 13, 31, 2)) == \
+            "'2005-07-14 13:31:02'"
     assert sqlrepr(date(2005, 7, 14)) == "'2005-07-14'"
-    assert sqlrepr(time(13, 31, 2)) == "'13:31:02.000000'"
+    if SOTimeCol.timeFormat.find('.%f'):
+        assert sqlrepr(time(13, 31, 2)) == "'13:31:02.000000'"
+    else:
+        assert sqlrepr(time(13, 31, 2)) == "'13:31:02'"
     # now dates before 1900
-    assert sqlrepr(datetime(1428, 7, 14, 13, 31, 2)) == \
-        "'1428-07-14 13:31:02.000000'"
+    if SODateTimeCol.datetimeFormat.find('.%f'):
+        assert sqlrepr(datetime(1428, 7, 14, 13, 31, 2)) == \
+            "'1428-07-14 13:31:02.000000'"
+    else:
+        assert sqlrepr(datetime(1428, 7, 14, 13, 31, 2)) == \
+            "'1428-07-14 13:31:02'"
     assert sqlrepr(date(1428, 7, 14)) == "'1428-07-14'"
 
 
