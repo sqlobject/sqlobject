@@ -13,9 +13,10 @@ try:
     support_decimal_column = supports('decimalColumn')
 except NameError:
     # The module was imported during documentation building
-    support_decimal_column = True
-if not support_decimal_column:
-    pytestmark = pytest.mark.skip('')
+    pass
+else:
+    if not support_decimal_column:
+        pytestmark = pytest.mark.skip('')
 
 
 class DecimalTable(SQLObject):

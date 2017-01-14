@@ -8,6 +8,16 @@ from sqlobject.tests.dbtest import raises, setupClass, supports
 ########################################
 
 
+try:
+    support_transactions = supports('transactions')
+except NameError:
+    # The module was imported during documentation building
+    pass
+else:
+    if not support_transactions:
+        pytestmark = pytest.mark.skip('')
+
+
 class SOTestSOTrans(SQLObject):
     class sqlmeta:
         defaultOrder = 'name'
@@ -15,8 +25,6 @@ class SOTestSOTrans(SQLObject):
 
 
 def test_transaction():
-    if not supports('transactions'):
-        pytest.skip("Transactions aren't supported")
     setupClass(SOTestSOTrans)
     SOTestSOTrans(name='bob')
     SOTestSOTrans(name='tim')
@@ -41,8 +49,6 @@ def test_transaction():
 
 
 def test_transaction_commit_sync():
-    if not supports('transactions'):
-        pytest.skip("Transactions aren't supported")
     setupClass(SOTestSOTrans)
     trans = SOTestSOTrans._connection.transaction()
     try:
@@ -58,8 +64,6 @@ def test_transaction_commit_sync():
 
 
 def test_transaction_delete(close=False):
-    if not supports('transactions'):
-        pytest.skip("Transactions aren't supported")
     setupClass(SOTestSOTrans)
     connection = SOTestSOTrans._connection
     if (connection.dbName == 'sqlite') and connection._memory:

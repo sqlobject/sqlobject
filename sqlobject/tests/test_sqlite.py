@@ -7,6 +7,16 @@ from sqlobject.tests.dbtest import setSQLiteConnectionFactory
 from .test_basic import SOTestSO1
 
 
+try:
+    connection = getConnection()
+except NameError:
+    # The module was imported during documentation building
+    pass
+else:
+    if connection.dbName != "sqlite":
+        pytestmark = pytest.mark.skip('')
+
+
 class SQLiteFactoryTest(SQLObject):
     name = StringCol()
 
@@ -14,8 +24,6 @@ class SQLiteFactoryTest(SQLObject):
 def test_sqlite_factory():
     setupClass(SQLiteFactoryTest)
 
-    if SQLiteFactoryTest._connection.dbName != "sqlite":
-        pytest.skip("These tests require SQLite")
     if not SQLiteFactoryTest._connection.using_sqlite2:
         pytest.skip("These tests require SQLite v2+")
 
@@ -37,8 +45,6 @@ def test_sqlite_factory():
 def test_sqlite_factory_str():
     setupClass(SQLiteFactoryTest)
 
-    if SQLiteFactoryTest._connection.dbName != "sqlite":
-        pytest.skip("These tests require SQLite")
     if not SQLiteFactoryTest._connection.using_sqlite2:
         pytest.skip("These tests require SQLite v2+")
 
@@ -64,8 +70,6 @@ def test_sqlite_factory_str():
 def test_sqlite_aggregate():
     setupClass(SQLiteFactoryTest)
 
-    if SQLiteFactoryTest._connection.dbName != "sqlite":
-        pytest.skip("These tests require SQLite")
     if not SQLiteFactoryTest._connection.using_sqlite2:
         pytest.skip("These tests require SQLite v2+")
 
@@ -125,9 +129,6 @@ def test_empty_string():
 def test_memorydb():
     if not supports("memorydb"):
         pytest.skip("memorydb isn't supported")
-    connection = getConnection()
-    if connection.dbName != "sqlite":
-        pytest.skip("These tests require SQLite")
     if not connection._memory:
         pytest.skip("The connection isn't memorydb")
     setupClass(SOTestSO1)
@@ -137,15 +138,9 @@ def test_memorydb():
 
 
 def test_list_databases():
-    connection = getConnection()
-    if connection.dbName != "sqlite":
-        pytest.skip("These tests require SQLite")
     assert connection.listDatabases() == ['main']
 
 
 def test_list_tables():
-    connection = getConnection()
-    if connection.dbName != "sqlite":
-        pytest.skip("These tests require SQLite")
     setupClass(SOTestSO1)
     assert SOTestSO1.sqlmeta.table in connection.listTables()

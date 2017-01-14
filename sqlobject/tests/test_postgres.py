@@ -9,6 +9,16 @@ from sqlobject.tests.dbtest import getConnection, setupClass
 ########################################
 
 
+try:
+    connection = getConnection()
+except NameError:
+    # The module was imported during documentation building
+    pass
+else:
+    if connection.dbName != "postgres":
+        pytestmark = pytest.mark.skip('')
+
+
 class SOTestSSLMode(SQLObject):
     test = StringCol()
 
@@ -16,8 +26,7 @@ class SOTestSSLMode(SQLObject):
 def test_sslmode():
     setupClass(SOTestSSLMode)
     connection = SOTestSSLMode._connection
-    if (connection.dbName != 'postgres') or \
-            (not connection.module.__name__.startswith('psycopg')) or \
+    if (not connection.module.__name__.startswith('psycopg')) or \
             (os.name == 'nt'):
         pytest.skip("The test requires PostgreSQL, psycopg and ssl mode; "
                     "also it doesn't work on w32")
@@ -41,15 +50,9 @@ class SOTestSOList(SQLObject):
 
 
 def test_list_databases():
-    connection = getConnection()
-    if connection.dbName != "postgres":
-        pytest.skip("These tests require PostgreSQL")
     assert connection.db in connection.listDatabases()
 
 
 def test_list_tables():
-    connection = getConnection()
-    if connection.dbName != "postgres":
-        pytest.skip("These tests require PostgreSQL")
     setupClass(SOTestSOList)
     assert SOTestSOList.sqlmeta.table in connection.listTables()
