@@ -9,16 +9,16 @@ from sqlobject.tests.dbtest import setupClass
 ########################################
 
 
-class PersonJoinerNew(SQLObject):
+class PersonJNew(SQLObject):
 
     name = StringCol(length=40, alternateID=True)
-    addressJoiners = ManyToMany('AddressJoinerNew')
+    addressJs = ManyToMany('AddressJNew')
 
 
-class AddressJoinerNew(SQLObject):
+class AddressJNew(SQLObject):
 
     zip = StringCol(length=5, alternateID=True)
-    personJoiners = ManyToMany('PersonJoinerNew')
+    personJs = ManyToMany('PersonJNew')
 
 
 class ImplicitJoiningSONew(SQLObject):
@@ -32,29 +32,29 @@ class ExplicitJoiningSONew(SQLObject):
 class TestJoin:
 
     def setup_method(self, meth):
-        setupClass(PersonJoinerNew)
-        setupClass(AddressJoinerNew)
+        setupClass(PersonJNew)
+        setupClass(AddressJNew)
         for n in ['bob', 'tim', 'jane', 'joe', 'fred', 'barb']:
-            PersonJoinerNew(name=n)
+            PersonJNew(name=n)
         for z in ['11111', '22222', '33333', '44444']:
-            AddressJoinerNew(zip=z)
+            AddressJNew(zip=z)
 
     def test_join(self):
-        b = PersonJoinerNew.byName('bob')
-        assert list(b.addressJoiners) == []
-        z = AddressJoinerNew.byZip('11111')
-        b.addressJoiners.add(z)
-        self.assertZipsEqual(b.addressJoiners, ['11111'])
-        print(str(z.personJoiners), repr(z.personJoiners))
-        self.assertNamesEqual(z.personJoiners, ['bob'])
-        z2 = AddressJoinerNew.byZip('22222')
-        b.addressJoiners.add(z2)
-        print(str(b.addressJoiners))
-        self.assertZipsEqual(b.addressJoiners, ['11111', '22222'])
-        self.assertNamesEqual(z2.personJoiners, ['bob'])
-        b.addressJoiners.remove(z)
-        self.assertZipsEqual(b.addressJoiners, ['22222'])
-        self.assertNamesEqual(z.personJoiners, [])
+        b = PersonJNew.byName('bob')
+        assert list(b.addressJs) == []
+        z = AddressJNew.byZip('11111')
+        b.addressJs.add(z)
+        self.assertZipsEqual(b.addressJs, ['11111'])
+        print(str(z.personJs), repr(z.personJs))
+        self.assertNamesEqual(z.personJs, ['bob'])
+        z2 = AddressJNew.byZip('22222')
+        b.addressJs.add(z2)
+        print(str(b.addressJs))
+        self.assertZipsEqual(b.addressJs, ['11111', '22222'])
+        self.assertNamesEqual(z2.personJs, ['bob'])
+        b.addressJs.remove(z)
+        self.assertZipsEqual(b.addressJs, ['22222'])
+        self.assertNamesEqual(z.personJs, [])
 
     def assertZipsEqual(self, zips, dest):
         assert [a.zip for a in zips] == dest
@@ -72,94 +72,94 @@ class TestJoin:
         assert not hasattr(ExplicitJoiningSONew, 'bars')
 
 
-class PersonJoinerNew2(SQLObject):
+class PersonJNew2(SQLObject):
 
     name = StringCol('name', length=40, alternateID=True)
-    addressJoiner2s = OneToMany('AddressJoinerNew2')
+    addressJ2s = OneToMany('AddressJNew2')
 
 
-class AddressJoinerNew2(SQLObject):
+class AddressJNew2(SQLObject):
 
     class sqlmeta:
         defaultOrder = ['-zip', 'plus4']
 
     zip = StringCol(length=5)
     plus4 = StringCol(length=4, default=None)
-    personJoinerNew2 = ForeignKey('PersonJoinerNew2')
+    personJNew2 = ForeignKey('PersonJNew2')
 
 
 class TestJoin2:
 
     def setup_method(self, meth):
-        setupClass([PersonJoinerNew2, AddressJoinerNew2])
-        p1 = PersonJoinerNew2(name='bob')
-        p2 = PersonJoinerNew2(name='sally')
+        setupClass([PersonJNew2, AddressJNew2])
+        p1 = PersonJNew2(name='bob')
+        p2 = PersonJNew2(name='sally')
         for z in ['11111', '22222', '33333']:
-            AddressJoinerNew2(zip=z, personJoinerNew2=p1)
-        AddressJoinerNew2(zip='00000', personJoinerNew2=p2)
+            AddressJNew2(zip=z, personJNew2=p1)
+        AddressJNew2(zip='00000', personJNew2=p2)
 
     def test_basic(self):
-        bob = PersonJoinerNew2.byName('bob')
-        sally = PersonJoinerNew2.byName('sally')
-        print(bob.addressJoiner2s)
+        bob = PersonJNew2.byName('bob')
+        sally = PersonJNew2.byName('sally')
+        print(bob.addressJ2s)
         print(bob)
-        assert len(list(bob.addressJoiner2s)) == 3
-        assert len(list(sally.addressJoiner2s)) == 1
-        bob.addressJoiner2s[0].destroySelf()
-        assert len(list(bob.addressJoiner2s)) == 2
-        z = bob.addressJoiner2s[0]
+        assert len(list(bob.addressJ2s)) == 3
+        assert len(list(sally.addressJ2s)) == 1
+        bob.addressJ2s[0].destroySelf()
+        assert len(list(bob.addressJ2s)) == 2
+        z = bob.addressJ2s[0]
         z.zip = 'xxxxx'
         id = z.id
         del z
-        z = AddressJoinerNew2.get(id)
+        z = AddressJNew2.get(id)
         assert z.zip == 'xxxxx'
 
     def test_defaultOrder(self):
-        p1 = PersonJoinerNew2.byName('bob')
-        assert ([i.zip for i in p1.addressJoiner2s] ==
+        p1 = PersonJNew2.byName('bob')
+        assert ([i.zip for i in p1.addressJ2s] ==
                 ['33333', '22222', '11111'])
 
 
-_personJoiner3_getters = []
-_personJoiner3_setters = []
+_personJ3_getters = []
+_personJ3_setters = []
 
 
-class PersonJoinerNew3(SQLObject):
+class PersonJNew3(SQLObject):
 
     name = StringCol('name', length=40, alternateID=True)
-    addressJoinerNew3s = OneToMany('AddressJoinerNew3')
+    addressJNew3s = OneToMany('AddressJNew3')
 
 
-class AddressJoinerNew3(SQLObject):
+class AddressJNew3(SQLObject):
 
     zip = StringCol(length=5)
-    personJoinerNew3 = ForeignKey('PersonJoinerNew3')
+    personJNew3 = ForeignKey('PersonJNew3')
 
-    def _get_personJoinerNew3(self):
-        value = self._SO_get_personJoinerNew3()
-        _personJoiner3_getters.append((self, value))
+    def _get_personJNew3(self):
+        value = self._SO_get_personJNew3()
+        _personJ3_getters.append((self, value))
         return value
 
-    def _set_personJoinerNew3(self, value):
-        self._SO_set_personJoinerNew3(value)
-        _personJoiner3_setters.append((self, value))
+    def _set_personJNew3(self, value):
+        self._SO_set_personJNew3(value)
+        _personJ3_setters.append((self, value))
 
 
 class TestJoin3:
 
     def setup_method(self, meth):
-        setupClass([PersonJoinerNew3, AddressJoinerNew3])
-        p1 = PersonJoinerNew3(name='bob')
-        p2 = PersonJoinerNew3(name='sally')
+        setupClass([PersonJNew3, AddressJNew3])
+        p1 = PersonJNew3(name='bob')
+        p2 = PersonJNew3(name='sally')
         for z in ['11111', '22222', '33333']:
-            AddressJoinerNew3(zip=z, personJoinerNew3=p1)
-        AddressJoinerNew3(zip='00000', personJoinerNew3=p2)
+            AddressJNew3(zip=z, personJNew3=p1)
+        AddressJNew3(zip='00000', personJNew3=p2)
 
     def test_accessors(self):
-        assert len(list(_personJoiner3_getters)) == 0
-        assert len(list(_personJoiner3_setters)) == 4
-        bob = PersonJoinerNew3.byName('bob')
-        for addressJoiner3 in bob.addressJoinerNew3s:
-            addressJoiner3.personJoinerNew3
-        assert len(list(_personJoiner3_getters)) == 3
-        assert len(list(_personJoiner3_setters)) == 4
+        assert len(list(_personJ3_getters)) == 0
+        assert len(list(_personJ3_setters)) == 4
+        bob = PersonJNew3.byName('bob')
+        for addressJ3 in bob.addressJNew3s:
+            addressJ3.personJNew3
+        assert len(list(_personJ3_getters)) == 3
+        assert len(list(_personJ3_setters)) == 4
