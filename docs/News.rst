@@ -22,7 +22,7 @@ Minor features
 
 * Add ``driver`` keyword for FirebirdConnection. Allowed values are 'fdb'
   or 'kinterbasdb'. Default is to test 'fdb' and 'kinterbasdb' in that
-  order. pyfirebirdsql is supported but untested.
+  order. pyfirebirdsql is supported but has problems.
 
 * Add ``driver`` keyword for MySQLConnection. Allowed value are 'mysqldb',
   'connector', 'oursql' and 'pymysql'. Default is to test for mysqldb only.
