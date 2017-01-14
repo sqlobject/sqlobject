@@ -105,7 +105,7 @@ if mxdatetime_available:
     def test_mxDateTime():
         setupClass(DateTime2)
         _now = now()
-        dt2 = DateTime2(col1=_now, col2=_now,
+        dt2 = DateTime2(col1=_now, col2=_now.pydate(),
                         col3=Time(_now.hour, _now.minute, _now.second))
 
         assert isinstance(dt2.col1, col.DateTimeType)
@@ -120,14 +120,9 @@ if mxdatetime_available:
         assert dt2.col2.year == _now.year
         assert dt2.col2.month == _now.month
         assert dt2.col2.day == _now.day
-        if getConnection().dbName == "sqlite":
-            assert dt2.col2.hour == _now.hour
-            assert dt2.col2.minute == _now.minute
-            assert dt2.col2.second == int(_now.second)
-        else:
-            assert dt2.col2.hour == 0
-            assert dt2.col2.minute == 0
-            assert dt2.col2.second == 0
+        assert dt2.col2.hour == 0
+        assert dt2.col2.minute == 0
+        assert dt2.col2.second == 0
 
         assert isinstance(dt2.col3, (col.DateTimeType, col.TimeType))
         assert dt2.col3.hour == _now.hour
