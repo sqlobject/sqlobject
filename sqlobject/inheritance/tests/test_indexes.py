@@ -25,9 +25,9 @@ def test_index_get_1():
     setupClass([InhPersonIdxGet, InhEmployeeIdxGet, InhSalesManIdxGet])
 
     InhSalesManIdxGet(first_name='Michael', last_name='Pallin', age=65,
-                              security_number=2304, experience=2, skill=10)
+                      security_number=2304, experience=2, skill=10)
     InhEmployeeIdxGet(first_name='Eric', last_name='Idle', age=63,
-                              security_number=3402, experience=9)
+                      security_number=3402, experience=9)
     InhPersonIdxGet(first_name='Terry', last_name='Guilliam', age=64)
 
     InhPersonIdxGet.pk.get('Michael', 'Pallin')
