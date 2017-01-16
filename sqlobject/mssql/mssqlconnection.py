@@ -60,8 +60,8 @@ class MSSQLConnection(DBAPI):
                 self.make_conn_str = lambda keys: conn_str % (
                     keys.host, keys.db, keys.user, keys.password)
 
-            kw.pop("sspi", None)
             kw.pop("ncli", None)
+            kw.pop("sspi", None)
 
         else:  # pymssql
             self.dbconnection = sqlmodule.connect
@@ -69,14 +69,20 @@ class MSSQLConnection(DBAPI):
             # don't know whether pymssql uses unicode
             self.usingUnicodeStrings = False
 
+            timeout = kw.pop('timeout', None)
+            if timeout:
+                timeout = int(timeout)
+            self.timeout = timeout
+
             def _make_conn_str(keys):
                 keys_dict = {}
                 for attr, value in (
+                    ('database', keys.db),
                     ('user', keys.user),
                     ('password', keys.password),
                     ('host', keys.host),
                     ('port', keys.port),
-                    ('database', keys.db),
+                    ('timeout', keys.timeout),
                 ):
                     if value:
                         keys_dict[attr] = value

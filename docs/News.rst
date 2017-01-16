@@ -38,6 +38,9 @@ Minor features
 * Add support for `PyMySQL <https://github.com/PyMySQL/PyMySQL/>`_ - pure
   python mysql interface).
 
+* Add parameter ``timeout`` for MSSQLConnection (usable only with pymssql
+  driver); timeouts are in seconds.
+
 Drivers (work in progress)
 --------------------------
 
