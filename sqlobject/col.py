@@ -623,7 +623,6 @@ class StringCol(Col):
 
 class NQuoted(sqlbuilder.SQLExpression):
     def __init__(self, value):
-        assert isinstance(value, unicode_type)
         self.value = value
 
     def __hash__(self):
@@ -664,6 +663,8 @@ class UnicodeStringValidator(SOValidator):
                 pass
             else:
                 if connection.dbName == 'mssql':
+                    if PY2:
+                        value = value.encode(self.getDbEncoding(state))
                     return NQuoted(value)
             return value.encode(self.getDbEncoding(state))
         if hasattr(value, '__unicode__'):
