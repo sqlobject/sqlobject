@@ -61,6 +61,9 @@ Bug fix
 
 * Fix MSSQLConnection.columnsFromSchema: remove () from default value.
 
+* Fix MSSQLConnection and SybaseConnection: insert default values into a table
+  with just one IDENTITY column.
+
 Documentation
 -------------
 

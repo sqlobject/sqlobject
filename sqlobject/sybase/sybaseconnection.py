@@ -84,7 +84,10 @@ class SybaseConnection(DBAPI):
             identity_insert_on = True
             c.execute('SET IDENTITY_INSERT %s ON' % table)
 
-        q = self._insertSQL(table, names, values)
+        if names and values:
+            q = self._insertSQL(table, names, values)
+        else:
+            q = "INSERT INTO %s DEFAULT VALUES" % table
         if self.debug:
             self.printDebug(conn, q, 'QueryIns')
         c.execute(q)

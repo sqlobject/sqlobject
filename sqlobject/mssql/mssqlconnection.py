@@ -169,7 +169,10 @@ class MSSQLConnection(DBAPI):
             else:
                 c.execute('SET IDENTITY_INSERT %s OFF' % table)
 
-        q = self._insertSQL(table, names, values)
+        if names and values:
+            q = self._insertSQL(table, names, values)
+        else:
+            q = "INSERT INTO %s DEFAULT VALUES" % table
         if self.debug:
             self.printDebug(conn, q, 'QueryIns')
         c.execute(q)
