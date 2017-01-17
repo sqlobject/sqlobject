@@ -68,6 +68,8 @@ Bug fix
 
 * Fix concatenation operator for MSSQL/Sybase (it's ``+``, not ``||``).
 
+* Fix MSSQLConnection.server_version() under Py3 (decode version to str).
+
 Documentation
 -------------
 

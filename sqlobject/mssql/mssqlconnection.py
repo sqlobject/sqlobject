@@ -1,6 +1,7 @@
-from sqlobject.dbconnection import DBAPI
-from sqlobject import col
 import re
+from sqlobject import col
+from sqlobject.dbconnection import DBAPI
+from sqlobject.compat import PY2
 
 
 class MSSQLConnection(DBAPI):
@@ -347,6 +348,8 @@ class MSSQLConnection(DBAPI):
         try:
             server_version = self.queryOne(
                 "SELECT SERVERPROPERTY('productversion')")[0]
+            if not PY2 and isinstance(server_version, bytes):
+                server_version = server_version.decode('ascii')
             server_version = server_version.split('.')[0]
             server_version = int(server_version)
         except:
