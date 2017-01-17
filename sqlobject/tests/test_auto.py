@@ -3,6 +3,7 @@ from pytest import raises
 
 from sqlobject import KeyCol, MultipleJoin, SQLObject, StringCol, \
     classregistry, sqlmeta
+from sqlobject.col import use_microseconds
 from sqlobject.tests.dbtest import getConnection, setupClass
 
 
@@ -199,6 +200,8 @@ class TestAuto:
             class sqlmeta(sqlmeta):
                 idName = 'auto_id'
                 fromDatabase = True
+        if AutoTest._connection.dbName == 'mssql':
+            use_microseconds(False)
         john = AutoTest(firstName='john',
                         lastName='doe',
                         age=10,
@@ -221,3 +224,5 @@ class TestAuto:
         columns = AutoTest.sqlmeta.columns
         assert columns["lastName"].dbName == "last_name"
         assert columns["wannahavefun"].dbName == "wannahavefun"
+        if AutoTest._connection.dbName == 'mssql':
+            use_microseconds(True)
