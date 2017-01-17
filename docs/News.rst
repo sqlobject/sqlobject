@@ -56,6 +56,11 @@ Drivers (work in progress)
 
 * Add support for `pyfirebirdsql <https://pypi.python.org/pypi/firebirdsql>`_.
 
+Bug fix
+-------
+
+* Fix MSSQLConnection.columnsFromSchema: remove () from default value.
+
 Documentation
 -------------
 
