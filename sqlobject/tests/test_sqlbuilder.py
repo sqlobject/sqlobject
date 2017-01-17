@@ -96,6 +96,7 @@ def test_CONCAT():
     SOTestSQLBuilder(name='test', so_value=42)
 
     assert sqlrepr(CONCAT('a', 'b'), 'mysql') == "CONCAT('a', 'b')"
+    assert sqlrepr(CONCAT('a', 'b'), 'mssql') == "'a' + 'b'"
     assert sqlrepr(CONCAT('a', 'b'), 'sqlite') == "'a' || 'b'"
     assert sqlrepr(CONCAT('prefix', SOTestSQLBuilder.q.name), 'mysql') == \
         "CONCAT('prefix', so_test_sql_builder.name)"

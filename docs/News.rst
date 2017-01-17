@@ -66,6 +66,8 @@ Bug fix
 
 * Remove excessive NULLs for MSSQL/Sybase.
 
+* Fix concatenation operator for MSSQL/Sybase (it's ``+``, not ``||``).
+
 Documentation
 -------------
 

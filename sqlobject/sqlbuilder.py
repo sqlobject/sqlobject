@@ -1067,6 +1067,8 @@ class _LikeQuoted:
                 values.append(quote_str(self.postfix, db))
             if db == "mysql":
                 return "CONCAT(%s)" % ", ".join(values)
+            elif db in ("mssql", "sybase"):
+                return " + ".join(values)
             else:
                 return " || ".join(values)
         elif isinstance(s, string_type):
@@ -1096,6 +1098,8 @@ class CONCAT(SQLExpression):
         values = [sqlrepr(expr, db) for expr in self.expressions]
         if db == "mysql":
             return "CONCAT(%s)" % ", ".join(values)
+        elif db in ("mssql", "sybase"):
+            return " + ".join(values)
         else:
             return " || ".join(values)
 
