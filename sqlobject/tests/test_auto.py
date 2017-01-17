@@ -191,7 +191,10 @@ class TestAuto:
         dbName = conn.dbName
         dropper = getattr(self, dbName + 'Drop', None)
         if dropper:
-            conn.query(dropper)
+            try:
+                conn.query(dropper)
+            except:  # Perhaps we don't have DROP permission
+                pass
 
     def test_classCreate(self):
         class AutoTest(SQLObject):
