@@ -540,8 +540,6 @@ class SOStringLikeCol(SOCol):
     def _sybaseType(self):
         self._check_case_sensitive("SYBASE")
         type = self._sqlType()
-        if not self.notNone and not self.alternateID:
-            type += ' NULL'
         return type
 
     def _mssqlType(self):
@@ -556,8 +554,6 @@ class SOStringLikeCol(SOCol):
             type = 'VARCHAR(%i)' % self.length
         else:
             type = 'CHAR(%i)' % self.length
-        if not self.notNone and not self.alternateID:
-            type += ' NULL'
         return type
 
     def _firebirdType(self):
@@ -895,11 +891,11 @@ class SOKeyCol(SOCol):
         return self.key_type[self._idType()]
 
     def _sybaseType(self):
-        key_type = {int: "NUMERIC(18,0) NULL", str: "TEXT"}
+        key_type = {int: "NUMERIC(18,0)", str: "TEXT"}
         return key_type[self._idType()]
 
     def _mssqlType(self):
-        key_type = {int: "INT NULL", str: "TEXT"}
+        key_type = {int: "INT", str: "TEXT"}
         return key_type[self._idType()]
 
     def _firebirdType(self):

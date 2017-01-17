@@ -64,6 +64,8 @@ Bug fix
 * Fix MSSQLConnection and SybaseConnection: insert default values into a table
   with just one IDENTITY column.
 
+* Remove excessive NULLs for MSSQL/Sybase.
+
 Documentation
 -------------
 
