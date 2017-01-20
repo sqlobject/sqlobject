@@ -20,9 +20,9 @@ Minor features
 * Remove ``driver`` keyword from RdbhostConnection as it allows one driver
   ``rdbhdb``.
 
-* Add ``driver`` keyword for FirebirdConnection. Allowed values are 'fdb'
-  or 'kinterbasdb'. Default is to test 'fdb' and 'kinterbasdb' in that
-  order. pyfirebirdsql is supported but has problems.
+* Add ``driver`` keyword for FirebirdConnection. Allowed values are 'fdb',
+  'kinterbasdb' and 'pyfirebirdsql'. Default is to test 'fdb' and
+  'kinterbasdb' in that order. pyfirebirdsql is supported but has problems.
 
 * Add ``driver`` keyword for MySQLConnection. Allowed value are 'mysqldb',
   'connector', 'oursql' and 'pymysql'. Default is to test for mysqldb only.
@@ -54,12 +54,15 @@ Drivers (work in progress)
   PostgreSQL driver. There are major problems with the driver caused by both
   the driver and SQLObject.
 
-* Add support for `pyfirebirdsql <https://pypi.python.org/pypi/firebirdsql>`_.
+* Add support for `pyfirebirdsql
+  <https://pypi.python.org/pypi/firebirdsql>`_.There are still problems with
+  the driver.
 
-Bug fix
--------
+Bug fixes
+---------
 
-* Fix MSSQLConnection.columnsFromSchema: remove () from default value.
+* Fix MSSQLConnection.columnsFromSchema: remove `(` and `)` from default
+  value.
 
 * Fix MSSQLConnection and SybaseConnection: insert default values into a table
   with just one IDENTITY column.
@@ -89,17 +92,15 @@ Tests
 * Fix ``pytest`` warnings by converting yield tests to plain calls: yield
   tests were deprecated in ``pytest``.
 
-* Tests are now run at CIs with ``python3.5``.
+* Tests are now run at CIs with Python 3.5.
 
 * Drop ``Circle CI``.
 
 * Run at Travis CI tests with Firebird backend (server version 2.5; drivers fdb
   and firebirdsql). There are problems with tests.
 
-* Add AppVeyor for windows testing. Run tests with Postgres and MS SQL. There
-  are problems with MS SQL.
-
-* Run sqlite tests at AppVeyor.
+* Add AppVeyor for windows testing. Run tests with MS SQL, Postgres and
+  SQLite. There are problems with MS SQL.
 
 SQLObject 3.1.0
 ===============
