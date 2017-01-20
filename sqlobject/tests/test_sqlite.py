@@ -9,7 +9,7 @@ from .test_basic import SOTestSO1
 
 try:
     connection = getConnection()
-except NameError:
+except (AttributeError, NameError):
     # The module was imported during documentation building
     pass
 else:

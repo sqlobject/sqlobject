@@ -11,7 +11,7 @@ from sqlobject.tests.dbtest import getConnection, setupClass
 
 try:
     connection = getConnection()
-except NameError:
+except (AttributeError, NameError):
     # The module was imported during documentation building
     pass
 else:
