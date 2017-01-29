@@ -6,14 +6,15 @@ SelectResults: Using Queries
 Overview
 --------
 
-SelectResults are returned from ``.select`` and ``.selectBy`` methods on SQLObject classes, and from ``SQLMultipleJoin``, and ``SQLRelatedJoin`` accessors on SQLObject instances.
+SelectResults are returned from ``.select`` and ``.selectBy`` methods on
+SQLObject classes, and from ``SQLMultipleJoin``, and ``SQLRelatedJoin``
+accessors on SQLObject instances.
 
-Select results are generators, which are lazily evaluated.  The SQL
-is only executed when you iterate over the select results, fetching
-rows one at a time.  This way you
-can iterate over large results without keeping the entire result set
-in memory. You can also do things like ``.reversed()`` without
-fetching and reversing the entire result -- instead, SQLObject can
+SelectResults are generators, which are lazily evaluated.  The SQL is only
+executed when you iterate over the SelectResults, fetching rows one at a
+time.  This way you can iterate over large results without keeping the
+entire result set in memory. You can also do things like ``.reversed()``
+without fetching and reversing the entire result -- instead, SQLObject can
 change the SQL that is sent so you get equivalent results.
 
 .. note::
@@ -21,17 +22,17 @@ change the SQL that is sent so you get equivalent results.
    of calling ``list()`` on the generator to force execution
    and convert the results to a stored list.
 
-You can also slice select results.  This modifies the SQL query, so
+You can also slice SelectResults.  This modifies the SQL query, so
 ``peeps[:10]`` will result in ``LIMIT 10`` being added to the end of
 the SQL query.  If the slice cannot be performed in the SQL (e.g.,
 peeps[:-10]), then the select is executed, and the slice is performed
 on the list of results.  This will generally only happen when you use
 negative indexes.
 
-In certain cases, you may get a select result with an object in it
-more than once, e.g., in some joins.  If you don't want this, you can
-add the keyword argument ``MyClass.select(..., distinct=True)``, which
-results in a ``SELECT DISTINCT`` call.
+In certain cases, you may get a SelectResults instance with an object in it
+more than once, e.g., in some joins.  If you don't want this, you can add
+the keyword argument ``MyClass.select(..., distinct=True)``, which results
+in a ``SELECT DISTINCT`` call.
 
 You can get the length of the result without fetching all the results
 by calling ``count`` on the result object, like
@@ -91,7 +92,7 @@ a default like ``.getOne(None)``.
 Cloning Methods
 ---------------
 
-These methods return a modified copy of the SelectResult instance 
+These methods return a modified copy of the SelectResults instance
 they are called on, so successive calls can chained, eg 
 ``results = MyClass.selectBy(city='Boston').filter(MyClass.q.commute_distance>10).orderBy('vehicle_mileage')``
 or used independently later on.
@@ -183,15 +184,15 @@ in the same manner as the cloning methods above. For instance::
 
   Schools.select(Schools.q.student_satisfaction>90).throughTo.teachers
 
-returns a SelectResult of Teachers of Schools with satisfied students,
+returns a SelectResults of Teachers of Schools with satisfied students,
 assuming Schools has a SQLMultipleJoin or SQLRelatedJoin attribute
 named ``teachers``. Similarily, with a self-joining foreign key named
 ``father``::
 
   Person.select(Person.q.name=='Steve').throughTo.father.throughTo.father
 
-returns a SelectResult of Persons who are the paternal grandfather of someone
-named ``Steve``.
+returns a SelectResults of Persons who are the paternal grandfather of
+someone named ``Steve``.
 
 .. image:: https://sourceforge.net/sflogo.php?group_id=74338&type=10
    :target: https://sourceforge.net/projects/sqlobject

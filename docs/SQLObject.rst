@@ -501,7 +501,7 @@ An alternative to ``.select`` is ``.selectBy``.  It works like:
     >>> peeps = Person.selectBy(firstName="John", lastName="Doe")
 
 Each keyword argument is a column, and all the keyword arguments
-are ANDed together.  The return value is a `SelectResult`, so you
+are ANDed together.  The return value is a `SelectResults`, so you
 can slice it, count it, order it, etc.
 
 

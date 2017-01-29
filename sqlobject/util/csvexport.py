@@ -21,7 +21,7 @@ def export_csv(soClass, select=None, writer=None, connection=None,
     """
     Export the SQLObject class ``soClass`` to a CSV file.
 
-    ``soClass`` can also be a SelectResult object, as returned by
+    ``soClass`` can also be a SelectResults object, as returned by
     ``.select()``.  If it is a class, all objects will be retrieved,
     ordered by ``orderBy`` if given, or the ``.csvOrderBy`` attribute
     if present (but csvOrderBy will only be applied when no select
@@ -29,7 +29,7 @@ def export_csv(soClass, select=None, writer=None, connection=None,
 
     You can also pass in select results (or simply a list of
     instances) in ``select`` -- if you have a list of objects (not a
-    SelectResult instance, as produced by ``.select()``) then you must
+    SelectResults instance, as produced by ``.select()``) then you must
     pass it in with ``select`` and pass the class in as the first
     argument.
 
@@ -67,7 +67,8 @@ def export_csv(soClass, select=None, writer=None, connection=None,
     if isinstance(soClass, sqlobject.SQLObject.SelectResultsClass):
         assert select is None, (
             "You cannot pass in a select argument (%r) "
-            "and a SelectResult argument (%r) for soClass" % (select, soClass))
+            "and a SelectResults argument (%r) for soClass" %
+            (select, soClass))
         select = soClass
         soClass = select.sourceClass
     elif select is None:
