@@ -4,11 +4,6 @@ SQLObject Community
 SQLObject questions and discussion happens on the `sqlobject-discuss
 mailing list
 <https://lists.sourceforge.net/mailman/listinfo/sqlobject-discuss>`_.
-`Gmane <http://www.gmane.org/>`_ also has the list in
-gmane.comp.python.sqlobject accessible by
-`HTTP <http://news.gmane.org/gmane.comp.python.sqlobject>`_,
-`HTTP (blog format) <http://blog.gmane.org/gmane.comp.python.sqlobject>`_
-and `News <news://news.gmane.org/gmane.comp.python.sqlobject>`_.
 
 Bugs should be submitted to the `bug tracker at SourceForge
 <https://sourceforge.net/p/sqlobject/bugs/>`_ or `GitHub
