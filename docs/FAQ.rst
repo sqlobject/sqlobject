@@ -14,7 +14,8 @@ In `SomeTable.select(SomeTable.q.Foo > 30)` why doesn't the inner parameter,
 `sqlbuilder.SQLExpression`. SQLExpression is a special class that overrides
 almost all Python magic methods and upon any operation instead of
 evaluating it constructs another instance of SQLExpression that remembers
-what operation it has to do. Similar to a symbolic algebra. Example:
+what operation it has to do. This is similar to a symbolic algebra.
+Example:
 
    SQLExpression("foo") > 30
 
@@ -34,7 +35,7 @@ and passes the result as a string to the SQL backend.
 The longer but more detailed and correct explanation is that select()
 produces an instance of SelectResults_ class that upon being iterated over
 produces an instance of Iteration class that upon calling its next()
-method (it is iterator!) construct the SQL query string, passes it to the
+method (it is iterator!) constructs the SQL query string, passes it to the
 backend, fetches the results, wraps every row as SQLObject instance and
 passes them back to the user.
 

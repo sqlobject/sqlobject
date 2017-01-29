@@ -24,7 +24,7 @@ Minor features
   'kinterbasdb' and 'pyfirebirdsql'. Default is to test 'fdb' and
   'kinterbasdb' in that order. pyfirebirdsql is supported but has problems.
 
-* Add ``driver`` keyword for MySQLConnection. Allowed value are 'mysqldb',
+* Add ``driver`` keyword for MySQLConnection. Allowed values are 'mysqldb',
   'connector', 'oursql' and 'pymysql'. Default is to test for mysqldb only.
 
 * Add support for `MySQL Connector
@@ -33,7 +33,8 @@ Minor features
   PyPI and hence are hard to install and test).
 
 * Add support for `oursql <https://github.com/python-oursql/oursql>`_ MySQL
-  driver (Python 2.6 and 2.7 until oursql fixes python 3 compatibility).
+  driver (only Python 2.6 and 2.7 until oursql author fixes Python 3
+  compatibility).
 
 * Add support for `PyMySQL <https://github.com/PyMySQL/PyMySQL/>`_ - pure
   python mysql interface).
@@ -67,7 +68,7 @@ Bug fixes
 * Fix MSSQLConnection and SybaseConnection: insert default values into a table
   with just one IDENTITY column.
 
-* Remove excessive NULLs for MSSQL/Sybase.
+* Remove excessive NULLs from ``CREATE TABLE`` for MSSQL/Sybase.
 
 * Fix concatenation operator for MSSQL/Sybase (it's ``+``, not ``||``).
 
@@ -99,8 +100,8 @@ Tests
 * Run at Travis CI tests with Firebird backend (server version 2.5; drivers fdb
   and firebirdsql). There are problems with tests.
 
-* Add AppVeyor for windows testing. Run tests with MS SQL, Postgres and
-  SQLite. There are problems with MS SQL.
+* Run tests at AppVeyor for windows testing. Run tests with MS SQL, Postgres
+  and SQLite. There are problems with MS SQL.
 
 SQLObject 3.1.0
 ===============
