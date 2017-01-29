@@ -5,12 +5,12 @@ SQLObject questions and discussion happens on the `sqlobject-discuss
 mailing list
 <https://lists.sourceforge.net/mailman/listinfo/sqlobject-discuss>`_.
 
-Bugs should be submitted to the `bug tracker at SourceForge
-<https://sourceforge.net/p/sqlobject/bugs/>`_ or `GitHub
-<https://github.com/sqlobject/sqlobject/issues>`_, and
-`patches to the patch tracker
-<https://sourceforge.net/p/sqlobject/patches/>`_ (or send pull requests
-at GitHub).
+Bugs should be submitted to the `GitHub issue tracker
+<https://github.com/sqlobject/sqlobject/issues>`_ or `bug tracker at
+SourceForge <https://sourceforge.net/p/sqlobject/bugs/>`_, and patches as
+`pull requests at GitHub <https://github.com/sqlobject/sqlobject/pulls>`_
+or `to the patch tracker at SF
+<https://sourceforge.net/p/sqlobject/patches/>`_.
 
 Development takes place in the `git repositories
 <download.html#repositories>`_.  There are `development docs`_, i.e the

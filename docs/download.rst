@@ -42,12 +42,11 @@ Repositories
 ------------
 
 The SQLObject `git <https://git-scm.com/>`_ repositories are located at
-https://sourceforge.net/p/sqlobject/_list/git and
-https://github.com/sqlobject
+https://github.com/sqlobject and
+https://sourceforge.net/p/sqlobject/_list/git
 
-Before switching to git development was performed at the `Subversion
-<https://subversion.apache.org/>`_ repository that is still located at
-http://svn.colorstudy.com/SQLObject
+Before switching to git development was performed at the Subversion
+repository that is no longer available.
 
 .. image:: https://sourceforge.net/sflogo.php?group_id=74338&type=10
    :target: https://sourceforge.net/projects/sqlobject
