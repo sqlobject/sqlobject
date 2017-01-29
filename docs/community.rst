@@ -13,13 +13,11 @@ Bugs should be submitted to the `bug tracker at SourceForge
 at GitHub).
 
 Development takes place in the `git repositories
-<download.html#repositories>`_.  There are `development docs`_.  If you are
-interested in contributing you should read the `Developer Guide
-<DeveloperGuide.html>`_. There also exists ``##sqlobject`` on the
-`Freenode IRC Network`_ for development discussions.
+<download.html#repositories>`_.  There are `development docs`_, i.e the
+docs from the development branch (master).  If you are interested in
+contributing you should read the `Developer Guide <DeveloperGuide.html>`_.
 
 .. _`development docs`: /devel/
-.. _`Freenode IRC Network`: https://freenode.net/
 
 The `Author List <Authors.html>`_ tries to list all the major
 contributors.
