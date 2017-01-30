@@ -42,6 +42,8 @@ Minor features
 * Add parameter ``timeout`` for MSSQLConnection (usable only with pymssql
   driver); timeouts are in seconds.
 
+* Remove deprecated ez_setup.py.
+
 Drivers (work in progress)
 --------------------------
 
