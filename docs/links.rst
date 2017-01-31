@@ -27,12 +27,9 @@ Articles and Documentation
 Open Source Projects
 --------------------
 
-* `TurboGears <http://turbogears.org/>`_ Web Framework: also integrates
-  with SQLObject.
-
 * `Catwalk <http://turbogears.org/1.0/docs/Catwalk.html>`_ is a
   web-based SQLObject browser and object editor (included in
-  TurboGears).
+  TurboGears 1.0).
 
 * `Ultra Gleeper <http://www.crummy.com/software/UltraGleeper/>`_, a
   Recommendation Engine for Web Pages.
@@ -40,9 +37,6 @@ Open Source Projects
 * `Guten <http://guten.sourceforge.net/>`_; an application for
   browsing, reading, and managing books from `Project Gutenberg
   <https://www.gutenberg.org/>`_.
-
-* `My Newspaper <http://inigo.katxi.org/devel/mynewspaper/>`_, a
-  personal RSS Aggregator and Reader.
 
 .. image:: https://sourceforge.net/sflogo.php?group_id=74338&type=10
    :target: https://sourceforge.net/projects/sqlobject
