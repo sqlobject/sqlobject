@@ -175,6 +175,9 @@ If you want to pass True value in a connection URI - pass almost any
 non-empty string, especially ``yes``, ``true``, ``on`` or ``1``; an
 empty string or ``no``, ``false``, ``off`` or ``0`` for False.
 
+There are also connection-specific parameters, they are listed in the
+appropriate sections.
+
 Lets first set up a connection::
 
     >>> import os
@@ -1782,6 +1785,9 @@ MySQLConnection supports all the features, though MySQL only supports
 transactions_ when using the InnoDB backend; SQLObject can explicitly
 define the backend using ``sqlmeta.createSQL``.
 
+Supported drivers are ``mysqldb``, ``connector``, ``oursql`` and
+``pymysql``; defualt is ``mysqldb``.
+
 Keyword argument ``conv`` allows to pass a list of custom converters.
 Example::
 
@@ -1805,6 +1811,12 @@ Example::
     MySQLConnection = sqlobject.mysql.builder()
     connection = MySQLConnection(user='foo', db='somedb', conv=conversions)
 
+Connection-specific parameters are: ``unix_socket``, ``init_command``,
+``read_default_file``, ``read_default_group``, ``conv``,
+``connect_timeout``, ``compress``, ``named_pipe``, ``use_unicode``,
+``client_flag``, ``local_infile``, ``ssl_key``, ``ssl_cert``,
+``ssl_ca``, ``ssl_capath``, ``charset``.
+
 Postgres
 --------
 
@@ -1818,8 +1830,11 @@ PostgresConnection supports transactions and all other features.
 The user can choose a DB API driver for PostgreSQL by using a ``driver``
 parameter in DB URI or PostgresConnection that can be a comma-separated
 list of driver names. Possible drivers are: ``psycopg2``, psycopg1,
-``psycopg`` (tries psycopg2 and psycopg1), ``pygresql``. Default is
-``psycopg``.
+``psycopg`` (tries psycopg2 and psycopg1), ``pygresql``, ``pygresql``,
+``pg8000`` or ``pypostgresql``. Default is ``psycopg``.
+
+Connection-specific parameters are: ``sslmode``, ``unicodeCols``,
+``schema``, ``charset``.
 
 SQLite
 ------
@@ -1841,6 +1856,9 @@ of driver names. Possible drivers are: ``pysqlite2`` (alias ``sqlite2``),
 ``sqlite3``, ``sqlite`` (alias ``sqlite1``). Default is to test pysqlite2,
 sqlite3 and sqlite in that order.
 
+Connection-specific parameters are: ``encoding``, ``mode``, ``timeout``,
+``check_same_thread``, ``use_table_info``.
+
 Firebird
 --------
 
@@ -1853,7 +1871,8 @@ using lazy selects.  Try ``list(MyClass.select())`` to avoid
 concurrent cursors if you have problems (using ``list()`` will
 pre-fetch all the results of a select).
 
-Firebird support uses fdb_ or kinterbasdb_ Python library.
+Firebird support ``fdb``, ``kinterbasdb`` or ``firebirdsql`` drivers.
+Default are ``fdb`` and ``kinterbasdb``.
 
 There could be a problem if one tries to connect to a server running on w32
 from a program running on Unix; the problem is how to specify the database
@@ -1884,6 +1903,8 @@ the restrictions on your indexing.
 
 .. _this page: http://mujweb.cz/iprenosil/interbase/ip_ib_indexcalculator.htm
 
+Connection-specific parameters are: ``dialect``, ``role``, ``charset``.
+
 Sybase
 ------
 
@@ -1895,6 +1916,8 @@ for a slight performance boost.
 
 It uses the Sybase_ module.
 
+Connection-specific parameters are: ``locking``, ``autoCommit``.
+
 MAX DB
 ------
 
@@ -1905,6 +1928,9 @@ and MySQL.  It takes the typical arguments: `host`, `database`,
 when creating the connection to the database.
 
 It uses the sapdb_ module.
+
+Connection-specific parameters are: ``autoCommit``, ``sqlmode``,
+``isolation``, ``timeout``.
 
 MS SQL Server
 -------------
@@ -1924,6 +1950,8 @@ The user can choose a DB API driver for MSSQL by using a ``driver``
 parameter in DB URI or MSSQLConnection that can be a comma-separated list
 of driver names. Possible drivers are: ``adodb`` (alias ``adodbapi``) and
 ``pymssql``. Default is to test ``adodbapi`` and ``pymssql`` in that order.
+
+Connection-specific parameters are: ``autoCommit``, ``timeout``.
 
 Events (signals)
 ================
