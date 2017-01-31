@@ -85,7 +85,7 @@ Python 2.6, 2.7 or 3.4+ is required.
 Compared To Other Database Wrappers
 ===================================
 
-There are several object-relational mappers (ORM) for Python.  I
+There are several object-relational mappers (ORM) for Python.  We
 honestly can't comment deeply on the quality of those packages, but
 I'll try to place SQLObject in perspective.
 
@@ -106,7 +106,7 @@ prominent as a storage mechanism.
 
 This is in contrast to some ORMs that provide a dictionary-like
 interface to the database (for example, PyDO_).  The dictionary
-interface distinguishes the row from a normal Python object.  I also
+interface distinguishes the row from a normal Python object.  We also
 don't care for the use of strings where an attribute seems more
 natural -- columns are limited in number and predefined, just like
 attributes.  (Note: newer version of PyDO apparently allow attribute
@@ -309,7 +309,7 @@ the same data (though of course across processes there can be no
 sharing of an instance).  This isn't true if you're using
 transactions_, which are necessarily isolated.
 
-To get an idea of what's happening behind the surface, I'll give the
+To get an idea of what's happening behind the surface, we'll give the
 same actions with the SQL that is sent, along with some commentary::
 
     >>> # This will make SQLObject print out the SQL it executes:
@@ -334,7 +334,7 @@ same actions with the SQL that is sent, along with some commentary::
 Hopefully you see that the SQL that gets sent is pretty clear and
 predictable.  To view the SQL being sent, add ``?debug=t`` to your
 connection URI, or set the ``debug`` attribute on the connection, and
-all SQL will be printed to the console.  This can be reassuring, and I
+all SQL will be printed to the console.  This can be reassuring, and we
 would encourage you to try it.
 
 .. comment:
@@ -976,7 +976,7 @@ directory::
             f.close()
 
         def _del_image(self, value):
-            # I usually wouldn't include a method like this, but for
+            # We usually wouldn't include a method like this, but for
             # instructional purposes...
             os.unlink(self.imageFilename())
 
