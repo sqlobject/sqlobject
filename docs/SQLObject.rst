@@ -114,12 +114,13 @@ access as well)
 SQLObject is, to my knowledge, unique in using metaclasses to
 facilitate this seamless integration.  Some other ORMs use code
 generation to create an interface, expressing the schema in a CSV or
-XML file (for example, MiddleKit, part of Webware_).  By using
+XML file (for example, MiddleKit_, part of Webware_).  By using
 metaclasses you are able to comfortably define your schema in the
 Python source code.  No code generation, no weird tools, no
 compilation step.
 
-.. _Webware: http://webware.sourceforge.net/
+.. _MiddleKit: http://webware.sourceforge.net/Webware/MiddleKit/Docs/
+.. _Webware: http://webware.sourceforge.net/Webware/Docs/
 
 SQLObject provides a strong database abstraction, allowing
 cross-database compatibility (so long as you don't sidestep
