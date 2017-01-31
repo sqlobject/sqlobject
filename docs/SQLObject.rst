@@ -179,12 +179,9 @@ Lets first set up a connection::
 
     >>> import os
     >>> db_filename = os.path.abspath('data.db')
-    >>> if os.path.exists(db_filename):
-    ...     os.unlink(db_filename)
     >>> connection_string = 'sqlite:' + db_filename
     >>> connection = connectionForURI(connection_string)
     >>> sqlhub.processConnection = connection
-
 
 The ``sqlhub.processConnection`` assignment means that all classes
 will, by default, use this connection we've just set up.
@@ -331,14 +328,10 @@ same actions with the SQL that is sent, along with some commentary::
     >>> # instance we already had.
 
 Hopefully you see that the SQL that gets sent is pretty clear and
-predictable.  To view the SQL being sent, add ``?debug=t`` to your
+predictable.  To view the SQL being sent, add ``?debug=true`` to your
 connection URI, or set the ``debug`` attribute on the connection, and
 all SQL will be printed to the console.  This can be reassuring, and we
 would encourage you to try it.
-
-.. comment:
-
-    >>> Person._connection.debug = False
 
 As a small optimization, instead of assigning each attribute
 individually, you can assign a number of them using the ``set``
@@ -489,8 +482,8 @@ SQLObject doesn't evaluate firstName but stores the expression:
 
     Person.q.firstName=="John"
 
-converts it to the string ``first_name = 'John'`` and passes the string to
-the backend.
+Later SQLObject converts it to the string ``first_name = 'John'`` and
+passes the string to the backend.
 
 selectBy Method
 ~~~~~~~~~~~~~~~
@@ -804,13 +797,17 @@ values are:
 `fromDatabase`:
    A boolean (default false).  If true, then on class creation the
    database will be queried for the table's columns, and any missing
-   columns (possible all columns) will be added automatically.
+   columns (possible all columns) will be added automatically. Please be
+   warned that not all connections fully implement database
+   introspection.
 
 `dbEncoding`:
    UnicodeCol_ looks up `sqlmeta.dbEncoding` if `column.dbEncoding` is
    ``None`` (if `sqlmeta.dbEncoding` is ``None`` UnicodeCol_ looks up
    `connection.dbEncoding` and if `dbEncoding` isn't defined anywhere it
-   defaults to ``"utf-8"``).
+   defaults to ``"utf-8"``). For Python 3 there must be one encoding for
+   connection - do not define different columns with different
+   encodings, it's not implemented.
 
 .. _UnicodeCol: `Column Types`_
 
@@ -842,13 +839,11 @@ elements.
    are dbNames and values that are either single SQL command string or a list
    of SQL commands. This is usually for ALTER TABLE commands.
 
-
 There is also one instance attribute:
 
 `expired`:
    A boolean.  If true, then the next time this object's column
    attributes are accessed a query will be run.
-
 
 While in previous versions of SQLObject those attributes were defined
 directly at the class that will map your database data to Python and
@@ -879,7 +874,6 @@ To use sqlmeta you should write code like this example::
 
         def _get_attr1(self):
             # do something to retrieve value
-
 
 The above definition is creating a table ``my_class`` (the name may be
 different if you change the ``style`` used) with two columns called
@@ -1075,7 +1069,7 @@ work as any other attribute you set on any Python class, it will
 'forget' it is a SQLObject class.
 
 This may sometimes be a problem: if you have got a 'name' attribute and
-you you write 'a.namme="Victor"' once, when setting it, you'll get no
+you you write ``a.namme="Victor"`` once, when setting it, you'll get no
 error, no warning, nothing at all, and you may get crazy at understanding
 why you don't get that value set in your DB.
 
@@ -1785,9 +1779,8 @@ MySQL
 and `password`, just like `MySQLdb.connect` does.
 
 MySQLConnection supports all the features, though MySQL only supports
-transactions_ when using the InnoDB backend, and SQLObject currently
-does not have support for explicitly defining the backend when using
-``createTable``.
+transactions_ when using the InnoDB backend; SQLObject can explicitly
+define the backend using ``sqlmeta.createSQL``.
 
 Keyword argument ``conv`` allows to pass a list of custom converters.
 Example::
