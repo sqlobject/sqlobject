@@ -87,22 +87,19 @@ Compared To Other Database Wrappers
 
 There are several object-relational mappers (ORM) for Python.  We
 honestly can't comment deeply on the quality of those packages, but
-I'll try to place SQLObject in perspective.
+we'll try to place SQLObject in perspective.
 
-SQLObject uses new-style classes extensively.  The resultant objects
-have a new-style feel as a result -- setting attributes has side
-effects (it changes the database), and defining classes has side
-effects (through the use of metaclasses).  Attributes are generally
-exposed, not marked private, knowing that they can be made dynamic
-or write-only later.
+Objects have built-in magic -- setting attributes has side effects (it
+changes the database), and defining classes has side effects (through
+the use of metaclasses).  Attributes are generally exposed, not marked
+private, knowing that they can be made dynamic or write-only later.
 
-SQLObject creates objects that feel similar to normal Python objects
-(with the semantics of new-style classes).  An attribute attached to a
-column doesn't look different than an attribute that's attached to a
-file, or an attribute that is calculated.  It is a specific goal that
-you be able to change the database without changing the interface,
-including changing the scope of the database, making it more or less
-prominent as a storage mechanism.
+SQLObject creates objects that feel similar to normal Python objects. An
+attribute attached to a column doesn't look different than an attribute
+that's attached to a file, or an attribute that is calculated.  It is a
+specific goal that you be able to change the database without changing
+the interface, including changing the scope of the database, making it
+more or less prominent as a storage mechanism.
 
 This is in contrast to some ORMs that provide a dictionary-like
 interface to the database (for example, PyDO_).  The dictionary
@@ -948,12 +945,11 @@ Adding Magic Attributes (properties)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 You can use all the normal techniques for defining methods in this
-new-style class, including `classmethod`, `staticmethod`, and
-`property`, but you can also use a shortcut.  If you have a method
-that's name starts with ``_set_``, ``_get_``, ``_del_``, or ``_doc_``,
-it will be used to create a property.  So, for instance, say you have
-images stored under the ID of the person in the ``/var/people/images``
-directory::
+class, including `classmethod`, `staticmethod`, and `property`, but you
+can also use a shortcut.  If you have a method that's name starts with
+``_set_``, ``_get_``, ``_del_``, or ``_doc_``, it will be used to create
+a property.  So, for instance, say you have images stored under the ID
+of the person in the ``/var/people/images`` directory::
 
     class Person(SQLObject):
         # ...
