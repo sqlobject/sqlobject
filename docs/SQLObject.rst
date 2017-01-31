@@ -143,7 +143,6 @@ Let's start off quickly.  We'll generally just import everything from
 the ``sqlobject`` class::
 
     >>> from sqlobject import *
-    >>> import sys, os
 
 Declaring a Connection
 ----------------------
@@ -177,6 +176,7 @@ string; an empty string for False.
 
 Lets first set up a connection::
 
+    >>> import os
     >>> db_filename = os.path.abspath('data.db')
     >>> if os.path.exists(db_filename):
     ...     os.unlink(db_filename)
