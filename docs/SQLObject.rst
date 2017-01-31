@@ -1889,7 +1889,7 @@ If you are using indexes and get an error like *key size exceeds
 implementation restriction for index*, see `this page`_ to understand
 the restrictions on your indexing.
 
-.. _this page: http://www.volny.cz/iprenosil/interbase/ip_ib_indexcalculator.htm
+.. _this page: http://mujweb.cz/iprenosil/interbase/ip_ib_indexcalculator.htm
 
 Sybase
 ------
