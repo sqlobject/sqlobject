@@ -171,8 +171,9 @@ Parameters are: ``debug`` (default: False), ``debugOutput`` (default: False),
 ``logger`` (default: None), ``loglevel`` (default: None),
 ``schema`` (default: None).
 
-If you want to pass True value in a connection URI - pass any non-empty
-string; an empty string for False.
+If you want to pass True value in a connection URI - pass almost any
+non-empty string, especially ``yes``, ``true``, ``on`` or ``1``; an
+empty string or ``no``, ``false``, ``off`` or ``0`` for False.
 
 Lets first set up a connection::
 
