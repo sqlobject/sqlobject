@@ -230,13 +230,13 @@ We can change the type of the various columns by using something other
 than `StringCol`, or using different arguments.  More about this in
 `Column Types`_.
 
-You'll note that the ``id`` column is not given in the class
-definition, it is implied.  For MySQL databases it should be defined
-as ``INT PRIMARY KEY AUTO_INCREMENT``, in Postgres ``SERIAL PRIMARY
-KEY``, and in SQLite as ``INTEGER PRIMARY KEY``.  You can't use tables
-with SQLObject that don't have a single primary key, and you must
-treat that key as immutable (otherwise you'll confuse SQLObject
-terribly).
+You'll note that the ``id`` column is not given in the class definition,
+it is implied.  For MySQL databases it should be defined as ``INT
+PRIMARY KEY AUTO_INCREMENT``, in Postgres ``SERIAL PRIMARY KEY``, in
+SQLite as ``INTEGER PRIMARY KEY AUTOINCREMENT``, and for other backends
+accordingly.  You can't use tables with SQLObject that don't have a
+single primary key, and you must treat that key as immutable (otherwise
+you'll confuse SQLObject terribly).
 
 You can `override the id name`_ in the database, but it is
 always called ``.id`` from Python.
@@ -1622,7 +1622,7 @@ MySQL:
 Postgres:
     ``SERIAL PRIMARY KEY``
 SQLite:
-    ``INTEGER PRIMARY KEY``
+    ``INTEGER PRIMARY KEY AUTOINCREMENT``
 
 SQLObject does not support primary keys made up of multiple columns (that
 probably won't change).  It does not generally support tables with primary
