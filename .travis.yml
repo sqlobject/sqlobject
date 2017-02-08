@@ -15,13 +15,22 @@ addons:
       - firebird2.5-super
   postgresql: "9.4"
 
-# Start the firebird database server
-# We use firebird-super, so there's none of the inetd configuration required by firebird-classic
-# We also create a test user for the firebird test and create a script that can be fed into isql-fb to create the test database
 before_install:
-   - sudo sed -i /etc/default/firebird2.5 -e 's/=no/=yes/' && sudo /etc/init.d/firebird2.5-super start
-   - sudo touch /var/lib/firebird/create_test_db && sudo chmod 666 /var/lib/firebird/create_test_db && echo "CREATE DATABASE 'localhost:/tmp/test.fdb';" > /var/lib/firebird/create_test_db && sudo chmod 644 /var/lib/firebird/create_test_db
-   - sudo gsec -user sysdba -pass masterkey -add test -pw test
+  # Start the firebird database server.
+  # We use firebird-super, so there's none of the inetd configuration
+  # required by firebird-classic.
+  # We also create a test user for the firebird test and
+  # create a script that can be fed into isql-fb
+  # to create the test database.
+  - if [[ $TOXENV = *firebird* ]]; then
+      sudo sed -i /etc/default/firebird2.5 -e 's/=no/=yes/' &&
+      sudo /etc/init.d/firebird2.5-super start &&
+      sudo touch /var/lib/firebird/create_test_db &&
+      sudo chmod 666 /var/lib/firebird/create_test_db &&
+      echo "CREATE DATABASE 'localhost:/tmp/test.fdb';" > /var/lib/firebird/create_test_db &&
+      sudo chmod 644 /var/lib/firebird/create_test_db &&
+      sudo gsec -user sysdba -pass masterkey -add test -pw test;
+    fi
 
 env:
   - TOXENV=py26-mysqldb
