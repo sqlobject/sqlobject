@@ -98,8 +98,8 @@ Tests
 * Run at Travis CI tests with Firebird backend (server version 2.5; drivers fdb
   and firebirdsql). There are problems with tests.
 
-* Run tests at AppVeyor for windows testing. Run tests with MS SQL, Postgres
-  and SQLite. There are problems with MS SQL.
+* Run tests at AppVeyor for windows testing. Run tests with MS SQL, MySQL,
+  Postgres and SQLite. There are problems with MS SQL and MySQL.
 
 SQLObject 3.1.0
 ===============
