@@ -53,10 +53,6 @@ Drivers (work in progress)
   <https://pypi.python.org/pypi/py-postgresql>`_ PostgreSQL driver. There
   are still problems with the driver.
 
-* Add support for `pg8000 <https://pypi.python.org/pypi/pg8000>`_
-  PostgreSQL driver. There are major problems with the driver caused by both
-  the driver and SQLObject.
-
 * Add support for `pyfirebirdsql
   <https://pypi.python.org/pypi/firebirdsql>`_.There are still problems with
   the driver.

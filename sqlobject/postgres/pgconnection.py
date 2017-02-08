@@ -1,6 +1,4 @@
-from getpass import getuser
 import re
-import sys
 from sqlobject import col
 from sqlobject import dberrors
 from sqlobject import sqlbuilder
@@ -55,14 +53,11 @@ class PostgresConnection(DBAPI):
                 elif driver in ('py-postgresql', 'pypostgresql'):
                     from postgresql.driver import dbapi20
                     self.module = dbapi20
-                elif driver == 'pg8000':
-                    import pg8000
-                    self.module = pg8000
                 else:
                     raise ValueError(
                         'Unknown PostgreSQL driver "%s", '
                         'expected psycopg2, psycopg1, '
-                        'pygresql, pg8000 or pypostgresql' % driver)
+                        'pygresql or pypostgresql' % driver)
             except ImportError:
                 pass
             else:
@@ -142,12 +137,6 @@ class PostgresConnection(DBAPI):
             else:
                 if "unix" in dsn_dict:
                     del dsn_dict["unix"]
-        if driver == 'pg8000':
-            if host and host.startswith('/'):
-                dsn_dict["host"] = None
-                dsn_dict["unix_sock"] = host
-            if user is None:
-                dsn_dict["user"] = getuser()
         self.driver = driver
         self.dsn = dsn
         self.unicodeCols = kw.pop('unicodeCols', False)
@@ -182,11 +171,6 @@ class PostgresConnection(DBAPI):
         except self.module.OperationalError as e:
             raise dberrors.OperationalError(
                 ErrorMessage(e, "used connection string %r" % self.dsn))
-
-        if self.driver == 'pg8000' and \
-                'sqlobject.tests.dbtest' in sys.modules and \
-                hasattr(conn, 'set_cache_size'):
-            conn.set_cache_size(1000)  # rows
 
         # For printDebug in _executeRetry
         self._connectionNumbers[id(conn)] = self._connectionCount
