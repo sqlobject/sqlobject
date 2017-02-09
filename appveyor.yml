@@ -20,53 +20,36 @@ environment:
     - PYTHON: "C:\\Python27"
       db: mssql2014
       TOX_ENV: "pywin27-mssql"
-    - PYTHON: "C:\\Python27"
-      db: mysql
-      TOX_ENV: "pywin27-mysql-connector"
-    - PYTHON: "C:\\Python27"
-      db: postgresql
-      TOX_ENV: "pywin27-postgres-psycopg"
-    #- PYTHON: "C:\\Python27-x64"
-    #  db: mssql2014
-    #- PYTHON: "C:\\Python27-x64"
-    #  db: postgresql
     - PYTHON: "C:\\Python34"
       db: mssql2014
       TOX_ENV: "pywin34-mssql"
+    - PYTHON: "C:\\Python27"
+      db: mysql
+      TOX_ENV: "pywin27-mysql-connector"
     - PYTHON: "C:\\Python34"
       db: mysql
       TOX_ENV: "pywin34-mysql-connector"
+    - PYTHON: "C:\\Python27"
+      db: postgresql
+      TOX_ENV: "pywin27-postgres-psycopg"
     - PYTHON: "C:\\Python34"
       db: postgresql
       TOX_ENV: "pywin34-postgres-psycopg"
-    #- PYTHON: "C:\\Python34-x64"
-    #  db: mssql2014
-    #- PYTHON: "C:\\Python34-x64"
-    #  db: postgresql
-    #- PYTHON: "C:\\Python35"
-    #  db: mssql2014
-    #- PYTHON: "C:\\Python35"
-    #  db: postgresql
-    #- PYTHON: "C:\\Python35-x64"
-    #  db: mssql2014
-    #- PYTHON: "C:\\Python35-x64"
-    #  db: postgresql
-    #- PYTHON: "C:\\Python36"
-    #  db: mssql2014
-    #- PYTHON: "C:\\Python36"
-    #  db: postgresql
-    #- PYTHON: "C:\\Python36-x64"
-    #  db: mssql2014
-    #- PYTHON: "C:\\Python36-x64"
-    #  db: postgresql
+    - PYTHON: "C:\\Python35"
+      db: postgresql
+      TOX_ENV: "pywin35-postgres-psycopg"
     - PYTHON: "C:\\Python27"
       TOX_ENV: "pywin27-sqlite"
     - PYTHON: "C:\\Python34"
       TOX_ENV: "pywin34-sqlite"
+    - PYTHON: "C:\\Python35"
+      TOX_ENV: "pywin35-sqlite"
     - PYTHON: "C:\\Python27"
       TOX_ENV: "pywin27-sqlite-memory"
     - PYTHON: "C:\\Python34"
       TOX_ENV: "pywin34-sqlite-memory"
+    - PYTHON: "C:\\Python35"
+      TOX_ENV: "pywin35-sqlite-memory"
 
 install:
   # Ensure we use the right python version
