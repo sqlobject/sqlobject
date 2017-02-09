@@ -99,8 +99,8 @@ Tests
   drivers fdb and firebirdsql). There are problems with tests.
 
 * Run tests at AppVeyor for windows testing. Run tests with MS SQL,
-  MySQL, Postgres and SQLite backends; use Python 2.7, 3.4 and 3.5.
-  There are problems with MS SQL and MySQL.
+  MySQL, Postgres and SQLite backends; use Python 2.7, 3.4 and 3.5,
+  x86 and x64. There are problems with MS SQL and MySQL.
 
 SQLObject 3.1.0
 ===============
