@@ -1759,20 +1759,17 @@ empty SQLObject uses ``print``'s instead of logging; `loglevel` can be
 To configure logging one can do something like that::
 
     import logging
-    logging.basicConfig()
-    for handler in logging.root.handlers[:]:
-       logging.root.removeHandler(handler)
-    handler = logging.FileHandler("test.log")
-    fmt = '[%(asctime)s] %(name)s %(levelname)s: %(message)s'
-    handler.setFormatter(logging.Formatter(fmt))
-    logging.root.addHandler(handler)
-    logging.root.setLevel(logging.DEBUG)
+    logging.basicConfig(
+        filename='test.log',
+        format='[%(asctime)s] %(name)s %(levelname)s: %(message)s',
+        level=logging.DEBUG,
+    )
     log = logging.getLogger("TEST")
     log.info("Log started")
 
     __connection__ = "sqlite:/:memory:?debug=1&logger=TEST&loglevel=debug"
 
-The code redirects SQLObject debug messages to the `test.log` file.
+The code redirects SQLObject debug messages to `test.log` file.
 
 MySQL
 -----
