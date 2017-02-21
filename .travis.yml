@@ -24,7 +24,7 @@ before_install:
   # to create the test database.
   - if [[ $TOXENV = *firebird* ]]; then
       sudo sed -i /etc/default/firebird2.5 -e 's/=no/=yes/' &&
-      sudo /etc/init.d/firebird2.5-super start &&
+      sudo /etc/init.d/firebird2.5-super start && sleep 5 &&
       sudo touch /var/lib/firebird/create_test_db &&
       sudo chmod 666 /var/lib/firebird/create_test_db &&
       echo "CREATE DATABASE 'localhost:/tmp/test.fdb';" > /var/lib/firebird/create_test_db &&
