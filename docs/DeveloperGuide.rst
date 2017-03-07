@@ -104,6 +104,19 @@ converters. Another approach for ``from_python`` is to return an object
 that has ``__sqlrepr__`` method. Such objects convert to SQL strings
 themselves, converters are not used.
 
+Branch workflow
+===============
+
+Initially ``SQLObject`` was being developed using ``Subversion``. Even
+after switching to git development process somewhat preserves the old
+workflow.
+
+The ``trunk``, called ``master`` in git, is the most advanced and the
+most unstable branch. It is where new features are applied. Bug fixes
+are applied to ``oldstable`` and ``stable`` branches and are merged
+upward -- from ``oldstable`` to ``stable`` and from ``stable`` to
+``master``.
+
 Style Guide
 ===========
 
