@@ -20,6 +20,7 @@ import os
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 # sys.path.insert(0, os.path.abspath('.'))
+sys.path.insert(0, os.path.abspath('..'))
 
 # -- General configuration ------------------------------------------------
 
@@ -55,7 +56,6 @@ copyright = u'2004-%d, %s' % (date.today().year, authors)
 # |version| and |release|, also used in various other places throughout the
 # built documents.
 #
-sys.path.insert(0, os.path.abspath('..'))
 from sqlobject.__version__ import version as __version__  # noqa: E402
 # The short X.Y version.
 version = '.'.join(__version__.split('.')[:2])
