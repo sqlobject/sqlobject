@@ -1,5 +1,5 @@
-SQLObject 3.2.0
-===============
+SQLObject 3.3.0a0
+=================
 
 Thanks for looking at SQLObject.  SQLObject is an object-relational
 mapper, i.e., a library that will wrap your database tables in Python

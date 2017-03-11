@@ -1,7 +1,7 @@
 # Install SQLObject on windows and test against MS SQL server and postgres
 # Heavily inspired by Oliver Grisel's appveyor-demo (https://github.com/ogrisel/python-appveyor-demo)
 # and Michael Sverdlik's appveyor-utils (https://github.com/cloudify-cosmo/appveyor-utils)
-version: 3.2.{build}
+version: 3.3.{build}
 
 # Match travis
 clone_depth: 50
