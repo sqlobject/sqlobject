@@ -1,0 +1,5 @@
+#! /bin/sh
+
+mysql -e 'create database sqlobject_test;'
+"`dirname \"$0\"`/run-tests" 'mysql://localhost/sqlobject_test?driver=mysqldb&charset=utf8&debug=1' "$@"
+mysql -e 'drop database sqlobject_test;'

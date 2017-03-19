@@ -1,0 +1,5 @@
+#! /bin/sh
+
+while read _count code; do
+   grep -F " $code " all-results | sort -t : -k 1,1 -k 2,2nr >"$code"
+done <sort-by-lines

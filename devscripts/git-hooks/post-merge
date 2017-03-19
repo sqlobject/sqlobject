@@ -1,0 +1,8 @@
+#!/bin/sh
+
+# post-merge hook that compiles python files to byte code
+
+python    -m compileall -q -x '\.tox/.+' . &&
+python -O -m compileall -q -x '\.tox/.+' .
+
+exit 0

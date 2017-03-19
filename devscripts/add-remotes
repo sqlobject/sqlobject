@@ -1,0 +1,29 @@
+#! /bin/sh
+
+if [ -z "$2" ]; then
+   echo "Usage: $0 sf-url gl-url gh-url" >&2
+   exit 1
+fi
+
+sf_url="$1"
+gl_url="$2"
+gh_url="$3"
+
+if ! echo "$sf_url" | grep -q ^$USER@git\\.code\\.sf\\.net:/p/sqlobject/; then
+   echo "Usage: $0 SF-URL gl-url gh-url" >&2
+   exit 1
+fi
+
+if ! echo "$gl_url" | grep -q ^git@gitlab.com:sqlobject/; then
+   echo "Usage: $0 sf-url GL-URL gh-url" >&2
+   exit 1
+fi
+
+if ! echo "$gh_url" | grep -q ^git@github.com:sqlobject/; then
+   echo "Usage: $0 sf-url gl-url GH-URL" >&2
+   exit 1
+fi
+
+     git remote add sf "$sf_url" &&
+     git remote add gl "$gl_url" &&
+exec git remote add gh "$gh_url"

@@ -1,0 +1,13 @@
+#! /bin/sh
+
+cd "`dirname \"$0\"`"/SQLObject &&
+SO_DIR="`dirname $0`"
+
+for py_ver in 2.6 2.7 3.4 3.5; do
+   echo "---------- PYTHON $py_ver "$1" ----------"
+   "$SO_DIR"/cleanup &&
+   PY_VER=$py_ver "$SO_DIR"/run-tests-"$1" \
+      sqlobject/tests/test_*.py sqlobject/inheritance/tests/test_*.py \
+      sqlobject/versioning/test/test_*.py || exit 1
+done
+echo "---------- 'DONE!' ----------"

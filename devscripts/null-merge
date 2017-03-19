@@ -1,0 +1,54 @@
+#! /bin/sh
+
+new_branch=""
+old_branch=""
+
+while getopts n:o: opt; do
+   case $opt in
+      n ) new_branch="$OPTARG" ;;
+      o ) old_branch="$OPTARG" ;;
+   esac
+done
+shift `expr $OPTIND - 1`
+
+usage() {
+   echo "Usage: $0 [-o old_branch] [-n new_branch]|[old_branch new_branch]" >&2
+   exit 1
+}
+
+get_current_branch() {
+   current_branch="`git branch | grep '^\*' | awk '{print $2}'`"
+}
+
+if [ -n "$new_branch" ]; then
+   if [ -n "$old_branch" ]; then
+      if [ -n "$1" ]; then
+         usage
+      fi
+   else
+      get_current_branch
+      old_branch="$current_branch"
+   fi
+elif [ -n "$old_branch" ]; then
+   if [ -n "$1" ]; then
+      usage
+   else
+      get_current_branch
+      new_branch="$current_branch"
+   fi
+elif [ -n "$1" ]; then
+   if [ -n "$2" ]; then
+      if [ -n "$3" ]; then
+         usage
+      fi
+      old_branch="$1"
+      new_branch="$2"
+   else
+      usage
+   fi
+else
+   usage
+fi
+
+git checkout "$new_branch" &&
+exec git merge --strategy=ours "$old_branch"

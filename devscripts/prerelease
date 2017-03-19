@@ -1,0 +1,26 @@
+#! /bin/sh
+
+if [ -z "$1" -o -n "$3" ]; then
+   echo "Usage: $0 new_tag [branch]" >&2
+   exit 1
+elif [ -z "$2" ]; then
+   tag="$1"
+else
+   tag="$1"
+   branch="$2"
+fi
+
+. `dirname $0`/split.sh &&
+split_tag $tag $branch
+
+git checkout "$branch" &&
+echo "
+version = '$tag'
+major = $major
+minor = $minor
+micro = $micro
+release_level = '$state'
+serial = $serial
+version_info = (major, minor, micro, release_level, serial)" > sqlobject/__version__.py &&
+`git var GIT_EDITOR` docs/News.rst sqlobject/__version__.py README.rst setup.cfg setup.py &&
+exec git commit --message="Release $tag" docs/News.rst sqlobject/__version__.py README.rst setup.cfg setup.py

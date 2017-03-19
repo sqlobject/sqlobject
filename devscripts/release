@@ -1,0 +1,41 @@
+#! /bin/sh
+
+cd "`dirname \"$0\"`"/SQLObject &&
+umask 022 &&
+chmod -R a+rX . &&
+
+../build-docs &&
+../set-commit-date.py &&
+
+python setup.py build_py &&
+python setup.py register sdist upload --sign &&
+
+for py in 6 7; do
+   find build -name '*.py[co]' -delete &&
+   python2.$py    -m compileall build &&
+   python2.$py -O -m compileall build &&
+   python2.$py setup.py bdist_egg upload --sign || exit 1
+done
+
+version="`python setup.py -V`" &&
+. `dirname $0`/split.sh &&
+split_tag $version
+
+if [ "$major" -ge 3 ]; then
+   find build -name '*.py[co]' -delete &&
+   python setup.py bdist_wheel --universal upload --sign &&
+   for py in 4 5; do
+      find build -name '*.py[co]' -delete &&
+      python3.$py    -m compileall build &&
+      python3.$py -O -m compileall build &&
+      python3.$py setup.py bdist_egg upload --sign || exit 1
+   done
+fi
+
+if [ "$state" = final ]; then
+   cp -a dist/* "$HOME"/tmp/ &&
+   rsync -ahP4 dist/* frs.sourceforge.net:/home/frs/project/sqlobject/sqlobject/"$version"/ &&
+   rsync -ahP4 ../SQLObject-"$branch".rst frs.sourceforge.net:/home/frs/project/sqlobject/sqlobject/"$version"/README.rst || exit 1
+fi
+
+exec rm -rf build dist docs/html SQLObject.egg-info

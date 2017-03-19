@@ -1,0 +1,2 @@
+#! /bin/sh
+exec sftp web.sourceforge.net:/home/project-web/sqlobject

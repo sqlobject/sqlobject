@@ -10,6 +10,13 @@ News
 SQLObject 3.3.0 (master)
 ========================
 
+Minor features
+--------------
+
+* Convert scripts repository to devscripts subdirectory.
+  Some of thses scripts are version-dependent so it's better to have them
+  in the main repo.
+
 SQLObject 3.2.0
 ===============
 

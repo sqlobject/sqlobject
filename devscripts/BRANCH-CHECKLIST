@@ -1,0 +1,32 @@
+0. Run full test suite in master. Continue if all tests passed.
+
+1. If the branching point is master run ../branch $NEW_BRANCH. If it's
+not master run ../branch $NEW_BRANCH $TREEISH, where $TREEISH is
+a branch, a commit id or a tag.
+
+1a. The script creates a new branch and calls editor; edit README.rst,
+    __version__.py and News.rst in the branch - set version. In
+    setup.cfg in the branch edit section [publish] - uncomment doc-dest
+    for stable branch. In setup.py in the branch edit URL (remove
+    '/devel') and download URL. In setup.py and DeveloperGuide.rst edit
+    Travis CI build status image URL (change branch). Commit.
+
+1b. If the branching point was master the script checks out master and
+    calls editor again; edit README.rst, __version__.py and News.rst in
+    master - set version for the next release. Edit branch in
+    appveyor.yml. In setup.py edit "Development Status" in trove
+    classifiers. Commit.
+
+1c. If the branching point was master the script updates versions in
+    SQLObject-master.rst. If the branching point was not master the
+    script updates versions in SQLObject-$branch.rst.
+
+2. To deprecate a version of Python edit files docs/News.rst,
+   docs/SQLObject.rst, docs/TODO.rst, sqlobject/main.py, README.rst and
+   setup.py in master.
+
+3. Do a null-merge from the new branch to the higher branch or the
+   master.
+
+4. Run ../push-all to push all branches and tags to the public
+   repositories.

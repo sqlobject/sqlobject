@@ -1,0 +1,15 @@
+#! /bin/sh
+
+build_docs() {
+   git checkout "$1" &&
+   ../build-docs &&
+   rsync -ahP --del --exclude=.git --exclude=.gitlab-ci.yml \
+      --exclude=.nojekyll docs/html/ ../SQLObject-docs/"$2"/
+}
+
+cd "`dirname \"$0\"`"/SQLObject &&
+build_docs 3.2.0 &&
+build_docs master devel &&
+
+cd ../SQLObject-docs &&
+exec git status

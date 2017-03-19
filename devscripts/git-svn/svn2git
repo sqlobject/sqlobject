@@ -1,0 +1,55 @@
+#! /bin/sh
+
+if [ -z "$1" ]; then
+   echo "Usage: $0 svn_url [dir]" >&2
+   exit 1
+fi
+
+url="$1"
+
+if [ ! -f authors.txt ]; then
+   echo "Run \"get-authors $1\" first" >&2
+   exit 2
+fi
+
+if [ -z "$2" ]; then
+   dir="`basename $url`"
+else
+   dir="$2"
+fi
+
+if [ -z "$dir" ]; then
+   echo "Usage: $0 $url dir" >&2
+   exit 1
+fi
+
+# init + fetch
+git svn clone "$url" --authors-file=authors.txt --prefix=svn/ --stdlayout "$dir" &&
+cd "$dir" &&
+
+# Convert tags and branches
+
+# See http://blog.jessitron.com/2013/08/converting-from-svn-to-git.html
+
+git for-each-ref --format="%(refname:short)" refs/remotes/svn |
+   sed 's#svn/##' | grep -v '^tags' |
+      while read aBranch; do git branch $aBranch svn/$aBranch || exit 1; done
+
+# See http://thomasrast.ch/git/git-svn-conversion.html
+
+git for-each-ref --format="%(refname:short)" refs/remotes/svn/tags/ |
+while read tag; do
+    GIT_COMMITTER_DATE="`git log -1 --pretty=format:\"%ad\" \"$tag\"`" \
+    GIT_COMMITTER_EMAIL="`git log -1 --pretty=format:\"%ce\" \"$tag\"`" \
+    GIT_COMMITTER_NAME="`git log -1 --pretty=format:\"%cn\" \"$tag\"`" \
+    git tag -a -m "`git for-each-ref --format=\"%(contents)\" \"$tag\"`" \
+        "`echo \"$tag\" | sed 's#svn/tags/##'`" "$tag" || exit 1
+done
+
+# preserve authors.txt
+cp -p ../authors.txt .git/info &&
+git config --local --path svn.authorsfile .git/info/authors.txt
+
+git svn gc &&
+git gc --aggressive &&
+echo "Cloned from $url using git-svn" >.git/description

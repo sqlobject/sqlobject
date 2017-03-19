@@ -1,0 +1,17 @@
+#! /bin/sh
+
+if [ -z "$1" -o -n "$3" ]; then
+   echo "Usage: $0 new_tag [branch]" >&2
+   exit 1
+elif [ -z "$2" ]; then
+   tag="$1"
+else
+   tag="$1"
+   branch="$2"
+fi
+
+. `dirname $0`/split.sh &&
+split_tag $tag $branch
+
+git checkout "$branch" &&
+exec git tag --message="Release $tag" --sign $tag

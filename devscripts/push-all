@@ -1,0 +1,5 @@
+#! /bin/sh
+
+git push --all sf &&      git push --tags sf &&
+git push --all gl &&      git push --tags gl &&
+git push --all gh && exec git push --tags gh

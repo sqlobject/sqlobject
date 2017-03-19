@@ -1,0 +1,56 @@
+#! /bin/sh
+
+if [ -z "$1" -o -n "$3" ]; then
+   echo "Usage: $0 branch [treeish]" >&2
+   exit 1
+fi
+
+branch="$1"
+treeish="$2"
+
+. `dirname $0`/split.sh &&
+branch="$1"
+
+if [ -z "$treeish" ]; then
+   treeish="master"
+fi
+
+split_tag "`git describe --abbrev=0 \"$treeish\"`"
+prev_branch="$major.$minor"
+
+split_tag $branch
+next_minor="`expr $minor + 1`"
+
+git checkout -b "$branch" "$treeish" &&
+echo "
+version = '$major.$minor'
+major = $major
+minor = $minor
+micro = 0
+release_level = 'branch'
+serial = 0
+version_info = (major, minor, micro, release_level, serial)" > sqlobject/__version__.py &&
+`git var GIT_EDITOR` README.rst sqlobject/__version__.py docs/News.rst setup.cfg setup.py docs/DeveloperGuide.rst &&
+git commit --message="Branch $branch" README.rst sqlobject/__version__.py docs/News.rst setup.cfg setup.py docs/DeveloperGuide.rst &&
+
+if [ "$treeish" = master ]; then
+   git checkout master && echo "
+version = '$major.$next_minor'
+major = $major
+minor = $next_minor
+micro = 0
+release_level = 'trunk'
+serial = 0
+version_info = (major, minor, micro, release_level, serial)" > sqlobject/__version__.py &&
+   `git var GIT_EDITOR` README.rst sqlobject/__version__.py docs/News.rst appveyor.yml setup.py &&
+   git commit --message="Next branch will be $major.$next_minor" README.rst sqlobject/__version__.py docs/News.rst setup.py &&
+
+   cd .. &&
+   cp -p SQLObject-master.rst SQLObject-"$branch".rst &&
+   exec ./replace "$major\.$minor" "$major.$next_minor" SQLObject-master.rst
+
+else
+   cd .. &&
+   cp -p SQLObject-"$prev_branch".rst SQLObject-"$branch".rst &&
+   exec ./replace "$prev_branch" "$major.$next_minor" SQLObject-"$branch".rst
+fi

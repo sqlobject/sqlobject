@@ -1,0 +1,2 @@
+#! /bin/sh
+exec sftp frs.sourceforge.net:/home/frs/project/sqlobject

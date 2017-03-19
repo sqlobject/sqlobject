@@ -1,0 +1,5 @@
+#! /bin/sh
+
+flake8 ../SQLObject | sort >all-results &&
+awk '{print $2}' all-results | sort | uniq -c |
+   sort -k 1,1nr -k 2,2 >sort-by-lines
