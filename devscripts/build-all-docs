@@ -7,8 +7,4 @@ build_docs() {
 }
 
 cd "`dirname \"$0\"`"/SQLObject &&
-build_docs 3.2.0 &&
-build_docs master devel &&
-
-cd ../SQLObject-docs &&
-exec git status
+build_docs 3.2.0 && exec build_docs master devel
