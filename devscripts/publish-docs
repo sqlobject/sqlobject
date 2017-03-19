@@ -1,7 +1,5 @@
 #! /bin/sh
 
-cd "`dirname \"$0\"`"/SQLObject-docs &&
-../set-commit-date.py && chmod -R u=rwX,go=rX . &&
-rsync -hlrtP4 --del . web.sourceforge.net:/home/project-web/sqlobject/htdocs/ &&
-git archive --format=zip -o "$HOME"/tmp/SQLObject-docs.zip master &&
-git push gl master && exec git push gh master
+cd "`dirname \"$0\"`"/SQLObject-docs && chmod -R u=rwX,go=rX . &&
+exec rsync -hlrtP4 --del . \
+   web.sourceforge.net:/home/project-web/sqlobject/htdocs/
