@@ -1,11 +1,27 @@
 Hello!
 
-I'm pleased to announce version 3.2.1, the first bugfix release of branch
+I'm pleased to announce version 3.3.0a1, the first alpha of the upcoming
+release of branch 3.2 of SQLObject.
+
+I'm pleased to announce version 3.3.0a2, the second alpha of the upcoming
+release of branch 3.2 of SQLObject.
+
+I'm pleased to announce version 3.3.0b1, the first beta of the upcoming
+release of branch 3.2 of SQLObject.
+
+I'm pleased to announce version 3.3.0rc1, the first release candidate
+of the upcoming release of branch 3.2 of SQLObject.
+
+I'm pleased to announce version 3.3.0, the first stable release of branch
+3.2 of SQLObject.
+
+I'm pleased to announce version 3.3.1, the first bugfix release of branch
 3.2 of SQLObject.
 
 
 What's new in SQLObject
 =======================
+
 
 Contributor for this release is 
 
@@ -42,7 +58,7 @@ Archives:
 http://news.gmane.org/gmane.comp.python.sqlobject
 
 Download:
-https://pypi.python.org/pypi/SQLObject/3.2.1a0.dev20170311
+https://pypi.python.org/pypi/SQLObject/3.3.0a0.dev20170110
 
 News and changes:
 http://sqlobject.org/News.html
