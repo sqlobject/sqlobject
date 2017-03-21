@@ -45,12 +45,8 @@ version_info = (major, minor, micro, release_level, serial)" > sqlobject/__versi
    `git var GIT_EDITOR` README.rst sqlobject/__version__.py docs/News.rst appveyor.yml setup.py &&
    git commit --message="Next branch will be $major.$next_minor" README.rst sqlobject/__version__.py docs/News.rst setup.py &&
 
-   cd .. &&
-   cp -p SQLObject-master.rst SQLObject-"$branch".rst &&
-   exec ./replace "$major\.$minor" "$major.$next_minor" SQLObject-master.rst
+   exec ./replace "$major\.$minor" "$major.$next_minor" ANNOUNCE.rst
 
 else
-   cd .. &&
-   cp -p SQLObject-"$prev_branch".rst SQLObject-"$branch".rst &&
-   exec ./replace "$prev_branch" "$major.$next_minor" SQLObject-"$branch".rst
+   exec ./replace "$prev_branch" "$major.$next_minor" ANNOUNCE.rst
 fi

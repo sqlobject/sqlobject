@@ -17,9 +17,7 @@ a branch, a commit id or a tag.
     appveyor.yml. In setup.py edit "Development Status" in trove
     classifiers. Commit.
 
-1c. If the branching point was master the script updates versions in
-    SQLObject-master.rst. If the branching point was not master the
-    script updates versions in SQLObject-$branch.rst.
+1c. The script updates versions in ANNOUNCE.rst.
 
 2. To deprecate a version of Python edit files docs/News.rst,
    docs/SQLObject.rst, docs/TODO.rst, sqlobject/main.py, README.rst and

@@ -35,7 +35,7 @@ fi
 if [ "$state" = final ]; then
    cp -a dist/* "$HOME"/tmp/ &&
    rsync -ahP4 dist/* frs.sourceforge.net:/home/frs/project/sqlobject/sqlobject/"$version"/ &&
-   rsync -ahP4 ../SQLObject-"$branch".rst frs.sourceforge.net:/home/frs/project/sqlobject/sqlobject/"$version"/README.rst || exit 1
+   rsync -ahP4 ANNOUNCE.rst frs.sourceforge.net:/home/frs/project/sqlobject/sqlobject/"$version"/README.rst || exit 1
 fi
 
 exec rm -rf build dist docs/html SQLObject.egg-info
