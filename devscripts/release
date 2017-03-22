@@ -10,27 +10,15 @@ chmod -R a+rX . &&
 python setup.py build_py &&
 python setup.py register sdist upload --sign &&
 
-for py in 6 7; do
+for py in 2.6 2.7 3.4 3.5; do
    find build -name '*.py[co]' -delete &&
-   python2.$py    -m compileall build &&
-   python2.$py -O -m compileall build &&
-   python2.$py setup.py bdist_egg upload --sign || exit 1
+   python$py    -m compileall build &&
+   python$py -O -m compileall build &&
+   python$py setup.py bdist_egg upload --sign || exit 1
 done
 
-version="`python setup.py -V`" &&
-. `dirname $0`/split.sh &&
-split_tag $version
-
-if [ "$major" -ge 3 ]; then
-   find build -name '*.py[co]' -delete &&
-   python setup.py bdist_wheel --universal upload --sign &&
-   for py in 4 5; do
-      find build -name '*.py[co]' -delete &&
-      python3.$py    -m compileall build &&
-      python3.$py -O -m compileall build &&
-      python3.$py setup.py bdist_egg upload --sign || exit 1
-   done
-fi
+find build -name '*.py[co]' -delete &&
+python setup.py bdist_wheel --universal upload --sign &&
 
 if [ "$state" = final ]; then
    cp -a dist/* "$HOME"/tmp/ &&
