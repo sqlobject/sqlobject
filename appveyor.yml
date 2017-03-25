@@ -29,6 +29,12 @@ environment:
     - PYTHON: "C:\\Python34"
       db: mysql
       TOX_ENV: "py34-mysql-connector-w32"
+    - PYTHON: "C:\\Python35"
+      db: mysql
+      TOX_ENV: "py35-mysql-connector-w32"
+    - PYTHON: "C:\\Python36"
+      db: mysql
+      TOX_ENV: "py36-mysql-connector-w32"
     - PYTHON: "C:\\Python27"
       db: postgresql
       TOX_ENV: "py27-postgres-psycopg-w32"
