@@ -101,7 +101,7 @@ def getConnection(**kw):
         conn.debug = True
     if conftest.option.show_sql_output:
         conn.debugOutput = True
-    if conn.dbName == 'sqlite':
+    if (conn.dbName == 'sqlite') and not conn._memory:
         speedupSQLiteConnection(conn)
     return conn
 
