@@ -120,7 +120,11 @@ except Exception as e:
     if 'sphinx' not in sys.modules:
         print("Could not open database: %s" % e, file=sys.stderr)
 else:
-    if connection.dbName == 'firebird':
+    if (connection.dbName == 'firebird') \
+        or (
+            (connection.dbName == 'mysql') and
+            (os.environ.get('APPVEYOR'))
+    ):
         use_microseconds(False)
 
 

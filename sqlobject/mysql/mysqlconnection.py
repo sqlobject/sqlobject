@@ -1,3 +1,5 @@
+import os
+
 from sqlobject import col, dberrors
 from sqlobject.compat import PY2
 from sqlobject.dbconnection import DBAPI
@@ -411,6 +413,9 @@ class MySQLConnection(DBAPI):
     def can_use_microseconds(self):
         if self._can_use_microseconds is not None:
             return self._can_use_microseconds
+        if os.environ.get('APPVEYOR'):
+            self._can_use_microseconds = False
+            return False
         server_version = self.server_version()
         if server_version is None:
             return None
