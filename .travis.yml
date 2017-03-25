@@ -18,23 +18,6 @@ addons:
       - firebird2.5-super
   postgresql: "9.4"
 
-before_install:
-  # Start the firebird database server.
-  # We use firebird-super, so there's none of the inetd configuration
-  # required by firebird-classic.
-  # We also create a test user for the firebird test and
-  # create a script that can be fed into isql-fb
-  # to create the test database.
-  - if [[ $TOXENV = *firebird* ]]; then
-      sudo sed -i /etc/default/firebird2.5 -e 's/=no/=yes/' &&
-      sudo /etc/init.d/firebird2.5-super start && sleep 5 &&
-      sudo touch /var/lib/firebird/create_test_db &&
-      sudo chmod 666 /var/lib/firebird/create_test_db &&
-      echo "CREATE DATABASE 'localhost:/tmp/test.fdb';" > /var/lib/firebird/create_test_db &&
-      sudo chmod 644 /var/lib/firebird/create_test_db &&
-      sudo gsec -user sysdba -pass masterkey -add test -pw test;
-    fi
-
 env:
   - TOXENV=py26-mysqldb
   - TOXENV=py27-mysqldb
@@ -87,8 +70,6 @@ env:
   - TOXENV=py35-firebirdsql
   - TOXENV=py36-firebirdsql
 
-install: travis_retry pip install tox coveralls codecov
-
 matrix:
   allow_failures:
     - env: TOXENV=py26-postgres-pygresql
@@ -108,6 +89,25 @@ matrix:
     - env: TOXENV=py35-firebirdsql
     - env: TOXENV=py36-firebirdsql
   fast_finish: true
+
+before_install:
+  # Start the firebird database server.
+  # We use firebird-super, so there's none of the inetd configuration
+  # required by firebird-classic.
+  # We also create a test user for the firebird test and
+  # create a script that can be fed into isql-fb
+  # to create the test database.
+  - if [[ $TOXENV = *firebird* ]]; then
+      sudo sed -i /etc/default/firebird2.5 -e 's/=no/=yes/' &&
+      sudo /etc/init.d/firebird2.5-super start && sleep 5 &&
+      sudo touch /var/lib/firebird/create_test_db &&
+      sudo chmod 666 /var/lib/firebird/create_test_db &&
+      echo "CREATE DATABASE 'localhost:/tmp/test.fdb';" > /var/lib/firebird/create_test_db &&
+      sudo chmod 644 /var/lib/firebird/create_test_db &&
+      sudo gsec -user sysdba -pass masterkey -add test -pw test;
+    fi
+
+install: travis_retry pip install tox coveralls codecov
 
 script: tox -e ${TOXENV}
 
