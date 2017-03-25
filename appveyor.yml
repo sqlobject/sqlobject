@@ -47,6 +47,12 @@ environment:
     - PYTHON: "C:\\Python35-x64"
       db: postgresql
       TOX_ENV: "py35-postgres-psycopg-w32"
+    - PYTHON: "C:\\Python36"
+      db: postgresql
+      TOX_ENV: "py36-postgres-psycopg-w32"
+    - PYTHON: "C:\\Python36-x64"
+      db: postgresql
+      TOX_ENV: "py36-postgres-psycopg-w32"
     - PYTHON: "C:\\Python27"
       TOX_ENV: "py27-sqlite-w32"
     - PYTHON: "C:\\Python27-x64"
@@ -59,6 +65,10 @@ environment:
       TOX_ENV: "py35-sqlite-w32"
     - PYTHON: "C:\\Python35-x64"
       TOX_ENV: "py35-sqlite-w32"
+    - PYTHON: "C:\\Python36"
+      TOX_ENV: "py36-sqlite-w32"
+    - PYTHON: "C:\\Python36-x64"
+      TOX_ENV: "py36-sqlite-w32"
     - PYTHON: "C:\\Python27"
       TOX_ENV: "py27-sqlite-memory-w32"
     - PYTHON: "C:\\Python27-x64"
@@ -71,6 +81,10 @@ environment:
       TOX_ENV: "py35-sqlite-memory-w32"
     - PYTHON: "C:\\Python35-x64"
       TOX_ENV: "py35-sqlite-memory-w32"
+    - PYTHON: "C:\\Python36"
+      TOX_ENV: "py36-sqlite-memory-w32"
+    - PYTHON: "C:\\Python36-x64"
+      TOX_ENV: "py36-sqlite-memory-w32"
 
 install:
   # Ensure we use the right python version

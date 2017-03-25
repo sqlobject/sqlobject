@@ -3,6 +3,9 @@ sudo: required
 
 language: python
 
+python:
+  - "3.6"
+
 cache: pip
 
 addons:
@@ -37,42 +40,52 @@ env:
   - TOXENV=py27-mysqldb
   - TOXENV=py34-mysqlclient
   - TOXENV=py35-mysqlclient
+  - TOXENV=py36-mysqlclient
   - TOXENV=py26-mysql-connector
   - TOXENV=py27-mysql-connector
   - TOXENV=py34-mysql-connector
   - TOXENV=py35-mysql-connector
+  - TOXENV=py36-mysql-connector
   - TOXENV=py26-mysql-oursql
   - TOXENV=py27-mysql-oursql
   - TOXENV=py26-pymysql
   - TOXENV=py27-pymysql
   - TOXENV=py34-pymysql
   - TOXENV=py35-pymysql
+  - TOXENV=py36-pymysql
   - TOXENV=py26-postgres-psycopg
   - TOXENV=py27-postgres-psycopg
   - TOXENV=py34-postgres-psycopg
   - TOXENV=py35-postgres-psycopg
+  - TOXENV=py36-postgres-psycopg
   - TOXENV=py26-postgres-pygresql
   - TOXENV=py27-postgres-pygresql
   - TOXENV=py34-postgres-pygresql
   - TOXENV=py35-postgres-pygresql
+  - TOXENV=py36-postgres-pygresql
   - TOXENV=py34-pypostgresql
   - TOXENV=py35-pypostgresql
+  - TOXENV=py36-pypostgresql
   - TOXENV=py26-sqlite
   - TOXENV=py27-sqlite
   - TOXENV=py34-sqlite
   - TOXENV=py35-sqlite
+  - TOXENV=py36-sqlite
   - TOXENV=py26-sqlite-memory
   - TOXENV=py27-sqlite-memory
   - TOXENV=py34-sqlite-memory
   - TOXENV=py35-sqlite-memory
+  - TOXENV=py36-sqlite-memory
   - TOXENV=py27-flake8
   - TOXENV=py34-flake8
   - TOXENV=py27-firebird-fdb
   - TOXENV=py34-firebird-fdb
   - TOXENV=py35-firebird-fdb
+  - TOXENV=py36-firebird-fdb
   - TOXENV=py27-firebirdsql
   - TOXENV=py34-firebirdsql
   - TOXENV=py35-firebirdsql
+  - TOXENV=py36-firebirdsql
 
 install: travis_retry pip install tox coveralls codecov
 
@@ -82,14 +95,18 @@ matrix:
     - env: TOXENV=py27-postgres-pygresql
     - env: TOXENV=py34-postgres-pygresql
     - env: TOXENV=py35-postgres-pygresql
+    - env: TOXENV=py36-postgres-pygresql
     - env: TOXENV=py34-pypostgresql
     - env: TOXENV=py35-pypostgresql
+    - env: TOXENV=py36-pypostgresql
     - env: TOXENV=py27-firebird-fdb
     - env: TOXENV=py34-firebird-fdb
     - env: TOXENV=py35-firebird-fdb
+    - env: TOXENV=py36-firebird-fdb
     - env: TOXENV=py27-firebirdsql
     - env: TOXENV=py34-firebirdsql
     - env: TOXENV=py35-firebirdsql
+    - env: TOXENV=py36-firebirdsql
   fast_finish: true
 
 script: tox -e ${TOXENV}

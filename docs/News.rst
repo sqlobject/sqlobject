@@ -17,6 +17,11 @@ Minor features
   Some of thses scripts are version-dependent so it's better to have them
   in the main repo.
 
+Tests
+-----
+
+* Run tests at Travis CI and AppVeyor with Python 3.6, x86 and x64.
+
 SQLObject 3.2.0
 ===============
 
