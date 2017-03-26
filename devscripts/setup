@@ -4,7 +4,7 @@ umask 002  # -rwxrwxr-x
 cd "`dirname \"$0\"`"/SQLObject &&
 
 python2.6 setup.py install -O2 &&
-for py_ver in 2.7 3.4 3.5; do
+for py_ver in 2.7 3.4 3.5 3.6; do
    python$py_ver -m pip install --install-option=-O2 --upgrade .
 done &&
 
