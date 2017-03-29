@@ -96,6 +96,7 @@ install:
   # Ensure we use the right python version
   - "SET PATH=%PYTHON%;%PYTHON%\\Scripts;C:\\Program Files\\MySQL\\MySQL Server 5.7\\bin;C:\\Program Files\\PostgreSQL\\9.5\\bin;%PATH%"
   - "python --version"
+  - "pip --version"
   - "pip install -r requirements.txt"
   - "pip install tox"
   # Enable TCP for mssql
