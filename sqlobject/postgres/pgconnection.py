@@ -53,14 +53,24 @@ class PostgresConnection(DBAPI):
                 elif driver in ('py-postgresql', 'pypostgresql'):
                     from postgresql.driver import dbapi20
                     self.module = dbapi20
-                elif driver in ('odbc', 'pyodbc'):
+                elif driver == 'pyodbc':
                     import pyodbc
+                    self.module = pyodbc
+                elif driver == 'pypyodbc':
+                    import pypyodbc
+                    self.module = pypyodbc
+                elif driver == 'odbc':
+                    try:
+                        import pyodbc
+                    except ImportError:
+                        import pypyodbc as pyodbc
                     self.module = pyodbc
                 else:
                     raise ValueError(
                         'Unknown PostgreSQL driver "%s", '
-                        'expected psycopg2, psycopg1, '
-                        'pygresql, pypostgresql or odbc' % driver)
+                        'expected psycopg, psycopg2, psycopg1, '
+                        'pygresql, pypostgresql, '
+                        'odbc, pyodbc or pypyodbc' % driver)
             except ImportError:
                 pass
             else:
@@ -83,9 +93,9 @@ class PostgresConnection(DBAPI):
         self.password = password
         self.host = host
         self.port = port
-        if driver in ('odbc', 'pyodbc'):
+        if driver in ('odbc', 'pyodbc', 'pypyodbc'):
             self.make_odbc_conn_str(db, host, port, user, password,
-                                    'PostgreSQL ANSI', **kw)
+                                    kw.pop('odbcdrv', 'PostgreSQL ANSI'))
         else:
             self.dsn_dict = dsn_dict = {}
             if host:
@@ -171,7 +181,7 @@ class PostgresConnection(DBAPI):
 
     def makeConnection(self):
         try:
-            if self.driver in ('odbc', 'pyodbc'):
+            if self.driver in ('odbc', 'pyodbc', 'pypyodbc'):
                 self.debugWriter.write(
                     "ODBC connect string: " + self.odbc_conn_str)
                 conn = self.module.connect(self.odbc_conn_str)

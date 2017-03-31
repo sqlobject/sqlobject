@@ -97,22 +97,42 @@ environment:
       PYTHON_VERSION: "2.7"
       PYTHON_ARCH: "64"
       db: postgresql
-      TOX_ENV: "py27-postgres-odbc-w32"
+      TOX_ENV: "py27-postgres-pyodbc-w32"
     - PYTHON: "C:\\Python34-x64"
       PYTHON_VERSION: "3.4"
       PYTHON_ARCH: "64"
       db: postgresql
-      TOX_ENV: "py34-postgres-odbc-w32"
+      TOX_ENV: "py34-postgres-pyodbc-w32"
     - PYTHON: "C:\\Python35-x64"
       PYTHON_VERSION: "3.5"
       PYTHON_ARCH: "64"
       db: postgresql
-      TOX_ENV: "py35-postgres-odbc-w32"
+      TOX_ENV: "py35-postgres-pyodbc-w32"
     - PYTHON: "C:\\Python36-x64"
       PYTHON_VERSION: "3.6"
       PYTHON_ARCH: "64"
       db: postgresql
-      TOX_ENV: "py36-postgres-odbc-w32"
+      TOX_ENV: "py36-postgres-pyodbc-w32"
+    - PYTHON: "C:\\Python27-x64"
+      PYTHON_VERSION: "2.7"
+      PYTHON_ARCH: "64"
+      db: postgresql
+      TOX_ENV: "py27-postgres-pypyodbc-w32"
+    - PYTHON: "C:\\Python34-x64"
+      PYTHON_VERSION: "3.4"
+      PYTHON_ARCH: "64"
+      db: postgresql
+      TOX_ENV: "py34-postgres-pypyodbc-w32"
+    - PYTHON: "C:\\Python35-x64"
+      PYTHON_VERSION: "3.5"
+      PYTHON_ARCH: "64"
+      db: postgresql
+      TOX_ENV: "py35-postgres-pypyodbc-w32"
+    - PYTHON: "C:\\Python36-x64"
+      PYTHON_VERSION: "3.6"
+      PYTHON_ARCH: "64"
+      db: postgresql
+      TOX_ENV: "py36-postgres-pypyodbc-w32"
     - PYTHON: "C:\\Python27"
       PYTHON_VERSION: "2.7"
       PYTHON_ARCH: "32"

@@ -20,7 +20,9 @@ Minor features
 Drivers (work in progress)
 --------------------------
 
-* Add support for PyODBC for PostgreSQL. There are some problems.
+* Add support for PyODBC and PyPyODBC (pure-python ODBC DB API driver) for
+  PostgreSQL. Driver names are ``pyodbc``, ``pypyodbc`` or ``odbc`` (try
+  ``pyodbc`` and ``pypyodbc``). There are some problems.
 
 Tests
 -----
