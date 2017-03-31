@@ -53,11 +53,14 @@ class PostgresConnection(DBAPI):
                 elif driver in ('py-postgresql', 'pypostgresql'):
                     from postgresql.driver import dbapi20
                     self.module = dbapi20
+                elif driver in ('odbc', 'pyodbc'):
+                    import pyodbc
+                    self.module = pyodbc
                 else:
                     raise ValueError(
                         'Unknown PostgreSQL driver "%s", '
                         'expected psycopg2, psycopg1, '
-                        'pygresql or pypostgresql' % driver)
+                        'pygresql, pypostgresql or odbc' % driver)
             except ImportError:
                 pass
             else:
@@ -75,70 +78,84 @@ class PostgresConnection(DBAPI):
             registerConverter(type(self.module.Binary(b'')),
                               PostgresBinaryConverter)
 
+        self.db = db
         self.user = user
+        self.password = password
         self.host = host
         self.port = port
-        self.db = db
-        self.password = password
-        self.dsn_dict = dsn_dict = {}
-        if host:
-            dsn_dict["host"] = host
-        if port:
-            if driver == 'pygresql':
-                dsn_dict["host"] = "%s:%d" % (host, port)
-            elif driver.startswith('psycopg') and \
-                    psycopg.__version__.split('.')[0] == '1':
-                dsn_dict["port"] = str(port)
-            else:
-                dsn_dict["port"] = port
-        if db:
-            dsn_dict["database"] = db
-        if user:
-            dsn_dict["user"] = user
-        if password:
-            dsn_dict["password"] = password
-        sslmode = kw.pop("sslmode", None)
-        if sslmode:
-            dsn_dict["sslmode"] = sslmode
-        self.use_dsn = dsn is not None
-        if dsn is None:
-            if driver == 'pygresql':
-                dsn = ''
-                if host:
-                    dsn += host
-                dsn += ':'
-                if db:
-                    dsn += db
-                dsn += ':'
-                if user:
-                    dsn += user
-                dsn += ':'
-                if password:
-                    dsn += password
-            else:
-                dsn = []
-                if db:
-                    dsn.append('dbname=%s' % db)
-                if user:
-                    dsn.append('user=%s' % user)
-                if password:
-                    dsn.append('password=%s' % password)
-                if host:
-                    dsn.append('host=%s' % host)
-                if port:
-                    dsn.append('port=%d' % port)
-                if sslmode:
-                    dsn.append('sslmode=%s' % sslmode)
-                dsn = ' '.join(dsn)
-        if driver in ('py-postgresql', 'pypostgresql'):
-            if host and host.startswith('/'):
-                dsn_dict["host"] = dsn_dict["port"] = None
-                dsn_dict["unix"] = host
-            else:
-                if "unix" in dsn_dict:
-                    del dsn_dict["unix"]
+        if driver in ('odbc', 'pyodbc'):
+            odb_source = kw.pop('odbcdrv', 'PostgreSQL ANSI')
+            odbc_conn_str = 'Driver={%s};' % odb_source
+            odbc_conn_str += 'Database=%s;' % db
+            if user:
+                odbc_conn_str += 'User ID=%s;' % user
+            if password:
+                odbc_conn_str += 'Password=%s;' % password
+            if host:
+                odbc_conn_str += 'Host=%s;' % host
+            if port:
+                odbc_conn_str += 'Port=%d;' % port
+            self.odbc_conn_str = odbc_conn_str
+        else:
+            self.dsn_dict = dsn_dict = {}
+            if host:
+                dsn_dict["host"] = host
+            if port:
+                if driver == 'pygresql':
+                    dsn_dict["host"] = "%s:%d" % (host, port)
+                elif driver.startswith('psycopg') and \
+                        psycopg.__version__.split('.')[0] == '1':
+                    dsn_dict["port"] = str(port)
+                else:
+                    dsn_dict["port"] = port
+            if db:
+                dsn_dict["database"] = db
+            if user:
+                dsn_dict["user"] = user
+            if password:
+                dsn_dict["password"] = password
+            sslmode = kw.pop("sslmode", None)
+            if sslmode:
+                dsn_dict["sslmode"] = sslmode
+            self.use_dsn = dsn is not None
+            if dsn is None:
+                if driver == 'pygresql':
+                    dsn = ''
+                    if host:
+                        dsn += host
+                    dsn += ':'
+                    if db:
+                        dsn += db
+                    dsn += ':'
+                    if user:
+                        dsn += user
+                    dsn += ':'
+                    if password:
+                        dsn += password
+                else:
+                    dsn = []
+                    if db:
+                        dsn.append('dbname=%s' % db)
+                    if user:
+                        dsn.append('user=%s' % user)
+                    if password:
+                        dsn.append('password=%s' % password)
+                    if host:
+                        dsn.append('host=%s' % host)
+                    if port:
+                        dsn.append('port=%d' % port)
+                    if sslmode:
+                        dsn.append('sslmode=%s' % sslmode)
+                    dsn = ' '.join(dsn)
+            if driver in ('py-postgresql', 'pypostgresql'):
+                if host and host.startswith('/'):
+                    dsn_dict["host"] = dsn_dict["port"] = None
+                    dsn_dict["unix"] = host
+                else:
+                    if "unix" in dsn_dict:
+                        del dsn_dict["unix"]
+            self.dsn = dsn
         self.driver = driver
-        self.dsn = dsn
         self.unicodeCols = kw.pop('unicodeCols', False)
         self.schema = kw.pop('schema', None)
         self.dbEncoding = kw.pop("charset", None)
@@ -164,7 +181,9 @@ class PostgresConnection(DBAPI):
 
     def makeConnection(self):
         try:
-            if self.use_dsn:
+            if self.driver in ('odbc', 'pyodbc'):
+                conn = self.module.connect(self.odbc_conn_str)
+            elif self.use_dsn:
                 conn = self.module.connect(self.dsn)
             else:
                 conn = self.module.connect(**self.dsn_dict)
@@ -182,6 +201,14 @@ class PostgresConnection(DBAPI):
             self._executeRetry(conn, c, "SET search_path TO " + self.schema)
         dbEncoding = self.dbEncoding
         if dbEncoding:
+            if self.driver in ('odbc', 'pyodbc'):
+                conn.setdecoding(self.module.SQL_CHAR, encoding=dbEncoding)
+                conn.setdecoding(self.module.SQL_WCHAR, encoding=dbEncoding)
+                if PY2:
+                    conn.setencoding(str, encoding=dbEncoding)
+                    conn.setencoding(unicode, encoding=dbEncoding)
+                else:
+                    conn.setencoding(encoding=dbEncoding)
             self._executeRetry(conn, c,
                                "SET client_encoding TO '%s'" % dbEncoding)
         return conn

@@ -17,6 +17,11 @@ Minor features
   Some of thses scripts are version-dependent so it's better to have them
   in the main repo.
 
+Drivers (work in progress)
+--------------------------
+
+* Add support for PyODBC for PostgreSQL. There are some problems.
+
 Tests
 -----
 

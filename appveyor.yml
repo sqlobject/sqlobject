@@ -15,81 +15,167 @@ environment:
   PGUSER: "postgres"
   PGPASSWORD: "Password12!"
 
+  global:
+    # SDK v7.0 MSVC Express 2008's SetEnv.cmd script will fail if the
+    # /E:ON and /V:ON options are not enabled in the batch script intepreter
+    # See: http://stackoverflow.com/a/13751649/163740
+    CMD_IN_ENV: "cmd /E:ON /V:ON /C .\\run_with_env.cmd"
+
   matrix:
     # from https://www.appveyor.com/docs/installed-software/#python
     - PYTHON: "C:\\Python27"
+      PYTHON_VERSION: "2.7"
+      PYTHON_ARCH: "32"
       db: mssql2014
       TOX_ENV: "py27-mssql-w32"
     - PYTHON: "C:\\Python34"
+      PYTHON_VERSION: "3.4"
+      PYTHON_ARCH: "32"
       db: mssql2014
       TOX_ENV: "py34-mssql-w32"
     - PYTHON: "C:\\Python27"
+      PYTHON_VERSION: "2.7"
+      PYTHON_ARCH: "32"
       db: mysql
       TOX_ENV: "py27-mysql-connector-w32"
     - PYTHON: "C:\\Python34"
+      PYTHON_VERSION: "3.4"
+      PYTHON_ARCH: "32"
       db: mysql
       TOX_ENV: "py34-mysql-connector-w32"
     - PYTHON: "C:\\Python35"
+      PYTHON_VERSION: "3.5"
+      PYTHON_ARCH: "32"
       db: mysql
       TOX_ENV: "py35-mysql-connector-w32"
     - PYTHON: "C:\\Python36"
+      PYTHON_VERSION: "3.6"
+      PYTHON_ARCH: "32"
       db: mysql
       TOX_ENV: "py36-mysql-connector-w32"
     - PYTHON: "C:\\Python27"
+      PYTHON_VERSION: "2.7"
+      PYTHON_ARCH: "32"
       db: postgresql
       TOX_ENV: "py27-postgres-psycopg-w32"
     - PYTHON: "C:\\Python27-x64"
+      PYTHON_VERSION: "2.7"
+      PYTHON_ARCH: "64"
       db: postgresql
       TOX_ENV: "py27-postgres-psycopg-w32"
     - PYTHON: "C:\\Python34"
+      PYTHON_VERSION: "3.4"
+      PYTHON_ARCH: "32"
       db: postgresql
       TOX_ENV: "py34-postgres-psycopg-w32"
     - PYTHON: "C:\\Python34-x64"
+      PYTHON_VERSION: "3.4"
+      PYTHON_ARCH: "64"
       db: postgresql
       TOX_ENV: "py34-postgres-psycopg-w32"
     - PYTHON: "C:\\Python35"
+      PYTHON_VERSION: "3.5"
+      PYTHON_ARCH: "32"
       db: postgresql
       TOX_ENV: "py35-postgres-psycopg-w32"
     - PYTHON: "C:\\Python35-x64"
+      PYTHON_VERSION: "3.5"
+      PYTHON_ARCH: "64"
       db: postgresql
       TOX_ENV: "py35-postgres-psycopg-w32"
     - PYTHON: "C:\\Python36"
+      PYTHON_VERSION: "3.6"
+      PYTHON_ARCH: "32"
       db: postgresql
       TOX_ENV: "py36-postgres-psycopg-w32"
     - PYTHON: "C:\\Python36-x64"
+      PYTHON_VERSION: "3.6"
+      PYTHON_ARCH: "64"
       db: postgresql
       TOX_ENV: "py36-postgres-psycopg-w32"
+    - PYTHON: "C:\\Python27-x64"
+      PYTHON_VERSION: "2.7"
+      PYTHON_ARCH: "64"
+      db: postgresql
+      TOX_ENV: "py27-postgres-odbc-w32"
+    - PYTHON: "C:\\Python34-x64"
+      PYTHON_VERSION: "3.4"
+      PYTHON_ARCH: "64"
+      db: postgresql
+      TOX_ENV: "py34-postgres-odbc-w32"
+    - PYTHON: "C:\\Python35-x64"
+      PYTHON_VERSION: "3.5"
+      PYTHON_ARCH: "64"
+      db: postgresql
+      TOX_ENV: "py35-postgres-odbc-w32"
+    - PYTHON: "C:\\Python36-x64"
+      PYTHON_VERSION: "3.6"
+      PYTHON_ARCH: "64"
+      db: postgresql
+      TOX_ENV: "py36-postgres-odbc-w32"
     - PYTHON: "C:\\Python27"
+      PYTHON_VERSION: "2.7"
+      PYTHON_ARCH: "32"
       TOX_ENV: "py27-sqlite-w32"
     - PYTHON: "C:\\Python27-x64"
+      PYTHON_VERSION: "2.7"
+      PYTHON_ARCH: "64"
       TOX_ENV: "py27-sqlite-w32"
     - PYTHON: "C:\\Python34"
+      PYTHON_VERSION: "3.4"
+      PYTHON_ARCH: "32"
       TOX_ENV: "py34-sqlite-w32"
     - PYTHON: "C:\\Python34-x64"
+      PYTHON_VERSION: "3.4"
+      PYTHON_ARCH: "64"
       TOX_ENV: "py34-sqlite-w32"
     - PYTHON: "C:\\Python35"
+      PYTHON_VERSION: "3.5"
+      PYTHON_ARCH: "32"
       TOX_ENV: "py35-sqlite-w32"
     - PYTHON: "C:\\Python35-x64"
+      PYTHON_VERSION: "3.5"
+      PYTHON_ARCH: "64"
       TOX_ENV: "py35-sqlite-w32"
     - PYTHON: "C:\\Python36"
+      PYTHON_VERSION: "3.6"
+      PYTHON_ARCH: "32"
       TOX_ENV: "py36-sqlite-w32"
     - PYTHON: "C:\\Python36-x64"
+      PYTHON_VERSION: "3.6"
+      PYTHON_ARCH: "64"
       TOX_ENV: "py36-sqlite-w32"
     - PYTHON: "C:\\Python27"
+      PYTHON_VERSION: "2.7"
+      PYTHON_ARCH: "32"
       TOX_ENV: "py27-sqlite-memory-w32"
     - PYTHON: "C:\\Python27-x64"
+      PYTHON_VERSION: "2.7"
+      PYTHON_ARCH: "64"
       TOX_ENV: "py27-sqlite-memory-w32"
     - PYTHON: "C:\\Python34"
+      PYTHON_VERSION: "3.4"
+      PYTHON_ARCH: "32"
       TOX_ENV: "py34-sqlite-memory-w32"
     - PYTHON: "C:\\Python34-x64"
+      PYTHON_VERSION: "3.4"
+      PYTHON_ARCH: "64"
       TOX_ENV: "py34-sqlite-memory-w32"
     - PYTHON: "C:\\Python35"
+      PYTHON_VERSION: "3.5"
+      PYTHON_ARCH: "32"
       TOX_ENV: "py35-sqlite-memory-w32"
     - PYTHON: "C:\\Python35-x64"
+      PYTHON_VERSION: "3.5"
+      PYTHON_ARCH: "64"
       TOX_ENV: "py35-sqlite-memory-w32"
     - PYTHON: "C:\\Python36"
+      PYTHON_VERSION: "3.6"
+      PYTHON_ARCH: "32"
       TOX_ENV: "py36-sqlite-memory-w32"
     - PYTHON: "C:\\Python36-x64"
+      PYTHON_VERSION: "3.6"
+      PYTHON_ARCH: "64"
       TOX_ENV: "py36-sqlite-memory-w32"
 
 install:
@@ -98,6 +184,9 @@ install:
   - "python --version"
   - "pip --version"
   - "pip install tox"
+  # List ODBC drivers
+  - ps: Get-OdbcDriver -Platform 32-bit | Select-Object -ExpandProperty Name
+  - ps: Get-OdbcDriver -Platform 64-bit | Select-Object -ExpandProperty Name
   # Enable TCP for mssql
   # (from appveyor documentation)
   - ps: |
@@ -119,4 +208,4 @@ install:
 build: false
 
 test_script:
-  - "tox -e %TOX_ENV%"
+  - "%CMD_IN_ENV% tox -e %TOX_ENV%"
