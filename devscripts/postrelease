@@ -1,0 +1,6 @@
+#! /bin/sh
+
+git checkout HEAD~ ANNOUNCE.rst &&
+
+`git var GIT_EDITOR` ANNOUNCE.rst docs/News.rst &&
+exec git commit --message="Prepare for the next release" ANNOUNCE.rst docs/News.rst
