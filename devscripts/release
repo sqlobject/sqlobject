@@ -8,22 +8,26 @@ chmod -R a+rX . &&
 ../set-commit-date.py &&
 
 python setup.py build_py &&
-python setup.py register sdist upload --sign &&
+python setup.py sdist &&
 
 for py in 2.6 2.7 3.4 3.5 3.6; do
    find build -name '*.py[co]' -delete &&
+   python$py setup.py build_py &&
    python$py    -m compileall build &&
    python$py -O -m compileall build &&
-   python$py setup.py bdist_egg upload --sign || exit 1
+   python$py setup.py bdist_egg || exit 1
 done
 
 find build -name '*.py[co]' -delete &&
-python setup.py bdist_wheel --universal upload --sign &&
+python setup.py bdist_wheel --universal &&
 
 if [ "$state" = final ]; then
    cp -a dist/* "$HOME"/tmp/ &&
    rsync -ahP4 dist/* frs.sourceforge.net:/home/frs/project/sqlobject/sqlobject/"$version"/ &&
    rsync -ahP4 ANNOUNCE.rst frs.sourceforge.net:/home/frs/project/sqlobject/sqlobject/"$version"/README.rst || exit 1
 fi
+
+twine register dist/SQLObject-"`python setup.py --version`".tar.gz &&
+twine upload --sign dist/* &&
 
 exec rm -rf build dist docs/html SQLObject.egg-info
