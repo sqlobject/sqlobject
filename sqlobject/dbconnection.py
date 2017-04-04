@@ -734,6 +734,21 @@ class DBAPI(DBConnection):
         """
         raise NotImplementedError
 
+    def make_odbc_conn_str(self, db, host=None, port=None,
+                           user=None, password=None,
+                           default_odbc_driver=None, **kw):
+        odb_source = kw.pop('odbcdrv', default_odbc_driver)
+        odbc_conn_parts = ['Driver={%s}' % odb_source, 'Database=%s' % db]
+        if host:
+            odbc_conn_parts.append('Server=%s' % host)
+        if port:
+            odbc_conn_parts.append('Port=%d' % port)
+        if user:
+            odbc_conn_parts.append('UID=%s' % user)
+        if password:
+            odbc_conn_parts.append('Password=%s' % password)
+        self.odbc_conn_str = ';'.join(odbc_conn_parts)
+
 
 class Iteration(object):
 

@@ -84,18 +84,8 @@ class PostgresConnection(DBAPI):
         self.host = host
         self.port = port
         if driver in ('odbc', 'pyodbc'):
-            odb_source = kw.pop('odbcdrv', 'PostgreSQL ANSI')
-            odbc_conn_str = 'Driver={%s};' % odb_source
-            odbc_conn_str += 'Database=%s;' % db
-            if user:
-                odbc_conn_str += 'User ID=%s;' % user
-            if password:
-                odbc_conn_str += 'Password=%s;' % password
-            if host:
-                odbc_conn_str += 'Host=%s;' % host
-            if port:
-                odbc_conn_str += 'Port=%d;' % port
-            self.odbc_conn_str = odbc_conn_str
+            self.make_odbc_conn_str(db, host, port, user, password,
+                                    'PostgreSQL ANSI', **kw)
         else:
             self.dsn_dict = dsn_dict = {}
             if host:
@@ -182,6 +172,8 @@ class PostgresConnection(DBAPI):
     def makeConnection(self):
         try:
             if self.driver in ('odbc', 'pyodbc'):
+                self.debugWriter.write(
+                    "ODBC connect string: " + self.odbc_conn_str)
                 conn = self.module.connect(self.odbc_conn_str)
             elif self.use_dsn:
                 conn = self.module.connect(self.dsn)
