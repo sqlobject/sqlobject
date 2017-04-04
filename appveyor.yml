@@ -205,6 +205,7 @@ install:
   # Ensure we use the right python version
   - "SET PATH=%PYTHON%;%PYTHON%\\Scripts;C:\\Program Files\\MySQL\\MySQL Server 5.7\\bin;C:\\Program Files\\PostgreSQL\\9.5\\bin;%PATH%"
   - "python --version"
+  - "python -c \"import struct; print(struct.calcsize('P') * 8)\""
   - "pip --version"
   - "pip install tox"
   # List ODBC drivers
