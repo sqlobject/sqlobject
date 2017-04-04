@@ -3,6 +3,9 @@
 # and Michael Sverdlik's appveyor-utils (https://github.com/cloudify-cosmo/appveyor-utils)
 version: '{branch}-{build}'
 
+cache:
+  - '%LOCALAPPDATA%\pip\Cache'
+
 # Match travis
 clone_depth: 50
 
