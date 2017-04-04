@@ -13,9 +13,8 @@ a branch, a commit id or a tag.
 
 1b. If the branching point was master the script checks out master and
     calls editor again; edit README.rst, __version__.py and News.rst in
-    master - set version for the next release. Edit branch in
-    appveyor.yml. In setup.py edit "Development Status" in trove
-    classifiers. Commit.
+    master - set version for the next release. In setup.py edit
+    "Development Status" in trove classifiers. Commit.
 
 1c. The script updates versions in ANNOUNCE.rst.
 
