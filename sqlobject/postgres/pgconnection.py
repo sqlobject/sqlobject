@@ -96,6 +96,9 @@ class PostgresConnection(DBAPI):
         if driver in ('odbc', 'pyodbc', 'pypyodbc'):
             self.make_odbc_conn_str(db, host, port, user, password,
                                     kw.pop('odbcdrv', 'PostgreSQL ANSI'))
+            sslmode = kw.pop("sslmode", None)
+            if sslmode:
+                self.odbc_conn_str += ';sslmode=require'
         else:
             self.dsn_dict = dsn_dict = {}
             if host:
