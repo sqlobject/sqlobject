@@ -8,7 +8,10 @@ from sqlobject.dbconnection import DBAPI
 class ErrorMessage(str):
     def __new__(cls, e, append_msg=''):
         obj = str.__new__(cls, e.args[1] + append_msg)
-        obj.code = int(e.args[0])
+        try:
+            obj.code = int(e.args[0])
+        except ValueError:
+            obj.code = e.args[0]
         obj.module = e.__module__
         obj.exception = e.__class__.__name__
         return obj
@@ -67,11 +70,24 @@ class MySQLConnection(DBAPI):
                         oursql.errnos['CR_SERVER_GONE_ERROR']
                     self.CR_SERVER_LOST = oursql.errnos['CR_SERVER_LOST']
                     self.ER_DUP_ENTRY = oursql.errnos['ER_DUP_ENTRY']
+                elif driver == 'pyodbc':
+                    import pyodbc
+                    self.module = pyodbc
+                elif driver == 'pypyodbc':
+                    import pypyodbc
+                    self.module = pypyodbc
+                elif driver == 'odbc':
+                    try:
+                        import pyodbc
+                    except ImportError:
+                        import pypyodbc as pyodbc
+                    self.module = pyodbc
                 else:
                     raise ValueError(
                         'Unknown MySQL driver "%s", '
                         'expected mysqldb, connector, '
-                        'oursql or pymysql' % driver)
+                        'oursql, pymysql, '
+                        'odbc, pyodbc or pypyodbc' % driver)
             except ImportError:
                 pass
             else:
@@ -104,6 +120,11 @@ class MySQLConnection(DBAPI):
             self.dbEncoding = None
         self.driver = driver
 
+        if driver in ('odbc', 'pyodbc', 'pypyodbc'):
+            self.make_odbc_conn_str(db, host, port, user, password,
+                                    kw.pop('odbcdrv',
+                                           'MySQL ODBC 5.3 ANSI Driver'))
+
         global mysql_Bin
         if not PY2 and mysql_Bin is None:
             mysql_Bin = self.module.Binary
@@ -133,12 +154,17 @@ class MySQLConnection(DBAPI):
         if self.driver == 'connector':
             self.kw['consume_results'] = True
         try:
-            conn = self.module.connect(
-                host=self.host, port=self.port, db=self.db,
-                user=self.user, passwd=self.password, **self.kw)
-            if self.driver != 'oursql':
-                # Attempt to reconnect. This setting is persistent.
-                conn.ping(True)
+            if self.driver in ('odbc', 'pyodbc', 'pypyodbc'):
+                self.debugWriter.write(
+                    "ODBC connect string: " + self.odbc_conn_str)
+                conn = self.module.connect(self.odbc_conn_str)
+            else:
+                conn = self.module.connect(
+                    host=self.host, port=self.port, db=self.db,
+                    user=self.user, passwd=self.password, **self.kw)
+                if self.driver != 'oursql':
+                    # Attempt to reconnect. This setting is persistent.
+                    conn.ping(True)
         except self.module.OperationalError as e:
             conninfo = ("; used connection string: "
                         "host=%(host)s, port=%(port)s, "
@@ -236,7 +262,13 @@ class MySQLConnection(DBAPI):
             try:
                 id = c.lastrowid
             except AttributeError:
-                id = c.insert_id()
+                try:
+                    id = c.insert_id
+                except AttributeError:
+                    self._executeRetry(conn, c, "SELECT LAST_INSERT_ID();")
+                    id = c.fetchone()[0]
+                else:
+                    id = c.insert_id()
         if self.debugOutput:
             self.printDebug(conn, id, 'QueryIns', 'result')
         return id
@@ -274,7 +306,7 @@ class MySQLConnection(DBAPI):
             self.query('DESCRIBE %s' % (tableName))
             return True
         except dberrors.ProgrammingError as e:
-            if e.args[0].code == 1146:  # ER_NO_SUCH_TABLE
+            if e.args[0].code in (1146, '42S02'):  # ER_NO_SUCH_TABLE
                 return False
             raise
 

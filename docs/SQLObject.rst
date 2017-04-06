@@ -47,14 +47,14 @@ Requirements
 ============
 
 Currently SQLObject supports MySQL_ via MySQLdb_ aka MySQL-python (called
-mysqlclient_ for Python 3), `MySQL Connector`_, oursql_ and PyMySQL_. For
-PostgreSQL_ psycopg2_ or psycopg1 are recommended; PyGreSQL_,
-py-postgresql_, PyODBC_ and PyPyODBC_ are supported but have problems (not
-all tests passed). SQLite_ has a built-in driver or PySQLite_. Firebird_
-is supported via fdb_ or kinterbasdb_; pyfirebirdsql_ is supported but has
-problems. `MAX DB`_ (also known as SAP DB) is supported via sapdb_. Sybase
-via Sybase_. `MSSQL Server`_ via pymssql_ (+ FreeTDS_) or adodbapi_
-(Win32).
+mysqlclient_ for Python 3), `MySQL Connector`_, oursql_, PyMySQL_, PyODBC_
+and PyPyODBC_. For PostgreSQL_ psycopg2_ or psycopg1 are recommended;
+PyGreSQL_, py-postgresql_, PyODBC_ and PyPyODBC_ are supported but have
+problems (not all tests passed). SQLite_ has a built-in driver or
+PySQLite_. Firebird_ is supported via fdb_ or kinterbasdb_; pyfirebirdsql_
+is supported but has problems. `MAX DB`_ (also known as SAP DB) is
+supported via sapdb_. Sybase via Sybase_. `MSSQL Server`_ via pymssql_ (+
+FreeTDS_) or adodbapi_ (Win32).
 
 .. _MySQL: https://www.mysql.com/
 .. _MySQLdb: https://sourceforge.net/projects/mysql-python/
@@ -1785,7 +1785,9 @@ transactions_ when using the InnoDB backend; SQLObject can explicitly
 define the backend using ``sqlmeta.createSQL``.
 
 Supported drivers are ``mysqldb``, ``connector``, ``oursql`` and
-``pymysql``; defualt is ``mysqldb``.
+``pymysql``, ``pyodbc``, ``pypyodbc`` or ``odbc`` (try ``pyodbc`` and
+``pypyodbc``); defualt is ``mysqldb``.
+
 
 Keyword argument ``conv`` allows to pass a list of custom converters.
 Example::
