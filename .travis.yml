@@ -71,6 +71,10 @@ matrix:
     - env: TOXENV=py34-pypostgresql
     - env: TOXENV=py35-pypostgresql
     - env: TOXENV=py36-pypostgresql
+    - env: TOXENV=py27-sqlite-memory
+    - env: TOXENV=py34-sqlite-memory
+    - env: TOXENV=py35-sqlite-memory
+    - env: TOXENV=py36-sqlite-memory
     - env: TOXENV=py27-firebird-fdb
     - env: TOXENV=py34-firebird-fdb
     - env: TOXENV=py35-firebird-fdb
