@@ -19,29 +19,23 @@ addons:
   postgresql: "9.4"
 
 env:
-  - TOXENV=py26-mysqldb
   - TOXENV=py27-mysqldb
   - TOXENV=py34-mysqlclient
   - TOXENV=py35-mysqlclient
   - TOXENV=py36-mysqlclient
-  - TOXENV=py26-mysql-connector
   - TOXENV=py27-mysql-connector
   - TOXENV=py34-mysql-connector
   - TOXENV=py35-mysql-connector
   - TOXENV=py36-mysql-connector
-  - TOXENV=py26-mysql-oursql
   - TOXENV=py27-mysql-oursql
-  - TOXENV=py26-pymysql
   - TOXENV=py27-pymysql
   - TOXENV=py34-pymysql
   - TOXENV=py35-pymysql
   - TOXENV=py36-pymysql
-  - TOXENV=py26-postgres-psycopg
   - TOXENV=py27-postgres-psycopg
   - TOXENV=py34-postgres-psycopg
   - TOXENV=py35-postgres-psycopg
   - TOXENV=py36-postgres-psycopg
-  - TOXENV=py26-postgres-pygresql
   - TOXENV=py27-postgres-pygresql
   - TOXENV=py34-postgres-pygresql
   - TOXENV=py35-postgres-pygresql
@@ -49,12 +43,10 @@ env:
   - TOXENV=py34-pypostgresql
   - TOXENV=py35-pypostgresql
   - TOXENV=py36-pypostgresql
-  - TOXENV=py26-sqlite
   - TOXENV=py27-sqlite
   - TOXENV=py34-sqlite
   - TOXENV=py35-sqlite
   - TOXENV=py36-sqlite
-  - TOXENV=py26-sqlite-memory
   - TOXENV=py27-sqlite-memory
   - TOXENV=py34-sqlite-memory
   - TOXENV=py35-sqlite-memory
@@ -72,7 +64,6 @@ env:
 
 matrix:
   allow_failures:
-    - env: TOXENV=py26-postgres-pygresql
     - env: TOXENV=py27-postgres-pygresql
     - env: TOXENV=py34-postgres-pygresql
     - env: TOXENV=py35-postgres-pygresql

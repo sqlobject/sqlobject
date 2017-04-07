@@ -29,6 +29,8 @@ Tests
 
 * Run tests at Travis CI and AppVeyor with Python 3.6, x86 and x64.
 
+* Stop running tests at Travis with Python 2.6.
+
 SQLObject 3.2.0
 ===============
 
