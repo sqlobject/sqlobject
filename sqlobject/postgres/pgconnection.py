@@ -211,7 +211,7 @@ class PostgresConnection(DBAPI):
                 conn.setdecoding(self.module.SQL_WCHAR, encoding=dbEncoding)
                 if PY2:
                     conn.setencoding(str, encoding=dbEncoding)
-                    conn.setencoding(unicode, encoding=dbEncoding)
+                    conn.setencoding(unicode, encoding=dbEncoding)  # noqa
                 else:
                     conn.setencoding(encoding=dbEncoding)
             self._executeRetry(conn, c,
