@@ -1,8 +1,7 @@
 global-include *.py *.rst *.txt
+recursive-include docs *.css *.html *.js *.gif *.png
 include LICENSE MANIFEST.in .travis.yml circle.yml tox.ini
 include debian/* sqlobject/.coveragerc
 include docs/Makefile docs/genapidocs docs/rebuild
-recursive-include devscripts *
-recursive-include docs *.css *.html *.js *.gif *.png
-global-exclude *.py[co]
-prune docs/_build
+recursive-exclude devscripts *
+recursive-exclude docs/_build *
