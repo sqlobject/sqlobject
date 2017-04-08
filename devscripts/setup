@@ -1,6 +1,6 @@
 #! /bin/sh
 
-umask 002  # -rwxrwxr-x
+umask 022  # -rwxr-xr-x
 cd "`dirname \"$0\"`"/SQLObject &&
 
 python2.6 setup.py install -O2 &&
