@@ -13,7 +13,8 @@ separator = '----- GIT LOG SEPARATOR -----'
 git_log = subprocess.Popen(['git', 'log', '-m', '--first-parent',
                             '--name-only', '--no-color',
                             '--format=%s%%n%%ct' % separator],
-                           stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+                           stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                           universal_newlines=True)
 filenames = set()
 # stages: 1 - start of commit, 2 - timestamp, 3 - empty line, 4 - files
 stage = 1
