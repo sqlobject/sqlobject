@@ -173,9 +173,6 @@ http://sqlobject.org
 Mailing list:
 https://lists.sourceforge.net/mailman/listinfo/sqlobject-discuss
 
-Archives:
-http://news.gmane.org/gmane.comp.python.sqlobject
-
 Download:
 https://pypi.python.org/pypi/SQLObject/@@
 
