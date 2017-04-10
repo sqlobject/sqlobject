@@ -24,6 +24,12 @@ Drivers (work in progress)
   MySQL and PostgreSQL. Driver names are ``pyodbc``, ``pypyodbc`` or
   ``odbc`` (try ``pyodbc`` and ``pypyodbc``). There are some problems.
 
+Documentation
+-------------
+
+* Stop updating http://sqlobject.readthedocs.org/ - it's enough to have
+  http://sqlobject.org/
+
 Tests
 -----
 
