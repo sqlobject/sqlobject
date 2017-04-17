@@ -23,13 +23,17 @@ done
 find build -name '*.py[co]' -delete &&
 python setup.py bdist_wheel --universal &&
 
+version=`python setup.py --version`
+. `dirname $0`/split.sh &&
+split_tag $version
+
 if [ "$state" = final ]; then
    cp -a dist/* "$HOME"/tmp/ &&
    rsync -ahP4 dist/* frs.sourceforge.net:/home/frs/project/sqlobject/sqlobject/"$version"/ &&
    rsync -ahP4 ANNOUNCE.rst frs.sourceforge.net:/home/frs/project/sqlobject/sqlobject/"$version"/README.rst || exit 1
 fi
 
-twine register dist/SQLObject-"`python setup.py --version`".tar.gz &&
+twine register dist/SQLObject-"$version".tar.gz &&
 twine upload --sign dist/* &&
 
 exec rm -rf build dist docs/html SQLObject.egg-info
