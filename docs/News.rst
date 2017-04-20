@@ -38,6 +38,9 @@ Tests
 
 * Stop running tests at Travis with Python 2.6.
 
+* Stop running tests at AppVeyor with pymssql - too many timeouts and
+  problems.
+
 SQLObject 3.2.0
 ===============
 

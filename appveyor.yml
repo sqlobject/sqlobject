@@ -25,17 +25,6 @@ environment:
     CMD_IN_ENV: "cmd /E:ON /V:ON /C .\\run_with_env.cmd"
 
   matrix:
-    # from https://www.appveyor.com/docs/installed-software/#python
-    - PYTHON_HOME: "C:\\Python27"
-      PYTHON_VERSION: "2.7"
-      PYTHON_ARCH: "32"
-      db: mssql2014
-      TOX_ENV: "py27-pymssql-w32"
-    - PYTHON_HOME: "C:\\Python34"
-      PYTHON_VERSION: "3.4"
-      PYTHON_ARCH: "32"
-      db: mssql2014
-      TOX_ENV: "py34-pymssql-w32"
     - PYTHON_HOME: "C:\\Python27"
       PYTHON_VERSION: "2.7"
       PYTHON_ARCH: "32"
@@ -233,7 +222,6 @@ install:
   - ps: Get-OdbcDriver -Platform 32-bit | Select-Object -ExpandProperty Name
   - ps: Get-OdbcDriver -Platform 64-bit | Select-Object -ExpandProperty Name
   # Enable TCP for mssql
-  # (from appveyor documentation)
   - ps: |
       [reflection.assembly]::LoadWithPartialName("Microsoft.SqlServer.Smo") | Out-Null
       [reflection.assembly]::LoadWithPartialName("Microsoft.SqlServer.SqlWmiManagement") | Out-Null
