@@ -24,10 +24,23 @@ class MSSQLConnection(DBAPI):
                     import adodbapi as sqlmodule
                 elif driver == 'pymssql':
                     import pymssql as sqlmodule
+                elif driver == 'pyodbc':
+                    import pyodbc
+                    self.module = pyodbc
+                elif driver == 'pypyodbc':
+                    import pypyodbc
+                    self.module = pypyodbc
+                elif driver == 'odbc':
+                    try:
+                        import pyodbc
+                    except ImportError:
+                        import pypyodbc as pyodbc
+                    self.module = pyodbc
                 else:
                     raise ValueError(
                         'Unknown MSSQL driver "%s", '
-                        'expected adodb or pymssql' % driver)
+                        'expected adodb, pymssql, '
+                        'odbc, pyodbc or pypyodbc' % driver)
             except ImportError:
                 pass
             else:
@@ -35,9 +48,13 @@ class MSSQLConnection(DBAPI):
         else:
             raise ImportError(
                 'Cannot find an MSSQL driver, tried %s' % drivers)
-        self.module = sqlmodule
 
-        if sqlmodule.__name__ == 'adodbapi':
+        if driver in ('odbc', 'pyodbc', 'pypyodbc'):
+            self.make_odbc_conn_str(db, host, port, user, password,
+                                    kw.pop('odbcdrv', 'SQL Server'))
+
+        elif driver in ('adodb', 'adodbapi'):
+            self.module = sqlmodule
             self.dbconnection = sqlmodule.connect
             # ADO uses unicode only (AFAIK)
             self.usingUnicodeStrings = True
@@ -64,7 +81,8 @@ class MSSQLConnection(DBAPI):
             kw.pop("ncli", None)
             kw.pop("sspi", None)
 
-        else:  # pymssql
+        elif driver == 'pymssql':
+            self.module = sqlmodule
             self.dbconnection = sqlmodule.connect
             sqlmodule.Binary = lambda st: str(st)
             # don't know whether pymssql uses unicode
@@ -89,6 +107,7 @@ class MSSQLConnection(DBAPI):
                         keys_dict[attr] = value
                 return keys_dict
             self.make_conn_str = _make_conn_str
+        self.driver = driver
 
         self.autoCommit = int(autoCommit)
         self.user = user
@@ -118,17 +137,22 @@ class MSSQLConnection(DBAPI):
         return c.fetchone()[0]
 
     def makeConnection(self):
-        conn_descr = self.make_conn_str(self)
-        if isinstance(conn_descr, dict):
-            con = self.dbconnection(**conn_descr)
+        if self.driver in ('odbc', 'pyodbc', 'pypyodbc'):
+            self.debugWriter.write(
+                "ODBC connect string: " + self.odbc_conn_str)
+            conn = self.module.connect(self.odbc_conn_str)
         else:
-            con = self.dbconnection(conn_descr)
-        cur = con.cursor()
+            conn_descr = self.make_conn_str(self)
+            if isinstance(conn_descr, dict):
+                conn = self.dbconnection(**conn_descr)
+            else:
+                conn = self.dbconnection(conn_descr)
+        cur = conn.cursor()
         cur.execute('SET ANSI_NULLS ON')
         cur.execute("SELECT CAST('12345.21' AS DECIMAL(10, 2))")
         self.decimalSeparator = str(cur.fetchone()[0])[-3]
         cur.close()
-        return con
+        return conn
 
     HAS_IDENTITY = """
        select 1
@@ -302,9 +326,6 @@ class MSSQLConnection(DBAPI):
             option = "OFF"
         c = conn.cursor()
         c.execute("SET AUTOCOMMIT " + option)
-        # from mx.ODBC.Windows import SQL
-        # connection.setconnectoption(
-        # SQL.AUTOCOMMIT, SQL.AUTOCOMMIT_ON if auto else SQL.AUTOCOMMIT_OFF)
 
     # precision and scale is needed for decimal columns
     def guessClass(self, t, size, precision, scale):

@@ -21,9 +21,9 @@ Drivers (work in progress)
 --------------------------
 
 * Add support for PyODBC and PyPyODBC (pure-python ODBC DB API driver) for
-  MySQL and PostgreSQL. Driver names are ``pyodbc``, ``pypyodbc`` or
-  ``odbc`` (try ``pyodbc`` and ``pypyodbc``). There are some problems with
-  pyodbc and many problems with pypyodbc.
+  MySQL, PostgreSQL and MS SQL. Driver names are ``pyodbc``, ``pypyodbc``
+  or ``odbc`` (try ``pyodbc`` and ``pypyodbc``). There are some problems
+  with pyodbc and many problems with pypyodbc.
 
 Documentation
 -------------
