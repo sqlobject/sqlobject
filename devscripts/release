@@ -4,8 +4,8 @@ cd "`dirname \"$0\"`"/SQLObject &&
 umask 022 &&
 chmod -R a+rX . &&
 
+set-commit-date.py &&
 ../build-docs &&
-../set-commit-date.py &&
 
 python setup.py build_py &&
 python setup.py build --executable '/usr/bin/env python' &&
