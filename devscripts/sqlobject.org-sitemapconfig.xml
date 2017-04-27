@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  sitemap_gen.py configuration script for sqlobject.org
+-->
+
+ <site
+  base_url="http://sqlobject.org/"
+  store_into="sitemap.xml"
+  default_encoding="utf-8"
+  verbose="1"
+  sitemap_type="web"
+  suppress_search_engine_notify="1"
+ >
+
+  <directory
+     url="http://sqlobject.org/"
+     path="."
+     default_file="index.html"
+  />
+
+  <!-- Exclude URLs within UNIX-style hidden files or directories       -->
+  <filter action="drop" type="regexp"   pattern="/\.[^/]*"     />
+
+</site>

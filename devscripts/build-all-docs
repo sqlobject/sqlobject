@@ -3,8 +3,16 @@
 build_docs() {
    git checkout "$1" &&
    ../build-docs &&
-   rsync -ahP --del docs/html/ ../SQLObject-docs/"$2"/
+   rsync -ahP --del --exclude=/robots.txt docs/html/ ../SQLObject-docs/"$2"/
 }
 
-cd "`dirname \"$0\"`"/SQLObject &&
-build_docs 3.2.0 && exec build_docs master devel
+PROG_DIR="`dirname \"$0\"`" &&
+cd "$PROG_DIR" &&
+PROG_DIR="`pwd`" &&
+
+cd "$PROG_DIR"/SQLObject &&
+build_docs 3.2.0 &&
+build_docs master devel &&
+
+cd ../SQLObject-docs &&
+exec sitemap_gen.py --config="$PROG_DIR"/sqlobject.org-sitemapconfig.xml
