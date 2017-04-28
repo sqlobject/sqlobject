@@ -1,3 +1,9 @@
+# Only test master and pull requests; skip tags.
+# Other branches can allow themselves.
+branches:
+  only:
+    - master
+
 # Prefer docker container with setuid/sudo
 sudo: required
 
