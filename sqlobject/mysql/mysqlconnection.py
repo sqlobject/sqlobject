@@ -25,6 +25,8 @@ class MySQLConnection(DBAPI):
     dbName = 'mysql'
     schemes = [dbName]
 
+    odbc_keywords = ('Server', 'Port', 'UID', 'Password', 'Database')
+
     def __init__(self, db, user, password='', host='localhost', port=0, **kw):
         drivers = kw.pop('driver', None) or 'mysqldb'
         for driver in drivers.split(','):
@@ -121,9 +123,10 @@ class MySQLConnection(DBAPI):
         self.driver = driver
 
         if driver in ('odbc', 'pyodbc', 'pypyodbc'):
-            self.make_odbc_conn_str(db, host, port, user, password,
-                                    kw.pop('odbcdrv',
-                                           'MySQL ODBC 5.3 ANSI Driver'))
+            self.make_odbc_conn_str(kw.pop('odbcdrv',
+                                           'MySQL ODBC 5.3 ANSI Driver'),
+                                    db, host, port, user, password
+                                    )
 
         global mysql_Bin
         if not PY2 and mysql_Bin is None:

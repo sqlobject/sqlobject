@@ -12,6 +12,8 @@ class MSSQLConnection(DBAPI):
 
     limit_re = re.compile('^\s*(select )(.*)', re.IGNORECASE)
 
+    odbc_keywords = ('Server', 'Port', 'User Id', 'Password', 'Database')
+
     def __init__(self, db, user, password='', host='localhost', port=None,
                  autoCommit=0, **kw):
         drivers = kw.pop('driver', None) or 'adodb,pymssql'
@@ -50,8 +52,9 @@ class MSSQLConnection(DBAPI):
                 'Cannot find an MSSQL driver, tried %s' % drivers)
 
         if driver in ('odbc', 'pyodbc', 'pypyodbc'):
-            self.make_odbc_conn_str(db, host, port, user, password,
-                                    kw.pop('odbcdrv', 'SQL Server'))
+            self.make_odbc_conn_str(kw.pop('odbcdrv', 'SQL Server'),
+                                    db, host, port, user, password
+                                    )
 
         elif driver in ('adodb', 'adodbapi'):
             self.module = sqlmodule

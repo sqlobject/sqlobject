@@ -27,6 +27,8 @@ class PostgresConnection(DBAPI):
     dbName = 'postgres'
     schemes = [dbName, 'postgresql']
 
+    odbc_keywords = ('Server', 'Port', 'UID', 'Password', 'Database')
+
     def __init__(self, dsn=None, host=None, port=None, db=None,
                  user=None, password=None, **kw):
         drivers = kw.pop('driver', None) or 'psycopg'
@@ -94,8 +96,9 @@ class PostgresConnection(DBAPI):
         self.host = host
         self.port = port
         if driver in ('odbc', 'pyodbc', 'pypyodbc'):
-            self.make_odbc_conn_str(db, host, port, user, password,
-                                    kw.pop('odbcdrv', 'PostgreSQL ANSI'))
+            self.make_odbc_conn_str(kw.pop('odbcdrv', 'PostgreSQL ANSI'),
+                                    db, host, port, user, password
+                                    )
             sslmode = kw.pop("sslmode", None)
             if sslmode:
                 self.odbc_conn_str += ';sslmode=require'

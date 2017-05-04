@@ -734,17 +734,13 @@ class DBAPI(DBConnection):
         """
         raise NotImplementedError
 
-    def make_odbc_conn_str(self, db, host=None, port=None,
-                           user=None, password=None, odb_source=None):
-        odbc_conn_parts = ['Driver={%s}' % odb_source, 'Database=%s' % db]
-        if host:
-            odbc_conn_parts.append('Server=%s' % host)
-        if port:
-            odbc_conn_parts.append('Port=%d' % port)
-        if user:
-            odbc_conn_parts.append('UID=%s' % user)
-        if password:
-            odbc_conn_parts.append('Password=%s' % password)
+    def make_odbc_conn_str(self, odb_source, db, host=None, port=None,
+                           user=None, password=None):
+        odbc_conn_parts = ['Driver={%s}' % odb_source]
+        for odbc_keyword, value in \
+                zip(self.odbc_keywords, (host, port, user, password, db)):
+            if value is not None:
+                odbc_conn_parts.append('%s=%s' % (odbc_keyword, value))
         self.odbc_conn_str = ';'.join(odbc_conn_parts)
 
 
