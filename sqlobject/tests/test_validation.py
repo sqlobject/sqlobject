@@ -63,6 +63,7 @@ class SOValidationTestInt(SOValidationTest):
 class SOValidationTestBool(SOValidationTest):
     def __nonzero__(self):
         return self.value
+    __bool__ = __nonzero__
 
 
 class SOValidationTestFloat(SOValidationTest):

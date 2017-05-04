@@ -1510,6 +1510,7 @@ class ImportProxy(SQLExpression):
 
     def __nonzero__(self):
         return True
+    __bool__ = __nonzero__
 
     def __getattr__(self, attr):
         if self.soClass is None:

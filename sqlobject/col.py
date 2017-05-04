@@ -789,7 +789,8 @@ class BoolValidator(SOValidator):
             return None
         if isinstance(value, (bool, sqlbuilder.SQLExpression)):
             return value
-        if isinstance(value, (int, long)) or hasattr(value, '__nonzero__'):
+        if PY2 and hasattr(value, '__nonzero__') \
+                or not PY2 and hasattr(value, '__bool__'):
             return bool(value)
         raise validators.Invalid(
             "expected a bool or an int in the BoolCol '%s', "

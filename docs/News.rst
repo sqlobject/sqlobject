@@ -17,6 +17,8 @@ Minor features
   Some of thses scripts are version-dependent so it's better to have them
   in the main repo.
 
+* Test for __nonzero__ under Python 2, __bool__ under Python 3 in BoolCol.
+
 Drivers (work in progress)
 --------------------------
 

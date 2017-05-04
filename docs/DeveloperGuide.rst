@@ -92,12 +92,12 @@ have any code. ``SOBoolCol`` has a method to create ``BoolValidator``
 and methods to create backend-specific column type. ``BoolValidator``
 has identical methods ``from_python`` and ``to_python``; the method
 passes ``None``, ``SQLExpression`` and bool values unchanged; int and
-objects that have method ``__nonzero__`` are converted to bool; other
-objects trigger validation error. Bool values that are returned by call
-to ``from_python`` will be converted to SQL strings by
-``BoolConverter``; bool values from ``to_python`` (is is supposed they
-are originated from the backend via DB API driver) are passed to the
-application.
+objects that have method ``__nonzero__`` (``__bool__`` in Python 3) are
+converted to bool; other objects trigger validation error. Bool values
+that are returned by call to ``from_python`` will be converted to SQL
+strings by ``BoolConverter``; bool values from ``to_python`` (is is
+supposed they are originated from the backend via DB API driver) are
+passed to the application.
 
 Objects that are returned from ``from_python`` must be registered with
 converters. Another approach for ``from_python`` is to return an object
