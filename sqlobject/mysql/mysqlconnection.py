@@ -177,7 +177,15 @@ class MySQLConnection(DBAPI):
         self._setAutoCommit(conn, bool(self.autoCommit))
 
         if dbEncoding:
-            if hasattr(conn, 'set_character_set'):
+            if self.driver in ('odbc', 'pyodbc'):
+                conn.setdecoding(self.module.SQL_CHAR, encoding=dbEncoding)
+                conn.setdecoding(self.module.SQL_WCHAR, encoding=dbEncoding)
+                if PY2:
+                    conn.setencoding(str, encoding=dbEncoding)
+                    conn.setencoding(unicode, encoding=dbEncoding)  # noqa
+                else:
+                    conn.setencoding(encoding=dbEncoding)
+            elif hasattr(conn, 'set_character_set'):
                 conn.set_character_set(dbEncoding)
             elif self.driver == 'oursql':
                 conn.charset = dbEncoding
