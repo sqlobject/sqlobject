@@ -792,6 +792,15 @@ class BoolValidator(SOValidator):
         if PY2 and hasattr(value, '__nonzero__') \
                 or not PY2 and hasattr(value, '__bool__'):
             return bool(value)
+        try:
+            connection = state.connection or state.soObject._connection
+        except AttributeError:
+            pass
+        else:
+            if connection.dbName == 'postgres' and \
+                    connection.driver in ('odbc', 'pyodbc', 'pypyodbc') and \
+                    isinstance(value, string_type):
+                return bool(int(value))
         raise validators.Invalid(
             "expected a bool or an int in the BoolCol '%s', "
             "got %s %r instead" % (

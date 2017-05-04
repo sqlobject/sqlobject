@@ -87,7 +87,9 @@ class TestValidation:
         raises(validators.Invalid, setattr, t, 'name2', 1)
         raises(validators.Invalid, setattr, t, 'name3', '1')
         raises(validators.Invalid, setattr, t, 'name4', '1')
-        raises(validators.Invalid, setattr, t, 'name6', '1')
+        if t._connection.dbName != 'postgres' or \
+                t._connection.driver not in ('odbc', 'pyodbc', 'pypyodbc'):
+            raises(validators.Invalid, setattr, t, 'name6', '1')
         raises(validators.Invalid, setattr, t, 'name7', 1)
         t.name2 = 'you'
         assert t.name2 == 'you'
