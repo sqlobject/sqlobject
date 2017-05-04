@@ -1942,6 +1942,8 @@ class UuidCol(Col):
 class JsonbValidator(SOValidator):
 
     def to_python(self, value, state):
+        if isinstance(value, string_type):
+            return json.loads(value)
         return value
 
     def from_python(self, value, state):
