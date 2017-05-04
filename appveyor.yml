@@ -38,9 +38,19 @@ environment:
       PYTHON_ARCH: "32"
       db: mssql2014
       TOX_ENV: "py27-mssql-pyodbc-w32"
+    - PYTHON_HOME: "C:\\Python27-x64"
+      PYTHON_VERSION: "2.7"
+      PYTHON_ARCH: "64"
+      db: mssql2014
+      TOX_ENV: "py27-mssql-pyodbc-w32"
     - PYTHON_HOME: "C:\\Python34"
       PYTHON_VERSION: "3.4"
       PYTHON_ARCH: "32"
+      db: mssql2014
+      TOX_ENV: "py34-mssql-pyodbc-w32"
+    - PYTHON_HOME: "C:\\Python34-x64"
+      PYTHON_VERSION: "3.4"
+      PYTHON_ARCH: "64"
       db: mssql2014
       TOX_ENV: "py34-mssql-pyodbc-w32"
     - PYTHON_HOME: "C:\\Python35"
@@ -48,9 +58,19 @@ environment:
       PYTHON_ARCH: "32"
       db: mssql2014
       TOX_ENV: "py35-mssql-pyodbc-w32"
+    - PYTHON_HOME: "C:\\Python35-x64"
+      PYTHON_VERSION: "3.5"
+      PYTHON_ARCH: "64"
+      db: mssql2014
+      TOX_ENV: "py35-mssql-pyodbc-w32"
     - PYTHON_HOME: "C:\\Python36"
       PYTHON_VERSION: "3.6"
       PYTHON_ARCH: "32"
+      db: mssql2014
+      TOX_ENV: "py36-mssql-pyodbc-w32"
+    - PYTHON_HOME: "C:\\Python36-x64"
+      PYTHON_VERSION: "3.6"
+      PYTHON_ARCH: "64"
       db: mssql2014
       TOX_ENV: "py36-mssql-pyodbc-w32"
     - PYTHON_HOME: "C:\\Python27"
