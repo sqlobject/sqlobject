@@ -129,7 +129,7 @@ class MySQLConnection(DBAPI):
                                     )
             self.CR_SERVER_GONE_ERROR = 2006
             self.CR_SERVER_LOST = 2013
-            self.ER_DUP_ENTRY = 1062
+            self.ER_DUP_ENTRY = '23000'
 
         global mysql_Bin
         if not PY2 and mysql_Bin is None:

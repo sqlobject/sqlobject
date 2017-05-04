@@ -232,7 +232,8 @@ class PostgresConnection(DBAPI):
             msg = ErrorMessage(e)
             if getattr(e, 'code', -1) == '23505' or \
                     getattr(e, 'pgcode', -1) == '23505' or \
-                    getattr(e, 'sqlstate', -1) == '23505':
+                    getattr(e, 'sqlstate', -1) == '23505' or \
+                    e.args[0] == '23505':
                 raise dberrors.DuplicateEntryError(msg)
             else:
                 raise dberrors.IntegrityError(msg)
