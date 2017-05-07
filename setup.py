@@ -69,7 +69,7 @@ and `GitHub <https://github.com/sqlobject>`_.
   :target: https://travis-ci.org/sqlobject/sqlobject
 """,
       classifiers=[
-          "Development Status :: 3 - Alpha",
+          "Development Status :: 5 - Production/Stable",
           "Intended Audience :: Developers",
           "License :: OSI Approved :: "
           "GNU Library or Lesser General Public License (LGPL)",
@@ -89,7 +89,7 @@ and `GitHub <https://github.com/sqlobject>`_.
       author_email="ianb@colorstudy.com",
       maintainer="Oleg Broytman",
       maintainer_email="phd@phdru.name",
-      url="http://sqlobject.org/devel/",
+      url="http://sqlobject.org/",
       download_url="https://pypi.python.org/pypi/SQLObject/%s" % version,
       license="LGPL",
       packages=["sqlobject"] +

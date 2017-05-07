@@ -7,8 +7,10 @@ News
 
 .. _start:
 
-SQLObject 3.3.0 (master)
-========================
+SQLObject 3.3.0
+===============
+
+Released 7 May 2017.
 
 Features
 --------
