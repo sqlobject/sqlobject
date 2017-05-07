@@ -10,6 +10,12 @@ News
 SQLObject 3.3.0 (master)
 ========================
 
+Features
+--------
+
+* Support for Python 2.6 is declared obsolete and will be removed
+  in the next release.
+
 Minor features
 --------------
 

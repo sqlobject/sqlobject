@@ -1,6 +1,8 @@
 TODO
 ----
 
+* Stop supporting Python 2.6. Fix dbconnection.py and joins.py.
+
 * PyPy.
 
 * Quote table/column names that are reserved keywords (order => "order",
