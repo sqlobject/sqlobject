@@ -1,50 +1,28 @@
 Hello!
 
-I'm pleased to announce version 3.3.0, the first stable release of branch
-3.3 of SQLObject.
+I'm pleased to announce version 3.4.0a1, the first alpha of the upcoming
+release of branch 3.4 of SQLObject.
+
+I'm pleased to announce version 3.4.0a2, the second alpha of the upcoming
+release of branch 3.4 of SQLObject.
+
+I'm pleased to announce version 3.4.0b1, the first beta of the upcoming
+release of branch 3.4 of SQLObject.
+
+I'm pleased to announce version 3.4.0rc1, the first release candidate
+of the upcoming release of branch 3.4 of SQLObject.
+
+I'm pleased to announce version 3.4.0, the first stable release of branch
+3.4 of SQLObject.
+
+I'm pleased to announce version 3.4.1, the first bugfix release of branch
+3.4 of SQLObject.
 
 
 What's new in SQLObject
 =======================
 
-Features
---------
-
-* Support for Python 2.6 is declared obsolete and will be removed
-  in the next release.
-
-Minor features
---------------
-
-* Convert scripts repository to devscripts subdirectory.
-  Some of thses scripts are version-dependent so it's better to have them
-  in the main repo.
-
-* Test for __nonzero__ under Python 2, __bool__ under Python 3 in BoolCol.
-
-Drivers (work in progress)
---------------------------
-
-* Add support for PyODBC and PyPyODBC (pure-python ODBC DB API driver) for
-  MySQL, PostgreSQL and MS SQL. Driver names are ``pyodbc``, ``pypyodbc``
-  or ``odbc`` (try ``pyodbc`` and ``pypyodbc``). There are some problems
-  with pyodbc and many problems with pypyodbc.
-
-Documentation
--------------
-
-* Stop updating http://sqlobject.readthedocs.org/ - it's enough to have
-  http://sqlobject.org/
-
-Tests
------
-
-* Run tests at Travis CI and AppVeyor with Python 3.6, x86 and x64.
-
-* Stop running tests at Travis with Python 2.6.
-
-* Stop running tests at AppVeyor with pymssql - too many timeouts and
-  problems.
+Contributor for this release is 
 
 For a more complete list, please see the news:
 http://sqlobject.org/News.html
@@ -76,7 +54,7 @@ Mailing list:
 https://lists.sourceforge.net/mailman/listinfo/sqlobject-discuss
 
 Download:
-https://pypi.python.org/pypi/SQLObject/3.3.0
+https://pypi.python.org/pypi/SQLObject/3.4.0a0.dev20170507
 
 News and changes:
 http://sqlobject.org/News.html
