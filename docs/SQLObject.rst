@@ -82,7 +82,7 @@ FreeTDS_) or adodbapi_ (Win32).
 .. _FreeTDS: http://www.freetds.org/
 .. _adodbapi: http://adodbapi.sourceforge.net/
 
-Python 2.6, 2.7 or 3.4+ is required.
+Python 2.7 or 3.4+ is required.
 
 Compared To Other Database Wrappers
 ===================================

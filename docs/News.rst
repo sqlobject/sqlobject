@@ -10,6 +10,9 @@ News
 SQLObject 3.4.0 (master)
 ========================
 
+* Python 2.6 is no longer supported. The minimal supported version is
+  Python 2.7.
+
 SQLObject 3.3.0
 ===============
 

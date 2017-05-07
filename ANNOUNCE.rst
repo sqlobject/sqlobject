@@ -38,7 +38,7 @@ easy to use and quick to get started with.
 SQLObject supports a number of backends: MySQL, PostgreSQL, SQLite,
 Firebird, Sybase, MSSQL and MaxDB (also known as SAPDB).
 
-Python 2.6, 2.7 or 3.4+ is required.
+Python 2.7 or 3.4+ is required.
 
 
 Where is SQLObject

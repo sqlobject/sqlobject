@@ -28,12 +28,12 @@ if is_setuptools:
     main = sqlobject.wsgi_middleware:make_middleware
     """
     install_requires = []
-    if (sys.version_info[0] == 2) and (sys.version_info[:2] >= (2, 6)):
+    if (sys.version_info[:2] == (2, 7)):
         install_requires.append("FormEncode>=1.1.1,!=1.3.0")
     elif (sys.version_info[0] == 3) and (sys.version_info[:2] >= (3, 4)):
         install_requires.append("FormEncode>=1.3.1")
     else:
-        raise ImportError("SQLObject requires Python 2.6, 2.7 or 3.4+")
+        raise ImportError("SQLObject requires Python 2.7 or 3.4+")
     install_requires.append("PyDispatcher>=2.0.4")
     kw['install_requires'] = install_requires
     kw['extras_require'] = {
@@ -59,7 +59,7 @@ more abstract, and provides substantial database independence for
 applications.
 
 Supports MySQL, PostgreSQL, SQLite, Firebird, Sybase, MSSQL and MaxDB (SAPDB).
-Python 2.6, 2.7 or 3.4+ is required.
+Python 2.7 or 3.4+ is required.
 
 For development see the projects at
 `SourceForge <https://sourceforge.net/projects/sqlobject/>`_
@@ -75,7 +75,6 @@ and `GitHub <https://github.com/sqlobject>`_.
           "GNU Library or Lesser General Public License (LGPL)",
           "Programming Language :: Python",
           "Programming Language :: Python :: 2",
-          "Programming Language :: Python :: 2.6",
           "Programming Language :: Python :: 2.7",
           "Programming Language :: Python :: 3",
           "Programming Language :: Python :: 3.4",
@@ -161,7 +160,7 @@ easy to use and quick to get started with.
 
 It currently supports MySQL through the `MySQLdb` package, PostgreSQL
 through the `psycopg` package, SQLite, Firebird, MaxDB (SAP DB), MS SQL
-Sybase and Rdbhost.  Python 2.6, 2.7 or 3.4+ is required.
+Sybase and Rdbhost.  Python 2.7 or 3.4+ is required.
 
 
 Where is SQLObject

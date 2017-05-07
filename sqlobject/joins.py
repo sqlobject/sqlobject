@@ -102,8 +102,7 @@ class SOJoin(object):
 
 class MinType(object):
     """Sort less than everything, for handling None's in the results"""
-    # functools.total_ordering would simplify this, but isn't available
-    # for python 2.6
+    # functools.total_ordering would simplify this
 
     def __lt__(self, other):
         if self is other:

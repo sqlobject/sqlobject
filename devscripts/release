@@ -11,7 +11,7 @@ python setup.py build_py &&
 python setup.py build --executable '/usr/bin/env python' &&
 python setup.py sdist &&
 
-for py in 2.6 2.7 3.4 3.5 3.6; do
+for py in 2.7 3.4 3.5 3.6; do
    find build -name '*.py[co]' -delete &&
    python$py setup.py build_py &&
    python$py setup.py build --executable '/usr/bin/env python' &&
