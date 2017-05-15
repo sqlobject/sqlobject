@@ -2,7 +2,7 @@ import re
 from sqlobject import col
 from sqlobject import dberrors
 from sqlobject import sqlbuilder
-from sqlobject.compat import PY2
+from sqlobject.compat import PY2, unicode_type
 from sqlobject.converters import registerConverter, sqlrepr
 from sqlobject.dbconnection import DBAPI
 
@@ -85,7 +85,9 @@ class PostgresConnection(DBAPI):
             # Register a converter for psycopg Binary type.
             registerConverter(type(self.module.Binary('')),
                               PsycoBinaryConverter)
-        elif type(self.module.Binary) in (type, type(PostgresBinaryConverter)):
+        elif type(self.module.Binary) in (
+                type, type(PostgresBinaryConverter)) and \
+                type(self.module.Binary(b'')) not in (bytes, unicode_type):
             # Register a converter for Binary type.
             registerConverter(type(self.module.Binary(b'')),
                               PostgresBinaryConverter)
