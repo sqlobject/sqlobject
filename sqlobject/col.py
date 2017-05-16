@@ -1768,12 +1768,12 @@ class BinaryValidator(SOValidator):
             dbName = connection.dbName
             binaryType = connection._binaryType
         if isinstance(value, str):
+            if not PY2 and dbName == "mysql":
+                value = value.encode('ascii', errors='surrogateescape')
             if dbName == "sqlite":
                 if not PY2:
                     value = bytes(value, 'ascii')
                 value = connection.module.decode(value)
-            if dbName == "mysql" and not PY2:
-                value = value.encode('ascii', errors='surrogateescape')
             return value
         if isinstance(value, bytes):
             return value
