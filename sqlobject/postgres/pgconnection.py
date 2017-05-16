@@ -85,6 +85,10 @@ class PostgresConnection(DBAPI):
             # Register a converter for psycopg Binary type.
             registerConverter(type(self.module.Binary('')),
                               PsycoBinaryConverter)
+        elif driver == 'pygresql':
+            from pg import escape_bytea
+            self.createBinary = \
+                lambda value, escape_bytea=escape_bytea: escape_bytea(value)
         elif type(self.module.Binary) in (
                 type, type(PostgresBinaryConverter)) and \
                 type(self.module.Binary(b'')) not in (bytes, unicode_type):

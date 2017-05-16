@@ -1770,6 +1770,9 @@ class BinaryValidator(SOValidator):
         if isinstance(value, str):
             if not PY2 and dbName == "mysql":
                 value = value.encode('ascii', errors='surrogateescape')
+            if dbName == "postgres" and connection.driver == 'pygresql':
+                from pg import unescape_bytea
+                value = unescape_bytea(value)
             if dbName == "sqlite":
                 if not PY2:
                     value = bytes(value, 'ascii')
