@@ -68,6 +68,14 @@ Here's how you'd use the object::
   >>> p is p2
   True
 
+Queries::
+
+  >>> p3 = Person.selectBy(lname="Doe")[0]
+  >>> p3
+  <Person 1 fname='John' mi='Q' lname='Doe'>
+  >>> pc = Person.select(Person.q.lname=="Doe").count()
+  >>> pc
+  1
 
 Indices and tables
 ==================
