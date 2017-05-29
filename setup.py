@@ -27,24 +27,54 @@ if is_setuptools:
     [paste.filter_app_factory]
     main = sqlobject.wsgi_middleware:make_middleware
     """
-    install_requires = []
     if (sys.version_info[:2] == (2, 7)):
-        install_requires.append("FormEncode>=1.1.1,!=1.3.0")
+        PY2 = True
     elif (sys.version_info[0] == 3) and (sys.version_info[:2] >= (3, 4)):
-        install_requires.append("FormEncode>=1.3.1")
+        PY2 = False
     else:
         raise ImportError("SQLObject requires Python 2.7 or 3.4+")
+
+    kw['install_requires'] = install_requires = []
+    if PY2:
+        install_requires.append("FormEncode>=1.1.1,!=1.3.0")
+    else:
+        install_requires.append("FormEncode>=1.3.1")
     install_requires.append("PyDispatcher>=2.0.4")
-    kw['install_requires'] = install_requires
-    kw['extras_require'] = {
-        'mysql': ['MySQLdb'],
-        'postgresql': ['psycopg'],  # or pgdb from PyGreSQL
-        'sqlite': ['pysqlite'],
-        'firebird': ['fdb'],  # or kinterbasdb
-        'sybase': ['Sybase'],
-        'mssql': ['adodbapi'],  # or pymssql
+
+    kw['extras_require'] = extras_require = {
+        # Firebird/Interbase
+        'fdb': ['fdb'],
+        'firebirdsql': ['firebirdsql'],
+        'kinterbasdb': ['kinterbasdb'],
+        # MS SQL
+        'adodbapi': ['adodbapi'],
+        'pymssql': ['pymssql'],
+        # MySQL
+        'mysql-connector': ['mysql-connector'],
+        'pymysql': ['pymysql'],
+        # ODBC
+        'odbc': ['pyodbc'],
+        'pyodbc': ['pyodbc'],
+        'pypyodbc': ['pypyodbc'],
+        # PostgreSQL
+        'psycopg1': ['psycopg1'],
+        'psycopg2': ['psycopg2'],
+        'psycopg': ['psycopg2'],
+        'postgres': ['psycopg2'],
+        'postgresql': ['psycopg2'],
+        'pygresql': ['pygresql'],
+        'pypostgresql': ['py-postgresql'],
+        'py-postgresql': ['py-postgresql'],
+        #
         'sapdb': ['sapdb'],
+        'sqlite': ['pysqlite'],
+        'sybase': ['Sybase'],
     }
+    if PY2:
+        extras_require['mysql'] = ['MySQLdb']
+        extras_require['oursql'] = ['oursql']
+    else:
+        extras_require['mysql'] = ['mysqlclient']
 
 setup(name="SQLObject",
       version=version,

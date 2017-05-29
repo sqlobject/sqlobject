@@ -15,6 +15,9 @@ SQLObject 3.4.0 (master)
 
 * Encode/decode binary values for PyGreSQL driver.
 
+* List all drivers in extras_require in setup.py.
+
+
 SQLObject 3.3.0
 ===============
 
