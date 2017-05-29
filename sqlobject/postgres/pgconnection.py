@@ -93,6 +93,8 @@ class PostgresConnection(DBAPI):
         elif driver in ('py-postgresql', 'pypostgresql'):
             registerConverter(type(self.module.Binary(b'')),
                               PypostgresBinaryConverter)
+        elif driver in ('odbc', 'pyodbc', 'pypyodbc'):
+            registerConverter(bytearray, OdbcBinaryConverter)
 
         self.db = db
         self.user = user
@@ -548,3 +550,11 @@ def escape_bytea(value):
 def PypostgresBinaryConverter(value, db):
     assert db == 'postgres'
     return sqlrepr(escape_bytea(value.decode('latin1')), db)
+
+
+def OdbcBinaryConverter(value, db):
+    assert db == 'postgres'
+    value = bytes(value)
+    if not PY2:
+        value = value.decode('latin1')
+    return value
