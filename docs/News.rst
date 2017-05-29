@@ -17,6 +17,8 @@ SQLObject 3.4.0 (master)
 
 * List all drivers in extras_require in setup.py.
 
+* Use base64.b64encode/b64decode instead of deprecated
+  encodestring/decodestring.
 
 SQLObject 3.3.0
 ===============

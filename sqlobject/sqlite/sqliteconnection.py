@@ -59,8 +59,8 @@ class SQLiteConnection(DBAPI):
             raise ImportError(
                 'Cannot find an SQLite driver, tried %s' % drivers)
         if self.using_sqlite2:
-            sqlite.encode = base64.encodestring
-            sqlite.decode = base64.decodestring
+            sqlite.encode = base64.b64encode
+            sqlite.decode = base64.b64decode
         self.module = sqlite
         self.filename = filename  # full path to sqlite-db-file
         self._memory = filename == ':memory:'
