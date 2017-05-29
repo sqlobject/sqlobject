@@ -2,7 +2,7 @@ import re
 from sqlobject import col
 from sqlobject import dberrors
 from sqlobject import sqlbuilder
-from sqlobject.compat import PY2, unicode_type
+from sqlobject.compat import PY2
 from sqlobject.converters import registerConverter, sqlrepr
 from sqlobject.dbconnection import DBAPI
 
@@ -86,15 +86,13 @@ class PostgresConnection(DBAPI):
             registerConverter(type(self.module.Binary('')),
                               PsycoBinaryConverter)
         elif driver == 'pygresql':
-            from pg import escape_bytea
+            from pg import escape_bytea as pg_escape_bytea
             self.createBinary = \
-                lambda value, escape_bytea=escape_bytea: escape_bytea(value)
-        elif type(self.module.Binary) in (
-                type, type(PostgresBinaryConverter)) and \
-                type(self.module.Binary(b'')) not in (bytes, unicode_type):
-            # Register a converter for Binary type.
+                lambda value, pg_escape_bytea=pg_escape_bytea: \
+                pg_escape_bytea(value)
+        elif driver in ('py-postgresql', 'pypostgresql'):
             registerConverter(type(self.module.Binary(b'')),
-                              PostgresBinaryConverter)
+                              PypostgresBinaryConverter)
 
         self.db = db
         self.user = user
@@ -541,11 +539,12 @@ def PsycoBinaryConverter(value, db):
     return str(value)
 
 
-if PY2:
-    def PostgresBinaryConverter(value, db):
-        assert db == 'postgres'
-        return sqlrepr(bytes(value), db)
-else:
-    def PostgresBinaryConverter(value, db):
-        assert db == 'postgres'
-        return sqlrepr(value.decode('latin1'), db)
+def escape_bytea(value):
+    return ''.join(
+        ['\\' + (x[2:].rjust(3, '0')) for x in (oct(ord(c)) for c in value)]
+    )
+
+
+def PypostgresBinaryConverter(value, db):
+    assert db == 'postgres'
+    return sqlrepr(escape_bytea(value.decode('latin1')), db)

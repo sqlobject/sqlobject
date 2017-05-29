@@ -13,6 +13,9 @@ SQLObject 3.4.0 (master)
 * Python 2.6 is no longer supported. The minimal supported version is
   Python 2.7.
 
+* Encode binary values for py-postgresql driver. This fixes the
+  last remaining problems with the driver.
+
 * Encode/decode binary values for PyGreSQL driver.
 
 * List all drivers in extras_require in setup.py.
