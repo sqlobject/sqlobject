@@ -22,6 +22,9 @@ contributing you should read the `Developer Guide <DeveloperGuide.html>`_.
 The `Author List <Authors.html>`_ tries to list all the major
 contributors.
 
+Questions can also be asked and answered on `StackOverflow
+<https://stackoverflow.com/questions/tagged/sqlobject>`_.
+
 One can also contribute to `community-editable recipe/documentation site
 <https://sites.google.com/site/sqlobject/>`_.
 

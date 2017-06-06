@@ -59,6 +59,9 @@ https://pypi.python.org/pypi/SQLObject/3.4.0a0.dev20170507
 News and changes:
 http://sqlobject.org/News.html
 
+StackOverflow:
+https://stackoverflow.com/questions/tagged/sqlobject
+
 
 Example
 =======
