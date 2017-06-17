@@ -10,8 +10,20 @@ News
 SQLObject 3.4.0 (master)
 ========================
 
+Features
+--------
+
 * Python 2.6 is no longer supported. The minimal supported version is
   Python 2.7.
+
+Minor features
+--------------
+
+* Use base64.b64encode/b64decode instead of deprecated
+  encodestring/decodestring.
+
+Drivers (work in progress)
+--------------------------
 
 * Encode binary values for py-postgresql driver. This fixes the
   last remaining problems with the driver.
@@ -20,8 +32,11 @@ SQLObject 3.4.0 (master)
 
 * List all drivers in extras_require in setup.py.
 
-* Use base64.b64encode/b64decode instead of deprecated
-  encodestring/decodestring.
+Tests
+-----
+
+* Use remove-old-files.py from ppu to cleanup pip cache
+  at Travis and AppVeyor.
 
 SQLObject 3.3.0
 ===============

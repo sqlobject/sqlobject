@@ -245,7 +245,7 @@ install:
   - "python --version"
   - "python -c \"import struct; print(struct.calcsize('P') * 8)\""
   - "pip --version"
-  - "pip install tox"
+  - "pip install tox ppu"
   # List ODBC drivers
   - ps: Get-OdbcDriver -Platform 32-bit | Select-Object -ExpandProperty Name
   - ps: Get-OdbcDriver -Platform 64-bit | Select-Object -ExpandProperty Name
@@ -270,3 +270,6 @@ build: false
 
 test_script:
   - "%CMD_IN_ENV% tox -e %TOX_ENV%"
+
+after_test:
+  - "remove-old-files.py -o 180 %LOCALAPPDATA%\\pip\\Cache"

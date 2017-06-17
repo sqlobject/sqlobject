@@ -101,7 +101,7 @@ before_install:
       sudo gsec -user sysdba -pass masterkey -add test -pw test;
     fi
 
-install: travis_retry pip install tox coveralls codecov
+install: travis_retry pip install tox coveralls codecov ppu
 
 script: tox -e ${TOXENV}
 
@@ -109,3 +109,6 @@ after_success:
     - cd sqlobject
     - coveralls
     - codecov
+
+before_cache:
+  - remove-old-files.py -o 180 ~/.cache/pip
