@@ -38,6 +38,9 @@ Tests
 * Use remove-old-files.py from ppu to cleanup pip cache
   at Travis and AppVeyor.
 
+* Add test_csvimport.py more as an example how to use load_csv
+  from sqlobject.util.csvimport.
+
 SQLObject 3.3.0
 ===============
 
