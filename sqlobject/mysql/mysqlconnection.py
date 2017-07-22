@@ -459,7 +459,7 @@ class MySQLConnection(DBAPI):
     def can_use_microseconds(self):
         if self._can_use_microseconds is not None:
             return self._can_use_microseconds
-        if os.environ.get('APPVEYOR'):
+        if os.environ.get('APPVEYOR') or os.environ.get('TRAVIS'):
             self._can_use_microseconds = False
             return False
         server_version = self.server_version()
