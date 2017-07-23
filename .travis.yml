@@ -91,14 +91,15 @@ before_install:
   # We also create a test user for the firebird test and
   # create a script that can be fed into isql-fb
   # to create the test database.
+  # Copied password initializtion from
+  # https://github.com/xdenser/node-firebird-libfbclient/blob/master/.travis.yml
   - if [[ $TOXENV = *firebird* ]]; then
       sudo sed -i /etc/default/firebird2.5 -e 's/=no/=yes/' &&
       sudo /etc/init.d/firebird2.5-super start && sleep 5 &&
-      sudo touch /var/lib/firebird/create_test_db &&
-      sudo chmod 666 /var/lib/firebird/create_test_db &&
-      echo "CREATE DATABASE 'localhost:/tmp/test.fdb';" > /var/lib/firebird/create_test_db &&
-      sudo chmod 644 /var/lib/firebird/create_test_db &&
-      sudo gsec -user sysdba -pass masterkey -add test -pw test;
+      sudo /bin/bash -c '(export FB_VER="2.5"; export FB_FLAVOUR="super";source /usr/share/firebird2.5-common/functions.sh; writeNewPassword masterkey)' &&
+      sudo gsec -user sysdba -pass masterkey -add test -pw test &&
+      sudo /bin/bash -c "echo \"CREATE DATABASE 'localhost:/tmp/test.fdb';\" > /var/lib/firebird/create_test_db" &&
+      sudo chmod 644 /var/lib/firebird/create_test_db;
     fi
 
 install: travis_retry pip install tox coveralls codecov ppu
