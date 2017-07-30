@@ -28,7 +28,16 @@ Drivers (work in progress)
 * Encode binary values for py-postgresql driver. This fixes the
   last remaining problems with the driver.
 
-* Encode/decode binary values for PyGreSQL driver.
+* Encode binary values for PyGreSQL driver using the same encoding as for
+  py-postgresql driver. This fixes the last remaining problems with the driver.
+
+  Our own encoding is needed because unescape_bytea(escape_bytea()) is not
+  idempotent. See the comment for PQunescapeBytea at
+  https://www.postgresql.org/docs/9.6/static/libpq-exec.html:
+
+    This conversion is not exactly the inverse of PQescapeBytea, because the
+    string is not expected to be "escaped" when received from PQgetvalue. In
+    particular this means there is no need for string quoting considerations.
 
 * List all drivers in extras_require in setup.py.
 

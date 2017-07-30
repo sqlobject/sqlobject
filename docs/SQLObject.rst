@@ -1831,9 +1831,9 @@ PostgresConnection supports transactions and all other features.
 The user can choose a DB API driver for PostgreSQL by using a ``driver``
 parameter in DB URI or PostgresConnection that can be a comma-separated
 list of driver names. Possible drivers are: ``psycopg2``, psycopg1,
-``psycopg`` (tries psycopg2 and psycopg1), ``pygresql``, ``pygresql``,
-``pypostgresql``, ``pyodbc``, ``pypyodbc`` or ``odbc`` (try ``pyodbc`` and
-``pypyodbc``). Default is ``psycopg``.
+``psycopg`` (tries psycopg2 and psycopg1), ``pygresql``, ``pypostgresql``,
+``pyodbc``, ``pypyodbc`` or ``odbc`` (try ``pyodbc`` and ``pypyodbc``).
+Default is ``psycopg``.
 
 Connection-specific parameters are: ``sslmode``, ``unicodeCols``,
 ``schema``, ``charset``.

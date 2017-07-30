@@ -85,14 +85,9 @@ class PostgresConnection(DBAPI):
             # Register a converter for psycopg Binary type.
             registerConverter(type(self.module.Binary('')),
                               PsycoBinaryConverter)
-        elif driver == 'pygresql':
-            from pg import escape_bytea as pg_escape_bytea
-            self.createBinary = \
-                lambda value, pg_escape_bytea=pg_escape_bytea: \
-                pg_escape_bytea(value)
-        elif driver in ('py-postgresql', 'pypostgresql'):
+        elif driver in ('pygresql', 'py-postgresql', 'pypostgresql'):
             registerConverter(type(self.module.Binary(b'')),
-                              PypostgresBinaryConverter)
+                              PostgresBinaryConverter)
         elif driver in ('odbc', 'pyodbc', 'pypyodbc'):
             registerConverter(bytearray, OdbcBinaryConverter)
 
@@ -541,15 +536,23 @@ def PsycoBinaryConverter(value, db):
     return str(value)
 
 
-def escape_bytea(value):
-    return ''.join(
-        ['\\' + (x[2:].rjust(3, '0')) for x in (oct(ord(c)) for c in value)]
-    )
+if PY2:
+    def escape_bytea(value):
+        return ''.join(
+            ['\\' + (x[1:].rjust(3, '0'))
+                for x in (oct(ord(c)) for c in value)]
+        )
+else:
+    def escape_bytea(value):
+        return ''.join(
+            ['\\' + (x[2:].rjust(3, '0'))
+                for x in (oct(ord(c)) for c in value.decode('latin1'))]
+        )
 
 
-def PypostgresBinaryConverter(value, db):
+def PostgresBinaryConverter(value, db):
     assert db == 'postgres'
-    return sqlrepr(escape_bytea(value.decode('latin1')), db)
+    return sqlrepr(escape_bytea(value), db)
 
 
 def OdbcBinaryConverter(value, db):
