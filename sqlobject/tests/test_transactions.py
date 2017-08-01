@@ -50,7 +50,8 @@ def test_transaction():
 
 def test_transaction_commit_sync():
     setupClass(SOTestSOTrans)
-    trans = SOTestSOTrans._connection.transaction()
+    connection = SOTestSOTrans._connection
+    trans = connection.transaction()
     try:
         SOTestSOTrans(name='bob')
         bOut = SOTestSOTrans.byName('bob')
@@ -60,14 +61,16 @@ def test_transaction_commit_sync():
         trans.commit()
         assert bOut.name == 'robert'
     finally:
-        SOTestSOTrans._connection.autoCommit = True
+        trans.rollback()
+        connection.autoCommit = True
+        connection.close()
 
 
 def test_transaction_delete(close=False):
     setupClass(SOTestSOTrans)
     connection = SOTestSOTrans._connection
     if (connection.dbName == 'sqlite') and connection._memory:
-        pytest.skip("The following test requires a different connection")
+        pytest.skip("The test doesn't work with sqlite memory connection")
     trans = connection.transaction()
     try:
         SOTestSOTrans(name='bob')

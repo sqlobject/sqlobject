@@ -44,6 +44,9 @@ Drivers (work in progress)
 Tests
 -----
 
+* Fix a bug with sqlite-memory: rollback transaction and close connection.
+  The solution was found by Dr. Neil Muller.
+
 * Use remove-old-files.py from ppu to cleanup pip cache
   at Travis and AppVeyor.
 

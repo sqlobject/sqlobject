@@ -22,7 +22,7 @@ I'm pleased to announce version 3.4.1, the first bugfix release of branch
 What's new in SQLObject
 =======================
 
-Contributor for this release is 
+Contributor for this release is Dr. Neil Muller.
 
 For a more complete list, please see the news:
 http://sqlobject.org/News.html
