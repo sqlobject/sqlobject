@@ -31,7 +31,8 @@ if [ "$state" = final ]; then
    cp -a dist/* "$HOME"/tmp/ &&
    rsync -ahP4 dist/* frs.sourceforge.net:/home/frs/project/sqlobject/sqlobject/"$version"/ &&
    rsync -ahP4 ANNOUNCE.rst frs.sourceforge.net:/home/frs/project/sqlobject/sqlobject/"$version"/README.rst || exit 1
-fi
+   ../sftp-frs
+fi &&
 
 twine register dist/SQLObject-"$version".tar.gz &&
 twine upload --sign dist/* &&
