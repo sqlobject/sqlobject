@@ -34,7 +34,5 @@ if [ "$state" = final ]; then
    ../sftp-frs
 fi &&
 
-twine register dist/SQLObject-"$version".tar.gz &&
 twine upload --sign dist/* &&
-
 exec rm -rf build dist docs/html SQLObject.egg-info
