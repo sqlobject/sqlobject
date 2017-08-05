@@ -1,21 +1,6 @@
 Hello!
 
-I'm pleased to announce version 3.4.0a1, the first alpha of the upcoming
-release of branch 3.4 of SQLObject.
-
-I'm pleased to announce version 3.4.0a2, the second alpha of the upcoming
-release of branch 3.4 of SQLObject.
-
-I'm pleased to announce version 3.4.0b1, the first beta of the upcoming
-release of branch 3.4 of SQLObject.
-
-I'm pleased to announce version 3.4.0rc1, the first release candidate
-of the upcoming release of branch 3.4 of SQLObject.
-
 I'm pleased to announce version 3.4.0, the first stable release of branch
-3.4 of SQLObject.
-
-I'm pleased to announce version 3.4.1, the first bugfix release of branch
 3.4 of SQLObject.
 
 
@@ -23,6 +8,49 @@ What's new in SQLObject
 =======================
 
 Contributor for this release is Dr. Neil Muller.
+
+Features
+--------
+
+* Python 2.6 is no longer supported. The minimal supported version is
+  Python 2.7.
+
+Drivers (work in progress)
+--------------------------
+
+* Encode binary values for py-postgresql driver. This fixes the
+  last remaining problems with the driver.
+
+* Encode binary values for PyGreSQL driver using the same encoding as for
+  py-postgresql driver. This fixes the last remaining problems with the driver.
+
+  Our own encoding is needed because unescape_bytea(escape_bytea()) is not
+  idempotent. See the comment for PQunescapeBytea at
+  https://www.postgresql.org/docs/9.6/static/libpq-exec.html:
+
+    This conversion is not exactly the inverse of PQescapeBytea, because the
+    string is not expected to be "escaped" when received from PQgetvalue. In
+    particular this means there is no need for string quoting considerations.
+
+* List all drivers in extras_require in setup.py.
+
+Minor features
+--------------
+
+* Use base64.b64encode/b64decode instead of deprecated
+  encodestring/decodestring.
+
+Tests
+-----
+
+* Fix a bug with sqlite-memory: rollback transaction and close connection.
+  The solution was found by Dr. Neil Muller.
+
+* Use remove-old-files.py from ppu to cleanup pip cache
+  at Travis and AppVeyor.
+
+* Add test_csvimport.py more as an example how to use load_csv
+  from sqlobject.util.csvimport.
 
 For a more complete list, please see the news:
 http://sqlobject.org/News.html
@@ -54,7 +82,7 @@ Mailing list:
 https://lists.sourceforge.net/mailman/listinfo/sqlobject-discuss
 
 Download:
-https://pypi.python.org/pypi/SQLObject/3.4.0a0.dev20170507
+https://pypi.python.org/pypi/SQLObject/3.4.0
 
 News and changes:
 http://sqlobject.org/News.html

@@ -7,20 +7,16 @@ News
 
 .. _start:
 
-SQLObject 3.4.0 (master)
-========================
+SQLObject 3.4.0
+===============
+
+Released 5 Aug 2017.
 
 Features
 --------
 
 * Python 2.6 is no longer supported. The minimal supported version is
   Python 2.7.
-
-Minor features
---------------
-
-* Use base64.b64encode/b64decode instead of deprecated
-  encodestring/decodestring.
 
 Drivers (work in progress)
 --------------------------
@@ -40,6 +36,12 @@ Drivers (work in progress)
     particular this means there is no need for string quoting considerations.
 
 * List all drivers in extras_require in setup.py.
+
+Minor features
+--------------
+
+* Use base64.b64encode/b64decode instead of deprecated
+  encodestring/decodestring.
 
 Tests
 -----
