@@ -1,3 +1,4 @@
+from getpass import getuser
 import re
 from sqlobject import col
 from sqlobject import dberrors
@@ -55,6 +56,9 @@ class PostgresConnection(DBAPI):
                 elif driver in ('py-postgresql', 'pypostgresql'):
                     from postgresql.driver import dbapi20
                     self.module = dbapi20
+                elif driver == 'pg8000':
+                    import pg8000
+                    self.module = pg8000
                 elif driver == 'pyodbc':
                     import pyodbc
                     self.module = pyodbc
@@ -71,7 +75,7 @@ class PostgresConnection(DBAPI):
                     raise ValueError(
                         'Unknown PostgreSQL driver "%s", '
                         'expected psycopg, psycopg2, psycopg1, '
-                        'pygresql, pypostgresql, '
+                        'pygresql, pypostgresql, pg8000, '
                         'odbc, pyodbc or pypyodbc' % driver)
             except ImportError:
                 pass
@@ -85,7 +89,7 @@ class PostgresConnection(DBAPI):
             # Register a converter for psycopg Binary type.
             registerConverter(type(self.module.Binary('')),
                               PsycoBinaryConverter)
-        elif driver in ('pygresql', 'py-postgresql', 'pypostgresql'):
+        elif driver in ('pygresql', 'py-postgresql', 'pypostgresql', 'pg8000'):
             registerConverter(type(self.module.Binary(b'')),
                               PostgresBinaryConverter)
         elif driver in ('odbc', 'pyodbc', 'pypyodbc'):
@@ -161,6 +165,12 @@ class PostgresConnection(DBAPI):
                 else:
                     if "unix" in dsn_dict:
                         del dsn_dict["unix"]
+            if driver == 'pg8000':
+                if host and host.startswith('/'):
+                    dsn_dict["host"] = None
+                    dsn_dict["unix_sock"] = host
+                if user is None:
+                    dsn_dict["user"] = getuser()
             self.dsn = dsn
         self.driver = driver
         self.unicodeCols = kw.pop('unicodeCols', False)

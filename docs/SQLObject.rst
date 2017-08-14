@@ -49,12 +49,12 @@ Requirements
 Currently SQLObject supports MySQL_ via MySQLdb_ aka MySQL-python (called
 mysqlclient_ for Python 3), `MySQL Connector`_, oursql_, PyMySQL_, PyODBC_
 and PyPyODBC_. For PostgreSQL_ psycopg2_ or psycopg1 are recommended;
-PyGreSQL_, py-postgresql_, PyODBC_ and PyPyODBC_ are supported but have
-problems (not all tests passed). SQLite_ has a built-in driver or
-PySQLite_. Firebird_ is supported via fdb_ or kinterbasdb_; pyfirebirdsql_
-is supported but has problems. `MAX DB`_ (also known as SAP DB) is
-supported via sapdb_. Sybase via Sybase_. `MSSQL Server`_ via pymssql_ (+
-FreeTDS_) or adodbapi_ (Win32).
+PyGreSQL_, py-postgresql_ and pg8000_ are supported; SQLite_ has a
+built-in driver or PySQLite_. Firebird_ is supported via fdb_ or
+kinterbasdb_; pyfirebirdsql_ is supported but has problems. `MAX DB`_
+(also known as SAP DB) is supported via sapdb_. Sybase via Sybase_. `MSSQL
+Server`_ via pymssql_ (+ FreeTDS_) or adodbapi_ (Win32). PyODBC_ and
+PyPyODBC_ are supported but have problems (not all tests passed).
 
 .. _MySQL: https://www.mysql.com/
 .. _MySQLdb: https://sourceforge.net/projects/mysql-python/
@@ -66,8 +66,7 @@ FreeTDS_) or adodbapi_ (Win32).
 .. _psycopg2: http://initd.org/psycopg/
 .. _PyGreSQL: http://www.pygresql.org/
 .. _py-postgresql: https://pypi.python.org/pypi/py-postgresql
-.. _PyODBC: https://pypi.python.org/pypi/pyodbc
-.. _PyPyODBC: https://pypi.python.org/pypi/pypyodbc
+.. _pg8000: https://pypi.python.org/pypi/pg8000
 .. _SQLite: https://sqlite.org/
 .. _PySQLite: https://github.com/ghaering/pysqlite
 .. _Firebird: http://www.firebirdsql.org/en/python-driver/
@@ -81,6 +80,8 @@ FreeTDS_) or adodbapi_ (Win32).
 .. _pymssql: http://www.pymssql.org/en/latest/index.html
 .. _FreeTDS: http://www.freetds.org/
 .. _adodbapi: http://adodbapi.sourceforge.net/
+.. _PyODBC: https://pypi.python.org/pypi/pyodbc
+.. _PyPyODBC: https://pypi.python.org/pypi/pypyodbc
 
 Python 2.7 or 3.4+ is required.
 
@@ -1832,8 +1833,8 @@ The user can choose a DB API driver for PostgreSQL by using a ``driver``
 parameter in DB URI or PostgresConnection that can be a comma-separated
 list of driver names. Possible drivers are: ``psycopg2``, psycopg1,
 ``psycopg`` (tries psycopg2 and psycopg1), ``pygresql``, ``pypostgresql``,
-``pyodbc``, ``pypyodbc`` or ``odbc`` (try ``pyodbc`` and ``pypyodbc``).
-Default is ``psycopg``.
+``pg8000``, ``pyodbc``, ``pypyodbc`` or ``odbc`` (try ``pyodbc`` and
+``pypyodbc``). Default is ``psycopg``.
 
 Connection-specific parameters are: ``sslmode``, ``unicodeCols``,
 ``schema``, ``charset``.

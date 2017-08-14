@@ -10,6 +10,12 @@ News
 SQLObject 3.5.0 (master)
 ========================
 
+Drivers
+-------
+
+* Add support for `pg8000 <https://pypi.python.org/pypi/pg8000>`_
+  PostgreSQL driver (from git). There is a minor problem with Python 2.7.
+
 SQLObject 3.4.0
 ===============
 

@@ -49,6 +49,10 @@ env:
   - TOXENV=py34-pypostgresql
   - TOXENV=py35-pypostgresql
   - TOXENV=py36-pypostgresql
+  - TOXENV=py27-postgres-pg8000
+  - TOXENV=py34-postgres-pg8000
+  - TOXENV=py35-postgres-pg8000
+  - TOXENV=py36-postgres-pg8000
   - TOXENV=py27-sqlite
   - TOXENV=py34-sqlite
   - TOXENV=py35-sqlite
@@ -70,6 +74,7 @@ env:
 
 matrix:
   allow_failures:
+    - env: TOXENV=py27-postgres-pg8000
     - env: TOXENV=py27-firebird-fdb
     - env: TOXENV=py34-firebird-fdb
     - env: TOXENV=py35-firebird-fdb

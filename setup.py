@@ -65,6 +65,7 @@ if is_setuptools:
         'pygresql': ['pygresql'],
         'pypostgresql': ['py-postgresql'],
         'py-postgresql': ['py-postgresql'],
+        'pg8000': ['pg8000'],
         #
         'sapdb': ['sapdb'],
         'sqlite': ['pysqlite'],
