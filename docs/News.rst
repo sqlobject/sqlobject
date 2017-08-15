@@ -16,6 +16,11 @@ Drivers
 * Add support for `pg8000 <https://pypi.python.org/pypi/pg8000>`_
   PostgreSQL driver (from git). There is a minor problem with Python 2.7.
 
+Tests
+-----
+
+* Add tests for PyGreSQL, py-postgresql and pg8000 at AppVeyor.
+
 SQLObject 3.4.0
 ===============
 
