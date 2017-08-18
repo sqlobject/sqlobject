@@ -114,19 +114,9 @@ environment:
       PYTHON_HOME: "C:\\Python36-x64"
       db: postgresql
     - TOX_ENV: "py27-postgres-pygresql-w32"
-      PYTHON_ARCH: "32"
-      PYTHON_VERSION: "2.7"
-      PYTHON_HOME: "C:\\Python27"
-      db: postgresql
-    - TOX_ENV: "py27-postgres-pygresql-w32"
       PYTHON_ARCH: "64"
       PYTHON_VERSION: "2.7"
       PYTHON_HOME: "C:\\Python27-x64"
-      db: postgresql
-    - TOX_ENV: "py34-postgres-pygresql-w32"
-      PYTHON_ARCH: "32"
-      PYTHON_VERSION: "3.4"
-      PYTHON_HOME: "C:\\Python34"
       db: postgresql
     - TOX_ENV: "py34-postgres-pygresql-w32"
       PYTHON_ARCH: "64"
@@ -134,19 +124,9 @@ environment:
       PYTHON_HOME: "C:\\Python34-x64"
       db: postgresql
     - TOX_ENV: "py35-postgres-pygresql-w32"
-      PYTHON_ARCH: "32"
-      PYTHON_VERSION: "3.5"
-      PYTHON_HOME: "C:\\Python35"
-      db: postgresql
-    - TOX_ENV: "py35-postgres-pygresql-w32"
       PYTHON_ARCH: "64"
       PYTHON_VERSION: "3.5"
       PYTHON_HOME: "C:\\Python35-x64"
-      db: postgresql
-    - TOX_ENV: "py36-postgres-pygresql-w32"
-      PYTHON_ARCH: "32"
-      PYTHON_VERSION: "3.6"
-      PYTHON_HOME: "C:\\Python36"
       db: postgresql
     - TOX_ENV: "py36-postgres-pygresql-w32"
       PYTHON_ARCH: "64"
