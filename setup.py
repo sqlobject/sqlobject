@@ -121,7 +121,9 @@ and `GitHub <https://github.com/sqlobject>`_.
       maintainer_email="phd@phdru.name",
       url="http://sqlobject.org/",
       download_url="https://pypi.python.org/pypi/SQLObject/%s" % version,
+      keywords=["sql", "orm", "object-relational mapper"],
       license="LGPL",
+      platforms="Any",
       packages=["sqlobject"] +
           ['sqlobject.%s' % package for package in subpackages],
       scripts=["scripts/sqlobject-admin", "scripts/sqlobject-convertOldURI"],
