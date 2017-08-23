@@ -21,6 +21,9 @@ Tests
 
 * Add tests for PyGreSQL, py-postgresql and pg8000 at AppVeyor.
 
+* Fixed bugs in py-postgresql at AppVeyor. SQLObject requires
+  the latest version of the driver from git.
+
 SQLObject 3.4.0
 ===============
 
