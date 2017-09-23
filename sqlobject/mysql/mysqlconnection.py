@@ -206,6 +206,13 @@ class MySQLConnection(DBAPI):
                 # mysql-connector has autocommit as a property
                 conn.autocommit = auto
 
+    def _force_reconnect(self, conn):
+        if self.driver.lower() == 'pymysql':
+            conn.ping(True)
+            self._setAutoCommit(conn, bool(self.autoCommit))
+            if self.dbEncoding:
+                conn.query("SET NAMES %s" % self.dbEncoding)
+
     def _executeRetry(self, conn, cursor, query):
         if self.debug:
             self.printDebug(conn, query, 'QueryR')
@@ -225,6 +232,8 @@ class MySQLConnection(DBAPI):
         # reconnect flag must be set when making the connection to indicate
         # that autoreconnecting is desired. In MySQLdb 1.2.2 or newer this is
         # done by calling ping(True) on the connection.
+        # PyMySQL needs explicit reconnect
+        # each time we detect connection timeout.
         for count in range(3):
             try:
                 return cursor.execute(query)
@@ -235,6 +244,8 @@ class MySQLConnection(DBAPI):
                         raise dberrors.OperationalError(ErrorMessage(e))
                     if self.debug:
                         self.printDebug(conn, str(e), 'ERROR')
+                    if self.driver.lower() == 'pymysql':
+                        self._force_reconnect(conn)
                 else:
                     raise dberrors.OperationalError(ErrorMessage(e))
             except self.module.IntegrityError as e:
