@@ -7,24 +7,21 @@ Author: <ahmedmo@wanadoo.fr>
 Edigram SA - Paris France
 Tel:0144779400
 
-SAPDBAPI installation 
+SAPDBAPI installation
 ---------------------
+
 The sapdb module can be downloaded from:
 
 Win32
--------
+-----
 
-ftp://ftp.sap.com/pub/sapdb/bin/win/sapdb-python-win32-7.4.03.31a.zip 
-
-
-Linux 
-------
-
-ftp://ftp.sap.com/pub/sapdb/bin/linux/sapdb-python-linux-i386-7.4.03.31a.tgz 
+ftp://ftp.sap.com/pub/sapdb/bin/win/sapdb-python-win32-7.4.03.33a.zip
 
 
-uncompress the archive and add the sapdb directory path to your PYTHONPATH.
+Linux
+-----
+
+ftp://ftp.sap.com/pub/sapdb/bin/linux/sapdb-python-linux-i386-7.4.03.33a.tgz
 
 
-
-
+Uncompress the archive and add the sapdb directory path to your PYTHONPATH.
