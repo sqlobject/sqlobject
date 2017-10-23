@@ -62,9 +62,9 @@ class TestPeople:
                 phone.person = Person.selectBy(name='tim')[0]
             else:
                 phone.person = Person.selectBy(name='bob')[0]
-        l = [p.phone for p in Person.selectBy(name='tim')[0].phones]
-        l.sort()
-        assert l == ['555-394-2930', '555-555-5555']
+        _l = [p.phone for p in Person.selectBy(name='tim')[0].phones]
+        _l.sort()
+        assert _l == ['555-394-2930', '555-555-5555']
         Phone.sqlmeta.delColumn(col, changeSchema=True)
         Person.sqlmeta.delJoin(join)
 
