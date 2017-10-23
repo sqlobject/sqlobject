@@ -701,7 +701,7 @@ class IntValidator(SOValidator):
             if hasattr(value, attr_name):
                 try:
                     return converter(value)
-                except:
+                except Exception:
                     break
         raise validators.Invalid(
             "expected an int in the IntCol '%s', got %s %r instead" % (
@@ -855,7 +855,7 @@ class FloatValidator(SOValidator):
             if hasattr(value, attr_name):
                 try:
                     return converter(value)
-                except:
+                except Exception:
                     break
         raise validators.Invalid(
             "expected a float in the FloatCol '%s', got %s %r instead" % (
@@ -1213,7 +1213,7 @@ class SetValidator(SOValidator):
             value = (value,)
         try:
             return ",".join(value)
-        except:
+        except Exception:
             raise validators.Invalid(
                 "expected a string or a sequence of strings "
                 "in the SetCol '%s', got %s %r instead" % (
@@ -1284,7 +1284,7 @@ class DateTimeValidator(validators.DateValidator):
                 else:
                     value += '.0'
             return datetime.datetime.strptime(value, self.format)
-        except:
+        except Exception:
             raise validators.Invalid(
                 "expected a date/time string of the '%s' format "
                 "in the DateTimeCol '%s', got %s %r instead" % (
@@ -1345,7 +1345,7 @@ if mxdatetime_available:
                 return DateTime.DateTime(value.year, value.month, value.day,
                                          value.hour, value.minute,
                                          value.second)
-            except:
+            except Exception:
                 raise validators.Invalid(
                     "expected a date/time string of the '%s' format "
                     "in the DateTimeCol '%s', got %s %r instead" % (
@@ -1625,7 +1625,7 @@ class DecimalValidator(SOValidator):
                 value = value.replace(connection.decimalSeparator, ".")
         try:
             return Decimal(value)
-        except:
+        except Exception:
             raise validators.Invalid(
                 "expected a Decimal in the DecimalCol '%s', "
                 "got %s %r instead" % (
@@ -1646,7 +1646,7 @@ class DecimalValidator(SOValidator):
                     value = value.replace(connection.decimalSeparator, ".")
             try:
                 return Decimal(value)
-            except:
+            except Exception:
                 raise validators.Invalid(
                     "can not parse Decimal value '%s' "
                     "in the DecimalCol from '%s'" % (

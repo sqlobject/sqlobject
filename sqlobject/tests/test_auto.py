@@ -193,7 +193,7 @@ class TestAuto:
         if dropper:
             try:
                 conn.query(dropper)
-            except:  # Perhaps we don't have DROP permission
+            except Exception:  # Perhaps we don't have DROP permission
                 pass
 
     def test_classCreate(self):

@@ -462,7 +462,7 @@ class MySQLConnection(DBAPI):
                 server_version = server_version[0]
             server_version = tuple(int(v) for v in server_version.split('.'))
             server_version = (server_version, db_tag)
-        except:
+        except Exception:
             server_version = None  # unknown
         self._server_version = server_version
         return server_version

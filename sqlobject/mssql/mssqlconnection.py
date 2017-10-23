@@ -376,7 +376,7 @@ class MSSQLConnection(DBAPI):
                 server_version = server_version.decode('ascii')
             server_version = server_version.split('.')[0]
             server_version = int(server_version)
-        except:
+        except Exception:
             server_version = None  # unknown
         self._server_version = server_version
         return server_version

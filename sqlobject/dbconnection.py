@@ -1006,7 +1006,7 @@ class ConnectionHub(object):
         try:
             try:
                 value = func(*args, **kw)
-            except:
+            except Exception:
                 conn.rollback()
                 raise
             else:

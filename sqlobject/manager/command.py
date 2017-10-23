@@ -1227,7 +1227,7 @@ class CommandUpgrade(CommandRecord):
             if not sim:
                 try:
                     conn.query(sql)
-                except:
+                except Exception:
                     print("Error in script: %s" % upgrader)
                     raise
             self.update_db(next_version, conn)

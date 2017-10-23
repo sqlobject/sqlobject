@@ -411,7 +411,7 @@ class InheritableSQLObject(SQLObject):
         # TC: the parent if the child can not be created.
         try:
             super(InheritableSQLObject, self)._create(id, **kw)
-        except:
+        except Exception:
             # If we are outside a transaction and this is a child,
             # destroy the parent
             connection = self._connection

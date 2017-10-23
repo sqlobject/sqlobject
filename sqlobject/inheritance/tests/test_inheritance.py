@@ -79,7 +79,7 @@ def test_inheritance_select():
 
     try:
         person = InheritablePerson.byLastName("Oneof")
-    except:
+    except Exception:
         pass
     else:
         raise RuntimeError("unknown person %s" % person)
