@@ -19,6 +19,12 @@ Drivers
 
 * Fix autoreconnect with pymysql driver. Contributed by Shailesh Mungikar.
 
+Documentation
+-------------
+
+* Remove generated HTML from eggs/wheels (docs are installed into wrong
+  place). Generated docs are still included in source distribution.
+
 Tests
 -----
 
