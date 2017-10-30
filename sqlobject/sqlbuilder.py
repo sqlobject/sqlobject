@@ -137,6 +137,18 @@ class SQLExpression:
     def __rdiv__(self, other):
         return SQLOp("/", other, self)
 
+    def __truediv__(self, other):
+        return SQLOp("/", self, other)
+
+    def __rtruediv__(self, other):
+        return SQLOp("/", other, self)
+
+    def __floordiv__(self, other):
+        return SQLConstant("FLOOR")(SQLOp("/", self, other))
+
+    def __rfloordiv__(self, other):
+        return SQLConstant("FLOOR")(SQLOp("/", other, self))
+
     def __pos__(self):
         return SQLPrefix("+", self)
 
