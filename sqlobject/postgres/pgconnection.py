@@ -235,6 +235,10 @@ class PostgresConnection(DBAPI):
     def _executeRetry(self, conn, cursor, query):
         if self.debug:
             self.printDebug(conn, query, 'QueryR')
+        dbEncoding = self.dbEncoding
+        if dbEncoding and isinstance(query, bytes) and (
+                self.driver == 'pg8000'):
+            query = query.decode(dbEncoding)
         try:
             return cursor.execute(query)
         except self.module.OperationalError as e:

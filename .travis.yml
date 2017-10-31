@@ -120,7 +120,6 @@ matrix:
     env: TOXENV=py36-firebirdsql
 
   allow_failures:
-    - env: TOXENV=py27-postgres-pg8000
     - env: TOXENV=py27-firebird-fdb
     - env: TOXENV=py34-firebird-fdb
     - env: TOXENV=py35-firebird-fdb

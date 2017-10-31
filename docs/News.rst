@@ -14,8 +14,7 @@ Drivers
 -------
 
 * Add support for `pg8000 <https://pypi.python.org/pypi/pg8000>`_
-  PostgreSQL driver (from our fork). There is a minor problem
-  with Python 2.7.
+  PostgreSQL driver (from our fork).
 
 * Fix autoreconnect with pymysql driver. Contributed by Shailesh Mungikar.
 
