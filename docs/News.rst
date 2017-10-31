@@ -22,7 +22,7 @@ Documentation
 -------------
 
 * Remove generated HTML from eggs/wheels (docs are installed into wrong
-  place). Generated docs are still included in source distribution.
+  place). Generated docs are still included in the source distribution.
 
 Tests
 -----
@@ -30,7 +30,7 @@ Tests
 * Add tests for PyGreSQL, py-postgresql and pg8000 at AppVeyor.
 
 * Fixed bugs in py-postgresql at AppVeyor. SQLObject requires
-  the latest version of the driver from git.
+  the latest version of the driver from our fork.
 
 SQLObject 3.4.0
 ===============
