@@ -33,16 +33,6 @@ environment:
     CMD_IN_ENV: "cmd /E:ON /V:ON /C .\\run_with_env.cmd"
 
   matrix:
-    - TOX_ENV: "py27-mssql-pyodbc-w32"
-      PYTHON_ARCH: "32"
-      PYTHON_VERSION: "2.7"
-      PYTHON_HOME: "C:\\Python27"
-      db: mssql2014
-    - TOX_ENV: "py34-mssql-pyodbc-w32"
-      PYTHON_ARCH: "64"
-      PYTHON_VERSION: "3.4"
-      PYTHON_HOME: "C:\\Python34-x64"
-      db: mssql2014
     - TOX_ENV: "py27-mysql-connector-w32"
       PYTHON_ARCH: "32"
       PYTHON_VERSION: "2.7"
@@ -273,21 +263,6 @@ install:
   # List ODBC drivers
   - ps: Get-OdbcDriver -Platform 32-bit | Select-Object -ExpandProperty Name
   - ps: Get-OdbcDriver -Platform 64-bit | Select-Object -ExpandProperty Name
-  # Enable TCP for mssql
-  - ps: |
-      [reflection.assembly]::LoadWithPartialName("Microsoft.SqlServer.Smo") | Out-Null
-      [reflection.assembly]::LoadWithPartialName("Microsoft.SqlServer.SqlWmiManagement") | Out-Null
-      $serverName = $env:COMPUTERNAME
-      $instanceName = 'SQL2014'
-      $smo = 'Microsoft.SqlServer.Management.Smo.'
-      $wmi = new-object ($smo + 'Wmi.ManagedComputer')
-      $uri = "ManagedComputer[@Name='$serverName']/ServerInstance[@Name='$instanceName']/ServerProtocol[@Name='Tcp']"
-      $Tcp = $wmi.GetSmoObject($uri)
-      $Tcp.IsEnabled = $true
-      $TCP.alter()
-      Set-Service SQLBrowser -StartupType Manual
-      Start-Service SQLBrowser
-      Start-Service "MSSQL`$$instanceName"
 
 # Not a C project, so no build step
 build: false
