@@ -10,6 +10,12 @@ News
 SQLObject 3.5.0 (master)
 ========================
 
+Features
+--------
+
+* Add Python3 special methods for division to SQLExpression.
+  Pull request by Michael S. Root.
+
 Drivers
 -------
 
