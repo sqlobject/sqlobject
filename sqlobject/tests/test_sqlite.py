@@ -1,7 +1,9 @@
+import math
 import threading
 import pytest
-from sqlobject import SQLObject, StringCol
+from sqlobject import SQLObject, StringCol, FloatCol
 from sqlobject.compat import string_type
+from sqlobject.sqlbuilder import Select
 from sqlobject.tests.dbtest import getConnection, setupClass, supports
 from sqlobject.tests.dbtest import setSQLiteConnectionFactory
 from .test_basic import SOTestSO1
@@ -144,3 +146,29 @@ def test_list_databases():
 def test_list_tables():
     setupClass(SOTestSO1)
     assert SOTestSO1.sqlmeta.table in connection.listTables()
+
+
+class SQLiteTruedivTest(SQLObject):
+    value = FloatCol()
+
+
+def test_truediv():
+    setupClass(SQLiteTruedivTest)
+
+    if SQLiteTruedivTest._connection.dbName == "sqlite":
+        if not SQLiteTruedivTest._connection.using_sqlite2:
+            pytest.skip("These tests require SQLite v2+")
+
+        def SQLiteConnectionFactory(sqlite):
+            class MyConnection(sqlite.Connection):
+                def __init__(self, *args, **kwargs):
+                    super(MyConnection, self).__init__(*args, **kwargs)
+                    self.create_function("floor", 1, math.floor)
+            return MyConnection
+
+        setSQLiteConnectionFactory(SQLiteTruedivTest, SQLiteConnectionFactory)
+
+    SQLiteTruedivTest(value=-5.0)
+    assert SQLiteTruedivTest._connection.queryAll(
+        SQLiteTruedivTest._connection.sqlrepr(
+            Select(SQLiteTruedivTest.q.value // 4)))[0][0] == -2
