@@ -57,6 +57,14 @@ def test_modulo():
         "(((so_test_sql_builder.so_value) % (2)) = (0))"
 
 
+def test_division():
+    SOTestSQLBuilder(name='test', so_value=-11)
+    assert sqlrepr(SOTestSQLBuilder.q.so_value / 4 == -2.75, 'mysql') == \
+        "(((so_test_sql_builder.so_value) / (4)) = (-2.75))"
+    assert sqlrepr(SOTestSQLBuilder.q.so_value // 4 == -3, 'mysql') == \
+        "((FLOOR(((so_test_sql_builder.so_value) / (4)))) = (-3))"
+
+
 def test_str_or_sqlrepr():
     select = Select(['id', 'name'], staticTables=['employees'],
                     where='value>0', orderBy='id')
