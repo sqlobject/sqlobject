@@ -7,6 +7,9 @@ News
 
 .. _start:
 
+SQLObject 3.6.0 (master)
+========================
+
 SQLObject 3.5.0
 ===============
 
