@@ -33,16 +33,16 @@
 
 7. Hide/show old releases at PyPI and SourceForge.
 
-8. Generate new docs using ./build-all-docs. Upload docs using
-   ./publish-docs.
+8. Run ../push-all in the development repository to push all branches
+   and tags to the public repositories.
 
 9. Run ../postrelease. The script restores ANNOUNCE.rst from the previous
    commit (HEAD~). It calls editor; update next version, remove the list
    of contributors and the list of changes, edit download URL in
    ANNOUNCE.rst. Edit docs/News.rst - add new version.
 
-10. Run ../push-all in the development repository to push all branches
-    and tags to the public repositories.
+10. Generate new docs using ./build-all-docs. Upload docs using
+    ./publish-docs.
 
 11. Send announcement to the SQLObject mailing list. For a stable
     release send announcements to python, python-announce and python-db
