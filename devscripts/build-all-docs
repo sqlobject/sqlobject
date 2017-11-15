@@ -11,7 +11,7 @@ cd "$PROG_DIR" &&
 PROG_DIR="`pwd`" &&
 
 cd "$PROG_DIR"/SQLObject &&
-build_docs 3.4.0 &&
+build_docs 3.5.0 &&
 build_docs master devel &&
 rm -rf docs/html &&
 

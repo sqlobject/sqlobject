@@ -1,7 +1,7 @@
 
-version = '3.4.0'
+version = '3.5.0'
 major = 3
-minor = 4
+minor = 5
 micro = 0
 release_level = 'final'
 serial = 0

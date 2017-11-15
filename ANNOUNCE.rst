@@ -1,28 +1,41 @@
 Hello!
 
-I'm pleased to announce version 3.4.1a1, the first alpha of the upcoming
-release of branch 3.4 of SQLObject.
-
-I'm pleased to announce version 3.4.1a2, the second alpha of the upcoming
-release of branch 3.4 of SQLObject.
-
-I'm pleased to announce version 3.4.1b1, the first beta of the upcoming
-release of branch 3.4 of SQLObject.
-
-I'm pleased to announce version 3.4.1rc1, the first release candidate
-of the upcoming release of branch 3.4 of SQLObject.
-
-I'm pleased to announce version 3.4.0, the first stable release of branch
-3.4 of SQLObject.
-
-I'm pleased to announce version 3.4.1, the first bugfix release of branch
-3.4 of SQLObject.
+I'm pleased to announce version 3.5.0, the first stable release of branch
+3.5 of SQLObject.
 
 
 What's new in SQLObject
 =======================
 
-Contributors for this release are Shailesh Mungikar, Michael S. Root.
+Contributors for this release are Shailesh Mungikar and Michael S. Root.
+
+Minor features
+--------------
+
+* Add Python3 special methods for division to SQLExpression.
+  Pull request by Michael S. Root.
+
+Drivers
+-------
+
+* Add support for `pg8000 <https://pypi.python.org/pypi/pg8000>`_
+  PostgreSQL driver.
+
+* Fix autoreconnect with pymysql driver. Contributed by Shailesh Mungikar.
+
+Documentation
+-------------
+
+* Remove generated HTML from eggs/wheels (docs are installed into wrong
+  place). Generated docs are still included in the source distribution.
+
+Tests
+-----
+
+* Add tests for PyGreSQL, py-postgresql and pg8000 at AppVeyor.
+
+* Fixed bugs in py-postgresql at AppVeyor. SQLObject requires
+  the latest version of the driver from our fork.
 
 For a more complete list, please see the news:
 http://sqlobject.org/News.html
@@ -54,7 +67,7 @@ Mailing list:
 https://lists.sourceforge.net/mailman/listinfo/sqlobject-discuss
 
 Download:
-https://pypi.python.org/pypi/SQLObject/3.4.1a0.dev20170805
+https://pypi.python.org/pypi/SQLObject/3.5.0
 
 News and changes:
 http://sqlobject.org/News.html

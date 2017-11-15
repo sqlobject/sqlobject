@@ -7,11 +7,13 @@ News
 
 .. _start:
 
-SQLObject 3.5.0 (master)
-========================
+SQLObject 3.5.0
+===============
 
-Features
---------
+Released 15 Nov 2017.
+
+Minor features
+--------------
 
 * Add Python3 special methods for division to SQLExpression.
   Pull request by Michael S. Root.
@@ -20,7 +22,7 @@ Drivers
 -------
 
 * Add support for `pg8000 <https://pypi.python.org/pypi/pg8000>`_
-  PostgreSQL driver (from our fork).
+  PostgreSQL driver.
 
 * Fix autoreconnect with pymysql driver. Contributed by Shailesh Mungikar.
 
