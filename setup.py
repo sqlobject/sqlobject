@@ -66,6 +66,8 @@ if is_setuptools:
         'sybase': ['Sybase'],
     }
 
+    kw['python_requires'] = '>=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*'
+
 setup(name="SQLObject",
       version=version,
       description="Object-Relational Manager, aka database wrapper",

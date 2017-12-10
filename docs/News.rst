@@ -17,6 +17,8 @@ Build
   ``install_requires`` and ``extras_require`` declarative. This makes
   the universal wheel truly universal.
 
+* Use ``python_requires`` keyword in ``setup.py``.
+
 SQLObject 3.5.0
 ===============
 
