@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-import sys
 from imp import load_source
 from os.path import abspath, dirname, join
 
@@ -27,21 +26,13 @@ if is_setuptools:
     [paste.filter_app_factory]
     main = sqlobject.wsgi_middleware:make_middleware
     """
-    if (sys.version_info[:2] == (2, 7)):
-        PY2 = True
-    elif (sys.version_info[0] == 3) and (sys.version_info[:2] >= (3, 4)):
-        PY2 = False
-    else:
-        raise ImportError("SQLObject requires Python 2.7 or 3.4+")
+    kw['install_requires'] = [
+        "FormEncode>=1.1.1,!=1.3.0; python_version=='2.7'",
+        "FormEncode>=1.3.1; python_version>='3.4'",
+        "PyDispatcher>=2.0.4",
+    ]
 
-    kw['install_requires'] = install_requires = []
-    if PY2:
-        install_requires.append("FormEncode>=1.1.1,!=1.3.0")
-    else:
-        install_requires.append("FormEncode>=1.3.1")
-    install_requires.append("PyDispatcher>=2.0.4")
-
-    kw['extras_require'] = extras_require = {
+    kw['extras_require'] = {
         # Firebird/Interbase
         'fdb': ['fdb'],
         'firebirdsql': ['firebirdsql'],
@@ -50,7 +41,10 @@ if is_setuptools:
         'adodbapi': ['adodbapi'],
         'pymssql': ['pymssql'],
         # MySQL
+        'mysql:python_version=="2.7"': ['MySQL-python'],
+        'mysql:python_version>="3.4"': ['mysqlclient'],
         'mysql-connector': ['mysql-connector'],
+        'oursql:python_version=="2.7"': ['oursql'],
         'pymysql': ['pymysql'],
         # ODBC
         'odbc': ['pyodbc'],
@@ -71,11 +65,6 @@ if is_setuptools:
         'sqlite': ['pysqlite'],
         'sybase': ['Sybase'],
     }
-    if PY2:
-        extras_require['mysql'] = ['MySQLdb']
-        extras_require['oursql'] = ['oursql']
-    else:
-        extras_require['mysql'] = ['mysqlclient']
 
 setup(name="SQLObject",
       version=version,

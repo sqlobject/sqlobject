@@ -10,6 +10,13 @@ News
 SQLObject 3.6.0 (master)
 ========================
 
+Build
+=====
+
+* Use ``python_version`` environment marker in ``setup.py`` to make
+  ``install_requires`` and ``extras_require`` declarative. This makes
+  the universal wheel truly universal.
+
 SQLObject 3.5.0
 ===============
 
