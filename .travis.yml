@@ -149,7 +149,7 @@ before_install:
       sudo chmod 644 /var/lib/firebird/create_test_db;
     fi
 
-install: travis_retry pip install tox coveralls codecov ppu
+install: travis_retry pip install --upgrade pip setuptools tox coveralls codecov ppu
 
 script: tox -e ${TOXENV}
 
