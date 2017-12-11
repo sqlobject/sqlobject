@@ -151,7 +151,7 @@ before_install:
 
 install: travis_retry pip install --upgrade pip setuptools tox coveralls codecov ppu
 
-script: tox -e ${TOXENV}
+script: tox
 
 after_success:
     - cd sqlobject
