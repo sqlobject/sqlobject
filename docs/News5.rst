@@ -5,8 +5,6 @@ News
 .. contents:: Contents:
    :backlinks: none
 
-.. _start:
-
 SQLObject 2.2.1
 ===============
 
