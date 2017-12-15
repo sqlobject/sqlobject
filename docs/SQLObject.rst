@@ -54,7 +54,8 @@ built-in driver or PySQLite_. Firebird_ is supported via fdb_ or
 kinterbasdb_; pyfirebirdsql_ is supported but has problems. `MAX DB`_
 (also known as SAP DB) is supported via sapdb_. Sybase via Sybase_. `MSSQL
 Server`_ via pymssql_ (+ FreeTDS_) or adodbapi_ (Win32). PyODBC_ and
-PyPyODBC_ are supported but have problems (not all tests passed).
+PyPyODBC_ are supported for MySQL, PostgreSQL and MSSQL but have
+problems (not all tests passed).
 
 .. _MySQL: https://www.mysql.com/
 .. _MySQLdb: https://sourceforge.net/projects/mysql-python/
