@@ -10,6 +10,11 @@ News
 SQLObject 3.6.0 (master)
 ========================
 
+Documentation
+-------------
+
+* Document extras that are available for installation.
+
 Build
 =====
 

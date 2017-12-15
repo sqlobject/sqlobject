@@ -38,6 +38,49 @@ when you install ``SQLObject==bugfix`` you will be installing a
 specific version, and "bugfix" is just a kind of label for a way of
 acquiring the version (it points to a branch in the repository).
 
+Drivers
+-------
+
+SQLObject can be used with a number of drivers_. They can be installed
+separately but it's also possible to install them with ``pip install``,
+for example ``pip install SQLObject[mysql]`` or
+``pip install SQLObject[postgres]``. The following drivers are
+available:
+
+.. _drivers: SQLObject.html#requirements
+
+Firebird/Interbase
+^^^^^^^^^^^^^^^^^^
+
+fdb firebirdsql kinterbasdb
+
+MS SQL
+^^^^^^
+
+adodbapi pymssql
+
+MySQL
+^^^^^
+
+mysql (installs MySQL-python for Python 2.7 and mysqlclient for Python 3.4+)
+mysql-connector oursql (only for Python 2.7) pymysql
+
+ODBC
+^^^^
+
+pyodbc pypyodbc odbc (synonym for pyodbc)
+
+PostgreSQL
+^^^^^^^^^^
+
+psycopg1 psycopg2 psycopg postgres postgresql (synonyms for psycopg2)
+pygresql pypostgresql py-postgresql pg8000
+
+The rest
+^^^^^^^^
+
+sapdb sqlite (pysqlite) sybase
+
 Repositories
 ------------
 
