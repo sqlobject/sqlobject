@@ -1,5 +1,5 @@
-sqlobject.tests.test_delete module
-==================================
+sqlobject\.tests\.test\_delete module
+=====================================
 
 .. automodule:: sqlobject.tests.test_delete
     :members:

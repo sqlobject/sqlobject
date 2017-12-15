@@ -1,5 +1,5 @@
-sqlobject.inheritance.tests.test_inheritance_tree module
-========================================================
+sqlobject\.inheritance\.tests\.test\_inheritance\_tree module
+=============================================================
 
 .. automodule:: sqlobject.inheritance.tests.test_inheritance_tree
     :members:

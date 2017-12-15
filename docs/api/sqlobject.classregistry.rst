@@ -1,5 +1,5 @@
-sqlobject.classregistry module
-==============================
+sqlobject\.classregistry module
+===============================
 
 .. automodule:: sqlobject.classregistry
     :members:

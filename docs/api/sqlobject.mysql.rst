@@ -1,5 +1,5 @@
-sqlobject.mysql package
-=======================
+sqlobject\.mysql package
+========================
 
 .. automodule:: sqlobject.mysql
     :members:

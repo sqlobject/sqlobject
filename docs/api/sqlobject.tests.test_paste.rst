@@ -1,5 +1,5 @@
-sqlobject.tests.test_paste module
-=================================
+sqlobject\.tests\.test\_paste module
+====================================
 
 .. automodule:: sqlobject.tests.test_paste
     :members:

@@ -1,5 +1,5 @@
-sqlobject.dbconnection module
-=============================
+sqlobject\.dbconnection module
+==============================
 
 .. automodule:: sqlobject.dbconnection
     :members:

@@ -1,5 +1,5 @@
-sqlobject.sqlite package
-========================
+sqlobject\.sqlite package
+=========================
 
 .. automodule:: sqlobject.sqlite
     :members:

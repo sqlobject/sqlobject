@@ -1,5 +1,5 @@
-sqlobject.tests.test_jsonbcol module
-====================================
+sqlobject\.tests\.test\_jsonbcol module
+=======================================
 
 .. automodule:: sqlobject.tests.test_jsonbcol
     :members:

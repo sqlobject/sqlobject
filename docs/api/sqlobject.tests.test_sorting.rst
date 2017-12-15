@@ -1,5 +1,5 @@
-sqlobject.tests.test_sorting module
-===================================
+sqlobject\.tests\.test\_sorting module
+======================================
 
 .. automodule:: sqlobject.tests.test_sorting
     :members:

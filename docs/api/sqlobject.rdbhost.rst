@@ -1,5 +1,5 @@
-sqlobject.rdbhost package
-=========================
+sqlobject\.rdbhost package
+==========================
 
 .. automodule:: sqlobject.rdbhost
     :members:

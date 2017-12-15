@@ -1,5 +1,5 @@
-sqlobject.tests.test_ForeignKey module
-======================================
+sqlobject\.tests\.test\_ForeignKey module
+=========================================
 
 .. automodule:: sqlobject.tests.test_ForeignKey
     :members:

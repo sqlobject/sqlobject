@@ -1,5 +1,5 @@
-sqlobject.firebird package
-==========================
+sqlobject\.firebird package
+===========================
 
 .. automodule:: sqlobject.firebird
     :members:

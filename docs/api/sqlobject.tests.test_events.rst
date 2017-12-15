@@ -1,5 +1,5 @@
-sqlobject.tests.test_events module
-==================================
+sqlobject\.tests\.test\_events module
+=====================================
 
 .. automodule:: sqlobject.tests.test_events
     :members:

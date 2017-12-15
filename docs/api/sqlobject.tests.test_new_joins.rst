@@ -1,5 +1,5 @@
-sqlobject.tests.test_new_joins module
-=====================================
+sqlobject\.tests\.test\_new\_joins module
+=========================================
 
 .. automodule:: sqlobject.tests.test_new_joins
     :members:

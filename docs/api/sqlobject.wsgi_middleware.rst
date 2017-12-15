@@ -1,5 +1,5 @@
-sqlobject.wsgi_middleware module
-================================
+sqlobject\.wsgi\_middleware module
+==================================
 
 .. automodule:: sqlobject.wsgi_middleware
     :members:

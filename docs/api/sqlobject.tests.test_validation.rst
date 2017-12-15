@@ -1,5 +1,5 @@
-sqlobject.tests.test_validation module
-======================================
+sqlobject\.tests\.test\_validation module
+=========================================
 
 .. automodule:: sqlobject.tests.test_validation
     :members:

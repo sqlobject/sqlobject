@@ -1,5 +1,5 @@
-sqlobject.tests.test_setters module
-===================================
+sqlobject\.tests\.test\_setters module
+======================================
 
 .. automodule:: sqlobject.tests.test_setters
     :members:

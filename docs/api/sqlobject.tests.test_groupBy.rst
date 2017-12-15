@@ -1,5 +1,5 @@
-sqlobject.tests.test_groupBy module
-===================================
+sqlobject\.tests\.test\_groupBy module
+======================================
 
 .. automodule:: sqlobject.tests.test_groupBy
     :members:

@@ -1,5 +1,5 @@
-sqlobject.tests.test_pickle module
-==================================
+sqlobject\.tests\.test\_pickle module
+=====================================
 
 .. automodule:: sqlobject.tests.test_pickle
     :members:

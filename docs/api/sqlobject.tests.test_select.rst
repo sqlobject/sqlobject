@@ -1,5 +1,5 @@
-sqlobject.tests.test_select module
-==================================
+sqlobject\.tests\.test\_select module
+=====================================
 
 .. automodule:: sqlobject.tests.test_select
     :members:

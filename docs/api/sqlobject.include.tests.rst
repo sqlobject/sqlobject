@@ -1,5 +1,5 @@
-sqlobject.include.tests package
-===============================
+sqlobject\.include\.tests package
+=================================
 
 .. automodule:: sqlobject.include.tests
     :members:

@@ -1,5 +1,5 @@
-sqlobject.versioning.test package
-=================================
+sqlobject\.versioning\.test package
+===================================
 
 .. automodule:: sqlobject.versioning.test
     :members:

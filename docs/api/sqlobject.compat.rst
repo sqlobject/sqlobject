@@ -1,5 +1,5 @@
-sqlobject.compat module
-=======================
+sqlobject\.compat module
+========================
 
 .. automodule:: sqlobject.compat
     :members:

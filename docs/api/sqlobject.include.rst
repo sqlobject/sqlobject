@@ -1,5 +1,5 @@
-sqlobject.include package
-=========================
+sqlobject\.include package
+==========================
 
 .. automodule:: sqlobject.include
     :members:

@@ -1,5 +1,5 @@
-sqlobject.tests.test_exceptions module
-======================================
+sqlobject\.tests\.test\_exceptions module
+=========================================
 
 .. automodule:: sqlobject.tests.test_exceptions
     :members:

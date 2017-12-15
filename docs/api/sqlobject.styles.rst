@@ -1,5 +1,5 @@
-sqlobject.styles module
-=======================
+sqlobject\.styles module
+========================
 
 .. automodule:: sqlobject.styles
     :members:

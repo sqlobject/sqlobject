@@ -1,5 +1,5 @@
-sqlobject.tests.test_lazy module
-================================
+sqlobject\.tests\.test\_lazy module
+===================================
 
 .. automodule:: sqlobject.tests.test_lazy
     :members:

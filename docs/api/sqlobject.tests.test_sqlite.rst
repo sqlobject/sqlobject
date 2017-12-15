@@ -1,5 +1,5 @@
-sqlobject.tests.test_sqlite module
-==================================
+sqlobject\.tests\.test\_sqlite module
+=====================================
 
 .. automodule:: sqlobject.tests.test_sqlite
     :members:

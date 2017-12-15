@@ -1,5 +1,5 @@
-sqlobject.tests.test_declarative module
-=======================================
+sqlobject\.tests\.test\_declarative module
+==========================================
 
 .. automodule:: sqlobject.tests.test_declarative
     :members:

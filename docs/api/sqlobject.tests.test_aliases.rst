@@ -1,5 +1,5 @@
-sqlobject.tests.test_aliases module
-===================================
+sqlobject\.tests\.test\_aliases module
+======================================
 
 .. automodule:: sqlobject.tests.test_aliases
     :members:

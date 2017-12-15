@@ -1,5 +1,5 @@
-sqlobject.tests.test_unicode module
-===================================
+sqlobject\.tests\.test\_unicode module
+======================================
 
 .. automodule:: sqlobject.tests.test_unicode
     :members:

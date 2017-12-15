@@ -1,5 +1,5 @@
-sqlobject.sqlite.sqliteconnection module
-========================================
+sqlobject\.sqlite\.sqliteconnection module
+==========================================
 
 .. automodule:: sqlobject.sqlite.sqliteconnection
     :members:

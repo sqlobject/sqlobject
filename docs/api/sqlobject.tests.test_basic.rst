@@ -1,5 +1,5 @@
-sqlobject.tests.test_basic module
-=================================
+sqlobject\.tests\.test\_basic module
+====================================
 
 .. automodule:: sqlobject.tests.test_basic
     :members:

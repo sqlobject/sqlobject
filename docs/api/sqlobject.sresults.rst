@@ -1,5 +1,5 @@
-sqlobject.sresults module
-=========================
+sqlobject\.sresults module
+==========================
 
 .. automodule:: sqlobject.sresults
     :members:

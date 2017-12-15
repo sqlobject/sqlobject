@@ -1,5 +1,5 @@
-sqlobject.tests.test_SingleJoin module
-======================================
+sqlobject\.tests\.test\_SingleJoin module
+=========================================
 
 .. automodule:: sqlobject.tests.test_SingleJoin
     :members:

@@ -1,5 +1,5 @@
-sqlobject.inheritance package
-=============================
+sqlobject\.inheritance package
+==============================
 
 .. automodule:: sqlobject.inheritance
     :members:

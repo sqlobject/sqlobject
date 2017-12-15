@@ -1,5 +1,5 @@
-sqlobject.tests.test_decimal module
-===================================
+sqlobject\.tests\.test\_decimal module
+======================================
 
 .. automodule:: sqlobject.tests.test_decimal
     :members:

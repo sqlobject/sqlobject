@@ -1,5 +1,5 @@
-sqlobject.inheritance.tests.test_asdict module
-==============================================
+sqlobject\.inheritance\.tests\.test\_asdict module
+==================================================
 
 .. automodule:: sqlobject.inheritance.tests.test_asdict
     :members:

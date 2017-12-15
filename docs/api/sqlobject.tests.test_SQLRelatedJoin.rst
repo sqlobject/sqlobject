@@ -1,5 +1,5 @@
-sqlobject.tests.test_SQLRelatedJoin module
-==========================================
+sqlobject\.tests\.test\_SQLRelatedJoin module
+=============================================
 
 .. automodule:: sqlobject.tests.test_SQLRelatedJoin
     :members:

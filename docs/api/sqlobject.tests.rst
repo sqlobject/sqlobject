@@ -1,5 +1,5 @@
-sqlobject.tests package
-=======================
+sqlobject\.tests package
+========================
 
 .. automodule:: sqlobject.tests
     :members:
@@ -34,6 +34,7 @@ Submodules
    sqlobject.tests.test_converters
    sqlobject.tests.test_create_drop
    sqlobject.tests.test_csvexport
+   sqlobject.tests.test_csvimport
    sqlobject.tests.test_cyclic_reference
    sqlobject.tests.test_datetime
    sqlobject.tests.test_decimal

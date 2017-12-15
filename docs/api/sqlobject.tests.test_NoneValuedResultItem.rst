@@ -1,5 +1,5 @@
-sqlobject.tests.test_NoneValuedResultItem module
-================================================
+sqlobject\.tests\.test\_NoneValuedResultItem module
+===================================================
 
 .. automodule:: sqlobject.tests.test_NoneValuedResultItem
     :members:

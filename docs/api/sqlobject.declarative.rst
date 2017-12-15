@@ -1,5 +1,5 @@
-sqlobject.declarative module
-============================
+sqlobject\.declarative module
+=============================
 
 .. automodule:: sqlobject.declarative
     :members:

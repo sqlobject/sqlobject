@@ -1,5 +1,5 @@
-sqlobject.tests.test_aggregates module
-======================================
+sqlobject\.tests\.test\_aggregates module
+=========================================
 
 .. automodule:: sqlobject.tests.test_aggregates
     :members:

@@ -1,5 +1,5 @@
-sqlobject.inheritance.tests package
-===================================
+sqlobject\.inheritance\.tests package
+=====================================
 
 .. automodule:: sqlobject.inheritance.tests
     :members:

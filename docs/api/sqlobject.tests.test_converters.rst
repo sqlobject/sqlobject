@@ -1,5 +1,5 @@
-sqlobject.tests.test_converters module
-======================================
+sqlobject\.tests\.test\_converters module
+=========================================
 
 .. automodule:: sqlobject.tests.test_converters
     :members:

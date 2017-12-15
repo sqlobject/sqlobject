@@ -1,5 +1,5 @@
-sqlobject.sybase.sybaseconnection module
-========================================
+sqlobject\.sybase\.sybaseconnection module
+==========================================
 
 .. automodule:: sqlobject.sybase.sybaseconnection
     :members:

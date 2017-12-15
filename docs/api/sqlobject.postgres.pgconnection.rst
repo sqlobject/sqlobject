@@ -1,5 +1,5 @@
-sqlobject.postgres.pgconnection module
-======================================
+sqlobject\.postgres\.pgconnection module
+========================================
 
 .. automodule:: sqlobject.postgres.pgconnection
     :members:

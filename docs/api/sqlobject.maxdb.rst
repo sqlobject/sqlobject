@@ -1,5 +1,5 @@
-sqlobject.maxdb package
-=======================
+sqlobject\.maxdb package
+========================
 
 .. automodule:: sqlobject.maxdb
     :members:

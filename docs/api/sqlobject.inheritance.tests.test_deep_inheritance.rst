@@ -1,5 +1,5 @@
-sqlobject.inheritance.tests.test_deep_inheritance module
-========================================================
+sqlobject\.inheritance\.tests\.test\_deep\_inheritance module
+=============================================================
 
 .. automodule:: sqlobject.inheritance.tests.test_deep_inheritance
     :members:

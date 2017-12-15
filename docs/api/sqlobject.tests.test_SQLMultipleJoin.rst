@@ -1,5 +1,5 @@
-sqlobject.tests.test_SQLMultipleJoin module
-===========================================
+sqlobject\.tests\.test\_SQLMultipleJoin module
+==============================================
 
 .. automodule:: sqlobject.tests.test_SQLMultipleJoin
     :members:

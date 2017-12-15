@@ -1,5 +1,5 @@
-sqlobject.tests.test_enum module
-================================
+sqlobject\.tests\.test\_enum module
+===================================
 
 .. automodule:: sqlobject.tests.test_enum
     :members:

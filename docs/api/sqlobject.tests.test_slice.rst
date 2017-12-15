@@ -1,5 +1,5 @@
-sqlobject.tests.test_slice module
-=================================
+sqlobject\.tests\.test\_slice module
+====================================
 
 .. automodule:: sqlobject.tests.test_slice
     :members:

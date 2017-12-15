@@ -1,5 +1,5 @@
-sqlobject.tests.test_asdict module
-==================================
+sqlobject\.tests\.test\_asdict module
+=====================================
 
 .. automodule:: sqlobject.tests.test_asdict
     :members:

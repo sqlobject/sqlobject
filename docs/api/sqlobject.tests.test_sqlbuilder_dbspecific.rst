@@ -1,5 +1,5 @@
-sqlobject.tests.test_sqlbuilder_dbspecific module
-=================================================
+sqlobject\.tests\.test\_sqlbuilder\_dbspecific module
+=====================================================
 
 .. automodule:: sqlobject.tests.test_sqlbuilder_dbspecific
     :members:

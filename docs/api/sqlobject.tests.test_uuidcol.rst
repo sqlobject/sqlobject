@@ -1,5 +1,5 @@
-sqlobject.tests.test_uuidcol module
-===================================
+sqlobject\.tests\.test\_uuidcol module
+======================================
 
 .. automodule:: sqlobject.tests.test_uuidcol
     :members:

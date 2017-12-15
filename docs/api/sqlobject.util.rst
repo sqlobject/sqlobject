@@ -1,5 +1,5 @@
-sqlobject.util package
-======================
+sqlobject\.util package
+=======================
 
 .. automodule:: sqlobject.util
     :members:

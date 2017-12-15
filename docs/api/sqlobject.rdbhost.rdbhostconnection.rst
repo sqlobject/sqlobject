@@ -1,5 +1,5 @@
-sqlobject.rdbhost.rdbhostconnection module
-==========================================
+sqlobject\.rdbhost\.rdbhostconnection module
+============================================
 
 .. automodule:: sqlobject.rdbhost.rdbhostconnection
     :members:

@@ -1,5 +1,5 @@
-sqlobject.tests.test_empty module
-=================================
+sqlobject\.tests\.test\_empty module
+====================================
 
 .. automodule:: sqlobject.tests.test_empty
     :members:

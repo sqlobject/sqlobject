@@ -1,5 +1,5 @@
-sqlobject.tests.test_perConnection module
-=========================================
+sqlobject\.tests\.test\_perConnection module
+============================================
 
 .. automodule:: sqlobject.tests.test_perConnection
     :members:

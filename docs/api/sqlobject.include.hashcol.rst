@@ -1,5 +1,5 @@
-sqlobject.include.hashcol module
-================================
+sqlobject\.include\.hashcol module
+==================================
 
 .. automodule:: sqlobject.include.hashcol
     :members:

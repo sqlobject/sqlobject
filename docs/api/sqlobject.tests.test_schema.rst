@@ -1,5 +1,5 @@
-sqlobject.tests.test_schema module
-==================================
+sqlobject\.tests\.test\_schema module
+=====================================
 
 .. automodule:: sqlobject.tests.test_schema
     :members:
