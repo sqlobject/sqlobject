@@ -1,7 +1,31 @@
 TODO
 ----
 
+* Restore oursql driver; use our fork.
+
+* Fix test ordering problem with Postgres.
+
+* Fix unicode problems with pyodbc at AppVeyor.
+
+* Resolve timeout problems with MSSQL.
+
+* https://github.com/d33tah/bpgsql,
+  https://github.com/olopez32/py-bpgsql,
+  https://pypi.python.org/pypi/ocpgdb/2.0.2,
+  https://magicstack.github.io/asyncpg/current/.
+
 * PyPy.
+
+* Use https://pypi.python.org/pypi/psycopg2cffi to run SQLObject
+  under PyPy.
+
+* https://pypi.python.org/pypi/turbodbc
+
+* PyODBC and PyPyODBC for linux and w32: SQLite (libsqliteodbc).
+
+* https://pypi.python.org/pypi/JayDeBeApi
+
+* Jython.
 
 * Quote table/column names that are reserved keywords (order => "order",
   values => `values` for MySQL).
