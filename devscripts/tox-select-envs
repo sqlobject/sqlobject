@@ -2,7 +2,7 @@
 
 pattern="$1"
 shift
-envs="`tox --listenvs | grep -F $pattern | sed 's/$/,/'`"
+envs="`tox --listenvs-all | grep -F $pattern | sed 's/$/,/'`"
 
 if [ -n "$envs" ]; then
    exec tox -e "$envs" "$@"
