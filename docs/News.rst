@@ -8,6 +8,12 @@ News
 SQLObject 3.6.0 (master)
 ========================
 
+Drivers
+-------
+
+* Extend support for oursql and Python 3 (require our fork); there are
+  some unicode-related problems.
+
 Documentation
 -------------
 

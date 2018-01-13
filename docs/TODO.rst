@@ -1,9 +1,9 @@
 TODO
 ----
 
-* Restore oursql driver; use our fork.
-
 * Fix test ordering problem with Postgres.
+
+* Fix unicode problems with oursql.
 
 * Fix unicode problems with pyodbc at AppVeyor.
 

@@ -44,7 +44,7 @@ if is_setuptools:
         'mysql:python_version=="2.7"': ['MySQL-python'],
         'mysql:python_version>="3.4"': ['mysqlclient'],
         'mysql-connector': ['mysql-connector'],
-        'oursql:python_version=="2.7"': ['oursql'],
+        'oursql': ['oursql'],
         'pymysql': ['pymysql'],
         # ODBC
         'odbc': ['pyodbc'],
