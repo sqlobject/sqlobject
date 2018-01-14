@@ -11,7 +11,7 @@ SQLObject 3.6.0 (master)
 Drivers
 -------
 
-* Extend support for oursql and Python 3 (require our fork); there are
+* Extend support for oursql and Python 3 (require our fork). There are
   some unicode-related problems.
 
 Documentation
@@ -20,7 +20,7 @@ Documentation
 * Document extras that are available for installation.
 
 Build
-=====
+-----
 
 * Use ``python_version`` environment marker in ``setup.py`` to make
   ``install_requires`` and ``extras_require`` declarative. This makes
