@@ -131,6 +131,12 @@ class MySQLConnection(DBAPI):
             self.CR_SERVER_LOST = 2013
             self.ER_DUP_ENTRY = '23000'
 
+        elif self.driver == 'oursql':
+            if "use_unicode" not in self.kw:
+                self.kw["use_unicode"] = not PY2
+            # oursql doesn't implement ping(True) yet
+            self.kw["autoreconnect"] = True
+
         global mysql_Bin
         if not PY2 and mysql_Bin is None:
             mysql_Bin = self.module.Binary
@@ -218,7 +224,7 @@ class MySQLConnection(DBAPI):
             self.printDebug(conn, query, 'QueryR')
         dbEncoding = self.dbEncoding
         if dbEncoding and not isinstance(query, bytes) and (
-                self.driver == 'connector'):
+                self.driver in ('connector', 'oursql')):
             query = query.encode(dbEncoding, 'surrogateescape')
         # When a server connection is lost and a query is attempted, most of
         # the time the query will raise a SERVER_LOST exception, then at the

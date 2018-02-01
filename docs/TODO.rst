@@ -3,8 +3,6 @@ TODO
 
 * Fix test ordering problem with Postgres.
 
-* Fix unicode problems with oursql.
-
 * Fix unicode problems with pyodbc at AppVeyor.
 
 * Resolve timeout problems with MSSQL.

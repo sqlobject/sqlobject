@@ -11,8 +11,7 @@ SQLObject 3.6.0 (master)
 Drivers
 -------
 
-* Extend support for oursql and Python 3 (require our fork). There are
-  some unicode-related problems.
+* Extend support for oursql and Python 3 (require our fork of the driver).
 
 Documentation
 -------------
