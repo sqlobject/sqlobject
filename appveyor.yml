@@ -44,9 +44,9 @@ environment:
       PYTHON_HOME: "C:\\Python36-x64"
       db: mysql
     - TOXENV: "py27-mysql-pyodbc-w32"
-      PYTHON_ARCH: "32"
+      PYTHON_ARCH: "64"
       PYTHON_VERSION: "2.7"
-      PYTHON_HOME: "C:\\Python27"
+      PYTHON_HOME: "C:\\Python27-x64"
       db: mysql
     - TOXENV: "py36-mysql-pyodbc-w32"
       PYTHON_ARCH: "64"
