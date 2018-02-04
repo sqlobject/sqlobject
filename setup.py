@@ -11,8 +11,7 @@ except ImportError:
     is_setuptools = False
 
 versionpath = join(abspath(dirname(__file__)), "sqlobject", "__version__.py")
-load_source("sqlobject_version", versionpath)
-from sqlobject_version import version  # noqa: ignore flake8 E402
+sqlobject_version = load_source("sqlobject_version", versionpath)
 
 subpackages = ['firebird', 'include', 'include.tests',
                'inheritance', 'inheritance.tests',
@@ -69,7 +68,7 @@ if is_setuptools:
     kw['python_requires'] = '>=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*'
 
 setup(name="SQLObject",
-      version=version,
+      version=sqlobject_version.version,
       description="Object-Relational Manager, aka database wrapper",
       long_description="""\
 SQLObject is a popular *Object Relational Manager* for providing an
@@ -111,7 +110,8 @@ and `GitHub <https://github.com/sqlobject>`_.
       maintainer="Oleg Broytman",
       maintainer_email="phd@phdru.name",
       url="http://sqlobject.org/",
-      download_url="https://pypi.python.org/pypi/SQLObject/%s" % version,
+      download_url="https://pypi.python.org/pypi/SQLObject/%s" %
+      sqlobject_version.version,
       keywords=["sql", "orm", "object-relational mapper"],
       license="LGPL",
       platforms="Any",
