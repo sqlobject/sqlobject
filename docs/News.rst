@@ -19,6 +19,8 @@ Drivers
 
 * Extend support for oursql and Python 3 (require our fork of the driver).
 
+* Fix _setAutoCommit for MSSQL.
+
 Documentation
 -------------
 

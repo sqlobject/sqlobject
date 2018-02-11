@@ -159,6 +159,20 @@ class MSSQLConnection(DBAPI):
         cur.close()
         return conn
 
+    def _setAutoCommit(self, conn, auto):
+        auto = bool(auto)
+        if self.driver in ('adodb', 'adodbapi'):
+            if auto:
+                option = "ON"
+            else:
+                option = "OFF"
+            c = conn.cursor()
+            c.execute("SET AUTOCOMMIT " + option)
+        elif self.driver == 'pymssql':
+            conn.autocommit(auto)
+        elif self.driver in ('odbc', 'pyodbc', 'pypyodbc'):
+            conn.autocommit = auto
+
     HAS_IDENTITY = """
        select 1
        from INFORMATION_SCHEMA.COLUMNS
@@ -323,17 +337,6 @@ class MSSQLConnection(DBAPI):
 
             results.append(colClass(**kw))
         return results
-
-    def _setAutoCommit(self, conn, auto):
-        # raise Exception(repr(auto))
-        return
-        # conn.auto_commit = auto
-        option = "ON"
-        if auto == 0:
-            option = "OFF"
-        c = conn.cursor()
-        c.execute("SET AUTOCOMMIT " + option)
-        c.close()
 
     # precision and scale is needed for decimal columns
     def guessClass(self, t, size, precision, scale):
