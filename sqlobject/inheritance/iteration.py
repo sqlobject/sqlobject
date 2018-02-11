@@ -11,7 +11,11 @@ class InheritableIteration(Iteration):
         super(InheritableIteration, self).__init__(dbconn, rawconn, select,
                                                    keepConnection)
         self.lazyColumns = select.ops.get('lazyColumns', False)
-        self.cursor.arraysize = self.defaultArraySize
+        try:
+            self.cursor.arraysize = self.defaultArraySize
+            self.use_arraysize = True
+        except AttributeError:  # pymssql doesn't have arraysize
+            self.use_arraysize = False
         self._results = []
         # Find the index of the childName column
         childNameIdx = None
@@ -24,7 +28,11 @@ class InheritableIteration(Iteration):
 
     def next(self):
         if not self._results:
-            self._results = list(self.cursor.fetchmany())
+            if self.use_arraysize:
+                _results = self.cursor.fetchmany()
+            else:
+                _results = self.cursor.fetchmany(size=self.defaultArraySize)
+            self._results = list(_results)
             if not self.lazyColumns:
                 self.fetchChildren()
         if not self._results:

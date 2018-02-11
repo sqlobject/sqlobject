@@ -21,6 +21,8 @@ Drivers
 
 * Fix _setAutoCommit for MSSQL.
 
+* Fix cursor.arraysize - pymssql doesn't have arraysize.
+
 Documentation
 -------------
 
