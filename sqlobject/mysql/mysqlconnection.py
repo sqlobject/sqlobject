@@ -300,6 +300,7 @@ class MySQLConnection(DBAPI):
                     id = c.fetchone()[0]
                 else:
                     id = c.insert_id()
+        c.close()
         if self.debugOutput:
             self.printDebug(conn, id, 'QueryIns', 'result')
         return id

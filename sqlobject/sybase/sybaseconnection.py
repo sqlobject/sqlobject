@@ -46,7 +46,9 @@ class SybaseConnection(DBAPI):
         """
         c = conn.cursor()
         c.execute('SELECT @@IDENTITY')
-        return c.fetchone()[0]
+        result = c.fetchone()[0]
+        c.close()
+        return result
 
     def makeConnection(self):
         return self.module.connect(self.host, self.user, self.password,
@@ -68,6 +70,7 @@ class SybaseConnection(DBAPI):
         c = conn.cursor()
         c.execute(query)
         r = c.fetchone()
+        c.close()
         return r is not None
 
     def _queryInsertID(self, conn, soInstance, id, names, values):
@@ -93,6 +96,7 @@ class SybaseConnection(DBAPI):
         c.execute(q)
         if has_identity and identity_insert_on:
             c.execute('SET IDENTITY_INSERT %s OFF' % table)
+        c.close()
         if id is None:
             id = self.insert_id(conn)
         if self.debugOutput:

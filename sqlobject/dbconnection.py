@@ -427,7 +427,9 @@ class DBAPI(DBConnection):
     def _query(self, conn, s):
         if self.debug:
             self.printDebug(conn, s, 'Query')
-        self._executeRetry(conn, conn.cursor(), s)
+        c = conn.cursor()
+        self._executeRetry(conn, c, s)
+        c.close()
 
     def query(self, s):
         return self._runWithConnection(self._query, s)
@@ -438,6 +440,7 @@ class DBAPI(DBConnection):
         c = conn.cursor()
         self._executeRetry(conn, c, s)
         value = c.fetchall()
+        c.close()
         if self.debugOutput:
             self.printDebug(conn, value, 'QueryAll', 'result')
         return value
@@ -455,6 +458,7 @@ class DBAPI(DBConnection):
         c = conn.cursor()
         self._executeRetry(conn, c, s)
         value = c.fetchall()
+        c.close()
         if self.debugOutput:
             self.printDebug(conn, value, 'QueryAll', 'result')
         return c.description, value
@@ -468,6 +472,7 @@ class DBAPI(DBConnection):
         c = conn.cursor()
         self._executeRetry(conn, c, s)
         value = c.fetchone()
+        c.close()
         if self.debugOutput:
             self.printDebug(conn, value, 'QueryOne', 'result')
         return value
@@ -778,10 +783,11 @@ class Iteration(object):
         if getattr(self, 'query', None) is None:
             # already cleaned up
             return
-        self.query = None
+        self.cursor.close()
         if not self.keepConnection:
             self.dbconn.releaseConnection(self.rawconn)
-        self.dbconn = self.rawconn = self.select = self.cursor = None
+        self.query = self.dbconn = self.rawconn = \
+            self.select = self.cursor = None
 
     def __del__(self):
         self._cleanup()

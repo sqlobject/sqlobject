@@ -258,6 +258,7 @@ class SQLiteConnection(DBAPI):
         # lastrowid is a DB-API extension from "PEP 0249":
         if id is None:
             id = int(c.lastrowid)
+        c.close()
         if self.debugOutput:
             self.printDebug(conn, id, 'QueryIns', 'result')
         return id

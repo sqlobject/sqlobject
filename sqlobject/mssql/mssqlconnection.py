@@ -137,7 +137,9 @@ class MSSQLConnection(DBAPI):
         # converting the identity to an int is ugly, but it gets returned
         # as a decimal otherwise :S
         c.execute('SELECT CONVERT(INT, @@IDENTITY)')
-        return c.fetchone()[0]
+        result = c.fetchone()[0]
+        c.close()
+        return result
 
     def makeConnection(self):
         if self.driver in ('odbc', 'pyodbc', 'pypyodbc'):
@@ -169,6 +171,7 @@ class MSSQLConnection(DBAPI):
         c = conn.cursor()
         c.execute(query)
         r = c.fetchone()
+        c.close()
         return r is not None
 
     def _queryInsertID(self, conn, soInstance, id, names, values):
@@ -206,6 +209,7 @@ class MSSQLConnection(DBAPI):
         c.execute(q)
         if has_identity:
             c.execute('SET IDENTITY_INSERT %s OFF' % table)
+        c.close()
 
         if id is None:
             id = self.insert_id(conn)
@@ -329,6 +333,7 @@ class MSSQLConnection(DBAPI):
             option = "OFF"
         c = conn.cursor()
         c.execute("SET AUTOCOMMIT " + option)
+        c.close()
 
     # precision and scale is needed for decimal columns
     def guessClass(self, t, size, precision, scale):

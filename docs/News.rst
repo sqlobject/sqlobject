@@ -8,6 +8,12 @@ News
 SQLObject 3.6.0 (master)
 ========================
 
+Minor features
+--------------
+
+* Close cursors after using to free resources immediately
+  instead of waiting for gc.
+
 Drivers
 -------
 

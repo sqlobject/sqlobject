@@ -230,6 +230,7 @@ class PostgresConnection(DBAPI):
                     conn.setencoding(encoding=dbEncoding)
             self._executeRetry(conn, c,
                                "SET client_encoding TO '%s'" % dbEncoding)
+        c.close()
         return conn
 
     def _executeRetry(self, conn, cursor, query):
@@ -303,6 +304,7 @@ class PostgresConnection(DBAPI):
         self._executeRetry(conn, c, q)
         if id is None:
             id = c.fetchone()[0]
+        c.close()
         if self.debugOutput:
             self.printDebug(conn, id, 'QueryIns', 'result')
         return id

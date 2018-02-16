@@ -138,6 +138,7 @@ class MaxdbConnection(DBAPI):
         if self.debug:
             self.printDebug(conn, q, 'QueryIns')
         c.execute(q)
+        c.close()
         if self.debugOutput:
             self.printDebug(conn, id, 'QueryIns', 'result')
         return id
