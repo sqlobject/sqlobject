@@ -19,9 +19,11 @@ Drivers
 
 * Extend support for oursql and Python 3 (require our fork of the driver).
 
+* Fix cursor.arraysize - pymssql doesn't have arraysize.
+
 * Fix _setAutoCommit for MSSQL.
 
-* Fix cursor.arraysize - pymssql doesn't have arraysize.
+* Set timeout for ODBC with MSSQL.
 
 Documentation
 -------------

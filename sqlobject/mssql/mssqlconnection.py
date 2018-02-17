@@ -51,6 +51,11 @@ class MSSQLConnection(DBAPI):
             raise ImportError(
                 'Cannot find an MSSQL driver, tried %s' % drivers)
 
+        timeout = kw.pop('timeout', None)
+        if timeout:
+            timeout = int(timeout)
+        self.timeout = timeout
+
         if driver in ('odbc', 'pyodbc', 'pypyodbc'):
             self.make_odbc_conn_str(kw.pop('odbcdrv', 'SQL Server'),
                                     db, host, port, user, password
@@ -90,11 +95,6 @@ class MSSQLConnection(DBAPI):
             sqlmodule.Binary = lambda st: str(st)
             # don't know whether pymssql uses unicode
             self.usingUnicodeStrings = False
-
-            timeout = kw.pop('timeout', None)
-            if timeout:
-                timeout = int(timeout)
-            self.timeout = timeout
 
             def _make_conn_str(keys):
                 keys_dict = {}
@@ -145,7 +145,14 @@ class MSSQLConnection(DBAPI):
         if self.driver in ('odbc', 'pyodbc', 'pypyodbc'):
             self.debugWriter.write(
                 "ODBC connect string: " + self.odbc_conn_str)
-            conn = self.module.connect(self.odbc_conn_str)
+            timeout = self.timeout
+            if timeout:
+                kw = dict(timeout=timeout)
+            else:
+                kw = dict()
+            conn = self.module.connect(self.odbc_conn_str, **kw)
+            if timeout:
+                conn.timeout = timeout
         else:
             conn_descr = self.make_conn_str(self)
             if isinstance(conn_descr, dict):
