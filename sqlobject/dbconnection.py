@@ -666,7 +666,6 @@ class DBAPI(DBConnection):
 
     def _SO_columnClause(self, soClass, kw):
         from . import main
-        ops = {None: "IS"}
         data = []
         if 'id' in kw:
             data.append((soClass.sqlmeta.idName, kw.pop('id')))
@@ -694,7 +693,7 @@ class DBAPI(DBConnection):
             return None
         return ' AND '.join(
             ['%s %s %s' %
-             (dbName, ops.get(value, "="), self.sqlrepr(value))
+             (dbName, "IS" if value is None else "=", self.sqlrepr(value))
              for dbName, value
              in data])
 
