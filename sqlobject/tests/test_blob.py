@@ -22,8 +22,7 @@ def test_BLOBCol():
     else:
         data = bytes(range(256))
 
-    prof = ImageData()
-    prof.image = data
+    prof = ImageData(image=data)
     iid = prof.id
 
     ImageData._connection.cache.clear()
@@ -31,5 +30,5 @@ def test_BLOBCol():
     prof2 = ImageData.get(iid)
     assert prof2.image == data
 
-    ImageData(image='string')
-    assert ImageData.selectBy(image='string').count() == 1
+    ImageData(image=b'string')
+    assert ImageData.selectBy(image=b'string').count() == 1
