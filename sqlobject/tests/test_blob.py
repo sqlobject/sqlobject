@@ -30,3 +30,6 @@ def test_BLOBCol():
 
     prof2 = ImageData.get(iid)
     assert prof2.image == data
+
+    ImageData(image='string')
+    assert ImageData.selectBy(image='string').count() == 1
