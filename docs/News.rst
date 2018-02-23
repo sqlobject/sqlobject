@@ -14,16 +14,21 @@ Minor features
 * Close cursors after using to free resources immediately
   instead of waiting for gc.
 
+Bug fixes
+---------
+
+* Fix for TypeError using selectBy on a BLOBCol. PR by Michael S. Root.
+
 Drivers
 -------
 
-* Extend support for oursql and Python 3 (require our fork of the driver).
+* Extend support for oursql and Python 3 (requires our fork of the driver).
 
 * Fix cursor.arraysize - pymssql doesn't have arraysize.
 
-* Fix _setAutoCommit for MSSQL.
-
 * Set timeout for ODBC with MSSQL.
+
+* Fix _setAutoCommit for MSSQL.
 
 Documentation
 -------------
