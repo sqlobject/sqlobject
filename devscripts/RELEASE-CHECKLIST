@@ -4,51 +4,53 @@
 1. Check out the release branch. If it is a stable release - edit
    docs/News.rst to set release date. Commit.
 
-2. If it's the first stable release of the branch - edit build-all-docs,
+2. If release branch is not master - run ../prerelease $NEW_TAG; if it's
+   master - run ../prerelease $NEW_TAG master.
+
+   The script checks out the release branch and calls editor; update
+   version, the list of contributors, the list of changes and download
+   URL in ANNOUNCE.rst; edit __version__.py and README.rst in the release
+   branch - fix versions. Edit section [egg_info] in setup.cfg - set if
+   it is a stable or development release. In setup.py edit "Development
+   Status" in trove classifiers; edit download URL: if a non-stable
+   version - append 'dev' and date stamp, for a stable version remove
+   'dev' and date stamp).
+
+   If it's the first stable release of the branch - edit build-all-docs,
    advance stable branch. Commit. If it's not master - merge to all higher
    branches and master.
 
-3. If release branch is not master - run ../prerelease $NEW_TAG; if it's
-   master - run ../prerelease $NEW_TAG master.
+   Commit. Verify.
 
-3a. The script checks out the release branch and calls editor; update
-    version, the list of contributors, the list of changes and download
-    URL in ANNOUNCE.rst; edit __version__.py and README.rst in the release
-    branch - fix versions. Edit section [egg_info] in setup.cfg - set if
-    it is a stable or development release. In setup.py edit "Development
-    Status" in trove classifiers; edit download URL: if a non-stable
-    version - append 'dev' and date stamp, for a stable version remove
-    'dev' and date stamp). Commit. Verify.
+3. If it's not master - null-merge to the next higher branch.
 
-4. If it's not master - null-merge to the next higher branch.
-
-5. If release branch is not master - run ../prerelease-tag $NEW_TAG; if
+4. If release branch is not master - run ../prerelease-tag $NEW_TAG; if
    it's master - run ../prerelease-tag $NEW_TAG master. This checks out
    the release branch and creates the new tag at the head of the release
    branch.
 
-6. Run ../release. This generates and uploads new archives to PyPI and
+5. Run ../release. This generates and uploads new archives to PyPI and
    if it is a stable release - uploads archives and release announcement
    (ANNOUNCE.rst) to SourceForge.
 
-7. Hide/show old releases at PyPI and SourceForge.
+6. Hide/show old releases at PyPI and SourceForge.
 
-8. Run ../push-all in the development repository to push all branches
+7. Run ../push-all in the development repository to push all branches
    and tags to the public repositories.
 
-9. Run ../postrelease. The script restores ANNOUNCE.rst from the previous
+8. Run ../postrelease. The script restores ANNOUNCE.rst from the previous
    commit (HEAD~). It calls editor; update next version, remove the list
    of contributors and the list of changes, edit download URL in
    ANNOUNCE.rst. Edit docs/News.rst - add new version.
 
-10. Generate new docs using ./build-all-docs. Upload docs using
-    ./publish-docs.
+9. Generate new docs using ./build-all-docs. Upload docs using
+   ./publish-docs.
 
-11. Send announcement to the SQLObject mailing list. For a stable
+10. Send announcement to the SQLObject mailing list. For a stable
     release send announcements to python, python-announce and python-db
     mailing lists.
 
-11. Announce new release(s) at Twitter (https://twitter.com/SQLObject) and
+10. Announce new release(s) at Twitter (https://twitter.com/SQLObject) and
     Wikipedia (https://en.wikipedia.org/wiki/SQLObject). If it is a stable
     release - announce it at
     https://en.wikipedia.org/wiki/Comparison_of_object-relational_mapping_software.
