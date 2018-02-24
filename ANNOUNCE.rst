@@ -1,28 +1,49 @@
 Hello!
 
-I'm pleased to announce version 3.6.1a1, the first alpha of the upcoming
-release of branch 3.6 of SQLObject.
-
-I'm pleased to announce version 3.6.1a2, the second alpha of the upcoming
-release of branch 3.6 of SQLObject.
-
-I'm pleased to announce version 3.6.1b1, the first beta of the upcoming
-release of branch 3.6 of SQLObject.
-
-I'm pleased to announce version 3.6.1rc1, the first release candidate
-of the upcoming release of branch 3.6 of SQLObject.
-
 I'm pleased to announce version 3.6.0, the first stable release of branch
-3.6 of SQLObject.
-
-I'm pleased to announce version 3.6.1, the first bugfix release of branch
 3.6 of SQLObject.
 
 
 What's new in SQLObject
 =======================
 
-Contributors for this release are 
+Contributor for this release is Michael S. Root.
+
+Minor features
+--------------
+
+* Close cursors after using to free resources immediately
+  instead of waiting for gc.
+
+Bug fixes
+---------
+
+* Fix for TypeError using selectBy on a BLOBCol. PR by Michael S. Root.
+
+Drivers
+-------
+
+* Extend support for oursql and Python 3 (requires our fork of the driver).
+
+* Fix cursor.arraysize - pymssql doesn't have arraysize.
+
+* Set timeout for ODBC with MSSQL.
+
+* Fix _setAutoCommit for MSSQL.
+
+Documentation
+-------------
+
+* Document extras that are available for installation.
+
+Build
+-----
+
+* Use ``python_version`` environment marker in ``setup.py`` to make
+  ``install_requires`` and ``extras_require`` declarative. This makes
+  the universal wheel truly universal.
+
+* Use ``python_requires`` keyword in ``setup.py``.
 
 For a more complete list, please see the news:
 http://sqlobject.org/News.html
@@ -54,7 +75,7 @@ Mailing list:
 https://lists.sourceforge.net/mailman/listinfo/sqlobject-discuss
 
 Download:
-https://pypi.python.org/pypi/SQLObject/3.6.0a0.dev20171115
+https://pypi.python.org/pypi/SQLObject/3.6.0
 
 News and changes:
 http://sqlobject.org/News.html
