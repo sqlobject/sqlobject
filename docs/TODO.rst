@@ -7,11 +7,6 @@ TODO
 
 * Resolve timeout problems with MSSQL.
 
-* https://github.com/d33tah/bpgsql,
-  https://github.com/olopez32/py-bpgsql,
-  https://pypi.python.org/pypi/ocpgdb/2.0.2,
-  https://magicstack.github.io/asyncpg/current/.
-
 * PyPy.
 
 * Use https://pypi.python.org/pypi/psycopg2cffi to run SQLObject
