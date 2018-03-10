@@ -1,7 +1,8 @@
 import pytest
 from sqlobject import SQLObject, SQLObjectNotFound, StringCol
 from sqlobject.tests.dbtest import raises, setupClass, supports
-
+from sqlobject import events
+from sqlobject.main import sqlmeta
 
 ########################################
 # Transaction test
@@ -24,7 +25,25 @@ class SOTestSOTrans(SQLObject):
     name = StringCol(length=10, alternateID=True, dbName='name_col')
 
 
+def make_watcher():
+    log = []
+
+    def watch(*args):
+        log.append(args)
+
+    watch.log = log
+    return watch
+
+
+def make_listen(signal):
+    watcher = make_watcher()
+    events.listen(watcher, sqlmeta, signal)
+    return watcher
+
+
 def test_transaction():
+    commit_watcher = make_listen(events.CommitSignal)
+    rollback_watcher = make_listen(events.RollbackSignal)
     setupClass(SOTestSOTrans)
     SOTestSOTrans(name='bob')
     SOTestSOTrans(name='tim')
@@ -44,6 +63,14 @@ def test_transaction():
         trans.rollback()
         trans.begin()
         assert b.name == 'robert'
+        assert len(commit_watcher.log) == 1
+        assert commit_watcher.log[0][0][0][0] == 'SOTestSOTrans'
+        assert commit_watcher.log[0][0][0][1] == [1, 2]
+        assert len(rollback_watcher.log) == 2
+        assert rollback_watcher.log[0][0][0][0] == 'SOTestSOTrans'
+        assert rollback_watcher.log[0][0][0][1] == [3]
+        assert rollback_watcher.log[1][0][0][0] == 'SOTestSOTrans'
+        assert rollback_watcher.log[1][0][0][1] == [1, 2]
     finally:
         SOTestSOTrans._connection.autoCommit = True
 

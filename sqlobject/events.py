@@ -211,6 +211,18 @@ class DropTableSignal(Signal):
     after the table has been dropped.
     """
 
+
+class CommitSignal(Signal):
+    """
+    Called on transaction commit
+    """
+
+class RollbackSignal(Signal):
+    """
+    Called on transaction rollback
+    """
+
+
 ############################################################
 # Event Debugging
 ############################################################

@@ -13,6 +13,7 @@ except ImportError:
 import warnings
 import weakref
 
+from .events import send, CommitSignal, RollbackSignal
 from .cache import CacheSet
 from . import classregistry
 from . import col
@@ -855,6 +856,7 @@ class Transaction(object):
             return
         if self._dbConnection.debug:
             self._dbConnection.printDebug(self._connection, '', 'COMMIT')
+        self._send_event(CommitSignal)
         self._connection.commit()
         subCaches = [(sub[0], sub[1].allIDs())
                      for sub in self.cache.allSubCachesByClassNames().items()]
@@ -874,6 +876,7 @@ class Transaction(object):
         if self._dbConnection.debug:
             self._dbConnection.printDebug(self._connection, '', 'ROLLBACK')
         subCaches = [(sub, sub.allIDs()) for sub in self.cache.allSubCaches()]
+        self._send_event(RollbackSignal)
         self._connection.rollback()
 
         for subCache, ids in subCaches:
@@ -882,6 +885,18 @@ class Transaction(object):
                 if inst is not None:
                     inst.expire()
         self._makeObsolete()
+
+    def _send_event(self, signal):
+        """
+        Pushes a list of class_names and related ids in cache.
+        :param signal: Type of event signal to use
+        """
+        from .main import sqlmeta
+        cached_classes_and_ids = [(class_name, cache.allIDs()) for class_name, cache in
+                                  self.cache.allSubCachesByClassNames().items()]
+
+        if cached_classes_and_ids:
+            send(signal, sqlmeta, cached_classes_and_ids)
 
     def __getattr__(self, attr):
         """
