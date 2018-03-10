@@ -217,6 +217,7 @@ class CommitSignal(Signal):
     Called on transaction commit
     """
 
+
 class RollbackSignal(Signal):
     """
     Called on transaction rollback

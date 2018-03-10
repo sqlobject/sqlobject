@@ -892,8 +892,10 @@ class Transaction(object):
         :param signal: Type of event signal to use
         """
         from .main import sqlmeta
-        cached_classes_and_ids = [(class_name, cache.allIDs()) for class_name, cache in
-                                  self.cache.allSubCachesByClassNames().items()]
+        cached_classes_and_ids = [
+            (class_name, cache.allIDs()) for class_name, cache in
+            self.cache.allSubCachesByClassNames().items()
+        ]
 
         if cached_classes_and_ids:
             send(signal, sqlmeta, cached_classes_and_ids)
