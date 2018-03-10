@@ -13,14 +13,14 @@ except ImportError:
 import warnings
 import weakref
 
-from .events import send, CommitSignal, RollbackSignal
-from .cache import CacheSet
 from . import classregistry
 from . import col
-from .converters import sqlrepr
 from . import sqlbuilder
-from .util.threadinglocal import local as threading_local
+from .cache import CacheSet
 from .compat import PY2, string_type, unicode_type
+from .converters import sqlrepr
+from .events import send, CommitSignal, RollbackSignal
+from .util.threadinglocal import local as threading_local
 
 warnings.filterwarnings("ignore", "DB-API extension cursor.lastrowid used")
 
@@ -891,13 +891,13 @@ class Transaction(object):
         Pushes a list of class_names and related ids in cache.
         :param signal: Type of event signal to use
         """
-        from .main import sqlmeta
         cached_classes_and_ids = [
             (class_name, cache.allIDs()) for class_name, cache in
             self.cache.allSubCachesByClassNames().items()
         ]
 
         if cached_classes_and_ids:
+            from .main import sqlmeta  # Import here to avoid circular import
             send(signal, sqlmeta, cached_classes_and_ids)
 
     def __getattr__(self, attr):
