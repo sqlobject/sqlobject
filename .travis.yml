@@ -26,104 +26,104 @@ addons:
 
 matrix:
   include:
-  - python: "2.7"
-    env: TOXENV=py27-mysqldb
-  - python: "3.4"
-    env: TOXENV=py34-mysqlclient
-  - python: "3.5"
-    env: TOXENV=py35-mysqlclient
-  - python: "3.6"
-    env: TOXENV=py36-mysqlclient
-  - python: "2.7"
-    env: TOXENV=py27-mysql-connector
-  - python: "3.4"
-    env: TOXENV=py34-mysql-connector
-  - python: "3.5"
-    env: TOXENV=py35-mysql-connector
-  - python: "3.6"
-    env: TOXENV=py36-mysql-connector
-  - python: "2.7"
-    env: TOXENV=py27-mysql-oursql
-  - python: "3.4"
-    env: TOXENV=py34-mysql-oursql3
-  - python: "3.5"
-    env: TOXENV=py35-mysql-oursql3
-  - python: "3.6"
-    env: TOXENV=py36-mysql-oursql3
-  - python: "2.7"
-    env: TOXENV=py27-pymysql
-  - python: "3.4"
-    env: TOXENV=py34-pymysql
-  - python: "3.5"
-    env: TOXENV=py35-pymysql
-  - python: "3.6"
-    env: TOXENV=py36-pymysql
-  - python: "2.7"
-    env: TOXENV=py27-postgres-psycopg
-  - python: "3.4"
-    env: TOXENV=py34-postgres-psycopg
-  - python: "3.5"
-    env: TOXENV=py35-postgres-psycopg
-  - python: "3.6"
-    env: TOXENV=py36-postgres-psycopg
-  - python: "2.7"
-    env: TOXENV=py27-postgres-pygresql
-  - python: "3.4"
-    env: TOXENV=py34-postgres-pygresql
-  - python: "3.5"
-    env: TOXENV=py35-postgres-pygresql
-  - python: "3.6"
-    env: TOXENV=py36-postgres-pygresql
-  - python: "3.4"
-    env: TOXENV=py34-pypostgresql
-  - python: "3.5"
-    env: TOXENV=py35-pypostgresql
-  - python: "3.6"
-    env: TOXENV=py36-pypostgresql
-  - python: "2.7"
-    env: TOXENV=py27-postgres-pg8000
-  - python: "3.4"
-    env: TOXENV=py34-postgres-pg8000
-  - python: "3.5"
-    env: TOXENV=py35-postgres-pg8000
-  - python: "3.6"
-    env: TOXENV=py36-postgres-pg8000
-  - python: "2.7"
-    env: TOXENV=py27-sqlite
-  - python: "3.4"
-    env: TOXENV=py34-sqlite
-  - python: "3.5"
-    env: TOXENV=py35-sqlite
-  - python: "3.6"
-    env: TOXENV=py36-sqlite
-  - python: "2.7"
-    env: TOXENV=py27-sqlite-memory
-  - python: "3.4"
-    env: TOXENV=py34-sqlite-memory
-  - python: "3.5"
-    env: TOXENV=py35-sqlite-memory
-  - python: "3.6"
-    env: TOXENV=py36-sqlite-memory
-  - python: "2.7"
-    env: TOXENV=py27-flake8
-  - python: "3.4"
-    env: TOXENV=py34-flake8
-  - python: "2.7"
-    env: TOXENV=py27-firebird-fdb
-  - python: "3.4"
-    env: TOXENV=py34-firebird-fdb
-  - python: "3.5"
-    env: TOXENV=py35-firebird-fdb
-  - python: "3.6"
-    env: TOXENV=py36-firebird-fdb
-  - python: "2.7"
-    env: TOXENV=py27-firebirdsql
-  - python: "3.4"
-    env: TOXENV=py34-firebirdsql
-  - python: "3.5"
-    env: TOXENV=py35-firebirdsql
-  - python: "3.6"
-    env: TOXENV=py36-firebirdsql
+    - python: "2.7"
+      env: TOXENV=py27-mysqldb
+    - python: "3.4"
+      env: TOXENV=py34-mysqlclient
+    - python: "3.5"
+      env: TOXENV=py35-mysqlclient
+    - python: "3.6"
+      env: TOXENV=py36-mysqlclient
+    - python: "2.7"
+      env: TOXENV=py27-mysql-connector
+    - python: "3.4"
+      env: TOXENV=py34-mysql-connector
+    - python: "3.5"
+      env: TOXENV=py35-mysql-connector
+    - python: "3.6"
+      env: TOXENV=py36-mysql-connector
+    - python: "2.7"
+      env: TOXENV=py27-mysql-oursql
+    - python: "3.4"
+      env: TOXENV=py34-mysql-oursql3
+    - python: "3.5"
+      env: TOXENV=py35-mysql-oursql3
+    - python: "3.6"
+      env: TOXENV=py36-mysql-oursql3
+    - python: "2.7"
+      env: TOXENV=py27-pymysql
+    - python: "3.4"
+      env: TOXENV=py34-pymysql
+    - python: "3.5"
+      env: TOXENV=py35-pymysql
+    - python: "3.6"
+      env: TOXENV=py36-pymysql
+    - python: "2.7"
+      env: TOXENV=py27-postgres-psycopg
+    - python: "3.4"
+      env: TOXENV=py34-postgres-psycopg
+    - python: "3.5"
+      env: TOXENV=py35-postgres-psycopg
+    - python: "3.6"
+      env: TOXENV=py36-postgres-psycopg
+    - python: "2.7"
+      env: TOXENV=py27-postgres-pygresql
+    - python: "3.4"
+      env: TOXENV=py34-postgres-pygresql
+    - python: "3.5"
+      env: TOXENV=py35-postgres-pygresql
+    - python: "3.6"
+      env: TOXENV=py36-postgres-pygresql
+    - python: "3.4"
+      env: TOXENV=py34-pypostgresql
+    - python: "3.5"
+      env: TOXENV=py35-pypostgresql
+    - python: "3.6"
+      env: TOXENV=py36-pypostgresql
+    - python: "2.7"
+      env: TOXENV=py27-postgres-pg8000
+    - python: "3.4"
+      env: TOXENV=py34-postgres-pg8000
+    - python: "3.5"
+      env: TOXENV=py35-postgres-pg8000
+    - python: "3.6"
+      env: TOXENV=py36-postgres-pg8000
+    - python: "2.7"
+      env: TOXENV=py27-sqlite
+    - python: "3.4"
+      env: TOXENV=py34-sqlite
+    - python: "3.5"
+      env: TOXENV=py35-sqlite
+    - python: "3.6"
+      env: TOXENV=py36-sqlite
+    - python: "2.7"
+      env: TOXENV=py27-sqlite-memory
+    - python: "3.4"
+      env: TOXENV=py34-sqlite-memory
+    - python: "3.5"
+      env: TOXENV=py35-sqlite-memory
+    - python: "3.6"
+      env: TOXENV=py36-sqlite-memory
+    - python: "2.7"
+      env: TOXENV=py27-flake8
+    - python: "3.4"
+      env: TOXENV=py34-flake8
+    - python: "2.7"
+      env: TOXENV=py27-firebird-fdb
+    - python: "3.4"
+      env: TOXENV=py34-firebird-fdb
+    - python: "3.5"
+      env: TOXENV=py35-firebird-fdb
+    - python: "3.6"
+      env: TOXENV=py36-firebird-fdb
+    - python: "2.7"
+      env: TOXENV=py27-firebirdsql
+    - python: "3.4"
+      env: TOXENV=py34-firebirdsql
+    - python: "3.5"
+      env: TOXENV=py35-firebirdsql
+    - python: "3.6"
+      env: TOXENV=py36-firebirdsql
 
   allow_failures:
     - env: TOXENV=py27-firebird-fdb
