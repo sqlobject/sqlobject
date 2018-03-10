@@ -130,6 +130,15 @@ environment:
       PYTHON_VERSION: "3.6"
       PYTHON_HOME: "C:\\Python36-x64"
 
+matrix:
+  allow_failures:
+    - TOXENV: "py27-mysql-pyodbc-w32"
+    - TOXENV: "py36-mysql-pyodbc-w32"
+    - TOXENV: "py27-postgres-pyodbc-w32"
+    - TOXENV: "py36-postgres-pyodbc-w32"
+
+  fast_finish: true
+
 install:
   # Ensure we use the right python version
   - "SET PATH=%PYTHON_HOME%;%PYTHON_HOME%\\Scripts;C:\\Program Files\\MySQL\\MySQL Server 5.7\\bin;C:\\Program Files\\PostgreSQL\\9.5\\bin;%PATH%"
