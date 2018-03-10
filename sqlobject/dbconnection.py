@@ -22,9 +22,8 @@ from .converters import sqlrepr
 from .events import send, CommitSignal, RollbackSignal
 from .util.threadinglocal import local as threading_local
 
-warnings.filterwarnings("ignore", "DB-API extension cursor.lastrowid used")
 
-_connections = {}
+warnings.filterwarnings("ignore", "DB-API extension cursor.lastrowid used")
 
 
 def _closeConnection(ref):
