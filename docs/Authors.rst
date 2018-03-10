@@ -36,6 +36,7 @@ Contributions have been made by:
 * Lutz Steinborn <l.steinborn at 4c-gmbh.de>
 * Shailesh Mungikar <shailesh.mungikar at druva.com>
 * Michael S. Root <miker at tippett.com>
+* Scott Stahl <sstahl at onshift.com>
 * Oleg Broytman <phd@phdru.name>
 
 .. image:: https://sourceforge.net/sflogo.php?group_id=74338&type=10

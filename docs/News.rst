@@ -8,6 +8,11 @@ News
 SQLObject 3.7.0 (master)
 ========================
 
+Features
+--------
+
+* Add signals on commit and rollback; pull request by Scott Stahl.
+
 SQLObject 3.6.0
 ===============
 
