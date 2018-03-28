@@ -2,13 +2,7 @@
 
 from imp import load_source
 from os.path import abspath, dirname, join
-
-try:
-    from setuptools import setup
-    is_setuptools = True
-except ImportError:
-    from distutils.core import setup
-    is_setuptools = False
+from setuptools import setup
 
 versionpath = join(abspath(dirname(__file__)), "sqlobject", "__version__.py")
 sqlobject_version = load_source("sqlobject_version", versionpath)
@@ -18,54 +12,6 @@ subpackages = ['firebird', 'include', 'include.tests',
                'manager', 'maxdb', 'mysql', 'mssql', 'postgres', 'rdbhost',
                'sqlite', 'sybase', 'tests', 'util',
                'versioning', 'versioning.test']
-
-kw = {}
-if is_setuptools:
-    kw['entry_points'] = """
-    [paste.filter_app_factory]
-    main = sqlobject.wsgi_middleware:make_middleware
-    """
-    kw['install_requires'] = [
-        "FormEncode>=1.1.1,!=1.3.0; python_version=='2.7'",
-        "FormEncode>=1.3.1; python_version>='3.4'",
-        "PyDispatcher>=2.0.4",
-    ]
-
-    kw['extras_require'] = {
-        # Firebird/Interbase
-        'fdb': ['fdb'],
-        'firebirdsql': ['firebirdsql'],
-        'kinterbasdb': ['kinterbasdb'],
-        # MS SQL
-        'adodbapi': ['adodbapi'],
-        'pymssql': ['pymssql'],
-        # MySQL
-        'mysql:python_version=="2.7"': ['MySQL-python'],
-        'mysql:python_version>="3.4"': ['mysqlclient'],
-        'mysql-connector': ['mysql-connector'],
-        'oursql': ['oursql'],
-        'pymysql': ['pymysql'],
-        # ODBC
-        'odbc': ['pyodbc'],
-        'pyodbc': ['pyodbc'],
-        'pypyodbc': ['pypyodbc'],
-        # PostgreSQL
-        'psycopg1': ['psycopg1'],
-        'psycopg2': ['psycopg2'],
-        'psycopg': ['psycopg2'],
-        'postgres': ['psycopg2'],
-        'postgresql': ['psycopg2'],
-        'pygresql': ['pygresql'],
-        'pypostgresql': ['py-postgresql'],
-        'py-postgresql': ['py-postgresql'],
-        'pg8000': ['pg8000'],
-        #
-        'sapdb': ['sapdb'],
-        'sqlite': ['pysqlite'],
-        'sybase': ['Sybase'],
-    }
-
-    kw['python_requires'] = '>=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*'
 
 setup(name="SQLObject",
       version=sqlobject_version.version,
@@ -121,8 +67,50 @@ and `GitHub <https://github.com/sqlobject>`_.
       package_data={
           "sqlobject.maxdb": ["readme.txt"],
       },
+      entry_points="""
+      [paste.filter_app_factory]
+      main = sqlobject.wsgi_middleware:make_middleware
+      """,
+      python_requires='>=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*',
       requires=['FormEncode', 'PyDispatcher'],
-      **kw
+      install_requires=[
+          "FormEncode>=1.1.1,!=1.3.0; python_version=='2.7'",
+          "FormEncode>=1.3.1; python_version>='3.4'",
+          "PyDispatcher>=2.0.4",
+      ],
+      extras_require={
+          # Firebird/Interbase
+          'fdb': ['fdb'],
+          'firebirdsql': ['firebirdsql'],
+          'kinterbasdb': ['kinterbasdb'],
+          # MS SQL
+          'adodbapi': ['adodbapi'],
+          'pymssql': ['pymssql'],
+          # MySQL
+          'mysql:python_version=="2.7"': ['MySQL-python'],
+          'mysql:python_version>="3.4"': ['mysqlclient'],
+          'mysql-connector': ['mysql-connector'],
+          'oursql': ['oursql'],
+          'pymysql': ['pymysql'],
+          # ODBC
+          'odbc': ['pyodbc'],
+          'pyodbc': ['pyodbc'],
+          'pypyodbc': ['pypyodbc'],
+          # PostgreSQL
+          'psycopg1': ['psycopg1'],
+          'psycopg2': ['psycopg2'],
+          'psycopg': ['psycopg2'],
+          'postgres': ['psycopg2'],
+          'postgresql': ['psycopg2'],
+          'pygresql': ['pygresql'],
+          'pypostgresql': ['py-postgresql'],
+          'py-postgresql': ['py-postgresql'],
+          'pg8000': ['pg8000'],
+          #
+          'sapdb': ['sapdb'],
+          'sqlite': ['pysqlite'],
+          'sybase': ['Sybase'],
+      },
       )
 
 # Send announce to:
