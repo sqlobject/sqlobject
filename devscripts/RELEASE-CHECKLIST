@@ -12,7 +12,7 @@
    URL in ANNOUNCE.rst; edit __version__.py and README.rst in the release
    branch - fix versions. Edit section [egg_info] in setup.cfg - set if
    it is a stable or development release. In setup.py edit "Development
-   Status" in trove classifiers; edit download URL: if a non-stable
+   Status" in trove classifiers; edit download URLs: if a non-stable
    version - append 'dev' and date stamp, for a stable version remove
    'dev' and date stamp).
 

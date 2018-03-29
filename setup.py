@@ -58,11 +58,22 @@ and `GitHub <https://github.com/sqlobject>`_.
       url="http://sqlobject.org/",
       download_url="https://pypi.python.org/pypi/SQLObject/%s" %
       sqlobject_version.version,
+      project_urls={
+          'Homepage': 'http://sqlobject.org/',
+          'Development docs': 'http://sqlobject.org/devel/',
+          'Download': 'https://pypi.python.org/pypi/SQLObject/%s' %
+          sqlobject_version.version,
+          'Github repo': 'https://github.com/sqlobject',
+          'Issue tracker': 'https://github.com/sqlobject/sqlobject/issues',
+          'SourceForge project': 'https://sourceforge.net/projects/sqlobject/',
+          'Twitter': 'https://twitter.com/SQLObject',
+          'Wikipedia': 'https://en.wikipedia.org/wiki/SQLObject',
+      },
       keywords=["sql", "orm", "object-relational mapper"],
       license="LGPL",
       platforms="Any",
       packages=["sqlobject"] +
-          ['sqlobject.%s' % package for package in subpackages],
+      ['sqlobject.%s' % package for package in subpackages],
       scripts=["scripts/sqlobject-admin", "scripts/sqlobject-convertOldURI"],
       package_data={
           "sqlobject.maxdb": ["readme.txt"],

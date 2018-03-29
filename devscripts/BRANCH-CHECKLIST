@@ -8,7 +8,7 @@ a branch, a commit id or a tag.
     __version__.py and News.rst in the branch - set version. In
     setup.cfg in the branch edit section [publish] - uncomment doc-dest
     for stable branch. In setup.py in the branch edit URL (remove
-    '/devel') and download URL. In setup.py and DeveloperGuide.rst edit
+    '/devel') and download URLs. In setup.py and DeveloperGuide.rst edit
     Travis CI build status image URL (change branch). Commit.
 
 1b. If the branching point was master the script checks out master and
