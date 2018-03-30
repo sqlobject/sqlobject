@@ -35,6 +35,7 @@ and `GitHub <https://github.com/sqlobject>`_.
 .. image:: https://travis-ci.org/sqlobject/sqlobject.svg?branch=master
   :target: https://travis-ci.org/sqlobject/sqlobject
 """,
+      long_description_content_type="text/x-rst",
       classifiers=[
           "Development Status :: 5 - Production/Stable",
           "Intended Audience :: Developers",
