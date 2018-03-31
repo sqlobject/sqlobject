@@ -34,5 +34,5 @@ if [ "$state" = final ]; then
    ../sftp-frs
 fi &&
 
-twine upload --sign dist/* &&
+twine upload dist/* &&
 exec rm -rf build dist docs/html SQLObject.egg-info
