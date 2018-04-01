@@ -145,8 +145,9 @@ install:
   - "SET TOXPYTHON=%PYTHON_HOME%\\python.exe"
   - "python --version"
   - "python -c \"import struct; print(struct.calcsize('P') * 8)\""
+  - "python -m pip install --upgrade pip setuptools"
+  - "pip install --upgrade tox ppu"
   - "pip --version"
-  - "pip install --upgrade pip setuptools tox ppu"
   # List ODBC drivers
   - ps: Get-OdbcDriver -Platform 32-bit | Select-Object -ExpandProperty Name
   - ps: Get-OdbcDriver -Platform 64-bit | Select-Object -ExpandProperty Name
