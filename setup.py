@@ -13,10 +13,11 @@ subpackages = ['firebird', 'include', 'include.tests',
                'sqlite', 'sybase', 'tests', 'util',
                'versioning', 'versioning.test']
 
-setup(name="SQLObject",
-      version=sqlobject_version.version,
-      description="Object-Relational Manager, aka database wrapper",
-      long_description="""\
+setup(
+    name="SQLObject",
+    version=sqlobject_version.version,
+    description="Object-Relational Manager, aka database wrapper",
+    long_description="""\
 SQLObject is a popular *Object Relational Manager* for providing an
 object interface to your database, with tables as classes, rows as
 instances, and columns as attributes.
@@ -35,95 +36,95 @@ and `GitHub <https://github.com/sqlobject>`_.
 .. image:: https://travis-ci.org/sqlobject/sqlobject.svg?branch=master
   :target: https://travis-ci.org/sqlobject/sqlobject
 """,
-      long_description_content_type="text/x-rst",
-      classifiers=[
-          "Development Status :: 5 - Production/Stable",
-          "Intended Audience :: Developers",
-          "License :: OSI Approved :: "
-          "GNU Library or Lesser General Public License (LGPL)",
-          "Programming Language :: Python",
-          "Programming Language :: Python :: 2",
-          "Programming Language :: Python :: 2.7",
-          "Programming Language :: Python :: 3",
-          "Programming Language :: Python :: 3.4",
-          "Programming Language :: Python :: 3.5",
-          "Programming Language :: Python :: 3.6",
-          "Topic :: Database",
-          "Topic :: Database :: Front-Ends",
-          "Topic :: Software Development :: Libraries :: Python Modules",
-      ],
-      author="Ian Bicking",
-      author_email="ianb@colorstudy.com",
-      maintainer="Oleg Broytman",
-      maintainer_email="phd@phdru.name",
-      url="http://sqlobject.org/",
-      download_url="https://pypi.python.org/pypi/SQLObject/%s" %
-      sqlobject_version.version,
-      project_urls={
-          'Homepage': 'http://sqlobject.org/',
-          'Development docs': 'http://sqlobject.org/devel/',
-          'Download': 'https://pypi.python.org/pypi/SQLObject/%s' %
-          sqlobject_version.version,
-          'Github repo': 'https://github.com/sqlobject',
-          'Issue tracker': 'https://github.com/sqlobject/sqlobject/issues',
-          'SourceForge project': 'https://sourceforge.net/projects/sqlobject/',
-          'Twitter': 'https://twitter.com/SQLObject',
-          'Wikipedia': 'https://en.wikipedia.org/wiki/SQLObject',
-      },
-      keywords=["sql", "orm", "object-relational mapper"],
-      license="LGPL",
-      platforms="Any",
-      packages=["sqlobject"] +
-      ['sqlobject.%s' % package for package in subpackages],
-      scripts=["scripts/sqlobject-admin", "scripts/sqlobject-convertOldURI"],
-      package_data={
-          "sqlobject.maxdb": ["readme.txt"],
-      },
-      entry_points="""
-      [paste.filter_app_factory]
-      main = sqlobject.wsgi_middleware:make_middleware
-      """,
-      python_requires='>=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*',
-      requires=['FormEncode', 'PyDispatcher'],
-      install_requires=[
-          "FormEncode>=1.1.1,!=1.3.0; python_version=='2.7'",
-          "FormEncode>=1.3.1; python_version>='3.4'",
-          "PyDispatcher>=2.0.4",
-      ],
-      extras_require={
-          # Firebird/Interbase
-          'fdb': ['fdb'],
-          'firebirdsql': ['firebirdsql'],
-          'kinterbasdb': ['kinterbasdb'],
-          # MS SQL
-          'adodbapi': ['adodbapi'],
-          'pymssql': ['pymssql'],
-          # MySQL
-          'mysql:python_version=="2.7"': ['MySQL-python'],
-          'mysql:python_version>="3.4"': ['mysqlclient'],
-          'mysql-connector': ['mysql-connector'],
-          'oursql': ['oursql'],
-          'pymysql': ['pymysql'],
-          # ODBC
-          'odbc': ['pyodbc'],
-          'pyodbc': ['pyodbc'],
-          'pypyodbc': ['pypyodbc'],
-          # PostgreSQL
-          'psycopg1': ['psycopg1'],
-          'psycopg2': ['psycopg2'],
-          'psycopg': ['psycopg2'],
-          'postgres': ['psycopg2'],
-          'postgresql': ['psycopg2'],
-          'pygresql': ['pygresql'],
-          'pypostgresql': ['py-postgresql'],
-          'py-postgresql': ['py-postgresql'],
-          'pg8000': ['pg8000'],
-          #
-          'sapdb': ['sapdb'],
-          'sqlite': ['pysqlite'],
-          'sybase': ['Sybase'],
-      },
-      )
+    long_description_content_type="text/x-rst",
+    classifiers=[
+        "Development Status :: 5 - Production/Stable",
+        "Intended Audience :: Developers",
+        "License :: OSI Approved :: "
+        "GNU Library or Lesser General Public License (LGPL)",
+        "Programming Language :: Python",
+        "Programming Language :: Python :: 2",
+        "Programming Language :: Python :: 2.7",
+        "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3.4",
+        "Programming Language :: Python :: 3.5",
+        "Programming Language :: Python :: 3.6",
+        "Topic :: Database",
+        "Topic :: Database :: Front-Ends",
+        "Topic :: Software Development :: Libraries :: Python Modules",
+    ],
+    author="Ian Bicking",
+    author_email="ianb@colorstudy.com",
+    maintainer="Oleg Broytman",
+    maintainer_email="phd@phdru.name",
+    url="http://sqlobject.org/",
+    download_url="https://pypi.python.org/pypi/SQLObject/%s" %
+    sqlobject_version.version,
+    project_urls={
+        'Homepage': 'http://sqlobject.org/',
+        'Development docs': 'http://sqlobject.org/devel/',
+        'Download': 'https://pypi.python.org/pypi/SQLObject/%s' %
+        sqlobject_version.version,
+        'Github repo': 'https://github.com/sqlobject',
+        'Issue tracker': 'https://github.com/sqlobject/sqlobject/issues',
+        'SourceForge project': 'https://sourceforge.net/projects/sqlobject/',
+        'Twitter': 'https://twitter.com/SQLObject',
+        'Wikipedia': 'https://en.wikipedia.org/wiki/SQLObject',
+    },
+    keywords=["sql", "orm", "object-relational mapper"],
+    license="LGPL",
+    platforms="Any",
+    packages=["sqlobject"] +
+    ['sqlobject.%s' % package for package in subpackages],
+    scripts=["scripts/sqlobject-admin", "scripts/sqlobject-convertOldURI"],
+    package_data={
+        "sqlobject.maxdb": ["readme.txt"],
+    },
+    entry_points="""
+    [paste.filter_app_factory]
+    main = sqlobject.wsgi_middleware:make_middleware
+    """,
+    python_requires='>=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*',
+    requires=['FormEncode', 'PyDispatcher'],
+    install_requires=[
+        "FormEncode>=1.1.1,!=1.3.0; python_version=='2.7'",
+        "FormEncode>=1.3.1; python_version>='3.4'",
+        "PyDispatcher>=2.0.4",
+    ],
+    extras_require={
+        # Firebird/Interbase
+        'fdb': ['fdb'],
+        'firebirdsql': ['firebirdsql'],
+        'kinterbasdb': ['kinterbasdb'],
+        # MS SQL
+        'adodbapi': ['adodbapi'],
+        'pymssql': ['pymssql'],
+        # MySQL
+        'mysql:python_version=="2.7"': ['MySQL-python'],
+        'mysql:python_version>="3.4"': ['mysqlclient'],
+        'mysql-connector': ['mysql-connector'],
+        'oursql': ['oursql'],
+        'pymysql': ['pymysql'],
+        # ODBC
+        'odbc': ['pyodbc'],
+        'pyodbc': ['pyodbc'],
+        'pypyodbc': ['pypyodbc'],
+        # PostgreSQL
+        'psycopg1': ['psycopg1'],
+        'psycopg2': ['psycopg2'],
+        'psycopg': ['psycopg2'],
+        'postgres': ['psycopg2'],
+        'postgresql': ['psycopg2'],
+        'pygresql': ['pygresql'],
+        'pypostgresql': ['py-postgresql'],
+        'py-postgresql': ['py-postgresql'],
+        'pg8000': ['pg8000'],
+        #
+        'sapdb': ['sapdb'],
+        'sqlite': ['pysqlite'],
+        'sybase': ['Sybase'],
+    },
+)
 
 # Send announce to:
 #   sqlobject-discuss@lists.sourceforge.net
