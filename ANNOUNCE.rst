@@ -54,7 +54,7 @@ Mailing list:
 https://lists.sourceforge.net/mailman/listinfo/sqlobject-discuss
 
 Download:
-https://pypi.python.org/pypi/SQLObject/3.7.0a0.dev20171115
+https://pypi.org/project/SQLObject/3.7.0a0.dev20171115/
 
 News and changes:
 http://sqlobject.org/News.html

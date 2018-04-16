@@ -2,7 +2,7 @@ Download SQLObject
 ++++++++++++++++++
 
 The latest releases are always available on the `Python Package Index
-<https://pypi.python.org/pypi/SQLObject>`_, and is installable
+<https://pypi.org/project/SQLObject/>`_, and is installable
 with `pip <https://pip.pypa.io/en/latest/>`_ or `easy_install
 <https://setuptools.readthedocs.io/en/latest/easy_install.html>`_.
 

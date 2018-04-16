@@ -9,14 +9,14 @@ TODO
 
 * PyPy.
 
-* Use https://pypi.python.org/pypi/psycopg2cffi to run SQLObject
+* Use https://pypi.org/project/psycopg2cffi/ to run SQLObject
   under PyPy.
 
-* https://pypi.python.org/pypi/turbodbc
+* https://pypi.org/project/turbodbc/
 
 * PyODBC and PyPyODBC for linux and w32: SQLite (libsqliteodbc).
 
-* https://pypi.python.org/pypi/JayDeBeApi
+* https://pypi.org/project/JayDeBeApi/
 
 * Jython.
 
@@ -92,7 +92,7 @@ TODO
 
 * Support PyODBC driver for all backends.
 
-* `dbms <https://pypi.python.org/pypi/dbms>`_ is a DB API wrapper for DB
+* `dbms <https://pypi.org/project/dbms/>`_ is a DB API wrapper for DB
   API drivers for IBM DB2, Firebird, MSSQL Server, MySQL, Oracle,
   PostgreSQL, SQLite and ODBC.
 
@@ -109,7 +109,7 @@ TODO
 
 * Use DBUtils_, especially SolidConnection.
 
-.. _DBUtils: https://pypi.python.org/pypi/DBUtils
+.. _DBUtils: https://pypi.org/project/DBUtils/
 
 * ``_fromDatabase`` currently doesn't support IDs that don't fit into the
   normal naming scheme.  It should do so.  You can still use ``_idName``

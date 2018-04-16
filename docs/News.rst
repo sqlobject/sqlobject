@@ -68,7 +68,7 @@ Minor features
 Drivers
 -------
 
-* Add support for `pg8000 <https://pypi.python.org/pypi/pg8000>`_
+* Add support for `pg8000 <https://pypi.org/project/pg8000/>`_
   PostgreSQL driver.
 
 * Fix autoreconnect with pymysql driver. Contributed by Shailesh Mungikar.
@@ -202,7 +202,7 @@ Minor features
   'connector', 'oursql' and 'pymysql'. Default is to test for mysqldb only.
 
 * Add support for `MySQL Connector
-  <https://pypi.python.org/pypi/mysql-connector>`_ (pure python; `binary
+  <https://pypi.org/project/mysql-connector/>`_ (pure python; `binary
   packages <https://dev.mysql.com/doc/connector-python/en/>`_ are not at
   PyPI and hence are hard to install and test).
 
@@ -224,11 +224,11 @@ Drivers (work in progress)
 * Extend support for PyGreSQL driver. There are still some problems.
 
 * Add support for `py-postgresql
-  <https://pypi.python.org/pypi/py-postgresql>`_ PostgreSQL driver. There
+  <https://pypi.org/project/py-postgresql/>`_ PostgreSQL driver. There
   are still problems with the driver.
 
 * Add support for `pyfirebirdsql
-  <https://pypi.python.org/pypi/firebirdsql>`_.There are still problems with
+  <https://pypi.org/project/firebirdsql/>`_.There are still problems with
   the driver.
 
 Bug fixes

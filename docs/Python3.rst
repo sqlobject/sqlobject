@@ -40,7 +40,7 @@ Note that the default encoding of MySQL databases is *latin1*, which can cause
 problems with general Unicode strings. We recommend specifying the character
 set as *utf8* when using MySQL to protect against these issues.
 
-.. _mysqlclient: https://pypi.python.org/pypi/mysqlclient
+.. _mysqlclient: https://pypi.org/project/mysqlclient/
 
 
 Using databases created with SQLObject and Python 2 in Python 3

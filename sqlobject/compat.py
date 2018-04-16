@@ -1,7 +1,7 @@
 import sys
 import types
 
-# Credit to six authors: https://pypi.python.org/pypi/six
+# Credit to six authors: https://pypi.org/project/six/
 # License: MIT
 
 

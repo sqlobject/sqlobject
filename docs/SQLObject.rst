@@ -59,21 +59,21 @@ problems (not all tests passed).
 
 .. _MySQL: https://www.mysql.com/
 .. _MySQLdb: https://sourceforge.net/projects/mysql-python/
-.. _mysqlclient: https://pypi.python.org/pypi/mysqlclient
-.. _`MySQL Connector`: https://pypi.python.org/pypi/mysql-connector
+.. _mysqlclient: https://pypi.org/project/mysqlclient/
+.. _`MySQL Connector`: https://pypi.org/project/mysql-connector/
 .. _oursql: https://github.com/python-oursql/oursql
 .. _PyMySQL: https://github.com/PyMySQL/PyMySQL/
 .. _PostgreSQL: https://postgresql.org
 .. _psycopg2: http://initd.org/psycopg/
 .. _PyGreSQL: http://www.pygresql.org/
-.. _py-postgresql: https://pypi.python.org/pypi/py-postgresql
-.. _pg8000: https://pypi.python.org/pypi/pg8000
+.. _py-postgresql: https://pypi.org/project/py-postgresql/
+.. _pg8000: https://pypi.org/project/pg8000/
 .. _SQLite: https://sqlite.org/
 .. _PySQLite: https://github.com/ghaering/pysqlite
 .. _Firebird: http://www.firebirdsql.org/en/python-driver/
 .. _fdb: http://www.firebirdsql.org/en/devel-python-driver/
 .. _kinterbasdb: http://kinterbasdb.sourceforge.net/
-.. _pyfirebirdsql: https://pypi.python.org/pypi/firebirdsql
+.. _pyfirebirdsql: https://pypi.org/project/firebirdsql/
 .. _`MAX DB`: http://maxdb.sap.com/
 .. _sapdb: http://maxdb.sap.com/doc/7_8/50/01923f25b842438a408805774f6989/frameset.htm
 .. _Sybase: http://www.object-craft.com.au/projects/sybase/
@@ -81,8 +81,8 @@ problems (not all tests passed).
 .. _pymssql: http://www.pymssql.org/en/latest/index.html
 .. _FreeTDS: http://www.freetds.org/
 .. _adodbapi: http://adodbapi.sourceforge.net/
-.. _PyODBC: https://pypi.python.org/pypi/pyodbc
-.. _PyPyODBC: https://pypi.python.org/pypi/pypyodbc
+.. _PyODBC: https://pypi.org/project/pyodbc/
+.. _PyPyODBC: https://pypi.org/project/pypyodbc/
 
 Python 2.7 or 3.4+ is required.
 

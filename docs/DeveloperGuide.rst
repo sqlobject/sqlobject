@@ -234,7 +234,7 @@ Tests are important.  Tests keep everything from falling apart.  All
 new additions should have tests.
 
 Testing uses pytest, an alternative to ``unittest``.  It is available
-at http://pytest.org/ and https://pypi.python.org/pypi/pytest.  Read its
+at http://pytest.org/ and https://pypi.org/project/pytest/.  Read its
 `getting started`_ document for more.
 
 .. _getting started: http://docs.pytest.org/en/latest/getting-started.html
@@ -283,7 +283,7 @@ To avoid triggering unnecessary test run at CI services add text `[skip ci]
 ``[ci skip]`` anywhere in your commit messages for commits that don't change
 code (documentation updates and such).
 
-We use `coverage.py <https://pypi.python.org/pypi/coverage>`_
+We use `coverage.py <https://pypi.org/project/coverage/>`_
 to measures code coverage by tests and upload the result for analyzis to
 `Coveralls <https://coveralls.io/github/sqlobject/sqlobject>`_ and
 `Codecov <https://codecov.io/gh/sqlobject/sqlobject>`_:
