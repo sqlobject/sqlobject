@@ -111,11 +111,16 @@ class MySQLConnection(DBAPI):
                     "client_flag", "local_infile"):
             if key in kw:
                 self.kw[key] = int(kw.pop(key))
-        for key in ("ssl_key", "ssl_cert", "ssl_ca", "ssl_capath"):
-            if key in kw:
-                if "ssl" not in self.kw:
-                    self.kw["ssl"] = {}
-                self.kw["ssl"][key[4:]] = kw.pop(key)
+        if driver == 'connector':
+            for key in ("ssl_key", "ssl_cert", "ssl_ca", "ssl_capath"):
+                if key in kw:
+                    self.kw[key] = kw.pop(key)
+        else:
+            for key in ("ssl_key", "ssl_cert", "ssl_ca", "ssl_capath"):
+                if key in kw:
+                    if "ssl" not in self.kw:
+                        self.kw["ssl"] = {}
+                    self.kw["ssl"][key[4:]] = kw.pop(key)
         if "charset" in kw:
             self.dbEncoding = self.kw["charset"] = kw.pop("charset")
         else:

@@ -13,6 +13,12 @@ Features
 
 * Add signals on commit and rollback; pull request by Scott Stahl.
 
+Bug fixes
+---------
+
+* Fix SSL-related parameters for MySQL-connector (connector uses
+  a different param style). Bug reported by Christophe Popov.
+
 SQLObject 3.6.0
 ===============
 
