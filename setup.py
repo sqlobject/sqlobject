@@ -110,7 +110,6 @@ and `GitHub <https://github.com/sqlobject>`_.
         'pyodbc': ['pyodbc'],
         'pypyodbc': ['pypyodbc'],
         # PostgreSQL
-        'psycopg1': ['psycopg1'],
         'psycopg2': ['psycopg2'],
         'psycopg': ['psycopg2'],
         'postgres': ['psycopg2'],

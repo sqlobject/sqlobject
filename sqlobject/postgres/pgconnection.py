@@ -38,17 +38,8 @@ class PostgresConnection(DBAPI):
             if not driver:
                 continue
             try:
-                if driver == 'psycopg2':
+                if driver in ('psycopg', 'psycopg2'):
                     import psycopg2 as psycopg
-                    self.module = psycopg
-                elif driver == 'psycopg1':
-                    import psycopg
-                    self.module = psycopg
-                elif driver == 'psycopg':
-                    try:
-                        import psycopg2 as psycopg
-                    except ImportError:
-                        import psycopg
                     self.module = psycopg
                 elif driver == 'pygresql':
                     import pgdb
@@ -74,7 +65,7 @@ class PostgresConnection(DBAPI):
                 else:
                     raise ValueError(
                         'Unknown PostgreSQL driver "%s", '
-                        'expected psycopg, psycopg2, psycopg1, '
+                        'expected psycopg, psycopg2, '
                         'pygresql, pypostgresql, pg8000, '
                         'odbc, pyodbc or pypyodbc' % driver)
             except ImportError:

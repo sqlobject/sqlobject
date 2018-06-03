@@ -19,6 +19,11 @@ Bug fixes
 * Fix SSL-related parameters for MySQL-connector (connector uses
   a different param style). Bug reported by Christophe Popov.
 
+Drivers
+-------
+
+* Remove psycopg1. Driver ``psycopg`` is now just an alias for ``psycopg2``.
+
 SQLObject 3.6.0
 ===============
 

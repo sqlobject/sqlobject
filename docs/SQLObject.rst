@@ -48,7 +48,7 @@ Requirements
 
 Currently SQLObject supports MySQL_ via MySQLdb_ aka MySQL-python (called
 mysqlclient_ for Python 3), `MySQL Connector`_, oursql_, PyMySQL_, PyODBC_
-and PyPyODBC_. For PostgreSQL_ psycopg2_ or psycopg1 are recommended;
+and PyPyODBC_. For PostgreSQL_ psycopg2_ is recommended;
 PyGreSQL_, py-postgresql_ and pg8000_ are supported; SQLite_ has a
 built-in driver or PySQLite_. Firebird_ is supported via fdb_ or
 kinterbasdb_; pyfirebirdsql_ is supported but has problems. `MAX DB`_
@@ -1832,8 +1832,8 @@ PostgresConnection supports transactions and all other features.
 
 The user can choose a DB API driver for PostgreSQL by using a ``driver``
 parameter in DB URI or PostgresConnection that can be a comma-separated
-list of driver names. Possible drivers are: ``psycopg2``, psycopg1,
-``psycopg`` (tries psycopg2 and psycopg1), ``pygresql``, ``pypostgresql``,
+list of driver names. Possible drivers are: ``psycopg2``,
+``psycopg`` (alias for ``psycopg2``), ``pygresql``, ``pypostgresql``,
 ``pg8000``, ``pyodbc``, ``pypyodbc`` or ``odbc`` (try ``pyodbc`` and
 ``pypyodbc``). Default is ``psycopg``.
 
