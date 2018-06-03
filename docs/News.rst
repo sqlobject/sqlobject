@@ -24,6 +24,13 @@ Drivers
 
 * Remove psycopg1. Driver ``psycopg`` is now just an alias for ``psycopg2``.
 
+Tests
+-----
+
+* Install psycopg2 from `psycopg2-binary`_ package.
+
+.. _`psycopg2-binary`: https://pypi.org/project/psycopg2-binary/
+
 SQLObject 3.6.0
 ===============
 
