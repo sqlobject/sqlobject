@@ -38,10 +38,11 @@
 7. Run ../push-all in the development repository to push all branches
    and tags to the public repositories.
 
-8. Run ../postrelease. The script restores ANNOUNCE.rst from the previous
-   commit (HEAD~). It calls editor; update next version, remove the list
-   of contributors and the list of changes, edit download URL in
-   ANNOUNCE.rst. Edit docs/News.rst - add new version.
+8. Run ../postrelease. The script restores ANNOUNCE.rst and setup.cfg
+   from the previous commit (HEAD~). It calls editor; update next version,
+   remove the list of contributors and the list of changes, edit download
+   URL in ANNOUNCE.rst. Edit README.rst and docs/News.rst - add new
+   version.
 
 9. Generate new docs using ./build-all-docs. Upload docs using
    ./publish-docs.
