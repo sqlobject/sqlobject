@@ -33,7 +33,7 @@
    if it is a stable release - uploads archives and release announcement
    (ANNOUNCE.rst) to SourceForge.
 
-6. Hide/show old releases at PyPI and SourceForge.
+6. Move old releases at SourceForge to subdirectory OldFiles.
 
 7. Run ../push-all in the development repository to push all branches
    and tags to the public repositories.
