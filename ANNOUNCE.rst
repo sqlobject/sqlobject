@@ -1,28 +1,36 @@
 Hello!
 
-I'm pleased to announce version 3.7.0a1, the first alpha of the upcoming
-release of branch 3.7 of SQLObject.
-
-I'm pleased to announce version 3.7.0a2, the second alpha of the upcoming
-release of branch 3.7 of SQLObject.
-
-I'm pleased to announce version 3.7.0b1, the first beta of the upcoming
-release of branch 3.7 of SQLObject.
-
-I'm pleased to announce version 3.7.0rc1, the first release candidate
-of the upcoming release of branch 3.7 of SQLObject.
-
 I'm pleased to announce version 3.7.0, the first stable release of branch
-3.7 of SQLObject.
-
-I'm pleased to announce version 3.7.0, the first bugfix release of branch
 3.7 of SQLObject.
 
 
 What's new in SQLObject
 =======================
 
-Contributors for this release are 
+Contributors for this release are Scott Stahl and Christophe Popov.
+
+Features
+--------
+
+* Add signals on commit and rollback; pull request by Scott Stahl.
+
+Bug fixes
+---------
+
+* Fix SSL-related parameters for MySQL-connector (connector uses
+  a different param style). Bug reported by Christophe Popov.
+
+Drivers
+-------
+
+* Remove psycopg1. Driver ``psycopg`` is now just an alias for ``psycopg2``.
+
+Tests
+-----
+
+* Install psycopg2 from `psycopg2-binary`_ package.
+
+.. _`psycopg2-binary`: https://pypi.org/project/psycopg2-binary/
 
 For a more complete list, please see the news:
 http://sqlobject.org/News.html
@@ -54,7 +62,7 @@ Mailing list:
 https://lists.sourceforge.net/mailman/listinfo/sqlobject-discuss
 
 Download:
-https://pypi.org/project/SQLObject/3.7.0a0.dev20171115/
+https://pypi.org/project/SQLObject/3.7.0/
 
 News and changes:
 http://sqlobject.org/News.html

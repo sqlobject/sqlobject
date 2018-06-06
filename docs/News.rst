@@ -5,8 +5,10 @@ News
 .. contents:: Contents:
    :backlinks: none
 
-SQLObject 3.7.0 (master)
-========================
+SQLObject 3.7.0
+===============
+
+Released 6 June 2018.
 
 Features
 --------
