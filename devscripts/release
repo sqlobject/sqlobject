@@ -11,15 +11,6 @@ python setup.py build_py &&
 python setup.py build --executable '/usr/bin/env python' &&
 python setup.py sdist &&
 
-for py in 2.7 3.4 3.5 3.6 3.7; do
-   find build -name '*.py[co]' -delete &&
-   python$py setup.py build_py &&
-   python$py setup.py build --executable '/usr/bin/env python' &&
-   python$py    -m compileall build &&
-   python$py -O -m compileall build &&
-   python$py setup.py bdist_egg || exit 1
-done
-
 find build -name '*.py[co]' -delete &&
 python setup.py bdist_wheel --universal &&
 
