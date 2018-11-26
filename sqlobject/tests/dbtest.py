@@ -122,11 +122,8 @@ except Exception as e:
 else:
     if (connection.dbName == 'firebird') \
         or (
-            (connection.dbName == 'mysql') and
-            (
-                (os.environ.get('APPVEYOR')) or
-                (os.environ.get('TRAVIS'))
-            )
+            (connection.dbName == 'mysql')
+            and ((os.environ.get('APPVEYOR')) or (os.environ.get('TRAVIS')))
     ):
         use_microseconds(False)
 

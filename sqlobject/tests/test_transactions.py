@@ -53,8 +53,8 @@ def test_transaction():
         SOTestSOTrans(name='joe', connection=trans)
         trans.rollback()
         trans.begin()
-        assert ([n.name for n in SOTestSOTrans.select(connection=trans)] ==
-                ['bob', 'tim'])
+        assert ([n.name for n in SOTestSOTrans.select(connection=trans)]
+                == ['bob', 'tim'])
         b = SOTestSOTrans.byName('bob', connection=trans)
         b.name = 'robert'
         trans.commit()

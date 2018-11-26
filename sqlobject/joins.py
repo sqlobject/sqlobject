@@ -440,19 +440,19 @@ class SOManyToMany(object):
         events.listen(self.event_CreateTableSignal,
                       self.otherClass, events.CreateTableSignal)
         self.clause = (
-            (self.otherClass.q.id ==
-             sqlbuilder.Field(self.intermediateTable, self.otherColumn)) &
-            (sqlbuilder.Field(self.intermediateTable, self.joinColumn) ==
-             self.soClass.q.id))
+            (self.otherClass.q.id
+                == sqlbuilder.Field(self.intermediateTable, self.otherColumn))
+            & (sqlbuilder.Field(self.intermediateTable, self.joinColumn)
+                == self.soClass.q.id))
 
     def __get__(self, obj, type):
         if obj is None:
             return self
         query = (
-            (self.otherClass.q.id ==
-             sqlbuilder.Field(self.intermediateTable, self.otherColumn)) &
-            (sqlbuilder.Field(self.intermediateTable, self.joinColumn) ==
-             obj.id))
+            (self.otherClass.q.id
+                == sqlbuilder.Field(self.intermediateTable, self.otherColumn))
+            & (sqlbuilder.Field(self.intermediateTable, self.joinColumn)
+                == obj.id))
         select = self.otherClass.select(query)
         return _ManyToManySelectWrapper(obj, self, select)
 
@@ -545,15 +545,15 @@ class SOOneToMany(object):
             self.joinColumn = styles.getStyle(
                 self.soClass).tableReference(self.soClass.sqlmeta.table)
         self.clause = (
-            sqlbuilder.Field(self.otherClass.sqlmeta.table, self.joinColumn) ==
-            self.soClass.q.id)
+            sqlbuilder.Field(self.otherClass.sqlmeta.table, self.joinColumn)
+            == self.soClass.q.id)
 
     def __get__(self, obj, type):
         if obj is None:
             return self
         query = (
-            sqlbuilder.Field(self.otherClass.sqlmeta.table, self.joinColumn) ==
-            obj.id)
+            sqlbuilder.Field(self.otherClass.sqlmeta.table, self.joinColumn)
+            == obj.id)
         select = self.otherClass.select(query)
         return _OneToManySelectWrapper(obj, self, select)
 

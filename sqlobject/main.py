@@ -1410,8 +1410,8 @@ class SQLObject(with_metaclass(declarative.DeclarativeMeta, object)):
             *[getattr(cls.q, _n) == _v for _n, _v in zip(name, new_value)])
         return (connection or cls._connection)._SO_selectOneAlt(
             cls,
-            [cls.sqlmeta.idName] +
-            [column.dbName for column in cls.sqlmeta.columnList],
+            [cls.sqlmeta.idName]
+            + [column.dbName for column in cls.sqlmeta.columnList],
             condition), None
 
     @classmethod
@@ -1536,8 +1536,8 @@ class SQLObject(with_metaclass(declarative.DeclarativeMeta, object)):
     def createJoinTables(cls, ifNotExists=False, connection=None):
         conn = connection or cls._connection
         for join in cls._getJoinsToCreate():
-            if (ifNotExists and
-                    conn.tableExists(join.intermediateTable)):
+            if (ifNotExists
+                    and conn.tableExists(join.intermediateTable)):
                 continue
             conn._SO_createJoinTable(join)
 

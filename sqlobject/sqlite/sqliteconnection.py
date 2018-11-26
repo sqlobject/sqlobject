@@ -170,8 +170,8 @@ class SQLiteConnection(DBAPI):
             return
         threadid = self._threadOrigination.get(id(conn))
         DBAPI.releaseConnection(self, conn, explicit=explicit)
-        if (self._pool is not None and threadid and
-                threadid not in self._threadPool):
+        if (self._pool is not None and threadid
+                and threadid not in self._threadPool):
             self._threadPool[threadid] = conn
         else:
             if self._pool and conn in self._pool:

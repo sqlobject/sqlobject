@@ -199,8 +199,8 @@ class Declarative(with_metaclass(DeclarativeMeta, object)):
     @staticmethod
     def _repr_vars(dictNames):
         names = [n for n in dictNames
-                 if not n.startswith('_') and
-                 n != 'declarative_count']
+                 if not n.startswith('_')
+                 and n != 'declarative_count']
         names.sort()
         return names
 

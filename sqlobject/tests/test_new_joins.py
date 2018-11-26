@@ -116,8 +116,8 @@ class TestJoin2:
 
     def test_defaultOrder(self):
         p1 = PersonJNew2.byName('bob')
-        assert ([i.zip for i in p1.addressJ2s] ==
-                ['33333', '22222', '11111'])
+        assert ([i.zip for i in p1.addressJ2s]
+                == ['33333', '22222', '11111'])
 
 
 _personJ3_getters = []

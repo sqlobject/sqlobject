@@ -387,8 +387,8 @@ class SOCol(object):
                 [self.dbName, self._firebirdType()] + self._extraSQL())
         else:
             return ' '.join(
-                [self.dbName] + [self._firebirdType()[0]] +
-                self._extraSQL() + [self._firebirdType()[1]])
+                [self.dbName] + [self._firebirdType()[0]]
+                + self._extraSQL() + [self._firebirdType()[1]])
 
     def maxdbCreateSQL(self):
         return ' '.join([self.dbName, self._maxdbType()] + self._extraSQL())

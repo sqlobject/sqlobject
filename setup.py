@@ -74,8 +74,8 @@ and `GitHub <https://github.com/sqlobject>`_.
     keywords=["sql", "orm", "object-relational mapper"],
     license="LGPL",
     platforms="Any",
-    packages=["sqlobject"] +
-    ['sqlobject.%s' % package for package in subpackages],
+    packages=["sqlobject"]
+    + ['sqlobject.%s' % package for package in subpackages],
     scripts=["scripts/sqlobject-admin", "scripts/sqlobject-convertOldURI"],
     package_data={
         "sqlobject.maxdb": ["readme.txt"],

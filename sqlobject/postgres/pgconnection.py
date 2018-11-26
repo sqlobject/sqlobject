@@ -249,8 +249,8 @@ class PostgresConnection(DBAPI):
         except self.module.ProgrammingError as e:
             msg = ErrorMessage(e)
             if (
-                (len(e.args) > 2) and (e.args[1] == 'ERROR') and
-                    (e.args[2] == '23505')) \
+                (len(e.args) > 2) and (e.args[1] == 'ERROR')
+                and (e.args[2] == '23505')) \
                     or ((len(e.args) >= 2) and (e.args[1] == '23505')):
                 raise dberrors.DuplicateEntryError(msg)
             else:

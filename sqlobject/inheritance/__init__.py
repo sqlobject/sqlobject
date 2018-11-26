@@ -31,8 +31,8 @@ class InheritableSelectResults(SelectResults):
         if clause is None or isinstance(clause, str) and clause == 'all':
             clause = sqlbuilder.SQLTrueClause
 
-        dbName = (ops.get('connection', None) or
-                  sourceClass._connection).dbName
+        dbName = (ops.get('connection', None)
+                  or sourceClass._connection).dbName
 
         tablesSet = tablesUsedSet(clause, dbName)
         tablesSet.add(str(sourceClass.sqlmeta.table))
@@ -415,8 +415,8 @@ class InheritableSQLObject(SQLObject):
             # If we are outside a transaction and this is a child,
             # destroy the parent
             connection = self._connection
-            if (not isinstance(connection, dbconnection.Transaction) and
-                    connection.autoCommit) and self.sqlmeta.parentClass:
+            if (not isinstance(connection, dbconnection.Transaction)
+                    and connection.autoCommit) and self.sqlmeta.parentClass:
                 self._parent.destroySelf()
                 # TC: Do we need to do this??
                 self._parent = None
@@ -457,8 +457,8 @@ class InheritableSQLObject(SQLObject):
                 # if the clause was one of TRUE varians, replace it
                 if (clause is None) or (clause is sqlbuilder.SQLTrueClause) \
                         or (
-                            isinstance(clause, string_type) and
-                            (clause == 'all')):
+                            isinstance(clause, string_type)
+                            and (clause == 'all')):
                     clause = addClause
                 else:
                     # patch WHERE condition:

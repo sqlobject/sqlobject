@@ -41,8 +41,8 @@ class B1(Declarative):
     def add_attrs(old_attrs, new_attrs):
         old_attrs = old_attrs[:]
         for name in new_attrs.keys():
-            if (name in old_attrs or name.startswith('_') or
-                    name in ('add_attrs', 'declarative_count', 'attrs')):
+            if (name in old_attrs or name.startswith('_')
+                    or name in ('add_attrs', 'declarative_count', 'attrs')):
                 continue
             old_attrs.append(name)
         old_attrs.sort()

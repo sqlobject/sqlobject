@@ -71,8 +71,8 @@ def test1():
     assert s.count() == 1
     assert s[0] == w1
     s = SOTestWorkKey.select(
-        (SOTestWorkKey.q.composer == c) &
-        (SOTestWorkKey.q.title == 'Symphony No. 9'))
+        (SOTestWorkKey.q.composer == c)
+        & (SOTestWorkKey.q.title == 'Symphony No. 9'))
     assert s.count() == 1
     assert s[0] == w1
 
