@@ -5,3 +5,4 @@ sqlobject\.tests\.test\_sqlbuilder\_joins\_instances module
     :members:
     :undoc-members:
     :show-inheritance:
+    :exclude-members: columnDefinitions,columnList,columns

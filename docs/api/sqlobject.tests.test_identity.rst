@@ -5,3 +5,4 @@ sqlobject\.tests\.test\_identity module
     :members:
     :undoc-members:
     :show-inheritance:
+    :exclude-members: columnDefinitions,columnList,columns

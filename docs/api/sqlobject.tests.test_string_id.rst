@@ -5,3 +5,4 @@ sqlobject\.tests\.test\_string\_id module
     :members:
     :undoc-members:
     :show-inheritance:
+    :exclude-members: columnDefinitions,columnList,columns

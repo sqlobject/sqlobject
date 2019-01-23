@@ -5,3 +5,4 @@ sqlobject\.inheritance\.tests\.test\_aggregates module
     :members:
     :undoc-members:
     :show-inheritance:
+    :exclude-members: columnDefinitions,columnList,columns
