@@ -9,7 +9,7 @@ from sqlobject.tests.dbtest import setupClass
 
 class InheritablePersonAD(InheritableSQLObject):
     firstName = StringCol()
-    lastName = StringCol(alternateID=True, length=255)
+    lastName = StringCol(alternateID=True, length=100)
 
 
 class ManagerAD(InheritablePersonAD):

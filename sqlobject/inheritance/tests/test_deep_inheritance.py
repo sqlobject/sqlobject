@@ -10,7 +10,7 @@ from sqlobject.tests.dbtest import getConnection, setupClass, supports
 
 class DIPerson(InheritableSQLObject):
     firstName = StringCol(length=100)
-    lastName = StringCol(alternateID=True, length=255)
+    lastName = StringCol(alternateID=True, length=100)
     manager = ForeignKey("DIManager", default=None)
 
 

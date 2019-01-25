@@ -9,13 +9,13 @@ from sqlobject.tests.dbtest import setupClass
 
 
 class InheritablePerson(InheritableSQLObject):
-    firstName = StringCol()
-    lastName = StringCol(alternateID=True, length=255)
+    firstName = StringCol(length=100)
+    lastName = StringCol(alternateID=True, length=100)
 
 
 class Employee(InheritablePerson):
     _inheritable = False
-    so_position = StringCol()
+    so_position = StringCol(length=100)
 
 
 def setup():
