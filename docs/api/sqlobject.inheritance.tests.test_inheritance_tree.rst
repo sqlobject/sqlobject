@@ -5,3 +5,4 @@ sqlobject\.inheritance\.tests\.test\_inheritance\_tree module
     :members:
     :undoc-members:
     :show-inheritance:
+    :exclude-members: columnDefinitions,columnList,columns

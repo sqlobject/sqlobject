@@ -5,3 +5,4 @@ sqlobject\.manager\.command module
     :members:
     :undoc-members:
     :show-inheritance:
+    :exclude-members: columnDefinitions,columnList,columns

@@ -5,3 +5,4 @@ sqlobject\.tests\.test\_aliases module
     :members:
     :undoc-members:
     :show-inheritance:
+    :exclude-members: columnDefinitions,columnList,columns
