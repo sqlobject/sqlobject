@@ -8,6 +8,23 @@ News
 SQLObject 3.8.0 (master)
 ========================
 
+Bug fixes
+---------
+
+* Fixed a unicode problem in the latest mysqlclient.
+
+Documentation
+-------------
+
+* Exclude sqlmeta members from some of the api docs.
+  The inclusion of of these sqlmeta members in these files breaks
+  reproducible builds.
+
+Development
+-----------
+
+* Source code was made flake8-clean using the latest flake8.
+
 SQLObject 3.7.0
 ===============
 
