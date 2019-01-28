@@ -110,29 +110,17 @@ matrix:
       env: TOXENV=py34-flake8
     - python: "2.7"
       env: TOXENV=py27-firebird-fdb
-    - python: "3.4"
-      env: TOXENV=py34-firebird-fdb
-    - python: "3.5"
-      env: TOXENV=py35-firebird-fdb
     - python: "3.6"
       env: TOXENV=py36-firebird-fdb
     - python: "2.7"
       env: TOXENV=py27-firebirdsql
-    - python: "3.4"
-      env: TOXENV=py34-firebirdsql
-    - python: "3.5"
-      env: TOXENV=py35-firebirdsql
     - python: "3.6"
       env: TOXENV=py36-firebirdsql
 
   allow_failures:
     - env: TOXENV=py27-firebird-fdb
-    - env: TOXENV=py34-firebird-fdb
-    - env: TOXENV=py35-firebird-fdb
     - env: TOXENV=py36-firebird-fdb
     - env: TOXENV=py27-firebirdsql
-    - env: TOXENV=py34-firebirdsql
-    - env: TOXENV=py35-firebirdsql
     - env: TOXENV=py36-firebirdsql
 
   fast_finish: true
