@@ -53,16 +53,6 @@ environment:
       PYTHON_VERSION: "3.6"
       PYTHON_HOME: "C:\\Python36-x64"
       db: mysql
-    - TOXENV: "py27-mysql-pyodbc-w32"
-      PYTHON_ARCH: "64"
-      PYTHON_VERSION: "2.7"
-      PYTHON_HOME: "C:\\Python27-x64"
-      db: mysql
-    - TOXENV: "py36-mysql-pyodbc-w32"
-      PYTHON_ARCH: "64"
-      PYTHON_VERSION: "3.6"
-      PYTHON_HOME: "C:\\Python36-x64"
-      db: mysql
     - TOXENV: "py27-postgres-psycopg-w32"
       PYTHON_ARCH: "32"
       PYTHON_VERSION: "2.7"
@@ -103,16 +93,6 @@ environment:
       PYTHON_VERSION: "3.6"
       PYTHON_HOME: "C:\\Python36-x64"
       db: postgresql
-    - TOXENV: "py27-postgres-pyodbc-w32"
-      PYTHON_ARCH: "64"
-      PYTHON_VERSION: "2.7"
-      PYTHON_HOME: "C:\\Python27-x64"
-      db: postgresql
-    - TOXENV: "py36-postgres-pyodbc-w32"
-      PYTHON_ARCH: "64"
-      PYTHON_VERSION: "3.6"
-      PYTHON_HOME: "C:\\Python36-x64"
-      db: postgresql
     - TOXENV: "py27-sqlite-w32"
       PYTHON_ARCH: "32"
       PYTHON_VERSION: "2.7"
@@ -131,12 +111,6 @@ environment:
       PYTHON_HOME: "C:\\Python36-x64"
 
 matrix:
-  allow_failures:
-    - TOXENV: "py27-mysql-pyodbc-w32"
-    - TOXENV: "py36-mysql-pyodbc-w32"
-    - TOXENV: "py27-postgres-pyodbc-w32"
-    - TOXENV: "py36-postgres-pyodbc-w32"
-
   fast_finish: true
 
 install:
