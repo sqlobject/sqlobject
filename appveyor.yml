@@ -43,6 +43,11 @@ environment:
       PYTHON_VERSION: "3.6"
       PYTHON_HOME: "C:\\Python36-x64"
       db: mysql
+    - TOXENV: "py37-mysql-connector-w32"
+      PYTHON_ARCH: "64"
+      PYTHON_VERSION: "3.7"
+      PYTHON_HOME: "C:\\Python37-x64"
+      db: mysql
     - TOXENV: "py27-pymysql-w32"
       PYTHON_ARCH: "32"
       PYTHON_VERSION: "2.7"
@@ -52,6 +57,11 @@ environment:
       PYTHON_ARCH: "64"
       PYTHON_VERSION: "3.6"
       PYTHON_HOME: "C:\\Python36-x64"
+      db: mysql
+    - TOXENV: "py37-pymysql-w32"
+      PYTHON_ARCH: "64"
+      PYTHON_VERSION: "3.7"
+      PYTHON_HOME: "C:\\Python37-x64"
       db: mysql
     - TOXENV: "py27-postgres-psycopg-w32"
       PYTHON_ARCH: "32"
@@ -63,6 +73,11 @@ environment:
       PYTHON_VERSION: "3.6"
       PYTHON_HOME: "C:\\Python36-x64"
       db: postgresql
+    - TOXENV: "py37-postgres-psycopg-w32"
+      PYTHON_ARCH: "64"
+      PYTHON_VERSION: "3.7"
+      PYTHON_HOME: "C:\\Python37-x64"
+      db: postgresql
     - TOXENV: "py27-postgres-pygresql-w32"
       PYTHON_ARCH: "64"
       PYTHON_VERSION: "2.7"
@@ -73,15 +88,30 @@ environment:
       PYTHON_VERSION: "3.6"
       PYTHON_HOME: "C:\\Python36-x64"
       db: postgresql
+    - TOXENV: "py37-postgres-pygresql-w32"
+      PYTHON_ARCH: "64"
+      PYTHON_VERSION: "3.7"
+      PYTHON_HOME: "C:\\Python37-x64"
+      db: postgresql
     - TOXENV: "py36-pypostgresql-w32"
       PYTHON_ARCH: "32"
       PYTHON_VERSION: "3.6"
       PYTHON_HOME: "C:\\Python36"
       db: postgresql
+    - TOXENV: "py37-pypostgresql-w32"
+      PYTHON_ARCH: "32"
+      PYTHON_VERSION: "3.7"
+      PYTHON_HOME: "C:\\Python37"
+      db: postgresql
     - TOXENV: "py36-pypostgresql-w32"
       PYTHON_ARCH: "64"
       PYTHON_VERSION: "3.6"
       PYTHON_HOME: "C:\\Python36-x64"
+      db: postgresql
+    - TOXENV: "py37-pypostgresql-w32"
+      PYTHON_ARCH: "64"
+      PYTHON_VERSION: "3.7"
+      PYTHON_HOME: "C:\\Python37-x64"
       db: postgresql
     - TOXENV: "py27-postgres-pg8000-w32"
       PYTHON_ARCH: "32"
@@ -93,6 +123,11 @@ environment:
       PYTHON_VERSION: "3.6"
       PYTHON_HOME: "C:\\Python36-x64"
       db: postgresql
+    - TOXENV: "py37-postgres-pg8000-w32"
+      PYTHON_ARCH: "64"
+      PYTHON_VERSION: "3.7"
+      PYTHON_HOME: "C:\\Python37-x64"
+      db: postgresql
     - TOXENV: "py27-sqlite-w32"
       PYTHON_ARCH: "32"
       PYTHON_VERSION: "2.7"
@@ -101,6 +136,10 @@ environment:
       PYTHON_ARCH: "64"
       PYTHON_VERSION: "3.6"
       PYTHON_HOME: "C:\\Python36-x64"
+    - TOXENV: "py37-sqlite-w32"
+      PYTHON_ARCH: "64"
+      PYTHON_VERSION: "3.7"
+      PYTHON_HOME: "C:\\Python37-x64"
     - TOXENV: "py27-sqlite-memory-w32"
       PYTHON_ARCH: "32"
       PYTHON_VERSION: "2.7"
@@ -109,6 +148,10 @@ environment:
       PYTHON_ARCH: "64"
       PYTHON_VERSION: "3.6"
       PYTHON_HOME: "C:\\Python36-x64"
+    - TOXENV: "py37-sqlite-memory-w32"
+      PYTHON_ARCH: "64"
+      PYTHON_VERSION: "3.7"
+      PYTHON_HOME: "C:\\Python37-x64"
 
 matrix:
   fast_finish: true

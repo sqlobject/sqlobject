@@ -25,6 +25,11 @@ Development
 
 * Source code was made flake8-clean using the latest flake8.
 
+CI
+--
+
+* Run tests with Python 3.7.
+
 SQLObject 3.7.0
 ===============
 
