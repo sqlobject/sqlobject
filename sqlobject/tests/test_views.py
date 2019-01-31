@@ -97,7 +97,7 @@ def testAliasOverride():
 
 
 def checkAttr(cls, id, attr, value):
-        assert getattr(cls.get(id), attr) == value
+    assert getattr(cls.get(id), attr) == value
 
 
 def testGetVPC():

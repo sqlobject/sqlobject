@@ -39,14 +39,14 @@ class SQLiteConnection(DBAPI):
                 continue
             try:
                 if driver in ('sqlite2', 'pysqlite2'):
-                        from pysqlite2 import dbapi2 as sqlite
-                        self.using_sqlite2 = True
+                    from pysqlite2 import dbapi2 as sqlite
+                    self.using_sqlite2 = True
                 elif driver == 'sqlite3':
-                        import sqlite3 as sqlite
-                        self.using_sqlite2 = True
+                    import sqlite3 as sqlite
+                    self.using_sqlite2 = True
                 elif driver in ('sqlite', 'sqlite1'):
-                        import sqlite
-                        self.using_sqlite2 = False
+                    import sqlite
+                    self.using_sqlite2 = False
                 else:
                     raise ValueError(
                         'Unknown SQLite driver "%s", '
