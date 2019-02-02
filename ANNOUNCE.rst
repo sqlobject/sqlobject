@@ -1,35 +1,28 @@
 Hello!
 
-I'm pleased to announce version 3.7.1, the first bugfix release of branch
-3.7 of SQLObject.
+I'm pleased to announce version 3.8.0a1, the first alpha of the upcoming
+release of branch 3.8 of SQLObject.
+
+I'm pleased to announce version 3.8.0a2, the second alpha of the upcoming
+release of branch 3.8 of SQLObject.
+
+I'm pleased to announce version 3.8.0b1, the first beta of the upcoming
+release of branch 3.8 of SQLObject.
+
+I'm pleased to announce version 3.8.0rc1, the first release candidate
+of the upcoming release of branch 3.8 of SQLObject.
+
+I'm pleased to announce version 3.8.0, the first stable release of branch
+3.8 of SQLObject.
+
+I'm pleased to announce version 3.8.1, the first bugfix release of branch
+3.8 of SQLObject.
 
 
 What's new in SQLObject
 =======================
 
-Contributor for this release is Neil Muller.
-
-Bug fixes
----------
-
-* Fixed a unicode problem in the latest mysqlclient.
-
-Documentation
--------------
-
-* Exclude sqlmeta members from some of the api docs.
-  The inclusion of of these sqlmeta members in these files breaks
-  reproducible builds.
-
-Development
------------
-
-* Source code was made flake8-clean using the latest flake8.
-
-CI
---
-
-* Run tests with Python 3.7.
+Contributors for this release are 
 
 For a more complete list, please see the news:
 http://sqlobject.org/News.html
@@ -61,7 +54,7 @@ Mailing list:
 https://lists.sourceforge.net/mailman/listinfo/sqlobject-discuss
 
 Download:
-https://pypi.org/project/SQLObject/3.7.1/
+https://pypi.org/project/SQLObject/3.8.0a0.dev20190202/
 
 News and changes:
 http://sqlobject.org/News.html
