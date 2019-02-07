@@ -1,2 +1,0 @@
-#! /bin/sh
-exec "`dirname \"$0\"`/run-tests" 'sqlite:/:memory:?debug=1&check_same_thread=' "$@"

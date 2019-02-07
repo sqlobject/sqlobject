@@ -1,5 +1,0 @@
-#! /bin/sh
-
-createdb -E utf-8 -l en_US.UTF-8 -T template0 test &&
-"`dirname \"$0\"`/run-tests" 'postgres:/var/run/postgresql/test?driver=pygresql&charset=utf-8&debug=1' "$@"
-exec dropdb test

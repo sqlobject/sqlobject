@@ -1,4 +1,0 @@
-#! /bin/sh
-
-"`dirname $0`"/run-all-tests-sqlite &&
-exec "`dirname $0`"/run-all-tests-pgsql
