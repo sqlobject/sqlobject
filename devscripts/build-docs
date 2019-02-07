@@ -1,5 +1,4 @@
 #! /bin/sh
 
-cd "`dirname \"$0\"`"/SQLObject &&
-cd docs &&
+cd "`dirname \"$0\"`"/../docs &&
 exec ./rebuild

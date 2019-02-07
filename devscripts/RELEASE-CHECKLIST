@@ -4,8 +4,8 @@
 1. Check out the release branch. If it is a stable release - edit
    docs/News.rst to set release date. Commit.
 
-2. If release branch is not master - run ../prerelease $NEW_TAG; if it's
-   master - run ../prerelease $NEW_TAG master.
+2. If release branch is not master - run devscripts/prerelease $NEW_TAG; if
+   it's master - run devscripts/prerelease $NEW_TAG master.
 
    The script checks out the release branch and calls editor; update
    version, the list of contributors, the list of changes and download
@@ -24,28 +24,28 @@
 
 3. If it's not master - null-merge to the next higher branch.
 
-4. If release branch is not master - run ../prerelease-tag $NEW_TAG; if
-   it's master - run ../prerelease-tag $NEW_TAG master. This checks out
-   the release branch and creates the new tag at the head of the release
-   branch.
+4. If release branch is not master - run devscripts/prerelease-tag
+   $NEW_TAG; if it's master - run devscripts/prerelease-tag $NEW_TAG
+   master. This checks out the release branch and creates the new tag at
+   the head of the release branch.
 
-5. Run ../release. This generates and uploads new archives to PyPI and
-   if it is a stable release - uploads archives and release announcement
-   (ANNOUNCE.rst) to SourceForge.
+5. Run devscripts/release. This generates and uploads new archives to PyPI
+   and if it is a stable release - uploads archives and release
+   announcement (ANNOUNCE.rst) to SourceForge.
 
 6. Move old releases at SourceForge to subdirectory OldFiles.
 
-7. Run ../push-all in the development repository to push all branches
-   and tags to the public repositories.
+7. Run devscripts/push-all in the development repository to push all
+   branches and tags to the public repositories.
 
-8. Run ../postrelease. The script restores ANNOUNCE.rst and setup.cfg
-   from the previous commit (HEAD~). It calls editor; update next version,
-   remove the list of contributors and the list of changes, edit download
-   URL in ANNOUNCE.rst. Edit README.rst and docs/News.rst - add new
-   version.
+8. Run devscripts/postrelease. The script restores ANNOUNCE.rst and
+   setup.cfg from the previous commit (HEAD~). It calls editor; update next
+   version, remove the list of contributors and the list of changes, edit
+   download URL in ANNOUNCE.rst. Edit README.rst and docs/News.rst - add
+   new version.
 
-9. Generate new docs using ./build-all-docs. Upload docs using
-   ./publish-docs.
+9. Generate new docs using devscripts/build-all-docs. Upload docs using
+   devscripts/publish-docs.
 
 10. Send announcement to the SQLObject mailing list. For a stable
     release send announcements to python, python-announce and python-db

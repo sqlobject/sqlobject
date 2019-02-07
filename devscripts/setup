@@ -1,7 +1,7 @@
 #! /bin/sh
 
 umask 022  # -rwxr-xr-x
-cd "`dirname \"$0\"`"/SQLObject &&
+cd "`dirname \"$0\"`"/.. &&
 
 for py_ver in 2.7 3.4 3.5 3.6 3.7; do
    python$py_ver -m pip install --install-option=-O2 --upgrade .

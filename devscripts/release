@@ -1,11 +1,11 @@
 #! /bin/sh
 
-cd "`dirname \"$0\"`"/SQLObject &&
+cd "`dirname \"$0\"`"/.. &&
 umask 022 &&
 chmod -R a+rX . &&
 
 set-commit-date.py &&
-../build-docs &&
+devscripts/build-docs &&
 
 python setup.py build_py &&
 python setup.py build --executable '/usr/bin/env python' &&
@@ -21,7 +21,7 @@ split_tag $version
 if [ "$state" = final ]; then
    rsync -ahP4 dist/* frs.sourceforge.net:/home/frs/project/sqlobject/sqlobject/"$version"/ &&
    rsync -ahP4 ANNOUNCE.rst frs.sourceforge.net:/home/frs/project/sqlobject/sqlobject/"$version"/README.rst || exit 1
-   ../sftp-frs
+   devscripts/sftp-frs
 fi &&
 
 twine upload --skip-existing dist/* &&

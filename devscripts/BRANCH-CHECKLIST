@@ -1,8 +1,8 @@
 0. Run full test suite in master. Continue if all tests passed.
 
-1. If the branching point is master run ../branch $NEW_BRANCH. If it's
-not master run ../branch $NEW_BRANCH $TREEISH, where $TREEISH is
-a branch, a commit id or a tag.
+1. If the branching point is master run devscripts/branch $NEW_BRANCH. If
+   it's not master run devscripts/branch $NEW_BRANCH $TREEISH, where
+   $TREEISH is a branch, a commit id or a tag.
 
 1a. The script creates a new branch and calls editor; edit README.rst,
     __version__.py and News.rst in the branch - set version. In
@@ -20,11 +20,11 @@ a branch, a commit id or a tag.
 
 2. To deprecate a version of Python edit files ANNOUNCE.rst, README.rst,
    devscripts/release, devscripts/setup, docs/News.rst, docs/SQLObject.rst,
-   docs/TODO.rst, requirements.txt, setup.py, sqlobject/main.py,
-   tox.ini in master. Edit metadata at SourceForge.
+   docs/TODO.rst, requirements.txt, setup.py, sqlobject/main.py, tox.ini in
+   master. Edit metadata at SourceForge.
 
 3. Do a null-merge from the new branch to the higher branch or the
    master.
 
-4. Run ../push-all to push all branches and tags to the public
+4. Run devscripts/push-all to push all branches and tags to the public
    repositories.

@@ -2,15 +2,14 @@
 
 build_docs() {
    git checkout "$1" &&
-   ../build-docs &&
+   devscripts/build-docs &&
    rsync -ahP --del --exclude=/robots.txt docs/html/ ../SQLObject-docs/"$2"/
 }
 
-PROG_DIR="`dirname \"$0\"`" &&
-cd "$PROG_DIR" &&
+cd "`dirname \"$0\"`" &&
 PROG_DIR="`pwd`" &&
 
-cd "$PROG_DIR"/SQLObject &&
+cd .. &&
 build_docs 3.7.1 &&
 build_docs master devel &&
 rm -rf docs/html &&

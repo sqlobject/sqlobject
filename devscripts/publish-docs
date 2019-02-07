@@ -1,5 +1,5 @@
 #! /bin/sh
 
-cd "`dirname \"$0\"`"/SQLObject-docs && chmod -R a+rX . &&
+cd "`dirname \"$0\"`"/../../SQLObject-docs && chmod -R a+rX . &&
 exec rsync -hlrtP4 --del . \
    web.sourceforge.net:/home/project-web/sqlobject/htdocs/
