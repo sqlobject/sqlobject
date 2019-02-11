@@ -1,6 +1,6 @@
-import imp
 import os
 import sys
+from sqlobject.compat import load_module_from_file
 
 
 def load_module(module_name):
@@ -24,7 +24,6 @@ def load_module_from_name(filename, module_name):
                 % (os.path.dirname(filename), e))
         f.write('#\n')
         f.close()
-    fp = None
     if module_name in sys.modules:
         return sys.modules[module_name]
     if '.' in module_name:
@@ -33,12 +32,4 @@ def load_module_from_name(filename, module_name):
         load_module_from_name(os.path.dirname(filename), parent_name)
     else:
         base_name = module_name
-    fp = None
-    try:
-        fp, pathname, stuff = imp.find_module(
-            base_name, [os.path.dirname(filename)])
-        module = imp.load_module(module_name, fp, pathname, stuff)
-    finally:
-        if fp is not None:
-            fp.close()
-    return module
+    return load_module_from_file(base_name, module_name, filename)

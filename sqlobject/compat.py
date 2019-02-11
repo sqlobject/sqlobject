@@ -1,3 +1,4 @@
+import os
 import sys
 import types
 
@@ -29,3 +30,21 @@ else:
     unicode_type = str
     class_types = (type,)
     buffer_type = memoryview
+
+if PY2:
+    import imp
+
+    def load_module_from_file(base_name, module_name, filename):
+        fp, pathname, stuff = imp.find_module(
+            base_name, [os.path.dirname(filename)])
+        try:
+            module = imp.load_module(module_name, fp, pathname, stuff)
+        finally:
+            fp.close()
+        return module
+else:
+    import importlib.util
+
+    def load_module_from_file(base_name, module_name, filename):
+        specs = importlib.util.spec_from_file_location(module_name, filename)
+        return specs.loader.load_module()
