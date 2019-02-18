@@ -4,24 +4,17 @@ from os.path import abspath, dirname, join
 from setuptools import setup
 import sys
 
+versionpath = join(abspath(dirname(__file__)), 'sqlobject', '__version__.py')
+sqlobject_version = {}
+
 if sys.version_info[:2] == (2, 7):
-    from imp import load_source
+    execfile(versionpath, sqlobject_version)
 
 elif sys.version_info >= (3, 4):
-    from importlib.machinery import SourceFileLoader
-    import types
-
-    def load_source(fullname, path):
-        loader = SourceFileLoader(fullname, path)
-        loaded = types.ModuleType(loader.name)
-        loader.exec_module(loaded)
-        return loaded
+    exec(open(versionpath, 'rU').read(), sqlobject_version)
 
 else:
     raise ImportError("SQLObject requires Python 2.7 or 3.4+")
-
-versionpath = join(abspath(dirname(__file__)), "sqlobject", "__version__.py")
-sqlobject_version = load_source("sqlobject_version", versionpath)
 
 subpackages = ['firebird', 'include', 'include.tests',
                'inheritance', 'inheritance.tests',
@@ -31,7 +24,7 @@ subpackages = ['firebird', 'include', 'include.tests',
 
 setup(
     name="SQLObject",
-    version=sqlobject_version.version,
+    version=sqlobject_version['version'],
     description="Object-Relational Manager, aka database wrapper",
     long_description="""\
 SQLObject is a popular *Object Relational Manager* for providing an
@@ -76,12 +69,12 @@ and `GitHub <https://github.com/sqlobject>`_.
     maintainer_email="phd@phdru.name",
     url="http://sqlobject.org/",
     download_url="https://pypi.org/project/SQLObject/%s/" %
-    sqlobject_version.version,
+    sqlobject_version['version'],
     project_urls={
         'Homepage': 'http://sqlobject.org/',
         'Development docs': 'http://sqlobject.org/devel/',
         'Download': 'https://pypi.org/project/SQLObject/%s/' %
-        sqlobject_version.version,
+        sqlobject_version['version'],
         'Github repo': 'https://github.com/sqlobject',
         'Issue tracker': 'https://github.com/sqlobject/sqlobject/issues',
         'SourceForge project': 'https://sourceforge.net/projects/sqlobject/',
