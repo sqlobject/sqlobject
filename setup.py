@@ -8,7 +8,7 @@ versionpath = join(abspath(dirname(__file__)), 'sqlobject', '__version__.py')
 sqlobject_version = {}
 
 if sys.version_info[:2] == (2, 7):
-    execfile(versionpath, sqlobject_version)
+    execfile(versionpath, sqlobject_version)  # noqa: F821 'execfile' Py3
 
 elif sys.version_info >= (3, 4):
     exec(open(versionpath, 'rU').read(), sqlobject_version)
