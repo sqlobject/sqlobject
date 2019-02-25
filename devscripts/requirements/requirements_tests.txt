@@ -1,4 +1,5 @@
 -r requirements.txt
 
-pytest < 5.0
+pytest < 5.0; python_version == '2.7' or python_version == '3.4'
+pytest; python_version >= '3.5'
 pytest-cov
