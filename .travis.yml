@@ -1,9 +1,3 @@
-# Only test master and pull requests; skip tags.
-# Other branches can allow themselves.
-branches:
-  only:
-    - master
-
 language: python
 
 python:
