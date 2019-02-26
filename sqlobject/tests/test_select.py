@@ -108,10 +108,10 @@ def test_select_getOne():
     assert IterTest.selectBy(name='a').getOne() == a
     assert IterTest.select(IterTest.q.name == 'b').getOne() == b
     assert IterTest.selectBy(name='c').getOne(None) is None
-    raises(SQLObjectNotFound, 'IterTest.selectBy(name="c").getOne()')
+    raises(SQLObjectNotFound, IterTest.selectBy(name="c").getOne)
     IterTest(name='b')
-    raises(SQLObjectIntegrityError, 'IterTest.selectBy(name="b").getOne()')
-    raises(SQLObjectIntegrityError, 'IterTest.selectBy(name="b").getOne(None)')
+    raises(SQLObjectIntegrityError, IterTest.selectBy(name="b").getOne)
+    raises(SQLObjectIntegrityError, IterTest.selectBy(name="b").getOne, None)
 
 
 def test_selectBy():

@@ -40,7 +40,8 @@ def setup_module(mod):
 
 
 def testBadRef():
-    pytest.raises(AttributeError, 'threes[0].throughTo.four')
+    with pytest.raises(AttributeError):
+        threes[0].throughTo.four
 
 
 def testThroughFK():

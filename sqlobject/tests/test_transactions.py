@@ -109,8 +109,9 @@ def test_transaction_delete(close=False):
         bOutID = bOutInst.id  # noqa: bOutID is used in the string code below
         trans.commit(close=close)
         assert bOut.count() == 0
-        raises(SQLObjectNotFound, "SOTestSOTrans.get(bOutID)")
-        raises(SQLObjectNotFound, "bOutInst.name")
+        raises(SQLObjectNotFound, SOTestSOTrans.get, bOutID)
+        with raises(SQLObjectNotFound):
+            bOutInst.name
     finally:
         trans.rollback()
         connection.autoCommit = True
