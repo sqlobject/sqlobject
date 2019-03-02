@@ -35,10 +35,10 @@ if PY2:
     import imp
 
     def load_module_from_file(base_name, module_name, filename):
-        fp, pathname, stuff = imp.find_module(
+        fp, pathname, description = imp.find_module(
             base_name, [os.path.dirname(filename)])
         try:
-            module = imp.load_module(module_name, fp, pathname, stuff)
+            module = imp.load_module(module_name, fp, pathname, description)
         finally:
             fp.close()
         return module
