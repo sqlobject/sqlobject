@@ -250,7 +250,7 @@ def summarize_events_by_sender(sender=None, output=None, indent=0):
             print(leader + header, file=output)
             print(leader + ('=' * len(header)), file=output)
             summarize_events_by_sender(real_sender, output=output,
-                                       indent=indent + 2)
+                                       indent += 2)
     else:
         for signal, receivers in \
                 sorted_items(dispatcher.connections.get(id(sender), [])):
