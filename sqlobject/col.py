@@ -733,9 +733,9 @@ class SOIntCol(SOCol):
         if self.length and self.length >= 1:
             _ret = "%s(%d)" % (_ret, self.length)
         if self.unsigned:
-            _ret = _ret + " UNSIGNED"
+            _ret += " UNSIGNED"
         if self.zerofill:
-            _ret = _ret + " ZEROFILL"
+            _ret += " ZEROFILL"
         return _ret
 
     def _sqlType(self):
@@ -1092,9 +1092,8 @@ class SOForeignKey(SOKeyCol):
         sql = ' '.join([fidName, self._maxdbType()])
         tName = other.sqlmeta.table
         idName = self.refColumn or other.sqlmeta.idName
-        sql = sql + ',' + '\n'
-        sql = sql + 'FOREIGN KEY (%s) REFERENCES %s(%s)' % (fidName, tName,
-                                                            idName)
+        sql += ',\nFOREIGN KEY (%s) REFERENCES %s(%s)' % (fidName, tName,
+                                                          idName)
         return sql
 
     def maxdbCreateReferenceConstraint(self):
