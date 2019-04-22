@@ -13,7 +13,7 @@ if [ "$new_branch" = 1 ]; then
    for d in sqlobject/include/pydispatch sqlobject/include/tests; do
       if [ "`echo $d/*`" = "$d/*" ]; then rm -rf $d; fi
    done &&
-   rm -rf docs/html
+   rm -rf docs/_build/html docs/html
 fi &&
 
 python    -m compileall -q -x '\.tox/.+' . &&
