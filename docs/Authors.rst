@@ -37,6 +37,7 @@ Contributions have been made by:
 * Shailesh Mungikar <shailesh.mungikar at druva.com>
 * Michael S. Root <miker at tippett.com>
 * Scott Stahl <sstahl at onshift.com>
+* Markus Elfring <elfring at users.sourceforge.net>
 * Oleg Broytman <phd@phdru.name>
 
 .. image:: https://sourceforge.net/sflogo.php?group_id=74338&type=10
