@@ -11,7 +11,7 @@ from sqlobject.dbconnection import DBAPI
 class ErrorMessage(str):
     def __new__(cls, e, append_msg=''):
         obj = str.__new__(cls, e.args[0] + append_msg)
-        if e.__module__ == 'psycopg2':
+        if hasattr(e, 'pgcode'):  # psycopg2 or psycopg2.errors
             obj.code = getattr(e, 'pgcode', None)
             obj.error = getattr(e, 'pgerror', None)
         else:

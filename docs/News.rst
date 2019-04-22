@@ -5,8 +5,14 @@ News
 .. contents:: Contents:
    :backlinks: none
 
-SQLObject 3.8.0 (master)
-========================
+SQLObject (master)
+==================
+
+Minor features
+--------------
+
+* Adapt Postgres exception handling to ``psycopg2`` version ``2.8``:
+  in the recent ``psycopg2`` errors are in ``psycopg2.errors`` module.
 
 SQLObject 3.7.1
 ===============
