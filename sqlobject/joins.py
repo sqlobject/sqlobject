@@ -170,9 +170,9 @@ class SOMultipleJoin(SOJoin):
         if not self.joinMethodName:
             name = self.otherClassName[0].lower() + self.otherClassName[1:]
             if name.endswith('s'):
-                name = name + "es"
+                name += "es"
             else:
-                name = name + "s"
+                name += "s"
             self.joinMethodName = name
         if addRemoveName:
             self.addRemoveName = addRemoveName

@@ -108,8 +108,8 @@ class DBConnection:
         auth = getattr(self, 'user', '') or ''
         if auth:
             if self.password:
-                auth = auth + ':' + self.password
-            auth = auth + '@'
+                auth += ':' + self.password
+            auth += '@'
         else:
             assert not getattr(self, 'password', None), (
                 'URIs cannot express passwords without usernames')
@@ -129,8 +129,8 @@ class DBConnection:
         if auth:
             auth = quote(auth)
             if self.password:
-                auth = auth + ':' + quote(self.password)
-            auth = auth + '@'
+                auth += ':' + quote(self.password)
+            auth += '@'
         else:
             assert not getattr(self, 'password', None), (
                 'URIs cannot express passwords without usernames')
