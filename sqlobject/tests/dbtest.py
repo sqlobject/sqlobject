@@ -33,7 +33,7 @@ and you can use it like::
             pytest.skip("Doesn't support featureX")
 """
 supportsMatrix = {
-    '-blobData': 'mssql rdbhost',
+    '-blobData': 'mssql',
     '-decimalColumn': 'mssql',
     '-dropTableCascade': 'sybase mssql mysql',
     '-emptyTable': 'mssql',
@@ -43,7 +43,7 @@ supportsMatrix = {
     '+memorydb': 'sqlite',
     '+rlike': 'mysql postgres sqlite',
     '+schema': 'postgres',
-    '-transactions': 'mysql rdbhost',
+    '-transactions': 'mysql',
 }
 
 

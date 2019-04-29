@@ -1092,7 +1092,7 @@ class _LikeQuoted:
 
 
 def _quote_like_special(s, db):
-    if db in ('postgres', 'rdbhost'):
+    if db == 'postgres':
         escape = r'\\'
     else:
         escape = '\\'
@@ -1433,7 +1433,6 @@ class RLIKE(LIKE):
         'maxdb': 'RLIKE',
         'mysql': 'RLIKE',
         'postgres': '~',
-        'rdbhost': '~',
         'sqlite': 'REGEXP'
     }
 

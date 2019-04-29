@@ -18,7 +18,7 @@ else:
 
 subpackages = ['firebird', 'include', 'include.tests',
                'inheritance', 'inheritance.tests',
-               'manager', 'maxdb', 'mysql', 'mssql', 'postgres', 'rdbhost',
+               'manager', 'maxdb', 'mysql', 'mssql', 'postgres',
                'sqlite', 'sybase', 'tests', 'util',
                'versioning', 'versioning.test']
 
@@ -164,7 +164,7 @@ easy to use and quick to get started with.
 
 It currently supports MySQL through the `MySQLdb` package, PostgreSQL
 through the `psycopg` package, SQLite, Firebird, MaxDB (SAP DB), MS SQL
-Sybase and Rdbhost.  Python 2.7 or 3.4+ is required.
+and Sybase.  Python 2.7 or 3.4+ is required.
 
 
 Where is SQLObject

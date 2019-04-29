@@ -22,7 +22,6 @@ Contributions have been made by:
 * Dan Pascu <dan at ag-projects.com>
 * Diez B. Roggisch <deets at web.de>
 * Christopher Singley <csingley at gmail.com>
-* David Keeney <dkeeney at rdbhost.com>
 * Daniel Fetchinson <fetchinson at googlemail.com>
 * Neil Muller <drnlmuller+sqlobject at gmail.com>
 * Petr Jakes <petr.jakes at tpc.cz>

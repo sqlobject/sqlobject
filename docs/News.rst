@@ -14,6 +14,9 @@ Minor features
 * Adapt Postgres exception handling to ``psycopg2`` version ``2.8``:
   in the recent ``psycopg2`` errors are in ``psycopg2.errors`` module.
 
+* Removed RdbhostConnection: David Keeney and rdbhost seem to be unavailable
+  since 2017.
+
 SQLObject 3.7.1
 ===============
 

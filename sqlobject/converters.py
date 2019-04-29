@@ -84,14 +84,14 @@ def StringLikeConverter(value, db):
     elif isinstance(value, buffer_type):
         value = str(value)
 
-    if db in ('mysql', 'postgres', 'rdbhost'):
+    if db in ('mysql', 'postgres'):
         for orig, repl in sqlStringReplace:
             value = value.replace(orig, repl)
     elif db in ('sqlite', 'firebird', 'sybase', 'maxdb', 'mssql'):
         value = value.replace("'", "''")
     else:
         assert 0, "Database %s unknown" % db
-    if db in ('postgres', 'rdbhost') and ('\\' in value):
+    if (db == 'postgres') and ('\\' in value):
         return "E'%s'" % value
     return "'%s'" % value
 
@@ -125,7 +125,7 @@ if NumericType:
 
 
 def BoolConverter(value, db):
-    if db in ('postgres', 'rdbhost'):
+    if db == 'postgres':
         if value:
             return "'t'"
         else:
@@ -237,7 +237,7 @@ def sqlrepr(obj, db=None):
 
 
 def quote_str(s, db):
-    if db in ('postgres', 'rdbhost') and ('\\' in s):
+    if (db == 'postgres') and ('\\' in s):
         return "E'%s'" % s
     return "'%s'" % s
 
