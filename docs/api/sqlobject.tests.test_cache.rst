@@ -1,8 +1,7 @@
-sqlobject\.tests\.test\_cache module
-====================================
+sqlobject.tests.test\_cache module
+==================================
 
 .. automodule:: sqlobject.tests.test_cache
     :members:
     :undoc-members:
     :show-inheritance:
-    :exclude-members: columnDefinitions,columnList,columns

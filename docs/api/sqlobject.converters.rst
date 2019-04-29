@@ -1,5 +1,5 @@
-sqlobject\.converters module
-============================
+sqlobject.converters module
+===========================
 
 .. automodule:: sqlobject.converters
     :members:

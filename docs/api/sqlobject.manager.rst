@@ -1,5 +1,5 @@
-sqlobject\.manager package
-==========================
+sqlobject.manager package
+=========================
 
 .. automodule:: sqlobject.manager
     :members:

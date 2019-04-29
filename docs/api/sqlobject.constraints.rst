@@ -1,5 +1,5 @@
-sqlobject\.constraints module
-=============================
+sqlobject.constraints module
+============================
 
 .. automodule:: sqlobject.constraints
     :members:

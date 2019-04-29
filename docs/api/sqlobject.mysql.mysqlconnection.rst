@@ -1,5 +1,5 @@
-sqlobject\.mysql\.mysqlconnection module
-========================================
+sqlobject.mysql.mysqlconnection module
+======================================
 
 .. automodule:: sqlobject.mysql.mysqlconnection
     :members:

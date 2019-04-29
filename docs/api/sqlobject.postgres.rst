@@ -1,5 +1,5 @@
-sqlobject\.postgres package
-===========================
+sqlobject.postgres package
+==========================
 
 .. automodule:: sqlobject.postgres
     :members:

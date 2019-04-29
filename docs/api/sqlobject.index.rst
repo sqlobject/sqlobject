@@ -1,5 +1,5 @@
-sqlobject\.index module
-=======================
+sqlobject.index module
+======================
 
 .. automodule:: sqlobject.index
     :members:

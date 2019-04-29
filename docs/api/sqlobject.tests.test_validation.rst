@@ -1,8 +1,7 @@
-sqlobject\.tests\.test\_validation module
-=========================================
+sqlobject.tests.test\_validation module
+=======================================
 
 .. automodule:: sqlobject.tests.test_validation
     :members:
     :undoc-members:
     :show-inheritance:
-    :exclude-members: columnDefinitions,columnList,columns

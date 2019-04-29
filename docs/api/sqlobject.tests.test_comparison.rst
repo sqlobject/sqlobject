@@ -1,5 +1,5 @@
-sqlobject\.tests\.test\_comparison module
-=========================================
+sqlobject.tests.test\_comparison module
+=======================================
 
 .. automodule:: sqlobject.tests.test_comparison
     :members:

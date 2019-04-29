@@ -1,8 +1,7 @@
-sqlobject\.tests\.test\_combining\_joins module
-===============================================
+sqlobject.tests.test\_combining\_joins module
+=============================================
 
 .. automodule:: sqlobject.tests.test_combining_joins
     :members:
     :undoc-members:
     :show-inheritance:
-    :exclude-members: columnDefinitions,columnList,columns

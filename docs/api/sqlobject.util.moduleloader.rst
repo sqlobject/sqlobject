@@ -1,5 +1,5 @@
-sqlobject\.util\.moduleloader module
-====================================
+sqlobject.util.moduleloader module
+==================================
 
 .. automodule:: sqlobject.util.moduleloader
     :members:

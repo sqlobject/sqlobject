@@ -1,5 +1,5 @@
-sqlobject\.tests\.test\_csvimport module
-========================================
+sqlobject.tests.test\_csvimport module
+======================================
 
 .. automodule:: sqlobject.tests.test_csvimport
     :members:

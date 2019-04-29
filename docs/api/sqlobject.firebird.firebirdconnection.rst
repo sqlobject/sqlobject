@@ -1,5 +1,5 @@
-sqlobject\.firebird\.firebirdconnection module
-==============================================
+sqlobject.firebird.firebirdconnection module
+============================================
 
 .. automodule:: sqlobject.firebird.firebirdconnection
     :members:

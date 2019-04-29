@@ -1,5 +1,5 @@
-sqlobject\.util\.csvimport module
-=================================
+sqlobject.util.csvimport module
+===============================
 
 .. automodule:: sqlobject.util.csvimport
     :members:

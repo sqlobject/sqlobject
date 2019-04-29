@@ -19,7 +19,6 @@ Subpackages
     sqlobject.mssql
     sqlobject.mysql
     sqlobject.postgres
-    sqlobject.rdbhost
     sqlobject.sqlite
     sqlobject.sybase
     sqlobject.tests

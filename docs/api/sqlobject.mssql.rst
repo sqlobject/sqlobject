@@ -1,5 +1,5 @@
-sqlobject\.mssql package
-========================
+sqlobject.mssql package
+=======================
 
 .. automodule:: sqlobject.mssql
     :members:

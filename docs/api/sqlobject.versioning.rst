@@ -1,5 +1,5 @@
-sqlobject\.versioning package
-=============================
+sqlobject.versioning package
+============================
 
 .. automodule:: sqlobject.versioning
     :members:

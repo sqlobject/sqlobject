@@ -1,5 +1,5 @@
-sqlobject\.cache module
-=======================
+sqlobject.cache module
+======================
 
 .. automodule:: sqlobject.cache
     :members:

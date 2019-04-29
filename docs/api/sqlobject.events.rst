@@ -1,5 +1,5 @@
-sqlobject\.events module
-========================
+sqlobject.events module
+=======================
 
 .. automodule:: sqlobject.events
     :members:

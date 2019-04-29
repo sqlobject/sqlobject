@@ -1,5 +1,5 @@
-sqlobject\.mssql\.mssqlconnection module
-========================================
+sqlobject.mssql.mssqlconnection module
+======================================
 
 .. automodule:: sqlobject.mssql.mssqlconnection
     :members:

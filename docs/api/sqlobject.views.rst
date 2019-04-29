@@ -1,5 +1,5 @@
-sqlobject\.views module
-=======================
+sqlobject.views module
+======================
 
 .. automodule:: sqlobject.views
     :members:

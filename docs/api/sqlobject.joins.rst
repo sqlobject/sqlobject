@@ -1,5 +1,5 @@
-sqlobject\.joins module
-=======================
+sqlobject.joins module
+======================
 
 .. automodule:: sqlobject.joins
     :members:

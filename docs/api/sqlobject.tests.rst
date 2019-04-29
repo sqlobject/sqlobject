@@ -1,5 +1,5 @@
-sqlobject\.tests package
-========================
+sqlobject.tests package
+=======================
 
 .. automodule:: sqlobject.tests
     :members:
@@ -29,6 +29,7 @@ Submodules
    sqlobject.tests.test_columns_order
    sqlobject.tests.test_combining_joins
    sqlobject.tests.test_comparison
+   sqlobject.tests.test_compat
    sqlobject.tests.test_complex_sorting
    sqlobject.tests.test_constraints
    sqlobject.tests.test_converters

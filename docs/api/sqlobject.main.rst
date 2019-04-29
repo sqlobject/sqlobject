@@ -1,5 +1,5 @@
-sqlobject\.main module
-======================
+sqlobject.main module
+=====================
 
 .. automodule:: sqlobject.main
     :members:

@@ -1,5 +1,5 @@
-sqlobject\.sqlbuilder module
-============================
+sqlobject.sqlbuilder module
+===========================
 
 .. automodule:: sqlobject.sqlbuilder
     :members:

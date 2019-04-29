@@ -1,8 +1,7 @@
-sqlobject\.tests\.test\_select module
-=====================================
+sqlobject.tests.test\_select module
+===================================
 
 .. automodule:: sqlobject.tests.test_select
     :members:
     :undoc-members:
     :show-inheritance:
-    :exclude-members: columnDefinitions,columnList,columns

@@ -1,5 +1,5 @@
-sqlobject\.sybase package
-=========================
+sqlobject.sybase package
+========================
 
 .. automodule:: sqlobject.sybase
     :members:

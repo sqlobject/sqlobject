@@ -1,5 +1,5 @@
-sqlobject\.tests\.test\_default\_style module
-=============================================
+sqlobject.tests.test\_default\_style module
+===========================================
 
 .. automodule:: sqlobject.tests.test_default_style
     :members:

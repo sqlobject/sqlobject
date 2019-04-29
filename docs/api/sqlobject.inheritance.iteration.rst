@@ -1,5 +1,5 @@
-sqlobject\.inheritance\.iteration module
-========================================
+sqlobject.inheritance.iteration module
+======================================
 
 .. automodule:: sqlobject.inheritance.iteration
     :members:

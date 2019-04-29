@@ -1,5 +1,5 @@
-sqlobject\.boundattributes module
-=================================
+sqlobject.boundattributes module
+================================
 
 .. automodule:: sqlobject.boundattributes
     :members:

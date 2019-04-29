@@ -1,5 +1,5 @@
-sqlobject\.util\.csvexport module
-=================================
+sqlobject.util.csvexport module
+===============================
 
 .. automodule:: sqlobject.util.csvexport
     :members:

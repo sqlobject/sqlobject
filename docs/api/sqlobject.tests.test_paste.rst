@@ -1,8 +1,7 @@
-sqlobject\.tests\.test\_paste module
-====================================
+sqlobject.tests.test\_paste module
+==================================
 
 .. automodule:: sqlobject.tests.test_paste
     :members:
     :undoc-members:
     :show-inheritance:
-    :exclude-members: columnDefinitions,columnList,columns

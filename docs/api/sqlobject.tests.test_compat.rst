@@ -1,7 +1,7 @@
-sqlobject.tests.test\_delete module
+sqlobject.tests.test\_compat module
 ===================================
 
-.. automodule:: sqlobject.tests.test_delete
+.. automodule:: sqlobject.tests.test_compat
     :members:
     :undoc-members:
     :show-inheritance:

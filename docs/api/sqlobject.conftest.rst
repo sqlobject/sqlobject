@@ -1,5 +1,5 @@
-sqlobject\.conftest module
-==========================
+sqlobject.conftest module
+=========================
 
 .. automodule:: sqlobject.conftest
     :members:

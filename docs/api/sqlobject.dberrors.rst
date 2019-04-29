@@ -1,5 +1,5 @@
-sqlobject\.dberrors module
-==========================
+sqlobject.dberrors module
+=========================
 
 .. automodule:: sqlobject.dberrors
     :members:

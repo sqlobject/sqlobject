@@ -1,5 +1,5 @@
-sqlobject\.maxdb\.maxdbconnection module
-========================================
+sqlobject.maxdb.maxdbconnection module
+======================================
 
 .. automodule:: sqlobject.maxdb.maxdbconnection
     :members:
