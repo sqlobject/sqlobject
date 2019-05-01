@@ -1,20 +1,28 @@
 Hello!
 
-I'm pleased to announce version 3.7.2, the second bugfix release of branch
-3.7 of SQLObject.
+I'm pleased to announce version 3.8.0a1, the first alpha of the upcoming
+release of branch 3.8 of SQLObject.
+
+I'm pleased to announce version 3.8.0a2, the second alpha of the upcoming
+release of branch 3.8 of SQLObject.
+
+I'm pleased to announce version 3.8.0b1, the first beta of the upcoming
+release of branch 3.8 of SQLObject.
+
+I'm pleased to announce version 3.8.0rc1, the first release candidate
+of the upcoming release of branch 3.8 of SQLObject.
+
+I'm pleased to announce version 3.8.0, the first stable release of branch
+3.8 of SQLObject.
+
+I'm pleased to announce version 3.8.1, the first bugfix release of branch
+3.8 of SQLObject.
 
 
 What's new in SQLObject
 =======================
 
-Minor features
---------------
-
-* Adapt Postgres exception handling to ``psycopg2`` version ``2.8``:
-  in the recent ``psycopg2`` errors are in ``psycopg2.errors`` module.
-
-* Removed RdbhostConnection: David Keeney and rdbhost seem to be unavailable
-  since 2017.
+Contributors for this release are 
 
 For a more complete list, please see the news:
 http://sqlobject.org/News.html
@@ -46,7 +54,7 @@ Mailing list:
 https://lists.sourceforge.net/mailman/listinfo/sqlobject-discuss
 
 Download:
-https://pypi.org/project/SQLObject/3.7.2
+https://pypi.org/project/SQLObject/3.8.0a0.dev20190501/
 
 News and changes:
 http://sqlobject.org/News.html
