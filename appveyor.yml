@@ -25,122 +25,45 @@ environment:
     CMD_IN_ENV: "cmd /E:ON /V:ON /C .\\run_with_env.cmd"
 
   matrix:
-    - TOXENV: "py27-mysql-connector-w32"
+    - TESTS: "py27-mysql"
       PYTHON_ARCH: "32"
       PYTHON_VERSION: "2.7"
       PYTHON_HOME: "C:\\Python27"
       db: mysql
-    - TOXENV: "py36-mysql-connector-w32"
+    - TESTS: "py36-mysql"
       PYTHON_ARCH: "64"
       PYTHON_VERSION: "3.6"
       PYTHON_HOME: "C:\\Python36-x64"
       db: mysql
-    - TOXENV: "py37-mysql-connector-w32"
+    - TESTS: "py37-mysql"
       PYTHON_ARCH: "64"
       PYTHON_VERSION: "3.7"
       PYTHON_HOME: "C:\\Python37-x64"
       db: mysql
-    - TOXENV: "py27-pymysql-w32"
-      PYTHON_ARCH: "32"
-      PYTHON_VERSION: "2.7"
-      PYTHON_HOME: "C:\\Python27"
-      db: mysql
-    - TOXENV: "py36-pymysql-w32"
-      PYTHON_ARCH: "64"
-      PYTHON_VERSION: "3.6"
-      PYTHON_HOME: "C:\\Python36-x64"
-      db: mysql
-    - TOXENV: "py37-pymysql-w32"
-      PYTHON_ARCH: "64"
-      PYTHON_VERSION: "3.7"
-      PYTHON_HOME: "C:\\Python37-x64"
-      db: mysql
-    - TOXENV: "py27-postgres-psycopg-w32"
+    - TESTS: "py27-postgres"
       PYTHON_ARCH: "32"
       PYTHON_VERSION: "2.7"
       PYTHON_HOME: "C:\\Python27"
       db: postgresql
-    - TOXENV: "py36-postgres-psycopg-w32"
+    - TESTS: "py36-postgres"
       PYTHON_ARCH: "64"
       PYTHON_VERSION: "3.6"
       PYTHON_HOME: "C:\\Python36-x64"
       db: postgresql
-    - TOXENV: "py37-postgres-psycopg-w32"
+    - TESTS: "py37-postgres"
       PYTHON_ARCH: "64"
       PYTHON_VERSION: "3.7"
       PYTHON_HOME: "C:\\Python37-x64"
       db: postgresql
-    - TOXENV: "py27-postgres-pygresql-w32"
-      PYTHON_ARCH: "64"
-      PYTHON_VERSION: "2.7"
-      PYTHON_HOME: "C:\\Python27-x64"
-      db: postgresql
-    - TOXENV: "py36-postgres-pygresql-w32"
-      PYTHON_ARCH: "64"
-      PYTHON_VERSION: "3.6"
-      PYTHON_HOME: "C:\\Python36-x64"
-      db: postgresql
-    - TOXENV: "py37-postgres-pygresql-w32"
-      PYTHON_ARCH: "64"
-      PYTHON_VERSION: "3.7"
-      PYTHON_HOME: "C:\\Python37-x64"
-      db: postgresql
-    - TOXENV: "py36-pypostgresql-w32"
-      PYTHON_ARCH: "32"
-      PYTHON_VERSION: "3.6"
-      PYTHON_HOME: "C:\\Python36"
-      db: postgresql
-    - TOXENV: "py37-pypostgresql-w32"
-      PYTHON_ARCH: "32"
-      PYTHON_VERSION: "3.7"
-      PYTHON_HOME: "C:\\Python37"
-      db: postgresql
-    - TOXENV: "py36-pypostgresql-w32"
-      PYTHON_ARCH: "64"
-      PYTHON_VERSION: "3.6"
-      PYTHON_HOME: "C:\\Python36-x64"
-      db: postgresql
-    - TOXENV: "py37-pypostgresql-w32"
-      PYTHON_ARCH: "64"
-      PYTHON_VERSION: "3.7"
-      PYTHON_HOME: "C:\\Python37-x64"
-      db: postgresql
-    - TOXENV: "py27-postgres-pg8000-w32"
+    - TESTS: "py27-sqlite"
       PYTHON_ARCH: "32"
       PYTHON_VERSION: "2.7"
       PYTHON_HOME: "C:\\Python27"
-      db: postgresql
-    - TOXENV: "py36-postgres-pg8000-w32"
+    - TESTS: "py36-sqlite"
       PYTHON_ARCH: "64"
       PYTHON_VERSION: "3.6"
       PYTHON_HOME: "C:\\Python36-x64"
-      db: postgresql
-    - TOXENV: "py37-postgres-pg8000-w32"
-      PYTHON_ARCH: "64"
-      PYTHON_VERSION: "3.7"
-      PYTHON_HOME: "C:\\Python37-x64"
-      db: postgresql
-    - TOXENV: "py27-sqlite-w32"
-      PYTHON_ARCH: "32"
-      PYTHON_VERSION: "2.7"
-      PYTHON_HOME: "C:\\Python27"
-    - TOXENV: "py36-sqlite-w32"
-      PYTHON_ARCH: "64"
-      PYTHON_VERSION: "3.6"
-      PYTHON_HOME: "C:\\Python36-x64"
-    - TOXENV: "py37-sqlite-w32"
-      PYTHON_ARCH: "64"
-      PYTHON_VERSION: "3.7"
-      PYTHON_HOME: "C:\\Python37-x64"
-    - TOXENV: "py27-sqlite-memory-w32"
-      PYTHON_ARCH: "32"
-      PYTHON_VERSION: "2.7"
-      PYTHON_HOME: "C:\\Python27"
-    - TOXENV: "py36-sqlite-memory-w32"
-      PYTHON_ARCH: "64"
-      PYTHON_VERSION: "3.6"
-      PYTHON_HOME: "C:\\Python36-x64"
-    - TOXENV: "py37-sqlite-memory-w32"
+    - TESTS: "py37-sqlite"
       PYTHON_ARCH: "64"
       PYTHON_VERSION: "3.7"
       PYTHON_HOME: "C:\\Python37-x64"
@@ -165,7 +88,7 @@ install:
 build: false
 
 test_script:
-  - "%CMD_IN_ENV% tox"
+  - "%CMD_IN_ENV% devscripts\\tox-select-envs %TESTS%"
 
 after_test:
   - "remove-old-files.py -o 180 %LOCALAPPDATA%\\pip\\Cache"

@@ -8,6 +8,12 @@ News
 SQLObject (master)
 ==================
 
+CI
+--
+
+* Reduce the number of virtual machines/containers:
+  one OS, one DB, one python version, many drivers per VM.
+
 SQLObject 3.7.2
 ===============
 
