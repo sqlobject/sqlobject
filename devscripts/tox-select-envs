@@ -2,7 +2,7 @@
 
 pattern="$1"
 shift
-envs="`tox --listenvs-all | grep -F $pattern | sed 's/$/,/'`"
+envs="`tox --listenvs-all | grep -F $pattern | grep -v 'noauto\|w32' | sed 's/$/,/'`"
 
 if [ -n "$envs" ]; then
    exec tox -e "$envs" "$@"

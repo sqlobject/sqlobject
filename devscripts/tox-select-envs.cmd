@@ -6,7 +6,7 @@ shift
 
 set "envs="
 for /f "usebackq" %%e in (
-   `tox --listenvs-all ^| find "%pattern%" ^| find "-w32"`
+   `tox --listenvs-all ^| find "%pattern%" ^| find "-w32" ^| find /v "noauto"`
 ) do (
    if defined envs (set "envs=!envs!,%%e") else (set "envs=%%e")
 )
