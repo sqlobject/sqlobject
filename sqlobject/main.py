@@ -1621,7 +1621,6 @@ class SQLObject(with_metaclass(declarative.DeclarativeMeta, object)):
                                                     join.joinColumn, self.id)
                 self._connection.query(q)
 
-        depends = []
         depends = self._SO_depends()
         for k in depends:
             # Free related joins
