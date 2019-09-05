@@ -8,6 +8,11 @@ News
 SQLObject (master)
 ==================
 
+Tests
+-----
+
+* Add tests for cascade deletion.
+
 CI
 --
 
