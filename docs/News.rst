@@ -8,10 +8,17 @@ News
 SQLObject (master)
 ==================
 
+Bug fixes
+---------
+
+* Avoid excessive parentheses around ``ALL/ANY/SOME()``.
+
 Tests
 -----
 
 * Add tests for cascade deletion.
+
+* Add tests for ``sqlbuilder.ALL/ANY/SOME()``.
 
 * Fix calls to ``pytest.mark.skipif`` - make conditions bool instead of str.
 

@@ -1,6 +1,7 @@
 import os
 import pytest
-from sqlobject import SQLObject, StringCol
+from sqlobject import SQLObject, StringCol, IntCol
+from sqlobject.sqlbuilder import Select, SOME
 from sqlobject.tests.dbtest import getConnection, setupClass
 
 
@@ -56,3 +57,16 @@ def test_list_databases():
 def test_list_tables():
     setupClass(SOTestSOList)
     assert SOTestSOList.sqlmeta.table in connection.listTables()
+
+
+class SOTestSOME(SQLObject):
+    value = IntCol()
+
+
+def test_SOME():
+    setupClass(SOTestSOME)
+    SOTestSOME(value=10)
+    SOTestSOME(value=20)
+    SOTestSOME(value=30)
+    assert len(list(SOTestSOME.select(
+        SOTestSOME.q.value > SOME(Select([SOTestSOME.q.value]))))) == 2

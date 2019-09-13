@@ -1,7 +1,7 @@
 from sqlobject import IntCol, SQLObject, StringCol
 from sqlobject.compat import PY2
-from sqlobject.sqlbuilder import AND, CONCAT, Delete, Insert, SQLOp, Select, \
-    Union, Update, const, func, sqlrepr
+from sqlobject.sqlbuilder import AND, ANY, CONCAT, Delete, Insert, \
+    SQLConstant, SQLOp, Select, Union, Update, const, func, sqlrepr
 from sqlobject.tests.dbtest import getConnection, raises, setupClass
 
 
@@ -119,3 +119,16 @@ def test_CONCAT():
     if not PY2 and not isinstance(result, str):
         result = result.decode('ascii')
     assert result == "test-suffix"
+
+
+def test_ANY():
+    setupClass(SOTestSQLBuilder)
+
+    select = Select(
+        [SOTestSQLBuilder.q.name],
+        SQLConstant("'value'") == ANY(SOTestSQLBuilder.q.so_value),
+    )
+
+    assert sqlrepr(select, 'mysql') == \
+        "SELECT so_test_sql_builder.name FROM so_test_sql_builder " \
+        "WHERE (('value') = ANY (so_test_sql_builder.so_value))"

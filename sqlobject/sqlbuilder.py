@@ -308,7 +308,8 @@ class SQLOp(SQLExpression):
         s2 = sqlrepr(self.expr2, db)
         if s1[0] != '(' and s1 != 'NULL':
             s1 = '(' + s1 + ')'
-        if s2[0] != '(' and s2 != 'NULL':
+        if s2[0] != '(' and s2 != 'NULL' and \
+                not isinstance(self.expr2, Subquery):
             s2 = '(' + s2 + ')'
         return "(%s %s %s)" % (s1, self.op, s2)
 

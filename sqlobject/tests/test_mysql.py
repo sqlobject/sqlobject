@@ -1,5 +1,6 @@
 import pytest
-from sqlobject import SQLObject
+from sqlobject import SQLObject, IntCol
+from sqlobject.sqlbuilder import Select, ANY
 from sqlobject.tests.dbtest import getConnection, setupClass
 
 
@@ -24,3 +25,16 @@ def test_list_databases():
 def test_list_tables():
     setupClass(SOTestSOListMySQL)
     assert SOTestSOListMySQL.sqlmeta.table in connection.listTables()
+
+
+class SOTestANY(SQLObject):
+    value = IntCol()
+
+
+def test_ANY():
+    setupClass(SOTestANY)
+    SOTestANY(value=10)
+    SOTestANY(value=20)
+    SOTestANY(value=30)
+    assert len(list(SOTestANY.select(
+        SOTestANY.q.value > ANY(Select([SOTestANY.q.value]))))) == 2
