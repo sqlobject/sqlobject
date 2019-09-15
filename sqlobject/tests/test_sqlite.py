@@ -16,7 +16,7 @@ except (AttributeError, NameError):
     pass
 else:
     if connection.dbName != "sqlite":
-        pytestmark = pytest.mark.skip('')
+        pytestmark = pytest.mark.skip("These tests require SQLite")
 
 
 class SQLiteFactoryTest(SQLObject):

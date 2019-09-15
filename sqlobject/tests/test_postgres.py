@@ -16,7 +16,7 @@ except (AttributeError, NameError):
     pass
 else:
     if connection.dbName != "postgres":
-        pytestmark = pytest.mark.skip('')
+        pytestmark = pytest.mark.skip("These tests require PostgreSQL")
 
 
 class SOTestSSLMode(SQLObject):

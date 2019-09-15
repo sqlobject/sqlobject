@@ -15,6 +15,8 @@ Tests
 
 * Fix calls to ``pytest.mark.skipif`` - make conditions bool instead of str.
 
+* Fix module-level calls to ``pytest.mark.skip`` - add reasons.
+
 CI
 --
 

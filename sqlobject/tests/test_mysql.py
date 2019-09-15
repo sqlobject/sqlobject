@@ -10,7 +10,7 @@ except (AttributeError, NameError):
     pass
 else:
     if connection.dbName != "mysql":
-        pytestmark = pytest.mark.skip('')
+        pytestmark = pytest.mark.skip("These tests require MySQL")
 
 
 class SOTestSOListMySQL(SQLObject):

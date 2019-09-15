@@ -16,7 +16,7 @@ except NameError:
     pass
 else:
     if not support_decimal_column:
-        pytestmark = pytest.mark.skip('')
+        pytestmark = pytest.mark.skip("These tests require Decimal support")
 
 
 class DecimalTable(SQLObject):

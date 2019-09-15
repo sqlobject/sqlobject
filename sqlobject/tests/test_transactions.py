@@ -16,7 +16,7 @@ except NameError:
     pass
 else:
     if not support_transactions:
-        pytestmark = pytest.mark.skip('')
+        pytestmark = pytest.mark.skip("These tests require transactions")
 
 
 class SOTestSOTrans(SQLObject):
