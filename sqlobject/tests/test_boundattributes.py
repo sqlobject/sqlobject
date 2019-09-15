@@ -3,7 +3,9 @@ import pytest
 from sqlobject import boundattributes
 from sqlobject import declarative
 
-pytestmark = pytest.mark.skipif('True')
+pytestmark = pytest.mark.skipif(
+    True,
+    reason='The module "boundattributes" and its tests were not finished yet')
 
 
 class SOTestMe(object):

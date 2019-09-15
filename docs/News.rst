@@ -13,6 +13,8 @@ Tests
 
 * Add tests for cascade deletion.
 
+* Fix calls to ``pytest.mark.skipif`` - make conditions bool instead of str.
+
 CI
 --
 

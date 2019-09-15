@@ -5,7 +5,7 @@ from sqlobject import sqlhub, SQLObject, StringCol
 try:
     from sqlobject.wsgi_middleware import make_middleware
 except ImportError:
-    pytestmark = pytest.mark.skipif('True')
+    pytestmark = pytest.mark.skipif(True, reason='These tests require Paste')
 from .dbtest import getConnection, getConnectionURI, setupClass
 
 
