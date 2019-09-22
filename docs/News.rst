@@ -32,6 +32,8 @@ CI
 * Reduce the number of virtual machines/containers:
   one OS, one DB, one python version, many drivers per VM.
 
+* Fix sqlite test under Python 3.7+ at AppVeyor.
+
 SQLObject 3.7.2
 ===============
 

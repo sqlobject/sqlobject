@@ -140,7 +140,7 @@ def test_memorydb():
 
 
 def test_list_databases():
-    assert connection.listDatabases() == ['main']
+    assert 'main' in connection.listDatabases()
 
 
 def test_list_tables():
