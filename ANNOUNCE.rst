@@ -1,37 +1,26 @@
 Hello!
 
-I'm pleased to announce version 3.7.3, a bugfix release of branch
-3.7 of SQLObject.
+I'm pleased to announce version 3.8.0a1, the first alpha of the upcoming
+release of branch 3.8 of SQLObject.
+
+I'm pleased to announce version 3.8.0a2, the second alpha of the upcoming
+release of branch 3.8 of SQLObject.
+
+I'm pleased to announce version 3.8.0b1, the first beta of the upcoming
+release of branch 3.8 of SQLObject.
+
+I'm pleased to announce version 3.8.0rc1, the first release candidate
+of the upcoming release of branch 3.8 of SQLObject.
+
+I'm pleased to announce version 3.8.0, the first stable release of branch
+3.8 of SQLObject.
+
+I'm pleased to announce version 3.8.1, the first bugfix release of branch
+3.8 of SQLObject.
 
 
 What's new in SQLObject
 =======================
-
-Bug fixes
----------
-
-* Avoid excessive parentheses around ``ALL/ANY/SOME()``.
-
-Tests
------
-
-* Add tests for cascade deletion.
-
-* Add tests for ``sqlbuilder.ALL/ANY/SOME()``.
-
-* Fix calls to ``pytest.mark.skipif`` - make conditions bool instead of str.
-
-* Fix module-level calls to ``pytest.mark.skip`` - add reasons.
-
-* Fix escape sequences ``'\%'`` -> ``'\\%'``.
-
-CI
---
-
-* Reduce the number of virtual machines/containers:
-  one OS, one DB, one python version, many drivers per VM.
-
-* Fix sqlite test under Python 3.7+ at AppVeyor.
 
 Contributors for this release are 
 
@@ -65,7 +54,7 @@ Mailing list:
 https://lists.sourceforge.net/mailman/listinfo/sqlobject-discuss
 
 Download:
-https://pypi.org/project/SQLObject/3.7.3
+https://pypi.org/project/SQLObject/3.8.0a0.dev20190501/
 
 News and changes:
 http://sqlobject.org/News.html
