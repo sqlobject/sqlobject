@@ -262,8 +262,8 @@ def test_timedelta():
 def test_quote_unquote_str():
     assert quote_str('test%', 'postgres') == "'test%'"
     assert quote_str('test%', 'sqlite') == "'test%'"
-    assert quote_str('test\%', 'postgres') == "E'test\\%'"
-    assert quote_str('test\\%', 'sqlite') == "'test\%'"
+    assert quote_str('test\\%', 'postgres') == "E'test\\%'"
+    assert quote_str('test\\%', 'sqlite') == "'test\\%'"
     assert unquote_str("'test%'") == 'test%'
     assert unquote_str("'test\\%'") == 'test\\%'
     assert unquote_str("E'test\\%'") == 'test\\%'

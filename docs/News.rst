@@ -24,6 +24,8 @@ Tests
 
 * Fix module-level calls to ``pytest.mark.skip`` - add reasons.
 
+* Fix escape sequences ``'\%'`` -> ``'\\%'``.
+
 CI
 --
 
