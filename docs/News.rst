@@ -8,6 +8,11 @@ News
 SQLObject (master)
 ==================
 
+SQLObject 3.7.3
+===============
+
+Released 22 Sep 2019.
+
 Bug fixes
 ---------
 
