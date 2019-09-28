@@ -32,13 +32,17 @@ class SQLiteConnection(DBAPI):
     schemes = [dbName]
 
     def __init__(self, filename, autoCommit=1, **kw):
-        drivers = kw.pop('driver', None) or 'pysqlite2,sqlite3,sqlite'
+        drivers = kw.pop('driver', None) or \
+            'supersqlite,pysqlite2,sqlite3,sqlite'
         for driver in drivers.split(','):
             driver = driver.strip()
             if not driver:
                 continue
             try:
-                if driver in ('sqlite2', 'pysqlite2'):
+                if driver == 'supersqlite':
+                    from supersqlite import sqlite3 as sqlite
+                    self.using_sqlite2 = True
+                elif driver in ('sqlite2', 'pysqlite2'):
                     from pysqlite2 import dbapi2 as sqlite
                     self.using_sqlite2 = True
                 elif driver == 'sqlite3':
@@ -50,7 +54,8 @@ class SQLiteConnection(DBAPI):
                 else:
                     raise ValueError(
                         'Unknown SQLite driver "%s", '
-                        'expected pysqlite2, sqlite3 or sqlite' % driver)
+                        'expected supersqlite, pysqlite2, sqlite3 '
+                        'or sqlite' % driver)
             except ImportError:
                 pass
             else:

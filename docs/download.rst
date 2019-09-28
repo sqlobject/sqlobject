@@ -76,10 +76,15 @@ PostgreSQL
 psycopg2 psycopg postgres postgresql (synonyms for psycopg2)
 pygresql pypostgresql py-postgresql pg8000
 
+SQLite
+^^^^^^
+
+sqlite pysqlite supersqlite
+
 The rest
 ^^^^^^^^
 
-sapdb sqlite (pysqlite) sybase
+sapdb sybase
 
 Repositories
 ------------

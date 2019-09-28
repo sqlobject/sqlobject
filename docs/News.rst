@@ -8,6 +8,12 @@ News
 SQLObject (master)
 ==================
 
+Features
+--------
+
+* Add driver ``supersqlite``. Not all tests are passing
+  so the driver isn't added to the list of default drivers.
+
 Bug fixes
 ---------
 

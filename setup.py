@@ -131,6 +131,7 @@ and `GitHub <https://github.com/sqlobject>`_.
         #
         'sapdb': ['sapdb'],
         'sqlite': ['pysqlite'],
+        'supersqlite': ['supersqlite'],
         'sybase': ['Sybase'],
     },
 )
