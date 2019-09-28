@@ -8,6 +8,11 @@ News
 SQLObject (master)
 ==================
 
+Bug fixes
+---------
+
+* Fixed a bug working with microseconds in Time columns.
+
 SQLObject 3.7.3
 ===============
 
