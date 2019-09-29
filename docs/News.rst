@@ -17,6 +17,8 @@ Features
 Bug fixes
 ---------
 
+* Fixed a bug in cascade deletion/nullification.
+
 * Fixed a bug working with microseconds in Time columns.
 
 SQLObject 3.7.3

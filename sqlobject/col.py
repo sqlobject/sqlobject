@@ -170,8 +170,13 @@ class SOCol(object):
         # True: a CASCADE constraint is generated
         # False: a RESTRICT constraint is generated
         # 'null': a SET NULL trigger is generated
-        if isinstance(cascade, str):
-            assert cascade == 'null', (
+        if not isinstance(cascade, (bool, string_type, type(None))):
+            raise TypeError(
+                'Expected cascade to be True, False, None or "null", '
+                "(you gave: %r %r)" % (type(cascade), cascade)
+            )
+        if isinstance(cascade, str) and (cascade != 'null'):
+            raise ValueError(
                 "The only string value allowed for cascade is 'null' "
                 "(you gave: %r)" % cascade)
         self.cascade = cascade

@@ -1639,36 +1639,45 @@ class SQLObject(with_metaclass(declarative.DeclarativeMeta, object)):
                 continue
 
             query = []
-            delete = setnull = restrict = False
+            restrict = False
             for _col in cols:
+                query.append(getattr(k.q, _col.name) == self.id)
                 if _col.cascade is False:
                     # Found a restriction
                     restrict = True
-                query.append(getattr(k.q, _col.name) == self.id)
+            query = sqlbuilder.OR(*query)
+            results = k.select(query, connection=self._connection)
+            if restrict and results.count():
+                # Restrictions only apply if there are
+                # matching records on the related table
+                raise SQLObjectIntegrityError(
+                    "Tried to delete %s::%s but "
+                    "table %s has a restriction against it" %
+                    (klass.__name__, self.id, k.__name__))
+
+            setnull = {}
+            for _col in cols:
                 if _col.cascade == 'null':
-                    setnull = _col.name
-                elif _col.cascade:
+                    setnull[_col.name] = None
+            if setnull:
+                for row in results:
+                    clear = {}
+                    for name in setnull:
+                        if getattr(row, name) == self.id:
+                            clear[name] = None
+                    row.set(**clear)
+
+            delete = False
+            for _col in cols:
+                if _col.cascade is True:
                     delete = True
             assert delete or setnull or restrict, (
                 "Class %s depends on %s accoriding to "
                 "findDependantColumns, but this seems inaccurate"
                 % (k, klass))
-            query = sqlbuilder.OR(*query)
-            results = k.select(query, connection=self._connection)
-            if restrict:
-                if results.count():
-                    # Restrictions only apply if there are
-                    # matching records on the related table
-                    raise SQLObjectIntegrityError(
-                        "Tried to delete %s::%s but "
-                        "table %s has a restriction against it" %
-                        (klass.__name__, self.id, k.__name__))
-            else:
+            if delete:
                 for row in results:
-                    if delete:
-                        row.destroySelf()
-                    else:
-                        row.set(**{setnull: None})
+                    row.destroySelf()
 
         self.sqlmeta._obsolete = True
         self._connection._SO_delete(self)

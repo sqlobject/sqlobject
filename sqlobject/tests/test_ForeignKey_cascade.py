@@ -90,10 +90,17 @@ def test3():
     message.sync()
     raises(SQLObjectNotFound, emily.sync)
 
-    assert message.recipient is None
+    assert message.sender is None
+    assert message.recipient == john
 
-    # This looks like a bug; `message.sender` here should be None
-    # assert message.sender is None
+    SOTestPerson3.delete(john.id)
+    john.expire()
+    message.expire()
+
+    message.sync()
+    raises(SQLObjectNotFound, john.sync)
+
+    assert message.recipient is None
 
 
 class SOTestPerson4(SQLObject):
@@ -120,6 +127,24 @@ def test4():
     message.expire()
 
     john.sync()
+    raises(SQLObjectNotFound, message.sync)
 
-    # This is even a nastier bug; `message` was deleted from the DB
-    # message.sync()
+
+def test5():
+    setupClass([SOTestPerson4, SOTestMessageCascadeMixed])
+
+    john = SOTestPerson4(name='john')
+    emily = SOTestPerson4(name='emily')
+    message = SOTestMessageCascadeMixed(
+        sender=emily, recipient=john, body='test5'
+    )
+
+    john.destroySelf()
+    emily.expire()
+    message.expire()
+
+    emily.sync()
+    message.sync()
+
+    assert message.recipient is None
+    assert message.sender == emily
