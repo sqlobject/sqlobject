@@ -300,6 +300,8 @@ operatorMap = {
 class SQLOp(SQLExpression):
     def __init__(self, op, expr1, expr2):
         self.op = op.upper()
+        if isinstance(expr1, Subquery):
+            expr1, expr2 = expr2, expr1
         self.expr1 = expr1
         self.expr2 = expr2
 

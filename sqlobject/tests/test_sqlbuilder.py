@@ -1,7 +1,7 @@
 from sqlobject import IntCol, SQLObject, StringCol
 from sqlobject.compat import PY2
 from sqlobject.sqlbuilder import AND, ANY, CONCAT, Delete, Insert, \
-    SQLConstant, SQLOp, Select, Union, Update, const, func, sqlrepr
+    SQLOp, Select, Union, Update, const, func, sqlrepr
 from sqlobject.tests.dbtest import getConnection, raises, setupClass
 
 
@@ -126,7 +126,7 @@ def test_ANY():
 
     select = Select(
         [SOTestSQLBuilder.q.name],
-        SQLConstant("'value'") == ANY(SOTestSQLBuilder.q.so_value),
+        'value' == ANY(SOTestSQLBuilder.q.so_value),
     )
 
     assert sqlrepr(select, 'mysql') == \

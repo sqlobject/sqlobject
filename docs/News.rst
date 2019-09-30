@@ -14,6 +14,12 @@ Features
 * Add driver ``supersqlite``. Not all tests are passing
   so the driver isn't added to the list of default drivers.
 
+Minor features
+--------------
+
+* Improve sqlrepr'ing ``ALL/ANY/SOME()``: always put the expression
+  at the right side of the comparison operation.
+
 Bug fixes
 ---------
 
