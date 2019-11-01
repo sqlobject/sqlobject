@@ -27,6 +27,11 @@ Bug fixes
 
 * Fixed a bug working with microseconds in Time columns.
 
+CI
+--
+
+* Run tests with Python 3.8 at Travis CI.
+
 SQLObject 3.7.3
 ===============
 
