@@ -353,7 +353,8 @@ class PostgresConnection(DBAPI):
         colQuery = """
         SELECT a.attname,
         pg_catalog.format_type(a.atttypid, a.atttypmod), a.attnotnull,
-        (SELECT substring(d.adsrc for 128) FROM pg_catalog.pg_attrdef d
+        (SELECT substring(pg_catalog.pg_get_expr(d.adbin, d.adrelid) for 128)
+            FROM pg_catalog.pg_attrdef d
         WHERE d.adrelid=a.attrelid AND d.adnum = a.attnum)
         FROM pg_catalog.pg_attribute a
         WHERE a.attrelid =%s::regclass

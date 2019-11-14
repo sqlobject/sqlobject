@@ -25,6 +25,10 @@ Bug fixes
 
 * Fixed a bug in cascade deletion/nullification.
 
+* Fixed a bug in ``PostgresConnection.columnsFromSchema``:
+  PostgreSQL 12 removed outdated catalog attribute
+  ``pg_catalog.pg_attrdef.adsrc``.
+
 * Fixed a bug working with microseconds in Time columns.
 
 CI
