@@ -15,4 +15,5 @@ if not "%envs%"=="" (
    tox -e "%envs%" %*
 ) else (
    echo "No environments match %pattern%" >&2
+   exit /b 1
 )
