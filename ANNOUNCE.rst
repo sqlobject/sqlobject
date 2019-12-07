@@ -1,41 +1,28 @@
 Hello!
 
+I'm pleased to announce version 3.8.1a1, the first alpha of the upcoming
+release of branch 3.8 of SQLObject.
+
+I'm pleased to announce version 3.8.1a2, the second alpha of the upcoming
+release of branch 3.8 of SQLObject.
+
+I'm pleased to announce version 3.8.1b1, the first beta of the upcoming
+release of branch 3.8 of SQLObject.
+
+I'm pleased to announce version 3.8.1rc1, the first release candidate
+of the upcoming release of branch 3.8 of SQLObject.
+
 I'm pleased to announce version 3.8.0, the first stable release of branch
+3.8 of SQLObject.
+
+I'm pleased to announce version 3.8.1, the first bugfix release of branch
 3.8 of SQLObject.
 
 
 What's new in SQLObject
 =======================
 
-Features
---------
-
-* Add driver ``supersqlite``. Not all tests are passing
-  so the driver isn't added to the list of default drivers.
-
-Minor features
---------------
-
-* Improve sqlrepr'ing ``ALL/ANY/SOME()``: always put the expression
-  at the right side of the comparison operation.
-
-Bug fixes
----------
-
-* Fixed a bug in cascade deletion/nullification.
-
-* Fixed a bug in ``PostgresConnection.columnsFromSchema``:
-  PostgreSQL 12 removed outdated catalog attribute
-  ``pg_catalog.pg_attrdef.adsrc``.
-
-* Fixed a bug working with microseconds in Time columns.
-
-CI
---
-
-* Run tests with Python 3.8 at Travis CI.
-
-Contributors for this release are Andrew Trusty, Marco Sirabella and darix.
+Contributors for this release are 
 
 For a more complete list, please see the news:
 http://sqlobject.org/News.html
@@ -67,7 +54,7 @@ Mailing list:
 https://lists.sourceforge.net/mailman/listinfo/sqlobject-discuss
 
 Download:
-https://pypi.org/project/SQLObject/3.8.0
+https://pypi.org/project/SQLObject/3.8.1a0.dev20191208/
 
 News and changes:
 http://sqlobject.org/News.html
