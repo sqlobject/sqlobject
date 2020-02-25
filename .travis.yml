@@ -69,14 +69,8 @@ matrix:
       env: TESTS=py27-firebird
     - python: "3.6"
       env: TESTS=py36-firebird
-    - python: "2.7"
-      env: TESTS=py27-firebird
-    - python: "3.6"
-      env: TESTS=py36-firebird
 
   allow_failures:
-    - env: TESTS=py27-firebird
-    - env: TESTS=py36-firebird
     - env: TESTS=py27-firebird
     - env: TESTS=py36-firebird
 
