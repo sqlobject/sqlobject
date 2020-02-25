@@ -1,3 +1,7 @@
+os: linux
+
+dist: xenial
+
 language: python
 
 python:
@@ -30,10 +34,8 @@ matrix:
     - python: "3.6"
       env: TESTS=py36-mysql
     - python: "3.7"
-      dist: xenial
       env: TESTS=py37-mysql
     - python: "3.8"
-      dist: xenial
       env: TESTS=py38-mysql
     - python: "2.7"
       env: TESTS=py27-postgres
@@ -44,10 +46,8 @@ matrix:
     - python: "3.6"
       env: TESTS=py36-postgres
     - python: "3.7"
-      dist: xenial
       env: TESTS=py37-postgres
     - python: "3.8"
-      dist: xenial
       env: TESTS=py38-postgres
     - python: "2.7"
       env: TESTS=py27-sqlite
@@ -58,15 +58,12 @@ matrix:
     - python: "3.6"
       env: TESTS=py36-sqlite
     - python: "3.7"
-      dist: xenial
       env: TESTS=py37-sqlite
     - python: "3.8"
-      dist: xenial
       env: TESTS=py38-sqlite
     - python: "2.7"
       env: TESTS=py27-flake8
     - python: "3.8"
-      dist: xenial
       env: TESTS=py38-flake8
     - python: "2.7"
       env: TESTS=py27-firebird
