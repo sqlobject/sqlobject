@@ -94,7 +94,7 @@ before_install:
       sudo chmod 644 /var/lib/firebird/create_test_db;
     fi
 
-install: travis_retry pip install --upgrade "pip < 19.1" setuptools tox coveralls codecov ppu
+install: travis_retry pip install --upgrade "pip<19.1" "setuptools<44" tox coveralls codecov ppu
 
 script: devscripts/tox-select-envs $TESTS
 
