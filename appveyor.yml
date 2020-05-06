@@ -91,7 +91,7 @@ install:
   - "SET TOXPYTHON=%PYTHON_HOME%\\python.exe"
   - "python --version"
   - "python -c \"import struct; print(struct.calcsize('P') * 8)\""
-  - "python -m pip install --upgrade \"pip<19.1\" \"setuptools<44\""
+  - "python -m pip install --upgrade \"pip<21\" \"setuptools<44\""
   - "pip install --upgrade \"tox<3.1\" ppu"
   - "pip --version"
   # List ODBC drivers
