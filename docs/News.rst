@@ -8,6 +8,11 @@ News
 SQLObject (master)
 ==================
 
+Tests
+-----
+
+* Fix ``PyGreSQL`` version for Python 3.4.
+
 SQLObject 3.8.0
 ===============
 
