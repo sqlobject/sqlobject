@@ -51,8 +51,8 @@ def isBool(obj, col, value):
 
 class InList:
 
-    def __init__(self, l):
-        self.list = l
+    def __init__(self, _l):
+        self.list = _l
 
     def __call__(self, obj, col, value):
         if value not in self.list:

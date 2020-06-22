@@ -1095,8 +1095,8 @@ class CommandRecord(Command):
                 connection=conn)
 
     def strip_comments(self, sql):
-        lines = [l for l in sql.splitlines()
-                 if not l.strip().startswith('--')]
+        lines = [_l for _l in sql.splitlines()
+                 if not _l.strip().startswith('--')]
         return '\n'.join(lines)
 
     def base_dir(self):
