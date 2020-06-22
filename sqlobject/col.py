@@ -1510,7 +1510,6 @@ class TimeValidator(DateTimeValidator):
                 raise validators.Invalid(
                     "the value for the TimeCol '%s' must has days=0, "
                     "it has days=%d" % (self.name, value.days), value, state)
-            print("[DEBUG1]:", value.microseconds)
             return datetime.time(
                 *time.gmtime(value.seconds)[3:6],
                 microsecond=value.microseconds
