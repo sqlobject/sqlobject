@@ -35,6 +35,11 @@ extensions = [
     'sphinx.ext.viewcode',
 ]
 
+# Exclude uninformative members from the api docs
+autodoc_default_options = {
+    'exclude-members': 'columnDefinitions,columnList,columns,indexDefinitions'
+}
+
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
 
