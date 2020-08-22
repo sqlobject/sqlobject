@@ -13,6 +13,7 @@ Submodules
 
    sqlobject.tests.dbtest
    sqlobject.tests.test_ForeignKey
+   sqlobject.tests.test_ForeignKey_cascade
    sqlobject.tests.test_NoneValuedResultItem
    sqlobject.tests.test_SQLMultipleJoin
    sqlobject.tests.test_SQLRelatedJoin
