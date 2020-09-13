@@ -148,6 +148,8 @@ class MySQLConnection(DBAPI):
 
         self._server_version = None
         self._can_use_microseconds = None
+        self._can_use_json_funcs = None
+
         DBAPI.__init__(self, **kw)
 
     @classmethod
@@ -490,3 +492,17 @@ class MySQLConnection(DBAPI):
             can_use_microseconds = (server_version >= (5, 6, 4))
         self._can_use_microseconds = can_use_microseconds
         return can_use_microseconds
+
+    def can_use_json_funcs(self):
+        if self._can_use_json_funcs is not None:
+            return self._can_use_json_funcs
+        server_version = self.server_version()
+        if server_version is None:
+            return None
+        server_version, db_tag = server_version
+        if db_tag == "MariaDB":
+            can_use_json_funcs = (server_version >= (10, 2, 7))
+        else:  # MySQL
+            can_use_json_funcs = (server_version >= (5, 7, 0))
+        self._can_use_json_funcs = can_use_json_funcs
+        return can_use_json_funcs
