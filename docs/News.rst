@@ -5,13 +5,25 @@ News
 .. contents:: Contents:
    :backlinks: none
 
-SQLObject (master)
-==================
+SQLObject 3.8.1
+===============
+
+Released 2020 Oct 01.
+
+Documentation
+-------------
+
+* Use conf.py options to exclude sqlmeta options.
 
 Tests
 -----
 
 * Fix ``PyGreSQL`` version for Python 3.4.
+
+CI
+--
+
+* Run tests with Python 3.8 at AppVeyor.
 
 SQLObject 3.8.0
 ===============
