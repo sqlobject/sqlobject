@@ -1978,11 +1978,13 @@ class JsonbCol(Col):
     baseClass = SOJsonbCol
 
 
-class JSONValidator(StringValidator):
+class JSONValidator(SOValidator):
 
     def to_python(self, value, state):
         if value is None:
             return None
+        if isinstance(value, (bool, int, float, long, dict, list)):
+            return value
         if isinstance(value, string_type):
             return json.loads(value)
         raise validators.Invalid(
@@ -2005,8 +2007,7 @@ class JSONValidator(StringValidator):
 class SOJSONCol(SOStringCol):
 
     def createValidators(self):
-        return [JSONValidator(name=self.name)] + \
-            super(SOJSONCol, self).createValidators()
+        return [JSONValidator(name=self.name)]
 
     def _sqlType(self):
         return 'JSON'
