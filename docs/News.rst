@@ -8,6 +8,11 @@ News
 SQLObject (master)
 ==================
 
+CI
+--
+
+* Run tests with Python 3.9 at Travis and AppVeyor.
+
 SQLObject 3.8.1
 ===============
 

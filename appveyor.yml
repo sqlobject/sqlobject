@@ -3,6 +3,8 @@
 # and Michael Sverdlik's appveyor-utils (https://github.com/cloudify-cosmo/appveyor-utils)
 version: '{branch}-{build}'
 
+image: Visual Studio 2019
+
 cache:
   - '%LOCALAPPDATA%\pip\Cache'
 
@@ -45,6 +47,11 @@ environment:
       PYTHON_VERSION: "3.8"
       PYTHON_HOME: "C:\\Python38-x64"
       db: mysql
+    - TESTS: "py39-mysql"
+      PYTHON_ARCH: "64"
+      PYTHON_VERSION: "3.9"
+      PYTHON_HOME: "C:\\Python39-x64"
+      db: mysql
     - TESTS: "py27-postgres"
       PYTHON_ARCH: "32"
       PYTHON_VERSION: "2.7"
@@ -65,6 +72,11 @@ environment:
       PYTHON_VERSION: "3.8"
       PYTHON_HOME: "C:\\Python38-x64"
       db: postgresql
+    - TESTS: "py39-postgres"
+      PYTHON_ARCH: "64"
+      PYTHON_VERSION: "3.9"
+      PYTHON_HOME: "C:\\Python39-x64"
+      db: postgresql
     - TESTS: "py27-sqlite"
       PYTHON_ARCH: "32"
       PYTHON_VERSION: "2.7"
@@ -81,6 +93,10 @@ environment:
       PYTHON_ARCH: "64"
       PYTHON_VERSION: "3.8"
       PYTHON_HOME: "C:\\Python38-x64"
+    - TESTS: "py39-sqlite"
+      PYTHON_ARCH: "64"
+      PYTHON_VERSION: "3.9"
+      PYTHON_HOME: "C:\\Python39-x64"
 
 matrix:
   fast_finish: true

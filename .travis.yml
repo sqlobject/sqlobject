@@ -37,6 +37,8 @@ matrix:
       env: TESTS=py37-mysql
     - python: "3.8"
       env: TESTS=py38-mysql
+    - python: "3.9"
+      env: TESTS=py39-mysql
     - python: "2.7"
       env: TESTS=py27-postgres
     - python: "3.4"
@@ -49,6 +51,8 @@ matrix:
       env: TESTS=py37-postgres
     - python: "3.8"
       env: TESTS=py38-postgres
+    - python: "3.9"
+      env: TESTS=py39-postgres
     - python: "2.7"
       env: TESTS=py27-sqlite
     - python: "3.4"
@@ -61,6 +65,8 @@ matrix:
       env: TESTS=py37-sqlite
     - python: "3.8"
       env: TESTS=py38-sqlite
+    - python: "3.9"
+      env: TESTS=py39-sqlite
     - python: "2.7"
       env: TESTS=py27-flake8
     - python: "3.8"
