@@ -80,8 +80,6 @@ matrix:
     - env: TESTS=py27-firebird
     - env: TESTS=py36-firebird
 
-  fast_finish: true
-
 before_install:
   # Start the firebird database server.
   # We use firebird-super, so there's none of the inetd configuration

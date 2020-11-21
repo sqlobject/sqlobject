@@ -98,9 +98,6 @@ environment:
       PYTHON_VERSION: "3.9"
       PYTHON_HOME: "C:\\Python39-x64"
 
-matrix:
-  fast_finish: true
-
 install:
   # Ensure we use the right python version
   - "SET PATH=%PYTHON_HOME%;%PYTHON_HOME%\\Scripts;C:\\Program Files\\MySQL\\MySQL Server 5.7\\bin;C:\\Program Files\\PostgreSQL\\9.5\\bin;%PATH%"
