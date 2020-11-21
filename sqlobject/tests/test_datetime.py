@@ -24,7 +24,7 @@ class DateTime1(SQLObject):
 
 def test_dateTime():
     setupClass(DateTime1)
-    _now = datetime.now()
+    _now = datetime.now().replace(microsecond=0)
     dt1 = DateTime1(col1=_now, col2=_now, col3=_now.time())
 
     assert isinstance(dt1.col1, datetime)
