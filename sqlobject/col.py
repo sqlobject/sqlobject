@@ -2009,8 +2009,9 @@ class SOJSONCol(SOStringCol):
     def createValidators(self):
         return [JSONValidator(name=self.name)]
 
-    def _sqlType(self):
-        return 'JSON'
+    # Doesn't work, especially with Postgres
+    # def _sqlType(self):
+    #     return 'JSON'
 
 
 class JSONCol(StringCol):
