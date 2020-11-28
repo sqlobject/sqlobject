@@ -8,6 +8,14 @@ News
 SQLObject (master)
 ==================
 
+Features
+--------
+
+* Add ``JSONCol``: a universal json column that converts simple Python objects
+  (None, bool, int, float, long, dict, list, str/unicode to/from JSON using
+  json.dumps/loads. A subclass of StringCol. Requires ``VARCHAR``/``TEXT``
+  columns at backends, doesn't work with ``JSON`` columns.
+
 CI
 --
 
