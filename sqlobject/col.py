@@ -1978,11 +1978,13 @@ class JsonbCol(Col):
     baseClass = SOJsonbCol
 
 
-class JSONValidator(StringValidator):
+class JSONValidator(SOValidator):
 
     def to_python(self, value, state):
         if value is None:
             return None
+        if isinstance(value, (bool, int, float, long, dict, list)):
+            return value
         if isinstance(value, string_type):
             return json.loads(value)
         raise validators.Invalid(
@@ -2005,12 +2007,69 @@ class JSONValidator(StringValidator):
 class SOJSONCol(SOStringCol):
 
     def createValidators(self):
-        return [JSONValidator(name=self.name)] + \
-            super(SOJSONCol, self).createValidators()
+        return [JSONValidator(name=self.name)]
+
+    # Doesn't work, especially with Postgres
+    # def _sqlType(self):
+    #     return 'JSON'
 
 
 class JSONCol(StringCol):
     baseClass = SOJSONCol
+
+
+#############################################
+#
+# Added by Tippett
+#
+
+#
+# Convenience stuff Monkey-Patched onto sqlbuilder.SQLObjectField,
+# so you can do:
+#
+#   Table.q.column.json_extract("key") == value
+#   Table.q.column.json_contains("item")
+#   Table.q.column.json_length("key")
+#
+# instead of
+#
+#   func.JSON_EXTRACT(Table.q.column, '$.key') == value
+#   func.JSON_CONTAINS(Table.q.column, json.dumps("item"))
+#   func.JSON_LENGTH(Table.q.column, '$.key')
+#
+
+def _json_extract(col, key, path=None):
+    """
+    """
+    assert isinstance(col.column, SOJSONCol), \
+        "{!r} is not a JSONCol".format(col)
+    if path is None:
+        return sqlbuilder.func.JSON_EXTRACT(col, '$.%s' % key)
+    else:
+        return sqlbuilder.func.JSON_EXTRACT(col, '$.%s' % key, path)
+
+
+def _json_contains(col, value, path=None):
+    assert isinstance(col.column, SOJSONCol), \
+        "{!r} is not a JSONCol".format(col)
+    if path is None:
+        return sqlbuilder.func.JSON_CONTAINS(col, json.dumps(value))
+    else:
+        return sqlbuilder.func.JSON_CONTAINS(col, json.dumps(value), path)
+
+
+def _json_length(col, path=None):
+    assert isinstance(col.column, SOJSONCol), \
+        "{!r} is not a JSONCol".format(col)
+    if path is None:
+        return sqlbuilder.func.JSON_LENGTH(col)
+    else:
+        return sqlbuilder.func.JSON_LENGTH(col, path)
+
+
+sqlbuilder.SQLObjectField.json_extract = _json_extract
+sqlbuilder.SQLObjectField.json_contains = _json_contains
+sqlbuilder.SQLObjectField.json_length = _json_length
 
 
 def pushKey(kw, name, value):

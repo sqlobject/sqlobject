@@ -1244,7 +1244,8 @@ different types of columns, when SQLObject creates your tables.
 `JSONCol`:
     A universal json column that converts simple Python objects (None,
     bool, int, float, long, dict, list, str/unicode to/from JSON using
-    json.dumps/loads. A subclass of StringCol.
+    json.dumps/loads. A subclass of StringCol. Requires ``VARCHAR``/``TEXT``
+    columns at backends, doesn't work with ``JSON`` columns.
 
 `PickleCol`:
     An extension of BLOBCol; this column can store/retrieve any Python object;
