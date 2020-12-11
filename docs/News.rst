@@ -16,6 +16,9 @@ Features
   json.dumps/loads. A subclass of StringCol. Requires ``VARCHAR``/``TEXT``
   columns at backends, doesn't work with ``JSON`` columns.
 
+* Drop support for very old version of ``mxDateTime``
+  without ``mx.`` namespace.
+
 CI
 --
 

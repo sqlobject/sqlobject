@@ -46,27 +46,28 @@ datetime_available = True
 try:
     from mx import DateTime
 except ImportError:
-    try:
-        # old version of mxDateTime,
-        # or Zope's Version if we're running with Zope
-        import DateTime
-    except ImportError:
-        mxdatetime_available = False
-    else:
-        mxdatetime_available = True
+    mxdatetime_available = False
 else:
     mxdatetime_available = True
+
+try:
+    # DateTime from Zope
+    import DateTime
+except ImportError:
+    zope_datetime_available = False
+else:
+    zope_datetime_available = True
 
 DATETIME_IMPLEMENTATION = "datetime"
 MXDATETIME_IMPLEMENTATION = "mxDateTime"
 
-if mxdatetime_available:
-    if hasattr(DateTime, "Time"):
-        DateTimeType = type(DateTime.now())
-        TimeType = type(DateTime.Time())
-    else:  # Zope
-        DateTimeType = type(DateTime.DateTime())
-        TimeType = type(DateTime.DateTime.Time(DateTime.DateTime()))
+if mxdatetime_available and hasattr(DateTime, "Time"):
+    DateTimeType = type(DateTime.now())
+    TimeType = type(DateTime.Time())
+
+elif zope_datetime_available:
+    DateTimeType = type(DateTime.DateTime())
+    TimeType = type(DateTime.DateTime.Time(DateTime.DateTime()))
 
 __all__ = ["datetime_available", "mxdatetime_available",
            "default_datetime_implementation", "DATETIME_IMPLEMENTATION"]
