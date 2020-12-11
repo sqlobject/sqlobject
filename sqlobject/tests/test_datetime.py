@@ -3,8 +3,9 @@ import pytest
 
 from sqlobject import SQLObject
 from sqlobject import col
-from sqlobject.col import DATETIME_IMPLEMENTATION, DateCol, DateTimeCol, \
-    MXDATETIME_IMPLEMENTATION, TimeCol, mxdatetime_available, use_microseconds
+from sqlobject.col import DateCol, DateTimeCol, TimeCol, use_microseconds, \
+    DATETIME_IMPLEMENTATION, MXDATETIME_IMPLEMENTATION, mxdatetime_available, \
+    ZOPE_DATETIME_IMPLEMENTATION, zope_datetime_available
 from sqlobject.tests.dbtest import getConnection, setupClass
 
 
@@ -82,7 +83,7 @@ def test_microseconds():
 
 if mxdatetime_available:
     col.default_datetime_implementation = MXDATETIME_IMPLEMENTATION
-    from mx.DateTime import now, Time
+    from mx.DateTime import now as mx_now, Time as mxTime
 
     dateFormat = None  # use default
     try:
@@ -104,11 +105,11 @@ if mxdatetime_available:
 
     def test_mxDateTime():
         setupClass(DateTime2)
-        _now = now()
+        _now = mx_now()
         dt2 = DateTime2(col1=_now, col2=_now.pydate(),
-                        col3=Time(_now.hour, _now.minute, _now.second))
+                        col3=mxTime(_now.hour, _now.minute, _now.second))
 
-        assert isinstance(dt2.col1, col.DateTimeType)
+        assert isinstance(dt2.col1, col.mxDateTimeType)
         assert dt2.col1.year == _now.year
         assert dt2.col1.month == _now.month
         assert dt2.col1.day == _now.day
@@ -116,7 +117,7 @@ if mxdatetime_available:
         assert dt2.col1.minute == _now.minute
         assert dt2.col1.second == int(_now.second)
 
-        assert isinstance(dt2.col2, col.DateTimeType)
+        assert isinstance(dt2.col2, col.mxDateTimeType)
         assert dt2.col2.year == _now.year
         assert dt2.col2.month == _now.month
         assert dt2.col2.day == _now.day
@@ -124,7 +125,27 @@ if mxdatetime_available:
         assert dt2.col2.minute == 0
         assert dt2.col2.second == 0
 
-        assert isinstance(dt2.col3, (col.DateTimeType, col.TimeType))
+        assert isinstance(dt2.col3, (col.mxDateTimeType, col.mxTimeType))
         assert dt2.col3.hour == _now.hour
         assert dt2.col3.minute == _now.minute
         assert dt2.col3.second == int(_now.second)
+
+if zope_datetime_available:
+    col.default_datetime_implementation = ZOPE_DATETIME_IMPLEMENTATION
+    from DateTime import DateTime as zopeDateTime
+
+    class DateTime3(SQLObject):
+        col1 = DateTimeCol()
+
+    def test_ZopeDateTime():
+        setupClass(DateTime3)
+        _now = zopeDateTime()
+        dt3 = DateTime3(col1=_now)
+
+        assert isinstance(dt3.col1, col.zopeDateTimeType)
+        assert dt3.col1.year() == _now.year()
+        assert dt3.col1.month() == _now.month()
+        assert dt3.col1.day() == _now.day()
+        assert dt3.col1.hour() == _now.hour()
+        assert dt3.col1.minute() == _now.minute()
+        assert int(dt3.col1.second()) == int(_now.second())

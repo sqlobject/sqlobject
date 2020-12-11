@@ -23,6 +23,13 @@ except ImportError:
     mxDateTimeDeltaType = None
 
 try:
+    from DateTime import DateTime as zopeDateTime
+except ImportError:
+    zopeDateTimeType = None
+else:
+    zopeDateTimeType = type(zopeDateTime())
+
+try:
     import Sybase
     NumericType = Sybase.NumericType
 except ImportError:
@@ -206,6 +213,13 @@ if mxDateTimeType:
         return "'%s'" % value.strftime("%H:%M:%S")
 
     registerConverter(mxDateTimeDeltaType, mxTimeConverter)
+
+
+if zopeDateTimeType:
+    def zopeDateTimeConverter(value, db):
+        return "'%s'" % value.strftime("%Y-%m-%d %H:%M:%S")
+
+    registerConverter(zopeDateTimeType, zopeDateTimeConverter)
 
 
 def DecimalConverter(value, db):

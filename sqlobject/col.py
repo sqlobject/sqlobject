@@ -44,7 +44,7 @@ import datetime
 datetime_available = True
 
 try:
-    from mx import DateTime
+    from mx import DateTime as mxDateTime
 except ImportError:
     mxdatetime_available = False
 else:
@@ -52,7 +52,7 @@ else:
 
 try:
     # DateTime from Zope
-    import DateTime
+    import DateTime as zopeDateTime
 except ImportError:
     zope_datetime_available = False
 else:
@@ -60,20 +60,23 @@ else:
 
 DATETIME_IMPLEMENTATION = "datetime"
 MXDATETIME_IMPLEMENTATION = "mxDateTime"
+ZOPE_DATETIME_IMPLEMENTATION = "zopeDateTime"
 
-if mxdatetime_available and hasattr(DateTime, "Time"):
-    DateTimeType = type(DateTime.now())
-    TimeType = type(DateTime.Time())
+if mxdatetime_available and hasattr(mxDateTime, "Time"):
+    mxDateTimeType = type(mxDateTime.now())
+    mxTimeType = type(mxDateTime.Time())
 
-elif zope_datetime_available:
-    DateTimeType = type(DateTime.DateTime())
-    TimeType = type(DateTime.DateTime.Time(DateTime.DateTime()))
+if zope_datetime_available:
+    zopeDateTimeType = type(zopeDateTime.DateTime())
 
 __all__ = ["datetime_available", "mxdatetime_available",
            "default_datetime_implementation", "DATETIME_IMPLEMENTATION"]
 
 if mxdatetime_available:
     __all__.append("MXDATETIME_IMPLEMENTATION")
+
+if zope_datetime_available:
+    __all__.append("ZOPE_DATETIME_IMPLEMENTATION")
 
 default_datetime_implementation = DATETIME_IMPLEMENTATION
 
@@ -1257,7 +1260,7 @@ class DateTimeValidator(validators.DateValidator):
                        datetime.time, sqlbuilder.SQLExpression)):
             return value
         if mxdatetime_available:
-            if isinstance(value, DateTimeType):
+            if isinstance(value, mxDateTimeType):
                 # convert mxDateTime instance to datetime
                 if (self.format.find("%H") >= 0) or \
                    (self.format.find("%T")) >= 0:
@@ -1267,13 +1270,23 @@ class DateTimeValidator(validators.DateValidator):
                                              int(value.second))
                 else:
                     return datetime.date(value.year, value.month, value.day)
-            elif isinstance(value, TimeType):
+            elif isinstance(value, mxTimeType):
                 # convert mxTime instance to time
                 if self.format.find("%d") >= 0:
                     return datetime.timedelta(seconds=value.seconds)
                 else:
                     return datetime.time(value.hour, value.minute,
                                          int(value.second))
+        if zope_datetime_available:
+            if isinstance(value, zopeDateTimeType):
+                # convert zopeDateTime instance to datetime
+                if (self.format.find("%H") >= 0) or \
+                   (self.format.find("%T")) >= 0:
+                    return datetime.datetime(
+                        value.year(), value.month(), value.day(),
+                        value.hour(), value.minute(), int(value.second()))
+                else:
+                    return datetime.date(value.year, value.month, value.day)
         try:
             if self.format.find(".%f") >= 0:
                 if '.' in value:
@@ -1315,23 +1328,30 @@ if mxdatetime_available:
             if value is None:
                 return None
             if isinstance(value,
-                          (DateTimeType, TimeType, sqlbuilder.SQLExpression)):
+                          (mxDateTimeType, mxTimeType,
+                           sqlbuilder.SQLExpression)):
                 return value
             if isinstance(value, datetime.datetime):
-                return DateTime.DateTime(value.year, value.month, value.day,
-                                         value.hour, value.minute,
-                                         value.second)
+                return mxDateTime.DateTime(value.year, value.month, value.day,
+                                           value.hour, value.minute,
+                                           value.second)
             elif isinstance(value, datetime.date):
-                return DateTime.Date(value.year, value.month, value.day)
+                return mxDateTime.Date(value.year, value.month, value.day)
             elif isinstance(value, datetime.time):
-                return DateTime.Time(value.hour, value.minute, value.second)
+                return mxDateTime.Time(value.hour, value.minute, value.second)
             elif isinstance(value, datetime.timedelta):
                 if value.days:
                     raise validators.Invalid(
                         "the value for the TimeCol '%s' must has days=0, "
                         "it has days=%d" % (self.name, value.days),
                         value, state)
-                return DateTime.Time(seconds=value.seconds)
+                return mxDateTime.Time(seconds=value.seconds)
+            if zope_datetime_available:
+                if isinstance(value, zopeDateTimeType):
+                    # convert zopeDateTime instance to mxdatetime
+                    return mxDateTime.DateTime(
+                        value.year(), value.month(), value.day(),
+                        value.hour(), value.minute(), int(value.second()))
             try:
                 if self.format.find(".%f") >= 0:
                     if '.' in value:
@@ -1347,9 +1367,9 @@ if mxdatetime_available:
                     else:
                         value += '.0'
                 value = datetime.datetime.strptime(value, self.format)
-                return DateTime.DateTime(value.year, value.month, value.day,
-                                         value.hour, value.minute,
-                                         value.second)
+                return mxDateTime.DateTime(value.year, value.month, value.day,
+                                           value.hour, value.minute,
+                                           value.second)
             except Exception:
                 raise validators.Invalid(
                     "expected a date/time string of the '%s' format "
@@ -1361,12 +1381,83 @@ if mxdatetime_available:
             if value is None:
                 return None
             if isinstance(value,
-                          (DateTimeType, TimeType, sqlbuilder.SQLExpression)):
+                          (mxDateTimeType, mxTimeType,
+                           sqlbuilder.SQLExpression)):
                 return value
             if hasattr(value, "strftime"):
                 return value.strftime(self.format)
             raise validators.Invalid(
                 "expected a mxDateTime in the DateTimeCol '%s', "
+                "got %s %r instead" % (
+                    self.name, type(value), value), value, state)
+
+
+if zope_datetime_available:
+    class ZopeDateTimeValidator(validators.DateValidator):
+        def to_python(self, value, state):
+            if value is None:
+                return None
+            if isinstance(value,
+                          (zopeDateTimeType, sqlbuilder.SQLExpression)):
+                return value
+            if isinstance(value, datetime.datetime):
+                return zopeDateTime.DateTime(
+                    value.year, value.month, value.day,
+                    value.hour, value.minute, value.second)
+            elif isinstance(value, datetime.date):
+                return zopeDateTime.DateTime(
+                    value.year, value.month, value.day)
+            elif isinstance(value, datetime.time):
+                return zopeDateTime.DateTime(
+                    value.hour, value.minute, value.second)
+            elif isinstance(value, datetime.timedelta):
+                if value.days:
+                    raise validators.Invalid(
+                        "the value for the TimeCol '%s' must has days=0, "
+                        "it has days=%d" % (self.name, value.days),
+                        value, state)
+                return zopeDateTime.DateTime(seconds=value.seconds)
+            if mxdatetime_available:
+                if isinstance(value, mxDateTimeType):
+                    # convert mxDateTime instance to zopeDateTime
+                    return zopeDateTime.DateTime(
+                        value.year, value.month, value.day,
+                        value.hour, value.minute, value.second)
+            try:
+                if self.format.find(".%f") >= 0:
+                    if '.' in value:
+                        _value = value.split('.')
+                        microseconds = _value[-1]
+                        _l = len(microseconds)
+                        if _l < 6:
+                            _value[-1] = microseconds + '0' * (6 - _l)
+                        elif _l > 6:
+                            _value[-1] = microseconds[:6]
+                        if _l != 6:
+                            value = '.'.join(_value)
+                    else:
+                        value += '.0'
+                value = datetime.datetime.strptime(value, self.format)
+                return zopeDateTime.DateTime(
+                    value.year, value.month, value.day,
+                    value.hour, value.minute, value.second)
+            except Exception:
+                raise validators.Invalid(
+                    "expected a date/time string of the '%s' format "
+                    "in the DateTimeCol '%s', got %s %r instead" % (
+                        self.format, self.name, type(value), value),
+                    value, state)
+
+        def from_python(self, value, state):
+            if value is None:
+                return None
+            if isinstance(value,
+                          (zopeDateTimeType, sqlbuilder.SQLExpression)):
+                return value
+            if hasattr(value, "strftime"):
+                return value.strftime(self.format)
+            raise validators.Invalid(
+                "expected a zopeDateTime in the DateTimeCol '%s', "
                 "got %s %r instead" % (
                     self.name, type(value), value), value, state)
 
@@ -1386,6 +1477,8 @@ class SODateTimeCol(SOCol):
             validatorClass = DateTimeValidator
         elif default_datetime_implementation == MXDATETIME_IMPLEMENTATION:
             validatorClass = MXDateTimeValidator
+        elif default_datetime_implementation == ZOPE_DATETIME_IMPLEMENTATION:
+            validatorClass = ZopeDateTimeValidator
         if default_datetime_implementation:
             _validators.insert(0, validatorClass(name=self.name,
                                                  format=self.datetimeFormat))
@@ -1427,7 +1520,9 @@ class DateTimeCol(Col):
         if default_datetime_implementation == DATETIME_IMPLEMENTATION:
             return datetime.datetime.now()
         elif default_datetime_implementation == MXDATETIME_IMPLEMENTATION:
-            return DateTime.now()
+            return mxDateTime.now()
+        elif default_datetime_implementation == ZOPE_DATETIME_IMPLEMENTATION:
+            return zopeDateTime.DateTimr()
         else:
             assert 0, ("No datetime implementation available "
                        "(DATETIME_IMPLEMENTATION=%r)"
@@ -1468,6 +1563,8 @@ class SODateCol(SOCol):
             validatorClass = DateValidator
         elif default_datetime_implementation == MXDATETIME_IMPLEMENTATION:
             validatorClass = MXDateTimeValidator
+        elif default_datetime_implementation == ZOPE_DATETIME_IMPLEMENTATION:
+            validatorClass = ZopeDateTimeValidator
         if default_datetime_implementation:
             _validators.insert(0, validatorClass(name=self.name,
                                                  format=self.dateFormat))
@@ -1538,6 +1635,8 @@ class SOTimeCol(SOCol):
             validatorClass = TimeValidator
         elif default_datetime_implementation == MXDATETIME_IMPLEMENTATION:
             validatorClass = MXDateTimeValidator
+        elif default_datetime_implementation == ZOPE_DATETIME_IMPLEMENTATION:
+            validatorClass = ZopeDateTimeValidator
         if default_datetime_implementation:
             _validators.insert(0, validatorClass(name=self.name,
                                                  format=self.timeFormat))
