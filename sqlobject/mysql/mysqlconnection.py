@@ -5,7 +5,10 @@ from sqlobject.dbconnection import DBAPI
 
 class ErrorMessage(str):
     def __new__(cls, e, append_msg=''):
-        obj = str.__new__(cls, e.args[1] + append_msg)
+        if len(e.args) > 1:
+            obj = str.__new__(cls, e.args[1] + append_msg)
+        else:
+            obj = str.__new__(cls, append_msg)
         try:
             obj.code = int(e.args[0])
         except ValueError:
@@ -70,6 +73,9 @@ class MySQLConnection(DBAPI):
                         oursql.errnos['CR_SERVER_GONE_ERROR']
                     self.CR_SERVER_LOST = oursql.errnos['CR_SERVER_LOST']
                     self.ER_DUP_ENTRY = oursql.errnos['ER_DUP_ENTRY']
+                elif driver == 'mariadb':
+                    import mariadb
+                    self.module = mariadb
                 elif driver == 'pyodbc':
                     import pyodbc
                     self.module = pyodbc
@@ -86,7 +92,7 @@ class MySQLConnection(DBAPI):
                     raise ValueError(
                         'Unknown MySQL driver "%s", '
                         'expected mysqldb, connector, '
-                        'oursql, pymysql, '
+                        'oursql, pymysql, mariadb, '
                         'odbc, pyodbc or pypyodbc' % driver)
             except ImportError:
                 pass
@@ -125,20 +131,25 @@ class MySQLConnection(DBAPI):
             self.dbEncoding = None
         self.driver = driver
 
+        if driver in ('mariadb', 'odbc', 'pyodbc', 'pypyodbc'):
+            self.CR_SERVER_GONE_ERROR = 2006
+            self.CR_SERVER_LOST = 2013
+            self.ER_DUP_ENTRY = '23000'
+
         if driver in ('odbc', 'pyodbc', 'pypyodbc'):
             self.make_odbc_conn_str(kw.pop('odbcdrv',
                                            'MySQL ODBC 5.3 ANSI Driver'),
                                     db, host, port, user, password
                                     )
-            self.CR_SERVER_GONE_ERROR = 2006
-            self.CR_SERVER_LOST = 2013
-            self.ER_DUP_ENTRY = '23000'
 
-        elif self.driver == 'oursql':
+        elif driver == 'oursql':
             if "use_unicode" not in self.kw:
                 self.kw["use_unicode"] = not PY2
             # oursql doesn't implement ping(True) yet
             self.kw["autoreconnect"] = True
+
+        elif driver == 'mariadb':
+            self.kw.pop("charset", None)
 
         global mysql_Bin
         if not PY2 and mysql_Bin is None:
@@ -179,7 +190,13 @@ class MySQLConnection(DBAPI):
                 conn = self.module.connect(
                     host=self.host, port=self.port, db=self.db,
                     user=self.user, passwd=self.password, **self.kw)
-                if self.driver != 'oursql':
+                if self.driver == 'mariadb':
+                    # Attempt to reconnect.
+                    # This setting is persistent due to ``auto_reconnect``.
+                    # mariadb doesn't implement ping(True)
+                    conn.auto_reconnect = True
+                    conn.ping()
+                elif self.driver != 'oursql':
                     # Attempt to reconnect. This setting is persistent.
                     conn.ping(True)
         except self.module.OperationalError as e:
@@ -229,7 +246,7 @@ class MySQLConnection(DBAPI):
             self.printDebug(conn, query, 'QueryR')
         dbEncoding = self.dbEncoding
         if dbEncoding and not isinstance(query, bytes) and (
-                self.driver in ('mysqldb', 'connector', 'oursql')):
+                self.driver in ('mysqldb', 'connector', 'oursql', 'mariadb')):
             query = query.encode(dbEncoding, 'surrogateescape')
         # When a server connection is lost and a query is attempted, most of
         # the time the query will raise a SERVER_LOST exception, then at the
@@ -262,6 +279,9 @@ class MySQLConnection(DBAPI):
             except self.module.IntegrityError as e:
                 msg = ErrorMessage(e)
                 if e.args[0] == self.ER_DUP_ENTRY:
+                    raise dberrors.DuplicateEntryError(msg)
+                elif isinstance(e.args[0], str) \
+                        and e.args[0].startswith('Duplicate'):
                     raise dberrors.DuplicateEntryError(msg)
                 else:
                     raise dberrors.IntegrityError(msg)
@@ -344,6 +364,8 @@ class MySQLConnection(DBAPI):
             return True
         except dberrors.ProgrammingError as e:
             if e.args[0].code in (1146, '42S02'):  # ER_NO_SUCH_TABLE
+                return False
+            if self.driver == 'mariadb':
                 return False
             raise
 

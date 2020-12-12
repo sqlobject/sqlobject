@@ -21,6 +21,11 @@ Features
 * Drop support for very old version of ``mxDateTime``
   without ``mx.`` namespace.
 
+Drivers
+-------
+
+* Support ``mariadb``.
+
 CI
 --
 

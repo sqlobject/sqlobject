@@ -39,6 +39,14 @@ matrix:
       env: TESTS=py38-mysql
     - python: "3.9"
       env: TESTS=py39-mysql
+    - python: "3.6"
+      env: TESTS=py36-mariadb
+    - python: "3.7"
+      env: TESTS=py37-mariadb
+    - python: "3.8"
+      env: TESTS=py38-mariadb
+    - python: "3.9"
+      env: TESTS=py39-mariadb
     - python: "2.7"
       env: TESTS=py27-postgres
     - python: "3.4"

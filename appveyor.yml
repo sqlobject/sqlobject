@@ -52,6 +52,26 @@ environment:
       PYTHON_VERSION: "3.9"
       PYTHON_HOME: "C:\\Python39-x64"
       db: mysql
+    - TESTS: "py36-mariadb"
+      PYTHON_ARCH: "64"
+      PYTHON_VERSION: "3.6"
+      PYTHON_HOME: "C:\\Python36-x64"
+      db: mysql
+    - TESTS: "py37-mariadb"
+      PYTHON_ARCH: "64"
+      PYTHON_VERSION: "3.7"
+      PYTHON_HOME: "C:\\Python37-x64"
+      db: mysql
+    - TESTS: "py38-mariadb"
+      PYTHON_ARCH: "64"
+      PYTHON_VERSION: "3.8"
+      PYTHON_HOME: "C:\\Python38-x64"
+      db: mysql
+    - TESTS: "py39-mariadb"
+      PYTHON_ARCH: "64"
+      PYTHON_VERSION: "3.9"
+      PYTHON_HOME: "C:\\Python39-x64"
+      db: mysql
     - TESTS: "py27-postgres"
       PYTHON_ARCH: "32"
       PYTHON_VERSION: "2.7"
