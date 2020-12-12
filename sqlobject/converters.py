@@ -16,13 +16,18 @@ else:
 
 
 try:
-    from mx.DateTime import DateTimeType, DateTimeDeltaType
+    from mx.DateTime import DateTimeType as mxDateTimeType, \
+        DateTimeDeltaType as mxDateTimeDeltaType
 except ImportError:
-    try:
-        from DateTime import DateTimeType, DateTimeDeltaType
-    except ImportError:
-        DateTimeType = None
-        DateTimeDeltaType = None
+    mxDateTimeType = None
+    mxDateTimeDeltaType = None
+
+try:
+    from DateTime import DateTime as zopeDateTime
+except ImportError:
+    zopeDateTimeType = None
+else:
+    zopeDateTimeType = type(zopeDateTime())
 
 try:
     import Sybase
@@ -144,17 +149,6 @@ def FloatConverter(value, db):
 
 registerConverter(float, FloatConverter)
 
-if DateTimeType:
-    def mxDateTimeConverter(value, db):
-        return "'%s'" % value.strftime("%Y-%m-%d %H:%M:%S")
-
-    registerConverter(DateTimeType, mxDateTimeConverter)
-
-    def mxTimeConverter(value, db):
-        return "'%s'" % value.strftime("%H:%M:%S")
-
-    registerConverter(DateTimeDeltaType, mxTimeConverter)
-
 
 def NoneConverter(value, db):
     return "NULL"
@@ -207,6 +201,25 @@ def TimeConverterMS(value, db):
                                       value.second, value.microsecond)
 
 registerConverter(datetime.time, TimeConverterMS)
+
+
+if mxDateTimeType:
+    def mxDateTimeConverter(value, db):
+        return "'%s'" % value.strftime("%Y-%m-%d %H:%M:%S")
+
+    registerConverter(mxDateTimeType, mxDateTimeConverter)
+
+    def mxTimeConverter(value, db):
+        return "'%s'" % value.strftime("%H:%M:%S")
+
+    registerConverter(mxDateTimeDeltaType, mxTimeConverter)
+
+
+if zopeDateTimeType:
+    def zopeDateTimeConverter(value, db):
+        return "'%s'" % value.strftime("%Y-%m-%d %H:%M:%S")
+
+    registerConverter(zopeDateTimeType, zopeDateTimeConverter)
 
 
 def DecimalConverter(value, db):
