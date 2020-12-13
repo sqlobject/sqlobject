@@ -14,13 +14,6 @@ services:
   - postgres
 
 addons:
-  apt:
-    packages:
-      - python-egenix-mxdatetime
-      - python-mysqldb
-      - python-psycopg2
-      - python3-psycopg2
-      - firebird2.5-super
   postgresql: "9.4"
 
 matrix:
@@ -41,12 +34,16 @@ matrix:
       env: TESTS=py39-mysql
     - python: "3.6"
       env: TESTS=py36-mariadb
+      dist: focal
     - python: "3.7"
       env: TESTS=py37-mariadb
+      dist: focal
     - python: "3.8"
       env: TESTS=py38-mariadb
+      dist: focal
     - python: "3.9"
       env: TESTS=py39-mariadb
+      dist: focal
     - python: "2.7"
       env: TESTS=py27-postgres
     - python: "3.4"
@@ -89,7 +86,20 @@ matrix:
     - env: TESTS=py36-firebird
 
 before_install:
-  # Start the firebird database server.
+  # Install version-specific dependencies
+  - if [[ $TESTS = py27-* ]]; then
+      sudo apt-get --quiet --yes install python-egenix-mxdatetime python-mysqldb python-psycopg2;
+    fi
+  - if [[ $TESTS = py3*-* ]]; then
+      sudo apt-get --quiet --yes install python3-mysqldb python3-psycopg2;
+    fi
+  # Install MariaDB mysql-compatible development files to compile mysql drivers
+  - if [[ $TESTS = py3[6789]-mysql ]]; then
+        sudo apt-get --quiet --yes install libmysqlclient-dev;
+    elif [[ $TESTS = py3[6789]-mariadb ]]; then
+        sudo apt-get --quiet --yes install libmariadb-dev-compat;
+    fi
+  # Install and start the firebird database server.
   # We use firebird-super, so there's none of the inetd configuration
   # required by firebird-classic.
   # We also create a test user for the firebird test and
@@ -98,6 +108,7 @@ before_install:
   # Copied password initializtion from
   # https://github.com/xdenser/node-firebird-libfbclient/blob/master/.travis.yml
   - if [[ $TESTS = *firebird* ]]; then
+      sudo apt-get --quiet --yes install firebird2.5-super &&
       sudo sed -i /etc/default/firebird2.5 -e 's/=no/=yes/' &&
       sudo /etc/init.d/firebird2.5-super start && sleep 5 &&
       sudo /bin/bash -c '(export FB_VER="2.5"; export FB_FLAVOUR="super";source /usr/share/firebird2.5-common/functions.sh; writeNewPassword masterkey)' &&
