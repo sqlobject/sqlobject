@@ -1,40 +1,25 @@
 Hello!
 
-I'm pleased to announce version 3.9.0, the first release
-of branch 3.9 of SQLObject.
+I'm pleased to announce version 3.9.1a1, the first alpha of the upcoming
+release of branch 3.9 of SQLObject.
+
+I'm pleased to announce version 3.9.1a2, the second alpha of the upcoming
+release of branch 3.9 of SQLObject.
+
+I'm pleased to announce version 3.9.1b1, the first beta of the upcoming
+release of branch 3.9 of SQLObject.
+
+I'm pleased to announce version 3.9.1rc1, the first release candidate
+of the upcoming release of branch 3.9 of SQLObject.
+
+I'm pleased to announce version 3.9.1, the first bugfix release of branch
+3.9 of SQLObject.
 
 
 What's new in SQLObject
 =======================
 
-Contributors for this release are:
-
-+ Michael S. Root, Ameya Bapat - ``JSONCol``;
-
-+ Jerry Nance - reported a bug with ``DateTime`` from ``Zope``.
-
-Features
---------
-
-* Add ``JSONCol``: a universal json column that converts simple Python objects
-  (None, bool, int, float, long, dict, list, str/unicode to/from JSON using
-  json.dumps/loads. A subclass of StringCol. Requires ``VARCHAR``/``TEXT``
-  columns at backends, doesn't work with ``JSON`` columns.
-
-* Extend/fix support for ``DateTime`` from ``Zope``.
-
-* Drop support for very old version of ``mxDateTime``
-  without ``mx.`` namespace.
-
-Drivers
--------
-
-* Support `mariadb <https://pypi.org/project/mariadb/>`_.
-
-CI
---
-
-* Run tests with Python 3.9 at Travis and AppVeyor.
+Contributors for this release are 
 
 For a more complete list, please see the news:
 http://sqlobject.org/News.html
@@ -47,9 +32,9 @@ SQLObject is an object-relational mapper.  Your database tables are described
 as classes, and rows are instances of those classes.  SQLObject is meant to be
 easy to use and quick to get started with.
 
-It currently supports MySQL, PostgreSQL and SQLite; connections to other
-backends - Firebird, Sybase, MSSQL and MaxDB (also known as SAPDB) - are
-lesser debugged).
+SQLObject supports a number of backends: MySQL, PostgreSQL, SQLite;
+connections to other backends - Firebird, Sybase, MSSQL
+and MaxDB (also known as SAPDB) - are lesser debugged).
 
 Python 2.7 or 3.4+ is required.
 
@@ -67,7 +52,7 @@ Mailing list:
 https://lists.sourceforge.net/mailman/listinfo/sqlobject-discuss
 
 Download:
-https://pypi.org/project/SQLObject/3.9.0
+https://pypi.org/project/SQLObject/3.9.1a0.dev20201215/
 
 News and changes:
 http://sqlobject.org/News.html
