@@ -5,8 +5,10 @@ News
 .. contents:: Contents:
    :backlinks: none
 
-SQLObject (master)
-==================
+SQLObject 3.9.0
+===============
+
+Released 2020 Dec 15.
 
 Features
 --------
@@ -24,7 +26,7 @@ Features
 Drivers
 -------
 
-* Support ``mariadb``.
+* Support `mariadb <https://pypi.org/project/mariadb/>`_.
 
 CI
 --
