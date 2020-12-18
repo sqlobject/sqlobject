@@ -8,6 +8,12 @@ News
 SQLObject (master)
 ==================
 
+Build
+-----
+
+* Change URLs for ``oursql`` in ``extras_require`` in ``setup.py``.
+  Provide separate URLs for Python 2.7 and 3.4+.
+
 SQLObject 3.9.0
 ===============
 

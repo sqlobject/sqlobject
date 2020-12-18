@@ -115,7 +115,10 @@ and `GitHub <https://github.com/sqlobject>`_.
         'mysql:python_version=="2.7"': ['MySQL-python'],
         'mysql:python_version>="3.4"': ['mysqlclient'],
         'mysql-connector': ['mysql-connector'],
-        'oursql': ['oursql'],
+        'oursql:python_version=="2.7"': [
+            'oursql @ git+https://github.com/sqlobject/oursql.git@master'],
+        'oursql:python_version>="3.4"': [
+            'oursql3 @ git+https://github.com/sqlobject/oursql.git@py3k'],
         'pymysql': ['pymysql'],
         # ODBC
         'odbc': ['pyodbc'],
