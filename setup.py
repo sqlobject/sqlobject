@@ -120,6 +120,7 @@ and `GitHub <https://github.com/sqlobject>`_.
         'oursql:python_version>="3.4"': [
             'oursql3 @ git+https://github.com/sqlobject/oursql.git@py3k'],
         'pymysql': ['pymysql'],
+        'mariadb': ['mariadb'],
         # ODBC
         'odbc': ['pyodbc'],
         'pyodbc': ['pyodbc'],
