@@ -125,7 +125,7 @@ install:
   - "python --version"
   - "python -c \"import struct; print(struct.calcsize('P') * 8)\""
   - "python -m pip install --upgrade \"pip<21\" \"setuptools<44\""
-  - "pip install --upgrade tox ppu"
+  - "pip install --upgrade \"tox>=3.15\" ppu"
   - "pip --version"
   # List ODBC drivers
   - ps: Get-OdbcDriver -Platform 32-bit | Select-Object -ExpandProperty Name
