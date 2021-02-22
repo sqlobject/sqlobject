@@ -10,7 +10,7 @@ else
    branch="$2"
 fi
 
-. `dirname $0`/split.sh &&
+. `dirname $0`/split_tag.sh &&
 split_tag $tag $branch
 
 git checkout "$branch" &&

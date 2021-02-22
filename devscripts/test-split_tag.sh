@@ -1,6 +1,6 @@
 #! /bin/sh
 
-. `dirname $0`/split.sh &&
+. `dirname $0`/split_tag.sh &&
 
 test_eq() {
    if [ "$1" != "$2" ]; then

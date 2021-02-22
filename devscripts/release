@@ -15,7 +15,7 @@ find build -name '*.py[co]' -delete &&
 python setup.py bdist_wheel --universal &&
 
 version=`python setup.py --version`
-. `dirname $0`/split.sh &&
+. `dirname $0`/split_tag.sh &&
 split_tag $version
 
 if [ "$state" = final ]; then

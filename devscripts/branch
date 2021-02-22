@@ -8,7 +8,7 @@ fi
 branch="$1"
 treeish="$2"
 
-. `dirname $0`/split.sh &&
+. `dirname $0`/split_tag.sh &&
 branch="$1"
 
 if [ -z "$treeish" ]; then
