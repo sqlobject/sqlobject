@@ -16,6 +16,16 @@ Build
 
 * Add ``mariadb`` in ``extras_require`` in ``setup.py``.
 
+CI
+--
+
+* For tests with Python 3.4 run ``tox`` under Python 3.5.
+
+Tests
+-----
+
+* Refactor ``tox.ini``.
+
 SQLObject 3.9.0
 ===============
 
