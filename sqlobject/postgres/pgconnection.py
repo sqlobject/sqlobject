@@ -35,6 +35,15 @@ class ErrorMessage(str):
         return obj
 
 
+def _getuser():
+    # ``getuser()`` on w32 can raise ``ImportError``
+    # due to absent of ``pwd`` module.
+    try:
+        return getuser()
+    except ImportError:
+        return None
+
+
 class PostgresConnection(DBAPI):
 
     supportTransactions = True
@@ -174,7 +183,7 @@ class PostgresConnection(DBAPI):
                     dsn_dict["host"] = None
                     dsn_dict["unix_sock"] = host
                 if user is None:
-                    dsn_dict["user"] = getuser()
+                    dsn_dict["user"] = _getuser()
             self.dsn = dsn
         self.driver = driver
         self.unicodeCols = kw.pop('unicodeCols', False)

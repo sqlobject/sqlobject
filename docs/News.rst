@@ -13,6 +13,9 @@ Drivers
 
 * Adapt to the latest ``pg8000``.
 
+* Protect ``getuser()`` - it can raise ``ImportError`` on w32
+  due to absent of ``pwd`` module.
+
 Build
 -----
 
