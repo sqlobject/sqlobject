@@ -133,7 +133,9 @@ and `GitHub <https://github.com/sqlobject>`_.
         'pygresql': ['pygresql'],
         'pypostgresql': ['py-postgresql'],
         'py-postgresql': ['py-postgresql'],
-        'pg8000': ['pg8000'],
+        'pg8000:python_version=="2.7"': ['pg8000<1.13'],
+        'pg8000:python_version=="3.4"': ['pg8000<1.12.4'],
+        'pg8000:python_version>="3.5"': ['pg8000'],
         #
         'sapdb': ['sapdb'],
         'sqlite': ['pysqlite'],
