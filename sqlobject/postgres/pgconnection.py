@@ -10,13 +10,26 @@ from sqlobject.dbconnection import DBAPI
 
 class ErrorMessage(str):
     def __new__(cls, e, append_msg=''):
-        obj = str.__new__(cls, e.args[0] + append_msg)
-        if hasattr(e, 'pgcode'):  # psycopg2 or psycopg2.errors
-            obj.code = getattr(e, 'pgcode', None)
-            obj.error = getattr(e, 'pgerror', None)
+        eargs0 = emessage = e.args[0]
+        if e.__module__.startswith('pg8000') \
+                and isinstance(e.args, tuple) and len(e.args) > 1:
+            # pg8000 =~ 1.12 for Python 3.4
+            ecode = e.args[2]
+            eerror = emessage = e.args[3]
+        elif e.__module__.startswith('pg8000') and isinstance(eargs0, dict):
+            # pg8000 =~ 1.13 for Python 2.7
+            # pg8000 for Python 3.5+
+            ecode = eargs0['C']
+            eerror = emessage = eargs0['M']
+        elif hasattr(e, 'pgcode'):  # psycopg2 or psycopg2.errors
+            ecode = getattr(e, 'pgcode', None)
+            eerror = getattr(e, 'pgerror', None)
         else:
-            obj.code = getattr(e, 'code', None)
-            obj.error = getattr(e, 'error', None)
+            ecode = getattr(e, 'code', None)
+            eerror = getattr(e, 'error', None)
+        obj = str.__new__(cls, emessage + append_msg)
+        obj.code = ecode
+        obj.error = eerror
         obj.module = e.__module__
         obj.exception = e.__class__.__name__
         return obj
@@ -237,7 +250,8 @@ class PostgresConnection(DBAPI):
             raise dberrors.OperationalError(ErrorMessage(e))
         except self.module.IntegrityError as e:
             msg = ErrorMessage(e)
-            if getattr(e, 'code', -1) == '23505' or \
+            if getattr(msg, 'code', -1) == '23505' or \
+                    getattr(e, 'code', -1) == '23505' or \
                     getattr(e, 'pgcode', -1) == '23505' or \
                     getattr(e, 'sqlstate', -1) == '23505' or \
                     e.args[0] == '23505':

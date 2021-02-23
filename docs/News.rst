@@ -8,6 +8,11 @@ News
 SQLObject (master)
 ==================
 
+Drivers
+-------
+
+* Adapt to the latest ``pg8000``.
+
 Build
 -----
 
