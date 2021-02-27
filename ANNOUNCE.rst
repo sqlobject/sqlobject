@@ -1,25 +1,37 @@
 Hello!
 
-I'm pleased to announce version 3.9.1a1, the first alpha of the upcoming
-release of branch 3.9 of SQLObject.
-
-I'm pleased to announce version 3.9.1a2, the second alpha of the upcoming
-release of branch 3.9 of SQLObject.
-
-I'm pleased to announce version 3.9.1b1, the first beta of the upcoming
-release of branch 3.9 of SQLObject.
-
-I'm pleased to announce version 3.9.1rc1, the first release candidate
-of the upcoming release of branch 3.9 of SQLObject.
-
-I'm pleased to announce version 3.9.1, the first bugfix release of branch
-3.9 of SQLObject.
+I'm pleased to announce version 3.9.1, the first minor feature release
+of branch 3.9 of SQLObject.
 
 
 What's new in SQLObject
 =======================
 
-Contributors for this release are 
+Drivers
+-------
+
+* Adapt to the latest ``pg8000``.
+
+* Protect ``getuser()`` - it can raise ``ImportError`` on w32
+  due to absent of ``pwd`` module.
+
+Build
+-----
+
+* Change URLs for ``oursql`` in ``extras_require`` in ``setup.py``.
+  Provide separate URLs for Python 2.7 and 3.4+.
+
+* Add ``mariadb`` in ``extras_require`` in ``setup.py``.
+
+CI
+--
+
+* For tests with Python 3.4 run ``tox`` under Python 3.5.
+
+Tests
+-----
+
+* Refactor ``tox.ini``.
 
 For a more complete list, please see the news:
 http://sqlobject.org/News.html
@@ -52,7 +64,7 @@ Mailing list:
 https://lists.sourceforge.net/mailman/listinfo/sqlobject-discuss
 
 Download:
-https://pypi.org/project/SQLObject/3.9.1a0.dev20201215/
+https://pypi.org/project/SQLObject/3.9.1
 
 News and changes:
 http://sqlobject.org/News.html

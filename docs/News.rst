@@ -5,8 +5,10 @@ News
 .. contents:: Contents:
    :backlinks: none
 
-SQLObject (master)
-==================
+SQLObject 3.9.1
+===============
+
+Released 2021 Feb 27.
 
 Drivers
 -------
