@@ -17,8 +17,7 @@
    'dev' and date stamp).
 
    If it's the first stable release of the branch - edit build-all-docs,
-   advance stable branch. Commit. If it's not master - merge to all higher
-   branches and master.
+   advance stable branch.
 
    Commit. Verify.
 
