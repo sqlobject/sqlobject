@@ -7,7 +7,7 @@ from sqlobject.col import DateCol, DateTimeCol, TimeCol, use_microseconds, \
     DATETIME_IMPLEMENTATION, MXDATETIME_IMPLEMENTATION, mxdatetime_available, \
     ZOPE_DATETIME_IMPLEMENTATION, zope_datetime_available
 from sqlobject.tests.dbtest import getConnection, setupClass
-
+from sqlobject.converters import pendulumDateTimeType
 
 ########################################
 # Date/time columns
@@ -129,6 +129,26 @@ if mxdatetime_available:
         assert dt2.col3.hour == _now.hour
         assert dt2.col3.minute == _now.minute
         assert dt2.col3.second == int(_now.second)
+
+if pendulumDateTimeType:
+    import pendulum
+
+    class DateTimePendulum(SQLObject):
+        col1 = DateTimeCol()
+
+    def test_PendulumDateTime():
+        setupClass(DateTimePendulum)
+        _now = pendulum.now()
+        dtp = DateTimePendulum(col1=_now)
+
+        assert isinstance(dtp.col1, datetime)
+        assert dtp.col1.year == _now.year
+        assert dtp.col1.month == _now.month
+        assert dtp.col1.day == _now.day
+        assert dtp.col1.hour == _now.hour
+        assert dtp.col1.minute == _now.minute
+        assert int(dtp.col1.second) == int(_now.second)
+
 
 if zope_datetime_available:
     col.default_datetime_implementation = ZOPE_DATETIME_IMPLEMENTATION

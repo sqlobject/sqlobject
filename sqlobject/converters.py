@@ -23,6 +23,13 @@ except ImportError:
     mxDateTimeDeltaType = None
 
 try:
+    import pendulum
+except ImportError:
+    pendulumDateTimeType = None
+else:
+    pendulumDateTimeType = pendulum.DateTime
+
+try:
     from DateTime import DateTime as zopeDateTime
 except ImportError:
     zopeDateTimeType = None
@@ -213,6 +220,13 @@ if mxDateTimeType:
         return "'%s'" % value.strftime("%H:%M:%S")
 
     registerConverter(mxDateTimeDeltaType, mxTimeConverter)
+
+
+if pendulumDateTimeType:
+    def pendulumConverter(value, db):
+        return "'%s'" % value.to_datetime_string()
+
+    registerConverter(pendulum.DateTime, pendulumConverter)
 
 
 if zopeDateTimeType:
