@@ -37,6 +37,7 @@ Contributions have been made by:
 * Michael S. Root <miker at tippett.com>
 * Scott Stahl <sstahl at onshift.com>
 * Markus Elfring <elfring at users.sourceforge.net>
+* James Hudson <james.hudson at boughtbymany.com>
 * Oleg Broytman <phd@phdru.name>
 
 .. image:: https://sourceforge.net/sflogo.php?group_id=74338&type=10

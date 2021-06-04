@@ -8,6 +8,11 @@ News
 SQLObject (master)
 ==================
 
+Features
+--------
+
+* Add compatibility with ``Pendulum``.
+
 SQLObject 3.9.1
 ===============
 
