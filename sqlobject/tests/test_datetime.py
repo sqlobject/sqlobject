@@ -131,6 +131,7 @@ if mxdatetime_available:
         assert dt2.col3.second == int(_now.second)
 
 if pendulumDateTimeType:
+    col.default_datetime_implementation = DATETIME_IMPLEMENTATION
     import pendulum
 
     class DateTimePendulum(SQLObject):
