@@ -272,8 +272,8 @@ exercised, even if the tests are absolutely complete.
 
 We now use Travis CI and AppVeyor to run tests. See the statuses:
 
-.. image:: https://travis-ci.org/sqlobject/sqlobject.svg?branch=master
-   :target: https://travis-ci.org/sqlobject/sqlobject
+.. image:: https://api.travis-ci.com/sqlobject/sqlobject.svg?branch=master
+   :target: https://travis-ci.com/github/sqlobject/sqlobject
 
 .. image:: https://ci.appveyor.com/api/projects/status/github/sqlobject/sqlobject?branch=master
    :target: https://ci.appveyor.com/project/phdru/sqlobject

@@ -13,6 +13,12 @@ Features
 
 * Add compatibility with ``Pendulum``.
 
+Documentation
+-------------
+
+* Change Travis CI URLs:
+  CI relocated from travis-ci.org to travis-ci.com.
+
 SQLObject 3.9.1
 ===============
 
