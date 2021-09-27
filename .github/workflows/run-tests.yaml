@@ -38,18 +38,15 @@ jobs:
           python -m pip install --upgrade "pip<21.0" "setuptools<45" wheel
           pip --version
           pip install --upgrade virtualenv tox
-      - name: Set TOXENV
+      - name: Set PYVER
         run: |
           import os, sys
           pyver = '%d%d' % tuple(sys.version_info[:2])
-          toxenv = 'py%s-sqlite' % pyver
-          if os.name == 'posix':
-            toxenv += ',py%s-flake8' % pyver
           with open(os.environ['GITHUB_ENV'], 'a') as f:
-            f.write('TOXENV=' + toxenv + '\n')
+            f.write('PYVER=' + pyver + '\n')
         shell: python
 
       - name: Run tox
         run: |
-          python -c "import os; print(os.environ['TOXENV'])"
-          tox
+          python -c "import os; print(os.environ['PYVER'])"
+          devscripts/tox-select-envs $PYVER-sqlite
