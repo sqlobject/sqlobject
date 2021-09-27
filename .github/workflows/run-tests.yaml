@@ -8,12 +8,15 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest]
+        os: [ubuntu-latest, windows-latest]
         python-version: ["2.7"]
         include:
         - os: ubuntu-latest
           os-name: Linux
           pip-cache-path: ~/.cache/pip
+        - os: windows-latest
+          os-name: w32
+          pip-cache-path: ~\AppData\Local\pip\Cache
 
     name: Python ${{ matrix.python-version }} @ ${{ matrix.os-name }}
     runs-on: ${{ matrix.os }}
@@ -46,7 +49,11 @@ jobs:
             f.write('PYVER=' + pyver + '\n')
         shell: python
 
-      - name: Run tox
+      - name: Run tox @ Linux
         run: |
-          python -c "import os; print(os.environ['PYVER'])"
           devscripts/tox-select-envs $PYVER-sqlite
+        if: ${{ runner.os == 'Linux' }}
+      - name: Run tox @ w64
+        run: |
+          devscripts\tox-select-envs.cmd %PYVER%-sqlite
+        if: ${{ runner.os == 'Windows' }}
