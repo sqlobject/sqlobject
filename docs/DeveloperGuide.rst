@@ -276,6 +276,12 @@ forced to write the test.  That's no fun for us, to just be writing
 tests.  So please, write tests; everything at least needs to be
 exercised, even if the tests are absolutely complete.
 
+We now use `Github Actions <https://github.com/sqlobject/sqlobject/actions>`_
+to run tests.
+
+.. image:: https://github.com/sqlobject/sqlobject/actions/workflows/run-tests.yaml/badge.svg?branch=github-actions
+   :target: https://github.com/sqlobject/sqlobject/actions/workflows/run-tests.yaml
+
 Documentation
 =============
 

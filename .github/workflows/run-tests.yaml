@@ -1,0 +1,55 @@
+name: Run tests
+
+on: [push, pull_request]
+
+jobs:
+  run-tests:
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest]
+        python-version: ["2.7"]
+        include:
+        - os: ubuntu-latest
+          os-name: Linux
+          pip-cache-path: ~/.cache/pip
+
+    name: Python ${{ matrix.python-version }} @ ${{ matrix.os-name }}
+    runs-on: ${{ matrix.os }}
+
+    steps:
+
+      # Setup Python/pip
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Cache pip
+        uses: actions/cache@v2
+        with:
+          path: ${{ matrix.pip-cache-path }}
+          key: ${{ runner.os }}-pip
+
+      # Setup tox
+      - name: Install dependencies
+        run: |
+          python --version
+          python -m pip install --upgrade "pip<21.0" "setuptools<45" wheel
+          pip --version
+          pip install --upgrade virtualenv tox
+      - name: Set TOXENV
+        run: |
+          import os, sys
+          pyver = '%d%d' % tuple(sys.version_info[:2])
+          toxenv = 'py%s-sqlite' % pyver
+          if os.name == 'posix':
+            toxenv += ',py%s-flake8' % pyver
+          with open(os.environ['GITHUB_ENV'], 'a') as f:
+            f.write('TOXENV=' + toxenv + '\n')
+        shell: python
+
+      - name: Run tox
+        run: |
+          python -c "import os; print(os.environ['TOXENV'])"
+          tox
