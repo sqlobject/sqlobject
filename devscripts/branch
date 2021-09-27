@@ -42,7 +42,7 @@ micro = 0
 release_level = 'trunk'
 serial = 0
 version_info = (major, minor, micro, release_level, serial)" > sqlobject/__version__.py &&
-   `git var GIT_EDITOR` README.rst sqlobject/__version__.py docs/News.rst appveyor.yml setup.py &&
+   `git var GIT_EDITOR` README.rst sqlobject/__version__.py docs/News.rst setup.py &&
    git commit --message="Next branch will be $major.$next_minor" README.rst sqlobject/__version__.py docs/News.rst setup.py &&
 
    exec sed -i /"$major\.$minor"/"$major.$next_minor"/ ANNOUNCE.rst
