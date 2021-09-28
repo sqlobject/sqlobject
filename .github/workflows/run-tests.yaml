@@ -23,6 +23,17 @@ jobs:
 
     steps:
 
+      # Setup PostgreSQL
+      - uses: ankane/setup-postgres@v1
+      - name: Setup Postgres user
+        run: |
+          sudo -u postgres psql --command="ALTER USER runner CREATEDB ENCRYPTED PASSWORD 'test'"
+        if: ${{ runner.os == 'Linux' }}
+      - name: Setup Postgres user
+        run: |
+          psql --command="CREATE USER runner CREATEDB ENCRYPTED PASSWORD 'test'"
+        if: ${{ runner.os == 'Windows' }}
+
       # Setup Python/pip
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
@@ -47,14 +58,17 @@ jobs:
           pyver = '%d%d' % tuple(sys.version_info[:2])
           with open(os.environ['GITHUB_ENV'], 'a') as f:
             f.write('PYVER=' + pyver + '\n')
+            f.write('PGPASSWORD=test\n')
         shell: python
 
       - name: Run tox @ Linux
         run: |
+          devscripts/tox-select-envs $PYVER-postgres
           devscripts/tox-select-envs $PYVER-sqlite
           devscripts/tox-select-envs $PYVER-flake8
         if: ${{ runner.os == 'Linux' }}
       - name: Run tox @ w64
         run: |
+          devscripts\tox-select-envs.cmd %PYVER%-postgres
           devscripts\tox-select-envs.cmd %PYVER%-sqlite
         if: ${{ runner.os == 'Windows' }}
