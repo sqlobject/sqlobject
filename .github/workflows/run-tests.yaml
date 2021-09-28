@@ -52,6 +52,7 @@ jobs:
       - name: Run tox @ Linux
         run: |
           devscripts/tox-select-envs $PYVER-sqlite
+          devscripts/tox-select-envs $PYVER-flake8
         if: ${{ runner.os == 'Linux' }}
       - name: Run tox @ w64
         run: |
