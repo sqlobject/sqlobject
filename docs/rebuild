@@ -2,4 +2,4 @@
 
 PYTHONPATH=.. make html &&
 find . -name \*.tmp -type f -delete &&
-exec rsync -ahP --del --exclude=.buildinfo --exclude=objects.inv _build/html .
+exec rsync -ahPv --del --exclude=.buildinfo --exclude=objects.inv _build/html .

@@ -3,7 +3,7 @@
 build_docs() {
    git checkout "$1" &&
    devscripts/build-docs &&
-   rsync -ahP --del --exclude=/robots.txt docs/html/ ../SQLObject-docs/"$2"/
+   rsync -ahPv --del --exclude=/robots.txt docs/html/ ../SQLObject-docs/"$2"/
 }
 
 cd "`dirname \"$0\"`" &&

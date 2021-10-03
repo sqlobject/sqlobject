@@ -19,8 +19,8 @@ version=`python setup.py --version`
 split_tag $version
 
 if [ "$state" = final ]; then
-   rsync -ahP4 dist/* frs.sourceforge.net:/home/frs/project/sqlobject/sqlobject/"$version"/ &&
-   rsync -ahP4 ANNOUNCE.rst frs.sourceforge.net:/home/frs/project/sqlobject/sqlobject/"$version"/README.rst || exit 1
+   rsync -ahPv dist/* frs.sourceforge.net:/home/frs/project/sqlobject/sqlobject/"$version"/ &&
+   rsync -ahPv ANNOUNCE.rst frs.sourceforge.net:/home/frs/project/sqlobject/sqlobject/"$version"/README.rst || exit 1
    devscripts/sftp-frs
 fi &&
 
