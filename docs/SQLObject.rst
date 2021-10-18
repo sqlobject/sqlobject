@@ -584,7 +584,7 @@ in-place::
    the class definition is equivalent to calling certain class methods
    (like ``addColumn()``).
 
-Now we can get the backreference with ``aPerson.addresses``, which
+Now we can get the backreference with ``Person.addresses``, which
 returns a list.  An example::
 
     >>> p.addresses
