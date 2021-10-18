@@ -546,8 +546,8 @@ addresses, of course::
 
 Note the column ``person = ForeignKey("Person")``.  This is a
 reference to a `Person` object.  We refer to other classes by name
-(with a string).  In the database there will be a ``person_id``
-column, type ``INT``, which points to the ``person`` column.
+(with a string).  In the address table there will be a ``person_id``
+column, type ``INT``, which points to the ``person`` table.
 
 .. note::
 
