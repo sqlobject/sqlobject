@@ -304,7 +304,7 @@ Here's a longer example of using the class::
     >>> p is p2
     True
 
-Columns are accessed like attributes.  (This uses the ``property``
+Columns are accessed like attributes (This uses the ``property``
 feature of Python, so that retrieving and setting these attributes
 executes code).  Also note that objects are unique -- there is
 generally only one ``Person`` instance of a particular id in memory at
