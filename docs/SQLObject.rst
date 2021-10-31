@@ -461,7 +461,7 @@ slicing, this makes batched queries easy to write:
    the entire result set to sort the items (so it knows which the
    first ten are), and depending on your query may need to scan
    through the entire table (depending on your use of indexes).
-   Indexes are probably the most important way to improve importance
+   Indexes are probably the most important way to improve performance
    in a case like this, and you may find caching to be more effective
    than slicing.
 
