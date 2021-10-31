@@ -264,7 +264,7 @@ To create a new object (and row), use class instantiation, like::
 .. note::
 
    In SQLObject NULL/None does *not* mean default.  NULL is a funny
-   thing; it mean very different things in different contexts and to
+   thing; it means very different things in different contexts and to
    different people.  Sometimes it means "default", sometimes "not
    applicable", sometimes "unknown".  If you want a default, NULL or
    otherwise, you always have to be explicit in your class
