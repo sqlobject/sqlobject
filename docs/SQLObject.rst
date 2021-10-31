@@ -1357,7 +1357,7 @@ Several keyword arguments are allowed to the `MultipleJoin` constructor:
     have a table ``Product``, and another table has a column
     ``ProductNo`` that points to this table, then you'd use
     ``joinColumn="ProductNo"``. WARNING: the argument you pass must
-    conform to the column name in the database, not to the column in the
+    conform to the column name in the database, not to the attribute in the
     class. So, if you have a SQLObject containing the ``ProductNo``
     column, this will probably be translated into ``product_no_id`` in
     the DB (``product_no`` is the normal uppercase- to-lowercase +
