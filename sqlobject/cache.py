@@ -96,7 +96,7 @@ class CacheFactory(object):
                 self.cullCount = 0
                 self.cull()
             else:
-                self.cullCount = self.cullCount + 1
+                self.cullCount += 1
 
             try:
                 return self.cache[id]
@@ -174,7 +174,7 @@ class CacheFactory(object):
                 self.cullCount = 0
                 self.cull()
             else:
-                self.cullCount = self.cullCount + 1
+                self.cullCount += 1
             self.cache[id] = obj
         else:
             self.expiredCache[id] = ref(obj)
