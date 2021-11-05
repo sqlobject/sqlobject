@@ -147,10 +147,7 @@ class MaxdbConnection(DBAPI):
     def sqlAddLimit(cls, query, limit):
         sql = query
         sql = sql.replace("SELECT", "SELECT ROWNO, ")
-        if sql.find('WHERE') != -1:
-            sql = sql + ' AND ' + limit
-        else:
-            sql = sql + 'WHERE ' + limit
+        sql += ('WHERE ' if sql.find('WHERE') == -1 else ' AND ') + limit
         return sql
 
     @classmethod
