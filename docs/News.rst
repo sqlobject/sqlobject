@@ -13,6 +13,11 @@ Features
 
 * Add compatibility with ``Pendulum``.
 
+Tests
+-----
+
+* Run tests with Python 3.10.
+
 Documentation
 -------------
 
