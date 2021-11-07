@@ -125,6 +125,9 @@ Python Style Guide.  Some things to take particular note of:
 
 .. _PEP 8: http://www.python.org/dev/peps/pep-0008/
 
+* With some exceptions sources must be pure ASCII. Including string
+  literals and comments.
+
 * With a few exceptions sources must be `flake8`_-clean (and hence
   pep8-clean). Please consider using pre-commit hook installed by
   running ``flake8 --install-hook``.
@@ -195,6 +198,9 @@ Python Style Guide.  Some things to take particular note of:
 
   Don't use single quotes (''').  Don't bother trying make the string
   less vertically compact.
+
+  Not strictly required but ``reStructuredText`` format for docstrings is
+  very much recommended.
 
 * Comments go right before the thing they are commenting on.
 
@@ -298,8 +304,23 @@ Documentation
 =============
 
 Please write documentation.  Documentation should live in the docs/
-directory in reStructuredText format.  We use Sphinx to convert docs to
+directory in ``reStructuredText`` format.  We use Sphinx to convert docs to
 HTML.
+
+Contributing
+============
+
+* Now de-facto `stadard for good commit messages
+  <https://chris.beams.io/posts/git-commit/#seven-rules>`_ is required.
+
+* `Conventional commit subject liness
+  <https://www.conventionalcommits.org/>`_ are recommended.
+
+* ``Markdown`` format for commit message bodies is recommended.
+  `Github-flavored Markdown <https://github.github.com/gfm/>`_ is allowed.
+
+* Commit messages must be pure ASCII. No fancy Unicode emojies,
+  quotes, etc.
 
 .. image:: https://sourceforge.net/sflogo.php?group_id=74338&type=10
    :target: https://sourceforge.net/projects/sqlobject

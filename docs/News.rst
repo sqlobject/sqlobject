@@ -21,6 +21,20 @@ Tests
 Documentation
 -------------
 
+* DevGuide: source code must be pure ASCII.
+
+* DevGuide: ``reStructuredText`` format for docstrings is recommended.
+
+* DevGuide: de-facto good commit message format is required:
+  subject/body/trailers.
+
+* DevGuide: ``conventional commit`` format for commit message subject lines
+  is recommended.
+
+* DevGuide: ``Markdown`` format for commit message bodies is recommended.
+
+* DevGuide: commit messages must be pure ASCII.
+
 * Change Travis CI URLs:
   CI relocated from travis-ci.org to travis-ci.com.
 
