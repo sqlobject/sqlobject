@@ -39,6 +39,7 @@ Contributions have been made by:
 * Markus Elfring <elfring at users.sourceforge.net>
 * James Hudson <james.hudson at boughtbymany.com>
 * Juergen Gmach <juergen.gmach at googlemail.com>
+* Hugo van Kemenade <hugovk@users.noreply.github.com>
 * Oleg Broytman <phd@phdru.name>
 
 .. image:: https://sourceforge.net/sflogo.php?group_id=74338&type=10
