@@ -11,7 +11,7 @@ if sys.version_info[:2] == (2, 7):
     execfile(versionpath, sqlobject_version)  # noqa: F821 'execfile' Py3
 
 elif sys.version_info >= (3, 4):
-    exec(open(versionpath, 'rU').read(), sqlobject_version)
+    exec(open(versionpath, 'r').read(), sqlobject_version)
 
 else:
     raise ImportError("SQLObject requires Python 2.7 or 3.4+")
