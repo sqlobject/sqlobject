@@ -11,6 +11,9 @@ SQLObject (master)
 Features
 --------
 
+* Allow connections in ``ConnectionHub`` to be strings.
+  This allows to open a new connection in every thread.
+
 * Add compatibility with ``Pendulum``.
 
 Tests

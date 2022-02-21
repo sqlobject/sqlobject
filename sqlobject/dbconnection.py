@@ -989,14 +989,21 @@ class ConnectionHub(object):
 
     def getConnection(self):
         try:
-            return self.threadingLocal.connection
+            connection = self.threadingLocal.connection
+            if isinstance(connection, string_type):
+                connection = connectionForURI(connection)
+                self.threadingLocal.connection = connection
         except AttributeError:
             try:
-                return self.processConnection
+                connection = self.processConnection
+                if isinstance(connection, string_type):
+                    connection = connectionForURI(connection)
+                    self.processConnection = connection
             except AttributeError:
                 raise AttributeError(
                     "No connection has been defined for this thread "
                     "or process")
+        return connection
 
     def doInTransaction(self, func, *args, **kw):
         """
@@ -1019,6 +1026,8 @@ class ConnectionHub(object):
         except AttributeError:
             old_conn = self.processConnection
             old_conn_is_threading = False
+        if isinstance(old_conn, string_type):
+            old_conn = connectionForURI(old_conn)
         conn = old_conn.transaction()
         if old_conn_is_threading:
             self.threadConnection = conn
