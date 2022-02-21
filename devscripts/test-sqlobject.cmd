@@ -3,7 +3,7 @@
 SetLocal EnableDelayedExpansion
 set SavePATH=%PATH%
 
-for %%V in (27 34 35 36 37 38 39) do (
+for %%V in (27 34 35 36 37 38 39 310) do (
    for %%s in (32 64) do (
       set PATH=C:\Python%%V-%%s;C:\Python%%V-%%s\Scripts;!SavePATH!
       set TOXPYTHON=C:\Python%%V-%%s\python.exe
