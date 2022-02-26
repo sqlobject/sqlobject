@@ -9,7 +9,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest]
-        python-version: ["2.7"]
+        python-version: ["2.7", "3.5"]
         include:
         - os: ubuntu-latest
           os-name: Linux
