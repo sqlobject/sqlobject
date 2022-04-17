@@ -397,6 +397,9 @@ class MySQLConnection(DBAPI):
             # (SQLObject expected '')
             kw['notNone'] = (nullAllowed.upper() != 'YES' and True or False)
 
+            if not PY2 and isinstance(t, bytes):
+                t = t.decode('ascii')
+
             if default and t.startswith('int'):
                 kw['default'] = int(default)
             elif default and t.startswith('float'):
@@ -413,6 +416,8 @@ class MySQLConnection(DBAPI):
         return results
 
     def guessClass(self, t):
+        if not PY2 and isinstance(t, bytes):
+            t = t.decode('ascii')
         if t.startswith('int'):
             return col.IntCol, {}
         elif t.startswith('enum'):
