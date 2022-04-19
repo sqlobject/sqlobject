@@ -23,6 +23,9 @@ jobs:
 
     steps:
 
+      # Setup MySQL
+      - uses: ankane/setup-mysql@v1
+
       # Setup PostgreSQL
       - uses: ankane/setup-postgres@v1
       - name: Setup Postgres user
@@ -63,12 +66,14 @@ jobs:
 
       - name: Run tox @ Linux
         run: |
+          devscripts/tox-select-envs $PYVER-mysql
           devscripts/tox-select-envs $PYVER-postgres
           devscripts/tox-select-envs $PYVER-sqlite
           devscripts/tox-select-envs $PYVER-flake8
         if: ${{ runner.os == 'Linux' }}
       - name: Run tox @ w64
         run: |
+          devscripts\tox-select-envs.cmd %PYVER%-mysql
           devscripts\tox-select-envs.cmd %PYVER%-postgres
           devscripts\tox-select-envs.cmd %PYVER%-sqlite
         if: ${{ runner.os == 'Windows' }}
