@@ -1,5 +1,6 @@
 from sqlobject import col, dberrors
 from sqlobject.compat import PY2
+from sqlobject.converters import registerConverter, StringLikeConverter
 from sqlobject.dbconnection import DBAPI
 
 
@@ -101,12 +102,14 @@ class MySQLConnection(DBAPI):
         else:
             raise ImportError(
                 'Cannot find a MySQL driver, tried %s' % drivers)
+
         self.host = host
         self.port = port or 3306
         self.db = db
         self.user = user
         self.password = password
         self.kw = {}
+
         for key in ("unix_socket", "init_command",
                     "read_default_file", "read_default_group", "conv"):
             if key in kw:
@@ -150,6 +153,9 @@ class MySQLConnection(DBAPI):
 
         elif driver == 'mariadb':
             self.kw.pop("charset", None)
+
+        elif driver == 'connector':
+            registerConverter(bytes, ConnectorBytesConverter)
 
         global mysql_Bin
         if not PY2 and mysql_Bin is None:
@@ -533,3 +539,10 @@ class MySQLConnection(DBAPI):
             can_use_json_funcs = (server_version >= (5, 7, 0))
         self._can_use_json_funcs = can_use_json_funcs
         return can_use_json_funcs
+
+
+def ConnectorBytesConverter(value, db):
+    assert db == 'mysql'
+    if not PY2:
+        value = value.decode('latin1')
+    return StringLikeConverter(value, db)
