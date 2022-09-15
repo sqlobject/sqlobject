@@ -542,7 +542,8 @@ class MySQLConnection(DBAPI):
 
 
 def ConnectorBytesConverter(value, db):
-    assert db == 'mysql'
     if not PY2:
+        # For PY2 this converter is called also for SQLite
+        assert db == 'mysql'
         value = value.decode('latin1')
     return StringLikeConverter(value, db)
