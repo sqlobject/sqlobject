@@ -480,10 +480,10 @@ class MySQLConnection(DBAPI):
             return col.Col, {}
 
     def listTables(self):
-        return [v[0] for v in self.queryAll("SHOW TABLES")]
+        return _decodeBytearrays(self.queryAll("SHOW TABLES"))
 
     def listDatabases(self):
-        return [v[0] for v in self.queryAll("SHOW DATABASES")]
+        return _decodeBytearrays(self.queryAll("SHOW DATABASES"))
 
     def _createOrDropDatabase(self, op="CREATE"):
         self.query('%s DATABASE %s' % (op, self.db))
@@ -547,3 +547,11 @@ def ConnectorBytesConverter(value, db):
         assert db == 'mysql'
         value = value.decode('latin1')
     return StringLikeConverter(value, db)
+
+
+def _decodeBytearrays(v_list):
+    if not v_list:
+        return []
+    if not PY2 and isinstance(v_list[0][0], bytearray):
+        return [v[0].decode('ascii') for v in v_list]
+    return [v[0] for v in v_list]
