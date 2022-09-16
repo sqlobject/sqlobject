@@ -63,7 +63,7 @@ class DbHash:
 
 
 class HashValidator(sqlobject.col.StringValidator):
-    """ Provides formal SQLObject validation services for the HashCol. """
+    """Provides formal SQLObject validation services for the HashCol"""
 
     def to_python(self, value, state):
         """ Passes out a hash object. """
@@ -72,14 +72,14 @@ class HashValidator(sqlobject.col.StringValidator):
         return DbHash(hash=value, hashMethod=self.hashMethod)
 
     def from_python(self, value, state):
-        """ Store the given value as a MD5 hash, or None if specified. """
+        """Store the given value as a MD5 hash, or None if specified"""
         if value is None:
             return None
         return self.hashMethod(value)
 
 
 class SOHashCol(sqlobject.col.SOStringCol):
-    """ The internal HashCol definition. By default, enforces a md5 digest. """
+    """The internal HashCol definition. By default, enforces a md5 digest"""
 
     def __init__(self, **kw):
         if 'hashMethod' not in kw:
