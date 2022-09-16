@@ -6,8 +6,10 @@ __all__ = ['HashCol']
 
 
 class DbHash:
-    """ Presents a comparison object for hashes, allowing plain text to be
-    automagically compared with the base content. """
+    """
+    Presents a comparison object for hashes, allowing plain text to be
+    automagically compared with the base content
+    """
 
     def __init__(self, hash, hashMethod):
         self.hash = hash
@@ -99,7 +101,9 @@ class SOHashCol(sqlobject.col.SOStringCol):
 
 
 class HashCol(sqlobject.col.StringCol):
-    """ End-user HashCol class. May be instantiated with 'hashMethod', a function
-    which returns the string hash of any other string (i.e. basestring). """
+    """
+    End-user HashCol class. May be instantiated with 'hashMethod', a function
+    which returns the string hash of any other string (i.e. basestring)
+    """
 
     baseClass = SOHashCol

@@ -1509,8 +1509,9 @@ class ImportProxyField(SQLObjectField):
 
 
 class ImportProxy(SQLExpression):
-    '''Class to be used in column definitions that rely on other tables that might
-        not yet be in a classregistry.
+    '''
+    Class to be used in column definitions that rely on other tables that might
+    not yet be in a classregistry
     '''
     FieldClass = ImportProxyField
 
