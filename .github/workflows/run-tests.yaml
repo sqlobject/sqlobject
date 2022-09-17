@@ -52,7 +52,7 @@ jobs:
       - name: Install dependencies
         run: |
           python --version
-          python -m pip install --upgrade "pip<21.0" "setuptools<45" wheel
+          python -m pip install --upgrade pip setuptools wheel
           pip --version
           pip install --upgrade virtualenv tox
       - name: Set PYVER
