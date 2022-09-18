@@ -64,6 +64,9 @@ jobs:
             f.write('PGPASSWORD=test\n')
         shell: python
 
+      - name: tox version
+        run: |
+          tox --version
       - name: Run tox @ Linux
         run: |
           devscripts/tox-select-envs $PYVER-mysql
