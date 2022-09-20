@@ -1,54 +1,25 @@
 Hello!
 
-I'm pleased to announce version 3.10.0, the first release of branch
+I'm pleased to announce version 3.10.1a1, the first alpha of the upcoming
+release of branch 3.10 of SQLObject.
+
+I'm pleased to announce version 3.10.1a2, the second alpha of the upcoming
+release of branch 3.10 of SQLObject.
+
+I'm pleased to announce version 3.10.1b1, the first beta of the upcoming
+release of branch 3.10 of SQLObject.
+
+I'm pleased to announce version 3.10.1rc1, the first release candidate
+of the upcoming release of branch 3.10 of SQLObject.
+
+I'm pleased to announce version 3.10.1, the first bugfix release of branch
 3.10 of SQLObject.
 
 
 What's new in SQLObject
 =======================
 
-Contributors for this release are
-James Hudson, Juergen Gmach, Hugo van Kemenade.
-Many thanks!
-
-Features
---------
-
-* Allow connections in ``ConnectionHub`` to be strings.
-  This allows to open a new connection in every thread.
-
-* Add compatibility with ``Pendulum``.
-
-Tests
------
-
-* Run tests with Python 3.10.
-
-CI
---
-
-* GitHub Actions.
-
-* Stop testing at Travis CI.
-
-* Stop testing at AppVeyor.
-
-Documentation
--------------
-
-* DevGuide: source code must be pure ASCII.
-
-* DevGuide: ``reStructuredText`` format for docstrings is recommended.
-
-* DevGuide: de-facto good commit message format is required:
-  subject/body/trailers.
-
-* DevGuide: ``conventional commit`` format for commit message subject lines
-  is recommended.
-
-* DevGuide: ``Markdown`` format for commit message bodies is recommended.
-
-* DevGuide: commit messages must be pure ASCII.
+Contributors for this release are 
 
 For a more complete list, please see the news:
 http://sqlobject.org/News.html
@@ -81,7 +52,7 @@ Mailing list:
 https://lists.sourceforge.net/mailman/listinfo/sqlobject-discuss
 
 Download:
-https://pypi.org/project/SQLObject/3.10.0
+https://pypi.org/project/SQLObject/3.10.1a0.dev20221020/
 
 News and changes:
 http://sqlobject.org/News.html
