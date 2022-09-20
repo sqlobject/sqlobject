@@ -276,29 +276,11 @@ forced to write the test.  That's no fun for us, to just be writing
 tests.  So please, write tests; everything at least needs to be
 exercised, even if the tests are absolutely complete.
 
-We now use Travis CI and AppVeyor to run tests. See the statuses:
+We now use `Github Actions <https://github.com/sqlobject/sqlobject/actions>`_
+to run tests.
 
-.. image:: https://api.travis-ci.com/sqlobject/sqlobject.svg?branch=master
-   :target: https://travis-ci.com/github/sqlobject/sqlobject
-
-.. image:: https://ci.appveyor.com/api/projects/status/github/sqlobject/sqlobject?branch=master
-   :target: https://ci.appveyor.com/project/phdru/sqlobject
-
-To avoid triggering unnecessary test run at CI services add text `[skip ci]
-<https://docs.travis-ci.com/user/customizing-the-build/#skipping-a-build>`_ or
-``[ci skip]`` anywhere in your commit messages for commits that don't change
-code (documentation updates and such).
-
-We use `coverage.py <https://pypi.org/project/coverage/>`_
-to measures code coverage by tests and upload the result for analyzis to
-`Coveralls <https://coveralls.io/github/sqlobject/sqlobject>`_ and
-`Codecov <https://codecov.io/gh/sqlobject/sqlobject>`_:
-
-.. image:: https://coveralls.io/repos/github/sqlobject/sqlobject/badge.svg?branch=master
-   :target: https://coveralls.io/github/sqlobject/sqlobject?branch=master
-
-.. image:: https://codecov.io/gh/sqlobject/sqlobject/branch/master/graph/badge.svg
-   :target: https://codecov.io/gh/sqlobject/sqlobject
+.. image:: https://github.com/sqlobject/sqlobject/actions/workflows/run-tests.yaml/badge.svg?branch=github-actions
+   :target: https://github.com/sqlobject/sqlobject/actions/workflows/run-tests.yaml
 
 Documentation
 =============

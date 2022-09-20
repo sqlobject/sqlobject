@@ -1,5 +1,6 @@
 from sqlobject import col, dberrors
 from sqlobject.compat import PY2
+from sqlobject.converters import registerConverter, StringLikeConverter
 from sqlobject.dbconnection import DBAPI
 
 
@@ -101,12 +102,14 @@ class MySQLConnection(DBAPI):
         else:
             raise ImportError(
                 'Cannot find a MySQL driver, tried %s' % drivers)
+
         self.host = host
         self.port = port or 3306
         self.db = db
         self.user = user
         self.password = password
         self.kw = {}
+
         for key in ("unix_socket", "init_command",
                     "read_default_file", "read_default_group", "conv"):
             if key in kw:
@@ -150,6 +153,9 @@ class MySQLConnection(DBAPI):
 
         elif driver == 'mariadb':
             self.kw.pop("charset", None)
+
+        elif driver == 'connector':
+            registerConverter(bytes, ConnectorBytesConverter)
 
         global mysql_Bin
         if not PY2 and mysql_Bin is None:
@@ -397,6 +403,9 @@ class MySQLConnection(DBAPI):
             # (SQLObject expected '')
             kw['notNone'] = (nullAllowed.upper() != 'YES' and True or False)
 
+            if not PY2 and isinstance(t, bytes):
+                t = t.decode('ascii')
+
             if default and t.startswith('int'):
                 kw['default'] = int(default)
             elif default and t.startswith('float'):
@@ -413,6 +422,8 @@ class MySQLConnection(DBAPI):
         return results
 
     def guessClass(self, t):
+        if not PY2 and isinstance(t, bytes):
+            t = t.decode('ascii')
         if t.startswith('int'):
             return col.IntCol, {}
         elif t.startswith('enum'):
@@ -469,10 +480,10 @@ class MySQLConnection(DBAPI):
             return col.Col, {}
 
     def listTables(self):
-        return [v[0] for v in self.queryAll("SHOW TABLES")]
+        return _decodeBytearrays(self.queryAll("SHOW TABLES"))
 
     def listDatabases(self):
-        return [v[0] for v in self.queryAll("SHOW DATABASES")]
+        return _decodeBytearrays(self.queryAll("SHOW DATABASES"))
 
     def _createOrDropDatabase(self, op="CREATE"):
         self.query('%s DATABASE %s' % (op, self.db))
@@ -528,3 +539,19 @@ class MySQLConnection(DBAPI):
             can_use_json_funcs = (server_version >= (5, 7, 0))
         self._can_use_json_funcs = can_use_json_funcs
         return can_use_json_funcs
+
+
+def ConnectorBytesConverter(value, db):
+    if not PY2:
+        # For PY2 this converter is called also for SQLite
+        assert db == 'mysql'
+        value = value.decode('latin1')
+    return StringLikeConverter(value, db)
+
+
+def _decodeBytearrays(v_list):
+    if not v_list:
+        return []
+    if not PY2 and isinstance(v_list[0][0], bytearray):
+        return [v[0].decode('ascii') for v in v_list]
+    return [v[0] for v in v_list]

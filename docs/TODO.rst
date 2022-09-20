@@ -1,9 +1,7 @@
 TODO
 ----
 
-* Fix test ordering problem with Postgres.
-
-* Fix unicode problems with pyodbc at AppVeyor.
+* Fix unicode problems with pyodbc.
 
 * Resolve timeout problems with MSSQL.
 

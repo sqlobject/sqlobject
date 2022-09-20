@@ -42,9 +42,9 @@ For development see the projects at
 `SourceForge <https://sourceforge.net/projects/sqlobject/>`_
 and `GitHub <https://github.com/sqlobject>`_.
 
-.. image:: https://api.travis-ci.com/sqlobject/sqlobject.svg?branch=master
-  :target: https://travis-ci.com/github/sqlobject/sqlobject
-""",
+.. image:: https://github.com/sqlobject/sqlobject/actions/workflows/run-tests.yaml/badge.svg?branch=github-actions
+   :target: https://github.com/sqlobject/sqlobject/actions/workflows/run-tests.yaml
+""",  # noqa: E501 line too long
     long_description_content_type="text/x-rst",
     classifiers=[
         "Development Status :: 5 - Production/Stable",

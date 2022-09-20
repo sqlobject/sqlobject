@@ -1,7 +1,7 @@
 global-include *.py *.rst *.txt
 recursive-include docs *.css *.html *.js *.gif *.png
-include LICENSE MANIFEST.in .travis.yml tox.ini
-include debian/* sqlobject/.coveragerc
+include LICENSE MANIFEST.in .tox.ini
+include debian/*
 include docs/Makefile docs/genapidocs docs/rebuild
 recursive-exclude devscripts *
 recursive-exclude docs/_build *

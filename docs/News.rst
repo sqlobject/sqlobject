@@ -21,6 +21,15 @@ Tests
 
 * Run tests with Python 3.10.
 
+CI
+--
+
+* GitHub Actions.
+
+* Stop testing at Travis CI.
+
+* Stop testing at AppVeyor.
+
 Documentation
 -------------
 

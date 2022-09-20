@@ -1,0 +1,82 @@
+name: Run tests
+
+on: [push, pull_request]
+
+jobs:
+  run-tests:
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        python-version: ["2.7", "3.5", "3.6", "3.7", "3.8", "3.9", "3.10"]
+        include:
+        - os: ubuntu-latest
+          os-name: Linux
+          pip-cache-path: ~/.cache/pip
+        - os: windows-latest
+          os-name: w32
+          pip-cache-path: ~\AppData\Local\pip\Cache
+
+    name: Python ${{ matrix.python-version }} @ ${{ matrix.os-name }}
+    runs-on: ${{ matrix.os }}
+
+    steps:
+
+      # Setup MySQL
+      - uses: ankane/setup-mysql@v1
+
+      # Setup PostgreSQL
+      - uses: ankane/setup-postgres@v1
+      - name: Setup Postgres user
+        run: |
+          sudo -u postgres psql --command="ALTER USER runner CREATEDB ENCRYPTED PASSWORD 'test'"
+        if: ${{ runner.os == 'Linux' }}
+      - name: Setup Postgres user
+        run: |
+          psql --command="CREATE USER runner CREATEDB ENCRYPTED PASSWORD 'test'"
+        if: ${{ runner.os == 'Windows' }}
+
+      # Setup Python/pip
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Cache pip
+        uses: actions/cache@v2
+        with:
+          path: ${{ matrix.pip-cache-path }}
+          key: ${{ runner.os }}-pip
+
+      # Setup tox
+      - name: Install dependencies
+        run: |
+          python --version
+          python -m pip install --upgrade pip setuptools wheel
+          pip --version
+          pip install --upgrade virtualenv tox
+      - name: Set PYVER
+        run: |
+          import os, sys
+          pyver = '%d%d' % tuple(sys.version_info[:2])
+          with open(os.environ['GITHUB_ENV'], 'a') as f:
+            f.write('PYVER=' + pyver + '\n')
+            f.write('PGPASSWORD=test\n')
+        shell: python
+
+      - name: tox version
+        run: |
+          tox --version
+      - name: Run tox @ Linux
+        run: |
+          devscripts/tox-select-envs $PYVER-mysql
+          devscripts/tox-select-envs $PYVER-postgres
+          devscripts/tox-select-envs $PYVER-sqlite
+          devscripts/tox-select-envs $PYVER-flake8
+        if: ${{ runner.os == 'Linux' }}
+      - name: Run tox @ w64
+        run: |
+          devscripts\tox-select-envs.cmd %PYVER%-mysql
+          devscripts\tox-select-envs.cmd %PYVER%-postgres
+          devscripts\tox-select-envs.cmd %PYVER%-sqlite
+        if: ${{ runner.os == 'Windows' }}

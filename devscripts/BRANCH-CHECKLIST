@@ -9,7 +9,7 @@
     setup.cfg in the branch edit section [publish] - uncomment doc-dest
     for stable branch. In setup.py in the branch edit URL (remove
     '/devel') and download URLs. In setup.py and DeveloperGuide.rst edit
-    Travis CI build status image URL (change branch). Commit.
+    CI build status image URL (change branch). Commit.
 
 1b. If the branching point was master the script checks out master and
     calls editor again; edit README.rst, __version__.py and News.rst in
