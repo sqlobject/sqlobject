@@ -10,7 +10,7 @@ cd "`dirname \"$0\"`" &&
 PROG_DIR="`pwd`" &&
 
 cd .. &&
-build_docs 3.9.1 &&
+build_docs 3.10.0 &&
 build_docs master devel &&
 rm -rf docs/html &&
 

@@ -5,8 +5,10 @@ News
 .. contents:: Contents:
    :backlinks: none
 
-SQLObject (master)
-==================
+SQLObject 3.10.0
+================
+
+Released 2022 Sep 20.
 
 Features
 --------
@@ -46,9 +48,6 @@ Documentation
 * DevGuide: ``Markdown`` format for commit message bodies is recommended.
 
 * DevGuide: commit messages must be pure ASCII.
-
-* Change Travis CI URLs:
-  CI relocated from travis-ci.org to travis-ci.com.
 
 SQLObject 3.9.1
 ===============
