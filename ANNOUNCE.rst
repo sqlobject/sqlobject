@@ -48,6 +48,9 @@ http://sqlobject.org
 Development:
 http://sqlobject.org/devel/
 
+Developer Guide:
+http://sqlobject.org/DeveloperGuide.html
+
 Mailing list:
 https://lists.sourceforge.net/mailman/listinfo/sqlobject-discuss
 
@@ -63,6 +66,10 @@ https://stackoverflow.com/questions/tagged/sqlobject
 
 Example
 =======
+
+Install::
+
+  $ pip install sqlobject
 
 Create a simple class that wraps a table::
 
