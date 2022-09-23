@@ -45,15 +45,6 @@ Where is SQLObject
 Site:
 http://sqlobject.org
 
-Development:
-http://sqlobject.org/devel/
-
-Developer Guide:
-http://sqlobject.org/DeveloperGuide.html
-
-Mailing list:
-https://lists.sourceforge.net/mailman/listinfo/sqlobject-discuss
-
 Download:
 https://pypi.org/project/SQLObject/3.10.1a0.dev20221020/
 
@@ -62,6 +53,15 @@ http://sqlobject.org/News.html
 
 StackOverflow:
 https://stackoverflow.com/questions/tagged/sqlobject
+
+Mailing lists:
+https://sourceforge.net/p/sqlobject/mailman/
+
+Development:
+http://sqlobject.org/devel/
+
+Developer Guide:
+http://sqlobject.org/DeveloperGuide.html
 
 
 Example
