@@ -28,9 +28,10 @@ http://sqlobject.org/News.html
 What is SQLObject
 =================
 
-SQLObject is an object-relational mapper.  Your database tables are described
-as classes, and rows are instances of those classes.  SQLObject is meant to be
-easy to use and quick to get started with.
+SQLObject is a free and open-source (LGPL) Python object-relational
+mapper.  Your database tables are described as classes, and rows are
+instances of those classes.  SQLObject is meant to be easy to use and
+quick to get started with.
 
 SQLObject supports a number of backends: MySQL/MariaDB (with a number of
 DB API drivers: ``MySQLdb``, ``mysqlclient``, ``mysql-connector``,
