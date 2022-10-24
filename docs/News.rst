@@ -8,6 +8,11 @@ News
 SQLObject (master)
 ==================
 
+Tests, CI
+---------
+
+* Run tests with Python 3.11.
+
 SQLObject 3.10.0
 ================
 
