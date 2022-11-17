@@ -47,4 +47,13 @@ else:
 
     def load_module_from_file(base_name, module_name, filename):
         specs = importlib.util.spec_from_file_location(module_name, filename)
-        return specs.loader.load_module()
+        loader = specs.loader
+        if hasattr(loader, 'create_module'):
+            module = loader.create_module(specs)
+        else:
+            module = None
+        if module is None:
+            return specs.loader.load_module()
+        else:
+            loader.exec_module(module)
+            return module
