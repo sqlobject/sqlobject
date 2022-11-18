@@ -1,15 +1,86 @@
 SQLObject 3.10.1a0
 ==================
 
-Thanks for looking at SQLObject.  SQLObject is an object-relational
-mapper, i.e., a library that will wrap your database tables in Python
-classes, and your rows in Python instances.
+SQLObject is a free and open-source (LGPL) Python object-relational
+mapper.  Your database tables are described as classes, and rows are
+instances of those classes.  SQLObject is meant to be easy to use and
+quick to get started with.
 
-It currently supports MySQL, PostgreSQL and SQLite; connections to other
-backends - Firebird, Sybase, MSSQL and MaxDB (also known as SAPDB) - are
-lesser debugged).
+SQLObject supports a number of backends: MySQL/MariaDB (with a number of
+DB API drivers: ``MySQLdb``, ``mysqlclient``, ``mysql-connector``,
+``PyMySQL``, ``mariadb``), PostgreSQL (``psycopg2``, ``PyGreSQL``,
+partially ``pg8000`` and ``py-postgresql``), SQLite (builtin ``sqlite``,
+``pysqlite``, partially ``supersqlite``); connections to other backends
+- Firebird, Sybase, MSSQL and MaxDB (also known as SAPDB) - are less
+debugged).
 
 Python 2.7 or 3.4+ is required.
 
-For more information please see the documentation in
-`<docs/SQLObject.rst>`_, or online at http://sqlobject.org/
+
+Where is SQLObject
+==================
+
+Site:
+http://sqlobject.org
+
+Download:
+https://pypi.org/project/SQLObject/
+
+News and changes:
+http://sqlobject.org/News.html
+
+StackOverflow:
+https://stackoverflow.com/questions/tagged/sqlobject
+
+Mailing lists:
+https://sourceforge.net/p/sqlobject/mailman/
+
+Development:
+http://sqlobject.org/devel/
+
+Developer Guide:
+http://sqlobject.org/DeveloperGuide.html
+
+
+Example
+=======
+
+Install::
+
+  $ pip install sqlobject
+
+Create a simple class that wraps a table::
+
+  >>> from sqlobject import *
+  >>>
+  >>> sqlhub.processConnection = connectionForURI('sqlite:/:memory:')
+  >>>
+  >>> class Person(SQLObject):
+  ...     fname = StringCol()
+  ...     mi = StringCol(length=1, default=None)
+  ...     lname = StringCol()
+  ...
+  >>> Person.createTable()
+
+Use the object::
+
+  >>> p = Person(fname="John", lname="Doe")
+  >>> p
+  <Person 1 fname='John' mi=None lname='Doe'>
+  >>> p.fname
+  'John'
+  >>> p.mi = 'Q'
+  >>> p2 = Person.get(1)
+  >>> p2
+  <Person 1 fname='John' mi='Q' lname='Doe'>
+  >>> p is p2
+  True
+
+Queries::
+
+  >>> p3 = Person.selectBy(lname="Doe")[0]
+  >>> p3
+  <Person 1 fname='John' mi='Q' lname='Doe'>
+  >>> pc = Person.select(Person.q.lname=="Doe").count()
+  >>> pc
+  1
