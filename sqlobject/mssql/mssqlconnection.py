@@ -23,9 +23,11 @@ class MSSQLConnection(DBAPI):
                 continue
             try:
                 if driver in ('adodb', 'adodbapi'):
-                    import adodbapi as sqlmodule
+                    import adodbapi
+                    self.module = adodbapi
                 elif driver == 'pymssql':
-                    import pymssql as sqlmodule
+                    import pymssql
+                    self.module = pymssql
                 elif driver == 'pyodbc':
                     import pyodbc
                     self.module = pyodbc
@@ -56,14 +58,7 @@ class MSSQLConnection(DBAPI):
             timeout = int(timeout)
         self.timeout = timeout
 
-        if driver in ('odbc', 'pyodbc', 'pypyodbc'):
-            self.make_odbc_conn_str(kw.pop('odbcdrv', 'SQL Server'),
-                                    db, host, port, user, password
-                                    )
-
-        elif driver in ('adodb', 'adodbapi'):
-            self.module = sqlmodule
-            self.dbconnection = sqlmodule.connect
+        if driver in ('adodb', 'adodbapi'):
             # ADO uses unicode only (AFAIK)
             self.usingUnicodeStrings = True
 
@@ -90,9 +85,7 @@ class MSSQLConnection(DBAPI):
             kw.pop("sspi", None)
 
         elif driver == 'pymssql':
-            self.module = sqlmodule
-            self.dbconnection = sqlmodule.connect
-            sqlmodule.Binary = lambda st: str(st)
+            self.module.Binary = lambda st: str(st)
             # don't know whether pymssql uses unicode
             self.usingUnicodeStrings = False
 
@@ -110,6 +103,12 @@ class MSSQLConnection(DBAPI):
                         keys_dict[attr] = value
                 return keys_dict
             self.make_conn_str = _make_conn_str
+
+        elif driver in ('odbc', 'pyodbc', 'pypyodbc'):
+            self.make_odbc_conn_str(kw.pop('odbcdrv', 'SQL Server'),
+                                    db, host, port, user, password
+                                    )
+
         self.driver = driver
 
         self.autoCommit = int(autoCommit)
@@ -158,9 +157,9 @@ class MSSQLConnection(DBAPI):
         else:
             conn_descr = self.make_conn_str(self)
             if isinstance(conn_descr, dict):
-                conn = self.dbconnection(**conn_descr)
+                conn = self.module.connect(**conn_descr)
             else:
-                conn = self.dbconnection(conn_descr)
+                conn = self.module.connect(conn_descr)
         cur = conn.cursor()
         try:
             cur.execute('SET ANSI_NULLS ON')
