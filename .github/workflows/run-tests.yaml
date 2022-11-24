@@ -7,12 +7,14 @@ jobs:
 
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest]
-        python-version: ["2.7", "3.5", "3.6", "3.7", "3.8", "3.9", "3.10", "3.11"]
+        #os: [ubuntu-latest, windows-latest]
+        os: [windows-latest]
+        #python-version: ["2.7", "3.5", "3.6", "3.7", "3.8", "3.9", "3.10", "3.11"]
+        python-version: ["3.7"]
         include:
-        - os: ubuntu-latest
-          os-name: Linux
-          pip-cache-path: ~/.cache/pip
+        #- os: ubuntu-latest
+        #  os-name: Linux
+        #  pip-cache-path: ~/.cache/pip
         - os: windows-latest
           os-name: w32
           pip-cache-path: ~\AppData\Local\pip\Cache
@@ -23,18 +25,18 @@ jobs:
     steps:
 
       # Setup MySQL
-      - uses: ankane/setup-mysql@v1
+      #- uses: ankane/setup-mysql@v1
 
       # Setup PostgreSQL
-      - uses: ankane/setup-postgres@v1
-      - name: Setup Postgres user
-        run: |
-          sudo -u postgres psql --command="ALTER USER runner CREATEDB ENCRYPTED PASSWORD 'test'"
-        if: ${{ runner.os == 'Linux' }}
-      - name: Setup Postgres user
-        run: |
-          psql --command="CREATE USER runner CREATEDB ENCRYPTED PASSWORD 'test'"
-        if: ${{ runner.os == 'Windows' }}
+      #- uses: ankane/setup-postgres@v1
+      #- name: Setup Postgres user
+      #  run: |
+      #    sudo -u postgres psql --command="ALTER USER runner CREATEDB ENCRYPTED PASSWORD 'test'"
+      #  if: ${{ runner.os == 'Linux' }}
+      #- name: Setup Postgres user
+      #  run: |
+      #    psql --command="CREATE USER runner CREATEDB ENCRYPTED PASSWORD 'test'"
+      #  if: ${{ runner.os == 'Windows' }}
 
       # Setup MS SQL
       - uses: ankane/setup-sqlserver@v1
@@ -89,18 +91,18 @@ jobs:
           tox --version
       - name: Run tox @ Linux
         run: |
-          devscripts/tox-select-envs $PYVER-mysql
-          devscripts/tox-select-envs $PYVER-postgres
-          devscripts/tox-select-envs $PYVER-sqlite
+          #devscripts/tox-select-envs $PYVER-mysql
+          #devscripts/tox-select-envs $PYVER-postgres
+          #devscripts/tox-select-envs $PYVER-sqlite
           devscripts/tox-select-envs $PYVER-mssql
           devscripts/tox-select-envs $PYVER-pytds
           devscripts/tox-select-envs $PYVER-flake8
         if: ${{ runner.os == 'Linux' }}
       - name: Run tox @ w32
         run: |
-          devscripts\tox-select-envs.cmd %PYVER%-mysql
-          devscripts\tox-select-envs.cmd %PYVER%-postgres
-          devscripts\tox-select-envs.cmd %PYVER%-sqlite
+          #devscripts\tox-select-envs.cmd %PYVER%-mysql
+          #devscripts\tox-select-envs.cmd %PYVER%-postgres
+          #devscripts\tox-select-envs.cmd %PYVER%-sqlite
           devscripts\tox-select-envs.cmd %PYVER%-mssql
           devscripts\tox-select-envs.cmd %PYVER%-pytds
         if: ${{ runner.os == 'Windows' }}
