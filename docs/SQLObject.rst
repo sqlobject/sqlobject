@@ -53,8 +53,8 @@ PostgreSQL_ psycopg2_ is recommended; PyGreSQL_, py-postgresql_ and pg8000_
 are supported; SQLite_ has a built-in driver, PySQLite_ or supersqlite_.
 Firebird_ is supported via fdb_ or kinterbasdb_; pyfirebirdsql_ is
 supported but has problems. `MAX DB`_ (also known as SAP DB) is supported
-via sapdb_. Sybase via Sybase_. `MSSQL Server`_ via pymssql_ (+ FreeTDS_)
-or adodbapi_ (Win32). PyODBC_ and PyPyODBC_ are supported for MySQL,
+via sapdb_. Sybase via Sybase_. `MSSQL Server`_ via pymssql_ (+ FreeTDS_),
+`pytds`_ or adodbapi_ (Win32). PyODBC_ and PyPyODBC_ are supported for MySQL,
 PostgreSQL and MSSQL but have problems (not all tests passed).
 
 .. _MySQL: https://www.mysql.com/
@@ -83,6 +83,7 @@ PostgreSQL and MSSQL but have problems (not all tests passed).
 .. _`MSSQL Server`: http://www.microsoft.com/sql/
 .. _pymssql: http://www.pymssql.org/en/latest/index.html
 .. _FreeTDS: http://www.freetds.org/
+.. _pytds: https://pypi.org/project/python-tds/
 .. _adodbapi: http://adodbapi.sourceforge.net/
 .. _PyODBC: https://pypi.org/project/pyodbc/
 .. _PyPyODBC: https://pypi.org/project/pypyodbc/

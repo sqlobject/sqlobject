@@ -14,6 +14,8 @@ Minor features
 * Use ``module_loader.exec_module(module_loader.create_module())``
   instead of ``module_loader.load_module()`` when available.
 
+* Use driver ``pytds``.
+
 Tests, CI
 ---------
 

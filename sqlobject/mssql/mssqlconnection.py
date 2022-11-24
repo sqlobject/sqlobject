@@ -16,7 +16,7 @@ class MSSQLConnection(DBAPI):
 
     def __init__(self, db, user, password='', host='localhost', port=None,
                  autoCommit=0, **kw):
-        drivers = kw.pop('driver', None) or 'adodb,pymssql'
+        drivers = kw.pop('driver', None) or 'adodb,pymssql,pytds'
         for driver in drivers.split(','):
             driver = driver.strip()
             if not driver:
@@ -28,6 +28,9 @@ class MSSQLConnection(DBAPI):
                 elif driver == 'pymssql':
                     import pymssql
                     self.module = pymssql
+                elif driver == 'pytds':
+                    import pytds
+                    self.module = pytds
                 elif driver == 'pyodbc':
                     import pyodbc
                     self.module = pyodbc
@@ -43,7 +46,7 @@ class MSSQLConnection(DBAPI):
                 else:
                     raise ValueError(
                         'Unknown MSSQL driver "%s", '
-                        'expected adodb, pymssql, '
+                        'expected adodb, pymssql, pytds, '
                         'odbc, pyodbc or pypyodbc' % driver)
             except ImportError:
                 pass
@@ -84,9 +87,10 @@ class MSSQLConnection(DBAPI):
             kw.pop("ncli", None)
             kw.pop("sspi", None)
 
-        elif driver == 'pymssql':
+        elif driver in ('pymssql', 'pytds'):
+            self.dbconnection = self.module.connect
             self.module.Binary = lambda st: str(st)
-            # don't know whether pymssql uses unicode
+            # don't know whether pymssql/pytds use unicode
             self.usingUnicodeStrings = False
 
             def _make_conn_str(keys):
@@ -95,7 +99,9 @@ class MSSQLConnection(DBAPI):
                     ('database', keys.db),
                     ('user', keys.user),
                     ('password', keys.password),
-                    ('host', keys.host),
+                    ('host', keys.host)
+                    if driver == 'pymssql' else  # pytds
+                    ('dsn', keys.host),
                     ('port', keys.port),
                     ('timeout', keys.timeout),
                 ):
@@ -183,7 +189,7 @@ class MSSQLConnection(DBAPI):
                 c.close()
         elif self.driver == 'pymssql':
             conn.autocommit(auto)
-        elif self.driver in ('odbc', 'pyodbc', 'pypyodbc'):
+        elif self.driver in ('pytds', 'odbc', 'pyodbc', 'pypyodbc'):
             conn.autocommit = auto
 
     HAS_IDENTITY = """

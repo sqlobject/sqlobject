@@ -110,9 +110,6 @@ and `GitHub <https://github.com/sqlobject>`_.
         'fdb': ['fdb'],
         'firebirdsql': ['firebirdsql'],
         'kinterbasdb': ['kinterbasdb'],
-        # MS SQL
-        'adodbapi': ['adodbapi'],
-        'pymssql': ['pymssql'],
         # MySQL
         'mysql:python_version=="2.7"': ['MySQL-python'],
         'mysql:python_version>="3.4"': ['mysqlclient'],
@@ -123,6 +120,10 @@ and `GitHub <https://github.com/sqlobject>`_.
             'oursql3 @ git+https://github.com/sqlobject/oursql.git@py3k'],
         'pymysql': ['pymysql'],
         'mariadb': ['mariadb'],
+        # MS SQL
+        'adodbapi': ['adodbapi'],
+        'pymssql': ['pymssql'],
+        'pytds': ['python-tds'],
         # ODBC
         'odbc': ['pyodbc'],
         'pyodbc': ['pyodbc'],
