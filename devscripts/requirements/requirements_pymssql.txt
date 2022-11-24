@@ -1,0 +1,2 @@
+pymssql < 2.2; python_version <= '3.5'
+pymssql; python_version >= '3.6'

@@ -21,6 +21,8 @@ Tests, CI
 
 * Run tests with Python 3.11.
 
+* Run tests with MS SQL at GH Actions.
+
 SQLObject 3.10.0
 ================
 

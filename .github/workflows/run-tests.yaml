@@ -36,6 +36,11 @@ jobs:
           psql --command="CREATE USER runner CREATEDB ENCRYPTED PASSWORD 'test'"
         if: ${{ runner.os == 'Windows' }}
 
+      # Setup MS SQL
+      - uses: ankane/setup-sqlserver@v1
+        with:
+          accept-eula: true
+
       # Setup Python/pip
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v4
@@ -71,6 +76,8 @@ jobs:
           devscripts/tox-select-envs $PYVER-mysql
           devscripts/tox-select-envs $PYVER-postgres
           devscripts/tox-select-envs $PYVER-sqlite
+          devscripts/tox-select-envs $PYVER-mssql
+          devscripts/tox-select-envs $PYVER-pytds
           devscripts/tox-select-envs $PYVER-flake8
         if: ${{ runner.os == 'Linux' }}
       - name: Run tox @ w32
@@ -78,4 +85,6 @@ jobs:
           devscripts\tox-select-envs.cmd %PYVER%-mysql
           devscripts\tox-select-envs.cmd %PYVER%-postgres
           devscripts\tox-select-envs.cmd %PYVER%-sqlite
+          devscripts\tox-select-envs.cmd %PYVER%-mssql
+          devscripts\tox-select-envs.cmd %PYVER%-pytds
         if: ${{ runner.os == 'Windows' }}
