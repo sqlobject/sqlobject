@@ -40,6 +40,12 @@ jobs:
       - uses: ankane/setup-sqlserver@v1
         with:
           accept-eula: true
+      - name: tsql
+        run: |
+          sudo apt-get update --yes
+          sudo apt-get install --yes freetds-bin
+          echo "SELECT @@VERSION" | tsql -H localhost -p 1433 -U sa -P 'YourStrong!Passw0rd'
+        if: ${{ runner.os == 'Linux' }}
 
       # Setup Python/pip
       - uses: actions/checkout@v2
