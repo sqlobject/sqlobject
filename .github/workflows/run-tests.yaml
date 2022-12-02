@@ -46,6 +46,16 @@ jobs:
           sudo apt-get install --yes freetds-bin
           echo "SELECT @@VERSION" | tsql -H localhost -p 1433 -U sa -P 'YourStrong!Passw0rd'
         if: ${{ runner.os == 'Linux' }}
+      - name: Enable TCP for MSSQL
+        run: |
+          [System.Reflection.Assembly]::LoadWithPartialName('Microsoft.SqlServer.SqlWmiManagement')
+          $wmi = New-Object 'Microsoft.SqlServer.Management.Smo.Wmi.ManagedComputer' localhost
+          $tcp = $wmi.ServerInstances['MSSQLSERVER'].ServerProtocols['Tcp']
+          $tcp.IsEnabled = $true
+          $tcp.Alter()
+          Restart-Service -Name MSSQLSERVER -Force
+        shell: powershell
+        if: ${{ runner.os == 'Windows' }}
 
       # Setup Python/pip
       - uses: actions/checkout@v2
