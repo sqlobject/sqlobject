@@ -59,7 +59,7 @@ class MySQLConnection(DBAPI):
                         self.CR_SERVER_LOST = \
                             MySQLdb.constants.CR.CR_SERVER_LOST
                     self.ER_DUP_ENTRY = MySQLdb.constants.ER.DUP_ENTRY
-                elif driver == 'connector':
+                elif driver in ('connector', 'connector-python'):
                     import mysql.connector
                     self.module = mysql.connector
                     self.CR_SERVER_GONE_ERROR = \
@@ -92,7 +92,7 @@ class MySQLConnection(DBAPI):
                 else:
                     raise ValueError(
                         'Unknown MySQL driver "%s", '
-                        'expected mysqldb, connector, '
+                        'expected mysqldb, connector, connector-python, '
                         'oursql, pymysql, mariadb, '
                         'odbc, pyodbc or pypyodbc' % driver)
             except ImportError:
@@ -118,7 +118,7 @@ class MySQLConnection(DBAPI):
                     "client_flag", "local_infile"):
             if key in kw:
                 self.kw[key] = int(kw.pop(key))
-        if driver == 'connector':
+        if driver in ('connector', 'connector-python'):
             for key in ("ssl_key", "ssl_cert", "ssl_ca", "ssl_capath"):
                 if key in kw:
                     self.kw[key] = kw.pop(key)
@@ -154,7 +154,7 @@ class MySQLConnection(DBAPI):
         elif driver == 'mariadb':
             self.kw.pop("charset", None)
 
-        elif driver == 'connector':
+        elif driver in ('connector', 'connector-python'):
             registerConverter(bytes, ConnectorBytesConverter)
 
         global mysql_Bin
@@ -185,7 +185,7 @@ class MySQLConnection(DBAPI):
                     def character_set_name(self):
                         return dbEncoding + '_' + dbEncoding
                     Connection.character_set_name = character_set_name
-        if self.driver == 'connector':
+        if self.driver in ('connector', 'connector-python'):
             self.kw['consume_results'] = True
         try:
             if self.driver in ('odbc', 'pyodbc', 'pypyodbc'):
@@ -237,7 +237,7 @@ class MySQLConnection(DBAPI):
             try:
                 conn.autocommit(auto)
             except TypeError:
-                # mysql-connector has autocommit as a property
+                # mysql-connector{-python} has autocommit as a property
                 conn.autocommit = auto
 
     def _force_reconnect(self, conn):
@@ -252,7 +252,8 @@ class MySQLConnection(DBAPI):
             self.printDebug(conn, query, 'QueryR')
         dbEncoding = self.dbEncoding
         if dbEncoding and not isinstance(query, bytes) and (
-                self.driver in ('mysqldb', 'connector', 'oursql', 'mariadb')):
+                self.driver in ('mysqldb', 'connector', 'connector-python',
+                                'oursql', 'mariadb')):
             query = query.encode(dbEncoding, 'surrogateescape')
         # When a server connection is lost and a query is attempted, most of
         # the time the query will raise a SERVER_LOST exception, then at the
