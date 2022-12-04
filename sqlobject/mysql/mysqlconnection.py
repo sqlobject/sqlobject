@@ -67,6 +67,10 @@ class MySQLConnection(DBAPI):
                     self.CR_SERVER_LOST = \
                         mysql.connector.errorcode.CR_SERVER_LOST
                     self.ER_DUP_ENTRY = mysql.connector.errorcode.ER_DUP_ENTRY
+                    if driver == 'connector-python':
+                        self.connector_type = 'mysql.connector-python'
+                    else:
+                        self.connector_type = 'mysql.connector'
                 elif driver == 'oursql':
                     import oursql
                     self.module = oursql

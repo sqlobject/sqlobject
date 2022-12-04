@@ -72,6 +72,11 @@ def test_creation_fail2():
 
 
 def test_deep_inheritance():
+    conn = getConnection()
+    if conn.module.__name__ == 'mysql.connector' \
+            and conn.connector_type == 'mysql.connector-python':
+        skip("connector-python falls into an infinite loop here")
+
     setupClass([DIManager, DIEmployee, DIPerson])
 
     manager = DIManager(firstName='Project', lastName='Manager',
@@ -81,7 +86,6 @@ def test_deep_inheritance():
                              so_position='Project leader', manager=manager).id
     DIPerson(firstName='Oneof', lastName='Authors', manager=manager)
 
-    conn = getConnection()
     cache = conn.cache
     cache.clear()
 
