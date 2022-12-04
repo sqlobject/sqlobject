@@ -43,7 +43,7 @@ supportsMatrix = {
     '+memorydb': 'sqlite',
     '+rlike': 'mysql postgres sqlite',
     '+schema': 'postgres',
-    '-transactions': 'mysql',
+    '-transactions': ' ',
 }
 
 
