@@ -799,7 +799,7 @@ class Transaction(object):
         self._obsolete = True
         self._dbConnection = dbConnection
         self._connection = dbConnection.getConnection()
-        self._dbConnection._setAutoCommit(self._connection, 0)
+        self._dbConnection._setAutoCommit(self._connection, False)
         self.cache = CacheSet(cache=dbConnection.doCache)
         self._deletedCache = {}
         self._obsolete = False
@@ -924,7 +924,7 @@ class Transaction(object):
     def _makeObsolete(self):
         self._obsolete = True
         if self._dbConnection.autoCommit:
-            self._dbConnection._setAutoCommit(self._connection, 1)
+            self._dbConnection._setAutoCommit(self._connection, True)
         self._dbConnection.releaseConnection(self._connection,
                                              explicit=True)
         self._connection = None
@@ -938,7 +938,7 @@ class Transaction(object):
             "without rolling back this one"
         self._obsolete = False
         self._connection = self._dbConnection.getConnection()
-        self._dbConnection._setAutoCommit(self._connection, 0)
+        self._dbConnection._setAutoCommit(self._connection, False)
 
     def __del__(self):
         if self._obsolete:
