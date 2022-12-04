@@ -229,21 +229,23 @@ class PostgresConnection(DBAPI):
         if self.autoCommit:
             self._setAutoCommit(conn, 1)
         c = conn.cursor()
-        if self.schema:
-            self._executeRetry(conn, c, "SET search_path TO " + self.schema)
-        dbEncoding = self.dbEncoding
-        if dbEncoding:
-            if self.driver in ('odbc', 'pyodbc'):
-                conn.setdecoding(self.module.SQL_CHAR, encoding=dbEncoding)
-                conn.setdecoding(self.module.SQL_WCHAR, encoding=dbEncoding)
-                if PY2:
-                    conn.setencoding(str, encoding=dbEncoding)
-                    conn.setencoding(unicode, encoding=dbEncoding)  # noqa
-                else:
-                    conn.setencoding(encoding=dbEncoding)
-            self._executeRetry(conn, c,
-                               "SET client_encoding TO '%s'" % dbEncoding)
-        c.close()
+        try:
+            if self.schema:
+                self._executeRetry(conn, c, "SET search_path TO " + self.schema)
+            dbEncoding = self.dbEncoding
+            if dbEncoding:
+                if self.driver in ('odbc', 'pyodbc'):
+                    conn.setdecoding(self.module.SQL_CHAR, encoding=dbEncoding)
+                    conn.setdecoding(self.module.SQL_WCHAR, encoding=dbEncoding)
+                    if PY2:
+                        conn.setencoding(str, encoding=dbEncoding)
+                        conn.setencoding(unicode, encoding=dbEncoding)  # noqa
+                    else:
+                        conn.setencoding(encoding=dbEncoding)
+                self._executeRetry(conn, c,
+                                   "SET client_encoding TO '%s'" % dbEncoding)
+        finally:
+            c.close()
         return conn
 
     def _executeRetry(self, conn, cursor, query):
@@ -299,26 +301,28 @@ class PostgresConnection(DBAPI):
         table = soInstance.sqlmeta.table
         idName = soInstance.sqlmeta.idName
         c = conn.cursor()
-        if id is None and self.driver in ('py-postgresql', 'pypostgresql'):
-            sequenceName = soInstance.sqlmeta.idSequence or \
-                '%s_%s_seq' % (table, idName)
-            self._executeRetry(conn, c, "SELECT NEXTVAL('%s')" % sequenceName)
-            id = c.fetchone()[0]
-        if id is not None:
-            names = [idName] + names
-            values = [id] + values
-        if names and values:
-            q = self._insertSQL(table, names, values)
-        else:
-            q = "INSERT INTO %s DEFAULT VALUES" % table
-        if id is None:
-            q += " RETURNING " + idName
-        if self.debug:
-            self.printDebug(conn, q, 'QueryIns')
-        self._executeRetry(conn, c, q)
-        if id is None:
-            id = c.fetchone()[0]
-        c.close()
+        try:
+            if id is None and self.driver in ('py-postgresql', 'pypostgresql'):
+                sequenceName = soInstance.sqlmeta.idSequence or \
+                    '%s_%s_seq' % (table, idName)
+                self._executeRetry(conn, c, "SELECT NEXTVAL('%s')" % sequenceName)
+                id = c.fetchone()[0]
+            if id is not None:
+                names = [idName] + names
+                values = [id] + values
+            if names and values:
+                q = self._insertSQL(table, names, values)
+            else:
+                q = "INSERT INTO %s DEFAULT VALUES" % table
+            if id is None:
+                q += " RETURNING " + idName
+            if self.debug:
+                self.printDebug(conn, q, 'QueryIns')
+            self._executeRetry(conn, c, q)
+            if id is None:
+                id = c.fetchone()[0]
+        finally:
+            c.close()
         if self.debugOutput:
             self.printDebug(conn, id, 'QueryIns', 'result')
         return id

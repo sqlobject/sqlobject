@@ -428,8 +428,10 @@ class DBAPI(DBConnection):
         if self.debug:
             self.printDebug(conn, s, 'Query')
         c = conn.cursor()
-        self._executeRetry(conn, c, s)
-        c.close()
+        try:
+            self._executeRetry(conn, c, s)
+        finally:
+            c.close()
 
     def query(self, s):
         return self._runWithConnection(self._query, s)
@@ -438,9 +440,11 @@ class DBAPI(DBConnection):
         if self.debug:
             self.printDebug(conn, s, 'QueryAll')
         c = conn.cursor()
-        self._executeRetry(conn, c, s)
-        value = c.fetchall()
-        c.close()
+        try:
+            self._executeRetry(conn, c, s)
+            value = c.fetchall()
+        finally:
+            c.close()
         if self.debugOutput:
             self.printDebug(conn, value, 'QueryAll', 'result')
         return value
@@ -456,9 +460,11 @@ class DBAPI(DBConnection):
         if self.debug:
             self.printDebug(conn, s, 'QueryAllDesc')
         c = conn.cursor()
-        self._executeRetry(conn, c, s)
-        value = c.fetchall()
-        c.close()
+        try:
+            self._executeRetry(conn, c, s)
+            value = c.fetchall()
+        finally:
+            c.close()
         if self.debugOutput:
             self.printDebug(conn, value, 'QueryAll', 'result')
         return c.description, value
@@ -470,9 +476,11 @@ class DBAPI(DBConnection):
         if self.debug:
             self.printDebug(conn, s, 'QueryOne')
         c = conn.cursor()
-        self._executeRetry(conn, c, s)
-        value = c.fetchone()
-        c.close()
+        try:
+            self._executeRetry(conn, c, s)
+            value = c.fetchone()
+        finally:
+            c.close()
         if self.debugOutput:
             self.printDebug(conn, value, 'QueryOne', 'result')
         return value

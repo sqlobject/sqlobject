@@ -45,9 +45,11 @@ class SybaseConnection(DBAPI):
         insert_id method.
         """
         c = conn.cursor()
-        c.execute('SELECT @@IDENTITY')
-        result = c.fetchone()[0]
-        c.close()
+        try:
+            c.execute('SELECT @@IDENTITY')
+            result = c.fetchone()[0]
+        finally:
+            c.close()
         return result
 
     def makeConnection(self):
@@ -68,35 +70,39 @@ class SybaseConnection(DBAPI):
     def _hasIdentity(self, conn, table):
         query = self.HAS_IDENTITY % table
         c = conn.cursor()
-        c.execute(query)
-        r = c.fetchone()
-        c.close()
+        try:
+            c.execute(query)
+            r = c.fetchone()
+        finally:
+            c.close()
         return r is not None
 
     def _queryInsertID(self, conn, soInstance, id, names, values):
         table = soInstance.sqlmeta.table
         idName = soInstance.sqlmeta.idName
         c = conn.cursor()
-        if id is not None:
-            names = [idName] + names
-            values = [id] + values
+        try:
+            if id is not None:
+                names = [idName] + names
+                values = [id] + values
 
-        has_identity = self._hasIdentity(conn, table)
-        identity_insert_on = False
-        if has_identity and (id is not None):
-            identity_insert_on = True
-            c.execute('SET IDENTITY_INSERT %s ON' % table)
+            has_identity = self._hasIdentity(conn, table)
+            identity_insert_on = False
+            if has_identity and (id is not None):
+                identity_insert_on = True
+                c.execute('SET IDENTITY_INSERT %s ON' % table)
 
-        if names and values:
-            q = self._insertSQL(table, names, values)
-        else:
-            q = "INSERT INTO %s DEFAULT VALUES" % table
-        if self.debug:
-            self.printDebug(conn, q, 'QueryIns')
-        c.execute(q)
-        if has_identity and identity_insert_on:
-            c.execute('SET IDENTITY_INSERT %s OFF' % table)
-        c.close()
+            if names and values:
+                q = self._insertSQL(table, names, values)
+            else:
+                q = "INSERT INTO %s DEFAULT VALUES" % table
+            if self.debug:
+                self.printDebug(conn, q, 'QueryIns')
+            c.execute(q)
+            if has_identity and identity_insert_on:
+                c.execute('SET IDENTITY_INSERT %s OFF' % table)
+        finally:
+            c.close()
         if id is None:
             id = self.insert_id(conn)
         if self.debugOutput:

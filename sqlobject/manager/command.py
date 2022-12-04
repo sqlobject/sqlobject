@@ -869,8 +869,11 @@ class CommandExecute(Command):
             args.append(sys.stdin.read())
         self.conn = self.connection().getConnection()
         self.cursor = self.conn.cursor()
-        for sql in args:
-            self.execute_sql(sql)
+        try:
+            for sql in args:
+                self.execute_sql(sql)
+        finally:
+            self.cursor.close()
 
     def execute_sql(self, sql):
         if self.options.verbose:

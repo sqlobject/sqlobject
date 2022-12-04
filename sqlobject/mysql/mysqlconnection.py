@@ -313,25 +313,27 @@ class MySQLConnection(DBAPI):
         table = soInstance.sqlmeta.table
         idName = soInstance.sqlmeta.idName
         c = conn.cursor()
-        if id is not None:
-            names = [idName] + names
-            values = [id] + values
-        q = self._insertSQL(table, names, values)
-        if self.debug:
-            self.printDebug(conn, q, 'QueryIns')
-        self._executeRetry(conn, c, q)
-        if id is None:
-            try:
-                id = c.lastrowid
-            except AttributeError:
+        try:
+            if id is not None:
+                names = [idName] + names
+                values = [id] + values
+            q = self._insertSQL(table, names, values)
+            if self.debug:
+                self.printDebug(conn, q, 'QueryIns')
+            self._executeRetry(conn, c, q)
+            if id is None:
                 try:
-                    id = c.insert_id
+                    id = c.lastrowid
                 except AttributeError:
-                    self._executeRetry(conn, c, "SELECT LAST_INSERT_ID();")
-                    id = c.fetchone()[0]
-                else:
-                    id = c.insert_id()
-        c.close()
+                    try:
+                        id = c.insert_id
+                    except AttributeError:
+                        self._executeRetry(conn, c, "SELECT LAST_INSERT_ID();")
+                        id = c.fetchone()[0]
+                    else:
+                        id = c.insert_id()
+        finally:
+            c.close()
         if self.debugOutput:
             self.printDebug(conn, id, 'QueryIns', 'result')
         return id

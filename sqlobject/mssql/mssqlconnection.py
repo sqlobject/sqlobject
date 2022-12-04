@@ -134,11 +134,13 @@ class MSSQLConnection(DBAPI):
         insert_id method.
         """
         c = conn.cursor()
-        # converting the identity to an int is ugly, but it gets returned
-        # as a decimal otherwise :S
-        c.execute('SELECT CONVERT(INT, @@IDENTITY)')
-        result = c.fetchone()[0]
-        c.close()
+        try:
+            # converting the identity to an int is ugly, but it gets returned
+            # as a decimal otherwise :S
+            c.execute('SELECT CONVERT(INT, @@IDENTITY)')
+            result = c.fetchone()[0]
+        finally:
+            c.close()
         return result
 
     def makeConnection(self):
@@ -160,10 +162,12 @@ class MSSQLConnection(DBAPI):
             else:
                 conn = self.dbconnection(conn_descr)
         cur = conn.cursor()
-        cur.execute('SET ANSI_NULLS ON')
-        cur.execute("SELECT CAST('12345.21' AS DECIMAL(10, 2))")
-        self.decimalSeparator = str(cur.fetchone()[0])[-3]
-        cur.close()
+        try:
+            cur.execute('SET ANSI_NULLS ON')
+            cur.execute("SELECT CAST('12345.21' AS DECIMAL(10, 2))")
+            self.decimalSeparator = str(cur.fetchone()[0])[-3]
+        finally:
+            cur.close()
         return conn
 
     def _setAutoCommit(self, conn, auto):
@@ -174,7 +178,10 @@ class MSSQLConnection(DBAPI):
             else:
                 option = "OFF"
             c = conn.cursor()
-            c.execute("SET AUTOCOMMIT " + option)
+            try:
+                c.execute("SET AUTOCOMMIT " + option)
+            finally:
+                c.close()
         elif self.driver == 'pymssql':
             conn.autocommit(auto)
         elif self.driver in ('odbc', 'pyodbc', 'pypyodbc'):
@@ -190,9 +197,11 @@ class MSSQLConnection(DBAPI):
     def _hasIdentity(self, conn, table):
         query = self.HAS_IDENTITY % table
         c = conn.cursor()
-        c.execute(query)
-        r = c.fetchone()
-        c.close()
+        try:
+            c.execute(query)
+            r = c.fetchone()
+        finally:
+            c.close()
         return r is not None
 
     def _queryInsertID(self, conn, soInstance, id, names, values):
@@ -202,35 +211,37 @@ class MSSQLConnection(DBAPI):
         table = soInstance.sqlmeta.table
         idName = soInstance.sqlmeta.idName
         c = conn.cursor()
-        has_identity = self._hasIdentity(conn, table)
-        if id is not None:
-            names = [idName] + names
-            values = [id] + values
-        elif has_identity and idName in names:
-            try:
-                i = names.index(idName)
-                if i:
-                    del names[i]
-                    del values[i]
-            except ValueError:
-                pass
-
-        if has_identity:
+        try:
+            has_identity = self._hasIdentity(conn, table)
             if id is not None:
-                c.execute('SET IDENTITY_INSERT %s ON' % table)
-            else:
-                c.execute('SET IDENTITY_INSERT %s OFF' % table)
+                names = [idName] + names
+                values = [id] + values
+            elif has_identity and idName in names:
+                try:
+                    i = names.index(idName)
+                    if i:
+                        del names[i]
+                        del values[i]
+                except ValueError:
+                    pass
 
-        if names and values:
-            q = self._insertSQL(table, names, values)
-        else:
-            q = "INSERT INTO %s DEFAULT VALUES" % table
-        if self.debug:
-            self.printDebug(conn, q, 'QueryIns')
-        c.execute(q)
-        if has_identity:
-            c.execute('SET IDENTITY_INSERT %s OFF' % table)
-        c.close()
+            if has_identity:
+                if id is not None:
+                    c.execute('SET IDENTITY_INSERT %s ON' % table)
+                else:
+                    c.execute('SET IDENTITY_INSERT %s OFF' % table)
+
+            if names and values:
+                q = self._insertSQL(table, names, values)
+            else:
+                q = "INSERT INTO %s DEFAULT VALUES" % table
+            if self.debug:
+                self.printDebug(conn, q, 'QueryIns')
+            c.execute(q)
+            if has_identity:
+                c.execute('SET IDENTITY_INSERT %s OFF' % table)
+        finally:
+            c.close()
 
         if id is None:
             id = self.insert_id(conn)

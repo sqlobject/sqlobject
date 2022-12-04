@@ -253,17 +253,19 @@ class SQLiteConnection(DBAPI):
         table = soInstance.sqlmeta.table
         idName = soInstance.sqlmeta.idName
         c = conn.cursor()
-        if id is not None:
-            names = [idName] + names
-            values = [id] + values
-        q = self._insertSQL(table, names, values)
-        if self.debug:
-            self.printDebug(conn, q, 'QueryIns')
-        self._executeRetry(conn, c, q)
-        # lastrowid is a DB-API extension from "PEP 0249":
-        if id is None:
-            id = int(c.lastrowid)
-        c.close()
+        try:
+            if id is not None:
+                names = [idName] + names
+                values = [id] + values
+            q = self._insertSQL(table, names, values)
+            if self.debug:
+                self.printDebug(conn, q, 'QueryIns')
+            self._executeRetry(conn, c, q)
+            # lastrowid is a DB-API extension from "PEP 0249":
+            if id is None:
+                id = int(c.lastrowid)
+        finally:
+            c.close()
         if self.debugOutput:
             self.printDebug(conn, id, 'QueryIns', 'result')
         return id

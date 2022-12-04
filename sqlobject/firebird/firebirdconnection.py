@@ -126,16 +126,18 @@ class FirebirdConnection(DBAPI):
         idName = soInstance.sqlmeta.idName
         sequenceName = soInstance.sqlmeta.idSequence or 'GEN_%s' % table
         c = conn.cursor()
-        if id is None:
-            c.execute('SELECT gen_id(%s,1) FROM rdb$database' % sequenceName)
-            id = c.fetchone()[0]
-        names = [idName] + names
-        values = [id] + values
-        q = self._insertSQL(table, names, values)
-        if self.debug:
-            self.printDebug(conn, q, 'QueryIns')
-        c.execute(q)
-        c.close()
+        try:
+            if id is None:
+                c.execute('SELECT gen_id(%s,1) FROM rdb$database' % sequenceName)
+                id = c.fetchone()[0]
+            names = [idName] + names
+            values = [id] + values
+            q = self._insertSQL(table, names, values)
+            if self.debug:
+                self.printDebug(conn, q, 'QueryIns')
+            c.execute(q)
+        finally:
+            c.close()
         if self.debugOutput:
             self.printDebug(conn, id, 'QueryIns', 'result')
         return id

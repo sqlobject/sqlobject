@@ -127,18 +127,20 @@ class MaxdbConnection(DBAPI):
         table = soInstance.sqlmeta.table
         idName = soInstance.sqlmeta.idName
         c = conn.cursor()
-        if id is None:
-            c.execute(
-                'SELECT %s.NEXTVAL FROM DUAL' % (
-                    self.createSequenceName(table)))
-            id = c.fetchone()[0]
-        names = [idName] + names
-        values = [id] + values
-        q = self._insertSQL(table, names, values)
-        if self.debug:
-            self.printDebug(conn, q, 'QueryIns')
-        c.execute(q)
-        c.close()
+        try:
+            if id is None:
+                c.execute(
+                    'SELECT %s.NEXTVAL FROM DUAL' % (
+                        self.createSequenceName(table)))
+                id = c.fetchone()[0]
+            names = [idName] + names
+            values = [id] + values
+            q = self._insertSQL(table, names, values)
+            if self.debug:
+                self.printDebug(conn, q, 'QueryIns')
+            c.execute(q)
+        finally:
+            c.close()
         if self.debugOutput:
             self.printDebug(conn, id, 'QueryIns', 'result')
         return id
