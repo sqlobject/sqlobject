@@ -38,9 +38,14 @@ jobs:
 
       # Setup Python/pip
       - uses: actions/checkout@v2
+      - uses: s-weigand/setup-conda@v1
+        with:
+          python-version: ${{ matrix.python-version }}
+        if: ${{ runner.os == 'Linux' && matrix.python-version != '3.11' }}
       - uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
+        if: ${{ runner.os != 'Linux' || matrix.python-version == '3.11' }}
       - name: Cache pip
         uses: actions/cache@v3
         with:
