@@ -62,8 +62,15 @@ jobs:
       - name: Set PYVER
         run: |
           import os, sys
+          ld_library_path = None
           pyver = '%d%d' % tuple(sys.version_info[:2])
+          if os.name == 'posix':
+            if pyver == '27':  # Python 2.7 on Linux requires `$LD_LIBRARY_PATH`
+                ld_library_path = os.path.join(
+                  os.path.dirname(os.path.dirname(sys.executable)), 'lib')
           with open(os.environ['GITHUB_ENV'], 'a') as f:
+            if ld_library_path:
+              f.write('LD_LIBRARY_PATH=' + ld_library_path + '\n')
             f.write('PYVER=' + pyver + '\n')
             f.write('PGPASSWORD=test\n')
         shell: python
