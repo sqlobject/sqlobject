@@ -14,6 +14,11 @@ Minor features
 * Use ``module_loader.exec_module(module_loader.create_module())``
   instead of ``module_loader.load_module()`` when available.
 
+Drivers
+-------
+
+* Added ``mysql-connector-python``.
+
 Tests
 -----
 
@@ -468,7 +473,8 @@ Minor features
   'kinterbasdb' in that order. pyfirebirdsql is supported but has problems.
 
 * Add ``driver`` keyword for MySQLConnection. Allowed values are 'mysqldb',
-  'connector', 'oursql' and 'pymysql'. Default is to test for mysqldb only.
+  'connector', 'connector-python', 'oursql' and 'pymysql'. Default is to
+  test for mysqldb only.
 
 * Add support for `MySQL Connector
   <https://pypi.org/project/mysql-connector/>`_ (pure python; `binary

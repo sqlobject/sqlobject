@@ -1,6 +1,7 @@
+from pytest import skip
 from sqlobject import StringCol
 from sqlobject.inheritance import InheritableSQLObject
-from sqlobject.tests.dbtest import setupClass
+from sqlobject.tests.dbtest import getConnection, setupClass
 
 ########################################
 # Inheritance Tree
@@ -28,6 +29,11 @@ class Tree5(Tree2):
 
 
 def test_tree():
+    conn = getConnection()
+    if conn.module.__name__ == 'mysql.connector' \
+            and conn.connector_type == 'mysql.connector-python':
+        skip("connector-python falls into an infinite loop here")
+
     setupClass([Tree1, Tree2, Tree3, Tree4, Tree5])
 
     Tree1(aprop='t1')  # t1

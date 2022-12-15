@@ -1,7 +1,21 @@
+import pytest
 from pytest import raises
 from sqlobject import IntCol, StringCol
 from sqlobject.inheritance import InheritableSQLObject
-from sqlobject.tests.dbtest import setupClass
+from sqlobject.tests.dbtest import getConnection, setupClass
+
+
+try:
+    connection = getConnection()
+except (AttributeError, NameError):
+    # The module was imported during documentation building
+    pass
+else:
+    if connection.module.__name__ == 'mysql.connector' \
+            and connection.connector_type == 'mysql.connector-python':
+        pytestmark = pytest.mark.skip(
+            "connector-python falls into an infinite loop here")
+
 
 ########################################
 # Inheritance
