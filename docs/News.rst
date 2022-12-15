@@ -14,10 +14,17 @@ Minor features
 * Use ``module_loader.exec_module(module_loader.create_module())``
   instead of ``module_loader.load_module()`` when available.
 
-Tests, CI
----------
+Tests
+-----
 
 * Run tests with Python 3.11.
+
+CI
+--
+
+* Ubuntu >= 22 and ``setup-python`` dropped Pythons < 3.7.
+  Use ``conda`` via ``s-weigand/setup-conda`` instead of ``setup-python``
+  to install older Pythons on Linux.
 
 SQLObject 3.10.0
 ================

@@ -38,9 +38,14 @@ jobs:
 
       # Setup Python/pip
       - uses: actions/checkout@v2
+      - uses: s-weigand/setup-conda@v1
+        with:
+          python-version: ${{ matrix.python-version }}
+        if: ${{ runner.os == 'Linux' && matrix.python-version != '3.11' }}
       - uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
+        if: ${{ runner.os != 'Linux' || matrix.python-version == '3.11' }}
       - name: Cache pip
         uses: actions/cache@v3
         with:
@@ -53,12 +58,19 @@ jobs:
           python --version
           python -m pip install --upgrade pip setuptools wheel
           pip --version
-          pip install --upgrade virtualenv tox
+          pip install --upgrade virtualenv "tox < 4"
       - name: Set PYVER
         run: |
           import os, sys
+          ld_library_path = None
           pyver = '%d%d' % tuple(sys.version_info[:2])
+          if os.name == 'posix':
+            if pyver == '27':  # Python 2.7 on Linux requires `$LD_LIBRARY_PATH`
+                ld_library_path = os.path.join(
+                  os.path.dirname(os.path.dirname(sys.executable)), 'lib')
           with open(os.environ['GITHUB_ENV'], 'a') as f:
+            if ld_library_path:
+              f.write('LD_LIBRARY_PATH=' + ld_library_path + '\n')
             f.write('PYVER=' + pyver + '\n')
             f.write('PGPASSWORD=test\n')
         shell: python
