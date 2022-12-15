@@ -27,11 +27,11 @@ jobs:
 
       # Setup PostgreSQL
       - uses: ankane/setup-postgres@v1
-      - name: Setup Postgres user
+      - name: Setup Postgres user @ Linux
         run: |
           sudo -u postgres psql --command="ALTER USER runner CREATEDB ENCRYPTED PASSWORD 'test'"
         if: ${{ runner.os == 'Linux' }}
-      - name: Setup Postgres user
+      - name: Setup Postgres user @ w32
         run: |
           psql --command="CREATE USER runner CREATEDB ENCRYPTED PASSWORD 'test'"
         if: ${{ runner.os == 'Windows' }}
