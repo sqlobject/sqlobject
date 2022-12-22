@@ -1,54 +1,48 @@
 0. Run full test suite in all branches and in master. Continue if all
    tests passed.
 
-1. Check out the release branch. If it is a stable release - edit
-   docs/News.rst to set release date. Commit.
-
-2. If release branch is not master - run devscripts/prerelease $NEW_TAG; if
+1. If release branch is not master - run devscripts/prerelease $NEW_TAG; if
    it's master - run devscripts/prerelease $NEW_TAG master.
 
-   The script checks out the release branch and calls editor; update
-   version, the list of contributors, the list of changes and download
-   URL in ANNOUNCE.rst; edit __version__.py and README.rst in the release
-   branch - fix versions. Edit section [egg_info] in setup.cfg - set if
-   it is a stable or development release. In setup.py edit "Development
-   Status" in trove classifiers; edit download URLs: if a non-stable
-   version - append 'dev' and date stamp, for a stable version remove
-   'dev' and date stamp).
+   The script checks out the release branch and calls editor; if it's the
+   first stable release of the branch - edit build-all-docs, advance stable
+   branch; if it is a stable release - edit docs/News.rst to set release
+   date; update version, the list of contributors, the list of changes and
+   download URL in ANNOUNCE.rst; edit __version__.py and README.rst in the
+   release branch - fix versions. Edit section [egg_info] in setup.cfg -
+   set if it is a stable or development release. In setup.py edit
+   "Development Status" in trove classifiers; edit download URLs: if a
+   non-stable version - append 'dev' and date stamp, for a stable version
+   remove 'dev' and date stamp). Commit. Verify.
 
-   If it's the first stable release of the branch - edit build-all-docs,
-   advance stable branch.
+2. If it's not master - null-merge to the next higher branch.
 
-   Commit. Verify.
-
-3. If it's not master - null-merge to the next higher branch.
-
-4. If release branch is not master - run devscripts/prerelease-tag
+3. If release branch is not master - run devscripts/prerelease-tag
    $NEW_TAG; if it's master - run devscripts/prerelease-tag $NEW_TAG
    master. This checks out the release branch and creates the new tag at
    the head of the release branch.
 
-5. Run devscripts/release. This generates and uploads new archives to PyPI
+4. Run devscripts/release. This generates and uploads new archives to PyPI
    and if it is a stable release - uploads archives and release
    announcement (ANNOUNCE.rst) to SourceForge.
 
-6. Move old releases at SourceForge to subdirectory OldFiles.
+5. Move old releases at SourceForge to subdirectory OldFiles.
 
-7. Run devscripts/postrelease. The script restores ANNOUNCE.rst and
+6. Run devscripts/postrelease. The script restores ANNOUNCE.rst and
    setup.cfg from the previous commit (HEAD~). It calls editor; update next
    version, remove the list of contributors and the list of changes, edit
    download URL in ANNOUNCE.rst. Edit README.rst and docs/News.rst - add
    new version.
 
-8. Run devscripts/push-all in the development repository to push all
+7. Run devscripts/push-all in the development repository to push all
    branches and tags to the public repositories.
 
-9. Generate new docs using devscripts/build-all-docs. Upload docs using
+8. Generate new docs using devscripts/build-all-docs. Upload docs using
    devscripts/publish-docs.
 
-10. Send announcement to the SQLObject mailing list. For a stable
-    release send announcements to python, python-announce and python-db
-    mailing lists.
+9. Send announcement to the SQLObject mailing list. For a stable
+   release send announcements to python, python-announce and python-db
+   mailing lists.
 
 10. Announce new release(s) at Twitter (https://twitter.com/SQLObject) and
     Wikipedia (https://en.wikipedia.org/wiki/SQLObject). If it is a stable
