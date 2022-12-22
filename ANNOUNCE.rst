@@ -1,25 +1,34 @@
 Hello!
 
-I'm pleased to announce version 3.10.1a1, the first alpha of the upcoming
-release of branch 3.10 of SQLObject.
-
-I'm pleased to announce version 3.10.1a2, the second alpha of the upcoming
-release of branch 3.10 of SQLObject.
-
-I'm pleased to announce version 3.10.1b1, the first beta of the upcoming
-release of branch 3.10 of SQLObject.
-
-I'm pleased to announce version 3.10.1rc1, the first release candidate
-of the upcoming release of branch 3.10 of SQLObject.
-
-I'm pleased to announce version 3.10.1, the first bugfix release of branch
-3.10 of SQLObject.
+I'm pleased to announce version 3.10.1, the first minor feature release of
+branch 3.10 of SQLObject.
 
 
 What's new in SQLObject
 =======================
 
-Contributors for this release are 
+Minor features
+--------------
+
+* Use ``module_loader.exec_module(module_loader.create_module())``
+  instead of ``module_loader.load_module()`` when available.
+
+Drivers
+-------
+
+* Added ``mysql-connector-python``.
+
+Tests
+-----
+
+* Run tests with Python 3.11.
+
+CI
+--
+
+* Ubuntu >= 22 and ``setup-python`` dropped Pythons < 3.7.
+  Use ``conda`` via ``s-weigand/setup-conda`` instead of ``setup-python``
+  to install older Pythons on Linux.
 
 For a more complete list, please see the news:
 http://sqlobject.org/News.html
@@ -51,7 +60,7 @@ Site:
 http://sqlobject.org
 
 Download:
-https://pypi.org/project/SQLObject/3.10.1a0.dev20221020/
+https://pypi.org/project/SQLObject/3.10.1
 
 News and changes:
 http://sqlobject.org/News.html
