@@ -24,27 +24,26 @@
 
 4. Run devscripts/release. This generates and uploads new archives to PyPI
    and if it is a stable release - uploads archives and release
-   announcement (ANNOUNCE.rst) to SourceForge.
+   announcement (ANNOUNCE.rst) to SourceForge. Move old releases at
+   SourceForge to subdirectory OldFiles.
 
-5. Move old releases at SourceForge to subdirectory OldFiles.
-
-6. Run devscripts/postrelease. The script restores ANNOUNCE.rst and
+5. Run devscripts/postrelease. The script restores ANNOUNCE.rst and
    setup.cfg from the previous commit (HEAD~). It calls editor; update next
    version, remove the list of contributors and the list of changes, edit
    download URL in ANNOUNCE.rst. Edit README.rst and docs/News.rst - add
    new version.
 
-7. Run devscripts/push-all in the development repository to push all
+6. Run devscripts/push-all in the development repository to push all
    branches and tags to the public repositories.
 
-8. Generate new docs using devscripts/build-all-docs. Upload docs using
+7. Generate new docs using devscripts/build-all-docs. Upload docs using
    devscripts/publish-docs.
 
-9. Send announcement to the SQLObject mailing list. For a stable
+8. Send announcement to the SQLObject mailing list. For a stable
    release send announcements to python, python-announce and python-db
    mailing lists.
 
-10. Announce new release(s) at Twitter (https://twitter.com/SQLObject) and
-    Wikipedia (https://en.wikipedia.org/wiki/SQLObject). If it is a stable
-    release - announce it at
-    https://en.wikipedia.org/wiki/Comparison_of_object-relational_mapping_software.
+9. Announce new release(s) at Twitter (https://twitter.com/SQLObject) and
+   Wikipedia (https://en.wikipedia.org/wiki/SQLObject). If it is a stable
+   release - announce it at
+   https://en.wikipedia.org/wiki/Comparison_of_object-relational_mapping_software.
