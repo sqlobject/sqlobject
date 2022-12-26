@@ -11,6 +11,8 @@ SQLObject (master)
 SQLObject 3.10.1
 ================
 
+Released 2022 Dec 22.
+
 Minor features
 --------------
 
