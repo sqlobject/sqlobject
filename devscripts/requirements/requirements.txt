@@ -1,5 +1,3 @@
---install-option=-O2
-
 # DateTime from Zope
 DateTime
 

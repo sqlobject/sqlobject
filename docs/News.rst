@@ -8,6 +8,11 @@ News
 SQLObject (master)
 ==================
 
+CI
+--
+
+* Install all Python and PyPy versions from ``conda-forge``.
+
 SQLObject 3.10.1
 ================
 
