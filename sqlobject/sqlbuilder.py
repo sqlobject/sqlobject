@@ -638,15 +638,53 @@ class AliasTable(Table):
                              self.alias)
 
 
+class AliasSQLMeta():
+    def __init__(self, table, alias):
+        self.__table = table
+        self.__alias = alias
+
+    def __getattr__(self, attr):
+        if attr.startswith('__'):
+            raise AttributeError
+        table = self.__table
+        if (attr == "table"):
+            return '%s  %s' % (table.sqlmeta.table, self.__alias)
+        return getattr(table.sqlmeta, attr)
+
+
 class Alias(SQLExpression):
     def __init__(self, table, alias=None):
         self.q = AliasTable(table, alias)
+
+    def __getattr__(self, attr):
+        table = self.q.table
+        if (attr == "sqlmeta") and hasattr(table, "sqlmeta"):
+            alias = self.q.alias
+            return AliasSQLMeta(table, alias)
+        return getattr(table, attr)
 
     def __sqlrepr__(self, db):
         return sqlrepr(self.q, db)
 
     def components(self):
         return [self.q]
+
+    def select(self, clause=None, clauseTables=None,
+               orderBy=NoDefault, limit=None,
+               lazyColumns=False, reversed=False,
+               distinct=False, connection=None,
+               join=None, forUpdate=False):
+        # Import here to avoid circular import
+        from .sresults import SelectResults
+        return SelectResults(self, clause,
+                             clauseTables=clauseTables,
+                             orderBy=orderBy,
+                             limit=limit,
+                             lazyColumns=lazyColumns,
+                             reversed=reversed,
+                             distinct=distinct,
+                             connection=connection,
+                             join=join, forUpdate=forUpdate)
 
 
 class Union(SQLExpression):

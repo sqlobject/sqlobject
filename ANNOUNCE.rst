@@ -21,6 +21,11 @@ What's new in SQLObject
 
 Contributors for this release are 
 
+Minor features
+--------------
+
+* Class ``Alias`` grows a method ``.select()`` to match ``SQLObject.select()``.
+
 For a more complete list, please see the news:
 http://sqlobject.org/News.html
 

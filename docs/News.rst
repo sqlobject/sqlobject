@@ -8,6 +8,11 @@ News
 SQLObject (master)
 ==================
 
+Minor features
+--------------
+
+* Class ``Alias`` grows a method ``.select()`` to match ``SQLObject.select()``.
+
 CI
 --
 
