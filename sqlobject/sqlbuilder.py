@@ -480,7 +480,8 @@ class Table(SQLExpression):
 
     def __getattr__(self, attr):
         if attr.startswith('__'):
-            raise AttributeError
+            raise AttributeError("Attribute '%s' is forbidden in '%s'" % (
+                attr, self.__class__.__name__))
         return self.FieldClass(self.tableName, attr)
 
     def __sqlrepr__(self, db):
@@ -502,7 +503,8 @@ class SQLObjectTable(Table):
 
     def __getattr__(self, attr):
         if attr.startswith('__'):
-            raise AttributeError
+            raise AttributeError("Attribute '%s' is forbidden in '%s'" % (
+                attr, self.__class__.__name__))
         if attr == 'id':
             return self._getattrFromID(attr)
         elif attr in self.soClass.sqlmeta.columns:
@@ -565,14 +567,16 @@ class TableSpace:
 
     def __getattr__(self, attr):
         if attr.startswith('__'):
-            raise AttributeError
+            raise AttributeError("Attribute '%s' is forbidden in '%s'" % (
+                attr, self.__class__.__name__))
         return self.TableClass(attr)
 
 
 class ConstantSpace:
     def __getattr__(self, attr):
         if attr.startswith('__'):
-            raise AttributeError
+            raise AttributeError("Attribute '%s' is forbidden in '%s'" % (
+                attr, self.__class__.__name__))
         return SQLConstant(attr)
 
 
@@ -628,7 +632,8 @@ class AliasTable(Table):
 
     def __getattr__(self, attr):
         if attr.startswith('__'):
-            raise AttributeError
+            raise AttributeError("Attribute '%s' is forbidden in '%s'" % (
+                attr, self.__class__.__name__))
         if self.table:
             attr = getattr(self.table.q, attr).fieldName
         return self.FieldClass(self.tableName, attr, self.alias, self)
@@ -645,7 +650,8 @@ class AliasSQLMeta():
 
     def __getattr__(self, attr):
         if attr.startswith('__'):
-            raise AttributeError
+            raise AttributeError("Attribute '%s' is forbidden in '%s'" % (
+                attr, self.__class__.__name__))
         table = self.__table
         if (attr == "table"):
             return '%s  %s' % (table.sqlmeta.table, self.__alias)
