@@ -19,12 +19,19 @@ I'm pleased to announce version 3.10.2, the first bugfix release of branch
 What's new in SQLObject
 =======================
 
-Contributors for this release are 
+The contributor for this release is Igor Yudytskiy.
 
 Minor features
 --------------
 
 * Class ``Alias`` grows a method ``.select()`` to match ``SQLObject.select()``.
+
+Bug fixes
+---------
+
+* Fixed a bug in ``SQLRelatedJoin`` in the case where the table joins with
+  itself; in the resulting SQL two instances of the table must use different
+  aliases. Thanks to Igor Yudytskiy for providing an elaborated bug report.
 
 For a more complete list, please see the news:
 http://sqlobject.org/News.html

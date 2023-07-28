@@ -1,5 +1,6 @@
 import pytest
-from sqlobject import RelatedJoin, SQLObject, SQLRelatedJoin, StringCol
+from sqlobject import RelatedJoin, SQLObject, SQLRelatedJoin, StringCol, \
+    ForeignKey
 from sqlobject.tests.dbtest import setupClass, supports
 
 
@@ -62,3 +63,29 @@ def test_related_join_transaction():
     finally:
         trans.commit(True)
         Tourtment._connection.autoCommit = True
+
+
+class RecursiveGroup(SQLObject):
+    name = StringCol(length=255, unique=True)
+    subgroups = SQLRelatedJoin(
+        'RecursiveGroup',
+        otherColumn='group_id',
+        intermediateTable='rec_group_map',
+        createRelatedTable=False,
+    )
+
+
+class RecGroupMap(SQLObject):
+    recursive_group = ForeignKey('RecursiveGroup')
+    group = ForeignKey('RecursiveGroup')
+
+
+def test_rec_group():
+    setupClass([RecursiveGroup, RecGroupMap])
+    a = RecursiveGroup(name='a')
+    a1 = RecursiveGroup(name='a1')
+    a.addRecursiveGroup(a1)
+    a2 = RecursiveGroup(name='a2')
+    a.addRecursiveGroup(a2)
+
+    assert sorted(a.subgroups, key=lambda x: x.name) == [a1, a2]

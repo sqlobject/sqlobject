@@ -13,6 +13,13 @@ Minor features
 
 * Class ``Alias`` grows a method ``.select()`` to match ``SQLObject.select()``.
 
+Bug fixes
+---------
+
+* Fixed a bug in ``SQLRelatedJoin`` in the case where the table joins with
+  itself; in the resulting SQL two instances of the table must use different
+  aliases.
+
 CI
 --
 
