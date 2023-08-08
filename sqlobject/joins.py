@@ -298,11 +298,14 @@ class OtherTableToJoin(sqlbuilder.SQLExpression):
         self.joinColumn = joinColumn
 
     def tablesUsedImmediate(self):
-        return [self.otherTable, self.interTable]
+        return [
+            '%s  _SO_SQLRelatedJoin_OtherTable' % self.otherTable,
+            self.interTable,
+        ]
 
     def __sqlrepr__(self, db):
-        return '%s.%s = %s.%s' % (self.otherTable, self.otherIdName,
-                                  self.interTable, self.joinColumn)
+        return '_SO_SQLRelatedJoin_OtherTable.%s = %s.%s' % (
+            self.otherIdName, self.interTable, self.joinColumn)
 
 
 class JoinToTable(sqlbuilder.SQLExpression):
@@ -313,11 +316,14 @@ class JoinToTable(sqlbuilder.SQLExpression):
         self.joinColumn = joinColumn
 
     def tablesUsedImmediate(self):
-        return [self.table, self.interTable]
+        return [
+            '%s  _SO_SQLRelatedJoin_ThisTable' % self.table,
+            self.interTable,
+        ]
 
     def __sqlrepr__(self, db):
-        return '%s.%s = %s.%s' % (self.interTable, self.joinColumn, self.table,
-                                  self.idName)
+        return '%s.%s = _SO_SQLRelatedJoin_ThisTable.%s' % (
+            self.interTable, self.joinColumn, self.idName)
 
 
 class TableToId(sqlbuilder.SQLExpression):
@@ -327,10 +333,11 @@ class TableToId(sqlbuilder.SQLExpression):
         self.idValue = idValue
 
     def tablesUsedImmediate(self):
-        return [self.table]
+        return ['%s  _SO_SQLRelatedJoin_ThisTable' % self.table]
 
     def __sqlrepr__(self, db):
-        return '%s.%s = %s' % (self.table, self.idName, self.idValue)
+        return '_SO_SQLRelatedJoin_ThisTable.%s = %s' % (
+            self.idName, self.idValue)
 
 
 class SOSQLRelatedJoin(SORelatedJoin):
@@ -339,7 +346,9 @@ class SOSQLRelatedJoin(SORelatedJoin):
             conn = inst._connection
         else:
             conn = None
-        results = self.otherClass.select(sqlbuilder.AND(
+        results = sqlbuilder.Alias(
+            self.otherClass, '_SO_SQLRelatedJoin_OtherTable'
+        ).select(sqlbuilder.AND(
             OtherTableToJoin(
                 self.otherClass.sqlmeta.table, self.otherClass.sqlmeta.idName,
                 self.intermediateTable, self.otherColumn
@@ -350,9 +359,11 @@ class SOSQLRelatedJoin(SORelatedJoin):
             ),
             TableToId(self.soClass.sqlmeta.table, self.soClass.sqlmeta.idName,
                       inst.id),
-        ), clauseTables=(self.soClass.sqlmeta.table,
-                         self.otherClass.sqlmeta.table,
-                         self.intermediateTable),
+        ), clauseTables=(
+            '%s  _SO_SQLRelatedJoin_ThisTable' % self.soClass.sqlmeta.table,
+            '%s  _SO_SQLRelatedJoin_OtherTable' %
+            self.otherClass.sqlmeta.table,
+            self.intermediateTable),
             connection=conn)
         return results.orderBy(self.orderBy)
 
