@@ -1,13 +1,25 @@
 Hello!
 
-I'm pleased to announce version 3.10.2, a minor feature release
-and the second bugfix release of branch 3.10 of SQLObject.
+I'm pleased to announce version 3.10.3a1, the first alpha of the upcoming
+release of branch 3.10 of SQLObject.
+
+I'm pleased to announce version 3.10.3a2, the second alpha of the upcoming
+release of branch 3.10 of SQLObject.
+
+I'm pleased to announce version 3.10.3b1, the first beta of the upcoming
+release of branch 3.10 of SQLObject.
+
+I'm pleased to announce version 3.10.3rc1, the first release candidate
+of the upcoming release of branch 3.10 of SQLObject.
+
+I'm pleased to announce version 3.10.3, the first bugfix release of branch
+3.10 of SQLObject.
 
 
 What's new in SQLObject
 =======================
 
-The contributor for this release is Igor Yudytskiy.
+The contributors for this release are ... Thanks!
 
 Minor features
 --------------
@@ -51,7 +63,7 @@ Site:
 http://sqlobject.org
 
 Download:
-https://pypi.org/project/SQLObject/3.10.2a0.dev20221222/
+https://pypi.org/project/SQLObject/3.10.3a0.dev20230810/
 
 News and changes:
 http://sqlobject.org/News.html
