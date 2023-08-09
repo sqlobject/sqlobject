@@ -1,5 +1,5 @@
-SQLObject 3.10.2a0
-==================
+SQLObject 3.10.2
+================
 
 SQLObject is a free and open-source (LGPL) Python object-relational
 mapper.  Your database tables are described as classes, and rows are
