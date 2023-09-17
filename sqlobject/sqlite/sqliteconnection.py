@@ -181,6 +181,8 @@ class SQLiteConnection(DBAPI):
         else:
             if self._pool and conn in self._pool:
                 self._pool.remove(conn)
+            if threadid:
+                del self._threadOrigination[id(conn)]
             conn.close()
 
     def _setAutoCommit(self, conn, auto):
@@ -214,6 +216,7 @@ class SQLiteConnection(DBAPI):
     def close(self):
         DBAPI.close(self)
         self._threadPool = {}
+        self._threadOrigination = {}
         if self._memory:
             self._memoryConn.close()
             self.makeMemoryConnection()
