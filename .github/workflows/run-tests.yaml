@@ -59,7 +59,7 @@ jobs:
       - name: Install dependencies
         run: |
           python --version
-          python -m ensurepip
+          python -m pip || python -m ensurepip --default-pip --upgrade
           python -m pip install --upgrade pip setuptools wheel
           pip --version
           pip install --upgrade virtualenv "tox >= 3.15, < 4"
