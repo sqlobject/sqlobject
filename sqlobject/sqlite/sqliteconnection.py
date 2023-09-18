@@ -4,6 +4,7 @@ try:
     from _thread import get_ident
 except ImportError:
     from thread import get_ident
+from threading import enumerate as enumerate_threads
 try:
     from urllib import quote
 except ImportError:
@@ -150,6 +151,7 @@ class SQLiteConnection(DBAPI):
             self._connectionNumbers[id(conn)] = self._connectionCount
             self._connectionCount += 1
             return conn
+        self._releaseUnusedConnections()
         threadid = get_ident()
         if (self._pool is not None and threadid in self._threadPool):
             conn = self._threadPool[threadid]
@@ -183,6 +185,7 @@ class SQLiteConnection(DBAPI):
                 self._pool.remove(conn)
             if threadid:
                 del self._threadOrigination[id(conn)]
+                del self._threadPool[threadid]
             conn.close()
 
     def _setAutoCommit(self, conn, auto):
@@ -212,6 +215,19 @@ class SQLiteConnection(DBAPI):
         conn = self.module.connect(self.filename, **self._connOptions)
         conn.text_factory = str  # Convert text data to str, not unicode
         return conn
+
+    def _releaseUnusedConnections(self):
+        """Release connections from threads that're no longer active"""
+        thread_ids = set(t.ident for t in enumerate_threads())
+        tp_set = set(self._threadPool)
+        unused_connections = [
+            self._threadPool[tid] for tid in tp_set - thread_ids
+        ]
+        for unused_connection in unused_connections:
+            try:
+                self.releaseConnection(unused_connection, explicit=True)
+            except self.module.ProgrammingError:
+                pass  # Ignore error in `conn.close()` from a different thread
 
     def close(self):
         DBAPI.close(self)

@@ -8,6 +8,25 @@ News
 SQLObject (master)
 ==================
 
+Drivers
+-------
+
+* Fix(SQLiteConnection): Release connections from threads that are
+  no longer active. This fixes memory leak in multithreaded programs
+  in Windows.
+
+  ``SQLite`` requires different connections per thread so
+  ``SQLiteConnection`` creates and stores a connection per thread.
+  When a thread finishes its connections should be closed.
+  But if a program doesn't cooperate and doesn't close connections at
+  the end of a thread SQLObject leaks memory as connection objects are
+  stuck in ``SQLiteConnection``. On Linux the leak is negligible as
+  Linux reuses thread IDs so new connections replace old ones and old
+  connections are garbage collected. But Windows doesn't reuse thread
+  IDs so old connections pile and never released. To fix the problem
+  ``SQLiteConnection`` now enumerates threads and releases connections
+  from non-existing threads.
+
 CI
 --
 
