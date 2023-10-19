@@ -30,6 +30,11 @@ Drivers
 * Dropped ``supersqlite``. It seems abandoned.
   The last version 0.0.78 was released in 2018.
 
+Tests
+-----
+
+* Run tests with Python 3.12.
+
 CI
 --
 
