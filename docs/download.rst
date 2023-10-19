@@ -79,7 +79,7 @@ pygresql pypostgresql py-postgresql pg8000
 SQLite
 ^^^^^^
 
-sqlite pysqlite supersqlite
+pysqlite sqlite
 
 The rest
 ^^^^^^^^

@@ -50,7 +50,7 @@ Currently SQLObject supports MySQL_ and MariaDB_ via MySQLdb_ aka
 MySQL-python (called mysqlclient_ for Python 3), `MySQL Connector`_,
 oursql_, PyMySQL_, `mariadb connector`_, PyODBC_ and PyPyODBC_. For
 PostgreSQL_ psycopg2_ is recommended; PyGreSQL_, py-postgresql_ and pg8000_
-are supported; SQLite_ has a built-in driver, PySQLite_ or supersqlite_.
+are supported; SQLite_ has a built-in driver or PySQLite_.
 Firebird_ is supported via fdb_ or kinterbasdb_; pyfirebirdsql_ is
 supported but has problems. `MAX DB`_ (also known as SAP DB) is supported
 via sapdb_. Sybase via Sybase_. `MSSQL Server`_ via pymssql_ (+ FreeTDS_)
@@ -72,7 +72,6 @@ PostgreSQL and MSSQL but have problems (not all tests passed).
 .. _pg8000: https://pypi.org/project/pg8000/
 .. _SQLite: https://sqlite.org/
 .. _PySQLite: https://github.com/ghaering/pysqlite
-.. _supersqlite: https://github.com/plasticityai/supersqlite
 .. _Firebird: http://www.firebirdsql.org/en/python-driver/
 .. _fdb: http://www.firebirdsql.org/en/devel-python-driver/
 .. _kinterbasdb: http://kinterbasdb.sourceforge.net/
@@ -1861,8 +1860,8 @@ multi-threaded environment.
 The user can choose a DB API driver for SQLite by using a ``driver``
 parameter in DB URI or SQLiteConnection that can be a comma-separated list
 of driver names. Possible drivers are: ``pysqlite2`` (alias ``sqlite2``),
-``sqlite3``, ``sqlite`` (alias ``sqlite1``), ``supersqlite``. Default is to
-test supersqlite, pysqlite2, sqlite3 and sqlite in that order.
+``sqlite3``, ``sqlite`` (alias ``sqlite1``). Default is to
+test pysqlite2, sqlite3 and sqlite in that order.
 
 Connection-specific parameters are: ``encoding``, ``mode``, ``timeout``,
 ``check_same_thread``, ``use_table_info``.

@@ -27,6 +27,9 @@ Drivers
   ``SQLiteConnection`` now enumerates threads and releases connections
   from non-existing threads.
 
+* Dropped ``supersqlite``. It seems abandoned.
+  The last version 0.0.78 was released in 2018.
+
 CI
 --
 
