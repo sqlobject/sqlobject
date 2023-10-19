@@ -1,6 +1,7 @@
 import pytest
 from sqlobject import RelatedJoin, SQLObject, SQLRelatedJoin, StringCol, \
     ForeignKey
+from sqlobject.sqlbuilder import Alias
 from sqlobject.tests.dbtest import setupClass, supports
 
 
@@ -24,7 +25,7 @@ def createAllTables():
     setupClass(Tourtment)
 
 
-def test_1():
+def createData():
     createAllTables()
     # create some tourtments
     t1 = Tourtment(name='Tourtment #1')
@@ -44,7 +45,11 @@ def test_1():
     t2.addFighter(trunks)
     t3.addFighter(gohan)
     t3.addFighter(trunks)
-    # do some selects
+    return t1, t2, t3, gokou, vegeta, gohan, trunks
+
+
+def test_1():
+    t1, t2, t3, gokou, vegeta, gohan, trunks = createData()
     for i, j in zip(t1.fightersAsList, t1.fightersAsSResult):
         assert i is j
     assert len(t2.fightersAsList) == t2.fightersAsSResult.count()
@@ -63,6 +68,15 @@ def test_related_join_transaction():
     finally:
         trans.commit(True)
         Tourtment._connection.autoCommit = True
+
+
+def test_related_join_filter():
+    t1, t2, t3, gokou, vegeta, gohan, trunks = createData()
+    filteredFighters = t1.fightersAsSResult.filter(
+        Fighter.q.name.startswith('go')
+    ).orderBy('id')
+    for i, j in zip(filteredFighters, [gokou, gohan]):
+        assert i is j
 
 
 class RecursiveGroup(SQLObject):
@@ -89,3 +103,12 @@ def test_rec_group():
     a.addRecursiveGroup(a2)
 
     assert sorted(a.subgroups, key=lambda x: x.name) == [a1, a2]
+
+    # Please note this is a wrong result!
+    # Do not filter by the table, use alias. See the example below.
+    assert list(
+        a.subgroups.filter(RecursiveGroup.q.name == 'a1').orderBy('name')
+    ) == [a1, a2]
+
+    rgroupAlias = Alias(RecursiveGroup, '_SO_SQLRelatedJoin_OtherTable')
+    assert list(a.subgroups.filter(rgroupAlias.q.name == 'a1')) == [a1]

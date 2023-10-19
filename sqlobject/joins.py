@@ -291,52 +291,63 @@ class RelatedJoin(MultipleJoin):
 
 
 class OtherTableToJoin(sqlbuilder.SQLExpression):
-    def __init__(self, otherTable, otherIdName, interTable, joinColumn):
+    def __init__(self, otherTable, otherIdName, interTable, joinColumn, alias):
         self.otherTable = otherTable
         self.otherIdName = otherIdName
         self.interTable = interTable
         self.joinColumn = joinColumn
+        self.alias = alias
 
     def tablesUsedImmediate(self):
         return [
-            '%s  _SO_SQLRelatedJoin_OtherTable' % self.otherTable,
+            '%s  %s' % (self.otherTable, self.alias)
+            if self.alias else self.otherTable,
             self.interTable,
         ]
 
     def __sqlrepr__(self, db):
-        return '_SO_SQLRelatedJoin_OtherTable.%s = %s.%s' % (
+        return '%s.%s = %s.%s' % (
+            self.alias if self.alias else self.otherTable,
             self.otherIdName, self.interTable, self.joinColumn)
 
 
 class JoinToTable(sqlbuilder.SQLExpression):
-    def __init__(self, table, idName, interTable, joinColumn):
+    def __init__(self, table, idName, interTable, joinColumn, alias):
         self.table = table
         self.idName = idName
         self.interTable = interTable
         self.joinColumn = joinColumn
+        self.alias = alias
 
     def tablesUsedImmediate(self):
         return [
-            '%s  _SO_SQLRelatedJoin_ThisTable' % self.table,
+            '%s  %s' % (self.table, self.alias)
+            if self.alias else self.table,
             self.interTable,
         ]
 
     def __sqlrepr__(self, db):
-        return '%s.%s = _SO_SQLRelatedJoin_ThisTable.%s' % (
-            self.interTable, self.joinColumn, self.idName)
+        return '%s.%s = %s.%s' % (
+            self.interTable, self.joinColumn,
+            self.alias if self.alias else self.table, self.idName)
 
 
 class TableToId(sqlbuilder.SQLExpression):
-    def __init__(self, table, idName, idValue):
+    def __init__(self, table, idName, idValue, alias):
         self.table = table
         self.idName = idName
         self.idValue = idValue
+        self.alias = alias
 
     def tablesUsedImmediate(self):
-        return ['%s  _SO_SQLRelatedJoin_ThisTable' % self.table]
+        return [
+            '%s  %s' % (self.table, self.alias)
+            if self.alias else self.table,
+        ]
 
     def __sqlrepr__(self, db):
-        return '_SO_SQLRelatedJoin_ThisTable.%s = %s' % (
+        return '%s.%s = %s' % (
+            self.alias if self.alias else self.table,
             self.idName, self.idValue)
 
 
@@ -346,23 +357,33 @@ class SOSQLRelatedJoin(SORelatedJoin):
             conn = inst._connection
         else:
             conn = None
-        results = sqlbuilder.Alias(
-            self.otherClass, '_SO_SQLRelatedJoin_OtherTable'
-        ).select(sqlbuilder.AND(
+        needAlias = self.soClass is self.otherClass
+        if needAlias:
+            source = sqlbuilder.Alias(
+                self.otherClass, '_SO_SQLRelatedJoin_OtherTable')
+        else:
+            source = self.otherClass
+        results = source.select(sqlbuilder.AND(
             OtherTableToJoin(
                 self.otherClass.sqlmeta.table, self.otherClass.sqlmeta.idName,
-                self.intermediateTable, self.otherColumn
+                self.intermediateTable, self.otherColumn,
+                '_SO_SQLRelatedJoin_OtherTable' if needAlias else '',
             ),
             JoinToTable(
                 self.soClass.sqlmeta.table, self.soClass.sqlmeta.idName,
-                self.intermediateTable, self.joinColumn
+                self.intermediateTable, self.joinColumn,
+                '_SO_SQLRelatedJoin_ThisTable' if needAlias else '',
             ),
-            TableToId(self.soClass.sqlmeta.table, self.soClass.sqlmeta.idName,
-                      inst.id),
+            TableToId(
+                self.soClass.sqlmeta.table, self.soClass.sqlmeta.idName,
+                inst.id, '_SO_SQLRelatedJoin_ThisTable' if needAlias else '',
+            ),
         ), clauseTables=(
-            '%s  _SO_SQLRelatedJoin_ThisTable' % self.soClass.sqlmeta.table,
+            '%s  _SO_SQLRelatedJoin_ThisTable' % self.soClass.sqlmeta.table
+            if needAlias else self.soClass.sqlmeta.table,
             '%s  _SO_SQLRelatedJoin_OtherTable' %
-            self.otherClass.sqlmeta.table,
+            self.otherClass.sqlmeta.table
+            if needAlias else self.otherClass.sqlmeta.table,
             self.intermediateTable),
             connection=conn)
         return results.orderBy(self.orderBy)

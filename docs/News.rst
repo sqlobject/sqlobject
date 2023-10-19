@@ -8,6 +8,14 @@ News
 SQLObject (master)
 ==================
 
+Bug fixes
+---------
+
+* Relaxed aliasing in ``SQLRelatedJoin`` introduced in 3.10.2 - aliasing
+  is required only when the table joins with itself. When there're two
+  tables to join aliasing prevents filtering -- wrong SQL is generated
+  in ``relJoinCol.filter(thisClass.q.column)``.
+
 Drivers
 -------
 
