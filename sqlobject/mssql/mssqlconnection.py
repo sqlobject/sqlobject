@@ -10,7 +10,7 @@ class MSSQLConnection(DBAPI):
     dbName = 'mssql'
     schemes = [dbName]
 
-    limit_re = re.compile('^\s*(select )(.*)', re.IGNORECASE)
+    limit_re = re.compile(r'^\s*(select )(.*)', re.IGNORECASE)
 
     odbc_keywords = ('Server', 'Port', 'User Id', 'Password', 'Database')
 

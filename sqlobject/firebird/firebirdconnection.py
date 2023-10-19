@@ -11,7 +11,7 @@ class FirebirdConnection(DBAPI):
     dbName = 'firebird'
     schemes = [dbName]
 
-    limit_re = re.compile('^\s*(select )(.*)', re.IGNORECASE)
+    limit_re = re.compile(r'^\s*(select )(.*)', re.IGNORECASE)
 
     def __init__(self, host, db, port='3050', user='sysdba',
                  password='masterkey', autoCommit=1,
