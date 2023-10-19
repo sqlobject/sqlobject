@@ -6,3 +6,6 @@ pytest < 5.0; python_version == '2.7' or python_version == '3.4'
 # https://github.com/pytest-dev/pytest/issues/9620
 
 pytest < 7.0; python_version >= '3.5'
+
+pendulum < 2.1; python_version == '3.4'
+pendulum; python_version == '2.7' or (python_version >= '3.5' and python_version <= '3.11')
