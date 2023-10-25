@@ -23,6 +23,11 @@ release_level = '$state'
 serial = $serial
 version_info = (major, minor, micro, release_level, serial)" > sqlobject/__version__.py &&
 
+sqlo_tag="SQLObject $tag" &&
+sqlo_tag_len=${#sqlo_tag} &&
+sed -Ei "1s/^SQLObject [1-9].+\$/$sqlo_tag/" README.rst &&
+sed -Ei "2s/^==========+\$/`python -c \"print('='*$sqlo_tag_len)\"`/" README.rst &&
+
 if [ "$state" = alpha ]; then
     trove_cls='3 - Alpha'
 elif [ "$state" = beta -o "$state" = 'release candidate' ]; then
