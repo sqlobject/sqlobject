@@ -1,58 +1,26 @@
 Hello!
 
-I'm pleased to announce version 3.10.3, the 3rd bugfix release of branch
+I'm pleased to announce version 3.10.4a1, the first alpha of the upcoming
+release of branch 3.10 of SQLObject.
+
+I'm pleased to announce version 3.10.4a2, the second alpha of the upcoming
+release of branch 3.10 of SQLObject.
+
+I'm pleased to announce version 3.10.4b1, the first beta of the upcoming
+release of branch 3.10 of SQLObject.
+
+I'm pleased to announce version 3.10.4rc1, the first release candidate
+of the upcoming release of branch 3.10 of SQLObject.
+
+I'm pleased to announce version 3.10.4, the fourth bugfix release of branch
 3.10 of SQLObject.
 
 
 What's new in SQLObject
 =======================
 
-The contributors for this release are
-Igor Yudytskiy and shuffle (github.com/shuffleyxf).
-Thanks!
+The contributors for this release are ... Thanks!
 
-Bug fixes
----------
-
-* Relaxed aliasing in ``SQLRelatedJoin`` introduced in 3.10.2 - aliasing
-  is required only when the table joins with itself. When there're two
-  tables to join aliasing prevents filtering -- wrong SQL is generated
-  in ``relJoinCol.filter(thisClass.q.column)``.
-
-Drivers
--------
-
-* Fix(SQLiteConnection): Release connections from threads that are
-  no longer active. This fixes memory leak in multithreaded programs
-  in Windows.
-
-  ``SQLite`` requires different connections per thread so
-  ``SQLiteConnection`` creates and stores a connection per thread.
-  When a thread finishes its connections should be closed.
-  But if a program doesn't cooperate and doesn't close connections at
-  the end of a thread SQLObject leaks memory as connection objects are
-  stuck in ``SQLiteConnection``. On Linux the leak is negligible as
-  Linux reuses thread IDs so new connections replace old ones and old
-  connections are garbage collected. But Windows doesn't reuse thread
-  IDs so old connections pile and never released. To fix the problem
-  ``SQLiteConnection`` now enumerates threads and releases connections
-  from non-existing threads.
-
-* Dropped ``supersqlite``. It seems abandoned.
-  The last version 0.0.78 was released in 2018.
-
-Tests
------
-
-* Run tests with Python 3.12.
-
-CI
---
-
-* GHActions: Ensure ``pip`` only if needed
-
-  This is to work around a problem in conda with Python 3.7 -
-  it brings in wrong version of ``setuptools`` incompatible with Python 3.7.
 
 For a more complete list, please see the news:
 http://sqlobject.org/News.html
@@ -84,7 +52,7 @@ Site:
 http://sqlobject.org
 
 Download:
-https://pypi.org/project/SQLObject/3.10.3
+https://pypi.org/project/SQLObject/3.10.4a0.dev20231025/
 
 News and changes:
 http://sqlobject.org/News.html
