@@ -22,5 +22,18 @@ micro = $micro
 release_level = '$state'
 serial = $serial
 version_info = (major, minor, micro, release_level, serial)" > sqlobject/__version__.py &&
+
+if [ "$state" = alpha ]; then
+    trove_cls='3 - Alpha'
+elif [ "$state" = beta -o "$state" = 'release candidate' ]; then
+    trove_cls='4 - Beta'
+elif [ "$state" = final -o "$state" = post ]; then
+    trove_cls='5 - Production/Stable'
+else
+    echo "Error: unknown state $state" >&2
+    exit 1
+fi &&
+sed -Ei "s/Development Status :: .+\",\$/Development Status :: $trove_cls\",/" setup.py &&
+
 `git var GIT_EDITOR` devscripts/build-all-docs docs/News.rst ANNOUNCE.rst sqlobject/__version__.py README.rst setup.cfg setup.py &&
 exec git commit --message="Release $tag" devscripts/build-all-docs docs/News.rst ANNOUNCE.rst sqlobject/__version__.py README.rst setup.cfg setup.py
