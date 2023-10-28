@@ -8,6 +8,14 @@ News
 SQLObject (master)
 ==================
 
+Features
+--------
+
+* Continue working on ``SQLRelatedJoin`` aliasing introduced in 3.10.2.
+  When a table joins with itself calling
+  ``relJoinCol.filter(thisClass.q.column)`` raises ``ValueError``
+  hinting that an alias is required for filtering.
+
 SQLObject 3.10.3
 ================
 

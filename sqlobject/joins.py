@@ -2,6 +2,7 @@ from itertools import count
 from . import boundattributes
 from . import classregistry
 from . import events
+from . import sresults
 from . import styles
 from . import sqlbuilder
 from .styles import capword
@@ -351,6 +352,21 @@ class TableToId(sqlbuilder.SQLExpression):
             self.idName, self.idValue)
 
 
+class SQLJoinSelectResults(sresults.SelectResults):
+    def filter(self, filter_clause):
+        clause_tables = filter_clause.tablesUsed(None)
+        if self._SOSQLRelatedJoin_realSourceClass.sqlmeta.table \
+                in clause_tables:
+            tableClass = self._SOSQLRelatedJoin_realSourceClass.__name__
+            raise ValueError(
+                "Using table '%s' in the filter expression without an alias "
+                "could produce wrong SQL. Most probably you need "
+                "Alias(%s, '_SO_SQLRelatedJoin_OtherTable') instead."
+                % (tableClass, tableClass)
+            )
+        return sresults.SelectResults.filter(self, filter_clause)
+
+
 class SOSQLRelatedJoin(SORelatedJoin):
     def performJoin(self, inst):
         if inst.sqlmeta._perConnection:
@@ -361,9 +377,11 @@ class SOSQLRelatedJoin(SORelatedJoin):
         if needAlias:
             source = sqlbuilder.Alias(
                 self.otherClass, '_SO_SQLRelatedJoin_OtherTable')
+            sresultsClass = SQLJoinSelectResults
         else:
             source = self.otherClass
-        results = self.otherClass.SelectResultsClass(
+            sresultsClass = self.otherClass.SelectResultsClass
+        results = sresultsClass(
             source,
             sqlbuilder.AND(
                 OtherTableToJoin(
@@ -394,6 +412,7 @@ class SOSQLRelatedJoin(SORelatedJoin):
             connection=conn,
             orderBy=self.orderBy,
         )
+        results._SOSQLRelatedJoin_realSourceClass = self.otherClass
         return results
 
 

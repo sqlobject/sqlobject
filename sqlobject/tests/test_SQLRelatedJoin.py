@@ -104,11 +104,11 @@ def test_rec_group():
 
     assert sorted(a.subgroups, key=lambda x: x.name) == [a1, a2]
 
-    # Please note this is a wrong result!
-    # Do not filter by the table, use alias. See the example below.
-    assert list(
-        a.subgroups.filter(RecursiveGroup.q.name == 'a1').orderBy('name')
-    ) == [a1, a2]
+    pytest.raises(
+        ValueError,
+        a.subgroups.filter,
+        RecursiveGroup.q.name == 'a1',
+    )
 
     rgroupAlias = Alias(RecursiveGroup, '_SO_SQLRelatedJoin_OtherTable')
     assert list(a.subgroups.filter(rgroupAlias.q.name == 'a1')) == [a1]
