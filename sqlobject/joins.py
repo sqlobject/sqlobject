@@ -363,7 +363,8 @@ class SOSQLRelatedJoin(SORelatedJoin):
                 self.otherClass, '_SO_SQLRelatedJoin_OtherTable')
         else:
             source = self.otherClass
-        results = source.select(
+        results = self.otherClass.SelectResultsClass(
+            source,
             sqlbuilder.AND(
                 OtherTableToJoin(
                     self.otherClass.sqlmeta.table,
