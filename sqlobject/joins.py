@@ -363,30 +363,37 @@ class SOSQLRelatedJoin(SORelatedJoin):
                 self.otherClass, '_SO_SQLRelatedJoin_OtherTable')
         else:
             source = self.otherClass
-        results = source.select(sqlbuilder.AND(
-            OtherTableToJoin(
-                self.otherClass.sqlmeta.table, self.otherClass.sqlmeta.idName,
-                self.intermediateTable, self.otherColumn,
-                '_SO_SQLRelatedJoin_OtherTable' if needAlias else '',
+        results = source.select(
+            sqlbuilder.AND(
+                OtherTableToJoin(
+                    self.otherClass.sqlmeta.table,
+                    self.otherClass.sqlmeta.idName,
+                    self.intermediateTable, self.otherColumn,
+                    '_SO_SQLRelatedJoin_OtherTable' if needAlias else '',
+                ),
+                JoinToTable(
+                    self.soClass.sqlmeta.table, self.soClass.sqlmeta.idName,
+                    self.intermediateTable, self.joinColumn,
+                    '_SO_SQLRelatedJoin_ThisTable' if needAlias else '',
+                ),
+                TableToId(
+                    self.soClass.sqlmeta.table, self.soClass.sqlmeta.idName,
+                    inst.id,
+                    '_SO_SQLRelatedJoin_ThisTable' if needAlias else '',
+                ),
             ),
-            JoinToTable(
-                self.soClass.sqlmeta.table, self.soClass.sqlmeta.idName,
-                self.intermediateTable, self.joinColumn,
-                '_SO_SQLRelatedJoin_ThisTable' if needAlias else '',
+            clauseTables=(
+                '%s  _SO_SQLRelatedJoin_ThisTable' % self.soClass.sqlmeta.table
+                if needAlias else self.soClass.sqlmeta.table,
+                '%s  _SO_SQLRelatedJoin_OtherTable' %
+                self.otherClass.sqlmeta.table
+                if needAlias else self.otherClass.sqlmeta.table,
+                self.intermediateTable,
             ),
-            TableToId(
-                self.soClass.sqlmeta.table, self.soClass.sqlmeta.idName,
-                inst.id, '_SO_SQLRelatedJoin_ThisTable' if needAlias else '',
-            ),
-        ), clauseTables=(
-            '%s  _SO_SQLRelatedJoin_ThisTable' % self.soClass.sqlmeta.table
-            if needAlias else self.soClass.sqlmeta.table,
-            '%s  _SO_SQLRelatedJoin_OtherTable' %
-            self.otherClass.sqlmeta.table
-            if needAlias else self.otherClass.sqlmeta.table,
-            self.intermediateTable),
-            connection=conn)
-        return results.orderBy(self.orderBy)
+            connection=conn,
+            orderBy=self.orderBy,
+        )
+        return results
 
 
 class SQLRelatedJoin(RelatedJoin):
