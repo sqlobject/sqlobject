@@ -364,7 +364,16 @@ class MySQLConnection(DBAPI):
         if soClass.sqlmeta.idType is not int:
             raise TypeError('sqlmeta.idType must be int or str, not %r'
                             % soClass.sqlmeta.idType)
-        return '%s INT PRIMARY KEY AUTO_INCREMENT' % soClass.sqlmeta.idName
+        if soClass.sqlmeta.idSize is None:
+            mysql_int_type = 'INT'
+        elif soClass.sqlmeta.idSize in ('TINY', 'SMALL', 'MEDIUM', 'BIG'):
+            mysql_int_type = '%sINT' % soClass.sqlmeta.idSize
+        else:
+            raise ValueError(
+                "sqlmeta.idSize must be 'TINY', 'SMALL', 'MEDIUM', 'BIG' "
+                "or None, not %r" % soClass.sqlmeta.idSize)
+        return '%s %s PRIMARY KEY AUTO_INCREMENT' \
+               % (soClass.sqlmeta.idName, mysql_int_type)
 
     def joinSQLType(self, join):
         return 'INT NOT NULL'

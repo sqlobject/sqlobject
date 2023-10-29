@@ -768,6 +768,13 @@ values are:
    or ``str``. This is ``int`` by default (all IDs are normalized to
    integers).
 
+`idSize`:
+   This sets the size of integer column ``id`` for MySQL and PostgreSQL.
+   Allowed values are ``'TINY'``, ``'SMALL'``, ``'MEDIUM'``, ``'BIG'``,
+   ``None``; default is ``None``. For Postgres mapped to
+   ``smallserial``/``serial``/``bigserial``. For other backends it's
+   currently ignored.
+
 `style`:
    A style object -- this object allows you to use other algorithms
    for translating between Python attribute and class names, and the

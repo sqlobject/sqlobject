@@ -190,6 +190,7 @@ class sqlmeta(with_metaclass(declarative.DeclarativeMeta, object)):
 
     table = None
     idName = None
+    idSize = None   # Allowed values are 'TINY/SMALL/MEDIUM/BIG/None'
     idSequence = None
     # This function is used to coerce IDs into the proper format,
     # so you should replace it with str, or another function, if you
@@ -271,6 +272,10 @@ class sqlmeta(with_metaclass(declarative.DeclarativeMeta, object)):
         if cls.idType not in (int, str):
             raise TypeError('sqlmeta.idType must be int or str, not %r'
                             % cls.idType)
+        if cls.idSize not in ('TINY', 'SMALL', 'MEDIUM', 'BIG', None):
+            raise ValueError(
+                "sqlmeta.idType must be 'TINY', 'SMALL', 'MEDIUM', 'BIG' "
+                "or None, not %r" % cls.idSize)
         cls.soClass = soClass
         if not cls.style:
             cls.style = styles.defaultStyle

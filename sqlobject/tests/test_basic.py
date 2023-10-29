@@ -347,3 +347,13 @@ def _test_wrong_sqlmeta_idType():
 
 def test_wrong_sqlmeta_idType():
     pytest.raises(TypeError, _test_wrong_sqlmeta_idType)
+
+
+def _test_wrong_sqlmeta_idSize():
+    class SOTestSO14(SQLObject):
+        class sqlmeta:
+            idSize = 'DEFAULT'
+
+
+def test_wrong_sqlmeta_idSize():
+    pytest.raises(ValueError, _test_wrong_sqlmeta_idSize)

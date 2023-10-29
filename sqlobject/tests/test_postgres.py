@@ -70,3 +70,13 @@ def test_SOME():
     SOTestSOME(value=30)
     assert len(list(SOTestSOME.select(
         SOTestSOME.q.value > SOME(Select([SOTestSOME.q.value]))))) == 2
+
+
+class SOTestPgidSize(SQLObject):
+    class sqlmeta:
+        idSize = 'BIG'
+
+
+def test_idSize():
+    assert 'id BIGSERIAL PRIMARY KEY' \
+        in SOTestPgidSize.createTableSQL(connection=connection)[0]

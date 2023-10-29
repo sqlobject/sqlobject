@@ -18,6 +18,13 @@ Features
 
 * Test that ``idType`` is either ``int`` or ``str``.
 
+* Added ``sqlmeta.idSize``. This sets the size of integer column ``id``
+  for MySQL and PostgreSQL. Allowed values are ``'TINY'``, ``'SMALL'``,
+  ``'MEDIUM'``, ``'BIG'``, ``None``; default is ``None``. For Postgres
+  mapped to ``smallserial``/``serial``/``bigserial``. For other backends
+  it's currently ignored. Feature request by Meet Gujrathi at
+  https://stackoverflow.com/q/77360075/7976758
+
 SQLObject 3.10.3
 ================
 

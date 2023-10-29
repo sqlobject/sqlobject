@@ -341,7 +341,22 @@ class PostgresConnection(DBAPI):
         return index.postgresCreateIndexSQL(soClass)
 
     def createIDColumn(self, soClass):
-        key_type = {int: "SERIAL", str: "TEXT"}[soClass.sqlmeta.idType]
+        if soClass.sqlmeta.idType is int:
+            if soClass.sqlmeta.idSize in ('TINY', 'SMALL'):
+                key_type = 'SMALLSERIAL'
+            elif soClass.sqlmeta.idSize in ('MEDIUM', None):
+                key_type = 'SERIAL'
+            elif soClass.sqlmeta.idSize == 'BIG':
+                key_type = 'BIGSERIAL'
+            else:
+                raise ValueError(
+                    "sqlmeta.idSize must be 'TINY', 'SMALL', 'MEDIUM', 'BIG' "
+                    "or None, not %r" % soClass.sqlmeta.idSize)
+        elif soClass.sqlmeta.idType is str:
+            key_type = "TEXT"
+        else:
+            raise TypeError('sqlmeta.idType must be int or str, not %r'
+                            % soClass.sqlmeta.idType)
         return '%s %s PRIMARY KEY' % (soClass.sqlmeta.idName, key_type)
 
     def dropTable(self, tableName, cascade=False):

@@ -38,3 +38,13 @@ def test_ANY():
     SOTestANY(value=30)
     assert len(list(SOTestANY.select(
         SOTestANY.q.value > ANY(Select([SOTestANY.q.value]))))) == 2
+
+
+class SOTestMySQLidSize(SQLObject):
+    class sqlmeta:
+        idSize = 'BIG'
+
+
+def test_idSize():
+    assert 'id BIGINT PRIMARY KEY AUTO_INCREMENT' \
+        in SOTestMySQLidSize.createTableSQL(connection=connection)[0]
