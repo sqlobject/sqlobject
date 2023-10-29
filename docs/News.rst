@@ -16,6 +16,8 @@ Features
   ``relJoinCol.filter(thisClass.q.column)`` raises ``ValueError``
   hinting that an alias is required for filtering.
 
+* Test that ``idType`` is either ``int`` or ``str``.
+
 SQLObject 3.10.3
 ================
 

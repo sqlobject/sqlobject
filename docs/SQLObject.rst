@@ -764,8 +764,9 @@ values are:
    is ``id``.
 
 `idType`:
-   A function that coerces/normalizes IDs when setting IDs.  This
-   is ``int`` by default (all IDs are normalized to integers).
+   A type that coerces/normalizes IDs when setting IDs.  Must be ``int``
+   or ``str``. This is ``int`` by default (all IDs are normalized to
+   integers).
 
 `style`:
    A style object -- this object allows you to use other algorithms

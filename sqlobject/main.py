@@ -268,6 +268,9 @@ class sqlmeta(with_metaclass(declarative.DeclarativeMeta, object)):
 
     @classmethod
     def setClass(cls, soClass):
+        if cls.idType not in (int, str):
+            raise TypeError('sqlmeta.idType must be int or str, not %r'
+                            % cls.idType)
         cls.soClass = soClass
         if not cls.style:
             cls.style = styles.defaultStyle

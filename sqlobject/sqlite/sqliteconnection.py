@@ -311,8 +311,11 @@ class SQLiteConnection(DBAPI):
         return self._createIDColumn(soClass.sqlmeta)
 
     def _createIDColumn(self, sqlmeta):
-        if sqlmeta.idType == str:
+        if sqlmeta.idType is str:
             return '%s TEXT PRIMARY KEY' % sqlmeta.idName
+        if sqlmeta.idType is not int:
+            raise TypeError('sqlmeta.idType must be int or str, not %r'
+                            % sqlmeta.idType)
         return '%s INTEGER PRIMARY KEY AUTOINCREMENT' % sqlmeta.idName
 
     def joinSQLType(self, join):

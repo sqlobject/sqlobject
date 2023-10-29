@@ -337,3 +337,13 @@ def test_connection_override():
 
     assert SOTestSO13._connection.uri() == 'sqlite:///db2'
     del sqlhub.processConnection
+
+
+def _test_wrong_sqlmeta_idType():
+    class SOTestSO13(SQLObject):
+        class sqlmeta:
+            idType = dict
+
+
+def test_wrong_sqlmeta_idType():
+    pytest.raises(TypeError, _test_wrong_sqlmeta_idType)
