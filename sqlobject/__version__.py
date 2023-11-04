@@ -1,8 +1,8 @@
 
-version = '3.10.3'
+version = '3.11.0b1'
 major = 3
-minor = 10
-micro = 3
-release_level = 'final'
-serial = 0
+minor = 11
+micro = 0
+release_level = 'beta'
+serial = 1
 version_info = (major, minor, micro, release_level, serial)
