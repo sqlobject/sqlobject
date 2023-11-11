@@ -5,8 +5,13 @@ News
 .. contents:: Contents:
    :backlinks: none
 
+SQLObject (master)
+==================
+
 SQLObject 3.11.0
 ================
+
+Released 2023 Nov 11.
 
 Features
 --------
