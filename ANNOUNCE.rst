@@ -1,26 +1,28 @@
 Hello!
 
-I'm pleased to announce version 3.11.0a1, the first alpha of the upcoming
-release of branch 3.11 of SQLObject.
-
-I'm pleased to announce version 3.11.0a2, the second alpha of the upcoming
-release of branch 3.11 of SQLObject.
-
-I'm pleased to announce version 3.11.0b1, the first beta of the upcoming
-release of branch 3.11 of SQLObject.
-
-I'm pleased to announce version 3.11.0rc1, the first release candidate
-of the upcoming release of branch 3.11 of SQLObject.
-
-I'm pleased to announce version 3.11.0, the fourth bugfix release of branch
-3.11 of SQLObject.
+I'm pleased to announce version 3.11.0, the first stable release
+of branch 3.11 of SQLObject.
 
 
 What's new in SQLObject
 =======================
 
-The contributors for this release are ... Thanks!
+Features
+--------
 
+* Continue working on ``SQLRelatedJoin`` aliasing introduced in 3.10.2.
+  When a table joins with itself calling
+  ``relJoinCol.filter(thisClass.q.column)`` raises ``ValueError``
+  hinting that an alias is required for filtering.
+
+* Test that ``idType`` is either ``int`` or ``str``.
+
+* Added ``sqlmeta.idSize``. This sets the size of integer column ``id``
+  for MySQL and PostgreSQL. Allowed values are ``'TINY'``, ``'SMALL'``,
+  ``'MEDIUM'``, ``'BIG'``, ``None``; default is ``None``. For Postgres
+  mapped to ``smallserial``/``serial``/``bigserial``. For other backends
+  it's currently ignored. Feature request by Meet Gujrathi at
+  https://stackoverflow.com/q/77360075/7976758
 
 For a more complete list, please see the news:
 http://sqlobject.org/News.html
@@ -52,7 +54,7 @@ Site:
 http://sqlobject.org
 
 Download:
-https://pypi.org/project/SQLObject/3.11.0a0.dev20231105/
+https://pypi.org/project/SQLObject/3.11.0
 
 News and changes:
 http://sqlobject.org/News.html

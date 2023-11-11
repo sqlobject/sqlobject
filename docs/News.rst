@@ -5,8 +5,8 @@ News
 .. contents:: Contents:
    :backlinks: none
 
-SQLObject (master)
-==================
+SQLObject 3.11.0
+================
 
 Features
 --------
