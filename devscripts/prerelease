@@ -33,7 +33,7 @@ if [ "$state" = alpha ]; then
 elif [ "$state" = beta -o "$state" = 'release candidate' ]; then
     trove_cls='4 - Beta'
 elif [ "$state" = final -o "$state" = post ]; then
-    trove_cls='5 - Production/Stable'
+    trove_cls='5 - Production\/Stable'
 else
     echo "Error: unknown state $state" >&2
     exit 1
