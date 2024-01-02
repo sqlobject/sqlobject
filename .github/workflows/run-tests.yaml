@@ -39,7 +39,7 @@ jobs:
         if: ${{ runner.os == 'Windows' }}
 
       # Setup Python/pip
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - uses: s-weigand/setup-conda@v1
         with:
           conda-channels: conda-forge
