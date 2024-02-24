@@ -8,6 +8,11 @@ News
 SQLObject (master)
 ==================
 
+CI
+--
+
+* Run tests with ``PyGreSQL`` on w32, do not ignore errors.
+
 SQLObject 3.11.0
 ================
 
