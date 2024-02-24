@@ -13,6 +13,8 @@ CI
 
 * Run tests with ``PyGreSQL`` on w32, do not ignore errors.
 
+* Skip tests with ``pg8000`` on w32.
+
 SQLObject 3.11.0
 ================
 
