@@ -1,3 +1,4 @@
 pymysql < 1.0; python_version == '2.7' or python_version == '3.5'
 pymysql < 0.10.0; python_version == '3.4'
-pymysql; python_version >= '3.6'
+pymysql < 1.0.3; python_version == '3.6'
+pymysql; python_version >= '3.7'
