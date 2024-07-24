@@ -40,15 +40,19 @@ jobs:
 
       # Setup Python/pip
       - uses: actions/checkout@v4
-      - uses: s-weigand/setup-conda@v1
+      - uses: conda-incubator/setup-miniconda@v3
         with:
-          conda-channels: conda-forge
+          miniforge-version: latest
           python-version: ${{ matrix.python-version }}
         if: ${{ !contains(fromJSON(env.not_in_conda), matrix.python-version) }}
       - uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
         if: ${{ contains(fromJSON(env.not_in_conda), matrix.python-version) }}
+      - uses: actions/cache@v3
+        with:
+          path: ~/conda_pkgs_dir
+          key: ${{ runner.os }}-conda
       - name: Cache pip
         uses: actions/cache@v3
         with:
@@ -63,8 +67,10 @@ jobs:
           python -m pip install --upgrade pip setuptools wheel
           pip --version
           pip install --upgrade virtualenv "tox >= 3.15, < 4"
+        shell: bash -el {0}
       - name: Set PYVER
         run: |
+          python -c "
           import os, sys
           ld_library_path = None
           pyver = '%d%d' % tuple(sys.version_info[:2])
@@ -77,11 +83,13 @@ jobs:
               f.write('LD_LIBRARY_PATH=' + ld_library_path + '\n')
             f.write('PYVER=' + pyver + '\n')
             f.write('PGPASSWORD=test\n')
-        shell: python
+          "
+        shell: bash -el {0}
 
       - name: tox version
         run: |
           tox --version
+        shell: bash -el {0}
       - name: Run tox @ Linux
         run: |
           devscripts/tox-select-envs $PYVER-mysql
@@ -89,9 +97,11 @@ jobs:
           devscripts/tox-select-envs $PYVER-sqlite
           devscripts/tox-select-envs $PYVER-flake8
         if: ${{ runner.os == 'Linux' }}
+        shell: bash -el {0}
       - name: Run tox @ w32
         run: |
           devscripts\tox-select-envs.cmd %PYVER%-mysql
           devscripts\tox-select-envs.cmd %PYVER%-postgres
           devscripts\tox-select-envs.cmd %PYVER%-sqlite
         if: ${{ runner.os == 'Windows' }}
+        shell: cmd /C CALL {0}

@@ -15,6 +15,8 @@ CI
 
 * Skip tests with ``pg8000`` on w32.
 
+* GHActions: Switch to ``setup-miniconda``.
+
 SQLObject 3.11.0
 ================
 
