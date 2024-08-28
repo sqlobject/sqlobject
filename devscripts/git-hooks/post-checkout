@@ -11,7 +11,7 @@ if [ "$new_branch" = 1 ]; then
    # empty directories and outdated docs
    find . -name '*.py[co]' -delete &&
    for d in sqlobject/include/pydispatch sqlobject/include/tests; do
-      if [ "`echo $d/*`" = "$d/*" ]; then rm -rf $d; fi
+      if [ "`echo $d/*`" = "$d/*" ]; then rmdir $d; fi
    done &&
    rm -rf docs/_build/html docs/html
 fi
