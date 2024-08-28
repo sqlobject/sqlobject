@@ -14,9 +14,4 @@ if [ "$new_branch" = 1 ]; then
       if [ "`echo $d/*`" = "$d/*" ]; then rm -rf $d; fi
    done &&
    rm -rf docs/_build/html docs/html
-fi &&
-
-python    -m compileall -q -x '\.tox/' . &&
-python -O -m compileall -q -x '\.tox/' .
-
-exit 0
+fi
