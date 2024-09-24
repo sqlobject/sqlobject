@@ -8,6 +8,11 @@ News
 SQLObject (master)
 ==================
 
+Tests
+-----
+
+* Run tests with Python 3.13.
+
 CI
 --
 
@@ -16,6 +21,8 @@ CI
 * Skip tests with ``pg8000`` on w32.
 
 * GHActions: Switch to ``setup-miniconda``.
+
+* GHActions: Python 3.13.
 
 SQLObject 3.11.0
 ================

@@ -64,6 +64,7 @@ and `GitHub <https://github.com/sqlobject>`_.
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
         "Programming Language :: Python :: 3.12",
+        "Programming Language :: Python :: 3.13",
         "Topic :: Database",
         "Topic :: Database :: Front-Ends",
         "Topic :: Software Development :: Libraries :: Python Modules",
@@ -103,9 +104,12 @@ and `GitHub <https://github.com/sqlobject>`_.
     requires=['FormEncode', 'PyDispatcher'],
     install_requires=[
         "FormEncode>=1.1.1,!=1.3.0; python_version=='2.7'",
-        "FormEncode>=1.3.1; python_version>='3.4'",
+        "FormEncode>=1.3.1; python_version>='3.4' and python_version < '3.13'",
         "PyDispatcher>=2.0.4",
-    ],
+    ] + [
+        "formencode @ "
+        "git+https://github.com/formencode/formencode.git#egg=formencode"
+    ] if sys.version_info >= (3, 13) else [],
     extras_require={
         # Firebird/Interbase
         'fdb': ['fdb'],
