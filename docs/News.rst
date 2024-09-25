@@ -19,6 +19,8 @@ Tests
 
 * Run tests with Python 3.13.
 
+* Fix ``test_exceptions.py``: MariaDB returns a different error code.
+
 CI
 --
 

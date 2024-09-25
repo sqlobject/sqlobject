@@ -29,6 +29,6 @@ def test_exceptions():
     try:
         list(SOTestExceptionWithNonexistingTable.select())
     except ProgrammingError as e:
-        assert e.args[0].code == '42P01'
+        assert e.args[0].code in (1146, '42P01')
     else:
         assert False, "DID NOT RAISE"
