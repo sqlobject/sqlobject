@@ -21,6 +21,9 @@ class ErrorMessage(str):
             # pg8000 for Python 3.5+
             ecode = eargs0['C']
             eerror = emessage = eargs0['M']
+        elif e.__module__ == 'pg':  # PyGreSQL
+            ecode = e.sqlstate
+            eerror = emessage = e.args[0]
         elif hasattr(e, 'pgcode'):  # psycopg2 or psycopg2.errors
             ecode = getattr(e, 'pgcode', None)
             eerror = getattr(e, 'pgerror', None)

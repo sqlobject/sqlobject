@@ -14,6 +14,8 @@ Drivers
 * Separate ``psycopg`` and ``psycopg2``;
   ``psycopg`` is actually ``psycopg3`` now.
 
+* Minor fix in getting error code from PyGreSQL.
+
 Tests
 -----
 
