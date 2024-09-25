@@ -73,7 +73,8 @@ pyodbc pypyodbc odbc (synonym for pyodbc)
 PostgreSQL
 ^^^^^^^^^^
 
-psycopg2 psycopg postgres postgresql (synonyms for psycopg2)
+psycopg
+psycopg2 postgres postgresql (synonyms for psycopg2)
 pygresql pypostgresql py-postgresql pg8000
 
 SQLite

@@ -49,13 +49,13 @@ Requirements
 Currently SQLObject supports MySQL_ and MariaDB_ via MySQLdb_ aka
 MySQL-python (called mysqlclient_ for Python 3), `MySQL Connector`_,
 oursql_, PyMySQL_, `mariadb connector`_, PyODBC_ and PyPyODBC_. For
-PostgreSQL_ psycopg2_ is recommended; PyGreSQL_, py-postgresql_ and pg8000_
-are supported; SQLite_ has a built-in driver or PySQLite_.
-Firebird_ is supported via fdb_ or kinterbasdb_; pyfirebirdsql_ is
-supported but has problems. `MAX DB`_ (also known as SAP DB) is supported
-via sapdb_. Sybase via Sybase_. `MSSQL Server`_ via pymssql_ (+ FreeTDS_)
-or adodbapi_ (Win32). PyODBC_ and PyPyODBC_ are supported for MySQL,
-PostgreSQL and MSSQL but have problems (not all tests passed).
+PostgreSQL_ psycopg_ and psycopg2_ are recommended; PyGreSQL_,
+py-postgresql_ and pg8000_ are supported; SQLite_ has a built-in driver or
+PySQLite_. Firebird_ is supported via fdb_ or kinterbasdb_; pyfirebirdsql_
+is supported but has problems. `MAX DB`_ (also known as SAP DB) is
+supported via sapdb_. Sybase via Sybase_. `MSSQL Server`_ via pymssql_ (+
+FreeTDS_) or adodbapi_ (Win32). PyODBC_ and PyPyODBC_ are supported for
+MySQL, PostgreSQL and MSSQL but have problems (not all tests passed).
 
 .. _MySQL: https://www.mysql.com/
 .. _MariaDB: https://mariadb.org/
@@ -66,7 +66,8 @@ PostgreSQL and MSSQL but have problems (not all tests passed).
 .. _PyMySQL: https://github.com/PyMySQL/PyMySQL/
 .. _mariadb connector: https://pypi.org/project/mariadb/
 .. _PostgreSQL: https://postgresql.org
-.. _psycopg2: http://initd.org/psycopg/
+.. _psycopg: https://pypi.org/project/psycopg/
+.. _psycopg2: https://www.psycopg.org/
 .. _PyGreSQL: http://www.pygresql.org/
 .. _py-postgresql: https://pypi.org/project/py-postgresql/
 .. _pg8000: https://pypi.org/project/pg8000/
@@ -1843,9 +1844,9 @@ PostgresConnection supports transactions and all other features.
 
 The user can choose a DB API driver for PostgreSQL by using a ``driver``
 parameter in DB URI or PostgresConnection that can be a comma-separated
-list of driver names. Possible drivers are: ``psycopg2``,
-``psycopg`` (alias for ``psycopg2``), ``pygresql``, ``pypostgresql``,
-``pg8000``, ``pyodbc``, ``pypyodbc`` or ``odbc`` (try ``pyodbc`` and
+list of driver names. Possible drivers are: ``psycopg``, ``psycopg2``,
+``pygresql``, ``pypostgresql``, ``pg8000``,
+``pyodbc``, ``pypyodbc`` or ``odbc`` (try ``pyodbc`` and
 ``pypyodbc``). Default is ``psycopg``.
 
 Connection-specific parameters are: ``sslmode``, ``unicodeCols``,

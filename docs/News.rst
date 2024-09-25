@@ -8,6 +8,12 @@ News
 SQLObject (master)
 ==================
 
+Drivers
+-------
+
+* Separate ``psycopg`` and ``psycopg2``;
+  ``psycopg`` is actually ``psycopg3`` now.
+
 Tests
 -----
 

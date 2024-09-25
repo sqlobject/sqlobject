@@ -134,8 +134,8 @@ and `GitHub <https://github.com/sqlobject>`_.
         'pyodbc': ['pyodbc'],
         'pypyodbc': ['pypyodbc'],
         # PostgreSQL
+        'psycopg:python_version>="3.6"': ['psycopg[binary]'],
         'psycopg2': ['psycopg2'],
-        'psycopg': ['psycopg2'],
         'postgres': ['psycopg2'],
         'postgresql': ['psycopg2'],
         'pygresql': ['pygresql'],

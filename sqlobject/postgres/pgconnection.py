@@ -60,9 +60,12 @@ class PostgresConnection(DBAPI):
             if not driver:
                 continue
             try:
-                if driver in ('psycopg', 'psycopg2'):
-                    import psycopg2 as psycopg
+                if driver == 'psycopg':
+                    import psycopg
                     self.module = psycopg
+                elif driver == 'psycopg2':
+                    import psycopg2
+                    self.module = psycopg2
                 elif driver == 'pygresql':
                     import pgdb
                     self.module = pgdb
@@ -133,7 +136,10 @@ class PostgresConnection(DBAPI):
                 else:
                     dsn_dict["port"] = port
             if db:
-                dsn_dict["database"] = db
+                if driver == 'psycopg':
+                    dsn_dict["dbname"] = db
+                else:
+                    dsn_dict["database"] = db
             if user:
                 dsn_dict["user"] = user
             if password:

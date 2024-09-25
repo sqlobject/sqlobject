@@ -25,8 +25,6 @@ def test_exceptions():
     raises(DuplicateEntryError, SOTestException, name="test")
 
     connection = getConnection()
-    if connection.module.__name__ != 'psycopg2':
-        return
     SOTestExceptionWithNonexistingTable.setConnection(connection)
     try:
         list(SOTestExceptionWithNonexistingTable.select())
