@@ -21,7 +21,7 @@ Tests
 
 * Run tests with Python 3.13.
 
-* Fix ``test_exceptions.py``: MariaDB returns a different error code.
+* Fix ``test_exceptions.py`` under MariaDB, PostgreSQL and SQLite.
 
 CI
 --

@@ -1,6 +1,7 @@
 import pytest
 from sqlobject import SQLObject, StringCol
-from sqlobject.dberrors import DuplicateEntryError, ProgrammingError
+from sqlobject.dberrors import DuplicateEntryError, OperationalError, \
+    ProgrammingError
 from sqlobject.tests.dbtest import getConnection, raises, setupClass, supports
 
 
@@ -30,5 +31,7 @@ def test_exceptions():
         list(SOTestExceptionWithNonexistingTable.select())
     except ProgrammingError as e:
         assert e.args[0].code in (1146, '42P01')
+    except OperationalError:
+        assert connection.dbName == 'sqlite'
     else:
         assert False, "DID NOT RAISE"
