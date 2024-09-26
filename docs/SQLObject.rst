@@ -50,8 +50,8 @@ Currently SQLObject supports MySQL_ and MariaDB_ via MySQLdb_ aka
 MySQL-python (called mysqlclient_ for Python 3), `MySQL Connector`_,
 PyMySQL_, `mariadb connector`_, PyODBC_ and PyPyODBC_. For
 PostgreSQL_ psycopg_ and psycopg2_ are recommended; PyGreSQL_,
-py-postgresql_ and pg8000_ are supported; SQLite_ has a built-in driver or
-PySQLite_. Firebird_ is supported via fdb_ or kinterbasdb_; pyfirebirdsql_
+py-postgresql_ and pg8000_ are supported; SQLite_ has a built-in driver.
+Firebird_ is supported via fdb_ or kinterbasdb_; pyfirebirdsql_
 is supported but has problems. `MAX DB`_ (also known as SAP DB) is
 supported via sapdb_. Sybase via Sybase_. `MSSQL Server`_ via pymssql_ (+
 FreeTDS_) or adodbapi_ (Win32). PyODBC_ and PyPyODBC_ are supported for
@@ -62,7 +62,7 @@ MySQL, PostgreSQL and MSSQL but have problems (not all tests passed).
 .. _MySQLdb: https://sourceforge.net/projects/mysql-python/
 .. _mysqlclient: https://pypi.org/project/mysqlclient/
 .. _`MySQL Connector`: https://pypi.org/project/mysql-connector/
-.. _PyMySQL: https://github.com/PyMySQL/PyMySQL/
+.. _PyMySQL: https://pypi.org/project/PyMySQL/
 .. _mariadb connector: https://pypi.org/project/mariadb/
 .. _PostgreSQL: https://postgresql.org
 .. _psycopg: https://pypi.org/project/psycopg/
@@ -71,7 +71,6 @@ MySQL, PostgreSQL and MSSQL but have problems (not all tests passed).
 .. _py-postgresql: https://pypi.org/project/py-postgresql/
 .. _pg8000: https://pypi.org/project/pg8000/
 .. _SQLite: https://sqlite.org/
-.. _PySQLite: https://github.com/ghaering/pysqlite
 .. _Firebird: http://www.firebirdsql.org/en/python-driver/
 .. _fdb: http://www.firebirdsql.org/en/devel-python-driver/
 .. _kinterbasdb: http://kinterbasdb.sourceforge.net/
@@ -1864,12 +1863,6 @@ column -- strings can go in integer columns, dates in integers, etc.
 
 SQLite may have concurrency issues, depending on your usage in a
 multi-threaded environment.
-
-The user can choose a DB API driver for SQLite by using a ``driver``
-parameter in DB URI or SQLiteConnection that can be a comma-separated list
-of driver names. Possible drivers are: ``pysqlite2`` (alias ``sqlite2``),
-``sqlite3``, ``sqlite`` (alias ``sqlite1``). Default is to
-test pysqlite2, sqlite3 and sqlite in that order.
 
 Connection-specific parameters are: ``encoding``, ``mode``, ``timeout``,
 ``check_same_thread``, ``use_table_info``.

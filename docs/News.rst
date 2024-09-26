@@ -18,6 +18,8 @@ Drivers
 
 * Dropped ``oursql``. It wasn't updated in years.
 
+* Dropped ``PySQLite2``. Only builtin ``sqlite3`` is supported.
+
 Tests
 -----
 

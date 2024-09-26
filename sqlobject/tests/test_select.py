@@ -183,10 +183,7 @@ def test_select_RLIKE():
     setupClass(IterTest)
 
     if IterTest._connection.dbName == "sqlite":
-        if not IterTest._connection.using_sqlite2:
-            pytest.skip("These tests require SQLite v2+")
-
-        # Implement regexp() function for SQLite; only works with PySQLite2
+        # Implement regexp() function for SQLite
         import re
 
         def regexp(regexp, test):

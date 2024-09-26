@@ -25,10 +25,6 @@ class SQLiteFactoryTest(SQLObject):
 
 def test_sqlite_factory():
     setupClass(SQLiteFactoryTest)
-
-    if not SQLiteFactoryTest._connection.using_sqlite2:
-        pytest.skip("These tests require SQLite v2+")
-
     factory = [None]
 
     def SQLiteConnectionFactory(sqlite):
@@ -46,10 +42,6 @@ def test_sqlite_factory():
 
 def test_sqlite_factory_str():
     setupClass(SQLiteFactoryTest)
-
-    if not SQLiteFactoryTest._connection.using_sqlite2:
-        pytest.skip("These tests require SQLite v2+")
-
     factory = [None]
 
     def SQLiteConnectionFactory(sqlite):
@@ -71,9 +63,6 @@ def test_sqlite_factory_str():
 
 def test_sqlite_aggregate():
     setupClass(SQLiteFactoryTest)
-
-    if not SQLiteFactoryTest._connection.using_sqlite2:
-        pytest.skip("These tests require SQLite v2+")
 
     def SQLiteConnectionFactory(sqlite):
         class MyConnection(sqlite.Connection):
@@ -156,9 +145,6 @@ def test_truediv():
     setupClass(SQLiteTruedivTest)
 
     if SQLiteTruedivTest._connection.dbName == "sqlite":
-        if not SQLiteTruedivTest._connection.using_sqlite2:
-            pytest.skip("These tests require SQLite v2+")
-
         def SQLiteConnectionFactory(sqlite):
             class MyConnection(sqlite.Connection):
                 def __init__(self, *args, **kwargs):

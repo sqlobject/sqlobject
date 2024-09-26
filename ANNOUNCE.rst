@@ -37,8 +37,8 @@ quick to get started with.
 SQLObject supports a number of backends: MySQL/MariaDB (with a number of
 DB API drivers: ``MySQLdb``, ``mysqlclient``, ``mysql-connector``,
 ``PyMySQL``, ``mariadb``), PostgreSQL (``psycopg2``, ``PyGreSQL``,
-partially ``pg8000`` and ``py-postgresql``), SQLite (builtin ``sqlite``,
-``pysqlite``); connections to other backends
+partially ``pg8000`` and ``py-postgresql``), SQLite (builtin ``sqlite3``);
+connections to other backends
 - Firebird, Sybase, MSSQL and MaxDB (also known as SAPDB) - are less
 debugged).
 

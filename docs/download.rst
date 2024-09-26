@@ -77,11 +77,6 @@ psycopg
 psycopg2 postgres postgresql (synonyms for psycopg2)
 pygresql pypostgresql py-postgresql pg8000
 
-SQLite
-^^^^^^
-
-pysqlite sqlite
-
 The rest
 ^^^^^^^^
 

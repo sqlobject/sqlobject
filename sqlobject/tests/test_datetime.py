@@ -93,10 +93,9 @@ if mxdatetime_available:
         pass
     else:
         if connection.dbName == "sqlite":
-            if connection.using_sqlite2:
-                # mxDateTime sends and PySQLite2 returns
-                # full date/time for dates
-                dateFormat = "%Y-%m-%d %H:%M:%S.%f"
+            # mxDateTime sends and sqlite3 returns
+            # full date/time for dates
+            dateFormat = "%Y-%m-%d %H:%M:%S.%f"
 
     class DateTime2(SQLObject):
         col1 = DateTimeCol()

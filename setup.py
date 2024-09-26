@@ -142,7 +142,6 @@ and `GitHub <https://github.com/sqlobject>`_.
         'pg8000:python_version>="3.5"': ['pg8000'],
         #
         'sapdb': ['sapdb'],
-        'sqlite': ['pysqlite'],
         'sybase': ['Sybase'],
     },
 )

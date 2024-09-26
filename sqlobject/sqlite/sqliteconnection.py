@@ -33,67 +33,27 @@ class SQLiteConnection(DBAPI):
     schemes = [dbName]
 
     def __init__(self, filename, autoCommit=1, **kw):
-        drivers = kw.pop('driver', None) or \
-            'pysqlite2,sqlite3,sqlite'
-        for driver in drivers.split(','):
-            driver = driver.strip()
-            if not driver:
-                continue
-            try:
-                if driver in ('sqlite2', 'pysqlite2'):
-                    from pysqlite2 import dbapi2 as sqlite
-                    self.using_sqlite2 = True
-                elif driver == 'sqlite3':
-                    import sqlite3 as sqlite
-                    self.using_sqlite2 = True
-                elif driver in ('sqlite', 'sqlite1'):
-                    import sqlite
-                    self.using_sqlite2 = False
-                else:
-                    raise ValueError(
-                        'Unknown SQLite driver "%s", '
-                        'expected pysqlite2, sqlite3 '
-                        'or sqlite' % driver)
-            except ImportError:
-                pass
-            else:
-                break
-        else:
-            raise ImportError(
-                'Cannot find an SQLite driver, tried %s' % drivers)
-        if self.using_sqlite2:
-            sqlite.encode = base64.b64encode
-            sqlite.decode = base64.b64decode
+        import sqlite3 as sqlite
+        sqlite.encode = base64.b64encode
+        sqlite.decode = base64.b64decode
         self.module = sqlite
         self.filename = filename  # full path to sqlite-db-file
         self._memory = filename == ':memory:'
-        if self._memory and not self.using_sqlite2:
-            raise ValueError("You must use sqlite2 to use in-memory databases")
         # connection options
         opts = {}
-        if self.using_sqlite2:
-            if autoCommit:
-                opts["isolation_level"] = None
-            global sqlite2_Binary
-            if sqlite2_Binary is None:
-                sqlite2_Binary = sqlite.Binary
-                sqlite.Binary = lambda s: sqlite2_Binary(sqlite.encode(s))
-            if 'factory' in kw:
-                factory = kw.pop('factory')
-                if isinstance(factory, str):
-                    factory = globals()[factory]
-                opts['factory'] = factory(sqlite)
-        else:
-            opts['autocommit'] = Boolean(autoCommit)
-            if 'encoding' in kw:
-                opts['encoding'] = kw.pop('encoding')
-            if 'mode' in kw:
-                opts['mode'] = int(kw.pop('mode'), 0)
+        if autoCommit:
+            opts["isolation_level"] = None
+        global sqlite2_Binary
+        if sqlite2_Binary is None:
+            sqlite2_Binary = sqlite.Binary
+            sqlite.Binary = lambda s: sqlite2_Binary(sqlite.encode(s))
+        if 'factory' in kw:
+            factory = kw.pop('factory')
+            if isinstance(factory, str):
+                factory = globals()[factory]
+            opts['factory'] = factory(sqlite)
         if 'timeout' in kw:
-            if self.using_sqlite2:
-                opts['timeout'] = float(kw.pop('timeout'))
-            else:
-                opts['timeout'] = int(float(kw.pop('timeout')) * 1000)
+            opts['timeout'] = float(kw.pop('timeout'))
         if 'check_same_thread' in kw:
             opts["check_same_thread"] = Boolean(kw.pop('check_same_thread'))
         # use only one connection for sqlite - supports multiple)
@@ -186,17 +146,12 @@ class SQLiteConnection(DBAPI):
             conn.close()
 
     def _setAutoCommit(self, conn, auto):
-        if self.using_sqlite2:
-            if auto:
-                conn.isolation_level = None
-            else:
-                conn.isolation_level = ""
+        if auto:
+            conn.isolation_level = None
         else:
-            conn.autocommit = auto
+            conn.isolation_level = ""
 
     def _setIsolationLevel(self, conn, level):
-        if not self.using_sqlite2:
-            return
         conn.isolation_level = level
 
     def makeMemoryConnection(self):
