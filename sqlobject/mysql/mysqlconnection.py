@@ -71,13 +71,6 @@ class MySQLConnection(DBAPI):
                         self.connector_type = 'mysql.connector-python'
                     else:
                         self.connector_type = 'mysql.connector'
-                elif driver == 'oursql':
-                    import oursql
-                    self.module = oursql
-                    self.CR_SERVER_GONE_ERROR = \
-                        oursql.errnos['CR_SERVER_GONE_ERROR']
-                    self.CR_SERVER_LOST = oursql.errnos['CR_SERVER_LOST']
-                    self.ER_DUP_ENTRY = oursql.errnos['ER_DUP_ENTRY']
                 elif driver == 'mariadb':
                     import mariadb
                     self.module = mariadb
@@ -97,7 +90,7 @@ class MySQLConnection(DBAPI):
                     raise ValueError(
                         'Unknown MySQL driver "%s", '
                         'expected mysqldb, connector, connector-python, '
-                        'oursql, pymysql, mariadb, '
+                        'pymysql, mariadb, '
                         'odbc, pyodbc or pypyodbc' % driver)
             except ImportError:
                 pass
@@ -148,12 +141,6 @@ class MySQLConnection(DBAPI):
                                            'MySQL ODBC 5.3 ANSI Driver'),
                                     db, host, port, user, password
                                     )
-
-        elif driver == 'oursql':
-            if "use_unicode" not in self.kw:
-                self.kw["use_unicode"] = not PY2
-            # oursql doesn't implement ping(True) yet
-            self.kw["autoreconnect"] = True
 
         elif driver == 'mariadb':
             self.kw.pop("charset", None)
@@ -206,7 +193,7 @@ class MySQLConnection(DBAPI):
                     # mariadb doesn't implement ping(True)
                     conn.auto_reconnect = True
                     conn.ping()
-                elif self.driver != 'oursql':
+                else:
                     # Attempt to reconnect. This setting is persistent.
                     conn.ping(True)
         except self.module.OperationalError as e:
@@ -228,8 +215,6 @@ class MySQLConnection(DBAPI):
                     conn.setencoding(encoding=dbEncoding)
             elif hasattr(conn, 'set_character_set'):
                 conn.set_character_set(dbEncoding)
-            elif self.driver == 'oursql':
-                conn.charset = dbEncoding
             elif hasattr(conn, 'query'):
                 # works along with monkeypatching code above
                 conn.query("SET NAMES %s" % dbEncoding)
@@ -257,7 +242,7 @@ class MySQLConnection(DBAPI):
         dbEncoding = self.dbEncoding
         if dbEncoding and not isinstance(query, bytes) and (
                 self.driver in ('mysqldb', 'connector', 'connector-python',
-                                'oursql', 'mariadb')):
+                                'mariadb')):
             query = query.encode(dbEncoding, 'surrogateescape')
         # When a server connection is lost and a query is attempted, most of
         # the time the query will raise a SERVER_LOST exception, then at the

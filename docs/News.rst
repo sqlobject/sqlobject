@@ -16,6 +16,8 @@ Drivers
 
 * Minor fix in getting error code from PyGreSQL.
 
+* Dropped ``oursql``. It wasn't updated in years.
+
 Tests
 -----
 

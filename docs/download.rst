@@ -63,7 +63,7 @@ MySQL
 ^^^^^
 
 mysql (installs MySQL-python for Python 2.7 and mysqlclient for Python 3.4+)
-mysql-connector oursql pymysql mariadb
+mysql-connector pymysql mariadb
 
 ODBC
 ^^^^
