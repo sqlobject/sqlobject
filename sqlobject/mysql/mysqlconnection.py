@@ -32,23 +32,23 @@ class MySQLConnection(DBAPI):
     def __init__(self, db, user, password='', host='localhost', port=0, **kw):
         drivers = kw.pop('driver', None) or 'mysqldb'
         for driver in drivers.split(','):
-            driver = driver.strip()
+            driver = driver.strip().lower()
             if not driver:
                 continue
             try:
-                if driver.lower() in ('mysqldb', 'pymysql'):
-                    if driver.lower() == 'pymysql':
+                if driver in ('mysqldb', 'pymysql'):
+                    if driver == 'pymysql':
                         import pymysql
                         pymysql.install_as_MySQLdb()
                     import MySQLdb
-                    if driver.lower() == 'mysqldb':
+                    if driver == 'mysqldb':
                         if MySQLdb.version_info[:3] < (1, 2, 2):
                             raise ValueError(
                                 'SQLObject requires MySQLdb 1.2.2 or later')
                     import MySQLdb.constants.CR
                     import MySQLdb.constants.ER
                     self.module = MySQLdb
-                    if driver.lower() == 'mysqldb':
+                    if driver == 'mysqldb':
                         self.CR_SERVER_GONE_ERROR = \
                             MySQLdb.constants.CR.SERVER_GONE_ERROR
                         self.CR_SERVER_LOST = \
@@ -169,7 +169,7 @@ class MySQLConnection(DBAPI):
     def makeConnection(self):
         dbEncoding = self.dbEncoding
         if dbEncoding:
-            if self.driver.lower() in ('mysqldb', 'pymysql'):
+            if self.driver in ('mysqldb', 'pymysql'):
                 from MySQLdb.connections import Connection
                 if not hasattr(Connection, 'set_character_set'):
                     # monkeypatch pre MySQLdb 1.2.1
@@ -230,7 +230,7 @@ class MySQLConnection(DBAPI):
                 conn.autocommit = auto
 
     def _force_reconnect(self, conn):
-        if self.driver.lower() == 'pymysql':
+        if self.driver == 'pymysql':
             conn.ping(True)
             self._setAutoCommit(conn, bool(self.autoCommit))
             if self.dbEncoding:
@@ -268,7 +268,7 @@ class MySQLConnection(DBAPI):
                         raise dberrors.OperationalError(ErrorMessage(e))
                     if self.debug:
                         self.printDebug(conn, str(e), 'ERROR')
-                    if self.driver.lower() == 'pymysql':
+                    if self.driver == 'pymysql':
                         self._force_reconnect(conn)
                 else:
                     raise dberrors.OperationalError(ErrorMessage(e))
