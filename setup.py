@@ -124,6 +124,7 @@ and `GitHub <https://github.com/sqlobject>`_.
         'mysql-connector': ['mysql-connector'],
         'mysql-connector-python': ['mysql-connector-python'],
         'pymysql': ['pymysql'],
+        'cymysql': ['cymysql'],
         'mariadb': ['mariadb'],
         # ODBC
         'odbc': ['pyodbc'],

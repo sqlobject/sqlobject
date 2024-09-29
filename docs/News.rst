@@ -11,6 +11,8 @@ SQLObject (master)
 Drivers
 -------
 
+* Add support for CyMySQL; there're some problems with unicode yet.
+
 * Separate ``psycopg`` and ``psycopg2``;
   ``psycopg`` is actually ``psycopg3`` now.
 

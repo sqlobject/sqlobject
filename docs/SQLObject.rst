@@ -48,7 +48,7 @@ Requirements
 
 Currently SQLObject supports MySQL_ and MariaDB_ via MySQLdb_ aka
 MySQL-python (called mysqlclient_ for Python 3), `MySQL Connector`_,
-PyMySQL_, `mariadb connector`_, PyODBC_ and PyPyODBC_. For
+PyMySQL_, CyMySQL_, `mariadb connector`_, PyODBC_ and PyPyODBC_. For
 PostgreSQL_ psycopg_ and psycopg2_ are recommended; PyGreSQL_,
 py-postgresql_ and pg8000_ are supported; SQLite_ has a built-in driver.
 Firebird_ is supported via fdb_ or kinterbasdb_; pyfirebirdsql_
@@ -63,6 +63,7 @@ MySQL, PostgreSQL and MSSQL but have problems (not all tests passed).
 .. _mysqlclient: https://pypi.org/project/mysqlclient/
 .. _`MySQL Connector`: https://pypi.org/project/mysql-connector/
 .. _PyMySQL: https://pypi.org/project/PyMySQL/
+.. _CyMySQL: https://pypi.org/project/CyMySQL/
 .. _mariadb connector: https://pypi.org/project/mariadb/
 .. _PostgreSQL: https://postgresql.org
 .. _psycopg: https://pypi.org/project/psycopg/
@@ -1796,8 +1797,8 @@ MySQLConnection supports all the features, though MySQL only supports
 transactions_ when using the InnoDB backend; SQLObject can explicitly
 define the backend using ``sqlmeta.createSQL``.
 
-Supported drivers are ``mysqldb``, ``connector``, ``pymysql``
-and ``mariadb``, ``pyodbc``, ``pypyodbc`` or ``odbc`` (try ``pyodbc`` and
+Supported drivers are ``mysqldb``, ``connector``, ``pymysql``, ``cymysql``,
+``mariadb``, ``pyodbc``, ``pypyodbc`` or ``odbc`` (try ``pyodbc`` and
 ``pypyodbc``); defualt is ``mysqldb``.
 
 
