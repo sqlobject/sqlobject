@@ -49,7 +49,7 @@ Requirements
 Currently SQLObject supports MySQL_ and MariaDB_ via MySQLdb_ aka
 MySQL-python (called mysqlclient_ for Python 3), `MySQL Connector`_,
 PyMySQL_, CyMySQL_, `mariadb connector`_, PyODBC_ and PyPyODBC_. For
-PostgreSQL_ psycopg_ and psycopg2_ are recommended; PyGreSQL_,
+PostgreSQL_ psycopg_ and psycopg2_ are recommended, especially their precompiled wheels psycopg-binary_ and psycopg2-binary_; PyGreSQL_,
 py-postgresql_ and pg8000_ are supported; SQLite_ has a built-in driver.
 Firebird_ is supported via fdb_ or kinterbasdb_; pyfirebirdsql_
 is supported but has problems. `MAX DB`_ (also known as SAP DB) is
@@ -67,7 +67,9 @@ MySQL, PostgreSQL and MSSQL but have problems (not all tests passed).
 .. _mariadb connector: https://pypi.org/project/mariadb/
 .. _PostgreSQL: https://postgresql.org
 .. _psycopg: https://pypi.org/project/psycopg/
+.. _psycopg-binary: https://pypi.org/project/psycopg-binary/
 .. _psycopg2: https://www.psycopg.org/
+.. _psycopg2-binary: https://pypi.org/project/psycopg2-binary/
 .. _PyGreSQL: http://www.pygresql.org/
 .. _py-postgresql: https://pypi.org/project/py-postgresql/
 .. _pg8000: https://pypi.org/project/pg8000/
