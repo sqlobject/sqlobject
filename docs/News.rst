@@ -14,7 +14,7 @@ Drivers
 * Add support for CyMySQL; there're some problems with unicode yet.
 
 * Separate ``psycopg`` and ``psycopg2``;
-  ``psycopg`` is actually ``psycopg3`` now.
+  ``psycopg`` is actually ``psycopg3`` now; not all tests pass.
 
 * Minor fix in getting error code from PyGreSQL.
 
@@ -26,6 +26,8 @@ Tests
 -----
 
 * Run tests with Python 3.13.
+
+* Run tests with ``psycopg-c``; not all tests pass.
 
 * Fix ``test_exceptions.py`` under MariaDB, PostgreSQL and SQLite.
 
