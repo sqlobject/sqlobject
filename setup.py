@@ -122,8 +122,29 @@ and `GitHub <https://github.com/sqlobject>`_.
         'mysql:python_version=="2.7"': ['MySQL-python'],
         'mysql:python_version>="3.4"': ['mysqlclient'],
         'mysql-connector': ['mysql-connector'],
-        'mysql-connector-python': ['mysql-connector-python'],
-        'pymysql': ['pymysql'],
+        'mysql-connector-python:python_version=="2.7"':
+            ['mysql-connector-python <= 8.0.23'],
+        'mysql-connector-python:python_version=="3.4"':
+            ['mysql-connector-python <= 8.0.22, > 2.0', 'protobuf < 3.19'],
+        'mysql-connector-python:python_version=="3.5"':
+            ['mysql-connector-python <= 8.0.23, >= 8.0.5'],
+        'mysql-connector-python:python_version=="3.6"':
+            ['mysql-connector-python <= 8.0.28, >= 8.0.6'],
+        'mysql-connector-python:python_version=="3.7"':
+            ['mysql-connector-python <= 8.0.29, >= 8.0.13'],
+        'mysql-connector-python:python_version=="3.8"':
+            ['mysql-connector-python <= 8.0.29, >= 8.0.19'],
+        'mysql-connector-python:python_version=="3.9"':
+            ['mysql-connector-python <= 8.0.29, >= 8.0.24'],
+        'mysql-connector-python:python_version=="3.10"':
+            ['mysql-connector-python <= 8.0.29, >= 8.0.28'],
+        'mysql-connector-python:python_version>="3.11"':
+            ['mysql-connector-python >= 8.0.29'],
+        'pymysql:python_version == "2.7" or python_version == "3.5"':
+            ['pymysql < 1.0'],
+        'pymysql:python_version == "3.4"': ['pymysql < 0.10.0'],
+        'pymysql:python_version == "3.6"': ['pymysql < 1.0.3'],
+        'pymysql:python_version >= "3.7"': ['pymysql'],
         'cymysql': ['cymysql'],
         'mariadb': ['mariadb'],
         # ODBC
@@ -136,15 +157,21 @@ and `GitHub <https://github.com/sqlobject>`_.
         'psycopg2': ['psycopg2-binary'],
         'postgres': ['psycopg2-binary'],
         'postgresql': ['psycopg2-binary'],
-        'pygresql': ['pygresql'],
+        'psycopg2-binary:python_version=="3.4"': ['psycopg2-binary == 2.8.4'],
+        'psycopg2-binary:python_version!="3.4"': ['psycopg2-binary'],
+        'pygresql:python_version=="3.4"': ['pygresql < 5.2'],
+        'pygresql:python_version!="3.4"': ['pygresql'],
         'pypostgresql': ['py-postgresql'],
         'py-postgresql': ['py-postgresql'],
-        'pg8000:python_version=="2.7"': ['pg8000<1.13'],
-        'pg8000:python_version=="3.4"': ['pg8000<1.12.4'],
+        'pg8000:python_version=="2.7"': ['pg8000 < 1.13'],
+        'pg8000:python_version=="3.4"': ['pg8000 < 1.12.4'],
         'pg8000:python_version>="3.5"': ['pg8000'],
         #
         'sapdb': ['sapdb'],
         'sybase': ['Sybase'],
+        # Non-DB API drivers
+        'zope-dt:python_version=="3.4"': ['zope.datetime < 4.3'],
+        'zope-dt:python_version!="3.4"': ['zope.datetime'],
     },
 )
 
