@@ -106,10 +106,10 @@ and `GitHub <https://github.com/sqlobject>`_.
         "FormEncode>=1.1.1,!=1.3.0; python_version=='2.7'",
         "FormEncode>=1.3.1; python_version>='3.4' and python_version < '3.13'",
         "PyDispatcher>=2.0.4",
-    ] + [
         "formencode @ "
         "git+https://github.com/formencode/formencode.git#egg=formencode"
-    ] if sys.version_info >= (3, 13) else [],
+        " ; python_version >= '3.13'",
+    ],
     extras_require={
         # Firebird/Interbase
         'fdb': ['fdb'],
