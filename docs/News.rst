@@ -31,6 +31,9 @@ Tests
 
 * Fix ``test_exceptions.py`` under MariaDB, PostgreSQL and SQLite.
 
+* ``py-postgres``: Set ``sslmode`` to ``allow``;
+  upstream changed default to ``prefer``.
+
 CI
 --
 
