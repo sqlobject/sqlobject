@@ -40,5 +40,9 @@ else
 fi &&
 sed -Ei "s/Development Status :: .+\",\$/Development Status :: $trove_cls\",/" setup.py &&
 
-`git var GIT_EDITOR` devscripts/build-all-docs docs/News.rst ANNOUNCE.rst sqlobject/__version__.py README.rst setup.cfg setup.py &&
+if [ "$state" = final -o "$state" = post ]; then
+    dbad=devscripts/build-all-docs
+fi &&
+
+`git var GIT_EDITOR` $dbad docs/News.rst ANNOUNCE.rst sqlobject/__version__.py README.rst setup.cfg setup.py &&
 exec git commit --message="Release $tag" devscripts/build-all-docs docs/News.rst ANNOUNCE.rst sqlobject/__version__.py README.rst setup.cfg setup.py
