@@ -5,7 +5,7 @@ News
 .. contents:: Contents:
    :backlinks: none
 
-SQLObject (master)
+SQLObject 3.12.0b1
 ==================
 
 Drivers

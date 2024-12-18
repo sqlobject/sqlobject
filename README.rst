@@ -1,4 +1,4 @@
-SQLObject 3.11.1a0
+SQLObject 3.12.0b1
 ==================
 
 SQLObject is a free and open-source (LGPL) Python object-relational
