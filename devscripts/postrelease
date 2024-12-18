@@ -6,4 +6,4 @@ trove_cls='3 - Alpha' &&
 sed -Ei "s/Development Status :: .+\",\$/Development Status :: $trove_cls\",/" setup.py &&
 
 `git var GIT_EDITOR` ANNOUNCE.rst setup.cfg README.rst docs/News.rst &&
-exec git commit --message="Build: Prepare for the next release" --message="[skip ci]" ANNOUNCE.rst setup.cfg README.rst docs/News.rst
+exec git commit --message="Build: Prepare for the next release" --message="[skip ci]" ANNOUNCE.rst setup.cfg README.rst docs/News.rst setup.py
