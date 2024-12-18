@@ -24,5 +24,9 @@ if [ "$state" = final ]; then
    devscripts/sftp-frs
 fi &&
 
+cd dist &&
+mv SQLObject-$version.tar.gz sqlobject-$version.tar.gz &&
+cd .. &&
+
 twine upload --disable-progress-bar --skip-existing dist/* &&
 exec rm -rf build dist docs/html SQLObject.egg-info
