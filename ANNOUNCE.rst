@@ -1,25 +1,53 @@
 Hello!
 
-I'm pleased to announce version 3.12.1a1, the first alpha of the upcoming
-release of branch 3.12 of SQLObject.
-
-I'm pleased to announce version 3.12.1a2, the second alpha of the upcoming
-release of branch 3.12 of SQLObject.
-
-I'm pleased to announce version 3.12.1b1, the first beta of the upcoming
-release of branch 3.12 of SQLObject.
-
-I'm pleased to announce version 3.12.1rc1, the first release candidate
-of the upcoming release of branch 3.12 of SQLObject.
-
-I'm pleased to announce version 3.12.1, the first bugfix release of branch
-3.12 of SQLObject.
+I'm pleased to announce version 3.12.0.post1, the first post-release
+of release 3.12.0 of branch 3.12 of SQLObject.
 
 
 What's new in SQLObject
 =======================
 
-The contributors for this release are ... Thanks!
+Drivers
+-------
+
+* Add support for CyMySQL; there're some problems with unicode yet.
+
+* Separate ``psycopg`` and ``psycopg2``;
+  ``psycopg`` is actually ``psycopg3`` now; not all tests pass.
+
+* Minor fix in getting error code from PyGreSQL.
+
+* Dropped ``oursql``. It wasn't updated in years.
+
+* Dropped ``PySQLite2``. Only builtin ``sqlite3`` is supported.
+
+Tests
+-----
+
+* Run tests with Python 3.13.
+
+* Run tests with ``psycopg-c``; not all tests pass.
+
+* Fix ``test_exceptions.py`` under MariaDB, PostgreSQL and SQLite.
+
+* ``py-postgres``: Set ``sslmode`` to ``allow``;
+  upstream changed default to ``prefer``.
+
+CI
+--
+
+* Run tests with ``PyGreSQL`` on w32, do not ignore errors.
+
+* Skip tests with ``pg8000`` on w32.
+
+* GHActions: Switch to ``setup-miniconda``.
+
+* GHActions: Python 3.13.
+
+Build/release
+-------------
+
+* Release only sdist: wheels do not allow direct links for dependencies.
 
 
 For a more complete list, please see the news:
@@ -52,7 +80,7 @@ Site:
 http://sqlobject.org
 
 Download:
-https://pypi.org/project/SQLObject/3.12.1a0.dev20241220/
+https://pypi.org/project/SQLObject/3.12.0.post1
 
 News and changes:
 http://sqlobject.org/News.html
