@@ -47,7 +47,7 @@ and `GitHub <https://github.com/sqlobject>`_.
 """,  # noqa: E501 line too long
     long_description_content_type="text/x-rst",
     classifiers=[
-        "Development Status :: 3 - Alpha",
+        "Development Status :: 5 - Production/Stable",
         "Intended Audience :: Developers",
         "License :: OSI Approved :: "
         "GNU Library or Lesser General Public License (LGPL)",

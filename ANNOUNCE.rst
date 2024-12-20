@@ -1,18 +1,6 @@
 Hello!
 
-I'm pleased to announce version 3.12.1a1, the first alpha of the upcoming
-release of branch 3.12 of SQLObject.
-
-I'm pleased to announce version 3.12.1a2, the second alpha of the upcoming
-release of branch 3.12 of SQLObject.
-
-I'm pleased to announce version 3.12.1b1, the first beta of the upcoming
-release of branch 3.12 of SQLObject.
-
-I'm pleased to announce version 3.12.1rc1, the first release candidate
-of the upcoming release of branch 3.12 of SQLObject.
-
-I'm pleased to announce version 3.12.1, the first bugfix release of branch
+I'm pleased to announce version 3.12.0, the release of branch
 3.12 of SQLObject.
 
 
@@ -52,7 +40,7 @@ Site:
 http://sqlobject.org
 
 Download:
-https://pypi.org/project/SQLObject/3.12.1a0.dev20241218/
+https://pypi.org/project/SQLObject/3.12.0
 
 News and changes:
 http://sqlobject.org/News.html

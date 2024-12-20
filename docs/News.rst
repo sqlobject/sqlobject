@@ -5,8 +5,10 @@ News
 .. contents:: Contents:
    :backlinks: none
 
-SQLObject 3.12.0b1
-==================
+SQLObject 3.12.0
+================
+
+Released 2024 Dec 20.
 
 Drivers
 -------
