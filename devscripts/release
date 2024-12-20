@@ -12,7 +12,7 @@ python setup.py build --executable '/usr/bin/env python' &&
 python setup.py sdist &&
 
 find build -name '*.py[co]' -delete &&
-python setup.py bdist_wheel --universal &&
+#python setup.py bdist_wheel --universal &&
 
 version=`python setup.py --version`
 . `dirname $0`/split_tag.sh &&

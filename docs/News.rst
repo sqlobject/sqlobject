@@ -8,6 +8,11 @@ News
 SQLObject (master)
 ==================
 
+Build/release
+-------------
+
+* Release only sdist: wheels do not allow direct links for dependencies.
+
 SQLObject 3.12.0
 ================
 
