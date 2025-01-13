@@ -1852,7 +1852,7 @@ parameter in DB URI or PostgresConnection that can be a comma-separated
 list of driver names. Possible drivers are: ``psycopg``, ``psycopg2``,
 ``pygresql``, ``pypostgresql``, ``pg8000``,
 ``pyodbc``, ``pypyodbc`` or ``odbc`` (try ``pyodbc`` and
-``pypyodbc``). Default is ``psycopg``.
+``pypyodbc``). Default are ``psycopg``, ``psycopg2``, ``pygresql``.
 
 Connection-specific parameters are: ``sslmode``, ``unicodeCols``,
 ``schema``, ``charset``.
