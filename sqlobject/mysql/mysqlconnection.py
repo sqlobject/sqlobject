@@ -39,7 +39,8 @@ class MySQLConnection(DBAPI):
     odbc_keywords = ('Server', 'Port', 'UID', 'Password', 'Database')
 
     def __init__(self, db, user, password='', host='localhost', port=0, **kw):
-        drivers = kw.pop('driver', None) or 'mysqldb'
+        drivers = kw.pop('driver', None) or 'mysqldb,mysqlclient,' + \
+            'mysql-connector,mysql-connector-python,pymysql'
         for driver in drivers.split(','):
             driver = driver.strip().lower()
             if not driver:

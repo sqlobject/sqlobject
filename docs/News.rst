@@ -8,6 +8,12 @@ News
 SQLObject (development)
 =======================
 
+Drivers
+-------
+
+* Extended default list of MySQL drivers to ``mysqldb``, ``mysqlclient``,
+  ``mysql-connector``, ``mysql-connector-python``, ``pymysql``.
+
 SQLObject 3.12.0.post2
 ======================
 

@@ -1804,7 +1804,8 @@ define the backend using ``sqlmeta.createSQL``.
 
 Supported drivers are ``mysqldb``, ``connector``, ``pymysql``, ``cymysql``,
 ``mariadb``, ``pyodbc``, ``pypyodbc`` or ``odbc`` (try ``pyodbc`` and
-``pypyodbc``); defualt is ``mysqldb``.
+``pypyodbc``); default are ``mysqldb``, ``mysqlclient``,
+``mysql-connector``, ``mysql-connector-python``, ``pymysql``.
 
 
 Keyword argument ``conv`` allows to pass a list of custom converters.
