@@ -5,6 +5,9 @@ News
 .. contents:: Contents:
    :backlinks: none
 
+SQLObject (development)
+=======================
+
 SQLObject 3.12.0.post2
 ======================
 
