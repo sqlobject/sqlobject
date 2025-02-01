@@ -8,6 +8,11 @@ News
 SQLObject (master)
 ==================
 
+Installation/dependencies
+-------------------------
+
+* Use ``FormEncode`` 2.1.1 for Python 3.13.
+
 SQLObject 3.12.0
 ================
 

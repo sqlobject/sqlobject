@@ -104,11 +104,9 @@ and `GitHub <https://github.com/sqlobject>`_.
     requires=['FormEncode', 'PyDispatcher'],
     install_requires=[
         "FormEncode>=1.1.1,!=1.3.0; python_version=='2.7'",
-        "FormEncode>=1.3.1; python_version>='3.4' and python_version < '3.13'",
+        "FormEncode>=1.3.1; python_version>='3.4'",
+        "FormEncode>=2.1.1; python_version >= '3.13'",
         "PyDispatcher>=2.0.4",
-        "formencode @ "
-        "git+https://github.com/formencode/formencode.git#egg=formencode"
-        " ; python_version >= '3.13'",
     ],
     extras_require={
         # Firebird/Interbase

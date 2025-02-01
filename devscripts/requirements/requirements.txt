@@ -2,7 +2,7 @@
 DateTime
 
 FormEncode >= 1.1.1, != 1.3.0; python_version == '2.7'
-FormEncode >= 1.3.1; python_version >= '3.4' and python_version < '3.13'
-git+https://github.com/formencode/formencode.git; python_version >= '3.13'
+FormEncode >= 1.3.1; python_version >= '3.4'
+FormEncode >= 2.1.1; python_version >= '3.13'
 
 PyDispatcher >= 2.0.4
