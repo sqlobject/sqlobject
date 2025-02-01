@@ -5,8 +5,10 @@ News
 .. contents:: Contents:
    :backlinks: none
 
-SQLObject (master)
-==================
+SQLObject 3.12.0.post2
+======================
+
+Released 2025 Feb 01.
 
 Installation/dependencies
 -------------------------

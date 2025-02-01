@@ -1,26 +1,16 @@
 Hello!
 
-I'm pleased to announce version 3.12.1a1, the first alpha of the upcoming
-release of branch 3.12 of SQLObject.
-
-I'm pleased to announce version 3.12.1a2, the second alpha of the upcoming
-release of branch 3.12 of SQLObject.
-
-I'm pleased to announce version 3.12.1b1, the first beta of the upcoming
-release of branch 3.12 of SQLObject.
-
-I'm pleased to announce version 3.12.1rc1, the first release candidate
-of the upcoming release of branch 3.12 of SQLObject.
-
-I'm pleased to announce version 3.12.1, the first bugfix release of branch
-3.12 of SQLObject.
+I'm pleased to announce version 3.12.0.post2, the second post-release
+of release 3.12.0 of branch 3.12 of SQLObject.
 
 
 What's new in SQLObject
 =======================
 
-The contributors for this release are ... Thanks!
+Installation/dependencies
+-------------------------
 
+* Use ``FormEncode`` 2.1.1 for Python 3.13.
 
 For a more complete list, please see the news:
 http://sqlobject.org/News.html
@@ -52,7 +42,7 @@ Site:
 http://sqlobject.org
 
 Download:
-https://pypi.org/project/SQLObject/3.12.1a0.dev20241220/
+https://pypi.org/project/SQLObject/3.12.0.post2
 
 News and changes:
 http://sqlobject.org/News.html
