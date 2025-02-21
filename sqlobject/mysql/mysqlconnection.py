@@ -1,26 +1,19 @@
 from sqlobject import col, dberrors
-from sqlobject.compat import PY2, string_type
+from sqlobject.compat import PY2
 from sqlobject.converters import registerConverter, StringLikeConverter
 from sqlobject.dbconnection import DBAPI
 
 
 class ErrorMessage(str):
     def __new__(cls, e, append_msg=''):
-        if e.__module__ == 'cymysql.err':
-            if isinstance(e.errmsg, string_type):
-                errmsg = e.errmsg
-            else:
-                errmsg = e.errmsg.reason
-            errcode = e.errno
+        if len(e.args) > 1:
+            errmsg = e.args[1]
         else:
-            if len(e.args) > 1:
-                errmsg = e.args[1]
-            else:
-                errmsg = ''
-            try:
-                errcode = int(e.args[0])
-            except ValueError:
-                errcode = e.args[0]
+            errmsg = ''
+        try:
+            errcode = int(e.args[0])
+        except ValueError:
+            errcode = e.args[0]
         obj = str.__new__(cls, errmsg + append_msg)
         obj.code = errcode
         obj.module = e.__module__
@@ -69,16 +62,6 @@ class MySQLConnection(DBAPI):
                         self.CR_SERVER_LOST = \
                             MySQLdb.constants.CR.CR_SERVER_LOST
                     self.ER_DUP_ENTRY = MySQLdb.constants.ER.DUP_ENTRY
-                elif driver == 'cymysql':
-                    import cymysql
-                    import cymysql.constants.CR
-                    import cymysql.constants.ER
-                    self.module = cymysql
-                    self.CR_SERVER_GONE_ERROR = \
-                        cymysql.constants.CR.CR_SERVER_GONE_ERROR
-                    self.CR_SERVER_LOST = \
-                        cymysql.constants.CR.CR_SERVER_LOST
-                    self.ER_DUP_ENTRY = cymysql.constants.ER.DUP_ENTRY
                 elif driver in ('connector', 'connector-python'):
                     import mysql.connector
                     self.module = mysql.connector
@@ -110,7 +93,7 @@ class MySQLConnection(DBAPI):
                     raise ValueError(
                         'Unknown MySQL driver "%s", '
                         'expected mysqldb, connector, connector-python, '
-                        'pymysql, cymysql, mariadb, '
+                        'pymysql, mariadb, '
                         'odbc, pyodbc or pypyodbc' % driver)
             except ImportError:
                 pass
@@ -250,7 +233,7 @@ class MySQLConnection(DBAPI):
                 conn.autocommit = auto
 
     def _force_reconnect(self, conn):
-        if self.driver in ('pymysql', 'cymysql'):
+        if self.driver in ('pymysql',):
             conn.ping(True)
             self._setAutoCommit(conn, bool(self.autoCommit))
             if self.dbEncoding:
@@ -288,7 +271,7 @@ class MySQLConnection(DBAPI):
                         raise dberrors.OperationalError(ErrorMessage(e))
                     if self.debug:
                         self.printDebug(conn, str(e), 'ERROR')
-                    if self.driver in ('pymysql', 'cymysql'):
+                    if self.driver in ('pymysql',):
                         self._force_reconnect(conn)
                 else:
                     raise dberrors.OperationalError(ErrorMessage(e))

@@ -48,7 +48,7 @@ Requirements
 
 Currently SQLObject supports MySQL_ and MariaDB_ via MySQLdb_ aka
 MySQL-python (called mysqlclient_ for Python 3), `MySQL Connector`_,
-PyMySQL_, CyMySQL_, `mariadb connector`_, PyODBC_ and PyPyODBC_. For
+PyMySQL_, `mariadb connector`_, PyODBC_ and PyPyODBC_. For
 PostgreSQL_ psycopg_ and psycopg2_ are recommended, especially their
 precompiled wheels psycopg-binary_ and psycopg2-binary_; see also optimized
 psycopg-c_; PyGreSQL_, py-postgresql_ and pg8000_ are supported; SQLite_
@@ -65,7 +65,6 @@ passed).
 .. _mysqlclient: https://pypi.org/project/mysqlclient/
 .. _`MySQL Connector`: https://pypi.org/project/mysql-connector/
 .. _PyMySQL: https://pypi.org/project/PyMySQL/
-.. _CyMySQL: https://pypi.org/project/CyMySQL/
 .. _mariadb connector: https://pypi.org/project/mariadb/
 .. _PostgreSQL: https://postgresql.org
 .. _psycopg: https://pypi.org/project/psycopg/
@@ -1802,7 +1801,7 @@ MySQLConnection supports all the features, though MySQL only supports
 transactions_ when using the InnoDB backend; SQLObject can explicitly
 define the backend using ``sqlmeta.createSQL``.
 
-Supported drivers are ``mysqldb``, ``connector``, ``pymysql``, ``cymysql``,
+Supported drivers are ``mysqldb``, ``connector``, ``pymysql``,
 ``mariadb``, ``pyodbc``, ``pypyodbc`` or ``odbc`` (try ``pyodbc`` and
 ``pypyodbc``); default are ``mysqldb``, ``mysqlclient``,
 ``mysql-connector``, ``mysql-connector-python``, ``pymysql``.

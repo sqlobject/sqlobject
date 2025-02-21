@@ -17,6 +17,9 @@ Drivers
 * Extended default list of PostgreSQL drivers to ``psycopg``, ``psycopg2``,
   ``pygresql``.
 
+* Dropped support for CyMySQL;
+  its author refused to fix unicode-related problems.
+
 SQLObject 3.12.0.post2
 ======================
 
