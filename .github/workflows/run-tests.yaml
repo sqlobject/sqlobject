@@ -104,8 +104,8 @@ jobs:
         shell: bash -el {0}
       - name: Run tox @ w32
         run: |
-          devscripts\tox-select-envs.cmd %PYVER%-mysql
-          devscripts\tox-select-envs.cmd %PYVER%-postgres
-          devscripts\tox-select-envs.cmd %PYVER%-sqlite
+          call devscripts\tox-select-envs.cmd %PYVER%-mysql
+          call devscripts\tox-select-envs.cmd %PYVER%-postgres
+          call devscripts\tox-select-envs.cmd %PYVER%-sqlite
         if: ${{ runner.os == 'Windows' }}
         shell: cmd /C CALL {0}

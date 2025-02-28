@@ -22,6 +22,11 @@ Drivers
 * Dropped support for CyMySQL;
   its author refused to fix unicode-related problems.
 
+CI
+--
+
+* Tests(GHActions): Fixed old bug in the workflow on w32.
+
 SQLObject 3.12.0.post2
 ======================
 
