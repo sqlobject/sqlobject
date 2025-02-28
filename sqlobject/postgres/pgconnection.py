@@ -104,7 +104,11 @@ class PostgresConnection(DBAPI):
             raise ImportError(
                 'Cannot find a PostgreSQL driver, tried %s' % drivers)
 
-        if driver.startswith('psycopg'):
+        if driver.startswith('psycopg2'):
+            # Register a converter for psycopg2 Binary type.
+            registerConverter(type(self.module.Binary('')),
+                              Psyco2BinaryConverter)
+        elif driver.startswith('psycopg'):
             # Register a converter for psycopg Binary type.
             registerConverter(type(self.module.Binary('')),
                               PsycoBinaryConverter)
@@ -588,8 +592,8 @@ class PostgresConnection(DBAPI):
         self._createOrDropDatabase(op="DROP")
 
 
-# Converter for Binary types
-def PsycoBinaryConverter(value, db):
+# Converters for Binary types
+def Psyco2BinaryConverter(value, db):
     assert db == 'postgres'
     return str(value)
 
@@ -606,6 +610,11 @@ else:
             ['\\' + (x[2:].rjust(3, '0'))
                 for x in (oct(ord(c)) for c in value.decode('latin1'))]
         )
+
+
+def PsycoBinaryConverter(value, db):
+    assert db == 'postgres'
+    return sqlrepr(escape_bytea(value.obj), db)
 
 
 def PostgresBinaryConverter(value, db):
