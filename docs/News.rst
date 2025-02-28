@@ -22,6 +22,11 @@ Drivers
 * Dropped support for CyMySQL;
   its author refused to fix unicode-related problems.
 
+Tests
+-----
+
+* Improved tests of ``mysql-connector``.
+
 CI
 --
 
