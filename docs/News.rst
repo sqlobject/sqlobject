@@ -25,7 +25,7 @@ Drivers
 Tests
 -----
 
-* Improved tests of ``mysql-connector``.
+* Improved tests of ``mysql-connector`` and ``mysql-connector-python``.
 
 CI
 --
