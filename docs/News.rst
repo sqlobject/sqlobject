@@ -17,6 +17,8 @@ Drivers
 * Extended default list of PostgreSQL drivers to ``psycopg``, ``psycopg2``,
   ``pygresql``.
 
+* Fixed outstanding problems with ``psycopg``. It's now the first class driver.
+
 * Dropped support for CyMySQL;
   its author refused to fix unicode-related problems.
 
