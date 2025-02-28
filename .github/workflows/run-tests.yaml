@@ -96,16 +96,16 @@ jobs:
         shell: bash -el {0}
       - name: Run tox @ Linux
         run: |
-          devscripts/tox-select-envs $PYVER-mysql
-          devscripts/tox-select-envs $PYVER-postgres
-          devscripts/tox-select-envs $PYVER-sqlite
+          devscripts/tox-select-envs $PYVER-mysql &&
+          devscripts/tox-select-envs $PYVER-postgres &&
+          devscripts/tox-select-envs $PYVER-sqlite &&
           devscripts/tox-select-envs $PYVER-flake8
         if: ${{ runner.os == 'Linux' }}
         shell: bash -el {0}
       - name: Run tox @ w32
-        run: |
-          call devscripts\tox-select-envs.cmd %PYVER%-mysql
-          call devscripts\tox-select-envs.cmd %PYVER%-postgres
-          call devscripts\tox-select-envs.cmd %PYVER%-sqlite
+        run: >
+          devscripts\\tox-select-envs.cmd %PYVER%-mysql &&
+          devscripts\\tox-select-envs.cmd %PYVER%-postgres &&
+          devscripts\\tox-select-envs.cmd %PYVER%-sqlite
         if: ${{ runner.os == 'Windows' }}
         shell: cmd /C CALL {0}

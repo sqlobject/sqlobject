@@ -30,7 +30,7 @@ Tests
 CI
 --
 
-* Tests(GHActions): Fixed old bug in the workflow on w32.
+* Tests(GHActions): Fixed old bugs in the workflow on w32.
 
 SQLObject 3.12.0.post2
 ======================
