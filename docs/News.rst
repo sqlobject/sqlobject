@@ -25,6 +25,9 @@ Drivers
 Tests
 -----
 
+* Added tests for ``mysqldb`` (aka ``mysql-python``)
+  and ``mysqlclient`` on w32.
+
 * Improved tests of ``mysql-connector`` and ``mysql-connector-python``.
 
 CI
