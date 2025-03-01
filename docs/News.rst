@@ -35,6 +35,8 @@ CI
 
 * Tests(GHActions): Fixed old bugs in the workflow on w32.
 
+* Run tests with ``psycopg[c]``.
+
 SQLObject 3.12.0.post2
 ======================
 
