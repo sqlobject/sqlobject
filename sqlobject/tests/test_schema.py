@@ -22,7 +22,9 @@ def test_connection_schema():
     conn.query('SET search_path TO test')
     setupClass(SOTestSchema)
     assert SOTestSchema._connection is conn
-    SOTestSchema(foo='bar')
-    assert conn.queryAll("SELECT * FROM test.so_test_schema")
-    conn.schema = None
-    conn.query('SET search_path TO public')
+    try:
+        SOTestSchema(foo='bar')
+        assert conn.queryAll("SELECT * FROM test.so_test_schema")
+    finally:
+        conn.schema = None
+        conn.query('SET search_path TO public')

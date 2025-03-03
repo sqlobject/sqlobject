@@ -101,6 +101,9 @@ def getConnection(**kw):
         conn.debug = True
     if conftest.option.show_sql_output:
         conn.debugOutput = True
+    if (conn.dbName == 'postgres') and (conn.driver == 'pg8000') \
+            and conn._pool is not None:
+        conn._pool = None
     if (conn.dbName == 'sqlite') and not conn._memory:
         speedupSQLiteConnection(conn)
     return conn

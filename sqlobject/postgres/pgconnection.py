@@ -73,8 +73,12 @@ class PostgresConnection(DBAPI):
                     import pgdb
                     self.module = pgdb
                 elif driver == 'pg8000':
-                    import pg8000
-                    self.module = pg8000
+                    try:
+                        import pg8000.dbapi
+                        self.module = pg8000.dbapi
+                    except ImportError:
+                        import pg8000
+                        self.module = pg8000
                 elif driver == 'pyodbc':
                     import pyodbc
                     self.module = pyodbc
