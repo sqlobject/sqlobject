@@ -51,7 +51,7 @@ MySQL-python (called mysqlclient_ for Python 3), `MySQL Connector`_,
 PyMySQL_, `mariadb connector`_, PyODBC_ and PyPyODBC_. For
 PostgreSQL_ psycopg_ and psycopg2_ are recommended, especially their
 precompiled wheels psycopg-binary_ and psycopg2-binary_; see also optimized
-psycopg-c_; PyGreSQL_, py-postgresql_ and pg8000_ are supported; SQLite_
+psycopg-c_; PyGreSQL_ and pg8000_ are supported; SQLite_
 has a built-in driver. Firebird_ is supported via fdb_ or kinterbasdb_;
 pyfirebirdsql_ is supported but has problems. `MAX DB`_ (also known as SAP
 DB) is supported via sapdb_. Sybase via Sybase_. `MSSQL Server`_ via
@@ -73,7 +73,6 @@ passed).
 .. _psycopg2: https://www.psycopg.org/
 .. _psycopg2-binary: https://pypi.org/project/psycopg2-binary/
 .. _PyGreSQL: http://www.pygresql.org/
-.. _py-postgresql: https://pypi.org/project/py-postgresql/
 .. _pg8000: https://pypi.org/project/pg8000/
 .. _SQLite: https://sqlite.org/
 .. _Firebird: http://www.firebirdsql.org/en/python-driver/
@@ -1849,9 +1848,9 @@ PostgresConnection supports transactions and all other features.
 The user can choose a DB API driver for PostgreSQL by using a ``driver``
 parameter in DB URI or PostgresConnection that can be a comma-separated
 list of driver names. Possible drivers are: ``psycopg``, ``psycopg2``,
-``pygresql``, ``pypostgresql``, ``pg8000``,
-``pyodbc``, ``pypyodbc`` or ``odbc`` (try ``pyodbc`` and
-``pypyodbc``). Default are ``psycopg``, ``psycopg2``, ``pygresql``.
+``pygresql``, ``pg8000``, ``pyodbc``, ``pypyodbc`` or ``odbc`` (try
+``pyodbc`` and ``pypyodbc``). Default are ``psycopg``, ``psycopg2``,
+``pygresql``.
 
 Connection-specific parameters are: ``sslmode``, ``unicodeCols``,
 ``schema``, ``charset``.

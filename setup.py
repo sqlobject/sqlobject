@@ -158,8 +158,6 @@ and `GitHub <https://github.com/sqlobject>`_.
         'psycopg2-binary:python_version!="3.4"': ['psycopg2-binary'],
         'pygresql:python_version=="3.4"': ['pygresql < 5.2'],
         'pygresql:python_version!="3.4"': ['pygresql'],
-        'pypostgresql': ['py-postgresql'],
-        'py-postgresql': ['py-postgresql'],
         'pg8000:python_version=="2.7"': ['pg8000 < 1.13'],
         'pg8000:python_version=="3.4"': ['pg8000 < 1.12.4'],
         'pg8000:python_version>="3.5"': ['pg8000'],

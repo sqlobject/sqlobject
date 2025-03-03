@@ -72,9 +72,6 @@ class PostgresConnection(DBAPI):
                 elif driver == 'pygresql':
                     import pgdb
                     self.module = pgdb
-                elif driver in ('py-postgresql', 'pypostgresql'):
-                    from postgresql.driver import dbapi20
-                    self.module = dbapi20
                 elif driver == 'pg8000':
                     import pg8000
                     self.module = pg8000
@@ -94,7 +91,7 @@ class PostgresConnection(DBAPI):
                     raise ValueError(
                         'Unknown PostgreSQL driver "%s", '
                         'expected psycopg, psycopg2, '
-                        'pygresql, pypostgresql, pg8000, '
+                        'pygresql, pg8000, '
                         'odbc, pyodbc or pypyodbc' % driver)
             except ImportError:
                 pass
@@ -112,7 +109,7 @@ class PostgresConnection(DBAPI):
             # Register a converter for psycopg Binary type.
             registerConverter(type(self.module.Binary('')),
                               PsycoBinaryConverter)
-        elif driver in ('pygresql', 'py-postgresql', 'pypostgresql', 'pg8000'):
+        elif driver in ('pygresql', 'pg8000'):
             registerConverter(type(self.module.Binary(b'')),
                               PostgresBinaryConverter)
         elif driver in ('odbc', 'pyodbc', 'pypyodbc'):
@@ -184,13 +181,6 @@ class PostgresConnection(DBAPI):
                     if sslmode:
                         dsn.append('sslmode=%s' % sslmode)
                     dsn = ' '.join(dsn)
-            if driver in ('py-postgresql', 'pypostgresql'):
-                if host and host.startswith('/'):
-                    dsn_dict["host"] = dsn_dict["port"] = None
-                    dsn_dict["unix"] = host
-                else:
-                    if "unix" in dsn_dict:
-                        del dsn_dict["unix"]
             if driver == 'pg8000':
                 if host and host.startswith('/'):
                     dsn_dict["host"] = None
@@ -312,11 +302,6 @@ class PostgresConnection(DBAPI):
         table = soInstance.sqlmeta.table
         idName = soInstance.sqlmeta.idName
         c = conn.cursor()
-        if id is None and self.driver in ('py-postgresql', 'pypostgresql'):
-            sequenceName = soInstance.sqlmeta.idSequence or \
-                '%s_%s_seq' % (table, idName)
-            self._executeRetry(conn, c, "SELECT NEXTVAL('%s')" % sequenceName)
-            id = c.fetchone()[0]
         if id is not None:
             names = [idName] + names
             values = [id] + values

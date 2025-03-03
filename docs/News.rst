@@ -22,6 +22,9 @@ Drivers
 * Dropped support for ``CyMySQL``;
   its author refused to fix unicode-related problems.
 
+* Dropped support for ``py-postgresql``; it's completely broken
+  with debianized ``Postgres`` and the authors reject fixes.
+
 Tests
 -----
 
