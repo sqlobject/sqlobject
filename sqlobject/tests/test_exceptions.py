@@ -1,7 +1,7 @@
 import pytest
 from sqlobject import SQLObject, StringCol
-from sqlobject.dberrors import DuplicateEntryError, OperationalError, \
-    ProgrammingError
+from sqlobject.dberrors import DatabaseError, DuplicateEntryError, \
+    OperationalError, ProgrammingError
 from sqlobject.tests.dbtest import getConnection, raises, setupClass, supports
 
 
@@ -33,5 +33,8 @@ def test_exceptions():
         assert e.args[0].code in (1146, '42P01')
     except OperationalError:
         assert connection.dbName == 'sqlite'
+    except DatabaseError:
+        assert connection.dbName == 'postgres' \
+            and connection.driver == 'pg8000'
     else:
         assert False, "DID NOT RAISE"

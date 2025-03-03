@@ -19,6 +19,9 @@ Drivers
 
 * Fixed outstanding problems with ``psycopg``. It's now the first class driver.
 
+* Fixed most problems with ``pg8000``. It's close to become
+  the first class driver.
+
 * Dropped support for ``CyMySQL``;
   its author refused to fix unicode-related problems.
 
