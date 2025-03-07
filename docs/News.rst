@@ -15,12 +15,11 @@ Drivers
   ``mysql-connector``, ``mysql-connector-python``, ``pymysql``.
 
 * Extended default list of PostgreSQL drivers to ``psycopg``, ``psycopg2``,
-  ``pygresql``.
+  ``pygresql``, ``pg8000``.
 
 * Fixed outstanding problems with ``psycopg``. It's now the first class driver.
 
-* Fixed all problems with ``pg8000``. It's now close to become
-  the first class driver.
+* Fixed all problems with ``pg8000``. It's now the first class driver.
 
 * Dropped support for ``CyMySQL``;
   its author refused to fix unicode-related problems.
