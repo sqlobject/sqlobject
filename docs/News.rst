@@ -5,6 +5,9 @@ News
 .. contents:: Contents:
    :backlinks: none
 
+SQLObject development (master)
+==============================
+
 SQLObject 3.13.0
 ================
 
