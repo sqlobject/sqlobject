@@ -5,8 +5,10 @@ News
 .. contents:: Contents:
    :backlinks: none
 
-SQLObject (development)
-=======================
+SQLObject 3.13.0
+================
+
+Released 2025 Mar 07.
 
 Drivers
 -------

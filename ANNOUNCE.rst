@@ -1,25 +1,45 @@
 Hello!
 
-I'm pleased to announce version 3.12.1a1, the first alpha of the upcoming
-release of branch 3.12 of SQLObject.
-
-I'm pleased to announce version 3.12.1a2, the second alpha of the upcoming
-release of branch 3.12 of SQLObject.
-
-I'm pleased to announce version 3.12.1b1, the first beta of the upcoming
-release of branch 3.12 of SQLObject.
-
-I'm pleased to announce version 3.12.1rc1, the first release candidate
-of the upcoming release of branch 3.12 of SQLObject.
-
-I'm pleased to announce version 3.12.1, the first bugfix release of branch
-3.12 of SQLObject.
+I'm pleased to announce version 3.13.0, the first release of branch
+3.13 of SQLObject.
 
 
 What's new in SQLObject
 =======================
 
-The contributors for this release are ... Thanks!
+Drivers
+-------
+
+* Extended default list of MySQL drivers to ``mysqldb``, ``mysqlclient``,
+  ``mysql-connector``, ``mysql-connector-python``, ``pymysql``.
+
+* Extended default list of PostgreSQL drivers to ``psycopg``, ``psycopg2``,
+  ``pygresql``, ``pg8000``.
+
+* Fixed outstanding problems with ``psycopg``. It's now the first class driver.
+
+* Fixed all problems with ``pg8000``. It's now the first class driver.
+
+* Dropped support for ``CyMySQL``;
+  its author refused to fix unicode-related problems.
+
+* Dropped support for ``py-postgresql``; it's completely broken
+  with debianized ``Postgres`` and the authors reject fixes.
+
+Tests
+-----
+
+* Added tests for ``mysqldb`` (aka ``mysql-python``)
+  and ``mysqlclient`` on w32.
+
+* Improved tests of ``mysql-connector`` and ``mysql-connector-python``.
+
+CI
+--
+
+* Tests(GHActions): Fixed old bugs in the workflow on w32.
+
+* Run tests with ``psycopg[c]``.
 
 
 For a more complete list, please see the news:
@@ -51,7 +71,7 @@ Site:
 http://sqlobject.org
 
 Download:
-https://pypi.org/project/SQLObject/3.12.1a0.dev20250201/
+https://pypi.org/project/SQLObject/3.13.0
 
 News and changes:
 http://sqlobject.org/News.html
