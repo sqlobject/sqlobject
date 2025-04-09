@@ -105,6 +105,8 @@ class MSSQLConnection(DBAPI):
                     ('host', keys.host),
                     ('port', keys.port),
                     ('timeout', keys.timeout),
+                    ('charset', keys.charset),
+                    ('tds_version', keys.tds_version),
                 ):
                     if value:
                         keys_dict[attr] = value
@@ -118,6 +120,8 @@ class MSSQLConnection(DBAPI):
         self.host = host
         self.port = port
         self.db = db
+        self.charset = kw.pop("charset", None)
+        self.tds_version = kw.pop("tds_version", None)
         self._server_version = None
         self._can_use_max_types = None
         self._can_use_microseconds = None
