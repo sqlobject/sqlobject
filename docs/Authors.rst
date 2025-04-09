@@ -40,6 +40,7 @@ Contributions have been made by:
 * James Hudson <james.hudson at boughtbymany.com>
 * Juergen Gmach <juergen.gmach at googlemail.com>
 * Hugo van Kemenade <hugovk@users.noreply.github.com>
+* Igor Yudytskiy <yudytskiy at tabris.ru>
 * Oleg Broytman <phd@phdru.name>
 
 .. image:: https://sourceforge.net/sflogo.php?group_id=74338&type=10
