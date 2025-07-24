@@ -63,7 +63,7 @@ def setupClass(soClasses, force=False):
     If force is true, then the database will be recreated no matter
     what.
     """
-    global hub
+    # global hub
     if not isinstance(soClasses, (list, tuple)):
         soClasses = [soClasses]
     connection = getConnection()
