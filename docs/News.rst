@@ -8,6 +8,8 @@ News
 SQLObject development (master)
 ==============================
 
+* Tested with Python 3.14.
+
 SQLObject 3.13.0
 ================
 
