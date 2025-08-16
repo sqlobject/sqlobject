@@ -10,6 +10,8 @@ SQLObject development (master)
 
 * Tested with Python 3.14.
 
+* Run tests with non-binary ``psycopg`` and ``psycopg2``.
+
 SQLObject 3.13.0
 ================
 
