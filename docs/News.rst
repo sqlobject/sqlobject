@@ -8,6 +8,15 @@ News
 SQLObject development (master)
 ==============================
 
+Bug fixes
+---------
+
+* Fixed #195: Minor ``NameError`` in ``pgconnection.py``
+  when using ``psycopg`` version 1 with a non-default port.
+
+Tests
+-----
+
 * Tested with Python 3.14.
 
 * Run tests with source-only (non-binary) ``psycopg`` and ``psycopg2``.

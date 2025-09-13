@@ -41,6 +41,7 @@ Contributions have been made by:
 * Juergen Gmach <juergen.gmach at googlemail.com>
 * Hugo van Kemenade <hugovk@users.noreply.github.com>
 * Igor Yudytskiy <yudytskiy at tabris.ru>
+* Dave Mulligan (https://github.com/DaveMulligan95060)
 * Oleg Broytman <phd@phdru.name>
 
 .. image:: https://sourceforge.net/sflogo.php?group_id=74338&type=10
