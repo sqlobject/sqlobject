@@ -14,13 +14,13 @@ Development Installation
 
 First install `FormEncode <http://www.formencode.org/en/latest/download.html>`_::
 
-    $ git clone git://github.com/formencode/formencode.git
+    $ git clone https://github.com/formencode/formencode.git
     $ cd formencode
     $ sudo python setup.py develop
 
 Then do the same for SQLObject::
 
-    $ git clone git clone git://github.com/sqlobject/sqlobject.git
+    $ git clone git clone https://github.com/sqlobject/sqlobject.git
     $ cd sqlobject
     $ sudo python setup.py develop
 
