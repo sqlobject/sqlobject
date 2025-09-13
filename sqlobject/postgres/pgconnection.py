@@ -139,7 +139,7 @@ class PostgresConnection(DBAPI):
                 if driver == 'pygresql':
                     dsn_dict["host"] = "%s:%d" % (host, port)
                 elif driver.startswith('psycopg') and \
-                        psycopg.__version__.split('.')[0] == '1':
+                        self.module.__version__.split('.')[0] == '1':
                     dsn_dict["port"] = str(port)
                 else:
                     dsn_dict["port"] = port
