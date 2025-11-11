@@ -22,8 +22,8 @@ I'm pleased to announce version 3.13.0, the first release of branch
 What's new in SQLObject
 =======================
 
-The contributors for this release are ... Thanks!
-
+The contributor for this release is GH user ghaushe-ampere.
+Thanks for finding an obscure bug!
 
 For a more complete list, please see the news:
 http://sqlobject.org/News.html

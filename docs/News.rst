@@ -11,6 +11,10 @@ SQLObject development (master)
 Bug fixes
 ---------
 
+* Fixed #197: a bug in ``dbconnection.ConnectionURIOpener.registerConnection``
+  triggered by non-empty instance's ``name``. The bug was inserted in 2004 so
+  it seems nobody ever used named instances. Fixed anyway.
+
 * Fixed #195: Minor ``NameError`` in ``pgconnection.py``
   when using ``psycopg`` version 1 with a non-default port.
 
