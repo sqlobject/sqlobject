@@ -22,8 +22,12 @@ I'm pleased to announce version 3.13.0, the first release of branch
 What's new in SQLObject
 =======================
 
-The contributor for this release is GH user ghaushe-ampere.
-Thanks for finding an obscure bug!
+The contributors for this release are:
+
+* Dave Mulligan fixed #195: Minor ``NameError`` in ``pgconnection.py``
+  when using ``psycopg`` version 1 with a non-default port. Many thanks!
+
+* GH user ghaushe-ampere. Thanks for finding an obscure bug!
 
 For a more complete list, please see the news:
 http://sqlobject.org/News.html
