@@ -24,10 +24,14 @@ What's new in SQLObject
 
 The contributors for this release are:
 
+* Igor Yudytskiy. Thanks for PR #194:
+  fix: connect to old mssql versions via set tds_version uri parameter.
+
 * Dave Mulligan fixed #195: Minor ``NameError`` in ``pgconnection.py``
-  when using ``psycopg`` version 1 with a non-default port. Many thanks!
+  when using ``psycopg`` version 1 with a non-default port. Thanks!
 
 * GH user ghaushe-ampere. Thanks for finding an obscure bug!
+
 
 For a more complete list, please see the news:
 http://sqlobject.org/News.html
