@@ -2022,6 +2022,8 @@ class UuidValidator(SOValidator):
     def from_python(self, value, state):
         if value is None:
             return None
+        if isinstance(value, str):
+            return value
         if isinstance(value, UUID):
             return str(value)
         raise validators.Invalid(

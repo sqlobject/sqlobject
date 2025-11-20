@@ -11,6 +11,9 @@ SQLObject development (master)
 Bug fixes
 ---------
 
+* ``UuidValidator.from_python()`` now accepts strings as a valid input.
+  This fixes #199.
+
 * Fixed #197: a bug in ``dbconnection.ConnectionURIOpener.registerConnection``
   triggered by non-empty instance's ``name``. The bug was inserted in 2004 so
   it seems nobody ever used named instances. Fixed anyway.

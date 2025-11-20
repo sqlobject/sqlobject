@@ -30,6 +30,8 @@ The contributors for this release are:
 * Dave Mulligan fixed #195: Minor ``NameError`` in ``pgconnection.py``
   when using ``psycopg`` version 1 with a non-default port. Thanks!
 
+* Chris Kauffman found a minor bug in ``UuidValidator``.
+
 * GH user ghaushe-ampere. Thanks for finding an obscure bug!
 
 
