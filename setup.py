@@ -23,7 +23,7 @@ subpackages = ['firebird', 'include', 'include.tests',
                'versioning', 'versioning.test']
 
 setup(
-    name="SQLObject",
+    name="sqlobject",
     version=sqlobject_version['version'],
     description="Object-Relational Manager, aka database wrapper",
     long_description="""\
@@ -75,12 +75,12 @@ and `GitHub <https://github.com/sqlobject>`_.
     maintainer="Oleg Broytman",
     maintainer_email="phd@phdru.name",
     url="http://sqlobject.org/",
-    download_url="https://pypi.org/project/SQLObject/%s/" %
+    download_url="https://pypi.org/project/sqlobject/%s/" %
     sqlobject_version['version'],
     project_urls={
         'Homepage': 'http://sqlobject.org/',
         'Development docs': 'http://sqlobject.org/devel/',
-        'Download': 'https://pypi.org/project/SQLObject/%s/' %
+        'Download': 'https://pypi.org/project/sqlobject/%s/' %
         sqlobject_version['version'],
         'Github repo': 'https://github.com/sqlobject',
         'Issue tracker': 'https://github.com/sqlobject/sqlobject/issues',
@@ -213,7 +213,7 @@ Mailing list:
 https://lists.sourceforge.net/mailman/listinfo/sqlobject-discuss
 
 Download:
-https://pypi.org/project/SQLObject/@@/
+https://pypi.org/project/sqlobject/@@/
 
 News and changes:
 http://sqlobject.org/docs/News.html

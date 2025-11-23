@@ -24,15 +24,5 @@ if [ "$state" = final ]; then
    devscripts/sftp-frs
 fi &&
 
-cd dist &&
-if [ -f SQLObject-$version.tar.gz ]; then
-    mv SQLObject-$version.tar.gz sqlobject-$version.tar.gz
-fi &&
-if [ -f SQLObject-$version-py2.py3-none-any.whl ]; then
-    mv SQLObject-$version-py2.py3-none-any.whl \
-       sqlobject-$version-py2.py3-none-any.whl
-fi &&
-cd .. &&
-
 twine upload --disable-progress-bar --skip-existing dist/* &&
-exec rm -rf build dist docs/html SQLObject.egg-info
+exec rm -rf build dist docs/html sqlobject.egg-info
