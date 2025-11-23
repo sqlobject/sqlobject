@@ -1,7 +1,7 @@
 Hello!
 
-I'm pleased to announce version 3.13.1b1, the first beta of the upcoming
-bugfix release 3.13.1 of SQLObject.
+I'm pleased to announce version 3.13.1, the first bugfix of the
+branch 3.13 of SQLObject.
 
 
 What's new in SQLObject
@@ -49,7 +49,7 @@ Site:
 http://sqlobject.org
 
 Download:
-https://pypi.org/project/SQLObject/3.13.1a0.dev20250307/
+https://pypi.org/project/SQLObject/3.13.1a0.dev20251124/
 
 News and changes:
 http://sqlobject.org/News.html
