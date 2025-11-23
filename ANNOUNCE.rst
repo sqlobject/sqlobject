@@ -1,22 +1,7 @@
 Hello!
 
-I'm pleased to announce version 3.13.1a1, the first alpha of the upcoming
-release of branch 3.13 of SQLObject.
-
-I'm pleased to announce version 3.13.1a2, the second alpha of the upcoming
-release of branch 3.13 of SQLObject.
-
 I'm pleased to announce version 3.13.1b1, the first beta of the upcoming
-release of branch 3.13 of SQLObject.
-
-I'm pleased to announce version 3.13.1rc1, the first release candidate
-of the upcoming release of branch 3.13 of SQLObject.
-
-I'm pleased to announce version 3.13.1, the first bugfix release of branch
-3.13 of SQLObject.
-
-I'm pleased to announce version 3.13.0, the first release of branch
-3.13 of SQLObject.
+bugfix release 3.13.1 of SQLObject.
 
 
 What's new in SQLObject
