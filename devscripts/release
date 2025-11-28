@@ -3,6 +3,7 @@
 cd "`dirname \"$0\"`"/.. &&
 umask 022 &&
 chmod -R a+rX . &&
+find .git/objects -type f -exec chmod u=r,go= '{}' \+ &&
 
 set-commit-date.py &&
 devscripts/build-docs &&
