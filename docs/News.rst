@@ -5,8 +5,10 @@ News
 .. contents:: Contents:
    :backlinks: none
 
-SQLObject development (master)
-==============================
+SQLObject 3.13.1
+================
+
+Released 2025 Dec 08.
 
 Bug fixes
 ---------
