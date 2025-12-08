@@ -1,6 +1,6 @@
 Hello!
 
-I'm pleased to announce version 3.13.1, the first bugfix release of the
+I'm pleased to announce version 3.13.2a0, the 2nd bugfix of the
 branch 3.13 of SQLObject.
 
 
@@ -9,35 +9,6 @@ What's new in SQLObject
 
 The contributors for this release are:
 
-* Igor Yudytskiy. Thanks for PR #194:
-  fix: connect to old mssql versions via set tds_version uri parameter.
-
-* Dave Mulligan fixed #195: Minor ``NameError`` in ``pgconnection.py``
-  when using ``psycopg`` version 1 with a non-default port. Thanks!
-
-* Chris Kauffman found a minor bug in ``UuidValidator``.
-
-* GH user ghaushe-ampere. Thanks for finding an obscure bug!
-
-Bug fixes
----------
-
-* ``UuidValidator.from_python()`` now accepts strings as a valid input.
-  This fixes #199.
-
-* Fixed #197: a bug in ``dbconnection.ConnectionURIOpener.registerConnection``
-  triggered by non-empty instance's ``name``. The bug was inserted in 2004 so
-  it seems nobody ever used named instances. Fixed anyway.
-
-* Fixed #195: Minor ``NameError`` in ``pgconnection.py``
-  when using ``psycopg`` version 1 with a non-default port.
-
-Tests
------
-
-* Tested with Python 3.14.
-
-* Run tests with source-only (non-binary) ``psycopg`` and ``psycopg2``.
 
 For a more complete list, please see the news:
 http://sqlobject.org/News.html
@@ -68,7 +39,7 @@ Site:
 http://sqlobject.org
 
 Download:
-https://pypi.org/project/SQLObject/3.13.1
+https://pypi.org/project/SQLObject/3.13.2a0.dev20251208/
 
 News and changes:
 http://sqlobject.org/News.html
