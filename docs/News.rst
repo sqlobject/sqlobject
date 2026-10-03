@@ -8,6 +8,12 @@ News
 SQLObject development (master)
 ==============================
 
+Drivers
+-------
+
+* Add ``pymysql`` to the list requiring encoding before submission,
+  to work around the changes in ``pymysql`` 1.2.1.
+
 SQLObject 3.13.1
 ================
 
