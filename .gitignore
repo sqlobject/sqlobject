@@ -1,7 +1,7 @@
 /.cache/
 /.pytest_cache/
 /.tox/
-/SQLObject.egg-info/
+/sqlobject.egg-info/
 /build/
 /data/
 /dist/

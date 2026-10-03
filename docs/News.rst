@@ -8,6 +8,11 @@ News
 SQLObject development (master)
 ==============================
 
+Build
+-----
+
+* Fix ``egg-info`` name in ``.gitignore``: it's now completely lowercase.
+
 Drivers
 -------
 
