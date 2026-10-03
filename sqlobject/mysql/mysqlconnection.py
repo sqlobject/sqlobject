@@ -245,7 +245,7 @@ class MySQLConnection(DBAPI):
         dbEncoding = self.dbEncoding
         if dbEncoding and not isinstance(query, bytes) and (
                 self.driver in ('mysqldb', 'connector', 'connector-python',
-                                'mariadb')):
+                                'mariadb', 'pymysql')):
             query = query.encode(dbEncoding, 'surrogateescape')
         # When a server connection is lost and a query is attempted, most of
         # the time the query will raise a SERVER_LOST exception, then at the
