@@ -13,6 +13,8 @@ Build
 
 * Fix ``egg-info`` name in ``.gitignore``: it's now completely lowercase.
 
+* Tested with Python 3.15 rc.
+
 Drivers
 -------
 
