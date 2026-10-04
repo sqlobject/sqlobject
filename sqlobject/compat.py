@@ -48,8 +48,8 @@ else:
     def load_module_from_file(base_name, module_name, filename):
         specs = importlib.util.spec_from_file_location(module_name, filename)
         loader = specs.loader
-        if hasattr(loader, 'create_module'):
-            module = loader.create_module(specs)
+        if hasattr(importlib.util, 'module_from_spec'):
+            module = importlib.util.module_from_spec(specs)
         else:
             module = None
         if module is None:

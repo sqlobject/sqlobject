@@ -8,6 +8,11 @@ News
 SQLObject development (master)
 ==============================
 
+Minor features
+--------------
+
+* Tweak ``load_module_from_file`` to work on Python 3.15.
+
 Build
 -----
 
