@@ -53,7 +53,7 @@ else:
         else:
             module = None
         if module is None:
-            return specs.loader.load_module()
+            return loader.load_module()
         else:
             loader.exec_module(module)
             return module
