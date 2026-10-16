@@ -5,7 +5,7 @@ on: [push, pull_request]
 jobs:
   run-tests:
     env:
-      not_in_conda: "[]"
+      not_in_conda: "['3.15']"
 
     strategy:
       matrix:
@@ -14,8 +14,6 @@ jobs:
         exclude:
         - os: windows-latest
           python-version: "2.7"
-        - os: windows-latest
-          python-version: "3.15"
         include:
         - os: ubuntu-latest
           os-name: Linux
