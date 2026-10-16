@@ -7,7 +7,26 @@ branch 3.13 of SQLObject.
 What's new in SQLObject
 =======================
 
-The contributors for this release are:
+The contributor for this release is Neil Muller.
+Many thanks for the pull requests!
+
+Minor features
+--------------
+
+* Tweak ``load_module_from_file`` to work on Python 3.15.
+
+Build
+-----
+
+* Fix ``egg-info`` name in ``.gitignore``: it's now completely lowercase.
+
+* Tested with Python 3.15. Not all drivers work but most are ok.
+
+Drivers
+-------
+
+* Add ``pymysql`` to the list requiring encoding before submission,
+  to work around the changes in ``pymysql`` 1.2.1.
 
 
 For a more complete list, please see the news:

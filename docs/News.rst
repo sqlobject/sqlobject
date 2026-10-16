@@ -8,6 +8,11 @@ News
 SQLObject development (master)
 ==============================
 
+SQLObject 3.14.0
+================
+
+Released 2026 Oct 16.
+
 Minor features
 --------------
 
@@ -18,7 +23,7 @@ Build
 
 * Fix ``egg-info`` name in ``.gitignore``: it's now completely lowercase.
 
-* Tested with Python 3.15 rc.
+* Tested with Python 3.15. Not all drivers work but most are ok.
 
 Drivers
 -------
