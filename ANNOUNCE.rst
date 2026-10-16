@@ -1,32 +1,13 @@
 Hello!
 
-I'm pleased to announce version 3.13.2a0, the 2nd bugfix of the
-branch 3.13 of SQLObject.
+I'm pleased to announce version 3.14.1a0, the 1st bugfix of the
+branch 3.14 of SQLObject.
 
 
 What's new in SQLObject
 =======================
 
-The contributor for this release is Neil Muller.
-Many thanks for the pull requests!
-
-Minor features
---------------
-
-* Tweak ``load_module_from_file`` to work on Python 3.15.
-
-Build
------
-
-* Fix ``egg-info`` name in ``.gitignore``: it's now completely lowercase.
-
-* Tested with Python 3.15. Not all drivers work but most are ok.
-
-Drivers
--------
-
-* Add ``pymysql`` to the list requiring encoding before submission,
-  to work around the changes in ``pymysql`` 1.2.1.
+The contributors for this release are:
 
 
 For a more complete list, please see the news:
@@ -58,7 +39,7 @@ Site:
 http://sqlobject.org
 
 Download:
-https://pypi.org/project/SQLObject/3.13.2a0.dev20251208/
+https://pypi.org/project/SQLObject/3.14.1a0.dev20261018/
 
 News and changes:
 http://sqlobject.org/News.html
